@@ -651,12 +651,12 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareClientTest, DISABLED_OAuth)
+  TEST_F(FileShareClientTest, OAuth)
   {
     // Create from client secret credential.
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret());
+            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 

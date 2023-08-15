@@ -859,20 +859,30 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.Files[0].Name, specialFileName);
   }
 
-  TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)
+  // cspell:ignore myshare mydirectory
+  TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks_PLAYBACKONLY_)
   {
-    auto result = m_fileShareDirectoryClient->ListHandles();
+    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        "myshare",
+        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto directoryClient
+        = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("mydirectory");
+    Files::Shares::ListDirectoryHandlesOptions options;
+    options.PageSizeHint = 1;
+    std::unordered_set<std::string> handles;
+    for (auto pageResult = directoryClient.ListHandles(options); pageResult.HasPage();
+         pageResult.MoveToNextPage())
+    {
+      ASSERT_EQ(1L, pageResult.DirectoryHandles.size());
+      handles.insert(pageResult.DirectoryHandles[0].HandleId);
+    }
+    EXPECT_EQ(handles.size(), 2);
+
+    EXPECT_NO_THROW(directoryClient.ForceCloseAllHandles());
+
+    auto result = directoryClient.ListHandles();
     EXPECT_TRUE(result.DirectoryHandles.empty());
-    EXPECT_FALSE(result.NextPageToken.HasValue());
-    for (auto pageResult = m_fileShareDirectoryClient->ListHandles(); pageResult.HasPage();
-         pageResult.MoveToNextPage())
-    {
-    }
-    EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());
-    for (auto pageResult = m_fileShareDirectoryClient->ForceCloseAllHandles(); pageResult.HasPage();
-         pageResult.MoveToNextPage())
-    {
-    }
   }
 
   TEST_F(FileShareDirectoryClientTest, AllowTrailingDot)
@@ -1052,14 +1062,14 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false, false);
   }
 
-  TEST_F(FileShareDirectoryClientTest, DISABLED_OAuth)
+  TEST_F(FileShareDirectoryClientTest, OAuth)
   {
     const std::string directoryName = RandomString();
 
     // Create from client secret credential.
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret());
+            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1117,11 +1127,12 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   // cspell:ignore myshare mydirectory
-  // Can't run this test on pipeline, test it locally.
-  TEST_F(FileShareDirectoryClientTest, DISABLED_ListHandlesAccessRights)
+  TEST_F(FileShareDirectoryClientTest, ListHandlesAccessRights_PLAYBACKONLY_)
   {
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), "myshare");
+        StandardStorageConnectionString(),
+        "myshare",
+        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
     auto directoryClient
         = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("mydirectory");
     auto directoryHandles = directoryClient.ListHandles().DirectoryHandles;
