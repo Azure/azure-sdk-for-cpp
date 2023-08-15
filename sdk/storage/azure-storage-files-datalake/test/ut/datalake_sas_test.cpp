@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "dataLake_file_system_client_test.hpp"
+#include "datalake_file_system_client_test.hpp"
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs/blob_sas_builder.hpp>
@@ -101,7 +101,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = pathClient.GetFileClient(fileName);
       auto newFileClient = pathClient.GetFileClient(newFilename);
       fileClient.Create();
-      newFileClient.Create();
       (void)baseDirectoryName;
       EXPECT_NO_THROW(pathClient1.RenameFile(fileName, newFilename));
     }
@@ -431,12 +430,6 @@ namespace Azure { namespace Storage { namespace Test {
       {
         VerifyDataLakeSasList(dataLakeDirectoryClient, sasToken2);
       }
-      if ((permissions & Sas::DataLakeSasPermissions::Add) == Sas::DataLakeSasPermissions::Add)
-      {
-        /*
-         * Add test for append block when DataLake supports append blobs.
-         */
-      }
       if ((permissions & Sas::DataLakeSasPermissions::Create)
           == Sas::DataLakeSasPermissions::Create)
       {
@@ -664,7 +657,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+        = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
 
     std::string fileName = RandomString();
 
@@ -691,12 +684,11 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.SetPermissions(static_cast<Sas::DataLakeFileSystemSasPermissions>(0));
     fileSasBuilder.Identifier = identifier.Id;
 
-    // TestSleep(std::chrono::seconds(30));
+    TestSleep(std::chrono::seconds(30));
 
     auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
 
-    // TODO: looks like a server bug, the identifier doesn't work sometimes.
-    // VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
 
   TEST_F(DataLakeSasTest, FileSasResponseHeadersOverride)
