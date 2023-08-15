@@ -17,7 +17,7 @@
 #include <sstream>
 #include <vector>
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
 #include <Windows.h>
 
 #include <wil/resource.h>
@@ -64,7 +64,7 @@ using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
 enum PrivateKeyType
 {
   Rsa,
@@ -353,7 +353,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 
 void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
 {
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
   BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(pkey));
 #else
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
