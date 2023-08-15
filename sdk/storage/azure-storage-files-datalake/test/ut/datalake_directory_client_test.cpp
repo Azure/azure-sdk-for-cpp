@@ -163,6 +163,16 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(deleted = dirClient.DeleteEmptyIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
     }
+    {
+      // Recursive delete if exists
+      auto rootDir = baseName + "root";
+      auto rootDirClient = m_fileSystemClient->GetDirectoryClient(rootDir);
+      EXPECT_NO_THROW(rootDirClient.Create());
+      auto fileClient = rootDirClient.GetFileClient(RandomString());
+      EXPECT_NO_THROW(fileClient.Create());
+      EXPECT_THROW(rootDirClient.DeleteEmpty(), StorageException);
+      EXPECT_NO_THROW(rootDirClient.DeleteRecursiveIfExists());
+    }
   }
 
   TEST_F(DataLakeDirectoryClientTest, RenameFile)
