@@ -113,9 +113,7 @@ TEST_F(ProducerClientTest, EventHubRawMessageSend_LIVEONLY_)
   client.Send(std::string{"String test message"});
 
   // Send using a vector of implicit EventData constructor with a binary buffer.
-  client.Send({{12,13,14,15}, {16,17,18,19}});
-  
-
+  client.Send({{12, 13, 14, 15}, {16, 17, 18, 19}});
 }
 
 TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
