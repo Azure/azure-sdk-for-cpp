@@ -348,7 +348,8 @@ build/
 [Dd]ocs/
 
 # vscode
-.vscode/
+.vscode/*
+!.vscode/cspell.json
 .factorypath
 
 # Default Assets restore directory
