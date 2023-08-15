@@ -94,6 +94,30 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   }
 }
 
+TEST_F(ProducerClientTest, EventHubRawMessageSend_LIVEONLY_)
+{
+  std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+  std::string const connStringEntityPath
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+
+  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  producerOptions.Name = "sender-link";
+  producerOptions.ApplicationID = "some";
+
+  auto client = Azure::Messaging::EventHubs::ProducerClient(
+      connStringEntityPath, eventHubName, producerOptions);
+
+  client.Send(Azure::Messaging::EventHubs::Models::EventData{"This is a test message"});
+
+  // Send using the implicit EventData constructor.
+  client.Send(std::string{"String test message"});
+
+  // Send using a vector of implicit EventData constructor with a binary buffer.
+  client.Send({{12,13,14,15}, {16,17,18,19}});
+  
+
+}
+
 TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};

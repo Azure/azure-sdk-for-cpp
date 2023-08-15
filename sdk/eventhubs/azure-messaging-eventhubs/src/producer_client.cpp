@@ -136,6 +136,31 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     });
   }
 
+  void ProducerClient::Send(Models::EventData const& eventData, Core::Context const& context)
+  {
+    auto batch = CreateBatch(EventDataBatchOptions{}, context);
+    if (!batch.TryAddMessage(eventData))
+    {
+      throw std::runtime_error("Could not add message to batch.");
+    }
+    Send(batch, context);
+  }
+
+  void ProducerClient::Send(
+      std::vector<Models::EventData> const& eventData,
+      Core::Context const& context)
+  {
+    auto batch = CreateBatch(EventDataBatchOptions{}, context);
+    for (const auto& data : eventData)
+    {
+      if (!batch.TryAddMessage(data))
+      {
+        throw std::runtime_error("Could not add message to batch.");
+      }
+    }
+    Send(batch, context);
+  }
+
   Models::EventHubProperties ProducerClient::GetEventHubProperties(Core::Context const& context)
   {
     // EventHub properties are not associated with a particular partition, so create a message
