@@ -654,8 +654,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    auto keyCredential
-        = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
 
     std::string fileName = RandomString();
 
