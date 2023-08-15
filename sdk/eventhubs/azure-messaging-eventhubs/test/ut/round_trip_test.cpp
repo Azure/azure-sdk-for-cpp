@@ -80,7 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       auto receiver = consumer.CreatePartitionClient("1", partitionOptions);
 
       auto receivedEvents = receiver.ReceiveEvents(1);
-      ASSERT_EQ(1, receivedEvents.size());
+      ASSERT_EQ(1ul, receivedEvents.size());
       for (auto const& event : receivedEvents)
       {
         GTEST_LOG_(INFO) << "Event: " << event;
@@ -134,7 +134,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       auto receiver = consumer.CreatePartitionClient("1", partitionOptions);
 
       auto receivedEvents = receiver.ReceiveEvents(1);
-      ASSERT_EQ(1, receivedEvents.size());
+      ASSERT_EQ(1ul, receivedEvents.size());
       for (auto const& event : receivedEvents)
       {
         GTEST_LOG_(INFO) << "Event: " << event;
