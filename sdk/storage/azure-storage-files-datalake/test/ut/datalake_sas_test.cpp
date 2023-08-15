@@ -92,7 +92,6 @@ namespace Azure { namespace Storage { namespace Test {
 
     void VerifyDataLakeSasMove(
         const Files::DataLake::DataLakeDirectoryClient& pathClient,
-        const std::string& baseDirectoryName,
         const std::string& sasToken)
     {
       auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
@@ -101,7 +100,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = pathClient.GetFileClient(fileName);
       auto newFileClient = pathClient.GetFileClient(newFilename);
       fileClient.Create();
-      (void)baseDirectoryName;
       EXPECT_NO_THROW(pathClient1.RenameFile(fileName, newFilename));
     }
 
@@ -275,8 +273,8 @@ namespace Azure { namespace Storage { namespace Test {
       }
       if ((permissions & Sas::DataLakeSasPermissions::Move) == Sas::DataLakeSasPermissions::Move)
       {
-        VerifyDataLakeSasMove(dataLakeDirectoryClient, directoryName, sasToken);
-        VerifyDataLakeSasMove(dataLakeDirectoryClient, directoryName, sasToken2);
+        VerifyDataLakeSasMove(dataLakeDirectoryClient, sasToken);
+        VerifyDataLakeSasMove(dataLakeDirectoryClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::ManageAccessControl)
           == Sas::DataLakeSasPermissions::ManageAccessControl)
