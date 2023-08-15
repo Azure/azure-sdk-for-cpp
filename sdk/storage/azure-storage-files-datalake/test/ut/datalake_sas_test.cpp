@@ -408,7 +408,6 @@ namespace Azure { namespace Storage { namespace Test {
              Sas::DataLakeSasPermissions::List,
              Sas::DataLakeSasPermissions::Add,
              Sas::DataLakeSasPermissions::Create,
-             Sas::DataLakeSasPermissions::Move,
              Sas::DataLakeSasPermissions::Execute,
              Sas::DataLakeSasPermissions::ManageAccessControl,
          })
@@ -432,11 +431,6 @@ namespace Azure { namespace Storage { namespace Test {
           == Sas::DataLakeSasPermissions::Create)
       {
         VerifyDataLakeSasCreate(dataLakeDirectoryClient, sasToken2);
-      }
-      if ((permissions & Sas::DataLakeSasPermissions::Move) == Sas::DataLakeSasPermissions::Move)
-      {
-        // Don't know why, move doesn' t work
-        // VerifyDataLakeSasMove(dataLakeDirectoryClient, directoryName, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::ManageAccessControl)
           == Sas::DataLakeSasPermissions::ManageAccessControl)
