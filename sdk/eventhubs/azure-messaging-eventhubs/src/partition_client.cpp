@@ -33,6 +33,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     std::string GetStartExpression(Models::StartPosition const& startPosition)
     {
+      Log::Stream(Logger::Level::Verbose)
+          << "Get Start Expression, startPosition: " << startPosition;
       std::string greaterThan = ">";
 
       if (startPosition.Inclusive)
@@ -92,10 +94,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // If we don't have a filter value, then default to the start.
       if (returnValue.empty())
       {
+        Log::Stream(Logger::Level::Verbose) << "No return value, use default.";
         return "amqp.annotation.x-opt-offset > '@latest'";
       }
       else
       {
+        Log::Stream(Logger::Level::Verbose) << "Get Start Expression, returnValue: " << returnValue;
         return returnValue;
       }
     }

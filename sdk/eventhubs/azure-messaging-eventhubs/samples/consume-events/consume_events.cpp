@@ -50,6 +50,10 @@ int main()
   Azure::Messaging::EventHubs::PartitionClientOptions partitionClientOptions;
   partitionClientOptions.StartPosition.Earliest = true;
   partitionClientOptions.StartPosition.Inclusive = true;
+
+  std::cout << "Creating partition client. Start position: " << partitionClientOptions.StartPosition
+			<< std::endl;
+
   Azure::Messaging::EventHubs::PartitionClient partitionClient{consumerClient.CreatePartitionClient(
       eventhubProperties.PartitionIds[0], partitionClientOptions)};
 
