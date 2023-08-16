@@ -1062,7 +1062,7 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false, false);
   }
 
-  TEST_F(FileShareDirectoryClientTest, OAuth)
+  TEST_F(FileShareDirectoryClientTest, OAuth_PLAYBACKONLY_)
   {
     const std::string directoryName = RandomString();
 

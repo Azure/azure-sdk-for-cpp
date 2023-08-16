@@ -1351,7 +1351,7 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false);
   }
 
-  TEST_F(FileShareFileClientTest, OAuth)
+  TEST_F(FileShareFileClientTest, OAuth_PLAYBACKONLY_)
   {
     const std::string fileName = RandomString();
 
@@ -1432,7 +1432,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.Delete());
   }
 
-  TEST_F(FileShareFileClientTest, OAuthCopy)
+  TEST_F(FileShareFileClientTest, OAuthCopy_PLAYBACKONLY_)
   {
     const std::string fileName = RandomString();
 
