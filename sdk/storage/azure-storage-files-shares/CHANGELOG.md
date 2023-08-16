@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `ShareServiceClient::SetProperties` and `ShareServiceClient::GetProperties` threw exception if property `Protocol` is not null.
+
 ### Other Changes
 
 ## 12.7.0-beta.1 (2023-08-12)
