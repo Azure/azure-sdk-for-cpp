@@ -162,6 +162,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_receiver.Open();
   }
 
+  PartitionClient::~PartitionClient()
+  {
+    // If the caller didn't close the underlying message receiver, ensure that it is closed.
+    if (!m_isClosed)
+    {
+      m_receiver.Close();
+    }
+  }
+
   /** Receive events from the partition.
    *
    * @param maxMessages The maximum number of messages to receive.

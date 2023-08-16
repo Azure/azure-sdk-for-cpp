@@ -94,13 +94,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // This runs into a uAMQP bug where an incoming link detach frame will cause a crash if the
     // corresponding link_endpoint is in the half attached state.
     std::shared_ptr<PartitionClient> client;
-    if (m_sessions.find("0") == m_sessions.end())
+
+    // Since EventHub properties are not tied to a partition, use an empty string for the partition ID.
+    if (m_sessions.find("") == m_sessions.end())
     {
-      client = std::make_shared<PartitionClient>(CreatePartitionClient("0"));
+      client = std::make_shared<PartitionClient>(CreatePartitionClient(""));
     }
 
     return _detail::EventHubsUtilities::GetEventHubsProperties(
-        m_sessions.at("0"), m_eventHub, context);
+        m_sessions.at(""), m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ConsumerClient::GetPartitionProperties(

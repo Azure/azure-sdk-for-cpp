@@ -63,6 +63,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// Assign a PartitionClient to another PartitionClient
     PartitionClient& operator=(PartitionClient const& other) = default;
 
+    /** Destroy this partition client.
+     */
+    virtual ~PartitionClient();
+
     /** Receive events from the partition.
      *
      * @param maxMessages The maximum number of messages to receive.
@@ -76,12 +80,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Closes the connection to the Event Hub service.
      */
-    void Close() { m_receiver.Close(); }
+    void Close()
+    {
+      m_receiver.Close();
+      m_isClosed = true;
+    }
 
   private:
     friend class _detail::PartitionClientFactory;
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
+
+    bool m_isClosed = false;
 
     /// The name of the offset to start receiving events from.
     //    std::string m_offsetExpression;
