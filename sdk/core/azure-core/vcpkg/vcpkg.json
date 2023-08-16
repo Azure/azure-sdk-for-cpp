@@ -41,7 +41,7 @@
           "features": [
             "ssl"
           ],
-          "version>=": "7.44"
+          "version>=": "7.48"
         }
       ]
     },
