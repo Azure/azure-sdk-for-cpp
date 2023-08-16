@@ -31,6 +31,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         std::string eventHubName = GetEnv("EVENTHUB_NAME");
 
         Azure::Messaging::EventHubs::ProducerClient producer{connStringNoEntityPath, eventHubName};
+        EventDataBatchOptions eventBatchOptions;
+        eventBatchOptions.PartitionId = "1";
         EventDataBatch batch{producer.CreateBatch()};
         EXPECT_TRUE(batch.TryAddMessage(Models::EventData{"Test"}));
         EXPECT_NO_THROW(producer.Send(batch));
