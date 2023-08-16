@@ -53,6 +53,19 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
+  TEST_F(DataLakePathClientTest, Constructors_LIVEONLY_)
+  {
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    {
+      auto pathClient = Files::DataLake::DataLakePathClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_pathClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          clientOptions);
+      EXPECT_NO_THROW(pathClient.GetProperties());
+    }
+  }
+
   TEST_F(DataLakePathClientTest, CreateWithOptions)
   {
     // owner&group
@@ -324,7 +337,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(oauthDirectoryClient.Delete(options));
   }
 
-  TEST_F(DataLakePathClientTest, PathAccessControls)
+  TEST_F(DataLakePathClientTest, PathAccessControls_LIVEONLY_)
   {
     {
       // Set/Get Acls works.
@@ -371,6 +384,36 @@ namespace Azure { namespace Storage { namespace Test {
       options2.AccessConditions.IfMatch = response.Value.ETag;
       EXPECT_NO_THROW(m_pathClient->SetAccessControlList(acls, options2));
     }
+
+    {
+      // Set/Get Acls works with scope
+      std::vector<Files::DataLake::Models::Acl> acls = GetAclsForTesting();
+      acls[0].Scope = "default";
+      auto directoryClient = m_fileSystemClient->GetDirectoryClient(RandomString());
+      directoryClient.Create();
+      EXPECT_NO_THROW(directoryClient.SetAccessControlList(acls));
+      EXPECT_NO_THROW(directoryClient.GetAccessControlList());
+    }
+  }
+
+  TEST_F(DataLakePathClientTest, PathAccessControlsRecursive_LIVEONLY_)
+  {
+    // Set Acls Recusive
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(RandomString());
+    directoryClient.Create();
+    auto fileClient = directoryClient.GetFileClient(RandomString());
+    fileClient.Create();
+    auto acls = directoryClient.GetAccessControlList().Value.Acls;
+    Files::DataLake::Models::Acl acl;
+    acl.Permissions = "rwx";
+    acl.Id = "72a3f86f-271f-439e-b031-25678907d381";
+    acl.Type = "user";
+    acls.emplace_back(acl);
+    Files::DataLake::SetPathAccessControlListRecursiveOptions options;
+    EXPECT_NO_THROW(directoryClient.SetAccessControlListRecursive(acls));
+    EXPECT_NO_THROW(directoryClient.UpdateAccessControlListRecursive(acls));
+    acl.Permissions = "";
+    EXPECT_NO_THROW(directoryClient.RemoveAccessControlListRecursive({acl}));
   }
 
   TEST_F(DataLakePathClientTest, PathSetPermissions)
