@@ -83,15 +83,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     void Close()
     {
       m_receiver.Close();
-      m_isClosed = true;
     }
 
   private:
     friend class _detail::PartitionClientFactory;
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
-
-    bool m_isClosed = false;
 
     /// The name of the offset to start receiving events from.
     //    std::string m_offsetExpression;

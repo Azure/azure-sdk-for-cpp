@@ -198,6 +198,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_eventHandler = nullptr;
     }
+    if (m_receiverOpen)
+    {
+      Close();
+    }
   }
 
   MessageReceiverState MessageReceiverStateFromLowLevel(MESSAGE_RECEIVER_STATE lowLevel)
@@ -308,6 +312,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       // LCOV_EXCL_STOP
     }
+    m_receiverOpen = true;
   }
 
   void MessageReceiverImpl::Close()
@@ -316,6 +321,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
     }
+    m_receiverOpen = false;
   }
 
   std::string MessageReceiverImpl::GetLinkName() const

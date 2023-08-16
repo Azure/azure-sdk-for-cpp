@@ -112,7 +112,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       // Create a management client off the session.
       // Eventhubs management APIs return a status code in the "status-code" application properties.
       Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
-      managementClientOptions.EnableTrace = false;
+      managementClientOptions.EnableTrace = true;
       managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
       Azure::Core::Amqp::_internal::ManagementClient managementClient{
           session.CreateManagementClient(eventHubName, managementClientOptions)};
@@ -179,7 +179,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       // Create a management client off the session.
       // Eventhubs management APIs return a status code in the "status-code" application properties.
       Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
-      managementClientOptions.EnableTrace = false;
+      managementClientOptions.EnableTrace = true;
       managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
       Azure::Core::Amqp::_internal::ManagementClient managementClient{
           session.CreateManagementClient(eventHubName, managementClientOptions)};
