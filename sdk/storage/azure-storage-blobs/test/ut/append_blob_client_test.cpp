@@ -398,7 +398,8 @@ namespace Azure { namespace Storage { namespace Test {
         appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options));
 
     auto downloadContent = appendBlobClient2.Download().Value.BodyStream->ReadToEnd();
-    EXPECT_EQ(downloadContent.size(), options.SourceRange.Value().Length.Value());
+    EXPECT_EQ(
+        downloadContent.size(), static_cast<size_t>(options.SourceRange.Value().Length.Value()));
     EXPECT_EQ(
         downloadContent,
         std::vector<uint8_t>(

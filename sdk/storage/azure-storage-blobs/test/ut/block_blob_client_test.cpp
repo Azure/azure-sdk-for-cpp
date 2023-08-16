@@ -1985,6 +1985,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, MaxUploadBlockSize)
   {
+#ifdef _WIN64
     auto blobClient = *m_blockBlobClient;
     Blobs::UploadBlockBlobFromOptions options;
 
@@ -1997,6 +1998,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       EXPECT_STREQ(e.what(), "Block size is too big.");
     }
+#endif
   }
 
 }}} // namespace Azure::Storage::Test
