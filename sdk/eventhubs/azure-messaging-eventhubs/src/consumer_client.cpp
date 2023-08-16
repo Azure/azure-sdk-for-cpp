@@ -95,7 +95,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // corresponding link_endpoint is in the half attached state.
     std::shared_ptr<PartitionClient> client;
 
-    // Since EventHub properties are not tied to a partition, use an empty string for the partition ID.
+    // Since EventHub properties are not tied to a partition, use an empty string for the partition
+    // ID.
     if (m_sessions.find("") == m_sessions.end())
     {
       client = std::make_shared<PartitionClient>(CreatePartitionClient(""));
