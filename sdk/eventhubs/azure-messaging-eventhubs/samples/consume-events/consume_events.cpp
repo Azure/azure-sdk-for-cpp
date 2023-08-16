@@ -51,14 +51,14 @@ int main()
   partitionClientOptions.StartPosition.Earliest = true;
   partitionClientOptions.StartPosition.Inclusive = true;
 
-  std::cout << "Creating partition client. Start position: " << partitionClientOptions.StartPosition
+  std::cerr << "Creating partition client. Start position: " << partitionClientOptions.StartPosition
             << std::endl;
 
-  std::cout << "earliest: HasValue: " << std::boolalpha
+  std::cerr << "earliest: HasValue: " << std::boolalpha
             << partitionClientOptions.StartPosition.Earliest.HasValue() << std::endl;
   if (partitionClientOptions.StartPosition.Earliest.HasValue())
   {
-    std::cout << "earliest: Value: " << std::boolalpha
+    std::cerr << "earliest: Value: " << std::boolalpha
               << partitionClientOptions.StartPosition.Earliest.Value() << std::endl;
   }
 
