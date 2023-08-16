@@ -99,8 +99,6 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      auto connectionStringParts
-          = _internal::ParseConnectionString(StandardStorageConnectionString());
       auto queueClient = Queues::QueueClient(m_queueClient->GetUrl(), keyCredential, clientOptions);
       EXPECT_NO_THROW(queueClient.GetProperties());
     }

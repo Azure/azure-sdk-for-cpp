@@ -66,10 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      auto connectionStringParts
-          = _internal::ParseConnectionString(StandardStorageConnectionString());
-      auto cred = std::make_shared<StorageSharedKeyCredential>(
-          connectionStringParts.AccountName, connectionStringParts.AccountKey);
+      auto cred = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
       auto blockBlobClient
           = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), cred, clientOptions);
       EXPECT_NO_THROW(blockBlobClient.GetProperties());
