@@ -133,7 +133,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param context The context for the operation can be used for request cancellation.
      */
     PartitionClient CreatePartitionClient(
-        std::string partitionId,
+        std::string const& partitionId,
         PartitionClientOptions const& options = {},
         Azure::Core::Context const& context = {});
 
@@ -155,6 +155,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
+    void CreateSessionForPartition(std::string const& partitionId);
+
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;
 

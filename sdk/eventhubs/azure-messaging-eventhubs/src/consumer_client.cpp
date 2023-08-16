@@ -48,14 +48,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         + m_consumerGroup;
   }
 
-  PartitionClient ConsumerClient::CreatePartitionClient(
-      std::string partitionId,
-      PartitionClientOptions const& options,
-      Azure::Core::Context const& context)
+  void ConsumerClient::CreateSessionForPartition(std::string const& partitionId)
   {
-    std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
-    std::string hostUrl = m_hostUrl + suffix;
-
     ConnectionOptions connectOptions;
     connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
     connectOptions.EnableTrace = true;
@@ -73,9 +67,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     Session session{connection.CreateSession(sessionOptions)};
     m_sessions.emplace(partitionId, session);
+  }
+
+  PartitionClient ConsumerClient::CreatePartitionClient(
+      std::string const& partitionId,
+      PartitionClientOptions const& options,
+      Azure::Core::Context const& context)
+  {
+    std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
+    std::string hostUrl = m_hostUrl + suffix;
+
+    CreateSessionForPartition(partitionId);
 
     return _detail::PartitionClientFactory::CreatePartitionClient(
-        session,
+        m_sessions.at(partitionId),
         hostUrl,
         m_consumerClientOptions.Name,
         options,
@@ -99,7 +104,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // ID.
     if (m_sessions.find("") == m_sessions.end())
     {
-      client = std::make_shared<PartitionClient>(CreatePartitionClient(""));
+      CreateSessionForPartition("");
     }
 
     return _detail::EventHubsUtilities::GetEventHubsProperties(
@@ -112,7 +117,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      CreatePartitionClient(partitionId);
+      CreateSessionForPartition(partitionId);
     }
 
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
