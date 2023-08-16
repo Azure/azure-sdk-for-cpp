@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
           InitStorageClientOptions<Files::Shares::ShareClientOptions>());
       return fileClient1;
     }
-    void VerifyDataLakeSasRead(
+    void VerifyShareSasRead(
         const Files::Shares::ShareFileClient& fileClient,
         const std::string& sasToken)
     {
@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient1.GetProperties());
     }
 
-    void VerifyDataLakeSasNonRead(
+    void VerifyShareSasNonRead(
         const Files::Shares::ShareFileClient& fileClient,
         const std::string& sasToken)
     {
@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(fileClient1.GetProperties(), StorageException);
     }
 
-    void VerifyDataLakeSasWrite(
+    void VerifyShareSasWrite(
         const Files::Shares::ShareFileClient& fileClient,
         const std::string& sasToken)
     {
@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient1.UploadFrom(reinterpret_cast<const uint8_t*>("a"), 1));
     }
 
-    void VerifyDataLakeSasDelete(
+    void VerifyShareSasDelete(
         const Files::Shares::ShareFileClient& fileClient,
         const std::string& sasToken)
     {
@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
       fileClient.UploadFrom(reinterpret_cast<const uint8_t*>("a"), 1);
     }
 
-    void VerifyDataLakeSasCreate(
+    void VerifyShareSasCreate(
         const Files::Shares::ShareFileClient& fileClient,
         const std::string& sasToken)
     {
@@ -61,25 +61,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient1.Create(1));
     }
 
-    void VerifyDataLakeSasList(
+    void VerifyShareSasList(
         const Files::Shares::ShareDirectoryClient& directoryClient,
         const std::string& sasToken)
     {
       auto directoryClient1 = GetSasAuthenticatedClient(directoryClient, sasToken);
       EXPECT_NO_THROW(directoryClient1.ListFilesAndDirectories());
-    }
-
-    void VerifyDataLakeSasMove(
-        const Files::Shares::ShareDirectoryClient& directoryClient,
-        const std::string& sasToken)
-    {
-      auto directoryClient1 = GetSasAuthenticatedClient(directoryClient, sasToken);
-      std::string fileName = RandomString();
-      std::string newFilename = RandomString();
-      auto fileClient = directoryClient.GetFileClient(fileName);
-      auto newFileClient = directoryClient.GetFileClient(newFilename);
-      directoryClient.Create();
-      EXPECT_NO_THROW(directoryClient1.RenameFile(fileName, newFilename));
     }
   };
 
@@ -126,23 +113,23 @@ namespace Azure { namespace Storage { namespace Test {
 
       if ((permissions & Sas::AccountSasPermissions::Read) == Sas::AccountSasPermissions::Read)
       {
-        VerifyDataLakeSasRead(fileClient, sasToken);
+        VerifyShareSasRead(fileClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Write) == Sas::AccountSasPermissions::Write)
       {
-        VerifyDataLakeSasWrite(fileClient, sasToken);
+        VerifyShareSasWrite(fileClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Delete) == Sas::AccountSasPermissions::Delete)
       {
-        VerifyDataLakeSasDelete(fileClient, sasToken);
+        VerifyShareSasDelete(fileClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::List) == Sas::AccountSasPermissions::List)
       {
-        VerifyDataLakeSasList(directoryClient, sasToken);
+        VerifyShareSasList(directoryClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Create) == Sas::AccountSasPermissions::Create)
       {
-        VerifyDataLakeSasCreate(fileClient, sasToken);
+        VerifyShareSasCreate(fileClient, sasToken);
       }
     }
   }
@@ -185,23 +172,23 @@ namespace Azure { namespace Storage { namespace Test {
 
       if ((permissions & Sas::ShareSasPermissions::Read) == Sas::ShareSasPermissions::Read)
       {
-        VerifyDataLakeSasRead(fileClient, sasToken);
+        VerifyShareSasRead(fileClient, sasToken);
       }
       if ((permissions & Sas::ShareSasPermissions::Write) == Sas::ShareSasPermissions::Write)
       {
-        VerifyDataLakeSasWrite(fileClient, sasToken);
+        VerifyShareSasWrite(fileClient, sasToken);
       }
       if ((permissions & Sas::ShareSasPermissions::Delete) == Sas::ShareSasPermissions::Delete)
       {
-        VerifyDataLakeSasDelete(fileClient, sasToken);
+        VerifyShareSasDelete(fileClient, sasToken);
       }
       if ((permissions & Sas::ShareSasPermissions::List) == Sas::ShareSasPermissions::List)
       {
-        VerifyDataLakeSasList(directoryClient, sasToken);
+        VerifyShareSasList(directoryClient, sasToken);
       }
       if ((permissions & Sas::ShareSasPermissions::Create) == Sas::ShareSasPermissions::Create)
       {
-        VerifyDataLakeSasCreate(fileClient, sasToken);
+        VerifyShareSasCreate(fileClient, sasToken);
       }
     }
   }
@@ -240,22 +227,22 @@ namespace Azure { namespace Storage { namespace Test {
 
       if ((permissions & Sas::ShareFileSasPermissions::Read) == Sas::ShareFileSasPermissions::Read)
       {
-        VerifyDataLakeSasRead(fileClient, sasToken);
+        VerifyShareSasRead(fileClient, sasToken);
       }
       if ((permissions & Sas::ShareFileSasPermissions::Write)
           == Sas::ShareFileSasPermissions::Write)
       {
-        VerifyDataLakeSasWrite(fileClient, sasToken);
+        VerifyShareSasWrite(fileClient, sasToken);
       }
       if ((permissions & Sas::ShareFileSasPermissions::Delete)
           == Sas::ShareFileSasPermissions::Delete)
       {
-        VerifyDataLakeSasDelete(fileClient, sasToken);
+        VerifyShareSasDelete(fileClient, sasToken);
       }
       if ((permissions & Sas::ShareFileSasPermissions::Create)
           == Sas::ShareFileSasPermissions::Create)
       {
-        VerifyDataLakeSasCreate(fileClient, sasToken);
+        VerifyShareSasCreate(fileClient, sasToken);
       }
     }
   }
@@ -284,11 +271,11 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
 
     auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasNonRead(fileClient, sasToken);
+    VerifyShareSasNonRead(fileClient, sasToken);
 
     accountSasBuilder.ExpiresOn = sasExpiresOn;
     sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasRead(fileClient, sasToken);
+    VerifyShareSasRead(fileClient, sasToken);
   }
 
   TEST_F(ShareSasTest, ServiceSasExpired)
@@ -316,11 +303,11 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.SetPermissions(Sas::ShareFileSasPermissions::Read);
 
     auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasNonRead(fileClient, sasToken);
+    VerifyShareSasNonRead(fileClient, sasToken);
 
     fileSasBuilder.ExpiresOn = sasExpiresOn;
     sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasRead(fileClient, sasToken);
+    VerifyShareSasRead(fileClient, sasToken);
   }
 
   TEST_F(ShareSasTest, AccountSasWithoutStarttime)
@@ -345,7 +332,7 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
 
     auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasRead(fileClient, sasToken);
+    VerifyShareSasRead(fileClient, sasToken);
   }
 
   TEST_F(ShareSasTest, ServiceSasWithoutStarttime)
@@ -371,7 +358,7 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.SetPermissions(Sas::ShareFileSasPermissions::Read);
 
     auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasRead(fileClient, sasToken);
+    VerifyShareSasRead(fileClient, sasToken);
   }
 
   TEST_F(ShareSasTest, AccountSasWithIP)
@@ -396,11 +383,11 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
 
     auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasRead(fileClient, sasToken);
+    VerifyShareSasRead(fileClient, sasToken);
 
     accountSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
     sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasNonRead(fileClient, sasToken);
+    VerifyShareSasNonRead(fileClient, sasToken);
   }
 
   TEST_F(ShareSasTest, ServiceSasWithIP)
@@ -426,11 +413,11 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.SetPermissions(Sas::ShareFileSasPermissions::Read);
 
     auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasRead(fileClient, sasToken);
+    VerifyShareSasRead(fileClient, sasToken);
 
     fileSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
     sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyDataLakeSasNonRead(fileClient, sasToken);
+    VerifyShareSasNonRead(fileClient, sasToken);
   }
 
   TEST_F(ShareSasTest, SasWithIdentifier)
@@ -467,7 +454,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
 
-    VerifyDataLakeSasRead(fileClient, sasToken);
+    VerifyShareSasRead(fileClient, sasToken);
   }
 
   TEST_F(ShareSasTest, FileSasResponseHeadersOverride)
