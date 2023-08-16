@@ -39,6 +39,22 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->CreateIfNotExists();
   }
 
+  TEST_F(DataLakeFileClientTest, BlobUndelete)
+  {
+    auto containerName = m_fileSystemName;
+    auto blobName = m_fileName;
+    auto blobClient = Blobs::BlobClient::CreateFromConnectionString(
+        AdlsGen2ConnectionString(),
+        containerName,
+        blobName,
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_NO_THROW(blobClient.GetProperties());
+    blobClient.Delete();
+    EXPECT_THROW(blobClient.GetProperties(), StorageException);
+    blobClient.Undelete();
+    EXPECT_NO_THROW(blobClient.GetProperties());
+  }
+
   TEST_F(DataLakeFileClientTest, CreateDeleteFiles)
   {
     {

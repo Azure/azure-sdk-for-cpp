@@ -71,6 +71,46 @@ namespace Azure { namespace Storage { namespace Test {
     return queueClient;
   }
 
+  TEST_F(QueueClientTest, Constructors)
+  {
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+    auto getSas = [&]() {
+      auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+      auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+      Sas::AccountSasBuilder accountSasBuilder;
+      accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      accountSasBuilder.StartsOn = sasStartsOn;
+      accountSasBuilder.ExpiresOn = sasExpiresOn;
+      accountSasBuilder.Services = Sas::AccountSasServices::Queue;
+      accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+      accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::Read);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+      return sasToken;
+    };
+
+    auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
+    {
+      auto queueClient = Queues::QueueClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_queueName, clientOptions);
+      EXPECT_NO_THROW(queueClient.GetProperties());
+    }
+
+    {
+      auto connectionStringParts
+          = _internal::ParseConnectionString(StandardStorageConnectionString());
+      auto queueClient = Queues::QueueClient(m_queueClient->GetUrl(), keyCredential, clientOptions);
+      EXPECT_NO_THROW(queueClient.GetProperties());
+    }
+
+    {
+      auto queueClient = Queues::QueueClient(m_queueClient->GetUrl() + getSas(), clientOptions);
+      EXPECT_NO_THROW(queueClient.GetProperties());
+    }
+  }
+
   TEST_F(QueueClientTest, CreateDelete)
   {
     auto queueClient = GetQueueClientForTest(LowercaseRandomString());

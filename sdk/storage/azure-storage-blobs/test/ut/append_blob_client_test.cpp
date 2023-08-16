@@ -36,7 +36,58 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.insert(m_blobContent.end(), blobContent2.begin(), blobContent2.end());
   }
 
-  // Requires blob versioning?
+  TEST_F(AppendBlobClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    {
+      auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, m_blobName, clientOptions);
+      EXPECT_NO_THROW(appendBlobClient.GetProperties());
+    }
+
+    {
+      auto connectionStringParts
+          = _internal::ParseConnectionString(StandardStorageConnectionString());
+      auto cred = std::make_shared<StorageSharedKeyCredential>(
+          connectionStringParts.AccountName, connectionStringParts.AccountKey);
+      auto appendBlobClient
+          = Blobs::AppendBlobClient(m_appendBlobClient->GetUrl(), cred, clientOptions);
+      EXPECT_NO_THROW(appendBlobClient.GetProperties());
+    }
+
+    {
+      auto appendBlobClient
+          = Blobs::AppendBlobClient(m_appendBlobClient->GetUrl() + GetSas(), clientOptions);
+      EXPECT_NO_THROW(appendBlobClient.GetProperties());
+    }
+  }
+
+  TEST_F(AppendBlobClientTest, WithSnapshotVersionId)
+  {
+    const std::string timestamp1 = "2001-01-01T01:01:01.1111000Z";
+    const std::string timestamp2 = "2022-02-02T02:02:02.2222000Z";
+
+    auto client1 = m_appendBlobClient->WithSnapshot(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot("");
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+
+    client1 = m_appendBlobClient->WithVersionId(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+    client1 = client1.WithVersionId(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+    client1 = client1.WithVersionId("");
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+  }
+
   TEST_F(AppendBlobClientTest, CreateAppendDelete)
   {
     auto blobClient = *m_appendBlobClient;
@@ -327,6 +378,34 @@ namespace Azure { namespace Storage { namespace Test {
     options2.TransactionalContentHash.Value().Value = contentMd5;
     EXPECT_NO_THROW(
         appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2));
+  }
+
+  TEST_F(AppendBlobClientTest, AppendBlockFromUriRange)
+  {
+    auto appendBlobClient = GetAppendBlobClientForTest(RandomString());
+
+    const std::vector<uint8_t> blobContent = RandomBuffer(10);
+
+    appendBlobClient.Create();
+    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    appendBlobClient.AppendBlock(contentStream);
+
+    auto appendBlobClient2 = GetAppendBlobClientForTest(RandomString());
+    appendBlobClient2.Create();
+
+    Blobs::AppendBlockFromUriOptions options;
+    options.SourceRange = Azure::Core::Http::HttpRange();
+    options.SourceRange.Value().Offset = 5;
+    options.SourceRange.Value().Length = 5;
+    EXPECT_NO_THROW(
+        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options));
+
+    auto downloadContent = appendBlobClient2.Download().Value.BodyStream->ReadToEnd();
+    EXPECT_EQ(downloadContent.size(), options.SourceRange.Value().Length.Value());
+    EXPECT_EQ(
+        downloadContent,
+        std::vector<uint8_t>(
+            blobContent.begin() + options.SourceRange.Value().Offset, blobContent.end()));
   }
 
   TEST_F(AppendBlobClientTest, DISABLED_AppendBlockFromUriCrc64AccessCondition)

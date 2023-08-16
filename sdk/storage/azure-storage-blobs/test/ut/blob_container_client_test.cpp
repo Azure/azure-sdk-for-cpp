@@ -167,6 +167,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.Metadata.empty());
   }
 
+  TEST_F(BlobContainerClientTest, UploadDeleteConvenientMethods)
+  {
+    auto containerClient = *m_blobContainerClient;
+    auto blobName = RandomString();
+    auto blobContent = RandomBuffer(static_cast<size_t>(10));
+    auto blobContentStream
+        = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    EXPECT_NO_THROW(containerClient.UploadBlob(blobName, blobContentStream));
+    EXPECT_NO_THROW(containerClient.GetBlobClient(blobName).GetProperties());
+    EXPECT_NO_THROW(containerClient.DeleteBlob(blobName));
+    EXPECT_THROW(containerClient.GetBlobClient(blobName).GetProperties(), StorageException);
+  }
+
   TEST_F(BlobContainerClientTest, ListBlobsFlat)
   {
     auto containerClient = *m_blobContainerClient;

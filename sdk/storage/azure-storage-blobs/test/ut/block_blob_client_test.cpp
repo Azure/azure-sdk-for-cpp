@@ -56,6 +56,58 @@ namespace Azure { namespace Storage { namespace Test {
         = m_blockBlobClient->GetProperties().Value.HttpHeaders.ContentHash;
   }
 
+  TEST_F(BlockBlobClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    {
+      auto blockBlobClient = Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, m_blobName, clientOptions);
+      EXPECT_NO_THROW(blockBlobClient.GetProperties());
+    }
+
+    {
+      auto connectionStringParts
+          = _internal::ParseConnectionString(StandardStorageConnectionString());
+      auto cred = std::make_shared<StorageSharedKeyCredential>(
+          connectionStringParts.AccountName, connectionStringParts.AccountKey);
+      auto blockBlobClient
+          = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), cred, clientOptions);
+      EXPECT_NO_THROW(blockBlobClient.GetProperties());
+    }
+
+    {
+      auto blockBlobClient
+          = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl() + GetSas(), clientOptions);
+      EXPECT_NO_THROW(blockBlobClient.GetProperties());
+    }
+  }
+
+  TEST_F(BlockBlobClientTest, WithSnapshotVersionId)
+  {
+    const std::string timestamp1 = "2001-01-01T01:01:01.1111000Z";
+    const std::string timestamp2 = "2022-02-02T02:02:02.2222000Z";
+
+    auto client1 = m_blockBlobClient->WithSnapshot(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot("");
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+
+    client1 = m_blockBlobClient->WithVersionId(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+    client1 = client1.WithVersionId(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+    client1 = client1.WithVersionId("");
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+  }
+
   TEST_F(BlockBlobClientTest, CreateDelete)
   {
     auto blobClient = *m_blockBlobClient;
@@ -754,6 +806,26 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         res.Value.BlobSize, static_cast<int64_t>(block1Content.size() + m_blobContent.size()));
     EXPECT_TRUE(res.Value.UncommittedBlocks.empty());
+  }
+
+  TEST_F(BlockBlobClientTest, StageBlockFromUriRange)
+  {
+    auto srcBlobClient = *m_blockBlobClient;
+
+    auto destClient = GetBlockBlobClientForTest(RandomString());
+    const std::string blockId1 = Base64EncodeText("0");
+
+    Storage::Blobs::StageBlockFromUriOptions options;
+    options.SourceRange = Core::Http::HttpRange();
+    options.SourceRange.Value().Offset = 1;
+    options.SourceRange.Value().Length = 2;
+    destClient.StageBlockFromUri(blockId1, srcBlobClient.GetUrl() + GetSas(), options);
+    Blobs::GetBlockListOptions options2;
+    options2.ListType = Blobs::Models::BlockListType::All;
+    auto blocks = destClient.GetBlockList(options2).Value.UncommittedBlocks;
+    ASSERT_FALSE(blocks.empty());
+    EXPECT_EQ(blocks[0].Name, blockId1);
+    EXPECT_EQ(blocks[0].Size, 2);
   }
 
   TEST_F(BlockBlobClientTest, OAuthStageBlockFromUri)
@@ -1911,6 +1983,22 @@ namespace Azure { namespace Storage { namespace Test {
         testUploadFromBuffer(c, fileSize, 0, 117_KB);
         testUploadFromFile(c, fileSize, 0, 259_KB);
       }
+    }
+  }
+
+  TEST_F(BlockBlobClientTest, MaxUploadBlockSize)
+  {
+    auto blobClient = *m_blockBlobClient;
+    Blobs::UploadBlockBlobFromOptions options;
+
+    try
+    {
+      blobClient.UploadFrom(reinterpret_cast<const uint8_t*>("a"), 300_TB, options);
+      FAIL();
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_STREQ(e.what(), "Block size is too big.");
     }
   }
 
