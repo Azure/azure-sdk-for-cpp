@@ -216,7 +216,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
-            PremiumFileConnectionString()));
+            PremiumFileConnectionString(),
+            InitStorageClientOptions<Files::Shares::ShareClientOptions>()));
     auto properties = premiumFileShareServiceClient->GetProperties().Value;
     auto originalProperties = properties;
 
