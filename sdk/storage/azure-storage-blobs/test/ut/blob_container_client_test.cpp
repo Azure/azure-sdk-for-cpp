@@ -1372,7 +1372,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobItem.HasVersionsOnly.Value());
   }
 
-  TEST_F(BlobContainerClientTest, ObjectReplication_PLAYBAKCONLY_)
+  TEST_F(BlobContainerClientTest, ObjectReplication_PLAYBACKONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
     auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
