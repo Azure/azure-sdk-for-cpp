@@ -103,11 +103,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_senders.emplace(partitionId, sender);
     }
   }
-  Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(std::string const& partitionId)
+  Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(
+      std::string const& partitionId)
   {
     return m_senders.at(partitionId);
   }
-
 
   EventDataBatch ProducerClient::CreateBatch(
       EventDataBatchOptions const& options,
