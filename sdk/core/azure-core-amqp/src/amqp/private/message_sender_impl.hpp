@@ -73,6 +73,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
+    void QueueSendInternal(
+        Models::AmqpMessage const& message,
+        Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
+        Context const& context);
 
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;

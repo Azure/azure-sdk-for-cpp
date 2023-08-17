@@ -299,6 +299,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not open connection."); // LCOV_EXCL_LINE
     }
+    Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(shared_from_this());
   }
 
   void ConnectionImpl::Listen()
@@ -319,6 +320,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::logic_error("Connection already closed."); // LCOV_EXCL_LINE
     }
 
+    // Stop polling on this connection, we're shutting it down.
+    Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(shared_from_this());
+    std::unique_lock<std::mutex> lock(m_amqpMutex);
     if (connection_close(
             m_connection.get(),
             (condition.empty() ? nullptr : condition.c_str()),
@@ -352,7 +356,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   std::chrono::milliseconds ConnectionImpl::GetIdleTimeout() const
   {
     milliseconds ms;
-
     if (connection_get_idle_timeout(m_connection.get(), &ms))
     {
       throw std::runtime_error("COuld not set max frame size."); // LCOV_EXCL_LINE
@@ -382,6 +385,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ConnectionImpl::SetIdleEmptyFrameSendPercentage(double ratio)
   {
+    std::unique_lock<std::mutex> lock(m_amqpMutex);
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection.get(), ratio))
     {
       throw std::runtime_error(

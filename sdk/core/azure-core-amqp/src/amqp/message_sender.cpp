@@ -84,6 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   MessageSenderImpl::~MessageSenderImpl() noexcept
   {
+    auto lock{m_session->GetConnection()->Lock()};
     if (m_link)
     {
       // Unsubscribe from any detach events before clearing out the event handler to short-circuit
@@ -199,6 +200,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageSenderImpl::Open(Context const& context)
   {
+    auto lock{m_session->GetConnection()->Lock()};
     if (m_options.AuthenticationRequired)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
@@ -233,6 +235,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   void MessageSenderImpl::Close()
   {
+    auto lock{m_session->GetConnection()->Lock()};
     if (messagesender_close(m_messageSender.get()))
     {
       throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
@@ -274,6 +277,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
       Context const& context)
   {
+    auto lock{m_session->GetConnection()->Lock()};
+    QueueSendInternal(message, onSendComplete, context);
+  }
+
+  void MessageSenderImpl::QueueSendInternal(
+      Models::AmqpMessage const& message,
+      Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
+      Context const& context)
+  {
     auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
                        decltype(onSendComplete),
                        RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
@@ -289,17 +301,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     (void)context;
   }
-
   std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> MessageSenderImpl::Send(
       Models::AmqpMessage const& message,
       Context const& context)
   {
+    auto lock{m_session->GetConnection()->Lock()};
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         Azure::Core::Amqp::_internal::MessageSendStatus,
         Models::_internal::AmqpError>
         sendCompleteQueue;
 
-    QueueSend(
+    QueueSendInternal(
         message,
         [&sendCompleteQueue, this](
             Azure::Core::Amqp::_internal::MessageSendStatus sendResult,

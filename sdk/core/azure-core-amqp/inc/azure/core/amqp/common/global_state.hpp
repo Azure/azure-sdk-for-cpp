@@ -3,6 +3,10 @@
 
 #pragma once
 
+#include <memory>
+#include <list>
+#include <mutex>
+
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
   /**
@@ -15,11 +19,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    *
    */
 
+  class Pollable {
+  public:
+    virtual void Poll() = 0;
+    virtual ~Pollable() = default;
+  };
   class GlobalStateHolder final {
     GlobalStateHolder();
     ~GlobalStateHolder();
 
+    std::list<std::shared_ptr<Pollable>> m_pollables;
+    std::mutex m_pollablesMutex;
+
   public:
     static GlobalStateHolder* GlobalStateInstance();
+
+    GlobalStateHolder(GlobalStateHolder const&) = delete;
+    GlobalStateHolder& operator=(GlobalStateHolder const&) = delete;
+
+    GlobalStateHolder(GlobalStateHolder&&) = delete;
+    GlobalStateHolder& operator=(GlobalStateHolder&&) = delete;
+
+    void AddPollable(std::shared_ptr<Pollable> pollable)
+    {
+      std::lock_guard<std::mutex> lock(m_pollablesMutex);
+      m_pollables.push_back(pollable);
+    }
+
+    void RemovePollable(std::shared_ptr<Pollable> pollable)
+    {
+      std::lock_guard<std::mutex> lock(m_pollablesMutex);
+      m_pollables.remove(pollable);
+    }
   };
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
