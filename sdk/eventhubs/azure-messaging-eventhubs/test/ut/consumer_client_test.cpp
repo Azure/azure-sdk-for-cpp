@@ -33,7 +33,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         Azure::Messaging::EventHubs::ProducerClient producer{connStringNoEntityPath, eventHubName};
         EventDataBatchOptions eventBatchOptions;
         eventBatchOptions.PartitionId = "1";
-        EventDataBatch batch{producer.CreateBatch()};
+        EventDataBatch batch{producer.CreateBatch(eventBatchOptions)};
         EXPECT_TRUE(batch.TryAddMessage(Models::EventData{"Test"}));
         EXPECT_NO_THROW(producer.Send(batch));
       }
