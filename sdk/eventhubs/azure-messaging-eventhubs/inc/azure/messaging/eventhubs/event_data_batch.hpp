@@ -13,6 +13,10 @@
 
 // cspell: words vbin
 
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
+  class EventDataBatchFactory;
+}}}} // namespace Azure::Messaging::EventHubs::_detail
+
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   /** @brief EventDataBatchOptions contains optional parameters for the
@@ -27,7 +31,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief MaxBytes overrides the max size (in bytes) for a batch.
      * By default CreateEventDataBatch will use the max message size provided by the service.
      */
-    uint32_t MaxBytes = std::numeric_limits<int32_t>::max();
+    Azure::Nullable<std::uint64_t> MaxBytes;
 
     /** @brief PartitionKey is hashed to calculate the partition assignment.Messages and message
      * batches with the same PartitionKey are guaranteed to end up in the same partition.
@@ -54,7 +58,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::mutex m_rwMutex;
     std::string m_partitionId;
     std::string m_partitionKey;
-    uint64_t m_maxBytes;
+    Azure::Nullable<std::uint64_t> m_maxBytes;
     std::vector<std::vector<uint8_t>> m_marshalledMessages;
     // Annotation properties
     const uint32_t BatchedMessageFormat = 0x80013700;
@@ -89,26 +93,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return *this;
     }
 
-    /** @brief Event Data Batch constructor
-     *
-     * @param options Options settings for creating the data batch
-     */
-    EventDataBatch(EventDataBatchOptions options = {})
-        : m_partitionId{options.PartitionId}, m_partitionKey{options.PartitionKey},
-          m_maxBytes{options.MaxBytes ? options.MaxBytes : std::numeric_limits<uint16_t>::max()},
-          m_marshalledMessages{}, m_batchEnvelope{}, m_currentSize{0}
-    {
-      if (!options.PartitionId.empty() && !options.PartitionKey.empty())
-      {
-        throw std::runtime_error("Either PartionID or PartitionKey can be set, but not both.");
-      }
-
-      if (options.PartitionId.empty())
-      {
-        m_partitionId = anyPartitionId;
-      }
-    };
-
     /** @brief Gets the partition ID for the data batch
      *
      * @return std::string
@@ -124,19 +108,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @return uint64_t
      */
-    uint64_t GetMaxBytes() const { return m_maxBytes; }
+    uint64_t GetMaxBytes() const { return m_maxBytes.Value(); }
 
-    /** @brief Adds a message to the data batch
+    /** @brief Attempts to add a raw AMQP message to the data batch
+     *
+     * @param message The AMQP message to add to the batch
+     *
+     * @returns true if the message was added to the batch, false otherwise.
+     */
+    bool TryAddMessage(Azure::Core::Amqp::Models::AmqpMessage const& message)
+    {
+      return TryAddAmqpMessage(message);
+    }
+
+    /** @brief Attempts to add a message to the data batch
      *
      * @param message The message to add to the batch
-     */
-    void AddMessage(Azure::Core::Amqp::Models::AmqpMessage message) { AddAmqpMessage(message); }
-
-    /** @brief Adds a message to the data batch
      *
-     * @param message The message to add to the batch
+     * @returns true if the message was added to the batch, false otherwise.
      */
-    void AddMessage(Azure::Messaging::EventHubs::Models::EventData& message);
+    bool TryAddMessage(Azure::Messaging::EventHubs::Models::EventData const& message);
 
     /** @brief Gets the number of messages in the batch
      *
@@ -155,7 +146,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const;
 
   private:
-    void AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message);
+    bool TryAddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message);
 
     size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {
@@ -179,5 +170,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       batchEnvelope.MessageFormat = BatchedMessageFormat;
       return batchEnvelope;
     }
+
+    /** @brief Event Data Batch constructor
+     *
+     * @param options Options settings for creating the data batch
+     */
+    EventDataBatch(EventDataBatchOptions options = {})
+        : m_partitionId{options.PartitionId}, m_partitionKey{options.PartitionKey},
+          m_maxBytes{options.MaxBytes}, m_marshalledMessages{}, m_batchEnvelope{}, m_currentSize{0}
+    {
+      if (!options.PartitionId.empty() && !options.PartitionKey.empty())
+      {
+        throw std::runtime_error("Either PartionID or PartitionKey can be set, but not both.");
+      }
+
+      if (options.PartitionId.empty())
+      {
+        m_partitionId = anyPartitionId;
+      }
+    };
+
+    friend class _detail::EventDataBatchFactory;
   };
 }}} // namespace Azure::Messaging::EventHubs

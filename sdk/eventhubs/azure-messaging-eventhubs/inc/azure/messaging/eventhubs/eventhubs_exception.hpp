@@ -62,7 +62,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * If this field is set to true, then retrying the operation may succeed at a later time.
      *
      */
-    bool IsTransient;
+    bool IsTransient{};
 
     friend _detail::EventHubsExceptionFactory;
   };

@@ -33,6 +33,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
 
     std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
 
     std::string const connStringNoEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
@@ -42,7 +43,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.Name = "processor unittest";
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
-        connStringNoEntityPath, eventHubName, "$Default", options);
+        connStringNoEntityPath, eventHubName, consumerGroup, options);
     ProcessorOptions processorOptions;
     processorOptions.LoadBalancingStrategy = Models::ProcessorStrategy::ProcessorStrategyBalanced;
     processorOptions.UpdateInterval = std::chrono::seconds(2);

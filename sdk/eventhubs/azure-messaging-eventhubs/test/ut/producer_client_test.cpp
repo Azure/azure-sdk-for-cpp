@@ -59,6 +59,9 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
+  auto client = Azure::Messaging::EventHubs::ProducerClient(
+      connStringEntityPath, eventHubName, producerOptions);
+
   Azure::Core::Amqp::Models::AmqpMessage message2;
   Azure::Messaging::EventHubs::Models::EventData message1;
   message2.SetBody(Azure::Core::Amqp::Models::AmqpValue("Hello7"));
@@ -71,27 +74,46 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
   edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
   edboptions.PartitionId = "1";
-  Azure::Messaging::EventHubs::EventDataBatch eventBatch(edboptions);
+  Azure::Messaging::EventHubs::EventDataBatch eventBatch{client.CreateBatch(edboptions)};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
   edboptions2.MaxBytes = std::numeric_limits<uint16_t>::max();
   ;
   edboptions2.PartitionId = "2";
-  Azure::Messaging::EventHubs::EventDataBatch eventBatch2(edboptions2);
+  Azure::Messaging::EventHubs::EventDataBatch eventBatch2{client.CreateBatch(edboptions2)};
 
-  eventBatch.AddMessage(message1);
-  eventBatch.AddMessage(message2);
+  eventBatch.TryAddMessage(message1);
+  eventBatch.TryAddMessage(message2);
 
-  eventBatch2.AddMessage(message3);
-  eventBatch2.AddMessage(message2);
+  eventBatch2.TryAddMessage(message3);
+  eventBatch2.TryAddMessage(message2);
+
+  for (int i = 0; i < 5; i++)
+  {
+    EXPECT_NO_THROW(client.Send(eventBatch));
+  }
+}
+
+TEST_F(ProducerClientTest, EventHubRawMessageSend_LIVEONLY_)
+{
+  std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+  std::string const connStringEntityPath
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+
+  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  producerOptions.Name = "sender-link";
+  producerOptions.ApplicationID = "some";
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(
       connStringEntityPath, eventHubName, producerOptions);
-  for (int i = 0; i < 5; i++)
-  {
-    auto result = client.SendEventDataBatch(eventBatch);
-    EXPECT_TRUE(result);
-  }
+
+  client.Send(Azure::Messaging::EventHubs::Models::EventData{"This is a test message"});
+
+  // Send using the implicit EventData constructor.
+  client.Send(std::string{"String test message"});
+
+  // Send using a vector of implicit EventData constructor with a binary buffer.
+  client.Send({{12, 13, 14, 15}, {16, 17, 18, 19}});
 }
 
 TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)

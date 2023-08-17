@@ -62,6 +62,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Context const& context);
 
+    std::uint64_t GetMaxMessageSize() const;
+
   private:
     static void OnMessageSenderStateChangedFn(
         void* context,

@@ -14,9 +14,9 @@ using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
-  void EventDataBatch::AddMessage(Azure::Messaging::EventHubs::Models::EventData& message)
+  bool EventDataBatch::TryAddMessage(Azure::Messaging::EventHubs::Models::EventData const& message)
   {
-    AddAmqpMessage(message.GetRawAmqpMessage());
+    return TryAddAmqpMessage(message.GetRawAmqpMessage());
   }
 
   Azure::Core::Amqp::Models::AmqpMessage EventDataBatch::ToAmqpMessage() const
@@ -48,7 +48,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return returnValue;
   }
 
-  void EventDataBatch::AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message)
+  bool EventDataBatch::TryAddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message)
   {
     std::lock_guard<std::mutex> lock(m_rwMutex);
 
@@ -75,16 +75,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_currentSize = serializedMessage.size();
     }
     auto actualPayloadSize = CalculateActualSizeForPayload(serializedMessage);
-    if (m_currentSize + actualPayloadSize > m_maxBytes)
+    if (m_currentSize + actualPayloadSize > m_maxBytes.Value())
     {
       m_currentSize = 0;
       m_batchEnvelope = nullptr;
-
-      throw std::runtime_error("EventDataBatch size is too large.");
+      return false;
     }
 
     m_currentSize += actualPayloadSize;
     m_marshalledMessages.push_back(serializedMessage);
+    return true;
   }
 
 }}} // namespace Azure::Messaging::EventHubs
+
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
+  EventDataBatch EventDataBatchFactory::CreateEventDataBatch(EventDataBatchOptions const& options)
+  {
+    return EventDataBatch{options};
+  }
+}}}} // namespace Azure::Messaging::EventHubs::_detail
