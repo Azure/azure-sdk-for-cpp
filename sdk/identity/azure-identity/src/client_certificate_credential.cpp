@@ -352,7 +352,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 #endif
 } // namespace
 
-void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
+void Azure::Identity::_detail::FreePrivateKeyImpl(void* pkey)
 {
 #if defined(AZ_PLATFORM_WINDOWS)
   BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(pkey));
