@@ -126,6 +126,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareServiceClientTest, SetProperties)
   {
     auto properties = m_shareServiceClient->GetProperties().Value;
+    properties.Protocol.Reset();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
