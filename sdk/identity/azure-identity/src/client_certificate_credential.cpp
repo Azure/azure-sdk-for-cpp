@@ -10,6 +10,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/core/io/body_stream.hpp>
+#include <azure/core/platform.hpp>
 #include <azure/core/uuid.hpp>
 
 #include <chrono>

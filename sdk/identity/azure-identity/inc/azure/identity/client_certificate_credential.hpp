@@ -14,7 +14,6 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/unique_handle.hpp>
-#include <azure/core/platform.hpp>
 #include <azure/core/url.hpp>
 
 #include <memory>
