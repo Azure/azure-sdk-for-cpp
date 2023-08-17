@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, PathAccessControlsRecursive_LIVEONLY_)
   {
-    // Set Acls Recusive
+    // Set Acls Recursive
     auto directoryClient = m_fileSystemClient->GetDirectoryClient(RandomString());
     directoryClient.Create();
     auto fileClient = directoryClient.GetFileClient(RandomString());

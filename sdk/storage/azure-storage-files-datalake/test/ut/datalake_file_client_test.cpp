@@ -48,9 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.GetProperties());
     }
     {
-      auto connectionStringParts = _internal::ParseConnectionString(AdlsGen2ConnectionString());
-      auto credential = std::make_shared<StorageSharedKeyCredential>(
-          connectionStringParts.AccountName, connectionStringParts.AccountKey);
+      auto credential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
       Files::DataLake::DataLakeFileClient fileClient(
           Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileClient->GetUrl()),
           credential,
