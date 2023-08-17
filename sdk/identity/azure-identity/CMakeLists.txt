@@ -103,7 +103,7 @@ target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 
 if(WIN32)
   find_package(wil CONFIG REQUIRED)
-  target_link_libraries(azure-identity PRIVATE WIL::WIL ncrypt)
+  target_link_libraries(azure-identity PRIVATE WIL::WIL bcrypt crypt32)
 else()
   find_package(OpenSSL REQUIRED)
   target_link_libraries(azure-identity PRIVATE OpenSSL::Crypto)
