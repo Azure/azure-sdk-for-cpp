@@ -170,9 +170,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
-    Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
-    void CreateSender(
+    void EnsureSender(
         std::string const& partitionId = "",
         Azure::Core::Context const& context = {});
+    Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
+
+    void EnsureSession(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = "");
   };
 }}} // namespace Azure::Messaging::EventHubs

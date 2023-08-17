@@ -155,7 +155,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
-    void CreateSessionForPartition(std::string const& partitionId);
+    void EnsureSession(std::string const& partitionId = {});
+    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = {});
 
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;

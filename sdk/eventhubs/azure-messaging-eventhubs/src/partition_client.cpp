@@ -160,10 +160,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       PartitionClientOptions options,
       Azure::Core::Http::Policies::RetryOptions retryOptions)
       : m_receiver{messageReceiver}, m_partitionOptions{options}, m_retryOptions{retryOptions}
-
   {
-    // Open the connection to the remote.
-    m_receiver.Open();
   }
 
   PartitionClient::~PartitionClient() {}

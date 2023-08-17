@@ -43,70 +43,78 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
-  Azure::Core::Amqp::_internal::MessageSender
-  Azure::Messaging::EventHubs::ProducerClient::GetSender(std::string const& partitionId)
+  void ProducerClient::EnsureSession(std::string const& partitionId = {})
   {
-    if (m_senders.find(partitionId) == m_senders.end())
+    if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      CreateSender(partitionId);
-    }
+      Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+      connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
+      connectOptions.EnableTrace = true;
+      connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
 
-    auto& sender = m_senders.at(partitionId);
-    return sender;
+      // Set the UserAgent related properties on this message sender.
+      _detail::EventHubsUtilities::SetUserAgent(
+          connectOptions, m_producerClientOptions.ApplicationID);
+
+      std::string fullyQualifiedNamespace{m_fullyQualifiedNamespace};
+
+      Azure::Core::Amqp::_internal::Connection connection(
+          fullyQualifiedNamespace, m_credential, connectOptions);
+
+      Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+      sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
+      sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+
+      Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
+      m_sessions.emplace(partitionId, session);
+    }
   }
 
-  void ProducerClient::CreateSender(
+  Azure::Core::Amqp::_internal::Session ProducerClient::GetSession(std::string const& partitionId)
+  {
+    return m_sessions.at(partitionId);
+  }
+
+  void ProducerClient::EnsureSender(
       std::string const& partitionId,
       Azure::Core::Context const& context)
   {
-    m_targetUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub;
-
-    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-    connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
-    connectOptions.EnableTrace = true;
-    connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
-
-    // Set the UserAgent related properties on this message sender.
-    _detail::EventHubsUtilities::SetUserAgent(
-        connectOptions, m_producerClientOptions.ApplicationID);
-
-    std::string fullyQualifiedNamespace{m_fullyQualifiedNamespace};
-    std::string targetUrl = m_targetUrl;
-
-    if (!partitionId.empty())
+    if (m_senders.find(partitionId) == m_senders.end())
     {
-      targetUrl += "/Partitions/" + partitionId;
+      m_targetUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub;
+
+      EnsureSession(partitionId);
+
+      std::string targetUrl = m_targetUrl;
+
+      if (!partitionId.empty())
+      {
+        targetUrl += "/Partitions/" + partitionId;
+      }
+
+      Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+      senderOptions.Name = m_producerClientOptions.Name;
+      senderOptions.EnableTrace = true;
+      senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
+
+      Azure::Core::Amqp::_internal::MessageSender sender
+          = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions, nullptr);
+      sender.Open(context);
+      m_senders.emplace(partitionId, sender);
     }
-
-    Azure::Core::Amqp::_internal::Connection connection(
-        fullyQualifiedNamespace, m_credential, connectOptions);
-
-    Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-    sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
-    sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
-
-    Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
-    m_sessions.emplace(partitionId, session);
-    Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
-
-    senderOptions.Name = m_producerClientOptions.Name;
-    senderOptions.EnableTrace = true;
-    senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
-
-    Azure::Core::Amqp::_internal::MessageSender sender
-        = session.CreateMessageSender(targetUrl, senderOptions, nullptr);
-    sender.Open(context);
-    m_senders.emplace(partitionId, sender);
   }
+  Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(std::string const& partitionId)
+  {
+    return m_senders.at(partitionId);
+  }
+
 
   EventDataBatch ProducerClient::CreateBatch(
       EventDataBatchOptions const& options,
       Core::Context const& context)
   {
-    if (m_senders.find(options.PartitionId) == m_senders.end())
-    {
-      CreateSender(options.PartitionId, context);
-    }
+    EnsureSender(options.PartitionId, context);
+
     auto messageSender = GetSender(options.PartitionId);
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
@@ -165,24 +173,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     // EventHub properties are not associated with a particular partition, so create a message
     // sender on the empty partition.
-    if (m_senders.find("") == m_senders.end())
-    {
-      CreateSender("");
-    }
+    EnsureSession();
 
-    return _detail::EventHubsUtilities::GetEventHubsProperties(
-        m_sessions.at(""), m_eventHub, context);
+    return _detail::EventHubsUtilities::GetEventHubsProperties(GetSession(), m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ProducerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    if (m_senders.find(partitionId) == m_senders.end())
-    {
-      CreateSender(partitionId);
-    }
+    EnsureSession(partitionId);
+
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        m_sessions.at(partitionId), m_eventHub, partitionId, context);
+        GetSession(partitionId), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs
