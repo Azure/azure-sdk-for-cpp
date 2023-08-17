@@ -16,7 +16,16 @@ namespace Azure { namespace Storage { namespace Test {
         Blobs::BlobClientOptions clientOptions = Blobs::BlobClientOptions());
 
     std::string GetSas();
+
     Blobs::Models::BlobItem GetBlobItem(
+        const std::string& blobName,
+        Blobs::Models::ListBlobsIncludeFlags include = Blobs::Models::ListBlobsIncludeFlags::None)
+    {
+      return GetBlobItem(*m_blobContainerClient, blobName, include);
+    }
+
+    Blobs::Models::BlobItem GetBlobItem(
+        const Blobs::BlobContainerClient& containerClient,
         const std::string& blobName,
         Blobs::Models::ListBlobsIncludeFlags include = Blobs::Models::ListBlobsIncludeFlags::None);
 
