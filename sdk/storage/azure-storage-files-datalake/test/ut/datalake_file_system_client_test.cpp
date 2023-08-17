@@ -240,7 +240,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, ListPathsExpiresOn_LIVEONLY_)
+  TEST_F(DataLakeFileSystemClientTest, ListPathsExpiresOn)
   {
     const std::string fileName = RandomString();
     auto fileClient = m_fileSystemClient->GetFileClient(fileName);
@@ -824,7 +824,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, ListDeletedPathsEncoded_LIVEONLY_)
+  TEST_F(DataLakeFileSystemClientTest, ListDeletedPathsEncoded)
   {
     const std::string prefix = "prefix\xEF\xBF\xBF";
     const std::string specialFileName = prefix + "file";

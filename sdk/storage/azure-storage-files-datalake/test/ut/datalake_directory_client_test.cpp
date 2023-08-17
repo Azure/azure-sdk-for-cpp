@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   } // namespace
 
-  TEST_F(DataLakeDirectoryClientTest, Constructors_LIVEONLY_)
+  TEST_F(DataLakeDirectoryClientTest, Constructors)
   {
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
     {
@@ -868,7 +868,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeDirectoryClientTest, ListPathsExpiresOn_LIVEONLY_)
+  TEST_F(DataLakeDirectoryClientTest, ListPathsExpiresOn)
   {
     const std::string fileName = RandomString();
     auto fileClient = m_directoryClient->GetFileClient(fileName);

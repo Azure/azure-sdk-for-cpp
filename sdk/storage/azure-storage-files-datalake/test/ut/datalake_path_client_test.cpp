@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  TEST_F(DataLakePathClientTest, Constructors_LIVEONLY_)
+  TEST_F(DataLakePathClientTest, Constructors)
   {
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
     {
@@ -337,7 +337,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(oauthDirectoryClient.Delete(options));
   }
 
-  TEST_F(DataLakePathClientTest, PathAccessControls_LIVEONLY_)
+  TEST_F(DataLakePathClientTest, PathAccessControls)
   {
     {
       // Set/Get Acls works.
@@ -396,7 +396,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakePathClientTest, PathAccessControlsRecursive_LIVEONLY_)
+  TEST_F(DataLakePathClientTest, PathAccessControlsRecursive)
   {
     // Set Acls Recursive
     auto directoryClient = m_fileSystemClient->GetDirectoryClient(RandomString());

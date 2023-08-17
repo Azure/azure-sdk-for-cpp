@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->CreateIfNotExists();
   }
 
-  TEST_F(DataLakeFileClientTest, Constructors_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, Constructors)
   {
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
     {
@@ -331,7 +331,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileClientTest, AppendFileWithHash_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, AppendFileWithHash)
   {
     const int32_t bufferSize = 1;
     auto buffer = RandomBuffer(bufferSize);
