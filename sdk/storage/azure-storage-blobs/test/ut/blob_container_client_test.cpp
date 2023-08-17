@@ -1378,7 +1378,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString(), clientOptions);
     auto destServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
-        PremiumStorageConnectionString(), clientOptions);
+        AdlsGen2ConnectionString(), clientOptions);
     auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient("src");
     auto destContainerClient = destServiceClient.GetBlobContainerClient("dest");
 

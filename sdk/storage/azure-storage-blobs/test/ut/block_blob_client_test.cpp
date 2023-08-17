@@ -1992,7 +1992,7 @@ namespace Azure { namespace Storage { namespace Test {
     const auto sourceBlobName = "b1";
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
     auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
-        PremiumStorageConnectionString(), clientOptions);
+        AdlsGen2ConnectionString(), clientOptions);
     auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient(sourceContainerName);
     auto sourceBlobClient = sourceContainerClient.GetBlockBlobClient(sourceBlobName);
 
