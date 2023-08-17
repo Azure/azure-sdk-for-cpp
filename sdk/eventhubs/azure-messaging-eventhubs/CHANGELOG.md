@@ -4,16 +4,19 @@
 
 ### Features Added
 
+- `ProducerClient` now has convenience methods for sending events without batching.
+
 ### Breaking Changes
 
 - Storage names used for checkpoint store have been normalized to match behavior of other Azure SDK eventhubs packages.
 - `EventDataBatch` object can no longer be directly created but instead must be created via `ProducerClient::CreateEventDataBatch`.
 - `EventDataBatch::AddMessage` method has been renamed to `EventDataBatch::TryAddMessage` and it now returns false if the message will not fit.
-- `SendEventDataBatch` method has been renamed to `Send` and it now returns a void.
+- `SendEventDataBatch` method has been renamed to `Send` and it now returns a void (throwing an exception of the send fails).
 
 ### Bugs Fixed
 
 - Setting `PartitionClientOptions::StartPosition::EnqueuedTime` now works as expected.
+- Internally restructured how AMQP senders and receivers are configured to simplify code and significantly improve reliability.
 
 ### Other Changes
 

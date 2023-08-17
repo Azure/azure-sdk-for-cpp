@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- When a message sender is destroyed, close the underlying AMQP link if it hasn't been closed already.
+
 ### Other Changes
 
 ## 1.0.0-beta.2 (2023-08-04)
