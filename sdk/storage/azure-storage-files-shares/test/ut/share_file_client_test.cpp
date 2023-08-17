@@ -1690,4 +1690,28 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
+
+  TEST(ShareFileHandleAccessRightsTest, ShareFileHandleAccessRights)
+  {
+    Files::Shares::Models::ShareFileHandleAccessRights accessRightsA
+        = Files::Shares::Models::ShareFileHandleAccessRights::Read
+        | Files::Shares::Models::ShareFileHandleAccessRights::Write;
+    Files::Shares::Models::ShareFileHandleAccessRights accessRightsB
+        = Files::Shares::Models::ShareFileHandleAccessRights::Write
+        | Files::Shares::Models::ShareFileHandleAccessRights::Delete;
+
+    Files::Shares::Models::ShareFileHandleAccessRights orAccessRights
+        = Files::Shares::Models::ShareFileHandleAccessRights::Read
+        | Files::Shares::Models::ShareFileHandleAccessRights::Write
+        | Files::Shares::Models::ShareFileHandleAccessRights::Delete;
+    Files::Shares::Models::ShareFileHandleAccessRights andAccessRights
+        = Files::Shares::Models::ShareFileHandleAccessRights::Write;
+    Files::Shares::Models::ShareFileHandleAccessRights xorAccessRights
+        = Files::Shares::Models::ShareFileHandleAccessRights::Read
+        | Files::Shares::Models::ShareFileHandleAccessRights::Delete;
+
+    EXPECT_EQ(orAccessRights, accessRightsA | accessRightsB);
+    EXPECT_EQ(andAccessRights, accessRightsA & accessRightsB);
+    EXPECT_EQ(xorAccessRights, accessRightsA ^ accessRightsB);
+  }
 }}} // namespace Azure::Storage::Test
