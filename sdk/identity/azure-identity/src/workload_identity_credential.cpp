@@ -79,7 +79,7 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
     }
   }
 
-  m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore::ClientCredentialCore(
+  m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
       tenantId, authorityHost, additionallyAllowedTenants);
   m_tokenCredentialImpl = std::make_unique<TokenCredentialImpl>(options);
   m_requestBody
