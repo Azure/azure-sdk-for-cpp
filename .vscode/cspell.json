@@ -246,6 +246,12 @@
       ]
     },
     {
+      "filename": "**/sdk/identity/azure-identity/**",
+      "words": [
+        "PCCERT"
+      ]
+    },
+    {
       "filename": "**/sdk/storage/azure-storage-common/CHANGELOG.md",
       "words": [
         "johnwheffner",
