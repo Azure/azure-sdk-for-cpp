@@ -293,8 +293,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         if (options.ShareServiceProperties.Protocol.HasValue())
         {
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Protocol"});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Settings"});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "ProtocolSettings"});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SMB"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Multichannel"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag,
@@ -368,8 +368,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kAllowedHeaders,
           kExposedHeaders,
           kMaxAgeInSeconds,
-          kProtocol,
-          kSettings,
+          kProtocolSettings,
+          kSMB,
           kMultichannel,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -388,8 +388,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"AllowedHeaders", XmlTagEnum::kAllowedHeaders},
             {"ExposedHeaders", XmlTagEnum::kExposedHeaders},
             {"MaxAgeInSeconds", XmlTagEnum::kMaxAgeInSeconds},
-            {"Protocol", XmlTagEnum::kProtocol},
-            {"Settings", XmlTagEnum::kSettings},
+            {"ProtocolSettings", XmlTagEnum::kProtocolSettings},
+            {"SMB", XmlTagEnum::kSMB},
             {"Multichannel", XmlTagEnum::kMultichannel},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -406,7 +406,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             auto ite = XmlTagEnumMap.find(node.Name);
             xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
             if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
-                && xmlPath[1] == XmlTagEnum::kProtocol)
+                && xmlPath[1] == XmlTagEnum::kProtocolSettings)
             {
               response.Protocol = Models::ProtocolSettings();
             }
@@ -514,7 +514,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
-                && xmlPath[1] == XmlTagEnum::kProtocol && xmlPath[2] == XmlTagEnum::kSettings
+                && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB
                 && xmlPath[3] == XmlTagEnum::kMultichannel && xmlPath[4] == XmlTagEnum::kEnabled)
             {
               response.Protocol.Value().Settings.Multichannel.Enabled
