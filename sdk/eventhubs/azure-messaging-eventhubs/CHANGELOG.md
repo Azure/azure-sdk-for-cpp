@@ -5,6 +5,7 @@
 ### Features Added
 
 - `ProducerClient` now has convenience methods for sending events without batching.
+- Added `std::ostream` insertion operators for model types to simplify debugging.
 
 ### Breaking Changes
 
