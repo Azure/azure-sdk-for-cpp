@@ -403,7 +403,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         downloadContent,
         std::vector<uint8_t>(
-            blobContent.begin() + options.SourceRange.Value().Offset, blobContent.end()));
+            blobContent.begin() + static_cast<size_t>(options.SourceRange.Value().Offset),
+            blobContent.end()));
   }
 
   TEST_F(AppendBlobClientTest, DISABLED_AppendBlockFromUriCrc64AccessCondition)
