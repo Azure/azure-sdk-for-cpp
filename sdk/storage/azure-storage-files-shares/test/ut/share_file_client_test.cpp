@@ -1608,7 +1608,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
         options);
-    EXPECT_NO_THROW(fileClient1.Create(1));
+    EXPECT_NO_THROW(fileClient1.GetProperties());
   }
 
   TEST_F(FileShareFileClientTest, OAuthCopy_PLAYBACKONLY_)

@@ -1168,7 +1168,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
         options);
-    EXPECT_NO_THROW(directoryClient.Create());
+    EXPECT_NO_THROW(directoryClient1.GetProperties());
   }
 
   // cspell:ignore myshare mydirectory
