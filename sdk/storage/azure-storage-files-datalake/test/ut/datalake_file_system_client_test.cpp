@@ -240,6 +240,23 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileSystemClientTest, ListPathsExpiresOn)
+  {
+    const std::string fileName = RandomString();
+    auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+    fileClient.Create();
+    Files::DataLake::ScheduleFileDeletionOptions options;
+    options.ExpiresOn = Azure::DateTime::Parse(
+        "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
+    EXPECT_NO_THROW(fileClient.ScheduleDeletion(
+        Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options));
+
+    auto pagedResult = m_fileSystemClient->ListPaths(true);
+    EXPECT_EQ(1L, pagedResult.Paths.size());
+    ASSERT_TRUE(pagedResult.Paths[0].ExpiresOn.HasValue());
+    EXPECT_EQ(options.ExpiresOn.Value(), pagedResult.Paths[0].ExpiresOn.Value());
+  }
+
   TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)
   {
     const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
@@ -805,6 +822,27 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(1, paths.size());
       EXPECT_EQ(directoryName + "/" + filename, paths[0].Name);
     }
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, ListDeletedPathsEncoded)
+  {
+    const std::string prefix = "prefix\xEF\xBF\xBF";
+    const std::string specialFileName = prefix + "file";
+    const std::string specialDirectoryName = prefix + "directory";
+    auto fileClient = m_fileSystemClient->GetFileClient(specialFileName);
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(specialDirectoryName);
+    fileClient.Create();
+    fileClient.Delete();
+    directoryClient.Create();
+    directoryClient.DeleteEmpty();
+    auto fileUrl = fileClient.GetUrl();
+    auto directoryUrl = directoryClient.GetUrl();
+    Files::DataLake::ListDeletedPathsOptions options;
+    options.Prefix = prefix;
+    auto response = m_fileSystemClient->ListDeletedPaths(options);
+    EXPECT_EQ(response.DeletedPaths.size(), 2L);
+    EXPECT_EQ(response.DeletedPaths[0].Name, specialDirectoryName);
+    EXPECT_EQ(response.DeletedPaths[1].Name, specialFileName);
   }
 
   TEST_F(DataLakeFileSystemClientTest, Undelete)
