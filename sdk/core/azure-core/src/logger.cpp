@@ -54,12 +54,25 @@ void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
 
 int Log::LoggerStringBuffer::sync()
 {
+  std::unique_lock<std::mutex> lock{m_mutex};
   // Note that in the case of the caller inserting std::endl, the buffer will be flushed twice, once
   // with the \n terminated string, the second time with an empty string (from the destructor of
   // Log::Stream). This depends on the code in Log::Write which discards empty strings.
   Log::Write(m_level, str());
   str(std::string());
   return 0;
+}
+
+Log::LoggerStringBuffer::int_type Log::LoggerStringBuffer::overflow(int_type meta)
+{
+  std::unique_lock<std::mutex> lock{m_mutex};
+  return std::stringbuf::overflow(meta);
+}
+
+std::streamsize Log::LoggerStringBuffer::xsputn(const char_type* ptr, std::streamsize count)
+{
+  std::unique_lock<std::mutex> lock{m_mutex};
+  return std::stringbuf::xsputn(ptr, count);
 }
 
 Log::LoggerStream Log::g_verboseLogger{Logger::Level::Verbose};

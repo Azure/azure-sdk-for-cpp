@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <memory>
 #include <list>
+#include <memory>
 #include <mutex>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
@@ -30,6 +30,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     std::list<std::shared_ptr<Pollable>> m_pollables;
     std::mutex m_pollablesMutex;
+    std::thread m_pollingThread;
+    bool m_stopped{false};
 
   public:
     static GlobalStateHolder* GlobalStateInstance();
@@ -40,11 +42,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     GlobalStateHolder(GlobalStateHolder&&) = delete;
     GlobalStateHolder& operator=(GlobalStateHolder&&) = delete;
 
-    void AddPollable(std::shared_ptr<Pollable> pollable)
-    {
-      std::lock_guard<std::mutex> lock(m_pollablesMutex);
-      m_pollables.push_back(pollable);
-    }
+    void AddPollable(std::shared_ptr<Pollable> pollable);
 
     void RemovePollable(std::shared_ptr<Pollable> pollable)
     {

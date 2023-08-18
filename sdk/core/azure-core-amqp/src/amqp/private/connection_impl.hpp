@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/network/transport.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
-#include "azure/core/amqp/common/global_state.hpp"
 
 #include <azure_uamqp_c/connection.h>
 
@@ -44,7 +44,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   };
 
-  class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl>, public Common::_detail::Pollable {
+  class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl>,
+                               public Common::_detail::Pollable {
   public:
     ConnectionImpl(
         std::shared_ptr<Network::_detail::TransportImpl> transport,
@@ -100,12 +101,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     Models::AmqpMap GetProperties() const;
     std::shared_ptr<Credentials::TokenCredential> GetCredential() const { return m_credential; }
-    bool EnableTrace() const { return m_options.EnableTrace; }
+    void EnableAsyncOperation(bool enable);
+    bool IsAsyncOperation() { return m_enableAsyncOperation; }
+    bool IsTraceEnabled() { return m_options.EnableTrace; }
     bool IsSasCredential() const;
     std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context)
         const;
 
-    std::unique_lock<std::mutex> Lock() { return std::unique_lock<std::mutex>(m_amqpMutex); }
+    _Acquires_exclusive_lock_(m_amqpMutex) std::unique_lock<std::mutex> Lock()
+    {
+      return std::move(std::unique_lock<std::mutex>(m_amqpMutex));
+    }
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
@@ -121,6 +127,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<Credentials::TokenCredential> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
     std::mutex m_amqpMutex;
+    bool m_enableAsyncOperation = false;
+    bool m_isClosing = false;
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,

@@ -92,9 +92,49 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     // Integrate AMQP logging with Azure Core logging.
     xlogging_set_log_function(AmqpLogFunction);
+
+    m_pollingThread = std::thread([this]() {
+      do
+      {
+        std::list<std::shared_ptr<Pollable>> capturedList;
+        {
+          std::unique_lock<std::mutex> lock{m_pollablesMutex};
+          // If there are no pollables, there's no point in doing any work.
+          if (m_pollables.empty())
+          {
+            continue;
+          }
+          capturedList = m_pollables;
+        }
+
+        for (auto const& pollable : capturedList)
+        {
+          pollable->Poll();
+        }
+        std::this_thread::yield();
+      } while (!m_stopped);
+    });
   }
 
-  GlobalStateHolder::~GlobalStateHolder() { platform_deinit(); }
+  GlobalStateHolder::~GlobalStateHolder()
+  {
+    m_stopped = true;
+    if (m_pollingThread.joinable())
+    {
+      m_pollingThread.join();
+    }
+    platform_deinit();
+  }
+
+void GlobalStateHolder::AddPollable(std::shared_ptr<Pollable> pollable)
+  {
+    std::lock_guard<std::mutex> lock(m_pollablesMutex);
+    if (std::find(m_pollables.begin(), m_pollables.end(), pollable) == m_pollables.end())
+    {
+      m_pollables.push_back(pollable);
+	}
+  }
+
 
   GlobalStateHolder* GlobalStateHolder::GlobalStateInstance()
   {

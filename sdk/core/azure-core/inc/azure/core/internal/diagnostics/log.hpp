@@ -8,6 +8,7 @@
 
 #include <atomic>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 #include <type_traits>
 
@@ -89,8 +90,13 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        */
       virtual int sync() override;
 
+      virtual int_type overflow(int_type meta) override;
+
+      virtual std::streamsize xsputn(const char_type* ptr, std::streamsize count) override;
+
     private:
       Logger::Level m_level;
+      std::mutex m_mutex;
     };
 
     /** @brief Logger Stream used internally by the GetStream() private method.
@@ -133,10 +139,13 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        *
        * @param level - Represents the desired diagnostic level for the operation.
        */
-      Stream(Logger::Level level) : m_stream(GetStream(level)) {}
+      Stream(Logger::Level level) : m_stream(GetStream(level)) { }
 
       /** @brief Called when the Stream object goes out of scope. */
-      ~Stream() { m_stream.flush(); }
+      ~Stream()
+      {
+        m_stream.flush();
+      }
       Stream(Stream const&) = delete;
       Stream& operator=(Stream const&) = delete;
 
@@ -145,7 +154,10 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        * @tparam T Type of the object being inserted.
        * @param val value to be inserted into the underlying stream.
        */
-      template <typename T> std::ostream& operator<<(T val) { return m_stream << val; }
+      template <typename T> std::ostream& operator<<(T val)
+      {
+        return m_stream << val;
+      }
 
     private:
       LoggerStream& m_stream;

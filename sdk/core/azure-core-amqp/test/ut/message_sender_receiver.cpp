@@ -414,14 +414,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Common::_internal::
           AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
               sendCompleteQueue;
-      sender.QueueSend(
+      try
+      {
+        sender.QueueSend(
           message,
           [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
             GTEST_LOG_(INFO) << "Send Complete!";
             sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
           });
-      try
-      {
 
         auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
         // Because we're trying to use TLS to connect to a non-TLS port, we should get an error

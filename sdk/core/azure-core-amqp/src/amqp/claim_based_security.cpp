@@ -53,7 +53,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
   }
 
-  ClaimsBasedSecurityImpl::~ClaimsBasedSecurityImpl() noexcept {}
+  ClaimsBasedSecurityImpl::~ClaimsBasedSecurityImpl() noexcept
+  {
+    auto lock{m_session->GetConnection()->Lock()};
+    m_cbs.reset();
+  }
 
   CbsOpenResult CbsOpenResultStateFromLowLevel(CBS_OPEN_COMPLETE_RESULT lowLevel)
   {

@@ -4,6 +4,8 @@
 #pragma once
 
 #include <azure/core/context.hpp>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 
 #include <condition_variable>
 #include <list>
@@ -60,6 +62,40 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         // Note: We need to call Poll() *outside* the lock because the poller is going to call the
         // CompleteOperation function.
         Poll(pollers...);
+      } while (true);
+    }
+
+    std::unique_ptr<std::tuple<T...>> WaitForResult(Context const& context)
+    {
+      std::unique_lock<std::mutex> lock(m_operationComplete);
+
+      // If the queue is not empty, return the first element.
+      do
+      {
+        if (!m_operationQueue.empty())
+        {
+          std::unique_ptr<std::tuple<T...>> rv;
+          rv = std::move(m_operationQueue.front());
+          m_operationQueue.pop_front();
+          return rv;
+        }
+
+        // There's nothing in the queue, wait until something is put into the queue.
+        // This will block until either something is put into the queue or the context is cancelled.
+        m_operationCondition.wait_for(
+            lock, std::chrono::milliseconds(100), [this, &context]() -> bool {
+              // If the context is cancelled, we should return immediately.
+              if (context.IsCancelled())
+              {
+                return true;
+              }
+              return !m_operationQueue.empty();
+            });
+
+        if (context.IsCancelled())
+        {
+          return nullptr;
+        }
       } while (true);
     }
 
