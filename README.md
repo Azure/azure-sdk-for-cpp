@@ -18,7 +18,7 @@ Here are some alternatives, from easiest to advanced, how you can get, build and
 
 #### CMake Project + Vcpkg - manifest mode
 
-The easiest way to acquire the C++ SDK is leveraging [vcpkg](https://github.com/microsoft/vcpkg#getting-started) package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
+The easiest way to acquire the C++ SDK is leveraging the [vcpkg](https://github.com/microsoft/vcpkg#getting-started) package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
 
 ##### 1. Create a [CMake](https://cmake.org/cmake/help/latest/) project
 
