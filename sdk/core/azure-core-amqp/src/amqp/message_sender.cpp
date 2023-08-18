@@ -51,6 +51,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return m_impl->QueueSend(message, onSendComplete, context);
   }
 
+  std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
+
   MessageSender::~MessageSender() noexcept {}
 }}}} // namespace Azure::Core::Amqp::_internal
 
@@ -107,6 +109,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_target);
     PopulateLinkProperties();
   }
+
   void MessageSenderImpl::CreateLink()
   {
     m_link = std::make_shared<_detail::LinkImpl>(
@@ -149,8 +152,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
     }
+    if (m_options.MaxLinkCredits != 0)
+    {
+      m_link->SetMaxLinkCredit(m_options.MaxLinkCredits);
+    }
     m_link->SetSenderSettleMode(m_options.SettleMode);
   }
+
+  std::uint64_t MessageSenderImpl::GetMaxMessageSize() const { return m_link->GetMaxMessageSize(); }
 
   _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
   {

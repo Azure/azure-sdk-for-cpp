@@ -4,7 +4,6 @@
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
-#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
@@ -40,11 +39,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(CheckpointStoreTest, TestCheckpoints)
   {
     std::string const testName = GetRandomName();
+    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
     auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        Azure::Core::_internal::Environment::GetVariable(
-            "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName,
-        m_blobClientOptions)};
+        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
 
     auto checkpoints = checkpointStore.ListCheckpoints(
@@ -53,7 +50,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(0ul, checkpoints.size());
 
     checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
-        "$Default",
+        consumerGroup,
         "event-hub-name",
         "ns.servicebus.windows.net",
         "partition-id",
@@ -62,9 +59,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     });
 
     checkpoints = checkpointStore.ListCheckpoints(
-        "ns.servicebus.windows.net", "event-hub-name", "$Default");
+        "ns.servicebus.windows.net", "event-hub-name", consumerGroup);
     EXPECT_EQ(checkpoints.size(), 1ul);
-    EXPECT_EQ("$Default", checkpoints[0].ConsumerGroup);
+    EXPECT_EQ(consumerGroup, checkpoints[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", checkpoints[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].FullyQualifiedNamespaceName);
     EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
@@ -72,7 +69,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(101, checkpoints[0].Offset.Value());
 
     checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
-        "$Default",
+        consumerGroup,
         "event-hub-name",
         "ns.servicebus.windows.net",
         "partition-id",
@@ -81,9 +78,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     });
 
     checkpoints = checkpointStore.ListCheckpoints(
-        "ns.servicebus.windows.net", "event-hub-name", "$Default");
+        "ns.servicebus.windows.net", "event-hub-name", consumerGroup);
     EXPECT_EQ(checkpoints.size(), 1ul);
-    EXPECT_EQ("$Default", checkpoints[0].ConsumerGroup);
+    EXPECT_EQ(consumerGroup, checkpoints[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", checkpoints[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].FullyQualifiedNamespaceName);
     EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
@@ -95,10 +92,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const testName = GetRandomName();
     auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        Azure::Core::_internal::Environment::GetVariable(
-            "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName,
-        m_blobClientOptions)};
+        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
 
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
 

@@ -32,9 +32,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    /** @brief Maximum message size for messages being sent. */
-    Azure::Nullable<std::uint64_t> MaxMessageSize;
-
     /** @brief Name of the consumer client. */
     std::string Name{};
   };
@@ -133,10 +130,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param partitionId targeted partition
      * @param options client options
+     * @param context The context for the operation can be used for request cancellation.
      */
     PartitionClient CreatePartitionClient(
-        std::string partitionId,
-        PartitionClientOptions const& options = {});
+        std::string const& partitionId,
+        PartitionClientOptions const& options = {},
+        Azure::Core::Context const& context = {});
 
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
@@ -156,6 +155,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
+    void EnsureSession(std::string const& partitionId = {});
+    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = {});
+
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;
 
@@ -181,7 +183,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
-
-    std::string GetStartExpression(Models::StartPosition const& startPosition);
   };
 }}} // namespace Azure::Messaging::EventHubs

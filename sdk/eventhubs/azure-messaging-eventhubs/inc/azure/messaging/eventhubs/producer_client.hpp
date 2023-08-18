@@ -113,14 +113,43 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_senders.clear();
     }
 
-    /**@brief Proceeds to send and EventDataBatch
+    /** @brief Create a new EventDataBatch to be sent to the Event Hub.
+     *
+     * @param options Optional batch options
+     * @param context Context for the operation can be used for request cancellation.
+     *
+     * @return newly created EventDataBatch object.
+     */
+    EventDataBatch CreateBatch(
+        EventDataBatchOptions const& options = {},
+        Azure::Core::Context const& context = {});
+
+    /**@brief Send an EventDataBatch to the remote Event Hub.
      *
      * @param eventDataBatch Batch to send
      * @param context Request context
      */
-    bool SendEventDataBatch(
-        EventDataBatch const& eventDataBatch,
-        Core::Context const& context = {});
+    void Send(EventDataBatch const& eventDataBatch, Core::Context const& context = {});
+
+    /**@brief Send an EventData to the remote Event Hub.
+     *
+     * @remark This method will create a new EventDataBatch and add the event to it. If the event
+     * exceeds the maximum size allowed by the Event Hubs service, an exception will be thrown.
+     *
+     * @param eventData event to send
+     * @param context Request context
+     */
+    void Send(Models::EventData const& eventData, Core::Context const& context = {});
+
+    /**@brief Send a vector of EventData items to the remote Event Hub.
+     *
+     * @remark This method will create a new EventDataBatch and add the events to it. If the events
+     * exceeds the maximum size allowed by the Event Hubs service, an exception will be thrown.
+     *
+     * @param eventData events to send
+     * @param context Request context
+     */
+    void Send(std::vector<Models::EventData> const& eventData, Core::Context const& context = {});
 
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
@@ -141,7 +170,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
+    void EnsureSender(
+        std::string const& partitionId = "",
+        Azure::Core::Context const& context = {});
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
-    void CreateSender(std::string const& partitionId = "");
+
+    void EnsureSession(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = "");
   };
 }}} // namespace Azure::Messaging::EventHubs

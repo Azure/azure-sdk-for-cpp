@@ -107,7 +107,7 @@ private:
 
     Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
     batchOptions.PartitionId = m_partitionId;
-    Azure::Messaging::EventHubs::EventDataBatch batch(batchOptions);
+    Azure::Messaging::EventHubs::EventDataBatch batch(m_client->CreateBatch(batchOptions));
     for (uint32_t j = 0; j < m_numberToSend; ++j)
     {
 
@@ -117,9 +117,9 @@ private:
       event.Properties["PartitionId"]
           = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_partitionId);
       AddEndProperty(event, m_numberToSend);
-      batch.AddMessage(event);
+      batch.TryAddMessage(event);
     }
-    m_client->SendEventDataBatch(batch, context);
+    m_client->Send(batch, context);
 
     auto afterSendProps = m_client->GetPartitionProperties(m_partitionId, context);
 

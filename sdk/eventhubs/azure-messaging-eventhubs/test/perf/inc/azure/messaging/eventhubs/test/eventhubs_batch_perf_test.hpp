@@ -39,8 +39,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     uint32_t m_batchSize;
     uint32_t m_prefetchCount;
     uint64_t m_rounds;
-    uint32_t m_paddingBytes;
-    uint32_t m_maxDeadlineExceeded;
+    uint32_t m_paddingBytes{};
+    uint32_t m_maxDeadlineExceeded{};
 
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> m_client;
@@ -148,7 +148,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
 
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = m_partitionId;
-      Azure::Messaging::EventHubs::EventDataBatch batch(batchOptions);
+      Azure::Messaging::EventHubs::EventDataBatch batch{m_client->CreateBatch(batchOptions)};
       for (uint32_t j = 0; j < m_numberToSend; ++j)
       {
 
@@ -158,9 +158,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
         event.Properties["PartitionId"]
             = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_partitionId);
         AddEndProperty(event, m_numberToSend);
-        batch.AddMessage(event);
+        batch.TryAddMessage(event);
       }
-      m_client->SendEventDataBatch(batch, context);
+      m_client->Send(batch, context);
 
       auto afterSendProps = m_client->GetPartitionProperties(m_partitionId, context);
 

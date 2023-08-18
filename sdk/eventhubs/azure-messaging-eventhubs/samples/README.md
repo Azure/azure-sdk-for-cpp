@@ -20,6 +20,26 @@ granted access to the eventhubs service instance.
 The tests also assume that the currently logged on user is authorized to call
 into the Event Hubs service instance because they use [Azure::Core::Credentials::TokenCredential](https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-core/1.3.1/class_azure_1_1_core_1_1_credentials_1_1_token_credential.html) for authorization.
 
+### Setting Environment Variables
+
+For the samples which use a connection string, the connection string can be retrieved using the Azure CLI with the following:
+
+```pwsh
+az eventhubs namespace authorization-rule keys list --resource-group <your resource group> --namespace-name <your namespace name> --name RootManageSharedAccessKey
+```
+
+```json
+{
+  "keyName": "RootManageSharedAccessKey",
+  "primaryConnectionString": "Endpoint=sb://REDACTED.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=REDACTED",
+  "primaryKey": "REDACTED",
+  "secondaryConnectionString": "Endpoint=sb://REDACTED.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=REDACTED",
+  "secondaryKey": "REDACTED"
+}
+```
+
+The value of the `primaryConnectionString` property should be used as the `EVENTHUBS_CONNECTION_STRING` environment variable.
+
 
 ## Samples
 

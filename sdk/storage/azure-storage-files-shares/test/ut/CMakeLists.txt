@@ -27,6 +27,7 @@ add_executable (
     share_sas_test.cpp
     share_service_client_test.cpp
     share_service_client_test.hpp
+    simplified_header_test.cpp
     # Include shared test source code
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp

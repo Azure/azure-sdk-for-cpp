@@ -7,7 +7,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(BlobContainerClientTest, BatchSubmitDelete_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, ServiceBatchSubmitDelete_LIVEONLY_)
   {
     const std::string containerNamePrefix = LowercaseRandomString();
 
@@ -37,6 +37,38 @@ namespace Azure { namespace Storage { namespace Test {
     deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::OnlySnapshots;
     auto delete3Response = batch.DeleteBlobUrl(blob3Client.GetUrl(), deleteOptions);
     auto submitBatchResponse = serviceClient.SubmitBatch(batch);
+
+    EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
+    EXPECT_TRUE(delete2Response.GetResponse().Value.Deleted);
+    EXPECT_TRUE(delete3Response.GetResponse().Value.Deleted);
+    EXPECT_THROW(blob1Client.GetProperties(), StorageException);
+    EXPECT_THROW(blob2Client.GetProperties(), StorageException);
+    EXPECT_NO_THROW(blob3Client.GetProperties());
+  }
+
+  TEST_F(BlobContainerClientTest, ContainerBatchSubmitDelete_LIVEONLY_)
+  {
+    auto containerClient = *m_blobContainerClient;
+
+    const std::string blob1Name = "b1";
+    const std::string blob2Name = "b2";
+    const std::string blob3Name = "b3";
+
+    auto blob1Client = containerClient.GetAppendBlobClient(blob1Name);
+    blob1Client.Create();
+    auto blob2Client = containerClient.GetAppendBlobClient(blob2Name);
+    blob2Client.Create();
+    auto blob3Client = containerClient.GetAppendBlobClient(blob3Name);
+    blob3Client.Create();
+    blob3Client.CreateSnapshot();
+
+    auto batch = containerClient.CreateBatch();
+    auto delete1Response = batch.DeleteBlobUrl(blob1Client.GetUrl());
+    auto delete2Response = batch.DeleteBlob(blob2Name);
+    Blobs::DeleteBlobOptions deleteOptions;
+    deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::OnlySnapshots;
+    auto delete3Response = batch.DeleteBlobUrl(blob3Client.GetUrl(), deleteOptions);
+    auto submitBatchResponse = containerClient.SubmitBatch(batch);
 
     EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
     EXPECT_TRUE(delete2Response.GetResponse().Value.Deleted);
@@ -87,7 +119,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blob1Client.WithSnapshot(snapshotId).GetProperties(), StorageException);
   }
 
-  TEST_F(BlobContainerClientTest, BatchSubmitSetTier_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, ServiceBatchSubmitSetTier_LIVEONLY_)
   {
     const std::string containerName = LowercaseRandomString();
     const std::string blob1Name = "b1";
@@ -118,6 +150,32 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto batch = containerClient.CreateBatch();
     auto setTier1Response = batch.SetBlobAccessTier(blob1Name, Blobs::Models::AccessTier::Cool);
+    auto setTier2Response = batch.SetBlobAccessTier(blob2Name, Blobs::Models::AccessTier::Archive);
+    auto submitBatchResponse = containerClient.SubmitBatch(batch);
+
+    EXPECT_NO_THROW(setTier1Response.GetResponse());
+    EXPECT_NO_THROW(setTier2Response.GetResponse());
+    EXPECT_EQ(
+        blob1Client.GetProperties().Value.AccessTier.Value(), Blobs::Models::AccessTier::Cool);
+    EXPECT_EQ(
+        blob2Client.GetProperties().Value.AccessTier.Value(), Blobs::Models::AccessTier::Archive);
+  }
+
+  TEST_F(BlobContainerClientTest, ContainerBatchSubmitSetTier_LIVEONLY_)
+  {
+    const std::string blob1Name = "b1";
+    const std::string blob2Name = "b2";
+
+    auto containerClient = *m_blobContainerClient;
+
+    auto blob1Client = containerClient.GetBlockBlobClient(blob1Name);
+    blob1Client.UploadFrom(nullptr, 0);
+    auto blob2Client = containerClient.GetBlockBlobClient(blob2Name);
+    blob2Client.UploadFrom(nullptr, 0);
+
+    auto batch = containerClient.CreateBatch();
+    auto setTier1Response
+        = batch.SetBlobAccessTierUrl(blob1Client.GetUrl(), Blobs::Models::AccessTier::Cool);
     auto setTier2Response = batch.SetBlobAccessTier(blob2Name, Blobs::Models::AccessTier::Archive);
     auto submitBatchResponse = containerClient.SubmitBatch(batch);
 

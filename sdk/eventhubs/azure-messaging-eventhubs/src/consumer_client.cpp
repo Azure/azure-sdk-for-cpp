@@ -48,179 +48,69 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         + m_consumerGroup;
   }
 
-  namespace {
-    struct FilterDescription
+  void ConsumerClient::EnsureSession(std::string const& partitionId)
+  {
+    if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      std::string Name;
-      std::uint64_t Code;
-    };
-    void AddFilterElementToSourceOptions(
-        Azure::Core::Amqp::Models::_internal::MessageSourceOptions& sourceOptions,
-        FilterDescription description,
-        Azure::Core::Amqp::Models::AmqpValue const& filterValue)
-    {
-      Azure::Core::Amqp::Models::AmqpDescribed value{description.Code, filterValue};
-      sourceOptions.Filter.emplace(description.Name, value);
-    }
+      ConnectionOptions connectOptions;
+      connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
+      connectOptions.EnableTrace = true;
+      connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
 
-    FilterDescription SelectorFilter{"apache.org:selector-filter:string", 0x0000468c00000004};
-  } // namespace
+      // Set the user agent related properties in the connectOptions based on the package
+      // information and application ID.
+      _detail::EventHubsUtilities::SetUserAgent(
+          connectOptions, m_consumerClientOptions.ApplicationID);
+
+      Connection connection(m_fullyQualifiedNamespace, m_credential, connectOptions);
+      SessionOptions sessionOptions;
+      sessionOptions.InitialIncomingWindowSize
+          = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+
+      Session session{connection.CreateSession(sessionOptions)};
+      m_sessions.emplace(partitionId, session);
+    }
+  }
+
+  Azure::Core::Amqp::_internal::Session ConsumerClient::GetSession(std::string const& partitionId)
+  {
+    return m_sessions.at(partitionId);
+  }
 
   PartitionClient ConsumerClient::CreatePartitionClient(
-      std::string partitionId,
-      PartitionClientOptions const& options)
+      std::string const& partitionId,
+      PartitionClientOptions const& options,
+      Azure::Core::Context const& context)
   {
-    PartitionClient partitionClient(options, m_consumerClientOptions.RetryOptions);
-
     std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
     std::string hostUrl = m_hostUrl + suffix;
 
-    ConnectionOptions connectOptions;
-    connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
-    connectOptions.EnableTrace = true;
-    connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
+    EnsureSession(partitionId);
 
-    // Set the user agent related properties in the connectOptions based on the package information
-    // and application ID.
-    _detail::EventHubsUtilities::SetUserAgent(
-        connectOptions, m_consumerClientOptions.ApplicationID);
-
-    Connection connection(m_fullyQualifiedNamespace, m_credential, connectOptions);
-    SessionOptions sessionOptions;
-    sessionOptions.InitialIncomingWindowSize = static_cast<uint32_t>(
-        m_consumerClientOptions.MaxMessageSize.ValueOr(std::numeric_limits<int32_t>::max()));
-
-    Session session{connection.CreateSession(sessionOptions)};
-
-    Azure::Core::Amqp::Models::_internal::MessageSourceOptions sourceOptions;
-    sourceOptions.Address = static_cast<Azure::Core::Amqp::Models::AmqpValue>(hostUrl);
-    AddFilterElementToSourceOptions(
-        sourceOptions,
-        SelectorFilter,
-        static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-            GetStartExpression(options.StartPosition)));
-
-    Azure::Core::Amqp::Models::_internal::MessageSource messageSource(sourceOptions);
-    Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
-    if (m_consumerClientOptions.MaxMessageSize)
-    {
-      receiverOptions.MaxMessageSize = m_consumerClientOptions.MaxMessageSize.Value();
-    }
-    receiverOptions.EnableTrace = true;
-    //    receiverOptions.MessageTarget = m_consumerClientOptions.MessageTarget;
-    receiverOptions.Name = m_consumerClientOptions.Name;
-    receiverOptions.Properties.emplace("com.microsoft:receiver-name", m_consumerClientOptions.Name);
-    if (options.OwnerLevel.HasValue())
-    {
-      receiverOptions.Properties.emplace("com.microsoft:epoch", options.OwnerLevel.Value());
-    }
-
-    MessageReceiver receiver = session.CreateMessageReceiver(messageSource, receiverOptions);
-
-    // Open the connection to the remote.
-    receiver.Open();
-    m_sessions.emplace(partitionId, session);
-    partitionClient.PushBackReceiver(receiver);
-    return partitionClient;
-  }
-
-  std::string ConsumerClient::GetStartExpression(Models::StartPosition const& startPosition)
-  {
-    std::string greaterThan = ">";
-
-    if (startPosition.Inclusive)
-    {
-      greaterThan = ">=";
-    }
-
-    constexpr const char* expressionErrorText
-        = "Only a single start point can be set: Earliest, EnqueuedTime, "
-          "Latest, Offset, or SequenceNumber";
-
-    std::string returnValue;
-    if (startPosition.EnqueuedTime.HasValue())
-    {
-      returnValue = "amqp.annotation.x--opt-enqueued-time " + greaterThan + "'"
-          + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
-                               startPosition.EnqueuedTime.Value().time_since_epoch())
-                               .count())
-          + "'";
-    }
-    if (startPosition.Offset.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-offset " + greaterThan + "'"
-          + std::to_string(startPosition.Offset.Value()) + "'";
-    }
-    if (startPosition.SequenceNumber.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-sequence-number " + greaterThan + "'"
-          + std::to_string(startPosition.SequenceNumber.Value()) + "'";
-    }
-    if (startPosition.Latest.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-offset > '@latest'";
-    }
-    if (startPosition.Earliest.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-offset > '-1'";
-    }
-    // If we don't have a filter value, then default to the start.
-    if (returnValue.empty())
-    {
-      return "amqp.annotation.x-opt-offset > '@latest'";
-    }
-    else
-    {
-      return returnValue;
-    }
+    return _detail::PartitionClientFactory::CreatePartitionClient(
+        GetSession(partitionId),
+        hostUrl,
+        m_consumerClientOptions.Name,
+        options,
+        m_consumerClientOptions.RetryOptions,
+        context);
   }
 
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)
   {
-    // We need to capture the partition client here, because we need to keep it alive across the
-    // call to GetEventHubsProperties.
-    //
-    // If we don't keep the PartitionClient alive, the message receiver inside the partition client
-    // will be disconnected AFTER the outgoing ATTACH frame is sent. When the response for the
-    // ATTACH frame is received, it creates a new link_endpoint which is in the half attached state.
-    // This runs into a uAMQP bug where an incoming link detach frame will cause a crash if the
-    // corresponding link_endpoint is in the half attached state.
-    std::shared_ptr<PartitionClient> client;
-    if (m_sessions.find("0") == m_sessions.end())
-    {
-      client = std::make_shared<PartitionClient>(CreatePartitionClient("0"));
-    }
+    // Since EventHub properties are not tied to a partition, we don't specify a partition ID.
+    EnsureSession();
 
-    return _detail::EventHubsUtilities::GetEventHubsProperties(
-        m_sessions.at("0"), m_eventHub, context);
+    return _detail::EventHubsUtilities::GetEventHubsProperties(GetSession(), m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ConsumerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    if (m_sessions.find(partitionId) == m_sessions.end())
-    {
-      CreatePartitionClient(partitionId);
-    }
+    EnsureSession(partitionId);
 
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        m_sessions.at(partitionId), m_eventHub, partitionId, context);
+        GetSession(partitionId), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

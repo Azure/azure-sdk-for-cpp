@@ -126,6 +126,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareServiceClientTest, SetProperties)
   {
     auto properties = m_shareServiceClient->GetProperties().Value;
+    properties.Protocol.Reset();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -212,11 +213,12 @@ namespace Azure { namespace Storage { namespace Test {
     m_shareServiceClient->SetProperties(originalProperties);
   }
 
-  TEST_F(FileShareServiceClientTest, DISABLED_SetPremiumFileProperties)
+  TEST_F(FileShareServiceClientTest, SetPremiumFileProperties)
   {
     auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
-            PremiumFileConnectionString()));
+            PremiumFileConnectionString(),
+            InitStorageClientOptions<Files::Shares::ShareClientOptions>()));
     auto properties = premiumFileShareServiceClient->GetProperties().Value;
     auto originalProperties = properties;
 

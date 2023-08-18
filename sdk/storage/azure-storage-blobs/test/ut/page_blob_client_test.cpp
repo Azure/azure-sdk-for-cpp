@@ -37,6 +37,54 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.resize(static_cast<size_t>(2_KB));
   }
 
+  TEST_F(PageBlobClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    {
+      auto pageBlobClient = Blobs::PageBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, m_blobName, clientOptions);
+      EXPECT_NO_THROW(pageBlobClient.GetProperties());
+    }
+
+    {
+      auto cred = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+      auto pageBlobClient = Blobs::PageBlobClient(m_pageBlobClient->GetUrl(), cred, clientOptions);
+      EXPECT_NO_THROW(pageBlobClient.GetProperties());
+    }
+
+    {
+      auto pageBlobClient
+          = Blobs::PageBlobClient(m_pageBlobClient->GetUrl() + GetSas(), clientOptions);
+      EXPECT_NO_THROW(pageBlobClient.GetProperties());
+    }
+  }
+
+  TEST_F(PageBlobClientTest, WithSnapshotVersionId)
+  {
+    const std::string timestamp1 = "2001-01-01T01:01:01.1111000Z";
+    const std::string timestamp2 = "2022-02-02T02:02:02.2222000Z";
+
+    auto client1 = m_pageBlobClient->WithSnapshot(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot("");
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+
+    client1 = m_pageBlobClient->WithVersionId(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+    client1 = client1.WithVersionId(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+    client1 = client1.WithVersionId("");
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("versionid=" + timestamp2) == std::string::npos);
+  }
+
   TEST_F(PageBlobClientTest, CreateDelete)
   {
     auto pageBlobClient = *m_pageBlobClient;
@@ -198,12 +246,26 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::GetPageRangesOptions options;
     options.PageSizeHint = 1;
     int numPages = 0;
+    int numItems = 0;
     for (auto page = pageBlobClient.GetPageRangesDiff(snapshot, options); page.HasPage();
          page.MoveToNextPage())
     {
       ++numPages;
+      numItems += static_cast<int>(page.PageRanges.size() + page.ClearRanges.size());
     }
     EXPECT_GT(numPages, 2);
+    EXPECT_EQ(numItems, 3);
+
+    // range
+    numItems = 0;
+    options.Range = Core::Http::HttpRange();
+    options.Range.Value().Offset = 1024 * 2;
+    for (auto page = pageBlobClient.GetPageRangesDiff(snapshot, options); page.HasPage();
+         page.MoveToNextPage())
+    {
+      numItems += static_cast<int>(page.PageRanges.size() + page.ClearRanges.size());
+    }
+    EXPECT_EQ(numItems, 1);
   }
 
   TEST_F(PageBlobClientTest, UploadFromUri)

@@ -11,141 +11,311 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(DataLakeFileSystemClientTest, DataLakeSasTest_LIVEONLY_)
+  class DataLakeSasTest : public DataLakeFileSystemClientTest {
+  public:
+    template <class T> T GetSasAuthenticatedClient(const T& pathClient, const std::string& sasToken)
+    {
+      T pathClient1(
+          AppendQueryParameters(
+              Azure::Core::Url(Files::DataLake::_detail::GetDfsUrlFromUrl(pathClient.GetUrl())),
+              sasToken),
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+      return pathClient1;
+    }
+    void VerifyDataLakeSasRead(
+        const Files::DataLake::DataLakePathClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.GetProperties());
+    }
+
+    void VerifyDataLakeSasNonRead(
+        const Files::DataLake::DataLakePathClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_THROW(pathClient1.GetProperties(), StorageException);
+    }
+
+    void VerifyDataLakeSasWrite(
+        const Files::DataLake::DataLakeFileClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.UploadFrom(reinterpret_cast<const uint8_t*>("a"), 1));
+    }
+
+    void VerifyDataLakeSasDelete(
+        const Files::DataLake::DataLakeFileClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.Delete());
+      pathClient.UploadFrom(reinterpret_cast<const uint8_t*>("a"), 1);
+    }
+
+    void VerifyDataLakeSasDelete(
+        const Files::DataLake::DataLakeDirectoryClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.DeleteRecursive());
+      pathClient.Create();
+    }
+
+    void VerifyDataLakeSasCreate(
+        const Files::DataLake::DataLakeFileClient& pathClient,
+        const std::string& sasToken)
+    {
+      pathClient.DeleteIfExists();
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.Create());
+    }
+
+    void VerifyDataLakeSasCreate(
+        const Files::DataLake::DataLakeDirectoryClient& pathClient,
+        const std::string& sasToken)
+    {
+      pathClient.DeleteRecursiveIfExists();
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.Create());
+    }
+
+    void VerifyDataLakeSasList(
+        const Files::DataLake::DataLakeDirectoryClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.ListPaths(true));
+    }
+
+    void VerifyDataLakeSasMove(
+        const Files::DataLake::DataLakeDirectoryClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      std::string fileName = RandomString();
+      std::string newFilename = RandomString();
+      auto fileClient = pathClient.GetFileClient(fileName);
+      auto newFileClient = pathClient.GetFileClient(newFilename);
+      fileClient.Create();
+      EXPECT_NO_THROW(pathClient1.RenameFile(fileName, newFilename));
+    }
+
+    void VerifyDataLakeSasExecute(
+        const Files::DataLake::DataLakeFileClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      EXPECT_NO_THROW(pathClient1.GetAccessControlList());
+    }
+
+    void VerifyDataLakeSasManageAccessControl(
+        const Files::DataLake::DataLakePathClient& pathClient,
+        const std::string& sasToken)
+    {
+      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
+      auto acls = pathClient.GetAccessControlList().Value.Acls;
+      EXPECT_NO_THROW(pathClient1.SetAccessControlList(acls));
+    }
+  };
+
+  TEST_F(DataLakeSasTest, AccountSasPermissions)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
-    auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    std::string directory1Name = RandomString();
-    std::string directory2Name = RandomString();
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string directoryName = RandomString();
     std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeDirectoryClient = dataLakeFileSystemClient.GetDirectoryClient(directoryName);
+    dataLakeDirectoryClient.Create();
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    auto allPermissions = Sas::AccountSasPermissions::Read | Sas::AccountSasPermissions::Write
+        | Sas::AccountSasPermissions::Delete | Sas::AccountSasPermissions::List
+        | Sas::AccountSasPermissions::Add | Sas::AccountSasPermissions::Create;
+
+    for (auto permissions : {
+             allPermissions,
+             Sas::AccountSasPermissions::Read,
+             Sas::AccountSasPermissions::Write,
+             Sas::AccountSasPermissions::Delete,
+             Sas::AccountSasPermissions::List,
+             Sas::AccountSasPermissions::Add,
+             Sas::AccountSasPermissions::Create,
+         })
+    {
+      accountSasBuilder.SetPermissions(permissions);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+
+      if ((permissions & Sas::AccountSasPermissions::Read) == Sas::AccountSasPermissions::Read)
+      {
+        VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Write) == Sas::AccountSasPermissions::Write)
+      {
+        VerifyDataLakeSasWrite(dataLakeFileClient, sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Delete) == Sas::AccountSasPermissions::Delete)
+      {
+        VerifyDataLakeSasDelete(dataLakeFileClient, sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::List) == Sas::AccountSasPermissions::List)
+      {
+        VerifyDataLakeSasList(dataLakeDirectoryClient, sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Add) == Sas::AccountSasPermissions::Add)
+      {
+      /*
+       * Add test for append block when DataLake supports append blobs.
+       */      }
+      if ((permissions & Sas::AccountSasPermissions::Create) == Sas::AccountSasPermissions::Create)
+      {
+        VerifyDataLakeSasCreate(dataLakeFileClient, sasToken);
+      }
+    }
+  }
+
+  TEST_F(DataLakeSasTest, ServiceFileSystemSasPermissions)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::DataLake::Models::UserDelegationKey userDelegationKey;
+    {
+      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    std::string directoryName = RandomString();
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeDirectoryClient = dataLakeFileSystemClient.GetDirectoryClient(directoryName);
+    dataLakeDirectoryClient.Create();
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSystemSasBuilder;
+    fileSystemSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSystemSasBuilder.StartsOn = sasStartsOn;
+    fileSystemSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSystemSasBuilder.FileSystemName = m_fileSystemName;
+    fileSystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
+
+    for (auto permissions : {
+             Sas::DataLakeSasPermissions::All,
+             Sas::DataLakeSasPermissions::Read,
+             Sas::DataLakeSasPermissions::Write,
+             Sas::DataLakeSasPermissions::Delete,
+             Sas::DataLakeSasPermissions::List,
+             Sas::DataLakeSasPermissions::Add,
+             Sas::DataLakeSasPermissions::Create,
+             Sas::DataLakeSasPermissions::Move,
+             Sas::DataLakeSasPermissions::Execute,
+             Sas::DataLakeSasPermissions::ManageAccessControl,
+         })
+    {
+      fileSystemSasBuilder.SetPermissions(permissions);
+      auto sasToken = fileSystemSasBuilder.GenerateSasToken(*keyCredential);
+      auto sasToken2 = fileSystemSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+      if ((permissions & Sas::DataLakeSasPermissions::Read) == Sas::DataLakeSasPermissions::Read)
+      {
+        VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasRead(dataLakeFileClient, sasToken2);
+      }
+      if ((permissions & Sas::DataLakeSasPermissions::Write) == Sas::DataLakeSasPermissions::Write)
+      {
+        VerifyDataLakeSasWrite(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasWrite(dataLakeFileClient, sasToken2);
+      }
+      if ((permissions & Sas::DataLakeSasPermissions::Delete)
+          == Sas::DataLakeSasPermissions::Delete)
+      {
+        VerifyDataLakeSasDelete(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasDelete(dataLakeFileClient, sasToken2);
+      }
+      if ((permissions & Sas::DataLakeSasPermissions::List) == Sas::DataLakeSasPermissions::List)
+      {
+        VerifyDataLakeSasList(dataLakeDirectoryClient, sasToken);
+        VerifyDataLakeSasList(dataLakeDirectoryClient, sasToken2);
+      }
+      if ((permissions & Sas::DataLakeSasPermissions::Add) == Sas::DataLakeSasPermissions::Add)
+      {
+      /*
+       * Add test for append block when DataLake supports append blobs.
+       */      }
+      if ((permissions & Sas::DataLakeSasPermissions::Create)
+          == Sas::DataLakeSasPermissions::Create)
+      {
+        VerifyDataLakeSasCreate(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasCreate(dataLakeFileClient, sasToken2);
+      }
+      if ((permissions & Sas::DataLakeSasPermissions::Move) == Sas::DataLakeSasPermissions::Move)
+      {
+        VerifyDataLakeSasMove(dataLakeDirectoryClient, sasToken);
+        VerifyDataLakeSasMove(dataLakeDirectoryClient, sasToken2);
+      }
+      if ((permissions & Sas::DataLakeSasPermissions::ManageAccessControl)
+          == Sas::DataLakeSasPermissions::ManageAccessControl)
+      {
+        VerifyDataLakeSasManageAccessControl(dataLakeDirectoryClient, sasToken);
+        VerifyDataLakeSasManageAccessControl(dataLakeDirectoryClient, sasToken2);
+      }
+    }
+  }
+
+  TEST_F(DataLakeSasTest, ServiceFileSasPermissions)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::DataLake::Models::UserDelegationKey userDelegationKey;
+    {
+      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
     Sas::DataLakeSasBuilder fileSasBuilder;
     fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     fileSasBuilder.StartsOn = sasStartsOn;
     fileSasBuilder.ExpiresOn = sasExpiresOn;
     fileSasBuilder.FileSystemName = m_fileSystemName;
-    fileSasBuilder.Path = directory1Name + "/" + directory2Name + "/" + fileName;
+    fileSasBuilder.Path = fileName;
     fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
-
-    Sas::DataLakeSasBuilder directorySasBuilder = fileSasBuilder;
-    directorySasBuilder.Path = directory1Name;
-    directorySasBuilder.IsDirectory = true;
-    directorySasBuilder.DirectoryDepth = 1;
-    directorySasBuilder.Resource = Sas::DataLakeSasResource::Directory;
-
-    Sas::DataLakeSasBuilder filesystemSasBuilder = fileSasBuilder;
-    filesystemSasBuilder.Path.clear();
-    filesystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
-
-    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
-    auto serviceClient0 = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-        AdlsGen2ConnectionString());
-    auto filesystemClient0 = serviceClient0.GetFileSystemClient(m_fileSystemName);
-    auto containerClinet0 = Blobs::BlobContainerClient::CreateFromConnectionString(
-        AdlsGen2ConnectionString(), m_fileSystemName);
-    auto directory1Client0 = filesystemClient0.GetDirectoryClient(directory1Name);
-    auto directory2Client0 = directory1Client0.GetSubdirectoryClient(directory2Name);
-    auto fileClient0 = directory2Client0.GetFileClient(fileName);
-    directory1Client0.Create();
-    directory2Client0.Create();
-
-    auto serviceUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(serviceClient0.GetUrl());
-    auto filesystemUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(filesystemClient0.GetUrl());
-    auto directory1Url = Files::DataLake::_detail::GetDfsUrlFromUrl(directory1Client0.GetUrl());
-    auto directory2Url = Files::DataLake::_detail::GetDfsUrlFromUrl(directory2Client0.GetUrl());
-    auto fileUrl = Files::DataLake::_detail::GetDfsUrlFromUrl(fileClient0.GetUrl());
-
-    auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
-        serviceUrl,
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = serviceClient1.GetUserDelegationKey(sasExpiresOn).Value;
-
-    auto verify_file_read = [&](const std::string& sas) {
-      EXPECT_NO_THROW(fileClient0.Create());
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      auto downloadedContent = fileClient.Download();
-      EXPECT_TRUE(ReadBodyStream(downloadedContent.Value.Body).empty());
-    };
-
-    auto verify_file_write = [&](const std::string& sas) {
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      EXPECT_NO_THROW(fileClient.Create());
-    };
-
-    auto verify_file_delete = [&](const std::string& sas) {
-      fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      EXPECT_NO_THROW(fileClient.Delete());
-    };
-
-    auto verify_file_add = [&](const std::string& sas) {
-      (void)sas;
-      /*
-       * Add test for append block when DataLake supports append blobs.
-       */
-    };
-
-    auto verify_filesystem_list = [&](const std::string& sas) {
-      auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUrl + sas);
-      EXPECT_NO_THROW(filesystemClient.ListPaths(true));
-    };
-
-    auto verify_directory_list = [&](const std::string& sas) {
-      auto filesystemClient = Files::DataLake::DataLakeFileSystemClient(filesystemUrl + sas);
-      auto directoryClient = filesystemClient.GetDirectoryClient(directory1Name);
-      EXPECT_NO_THROW(directoryClient.ListPaths(true));
-    };
-
-    auto verify_file_create = [&](const std::string& sas) {
-      try
-      {
-        fileClient0.Delete();
-      }
-      catch (const StorageException&)
-      {
-      }
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      fileClient.Create();
-    };
-
-    auto verify_file_move = [&](const std::string& sas) {
-      try
-      {
-        fileClient0.Delete();
-      }
-      catch (const StorageException&)
-      {
-      }
-      std::string newFilename = RandomString();
-      auto newFileClient0 = directory2Client0.GetFileClient(newFilename);
-      newFileClient0.Create();
-      auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
-          Files::DataLake::_detail::GetDfsUrlFromUrl(directory2Client0.GetUrl()) + sas);
-      EXPECT_NO_THROW(directoryClient.RenameFile(
-          newFilename, directory1Name + "/" + directory2Name + "/" + fileName));
-    };
-
-    auto verify_file_execute = [&](const std::string& sas) {
-      fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      EXPECT_NO_THROW(fileClient0.GetAccessControlList());
-    };
-
-    auto verify_file_ownership = [&](const std::string& sas) {
-      fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      EXPECT_NO_THROW(fileClient0.GetAccessControlList());
-    };
-
-    auto verify_file_permissions = [&](const std::string& sas) {
-      fileClient0.Create();
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
-      auto acls = fileClient0.GetAccessControlList().Value.Acls;
-      EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
-    };
 
     for (auto permissions : {
              Sas::DataLakeSasPermissions::All,
@@ -154,324 +324,466 @@ namespace Azure { namespace Storage { namespace Test {
              Sas::DataLakeSasPermissions::Delete,
              Sas::DataLakeSasPermissions::Add,
              Sas::DataLakeSasPermissions::Create,
-             Sas::DataLakeSasPermissions::List,
-             Sas::DataLakeSasPermissions::Move,
              Sas::DataLakeSasPermissions::Execute,
-             Sas::DataLakeSasPermissions::ManageOwnership,
              Sas::DataLakeSasPermissions::ManageAccessControl,
          })
     {
       fileSasBuilder.SetPermissions(permissions);
       auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
       auto sasToken2 = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
-
       if ((permissions & Sas::DataLakeSasPermissions::Read) == Sas::DataLakeSasPermissions::Read)
       {
-        verify_file_read(sasToken);
-        verify_file_read(sasToken2);
+        VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasRead(dataLakeFileClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::Write) == Sas::DataLakeSasPermissions::Write)
       {
-        verify_file_write(sasToken);
-        verify_file_write(sasToken2);
+        VerifyDataLakeSasWrite(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasWrite(dataLakeFileClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::Delete)
           == Sas::DataLakeSasPermissions::Delete)
       {
-        verify_file_delete(sasToken);
-        verify_file_delete(sasToken2);
+        VerifyDataLakeSasDelete(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasDelete(dataLakeFileClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::Add) == Sas::DataLakeSasPermissions::Add)
       {
-        verify_file_add(sasToken);
-        verify_file_add(sasToken2);
-      }
+      /*
+       * Add test for append block when DataLake supports append blobs.
+       */      }
       if ((permissions & Sas::DataLakeSasPermissions::Create)
           == Sas::DataLakeSasPermissions::Create)
       {
-        verify_file_create(sasToken);
-        verify_file_create(sasToken2);
+        VerifyDataLakeSasCreate(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasCreate(dataLakeFileClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::ManageAccessControl)
           == Sas::DataLakeSasPermissions::ManageAccessControl)
       {
-        verify_file_permissions(sasToken);
-        verify_file_permissions(sasToken2);
+        VerifyDataLakeSasManageAccessControl(dataLakeFileClient, sasToken);
+        VerifyDataLakeSasManageAccessControl(dataLakeFileClient, sasToken2);
       }
     }
+  }
+
+  TEST_F(DataLakeSasTest, ServiceDirectorySasPermissions)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::DataLake::Models::UserDelegationKey userDelegationKey;
+    {
+      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    std::string directoryName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeDirectoryClient = dataLakeFileSystemClient.GetDirectoryClient(directoryName);
+    dataLakeDirectoryClient.Create();
+
+    Sas::DataLakeSasBuilder directorySasBuilder;
+    directorySasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    directorySasBuilder.StartsOn = sasStartsOn;
+    directorySasBuilder.ExpiresOn = sasExpiresOn;
+    directorySasBuilder.FileSystemName = m_fileSystemName;
+    directorySasBuilder.Path = directoryName;
+    directorySasBuilder.IsDirectory = true;
+    directorySasBuilder.DirectoryDepth = 1;
+    directorySasBuilder.Resource = Sas::DataLakeSasResource::Directory;
 
     for (auto permissions : {
              Sas::DataLakeSasPermissions::All,
              Sas::DataLakeSasPermissions::Read,
-             Sas::DataLakeSasPermissions::Write,
              Sas::DataLakeSasPermissions::Delete,
+             Sas::DataLakeSasPermissions::List,
              Sas::DataLakeSasPermissions::Add,
              Sas::DataLakeSasPermissions::Create,
-             Sas::DataLakeSasPermissions::List,
-             Sas::DataLakeSasPermissions::Move,
              Sas::DataLakeSasPermissions::Execute,
-             Sas::DataLakeSasPermissions::ManageOwnership,
              Sas::DataLakeSasPermissions::ManageAccessControl,
          })
     {
       directorySasBuilder.SetPermissions(permissions);
       auto sasToken2 = directorySasBuilder.GenerateSasToken(userDelegationKey, accountName);
-
       if ((permissions & Sas::DataLakeSasPermissions::Read) == Sas::DataLakeSasPermissions::Read)
       {
-        verify_file_read(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeSasPermissions::Write) == Sas::DataLakeSasPermissions::Write)
-      {
-        verify_file_write(sasToken2);
+        VerifyDataLakeSasRead(dataLakeDirectoryClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::Delete)
           == Sas::DataLakeSasPermissions::Delete)
       {
-        verify_file_delete(sasToken2);
+        VerifyDataLakeSasDelete(dataLakeDirectoryClient, sasToken2);
       }
-      if ((permissions & Sas::DataLakeSasPermissions::Add) == Sas::DataLakeSasPermissions::Add)
+      if ((permissions & Sas::DataLakeSasPermissions::List) == Sas::DataLakeSasPermissions::List)
       {
-        verify_file_add(sasToken2);
+        VerifyDataLakeSasList(dataLakeDirectoryClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::Create)
           == Sas::DataLakeSasPermissions::Create)
       {
-        verify_file_create(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeSasPermissions::List) == Sas::DataLakeSasPermissions::List)
-      {
-        verify_directory_list(sasToken2);
-      }
-      (void)verify_file_move;
-      /*
-      don't know why, move doesn't work
-      if ((permissions & Sas::DataLakeSasPermissions::Move)
-          == Sas::DataLakeSasPermissions::Move)
-      {
-        verify_file_move(sasToken2);
-      }
-      */
-      if ((permissions & Sas::DataLakeSasPermissions::Execute)
-          == Sas::DataLakeSasPermissions::Execute)
-      {
-        verify_file_execute(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeSasPermissions::ManageOwnership)
-          == Sas::DataLakeSasPermissions::ManageOwnership)
-      {
-        verify_file_ownership(sasToken2);
+        VerifyDataLakeSasCreate(dataLakeDirectoryClient, sasToken2);
       }
       if ((permissions & Sas::DataLakeSasPermissions::ManageAccessControl)
           == Sas::DataLakeSasPermissions::ManageAccessControl)
       {
-        verify_file_permissions(sasToken2);
+        VerifyDataLakeSasManageAccessControl(dataLakeDirectoryClient, sasToken2);
       }
-    }
-
-    for (auto permissions : {
-             Sas::DataLakeFileSystemSasPermissions::All,
-             Sas::DataLakeFileSystemSasPermissions::Read,
-             Sas::DataLakeFileSystemSasPermissions::Write,
-             Sas::DataLakeFileSystemSasPermissions::Delete,
-             Sas::DataLakeFileSystemSasPermissions::List,
-             Sas::DataLakeFileSystemSasPermissions::Add,
-             Sas::DataLakeFileSystemSasPermissions::Create,
-         })
-    {
-      filesystemSasBuilder.SetPermissions(permissions);
-      auto sasToken = filesystemSasBuilder.GenerateSasToken(*keyCredential);
-      auto sasToken2 = filesystemSasBuilder.GenerateSasToken(userDelegationKey, accountName);
-
-      if ((permissions & Sas::DataLakeFileSystemSasPermissions::All)
-          == Sas::DataLakeFileSystemSasPermissions::All)
-      {
-        (void)verify_file_move;
-        /*
-        don't know why, move doesn't work
-        verify_file_move(sasToken);
-        verify_file_move(sasToken2);
-        */
-      }
-      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Read)
-          == Sas::DataLakeFileSystemSasPermissions::Read)
-      {
-        verify_file_read(sasToken);
-        verify_file_read(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Write)
-          == Sas::DataLakeFileSystemSasPermissions::Write)
-      {
-        verify_file_write(sasToken);
-        verify_file_write(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Delete)
-          == Sas::DataLakeFileSystemSasPermissions::Delete)
-      {
-        verify_file_delete(sasToken);
-        verify_file_delete(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeFileSystemSasPermissions::List)
-          == Sas::DataLakeFileSystemSasPermissions::List)
-      {
-        verify_filesystem_list(sasToken);
-        verify_filesystem_list(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Add)
-          == Sas::DataLakeFileSystemSasPermissions::Add)
-      {
-        verify_file_add(sasToken);
-        verify_file_add(sasToken2);
-      }
-      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Create)
-          == Sas::DataLakeFileSystemSasPermissions::Create)
-      {
-        verify_file_create(sasToken);
-        verify_file_create(sasToken2);
-      }
-    }
-
-    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
-
-    // Expires
-    {
-      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.StartsOn = sasStartsOn;
-      builder2.ExpiresOn = sasExpiredOn;
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      EXPECT_THROW(verify_file_create(sasToken), StorageException);
-
-      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      EXPECT_THROW(verify_file_create(sasToken2), StorageException);
-    }
-
-    // Without start time
-    {
-      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.StartsOn.Reset();
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      EXPECT_NO_THROW(verify_file_create(sasToken));
-      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      EXPECT_NO_THROW(verify_file_create(sasToken2));
-    }
-
-    // IP
-    {
-      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.IPRange = "0.0.0.0-0.0.0.1";
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      EXPECT_THROW(verify_file_create(sasToken), StorageException);
-      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      EXPECT_THROW(verify_file_create(sasToken2), StorageException);
-
-      // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
-      // builder2.IPRange = "0.0.0.0-255.255.255.255";
-      // sasToken = builder2.GenerateSasToken(*keyCredential);
-      // EXPECT_NO_THROW(verify_file_create(sasToken));
-      // sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      // EXPECT_NO_THROW(verify_file_create(sasToken2));
-    }
-
-    // PreauthorizedAgentObjectId
-    {
-      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().ToString();
-      builder2.CorrelationId = Azure::Core::Uuid::CreateUuid().ToString();
-      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      EXPECT_NO_THROW(verify_file_read(sasToken2));
-    }
-
-    // Identifier
-    {
-      Blobs::SetBlobContainerAccessPolicyOptions options;
-      options.AccessType = Blobs::Models::PublicAccessType::Blob;
-      Blobs::Models::SignedIdentifier identifier;
-      identifier.Id = RandomString(64);
-      identifier.StartsOn = sasStartsOn;
-      identifier.ExpiresOn = sasExpiresOn;
-      identifier.Permissions = "r";
-      options.SignedIdentifiers.emplace_back(identifier);
-      containerClinet0.SetAccessPolicy(options);
-
-      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.StartsOn.Reset();
-      builder2.ExpiresOn = Azure::DateTime();
-      builder2.SetPermissions(static_cast<Sas::DataLakeFileSystemSasPermissions>(0));
-      builder2.Identifier = identifier.Id;
-
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      // TODO: looks like a server bug, the identifier doesn't work sometimes.
-      // EXPECT_NO_THROW(verify_file_read(sasToken));
-    }
-
-    // response headers override
-    {
-      Files::DataLake::Models::PathHttpHeaders headers;
-      headers.ContentType = "application/x-binary";
-      headers.ContentLanguage = "en-US";
-      headers.ContentDisposition = "attachment";
-      headers.CacheControl = "no-cache";
-      headers.ContentEncoding = "identify";
-
-      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.SetPermissions(Sas::DataLakeSasPermissions::Read);
-      builder2.ContentType = "application/x-binary";
-      builder2.ContentLanguage = "en-US";
-      builder2.ContentDisposition = "attachment";
-      builder2.CacheControl = "no-cache";
-      builder2.ContentEncoding = "identify";
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sasToken);
-      fileClient0.Create();
-      auto p = fileClient.GetProperties();
-      EXPECT_EQ(p.Value.HttpHeaders.ContentType, headers.ContentType);
-      EXPECT_EQ(p.Value.HttpHeaders.ContentLanguage, headers.ContentLanguage);
-      EXPECT_EQ(p.Value.HttpHeaders.ContentDisposition, headers.ContentDisposition);
-      EXPECT_EQ(p.Value.HttpHeaders.CacheControl, headers.CacheControl);
-      EXPECT_EQ(p.Value.HttpHeaders.ContentEncoding, headers.ContentEncoding);
-
-      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sasToken);
-      p = fileClient.GetProperties();
-      EXPECT_EQ(p.Value.HttpHeaders.ContentType, headers.ContentType);
-      EXPECT_EQ(p.Value.HttpHeaders.ContentLanguage, headers.ContentLanguage);
-      EXPECT_EQ(p.Value.HttpHeaders.ContentDisposition, headers.ContentDisposition);
-      EXPECT_EQ(p.Value.HttpHeaders.CacheControl, headers.CacheControl);
-      EXPECT_EQ(p.Value.HttpHeaders.ContentEncoding, headers.ContentEncoding);
-    }
-
-    // Encryption scope
-    const std::string encryptionScope = GetTestEncryptionScope();
-    {
-      auto sasBuilderWithEncryptionScope = fileSasBuilder;
-      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
-      sasBuilderWithEncryptionScope.SetPermissions(Sas::DataLakeSasPermissions::All);
-      auto fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
-          fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(*keyCredential));
-      fileClientEncryptionScopeSas.Create();
-      auto properties = fileClientEncryptionScopeSas.GetProperties().Value;
-      ASSERT_TRUE(properties.EncryptionScope.HasValue());
-      EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
-
-      fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
-          fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
-      fileClientEncryptionScopeSas.Create();
-      properties = fileClientEncryptionScopeSas.GetProperties().Value;
-      ASSERT_TRUE(properties.EncryptionScope.HasValue());
-      EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
-    }
-    {
-      auto sasBuilderWithEncryptionScope = directorySasBuilder;
-      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
-      sasBuilderWithEncryptionScope.SetPermissions(Sas::DataLakeSasPermissions::All);
-      auto directoryClientEncryptionScopeSas = Files::DataLake::DataLakeDirectoryClient(
-          directory1Url
-          + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
-      directoryClientEncryptionScopeSas.Create();
-      auto properties = directoryClientEncryptionScopeSas.GetProperties().Value;
-      ASSERT_TRUE(properties.EncryptionScope.HasValue());
-      EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
     }
   }
 
+  TEST_F(DataLakeSasTest, AccountSasExpired)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiredOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasNonRead(dataLakeFileClient, sasToken);
+
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, ServiceSasExpired)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiredOn;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+
+    auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasNonRead(dataLakeFileClient, sasToken);
+
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, AccountSasWithoutStarttime)
+  {
+
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, ServiceSasWithoutStartTime)
+  {
+
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+
+    auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, AccountSasWithIP)
+  {
+
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+
+    accountSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
+    sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasNonRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, ServiceSasWithIP)
+  {
+
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+
+    auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+
+    fileSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
+    sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyDataLakeSasNonRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, FileSasWithPreauthorizedAgentObjectId)
+  {
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::DataLake::Models::UserDelegationKey userDelegationKey;
+    {
+      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+    fileSasBuilder.PreauthorizedAgentObjectId = RandomUUID();
+    fileSasBuilder.CorrelationId = RandomUUID();
+    auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, FileSasWithIdentifier)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Files::DataLake::SetFileSystemAccessPolicyOptions options;
+    options.AccessType = Files::DataLake::Models::PublicAccessType::None;
+    Files::DataLake::Models::SignedIdentifier identifier;
+    identifier.Id = RandomString(64);
+    identifier.StartsOn = sasStartsOn;
+    identifier.ExpiresOn = sasExpiresOn;
+    identifier.Permissions = "r";
+    options.SignedIdentifiers.emplace_back(identifier);
+    dataLakeFileSystemClient.SetAccessPolicy(options);
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.SetPermissions(static_cast<Sas::DataLakeFileSystemSasPermissions>(0));
+    fileSasBuilder.Identifier = identifier.Id;
+
+    TestSleep(std::chrono::seconds(30));
+
+    auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+
+    VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
+  }
+
+  TEST_F(DataLakeSasTest, FileSasResponseHeadersOverride)
+  {
+
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+    fileSasBuilder.ContentType = "application/x-binary";
+    fileSasBuilder.ContentLanguage = "en-US";
+    fileSasBuilder.ContentDisposition = "attachment";
+    fileSasBuilder.CacheControl = "no-cache";
+    fileSasBuilder.ContentEncoding = "identify";
+    auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+
+    auto fileClient1 = GetSasAuthenticatedClient(dataLakeFileClient, sasToken);
+    auto properties = fileClient1.GetProperties();
+    EXPECT_EQ(properties.Value.HttpHeaders.ContentType, fileSasBuilder.ContentType);
+    EXPECT_EQ(properties.Value.HttpHeaders.ContentLanguage, fileSasBuilder.ContentLanguage);
+    EXPECT_EQ(properties.Value.HttpHeaders.ContentDisposition, fileSasBuilder.ContentDisposition);
+    EXPECT_EQ(properties.Value.HttpHeaders.CacheControl, fileSasBuilder.CacheControl);
+    EXPECT_EQ(properties.Value.HttpHeaders.ContentEncoding, fileSasBuilder.ContentEncoding);
+  }
+
+  TEST_F(DataLakeSasTest, AccountSasEncryptionScope)
+  {
+    const std::string encryptionScope = GetTestEncryptionScope();
+
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+    accountSasBuilder.SetPermissions(
+        Sas::AccountSasPermissions::Read | Sas::AccountSasPermissions::Create);
+    accountSasBuilder.EncryptionScope = encryptionScope;
+
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    auto fileSystemClient = GetSasAuthenticatedClient(dataLakeFileSystemClient, sasToken);
+    auto fileClient1 = fileSystemClient.GetFileClient(RandomString());
+    fileClient1.Create();
+    auto properties = fileClient1.GetProperties().Value;
+
+    ASSERT_TRUE(properties.EncryptionScope.HasValue());
+    EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
+  }
+
+  TEST_F(DataLakeSasTest, ServiceSasEncryptionScope)
+  {
+    const std::string encryptionScope = GetTestEncryptionScope();
+
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSystemSasBuilder;
+    fileSystemSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSystemSasBuilder.StartsOn = sasStartsOn;
+    fileSystemSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSystemSasBuilder.FileSystemName = m_fileSystemName;
+    fileSystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
+    fileSystemSasBuilder.SetPermissions(Sas::DataLakeFileSystemSasPermissions::All);
+    fileSystemSasBuilder.EncryptionScope = encryptionScope;
+
+    auto sasToken = fileSystemSasBuilder.GenerateSasToken(*keyCredential);
+    auto fileSystemClient = GetSasAuthenticatedClient(dataLakeFileSystemClient, sasToken);
+    auto fileClient1 = fileSystemClient.GetFileClient(RandomString());
+    fileClient1.Create();
+    auto properties = fileClient1.GetProperties().Value;
+
+    ASSERT_TRUE(properties.EncryptionScope.HasValue());
+    EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
+  }
 }}} // namespace Azure::Storage::Test

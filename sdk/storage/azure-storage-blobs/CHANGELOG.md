@@ -1,18 +1,22 @@
 # Release History
 
-## 12.9.0-beta.2 (Unreleased)
+## 12.9.0-beta.3 (Unreleased)
 
 ### Features Added
-
-- TenantId can now be discovered through the service challenge response, when using a TokenCredential for authorization.
-    - A new property is now available on `BlobClientOptions` called `EnableTenantDiscovery`. If set to `true`, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.
-- Added a new field `SourceAuthorization` in options for copy operations, which can be used to specify authorization for copy source.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.9.0-beta.2 (2023-08-12)
+
+### Features Added
+
+- TenantId can now be discovered through the service challenge response, when using a TokenCredential for authorization.
+    - A new property is now available on `BlobClientOptions` called `EnableTenantDiscovery`. If set to `true`, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.
+- Added a new field `SourceAuthorization` in options for copy operations, which can be used to specify authorization for copy source.
 
 ## 12.9.0-beta.1 (2023-08-08)
 

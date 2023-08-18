@@ -67,13 +67,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Close();
     std::string GetLinkName() const;
     std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
-    uint32_t GetReceivedMessageId();
 
     std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
     WaitForIncomingMessage(Context const& context);
 
   private:
     UniqueMessageReceiver m_messageReceiver{};
+    bool m_receiverOpen{false};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;
