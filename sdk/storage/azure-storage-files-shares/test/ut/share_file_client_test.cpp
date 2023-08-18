@@ -849,7 +849,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, GetRangeListWithRange)
   {
-    int64_t rangeSize = 128;
+    size_t rangeSize = 128;
     std::vector<uint8_t> rangeContent = RandomBuffer(rangeSize);
     auto memBodyStream = Core::IO::MemoryBodyStream(rangeContent);
 
