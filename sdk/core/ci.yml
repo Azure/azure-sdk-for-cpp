@@ -37,6 +37,7 @@ pr:
       - doc/
       - samples/
       - .github/
+      - *.md
       - /**/*.md
 
 stages:
