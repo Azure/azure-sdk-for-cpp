@@ -102,7 +102,7 @@ cmake --build .
 
 #### CMake Project + fetch content
 
-For this scenario, CMake will fetch the Azure SDK source code and make it part of your project. THe SDK client libraries will be compiled at the same time as your application.
+For this scenario, CMake will fetch the Azure SDK source code and make it part of your project. The SDK client libraries will be compiled at the same time as your application.
 
 Follow the step 1 from above to create a CMake project first.
 
