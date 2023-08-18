@@ -17,6 +17,7 @@ trigger:
       - doc/
       - samples/
       - .github/
+      - *.md
       - /**/*.md
 
 pr:
