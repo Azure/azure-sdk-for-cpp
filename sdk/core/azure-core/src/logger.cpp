@@ -63,12 +63,6 @@ int Log::LoggerStringBuffer::sync()
   return 0;
 }
 
-Log::LoggerStringBuffer::int_type Log::LoggerStringBuffer::overflow(int_type meta)
-{
-  std::unique_lock<std::mutex> lock{m_mutex};
-  return std::stringbuf::overflow(meta);
-}
-
 std::streamsize Log::LoggerStringBuffer::xsputn(const char_type* ptr, std::streamsize count)
 {
   std::unique_lock<std::mutex> lock{m_mutex};

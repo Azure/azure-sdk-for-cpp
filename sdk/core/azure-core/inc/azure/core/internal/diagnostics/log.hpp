@@ -90,8 +90,12 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        */
       virtual int sync() override;
 
-      virtual int_type overflow(int_type meta) override;
-
+      /** @brief Implementation of std::basic_streambuf<char>::xsputn.
+       *
+       * @param ptr Pointer to the buffer to be written.
+       * @param count Number of characters to be written.
+       * @returns The number of characters written.
+       */
       virtual std::streamsize xsputn(const char_type* ptr, std::streamsize count) override;
 
     private:
@@ -139,13 +143,10 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        *
        * @param level - Represents the desired diagnostic level for the operation.
        */
-      Stream(Logger::Level level) : m_stream(GetStream(level)) { }
+      Stream(Logger::Level level) : m_stream(GetStream(level)) {}
 
       /** @brief Called when the Stream object goes out of scope. */
-      ~Stream()
-      {
-        m_stream.flush();
-      }
+      ~Stream() { m_stream.flush(); }
       Stream(Stream const&) = delete;
       Stream& operator=(Stream const&) = delete;
 
@@ -154,10 +155,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        * @tparam T Type of the object being inserted.
        * @param val value to be inserted into the underlying stream.
        */
-      template <typename T> std::ostream& operator<<(T val)
-      {
-        return m_stream << val;
-      }
+      template <typename T> std::ostream& operator<<(T val) { return m_stream << val; }
 
     private:
       LoggerStream& m_stream;
