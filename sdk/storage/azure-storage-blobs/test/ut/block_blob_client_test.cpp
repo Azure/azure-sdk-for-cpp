@@ -1999,7 +1999,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto getSas = [&]() {
       Sas::BlobSasBuilder sasBuilder;
       auto keyCredential
-          = _internal::ParseConnectionString(PremiumStorageConnectionString()).KeyCredential;
+          = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
       sasBuilder.BlobContainerName = sourceContainerName;
       sasBuilder.BlobName = sourceBlobName;
       sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
