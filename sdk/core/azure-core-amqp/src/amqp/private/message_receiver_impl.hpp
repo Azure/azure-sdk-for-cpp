@@ -74,6 +74,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     UniqueMessageReceiver m_messageReceiver{};
     bool m_receiverOpen{false};
+    bool m_listeningReceiver{false};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;

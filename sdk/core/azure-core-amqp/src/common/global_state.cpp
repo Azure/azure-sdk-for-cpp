@@ -126,15 +126,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     platform_deinit();
   }
 
-void GlobalStateHolder::AddPollable(std::shared_ptr<Pollable> pollable)
+  void GlobalStateHolder::AddPollable(std::shared_ptr<Pollable> pollable)
   {
     std::lock_guard<std::mutex> lock(m_pollablesMutex);
     if (std::find(m_pollables.begin(), m_pollables.end(), pollable) == m_pollables.end())
     {
       m_pollables.push_back(pollable);
-	}
+    }
   }
-
 
   GlobalStateHolder* GlobalStateHolder::GlobalStateInstance()
   {

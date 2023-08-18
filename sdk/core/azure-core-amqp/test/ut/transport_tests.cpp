@@ -256,13 +256,13 @@ Accept: */*
       listener.Start();
       EXPECT_ANY_THROW(listener.Start());
     }
-    #if 0
+#if 0
     {
       SocketListener listener(8008, nullptr);
 
       EXPECT_ANY_THROW(listener.Stop());
     }
-    #endif
+#endif
     {
       SocketListener listener1(8008, nullptr);
 
