@@ -77,14 +77,14 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   Blobs::Models::BlobItem BlobContainerClientTest::GetBlobItem(
+      const Blobs::BlobContainerClient& containerClient,
       const std::string& blobName,
       Blobs::Models::ListBlobsIncludeFlags include)
   {
     Blobs::ListBlobsOptions options;
     options.Prefix = blobName;
     options.Include = include;
-    for (auto page = m_blobContainerClient->ListBlobs(options); page.HasPage();
-         page.MoveToNextPage())
+    for (auto page = containerClient.ListBlobs(options); page.HasPage(); page.MoveToNextPage())
     {
       for (auto& blob : page.Blobs)
       {
@@ -572,21 +572,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto appendBlobClient = containerClient2.GetAppendBlobClient(blobName);
       auto blobContentInfo = appendBlobClient.Create();
       {
-        Blobs::ListBlobsOptions listOptions;
-        listOptions.Prefix = blobName;
-        for (auto page = containerClient2.ListBlobs(listOptions); page.HasPage();
-             page.MoveToNextPage())
-        {
-          for (auto& blob : page.Blobs)
-          {
-            if (blob.Name == blobName)
-            {
-              EXPECT_TRUE(blob.Details.IsServerEncrypted);
-              EXPECT_TRUE(blob.Details.EncryptionScope.HasValue());
-              EXPECT_EQ(blob.Details.EncryptionScope.Value(), testEncryptionScope);
-            }
-          }
-        }
+        auto blobItem = GetBlobItem(containerClient2, blobName);
+        EXPECT_TRUE(blobItem.Details.IsServerEncrypted);
+        EXPECT_TRUE(blobItem.Details.EncryptionScope.HasValue());
+        EXPECT_EQ(blobItem.Details.EncryptionScope.Value(), testEncryptionScope);
       }
       appendBlobClient.Delete();
       EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
@@ -1381,5 +1370,73 @@ namespace Azure { namespace Storage { namespace Test {
     blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::DeletedWithVersions);
     ASSERT_TRUE(blobItem.HasVersionsOnly.HasValue());
     EXPECT_TRUE(blobItem.HasVersionsOnly.Value());
+  }
+
+  TEST_F(BlobContainerClientTest, ObjectReplication_PLAYBACKONLY_)
+  {
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), clientOptions);
+    auto destServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
+        AdlsGen2ConnectionString(), clientOptions);
+    auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient("src");
+    auto destContainerClient = destServiceClient.GetBlobContainerClient("dest");
+
+    const auto blobName = "1.txt";
+    auto sourceBlobClient = sourceContainerClient.GetBlockBlobClient(blobName);
+    auto destBlobClient = destContainerClient.GetBlockBlobClient(blobName);
+
+    {
+      auto properties = sourceBlobClient.GetProperties().Value;
+      EXPECT_FALSE(properties.ObjectReplicationSourceProperties.empty());
+      for (const auto& i : properties.ObjectReplicationSourceProperties)
+      {
+        EXPECT_FALSE(i.PolicyId.empty());
+        EXPECT_FALSE(i.Rules.empty());
+        for (const auto& j : i.Rules)
+        {
+          EXPECT_FALSE(j.RuleId.empty());
+          EXPECT_FALSE(j.ReplicationStatus.ToString().empty());
+        }
+      }
+    }
+    {
+      auto blobItem = GetBlobItem(sourceContainerClient, blobName);
+      EXPECT_FALSE(blobItem.Details.ObjectReplicationSourceProperties.empty());
+      for (const auto& i : blobItem.Details.ObjectReplicationSourceProperties)
+      {
+        EXPECT_FALSE(i.PolicyId.empty());
+        EXPECT_FALSE(i.Rules.empty());
+        for (const auto& j : i.Rules)
+        {
+          EXPECT_FALSE(j.RuleId.empty());
+          EXPECT_FALSE(j.ReplicationStatus.ToString().empty());
+        }
+      }
+    }
+    {
+      auto downloadResponse = sourceBlobClient.Download().Value;
+      EXPECT_FALSE(downloadResponse.Details.ObjectReplicationSourceProperties.empty());
+      for (const auto& i : downloadResponse.Details.ObjectReplicationSourceProperties)
+      {
+        EXPECT_FALSE(i.PolicyId.empty());
+        EXPECT_FALSE(i.Rules.empty());
+        for (const auto& j : i.Rules)
+        {
+          EXPECT_FALSE(j.RuleId.empty());
+          EXPECT_FALSE(j.ReplicationStatus.ToString().empty());
+        }
+      }
+    }
+    {
+      auto properties = destBlobClient.GetProperties().Value;
+      ASSERT_TRUE(properties.ObjectReplicationDestinationPolicyId.HasValue());
+      EXPECT_FALSE(properties.ObjectReplicationDestinationPolicyId.Value().empty());
+    }
+    {
+      auto downloadResponse = destBlobClient.Download().Value;
+      ASSERT_TRUE(downloadResponse.Details.ObjectReplicationDestinationPolicyId.HasValue());
+      EXPECT_FALSE(downloadResponse.Details.ObjectReplicationDestinationPolicyId.Value().empty());
+    }
   }
 }}} // namespace Azure::Storage::Test
