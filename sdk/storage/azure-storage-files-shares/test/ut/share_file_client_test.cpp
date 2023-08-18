@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::CreateFileOptions options;
     options.HttpHeaders = httpHeaders;
 
-    EXPECT_NO_THROW(client.Create(1024));
+    EXPECT_NO_THROW(client.Create(1024, options));
   }
 
   TEST_F(FileShareFileClientTest, DownloadEmptyFile)
@@ -806,6 +806,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.SmbProperties.ChangedOn = sourceProperties.SmbProperties.ChangedOn;
       options.SmbProperties.LastWrittenOn = sourceProperties.SmbProperties.LastWrittenOn;
       options.PermissionCopyMode = Files::Shares::Models::PermissionCopyMode::Override;
+      options.SmbProperties.PermissionKey = sourceProperties.SmbProperties.PermissionKey;
 
       auto destFileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "2");

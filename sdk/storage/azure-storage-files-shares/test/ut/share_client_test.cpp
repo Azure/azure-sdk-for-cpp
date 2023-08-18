@@ -681,7 +681,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(shareClient1.GetPermission(created.FilePermissionKey));
   }
 
-  TEST_F(FileShareClientTest, WithSnapshot_LIVEONLY_)
+  TEST_F(FileShareClientTest, WithSnapshot)
   {
     const std::string timestamp1 = "2001-01-01T01:01:01.1111000Z";
     const std::string timestamp2 = "2022-02-02T02:02:02.2222000Z";
