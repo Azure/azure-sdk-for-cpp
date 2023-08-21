@@ -54,6 +54,12 @@ namespace Azure { namespace Storage { namespace Queues {
      * @brief API version 2018-03-28.
      *
      */
+    AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2018_03_28;
+
+    /**
+     * @brief API version 2019-12-12.
+     *
+     */
     AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2019_12_12;
 
   private:
