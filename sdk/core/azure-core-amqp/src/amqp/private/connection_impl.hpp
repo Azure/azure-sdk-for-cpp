@@ -108,9 +108,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context)
         const;
 
-    _Acquires_exclusive_lock_(m_amqpMutex) std::unique_lock<std::mutex> Lock()
+    std::unique_lock<std::mutex> Lock()
     {
-      return std::move(std::unique_lock<std::mutex>(m_amqpMutex));
+      return std::unique_lock<std::mutex>(m_amqpMutex);
     }
 
   private:

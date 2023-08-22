@@ -3,6 +3,7 @@
 
 #pragma once
 #include "azure/core/amqp/claims_based_security.hpp"
+#include "azure/core/amqp/management.hpp"
 
 #include <azure_uamqp_c/cbs.h>
 
@@ -21,8 +22,11 @@ namespace Azure { namespace Core { namespace _internal {
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
 
+#if defined(USE_UAMQP_CBS)
   class ClaimsBasedSecurityImpl final {
-
+#else
+  class ClaimsBasedSecurityImpl final : public _internal::ManagementClientEvents {
+#endif
   public:
     ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session);
     virtual ~ClaimsBasedSecurityImpl() noexcept;
@@ -40,13 +44,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& audience,
         std::string const& token,
         Context const& context);
+#if USE_UAMQP_CBS
     void SetTrace(bool traceEnabled);
-
+#endif
   private:
+#if defined(USE_UAMQP_CBS)
     UniqueAmqpCbsHandle m_cbs;
-    std::shared_ptr<_detail::SessionImpl> m_session;
     bool m_cbsOpen{false};
-    bool m_traceEnabled{false};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<CbsOpenResult> m_openResultQueue;
     Azure::Core::Amqp::Common::_internal::
@@ -59,5 +63,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         CBS_OPERATION_RESULT operationResult,
         uint32_t statusCode,
         const char* statusDescription);
+#else
+    std::shared_ptr<_detail::SessionImpl> m_session;
+    std::shared_ptr<_detail::ManagementClientImpl> m_management;
+    // Inherited via ManagementClientEvents
+    void OnError(Models::_internal::AmqpError const& error) override;
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail

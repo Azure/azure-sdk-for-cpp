@@ -67,7 +67,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& audience,
         std::string const& token,
         Context const& context = {});
-    void SetTrace(bool traceEnabled);
 
   private:
     std::shared_ptr<ClaimsBasedSecurityImpl> m_impl;

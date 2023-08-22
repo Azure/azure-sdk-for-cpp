@@ -13,10 +13,12 @@
 
 #include <cassert>
 #include <iomanip>
+#include <list>
 #include <mutex>
 #include <sstream>
 #include <stdarg.h>
 #include <stdexcept>
+#include <algorithm>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;

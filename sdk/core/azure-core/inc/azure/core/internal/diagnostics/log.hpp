@@ -80,8 +80,8 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     public:
       /** @brief Configure a LogStringBuffer with the specified logging level. */
       LoggerStringBuffer(Logger::Level level) : m_level{level} {}
-      LoggerStringBuffer(LoggerStringBuffer&& that) = default;
-      LoggerStringBuffer& operator=(LoggerStringBuffer&& that) = default;
+      LoggerStringBuffer(LoggerStringBuffer&& that) = delete;
+      LoggerStringBuffer& operator=(LoggerStringBuffer&& that) = delete;
       ~LoggerStringBuffer() override = default;
 
       /** @brief Implementation of std::basic_streambuf<char>::sync.
@@ -98,9 +98,11 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        */
       virtual std::streamsize xsputn(const char_type* ptr, std::streamsize count) override;
 
+      virtual int_type overflow(int_type ch) override;
+
     private:
       Logger::Level m_level;
-      std::mutex m_mutex;
+      std::recursive_mutex m_mutex;
     };
 
     /** @brief Logger Stream used internally by the GetStream() private method.

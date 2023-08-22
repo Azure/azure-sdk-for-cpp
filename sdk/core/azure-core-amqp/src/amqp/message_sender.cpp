@@ -206,7 +206,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageSenderImpl::Open(Context const& context)
   {
-    auto lock{m_session->GetConnection()->Lock()};
     if (m_options.AuthenticationRequired)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
@@ -214,6 +213,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
     }
 
+    auto lock{m_session->GetConnection()->Lock()};
     if (m_link == nullptr)
     {
       CreateLink();

@@ -44,9 +44,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session{connection.CreateSession({})};
       ManagementClient management(session.CreateManagementClient("Test", {}));
 
-      EXPECT_ANY_THROW(management.Open());
-      //    auto openResult = management.Open();
-      //    EXPECT_EQ(openResult, ManagementOpenResult::Error);
+      // EXPECT_ANY_THROW(management.Open());
+      auto openResult = management.Open();
+      EXPECT_EQ(openResult, ManagementOpenStatus::Error);
     }
 
     {

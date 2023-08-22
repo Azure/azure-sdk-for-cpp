@@ -55,6 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
       MessageTests::AmqpServerMock mockServer;
       ConnectionOptions options;
+      options.EnableTrace = true;
       options.Port = mockServer.GetPort();
       Connection connection("localhost", nullptr, options);
       Session session{connection.CreateSession()};
@@ -78,7 +79,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       {
         ClaimsBasedSecurity cbs(session);
-        cbs.SetTrace(true);
         CbsOpenResult openResult = cbs.Open();
         EXPECT_EQ(CbsOpenResult::Ok, openResult);
         GTEST_LOG_(INFO) << "Open Completed.";
@@ -100,6 +100,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       ConnectionOptions options;
       options.Port = mockServer.GetPort();
+      options.EnableTrace = true;
       Connection connection("localhost", nullptr, options);
       Session session{connection.CreateSession()};
 
@@ -107,7 +108,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       {
         ClaimsBasedSecurity cbs(session);
-        cbs.SetTrace(true);
 
         EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
         GTEST_LOG_(INFO) << "Open Completed.";
@@ -133,6 +133,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       ConnectionOptions options;
       options.Port = mockServer.GetPort();
+      options.EnableTrace = true;
       Connection connection("localhost", nullptr, options);
       Session session{connection.CreateSession()};
 
@@ -140,7 +141,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       {
         ClaimsBasedSecurity cbs(session);
-        cbs.SetTrace(true);
 
         EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
         GTEST_LOG_(INFO) << "Open Completed.";

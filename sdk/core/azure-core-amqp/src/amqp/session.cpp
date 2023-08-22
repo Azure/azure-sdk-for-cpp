@@ -239,7 +239,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     auto accessToken = GetConnection()->GetSecurityToken(audience, context);
 
-    m_claimsBasedSecurity->SetTrace(GetConnection()->IsTraceEnabled());
     if (!m_cbsOpen)
     {
       auto cbsOpenStatus = m_claimsBasedSecurity->Open(context);

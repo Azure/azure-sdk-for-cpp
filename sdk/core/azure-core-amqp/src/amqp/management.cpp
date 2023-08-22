@@ -107,9 +107,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
-    /** Authentication needs to happen *before* the management object is created. */
-    m_session->AuthenticateIfNeeded(
-        m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
+    /** Authentication needs to happen *before* the management object is created.
+     *
+     * Note that we ONLY enable authentication if we know we're talking to the management node.
+     * Other nodes require their own authentication.
+     */
+    if (m_options.ManagementNodeName == "$management")
+    {
+      m_session->AuthenticateIfNeeded(
+          m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
+    }
 #if UAMQP_MANAGEMENT_CLIENT
     CreateManagementClient();
 
@@ -162,11 +169,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // Now open the message sender and receiver.
     SetState(ManagementState::Opening);
-    m_messageSender->Open(context);
-    m_messageReceiver->Open(context);
+    try
+    {
+      m_messageSender->Open(context);
+      m_messageReceiver->Open(context);
+    }
+    catch (std::runtime_error const& e)
+    {
+      Log::Stream(Logger::Level::Error)
+          << "Exception thrown opening message sender and receiver." << e.what();
+      return _internal::ManagementOpenStatus::Error;
+    }
 
     // And finally, wait for the message sender and receiver to finish opening before we return.
-    auto result = m_openCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
+    auto result = m_openCompleteQueue.WaitForResult(context);
     if (result)
     {
       // If the message sender or receiver failed to open, we need to close them
@@ -181,7 +197,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return rv;
     }
     // If result is null, then it means that the context was cancelled.
-    throw Azure::Core::OperationCancelledException("Management Open operation was cancelled.");
+    return _internal::ManagementOpenStatus::Cancelled;
 #endif // UAMQP_MANAGEMENT_CLIENT
   }
 
@@ -265,7 +281,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           }
         },
         context);
-    auto result = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection());
+    auto result = m_messageQueue.WaitForResult(context);
     if (result)
     {
       _internal::ManagementOperationResult rv;
