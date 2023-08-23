@@ -104,7 +104,7 @@ az_rtti_setup(
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-files-datalake azure-storage-test "tests?/*;samples?/*")
+create_code_coverage(storage azure-storage-files-datalake azure-storage-test "tests?/*;samples?/*;inc/azure/storage/files/datalake/rest_client.hpp;src/rest_client.cpp")
 
 if(BUILD_TESTING)
   add_subdirectory(test/ut)
