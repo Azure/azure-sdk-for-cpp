@@ -44,13 +44,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       AmqpServerMock(
           std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
-          : m_testPort{FindAvailableSocket()}, m_connectionId{"Mock Server for " + name}
+          : m_connectionId{"Mock Server for " + name}, m_testPort{FindAvailableSocket()}
       {
       }
       AmqpServerMock(
           uint16_t listeningPort,
           std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
-          : m_testPort{listeningPort}, m_connectionId{"Mock Server for " + name}
+          : m_connectionId{"Mock Server for " + name}, m_testPort{listeningPort}
       {
       }
       virtual void Poll() const {}
