@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options,
       _internal::MessageSenderEvents* events)
-      : m_listener{true}, m_events{events}, m_session{session}, m_target{target}, m_options{options}
+      : m_events{events}, m_session{session}, m_target{target}, m_options{options}
   {
     CreateLink(endpoint);
     m_messageSender.reset(
@@ -240,10 +240,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
     // Mark the connection as async so that we can use the async APIs.
-    if (!m_listener)
-    {
-      m_session->GetConnection()->EnableAsyncOperation(true);
-    }
+    m_session->GetConnection()->EnableAsyncOperation(true);
     m_isOpen = true;
   }
   void MessageSenderImpl::Close()
@@ -323,71 +320,62 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage const& message,
       Context const& context)
   {
-    auto lock{m_session->GetConnection()->Lock()};
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         Azure::Core::Amqp::_internal::MessageSendStatus,
         Models::_internal::AmqpError>
         sendCompleteQueue;
+    {
+      auto lock{m_session->GetConnection()->Lock()};
 
-    QueueSendInternal(
-        message,
-        [&sendCompleteQueue, this](
-            Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
-            Models::AmqpValue deliveryStatus) {
-          Models::_internal::AmqpError error;
+      QueueSendInternal(
+          message,
+          [&sendCompleteQueue, this](
+              Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
+              Models::AmqpValue deliveryStatus) {
+            Models::_internal::AmqpError error;
 
-          // If the send failed. then we need to return the error. If the send completed because
-          // of an error, it's possible that the deliveryStatus provided is null. In that case,
-          // we use the cached saved error because it is highly likely to be better than
-          // nothing.
-          if (sendResult != _internal::MessageSendStatus::Ok)
-          {
-            if (deliveryStatus.IsNull())
+            // If the send failed. then we need to return the error. If the send completed because
+            // of an error, it's possible that the deliveryStatus provided is null. In that case,
+            // we use the cached saved error because it is highly likely to be better than
+            // nothing.
+            if (sendResult != _internal::MessageSendStatus::Ok)
             {
-              error = m_savedMessageError;
+              if (deliveryStatus.IsNull())
+              {
+                error = m_savedMessageError;
+              }
+              else
+              {
+                if (deliveryStatus.GetType() != Models::AmqpValueType::List)
+                {
+                  throw std::runtime_error("Delivery status is not a list");
+                }
+                auto deliveryStatusAsList{deliveryStatus.AsList()};
+                if (deliveryStatusAsList.size() != 1)
+                {
+                  throw std::runtime_error("Delivery Status list is not of size 1");
+                }
+                Models::AmqpValue firstState{deliveryStatusAsList[0]};
+                ERROR_HANDLE errorHandle;
+                if (!amqpvalue_get_error(firstState, &errorHandle))
+                {
+                  Models::_internal::UniqueAmqpErrorHandle uniqueError{
+                      errorHandle}; // This will free the error handle when it goes out of scope.
+                  error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
+                }
+              }
             }
             else
             {
-              if (deliveryStatus.GetType() != Models::AmqpValueType::List)
-              {
-                throw std::runtime_error("Delivery status is not a list");
-              }
-              auto deliveryStatusAsList{deliveryStatus.AsList()};
-              if (deliveryStatusAsList.size() != 1)
-              {
-                throw std::runtime_error("Delivery Status list is not of size 1");
-              }
-              Models::AmqpValue firstState{deliveryStatusAsList[0]};
-              ERROR_HANDLE errorHandle;
-              if (!amqpvalue_get_error(firstState, &errorHandle))
-              {
-                Models::_internal::UniqueAmqpErrorHandle uniqueError{
-                    errorHandle}; // This will free the error handle when it goes out of scope.
-                error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
-              }
+              // If we successfully sent the message, then whatever saved error should be cleared,
+              // it's no longer valid.
+              m_savedMessageError = Models::_internal::AmqpError();
             }
-          }
-          else
-          {
-            // If we successfully sent the message, then whatever saved error should be cleared,
-            // it's no longer valid.
-            m_savedMessageError = Models::_internal::AmqpError();
-          }
-          sendCompleteQueue.CompleteOperation(sendResult, error);
-        },
-        context);
-    std::unique_ptr<std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError>> result;
-    if (m_session->GetConnection()->IsAsyncOperation())
-    {
-      // Unlock the connection lock hile we wait for the send to complete. This allows polling to
-      // continue on the background thread.
-      lock.unlock();
-      result = sendCompleteQueue.WaitForResult(context);
+            sendCompleteQueue.CompleteOperation(sendResult, error);
+          },
+          context);
     }
-    else
-    {
-      result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
-    }
+    auto result = sendCompleteQueue.WaitForResult(context);
     if (result)
     {
       return std::move(*result);

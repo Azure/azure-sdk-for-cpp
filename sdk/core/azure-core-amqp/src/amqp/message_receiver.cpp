@@ -73,8 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::_internal::MessageSource const& source,
       MessageReceiverOptions const& options,
       MessageReceiverEvents* eventHandler)
-      : m_listeningReceiver{true}, m_options{options}, m_source{source}, m_session{session},
-        m_eventHandler(eventHandler)
+      : m_options{options}, m_source{source}, m_session{session}, m_eventHandler(eventHandler)
   {
     CreateLink(linkEndpoint);
 
@@ -182,16 +181,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Cannot call WaitForIncomingMessage when using an event handler.");
     }
-    std::unique_ptr<std::tuple<Models::AmqpMessage, Models::_internal::AmqpError>> result;
-    if (m_listeningReceiver)
-    {
-      result = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection());
-    }
-    else
-    {
-      result = m_messageQueue.WaitForResult(context);
-    }
 
+    auto result = m_messageQueue.WaitForResult(context);
     if (result)
     {
       std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError> rv;
@@ -337,25 +328,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_receiverOpen = true;
 
     // Mark the connection as async so that we can use the async APIs.
-    if (!m_listeningReceiver)
-    {
-      m_session->GetConnection()->EnableAsyncOperation(true);
-    }
+    m_session->GetConnection()->EnableAsyncOperation(true);
   }
 
   void MessageReceiverImpl::Close()
   {
-    if (!m_listeningReceiver && m_receiverOpen)
+    if (m_receiverOpen)
     {
       m_session->GetConnection()->EnableAsyncOperation(false);
+
+      // Clear messages from the queue.
+      m_messageQueue.Clear();
+      if (messagereceiver_close(m_messageReceiver.get()))
+      {
+        throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
+      }
+      m_receiverOpen = false;
     }
-    // Clear messages from the queue.
-    m_messageQueue.Clear();
-    if (messagereceiver_close(m_messageReceiver.get()))
-    {
-      throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
-    }
-    m_receiverOpen = false;
   }
 
   std::string MessageReceiverImpl::GetLinkName() const

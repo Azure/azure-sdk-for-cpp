@@ -11,6 +11,7 @@
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xlogging.h>
 
+#include <algorithm>
 #include <cassert>
 #include <iomanip>
 #include <list>
@@ -18,7 +19,6 @@
 #include <sstream>
 #include <stdarg.h>
 #include <stdexcept>
-#include <algorithm>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;

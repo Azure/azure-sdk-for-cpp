@@ -72,12 +72,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       ConnectionOptions options;
       options.Port = mockServer.GetPort();
+      options.EnableTrace = false;
       Connection connection("localhost", nullptr, options);
       Session session{connection.CreateSession()};
 
       mockServer.StartListening();
 
       {
+        GTEST_LOG_(INFO) << "Create CBS object.";
         ClaimsBasedSecurity cbs(session);
         CbsOpenResult openResult = cbs.Open();
         EXPECT_EQ(CbsOpenResult::Ok, openResult);

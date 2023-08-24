@@ -42,8 +42,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> MessageSenderPresentQueue;
       };
 
-      AmqpServerMock() { m_testPort = FindAvailableSocket(); }
-      AmqpServerMock(uint16_t listeningPort) : m_testPort{listeningPort} {}
+      AmqpServerMock(
+          std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
+          : m_testPort{FindAvailableSocket()}, m_connectionId{"Mock Server for " + name}
+      {
+      }
+      AmqpServerMock(
+          uint16_t listeningPort,
+          std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
+          : m_testPort{listeningPort}, m_connectionId{"Mock Server for " + name}
+      {
+      }
       virtual void Poll() const {}
 
       bool WaitForConnection(
@@ -61,16 +70,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           std::string const& nodeName,
           Azure::Core::Context const& context = {})
       {
-        auto result = m_linkMessageQueues[nodeName].MessageReceiverPresentQueue.WaitForPolledResult(
-            context, *this, *m_connection);
+        auto result
+            = m_linkMessageQueues[nodeName].MessageReceiverPresentQueue.WaitForResult(context);
         return result != nullptr;
       }
       bool WaitForMessageSender(
           std::string const& nodeName,
           Azure::Core::Context const& context = {})
       {
-        auto result = m_linkMessageQueues[nodeName].MessageSenderPresentQueue.WaitForPolledResult(
-            context, *this, *m_connection);
+        auto result
+            = m_linkMessageQueues[nodeName].MessageSenderPresentQueue.WaitForResult(context);
         return result != nullptr;
       }
       std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage> WaitForMessage(
@@ -78,8 +87,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       {
         // Poll for completion on both the mock server and the connection, that ensures that
         // we can implement unsolicited sends from the Poll function.
-        auto result = m_linkMessageQueues[nodeName].MessageQueue.WaitForPolledResult(
-            m_listenerContext, *m_connection, *this);
+        auto result
+            = m_linkMessageQueues[nodeName].MessageQueue.WaitForResult(m_listenerContext, *this);
         if (result)
         {
           return std::move(std::get<0>(*result));
@@ -151,7 +160,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           while (!m_listenerContext.IsCancelled())
           {
             std::this_thread::yield();
-            m_connection->Poll();
             for (const auto& val : m_linkMessageQueues)
             {
               if (!val.second.LinkReceiver)
@@ -213,6 +221,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         if (m_connection)
         {
+          m_connection->Close();
           m_connection.reset();
         }
       }
@@ -226,6 +235,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_connectionQueue;
 
+      std::string m_connectionId;
       std::thread m_serverThread;
       std::uint16_t m_testPort;
       bool m_forceCbsError{false};
@@ -362,7 +372,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
                 transport, nullptr)};
         Azure::Core::Amqp::_internal::ConnectionOptions options;
-        options.ContainerId = "connectionId";
+        options.ContainerId = m_connectionId;
         options.EnableTrace = true;
         m_connection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
             amqpTransport, options, this);
@@ -417,24 +427,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::Models::_internal::MessageSource msgSource(source);
         Azure::Core::Amqp::Models::_internal::MessageTarget msgTarget(target);
 
-        GTEST_LOG_(INFO) << "OnLinkAttached. Source: " << msgSource << " Target: " << msgTarget;
+        GTEST_LOG_(INFO) << "OnLinkAttached. Source: " << msgSource << " Target: " << msgTarget
+                         << " Role: " << static_cast<int>(role);
 
         // If the incoming role is receiver, then we want to create a sender to talk to it.
         // Similarly, if the incoming role is sender, we want to create a receiver to receive
         // from it.
         if (role == Azure::Core::Amqp::_internal::SessionRole::Receiver)
         {
-          Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
-          senderOptions.EnableTrace = true;
-          senderOptions.Name = name;
-          senderOptions.MessageSource = msgSource;
-          senderOptions.InitialDeliveryCount = 0;
+          GTEST_LOG_(INFO) << "Role is receiver, create sender.";
           std::string targetAddress = static_cast<std::string>(msgTarget.GetAddress());
-          MessageLinkComponents& linkComponents = m_linkMessageQueues[static_cast<std::string>(
-              senderOptions.MessageSource.GetAddress())];
+          MessageLinkComponents& linkComponents
+              = m_linkMessageQueues[static_cast<std::string>(msgSource.GetAddress())];
 
           if (!linkComponents.LinkSender)
           {
+            GTEST_LOG_(INFO) << "No sender found, create new.";
+            Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+            senderOptions.EnableTrace = true;
+            senderOptions.Name = name;
+            senderOptions.MessageSource = msgSource;
+            senderOptions.InitialDeliveryCount = 0;
             linkComponents.LinkSender
                 = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
                     session.CreateMessageSender(
@@ -445,16 +458,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         else if (role == Azure::Core::Amqp::_internal::SessionRole::Sender)
         {
-          Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
-          receiverOptions.EnableTrace = true;
-          receiverOptions.Name = name;
-          receiverOptions.MessageTarget = msgTarget;
-          receiverOptions.InitialDeliveryCount = 0;
-          std::string sourceAddress = static_cast<std::string>(msgSource.GetAddress());
-          MessageLinkComponents& linkComponents = m_linkMessageQueues[static_cast<std::string>(
-              receiverOptions.MessageTarget.GetAddress())];
+          GTEST_LOG_(INFO) << "Role is sender, create receiver.";
+          MessageLinkComponents& linkComponents
+              = m_linkMessageQueues[static_cast<std::string>(msgTarget.GetAddress())];
           if (!linkComponents.LinkReceiver)
           {
+            GTEST_LOG_(INFO) << "No receiver found, create new.";
+            Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
+            receiverOptions.EnableTrace = true;
+            receiverOptions.Name = name;
+            receiverOptions.MessageTarget = msgTarget;
+            receiverOptions.InitialDeliveryCount = 0;
+            std::string sourceAddress = static_cast<std::string>(msgSource.GetAddress());
             linkComponents.LinkReceiver
                 = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
                     session.CreateMessageReceiver(

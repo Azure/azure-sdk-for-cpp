@@ -80,6 +80,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   void Connection::Listen() { m_impl->Listen(); }
   void Connection::Open() { m_impl->Open(); }
+  void Connection::Close() { m_impl->Close(); }
   void Connection::Close(
       std::string const& condition,
       std::string const& description,
@@ -166,7 +167,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_enableAsyncOperation)
     {
-      std::unique_lock<std::mutex> lock(m_amqpMutex);
+      std::unique_lock<LockType> lock(m_amqpMutex);
       m_connection.reset();
     }
   }
@@ -178,6 +179,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       containerId = Azure::Core::Uuid::CreateUuid().ToString();
     }
+    m_containerId = containerId;
 
     m_connection.reset(connection_create2(
         *m_transport,
@@ -223,10 +225,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (m_enableAsyncOperation)
     {
-      std::unique_lock<std::mutex> lock(m_amqpMutex);
-      if (m_connection)
+      std::unique_lock<LockType> lock(m_amqpMutex);
+      if (!m_isClosing)
       {
-        connection_dowork(m_connection.get());
+        if (m_connection)
+        {
+          connection_dowork(m_connection.get());
+        }
       }
     }
     else
@@ -289,6 +294,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // When the connection transitions into the error or end state, it is no longer pollable.
       Log::Stream(Logger::Level::Verbose)
           << "Connection state changed to " << static_cast<int>(newState) << std::endl;
+      auto lock{connection->Lock()};
       if (!connection->m_isClosing)
       {
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
@@ -327,13 +333,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_enableAsyncOperation = enable;
     if (enable)
     {
-      Log::Stream(Logger::Level::Verbose) << "Enabled async operation on connection." << this;
-      Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(shared_from_this());
+      if (m_openCount++ == 0)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Enabled async operation on connection." << this << " ID: " << m_containerId;
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(shared_from_this());
+      }
     }
     else
     {
-      Log::Stream(Logger::Level::Verbose) << "Disabled async operation on connection." << this;
-      Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(shared_from_this());
+      if (--m_openCount == 0)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Disabled async operation on connection." << this << " ID: " << m_containerId;
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+            shared_from_this());
+      }
     }
   }
 
@@ -343,10 +358,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not open connection."); // LCOV_EXCL_LINE
     }
-    if (m_enableAsyncOperation)
-    {
-      Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(shared_from_this());
-    }
+    EnableAsyncOperation(true);
   }
 
   void ConnectionImpl::Listen()
@@ -355,6 +367,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not listen on connection."); // LCOV_EXCL_LINE
     }
+
+    EnableAsyncOperation(true);
+  }
+
+  void ConnectionImpl::Close()
+  {
+    auto lock{Lock()};
+    EnableAsyncOperation(false);
+    m_isClosing = true;
   }
 
   void ConnectionImpl::Close(
@@ -372,15 +393,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Stop polling on this connection, we're shutting it down.
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(shared_from_this());
     }
-    std::unique_lock<std::mutex> lock(m_amqpMutex);
-    if (connection_close(
-            m_connection.get(),
-            (condition.empty() ? nullptr : condition.c_str()),
-            (description.empty() ? nullptr : description.c_str()),
-            info))
     {
-      throw std::runtime_error("Could not close connection.");
+      std::unique_lock<LockType> lock(m_amqpMutex);
+      if (connection_close(
+              m_connection.get(),
+              (condition.empty() ? nullptr : condition.c_str()),
+              (description.empty() ? nullptr : description.c_str()),
+              info))
+      {
+        throw std::runtime_error("Could not close connection.");
+      }
     }
+    Close();
   }
 
   uint32_t ConnectionImpl::GetMaxFrameSize() const
@@ -435,7 +459,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ConnectionImpl::SetIdleEmptyFrameSendPercentage(double ratio)
   {
-    std::unique_lock<std::mutex> lock(m_amqpMutex);
+    std::unique_lock<LockType> lock(m_amqpMutex);
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection.get(), ratio))
     {
       throw std::runtime_error(

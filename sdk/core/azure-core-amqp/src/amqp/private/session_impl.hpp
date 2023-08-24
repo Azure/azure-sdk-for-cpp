@@ -75,8 +75,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     UniqueAmqpSession m_session;
     _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
-    std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
-    bool m_cbsOpen{false};
+    //    std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
+    //    bool m_cbsOpen{false};
 
     void Authenticate(std::string const& audience, Context const& context);
 

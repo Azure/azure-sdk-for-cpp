@@ -11,8 +11,7 @@
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ProcessorTest : public EventHubsTestBase {
-  };
+  class ProcessorTest : public EventHubsTestBase {};
   namespace {
 
     std::string GetRandomName()
@@ -38,9 +37,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringNoEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = "processor unit test";
-
-    options.Name = "processor unittest";
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+    options.Name = testing::UnitTest::GetInstance()->current_test_info()->name();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, eventHubName, consumerGroup, options);
@@ -55,6 +53,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     processor.Run();
     std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    processor.Close();
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

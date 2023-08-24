@@ -72,7 +72,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_managementEntityPath{managementEntityPath}
   {
   }
-  ManagementClientImpl::~ManagementClientImpl() noexcept { m_eventHandler = nullptr; }
+  ManagementClientImpl::~ManagementClientImpl() noexcept
+  {
+    m_eventHandler = nullptr;
+    if (m_isOpen)
+    {
+      Close();
+    }
+  }
 
 #if UAMQP_MANAGEMENT_CLIENT
   void ManagementClientImpl::CreateManagementClient()
@@ -194,6 +201,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_messageReceiver->Close();
         m_messageReceiverOpen = false;
       }
+      else
+      {
+        m_isOpen = true;
+      }
       return rv;
     }
     // If result is null, then it means that the context was cancelled.
@@ -314,6 +325,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_messageReceiver->Close();
     }
+    m_isOpen = false;
   }
 
 #if UAMQP_MANAGEMENT_IMPLEMENTATION

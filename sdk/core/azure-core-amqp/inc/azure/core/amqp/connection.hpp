@@ -38,6 +38,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestMessages_SenderOpenClose_Test;
   class TestMessages_TestLocalhostVsTls_Test;
   class TestMessages_SenderSendAsync_Test;
+  class TestMessages_SenderOpenClose_Test;
+  class TestMessages_ReceiverOpenClose_Test;
+  class TestMessages_ReceiverReceiveAsync_Test;
+
 }}}} // namespace Azure::Core::Amqp::Tests
 #endif // TESTING_BUILD
 #if defined(SAMPLES_BUILD)
@@ -351,6 +355,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     void Listen();
 
+    /** @brief Close the connection, stopping all polling on the connection.
+     */
+    void Close();
+
     /** @brief Closes the current connection.
      *
      * @param condition The condition for closing the connection.
@@ -450,6 +458,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
     friend class Azure::Core::Amqp::Tests::TestMessages_TestLocalhostVsTls_Test;
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
+
 #endif // TESTING_BUILD
 #if SAMPLES_BUILD
     friend int LocalServerSample::LocalServerSampleMain();

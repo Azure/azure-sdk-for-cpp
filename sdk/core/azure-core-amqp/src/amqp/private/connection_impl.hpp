@@ -6,6 +6,7 @@
 #include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/network/transport.hpp"
+#include "azure/core/platform.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 
@@ -14,6 +15,14 @@
 #include <chrono>
 #include <memory>
 #include <string>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+
+#define ACQUIRES_LOCK(...) _Acquires_exclusive_lock_(__VA_ARGS__)
+//#define ACQUIRES_LOCK(...) MSVC_ACQUIRES_LOCK(__VA_ARGS__)
+#else
+#define ACQUIRES_LOCK(...)
+#endif
 
 namespace Azure { namespace Core { namespace _internal {
   template <> struct UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
@@ -83,6 +92,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Open();
     void Listen();
 
+    void Close();
+
     void Close(
         std::string const& condition,
         std::string const& description,
@@ -108,10 +119,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context)
         const;
 
-    std::unique_lock<std::mutex> Lock()
-    {
-      return std::unique_lock<std::mutex>(m_amqpMutex);
-    }
+    using LockType = std::recursive_mutex;
+
+    ACQUIRES_LOCK(m_amqpMutex)
+    std::unique_lock<LockType> Lock() { return std::unique_lock<LockType>(m_amqpMutex); }
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
@@ -126,9 +137,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
     std::shared_ptr<Credentials::TokenCredential> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
-    std::mutex m_amqpMutex;
+    LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;
     bool m_isClosing = false;
+    std::atomic<uint32_t> m_openCount;
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,
