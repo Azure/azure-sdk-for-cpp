@@ -3,13 +3,15 @@
 
 #include "azure/storage/queues/queue_sas_builder.hpp"
 
+#include "azure/storage/queues/rest_client.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
 
   namespace {
-    constexpr static const char* SasVersion = "2019-12-12";
+    constexpr static const char* SasVersion = Queues::_detail::ApiVersion;
   }
 
   void QueueSasBuilder::SetPermissions(QueueSasPermissions permissions)

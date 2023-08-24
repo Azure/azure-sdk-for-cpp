@@ -26,6 +26,31 @@ namespace Azure { namespace Storage { namespace Test {
             StandardStorageConnectionString(), options));
   }
 
+  TEST_F(FileShareServiceClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    {
+      auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+      auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+      auto keyCredential
+          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+      Sas::AccountSasBuilder accountSasBuilder;
+      accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      accountSasBuilder.StartsOn = sasStartsOn;
+      accountSasBuilder.ExpiresOn = sasExpiresOn;
+      accountSasBuilder.Services = Sas::AccountSasServices::Files;
+      accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+      accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::Read);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+
+      auto serviceClient = Files::Shares::ShareServiceClient(
+          m_shareServiceClient->GetUrl() + sasToken, clientOptions);
+      EXPECT_NO_THROW(serviceClient.GetProperties());
+    }
+  }
+
   TEST_F(FileShareServiceClientTest, ListShares)
   {
     std::string prefix1 = LowercaseRandomString();

@@ -671,5 +671,29 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::CreateSharePermissionResult created;
     EXPECT_NO_THROW(created = shareClient.CreatePermission(permission).Value);
     EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
+
+    // OAuth Constructor
+    auto shareClient1 = Files::Shares::ShareClient(
+        m_shareClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+        options);
+    EXPECT_NO_THROW(shareClient1.GetPermission(created.FilePermissionKey));
+  }
+
+  TEST_F(FileShareClientTest, WithSnapshot)
+  {
+    const std::string timestamp1 = "2001-01-01T01:01:01.1111000Z";
+    const std::string timestamp2 = "2022-02-02T02:02:02.2222000Z";
+
+    auto client1 = m_shareClient->WithSnapshot(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithSnapshot("");
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
 }}} // namespace Azure::Storage::Test
