@@ -284,10 +284,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (connection->m_eventHandler)
     {
-      connection->m_eventHandler->OnConnectionStateChanged(
-          ConnectionFactory::CreateFromInternal(connection->shared_from_this()),
-          ConnectionStateFromCONNECTION_STATE(newState),
-          ConnectionStateFromCONNECTION_STATE(oldState));
+      if (!connection->m_isClosing)
+      {
+        connection->m_eventHandler->OnConnectionStateChanged(
+            ConnectionFactory::CreateFromInternal(connection->shared_from_this()),
+            ConnectionStateFromCONNECTION_STATE(newState),
+            ConnectionStateFromCONNECTION_STATE(oldState));
+      }
     }
     if (newState == CONNECTION_STATE_ERROR || newState == CONNECTION_STATE_END)
     {

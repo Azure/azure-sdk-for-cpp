@@ -335,6 +335,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (m_receiverOpen)
     {
+      auto lock{m_session->GetConnection()->Lock()};
       m_session->GetConnection()->EnableAsyncOperation(false);
 
       // Clear messages from the queue.

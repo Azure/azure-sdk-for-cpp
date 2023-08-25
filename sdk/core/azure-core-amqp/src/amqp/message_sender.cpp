@@ -247,8 +247,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (m_isOpen)
     {
-      m_session->GetConnection()->EnableAsyncOperation(false);
       auto lock{m_session->GetConnection()->Lock()};
+      m_session->GetConnection()->EnableAsyncOperation(false);
       if (messagesender_close(m_messageSender.get()))
       {
         throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
