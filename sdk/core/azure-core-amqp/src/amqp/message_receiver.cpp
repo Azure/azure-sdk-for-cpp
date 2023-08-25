@@ -327,6 +327,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     m_receiverOpen = true;
 
+      Log::Stream(Logger::Level::Verbose) << "Starting message receiver. Start async";
     // Mark the connection as async so that we can use the async APIs.
     m_session->GetConnection()->EnableAsyncOperation(true);
   }
@@ -335,7 +336,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (m_receiverOpen)
     {
+      Log::Stream(Logger::Level::Verbose) << "Lock for Closing message receiver.";
       auto lock{m_session->GetConnection()->Lock()};
+      Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
+
       m_session->GetConnection()->EnableAsyncOperation(false);
 
       // Clear messages from the queue.
