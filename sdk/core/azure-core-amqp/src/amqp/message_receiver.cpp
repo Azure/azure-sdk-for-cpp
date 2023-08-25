@@ -327,7 +327,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     m_receiverOpen = true;
 
-      Log::Stream(Logger::Level::Verbose) << "Starting message receiver. Start async";
+    Log::Stream(Logger::Level::Verbose) << "Starting message receiver. Start async";
     // Mark the connection as async so that we can use the async APIs.
     m_session->GetConnection()->EnableAsyncOperation(true);
   }
