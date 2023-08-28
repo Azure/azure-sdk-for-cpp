@@ -82,6 +82,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "HLOCAL",
     "HRESULT",
     "IMDS",
     "immutability",
@@ -242,6 +243,12 @@
         "sjoubert",
         "sourav",
         "Sylvain"
+      ]
+    },
+    {
+      "filename": "**/sdk/identity/azure-identity/**",
+      "words": [
+        "PCCERT"
       ]
     },
     {

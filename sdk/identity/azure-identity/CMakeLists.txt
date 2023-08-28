@@ -101,8 +101,13 @@ target_include_directories(
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(azure-identity PRIVATE OpenSSL::Crypto)
+if(WIN32)
+  find_package(wil CONFIG REQUIRED)
+  target_link_libraries(azure-identity PRIVATE WIL::WIL bcrypt crypt32)
+else()
+  find_package(OpenSSL REQUIRED)
+  target_link_libraries(azure-identity PRIVATE OpenSSL::Crypto)
+endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})

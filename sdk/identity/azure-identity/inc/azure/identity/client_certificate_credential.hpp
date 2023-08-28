@@ -24,16 +24,16 @@ namespace Azure { namespace Identity {
   namespace _detail {
     class TokenCredentialImpl;
 
-    void FreePkeyImpl(void* pkey);
+    void FreePrivateKeyImpl(void* pkey);
 
-    template <typename> struct UniquePkeyHelper;
-    template <> struct UniquePkeyHelper<void*>
+    template <typename> struct UniquePrivateKeyHelper;
+    template <> struct UniquePrivateKeyHelper<void*>
     {
-      static void FreePkey(void* pkey) { FreePkeyImpl(pkey); }
-      using type = Azure::Core::_internal::BasicUniqueHandle<void, FreePkey>;
+      static void FreePrivateKey(void* pkey) { FreePrivateKeyImpl(pkey); }
+      using type = Azure::Core::_internal::BasicUniqueHandle<void, FreePrivateKey>;
     };
 
-    using UniquePkeyHandle = Azure::Core::_internal::UniqueHandle<void*, UniquePkeyHelper>;
+    using UniquePrivateKey = Azure::Core::_internal::UniqueHandle<void*, UniquePrivateKeyHelper>;
   } // namespace _detail
 
   /**
@@ -73,7 +73,7 @@ namespace Azure { namespace Identity {
     std::string m_requestBody;
     std::string m_tokenPayloadStaticPart;
     std::string m_tokenHeaderEncoded;
-    _detail::UniquePkeyHandle m_pkey;
+    _detail::UniquePrivateKey m_pkey;
 
     explicit ClientCertificateCredential(
         std::string tenantId,
