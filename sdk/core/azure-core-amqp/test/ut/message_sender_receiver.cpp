@@ -386,7 +386,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     ConnectionOptions connectionOptions;
 
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.ContainerId = "some";
+    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->name();
     connectionOptions.Port = server.GetPort();
     Connection connection("localhost", sasCredential, connectionOptions);
     Session session{connection.CreateSession()};
@@ -398,7 +398,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     senderOptions.MessageSource = "ingress";
     senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
     senderOptions.MaxMessageSize = 65536;
-    senderOptions.Name = "sender-link";
     MessageSender sender(
         session.CreateMessageSender(sasCredential->GetEntityPath(), senderOptions, nullptr));
 

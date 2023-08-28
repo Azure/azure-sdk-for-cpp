@@ -214,6 +214,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       Close();
     }
+    if (m_messageReceiver)
+    {
+      m_messageReceiver.reset();
+	}
+    if (m_link)
+    {
+      m_link.reset();
+    }
     m_messageQueue.Clear();
   }
 
@@ -338,6 +346,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       Log::Stream(Logger::Level::Verbose) << "Lock for Closing message receiver.";
       auto lock{m_session->GetConnection()->Lock()};
+
+      Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
+      m_link->UnsubscribeFromDetachEvent();
+
       Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
 
       m_session->GetConnection()->EnableAsyncOperation(false);

@@ -91,17 +91,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_events = nullptr;
     }
 
+    auto lock{m_session->GetConnection()->Lock()};
     if (m_isOpen)
     {
       Close();
     }
 
-    auto lock{m_session->GetConnection()->Lock()};
+    if (m_messageSender)
+    {
+      m_messageSender.reset();
+    }
+
     if (m_link)
     {
       // Unsubscribe from any detach events before clearing out the event handler to short-circuit
       // any events firing after the object is destroyed.
       m_link->UnsubscribeFromDetachEvent();
+
+      m_link.reset();
     }
   }
 
@@ -254,6 +261,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto lock{m_session->GetConnection()->Lock()};
       Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
       m_session->GetConnection()->EnableAsyncOperation(false);
+
+      Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
+      m_link->UnsubscribeFromDetachEvent();
+
       if (messagesender_close(m_messageSender.get()))
       {
         throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
