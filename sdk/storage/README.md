@@ -27,6 +27,66 @@ For more information see the [Code of Conduct FAQ][coc_faq]
 or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
+### Set up storage account
+
+Storage account is required for storage unit test. There are several environment variables to set up storage account:
+
+<center>
+
+<table>
+<tr>
+<td>Environment Variable</td>
+<td>Description</td>
+<td>Test scope</td>
+</tr>
+<tr>
+<td>STANDARD_STORAGE_CONNECTION_STRING</td>
+<td>Standard storage account connection string for Blobs, stnadard Files Shares and Queues.</td>
+<td>Blobs,<br>Standard Files Shares,<br>Queues </td>
+</tr>
+<tr>
+<td>PREMIUM_FILE_CONNECTION_STRING</td>
+<td>Premium Files Shares storage account connection string.</td>
+<td>Premium Files Shares</td>
+</tr>
+<tr>
+<td>ADLS_GEN2_CONNECTION_STRING</td>
+<td>Data Lake storage account connection string.</td>
+<td>Data Lake</td></tr>
+<tr>
+<td>AAD_TENANT_ID</td>
+<td>Azure Active Directory tenant id of the service principal.</td>
+<td rowspan="3">Blobs,<br>Data Lake,<br>Files Shares,<br>Queues </td>
+</tr>
+<tr>
+<td>AAD_CLIENT_ID</td>
+<td>Application(Client) id of the service principal.</td>
+</tr>
+<tr>
+<td>AAD_CLIENT_SECRET</td>
+<td>Client secret of the service principal.</td>
+</tr>
+</table>
+
+</center>
+
+Azure Storage libraries for C++ offers three types for authorizing access to data: `Shared Key(storage account key)`, `Shared access signature (SAS)` and `Azure Active Directory (Azure AD)`. 
+The first two types can be obtained by `connection string`.
+
+#### Set up storage account 
+Before setting up storage account, you should have an overview of storage account: [Storage account overview](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview).
+1. [Create storage account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
+2. [Get storage account connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
+
+#### Set up Azure AD for storage account
+Before setting it up, you should have a basic understanding of accessing storage through Azure AD: [Authorize access to blobs using Azure Active Directory](https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory).
+
+Set up steps:
+1. [Create Azure Service Principal](https://learn.microsoft.com/en-us/purview/create-service-principal-azure).
+2. [Assign an Azure role for access to blob data](https://learn.microsoft.com/en-us/azure/storage/blobs/assign-azure-role-data-access?tabs=portal).
+	- You can find storage roles in [Azure built-in roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles)
+3. Fill the tenant id, client id, client secret into environment variables.
+
 <!-- LINKS -->
 [storage_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
 [cla]: https://cla.microsoft.com
