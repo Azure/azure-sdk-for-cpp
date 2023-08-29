@@ -336,7 +336,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_enableAsyncOperation = enable;
     if (enable)
     {
-      Log::Stream(Logger::Level::Verbose) << "Try to enable async operation on connection." << this << " ID: " << m_containerId
+      Log::Stream(Logger::Level::Verbose)
+          << "Try to enable async operation on connection." << this << " ID: " << m_containerId
           << " count: " << m_openCount.load();
       if (m_openCount++ == 0)
       {
@@ -347,8 +348,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
-      Log::Stream(Logger::Level::Verbose) << "Try to disable async operation on connection." << this
-                                          << " ID: " << m_containerId << " count: " << m_openCount.load();
+      Log::Stream(Logger::Level::Verbose)
+          << "Try to disable async operation on connection." << this << " ID: " << m_containerId
+          << " count: " << m_openCount.load();
       if (--m_openCount == 0)
       {
         Log::Stream(Logger::Level::Verbose)
