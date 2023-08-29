@@ -113,7 +113,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         {
           pollable->Poll();
         }
-        std::this_thread::yield();
+//        std::this_thread::yield();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
       } while (!m_stopped);
     });
   }
