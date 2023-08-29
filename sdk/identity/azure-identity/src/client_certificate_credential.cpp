@@ -23,6 +23,7 @@
 
 #pragma warning(push)
 #pragma warning(disable : 6553)
+#pragma warning(disable : 6001) // Using unitiialized memory 'pNode'.
 #pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
                                 // 'GetProcAddress'.
 #include <wil/resource.h>
