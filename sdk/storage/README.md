@@ -75,17 +75,19 @@ The first two types can be obtained by `connection string`.
 
 #### Set up storage account 
 Before setting up storage account, you should have an overview of storage account: [Storage account overview](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview).
+
+Set up steps:
 1. [Create storage account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
 2. [Get storage account connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
 
 #### Set up Azure AD for storage account
-Before setting it up, you should have a basic understanding of accessing storage through Azure AD: [Authorize access to blobs using Azure Active Directory](https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory).
+Before setting it up, you should have an overview of accessing storage through Azure AD: [Authorize access to blobs using Azure Active Directory](https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory).
 
 Set up steps:
 1. [Create Azure Service Principal](https://learn.microsoft.com/en-us/purview/create-service-principal-azure).
 2. [Assign an Azure role for access to blob data](https://learn.microsoft.com/en-us/azure/storage/blobs/assign-azure-role-data-access?tabs=portal).
 	- You can find storage roles in [Azure built-in roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles)
-3. Fill the tenant id, client id, client secret into environment variables.
+3. Fill the tenant id, client id and client secret into environment variables.
 
 <!-- LINKS -->
 [storage_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
