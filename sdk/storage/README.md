@@ -41,7 +41,7 @@ Storage account is required for storage unit test. There are several environment
 </tr>
 <tr>
 <td>STANDARD_STORAGE_CONNECTION_STRING</td>
-<td>Standard storage account connection string for Blobs, stnadard Files Shares and Queues.</td>
+<td>Standard storage account connection string for Blobs, standard Files Shares and Queues.</td>
 <td>Blobs,<br>Standard Files Shares,<br>Queues </td>
 </tr>
 <tr>
