@@ -8,7 +8,13 @@
 
 ### Bugs Fixed
 
-- [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows.
+- [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
+
+- Theodore Tsirpanis _([GitHub](https://github.com/teo-tsirpanis))_
 
 ### Other Changes
 

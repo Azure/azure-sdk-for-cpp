@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+- Fixed GCC 13 compilation error. (A community contribution, courtesy of _[adamdebreceni](https://github.com/adamdebreceni)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Key Vault Keys better with their contributions to this release:
+
+- adamdebreceni _([GitHub](https://github.com/adamdebreceni))_
+
 ## 4.4.0 (2023-05-09)
 
 ### Features Added
