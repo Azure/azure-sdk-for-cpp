@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto batch = containerClient.CreateBatch();
     auto setTier1Response = batch.SetBlobAccessTier(blob1Name, Blobs::Models::AccessTier::Cool);
-    auto setTier2Response = batch.SetBlobAccessTier(blob2Name, Blobs::Models::AccessTier::Archive);
+    auto setTier2Response = batch.SetBlobAccessTier(blob2Name, Blobs::Models::AccessTier::Cold);
     auto submitBatchResponse = containerClient.SubmitBatch(batch);
 
     EXPECT_NO_THROW(setTier1Response.GetResponse());
@@ -158,7 +158,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         blob1Client.GetProperties().Value.AccessTier.Value(), Blobs::Models::AccessTier::Cool);
     EXPECT_EQ(
-        blob2Client.GetProperties().Value.AccessTier.Value(), Blobs::Models::AccessTier::Archive);
+        blob2Client.GetProperties().Value.AccessTier.Value(), Blobs::Models::AccessTier::Cold);
   }
 
   TEST_F(BlobContainerClientTest, ContainerBatchSubmitSetTier_LIVEONLY_)
