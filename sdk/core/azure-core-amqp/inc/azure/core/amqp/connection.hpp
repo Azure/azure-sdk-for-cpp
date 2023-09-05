@@ -340,6 +340,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * will be opened implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
      *
+     * @remarks If you call Open() or Listen(), then you MUST call Close() when you are done with
+     * the connection, BEFORE destroying it.
+     *
      */
     void Open();
 
@@ -352,12 +355,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * will be opened implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
      *
+     * @remarks If you call Open() or Listen(), then you MUST call Close() when you are done with
+     * the connection, BEFORE destroying it.
      */
     void Listen();
-
-    /** @brief Close the connection, stopping all polling on the connection.
-     */
-    void Close();
 
     /** @brief Closes the current connection.
      *
@@ -369,11 +370,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * will be closed implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
      *
+     * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
+     *
      */
     void Close(
-        std::string const& condition,
-        std::string const& description,
-        Models::AmqpValue info);
+        std::string const& condition = {},
+        std::string const& description = {},
+        Models::AmqpValue info = {});
 
     /** @brief Gets host configured by the connection.
      *

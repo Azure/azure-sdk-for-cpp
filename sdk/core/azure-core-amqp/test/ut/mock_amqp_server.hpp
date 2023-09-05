@@ -208,15 +208,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           if (val.second.LinkSender)
           {
+            val.second.LinkSender->Close();
             val.second.LinkSender.reset();
           }
           if (val.second.LinkReceiver)
           {
+            val.second.LinkReceiver->Close();
             val.second.LinkReceiver.reset();
           }
         }
         if (m_session)
         {
+          // Note: resetting the m_session calls session_end always, so it does not need to be
+          // called here.
           m_session.reset();
         }
         if (m_connection)
@@ -326,7 +330,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           }
           try
           {
-            linkComponents.LinkSender->QueueSend(response, nullptr, m_listenerContext);
+            auto result = linkComponents.LinkSender->Send(response, m_listenerContext);
+            if (std::get<0>(result) != Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+            {
+              GTEST_LOG_(INFO) << "Failed to send CBS response: " << std::get<1>(result);
+              return;
+            }
           }
           catch (std::exception& ex)
           {
@@ -360,7 +369,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             return;
           }
 
-          linkComponents.LinkSender->QueueSend(response, nullptr, m_listenerContext);
+          auto sendResult = linkComponents.LinkSender->Send(response, m_listenerContext);
+          if (std::get<0>(sendResult) != Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+          {
+            GTEST_LOG_(INFO) << "Failed to send CBS response: " << std::get<1>(sendResult);
+            return;
+          }
         }
       }
 

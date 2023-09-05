@@ -138,7 +138,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (m_linkSubscriptionHandle != nullptr)
     {
-      UnsubscribeFromDetachEvent();
+      AZURE_ASSERT_MSG(
+          m_linkSubscriptionHandle == nullptr,
+          "Destroying link while link detach subscription is still active.");
+      Azure::Core::_internal::AzureNoReturnPath(
+          "Destroying link while link detach subscription is still active.");
     }
 
     if (m_link)

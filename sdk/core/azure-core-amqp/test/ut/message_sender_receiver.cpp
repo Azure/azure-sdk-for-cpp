@@ -178,7 +178,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sender.Open();
       sender.Close();
     }
-    connection.Close();
     listener.Stop();
   }
 
@@ -227,22 +226,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
 
       Azure::Core::Context context;
-      Azure::Core::Amqp::Common::_internal::
-          AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
-              sendCompleteQueue;
       try
       {
-        sender.QueueSend(
-            message,
-            [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
-              GTEST_LOG_(INFO) << "Send Complete!";
-              sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-            });
+        auto result = sender.Send(message, context);
 
-        auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
         // Because we're trying to use TLS to connect to a non-TLS port, we should get an error
         // sending the message.
-        EXPECT_EQ(std::get<0>(*result), MessageSendStatus::Error);
+        EXPECT_EQ(std::get<0>(result), MessageSendStatus::Error);
       }
       catch (Azure::Core::OperationCancelledException const&)
       {
@@ -256,7 +246,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       sender.Close();
     }
-    connection.Close();
     mockServer.StopListening();
   }
 
@@ -284,14 +273,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
       class SenderEvents : public MessageSenderEvents {
         virtual void OnMessageSenderStateChanged(
-            MessageSender const& sender,
+            MessageSender const&,
             MessageSenderState newState,
             MessageSenderState oldState) override
         {
-          GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderSTateChanged.";
-          (void)sender;
-          (void)newState;
-          (void)oldState;
+          GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Old State: "
+                           << oldState << " New State: " << newState;
         }
         virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
         {
@@ -313,23 +300,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
 
       Azure::Core::Context context;
-      Azure::Core::Amqp::Common::_internal::
-          AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
-              sendCompleteQueue;
-      sender.QueueSend(
-          message,
-          [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
-            GTEST_LOG_(INFO) << "Send Complete!";
-            sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-          });
-      auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
-      EXPECT_EQ(std::get<0>(*result), MessageSendStatus::Ok);
+      auto result = sender.Send(message);
+      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
 
       sender.Close();
     }
     receiveContext.Cancel();
     mockServer.StopListening();
-    connection.Close();
   }
 
   TEST_F(TestMessages, SenderSendSync)

@@ -263,35 +263,45 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_sendCompleted = false;
     m_nextMessageId++;
 
-    m_messageSender->QueueSend(
-        messageToSend,
-        [&](_internal::MessageSendStatus sendStatus, Models::AmqpValue const& deliveryState) {
-          m_sendCompleted = true;
-          if (m_options.EnableTrace)
-          {
-            Log::Stream(Logger::Level::Informational)
-                << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
-                << ", DeliveryState: " << deliveryState;
-          }
-          Models::_internal::AmqpError error;
-          if (sendStatus != _internal::MessageSendStatus::Ok)
-          {
-            error.Description = "Send failed.";
-            auto deliveryStateAsList{deliveryState.AsList()};
-            Models::AmqpValue firstState{deliveryStateAsList[0]};
-            ERROR_HANDLE errorHandle;
-            if (!amqpvalue_get_error(firstState, &errorHandle))
-            {
-              Models::_internal::UniqueAmqpErrorHandle uniqueError{
-                  errorHandle}; // This will free the error handle when it goes out of scope.
-              error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
-            }
+    // m_messageSender->QueueSend(
+    //    messageToSend,
+    //    [&](_internal::MessageSendStatus sendStatus, Models::AmqpValue const& deliveryState) {
+    //      m_sendCompleted = true;
+    //      if (m_options.EnableTrace)
+    //      {
+    //        Log::Stream(Logger::Level::Informational)
+    //            << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
+    //            << ", DeliveryState: " << deliveryState;
+    //      }
+    //      Models::_internal::AmqpError error;
+    //      if (sendStatus != _internal::MessageSendStatus::Ok)
+    //      {
+    //        error.Description = "Send failed.";
+    //        auto deliveryStateAsList{deliveryState.AsList()};
+    //        Models::AmqpValue firstState{deliveryStateAsList[0]};
+    //        ERROR_HANDLE errorHandle;
+    //        if (!amqpvalue_get_error(firstState, &errorHandle))
+    //        {
+    //          Models::_internal::UniqueAmqpErrorHandle uniqueError{
+    //              errorHandle}; // This will free the error handle when it goes out of scope.
+    //          error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
+    //        }
 
-            m_messageQueue.CompleteOperation(
-                _internal::ManagementOperationStatus::Error, 500, error, Models::AmqpMessage{});
-          }
-        },
-        context);
+    //        m_messageQueue.CompleteOperation(
+    //            _internal::ManagementOperationStatus::Error, 500, error, Models::AmqpMessage{});
+    //      }
+    //    },
+    //    context);
+    auto sendResult = m_messageSender->Send(messageToSend, context);
+    if (std::get<0>(sendResult) != _internal::MessageSendStatus::Ok)
+    {
+      _internal::ManagementOperationResult rv;
+      rv.Status = _internal::ManagementOperationStatus::Error;
+      rv.StatusCode = 500;
+      rv.Error = std::get<1>(sendResult);
+      rv.Message = Models::AmqpMessage{};
+      return rv;
+    }
     auto result = m_messageQueue.WaitForResult(context);
     if (result)
     {
@@ -413,6 +423,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return;
     }
 
+    if (m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Informational)
+          << "OnMessageSenderStateChanged: " << oldState << " -> " << newState << std::endl;
+    }
+
     switch (m_state)
     {
       case ManagementState::Opening:
@@ -519,6 +535,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Stream(Logger::Level::Error)
           << "OnMessageReceiverStateChanged: newState == oldState" << std::endl;
       return;
+    }
+
+    if (m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Informational)
+          << "OnMessageReceiverStateChanged: " << oldState << " -> " << newState << std::endl;
     }
 
     switch (m_state)

@@ -50,81 +50,77 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
+  TEST_F(TestCbs, CbsOpenNoListener)
+  {
+    MessageTests::AmqpServerMock mockServer;
+    ConnectionOptions options;
+    options.EnableTrace = true;
+    options.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, options);
+    Session session{connection.CreateSession()};
+    {
+      ClaimsBasedSecurity cbs(session);
+      GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
+
+      EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
+    }
+  }
   TEST_F(TestCbs, CbsOpen)
   {
-    {
-      MessageTests::AmqpServerMock mockServer;
-      ConnectionOptions options;
-      options.EnableTrace = true;
-      options.Port = mockServer.GetPort();
-      Connection connection("localhost", nullptr, options);
-      Session session{connection.CreateSession()};
-      {
-        ClaimsBasedSecurity cbs(session);
-        GTEST_LOG_(INFO) << "Expected failure for Open because no listener."
-                         << mockServer.GetPort();
+    MessageTests::AmqpServerMock mockServer;
 
-        EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
+    ConnectionOptions options;
+    options.Port = mockServer.GetPort();
+    options.EnableTrace = false;
+    options.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+    Connection connection("localhost", nullptr, options);
+    Session session{connection.CreateSession()};
+
+    mockServer.StartListening();
+
+    {
+      GTEST_LOG_(INFO) << "Create CBS object.";
+      ClaimsBasedSecurity cbs(session);
+      CbsOpenResult openResult = cbs.Open();
+      EXPECT_EQ(CbsOpenResult::Ok, openResult);
+      GTEST_LOG_(INFO) << "Open Completed.";
+      if (openResult == CbsOpenResult::Ok)
+      {
+        cbs.Close();
       }
     }
-    {
-      MessageTests::AmqpServerMock mockServer;
-
-      ConnectionOptions options;
-      options.Port = mockServer.GetPort();
-      options.EnableTrace = false;
-      options.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
-      Connection connection("localhost", nullptr, options);
-      Session session{connection.CreateSession()};
-
-      mockServer.StartListening();
-
-      {
-        GTEST_LOG_(INFO) << "Create CBS object.";
-        ClaimsBasedSecurity cbs(session);
-        CbsOpenResult openResult = cbs.Open();
-        EXPECT_EQ(CbsOpenResult::Ok, openResult);
-        GTEST_LOG_(INFO) << "Open Completed.";
-        if (openResult == CbsOpenResult::Ok)
-        {
-          cbs.Close();
-        }
-      }
-      mockServer.StopListening();
-    }
+    mockServer.StopListening();
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenAndPut)
   {
+    MessageTests::AmqpServerMock mockServer;
+
+    ConnectionOptions options;
+    options.Port = mockServer.GetPort();
+    options.EnableTrace = true;
+    Connection connection("localhost", nullptr, options);
+    Session session{connection.CreateSession()};
+
+    mockServer.StartListening();
+
     {
-      MessageTests::AmqpServerMock mockServer;
+      ClaimsBasedSecurity cbs(session);
 
-      ConnectionOptions options;
-      options.Port = mockServer.GetPort();
-      options.EnableTrace = true;
-      Connection connection("localhost", nullptr, options);
-      Session session{connection.CreateSession()};
+      EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
+      GTEST_LOG_(INFO) << "Open Completed.";
 
-      mockServer.StartListening();
+      auto putResult = cbs.PutToken(
+          Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken");
+      EXPECT_EQ(CbsOperationResult::Ok, std::get<0>(putResult));
+      EXPECT_EQ("OK-put", std::get<2>(putResult));
 
-      {
-        ClaimsBasedSecurity cbs(session);
-
-        EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
-        GTEST_LOG_(INFO) << "Open Completed.";
-
-        auto putResult = cbs.PutToken(
-            Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken");
-        EXPECT_EQ(CbsOperationResult::Ok, std::get<0>(putResult));
-        EXPECT_EQ("OK-put", std::get<2>(putResult));
-
-        cbs.Close();
-      }
-
-      mockServer.StopListening();
+      cbs.Close();
     }
+
+    mockServer.StopListening();
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 

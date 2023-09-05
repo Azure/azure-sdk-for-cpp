@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       // Make absolutely sure that we don't accidentally use the TLS port.
       do
       {
-        testPort = dev() % 1000 + 5000;
+        testPort = dev() % 1000 + 0xBFFF;
       } while (testPort == AmqpTlsPort);
 
       GTEST_LOG_(INFO) << "Trying Test port: " << testPort;

@@ -189,7 +189,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * use by AMQP listeners.
      *
      */
-    void End(std::string const& condition_value, std::string const& description);
+    void End(std::string const& condition_value = {}, std::string const& description = {});
 
     /** @brief Creates a MessageSender for use in a message listener.
      *

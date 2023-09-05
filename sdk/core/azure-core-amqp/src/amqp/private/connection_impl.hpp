@@ -95,9 +95,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Close();
 
     void Close(
-        std::string const& condition,
-        std::string const& description,
-        Models::AmqpValue info);
+        std::string const& condition = {},
+        std::string const& description = {},
+        Models::AmqpValue info = {});
 
     void Poll() override;
 
@@ -140,6 +140,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;
     bool m_isClosing = false;
+    bool m_connectionOpened = false;
     std::atomic<uint32_t> m_openCount{0};
 
     ConnectionImpl(

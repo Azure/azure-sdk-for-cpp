@@ -99,7 +99,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  SessionImpl::~SessionImpl() noexcept {}
+  SessionImpl::~SessionImpl() noexcept
+  {
+    auto lock{m_connectionToPoll->Lock()};
+    m_session.reset();
+  }
 
   SessionImpl::SessionImpl(
       std::shared_ptr<_detail::ConnectionImpl> connection,
