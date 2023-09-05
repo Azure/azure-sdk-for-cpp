@@ -5,7 +5,9 @@
   ],
   "sourceFilesToSkip": [
   ],
-  "additionalCompilerSwitches": [],
+  "additionalCompilerSwitches": [
+    "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"
+  ],
   "allowInternal": true,
   "includeDetail": false,
   "includePrivate": false,
