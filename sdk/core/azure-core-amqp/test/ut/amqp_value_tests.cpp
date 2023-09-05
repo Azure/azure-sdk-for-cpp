@@ -464,7 +464,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(5, static_cast<int32_t>(described2.GetValue()));
     EXPECT_EQ(described2.GetDescriptor().AsSymbol(), "My Composite Type");
     EXPECT_FALSE(described1 < described2);
-    //    EXPECT_TRUE(described1 == described2);
+    EXPECT_TRUE(described1 == described2);
   }
 
   // Described types with long descriptors.

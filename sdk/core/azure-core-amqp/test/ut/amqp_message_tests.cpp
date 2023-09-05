@@ -20,6 +20,11 @@ TEST_F(TestMessage, SimpleCreate)
   }
 
   {
+    AmqpMessage nullMessage(nullptr);
+    EXPECT_TRUE(nullMessage);
+  }
+
+  {
     AmqpMessage message1;
     message1.Properties.MessageId = 12345;
     message1.SetBody("Hello world");

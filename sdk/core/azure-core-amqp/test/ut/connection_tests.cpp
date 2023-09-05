@@ -294,12 +294,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     MessageTests::AmqpServerMock mockServer;
     mockServer.StartListening();
 
-    // TestSocketListenerEvents listenerEvents;
-    // Azure::Core::Amqp::Network::_internal::SocketListener listener(
-    //    Azure::Core::Amqp::_internal::AmqpPort, &listenerEvents);
-
-    // listener.Start();
-
     {
       // Create a connection
       Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
