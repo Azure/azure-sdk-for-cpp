@@ -9,7 +9,7 @@
 ### Breaking Changes
 
 - Removed the `QueueSend` API from `MessageSender` because it was not compatible with the new asynchronous model.
-- The new asyncronous model requires the user to call `Close()` on the `MessageSender` and `MessageReceiver` 
+- The new asynchronous model requires the user to call `Close()` on the `MessageSender` and `MessageReceiver` 
 to ensure operations have stabilized before destroying the object.
 - For connection listeners (primarily test scenarios), if you call `Open()` or `Listen()` on a connection, you MUST call `Close()` 
 before the connection is destroyed.

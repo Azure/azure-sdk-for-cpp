@@ -419,9 +419,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // Stop polling on this connection, we're shutting it down.
     EnableAsyncOperation(false);
-    //    Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(shared_from_this());
-    //    m_openCount = 0; // Force the open count to 0, since we forcably removed this from
-    //    polling.
 
     if (m_connectionOpened)
     {
