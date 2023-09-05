@@ -21,7 +21,7 @@ TEST_F(TestMessage, SimpleCreate)
 
   {
     AmqpMessage nullMessage(nullptr);
-    EXPECT_TRUE(nullMessage);
+    EXPECT_FALSE(nullMessage);
   }
 
   {
