@@ -9,10 +9,18 @@
 // The following environment variables must be set before running the sample.
 // * AZURE_TENANT_ID: Tenant ID for the Azure account.
 // * AZURE_CLIENT_ID: The Client ID to authenticate the request.
-// * AZURE_CLIENT_CERTIFICATE_PATH: The path to a client certificate.
+// * AZURE_FEDERATED_TOKEN_FILE: The path of a file containing a Kubernetes service account token.
 std::string GetTenantId() { return std::getenv("AZURE_TENANT_ID"); }
 std::string GetClientId() { return std::getenv("AZURE_CLIENT_ID"); }
-std::string GetTokenFilePath() { return std::getenv("AZURE_FEDERATED_TOKEN_FILE"); }
+std::string GetTokenFilePath() {
+  char const* const tokenFilePath{std::getenv("AZURE_FEDERATED_TOKEN_FILE")};
+  if (tokenFilePath == nullptr)
+  {
+    std::cerr << "Missing environment variable AZURE_FEDERATED_TOKEN_FILE" << std::endl;
+    return std::string();
+  }
+  return tokenFilePath;
+}
 
 int main()
 {
