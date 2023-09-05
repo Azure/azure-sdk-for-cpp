@@ -242,7 +242,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         sender->m_sendCompleteQueue.CompleteOperation(
             _internal::MessageSendStatus::Error,
             {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
-             "Message Sender unexpectedly entered the Error State."});
+             "Message Sender unexpectedly entered the Error State.", {}});
       }
     }
   }

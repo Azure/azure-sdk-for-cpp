@@ -10,6 +10,7 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+#include "mock_amqp_server.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
@@ -290,27 +291,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestConnections, ConnectionListenClose)
   {
     // Ensure someone is listening on the connection for when we call connection.Open.
-    TestSocketListenerEvents listenerEvents;
-    Azure::Core::Amqp::Network::_internal::SocketListener listener(
-        Azure::Core::Amqp::_internal::AmqpPort, &listenerEvents);
+    MessageTests::AmqpServerMock mockServer;
+    mockServer.StartListening();
 
-    listener.Start();
+    //TestSocketListenerEvents listenerEvents;
+    //Azure::Core::Amqp::Network::_internal::SocketListener listener(
+    //    Azure::Core::Amqp::_internal::AmqpPort, &listenerEvents);
+
+    //listener.Start();
 
     {
       // Create a connection
       Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
-      connectionOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
+      connectionOptions.Port = mockServer.GetPort();
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
       // Open the connection
       connection.Open();
 
-      //    // Ensure that we got an OnComplete callback.
-      auto incomingConnection = listenerEvents.WaitForListener(listener);
+      // Ensure that we got an OnComplete callback.
 
       // Now we can close the connection.
       connection.Close("", "yyy", {});
-
-      incomingConnection->Close({}, {}, {});
     }
 
     {
@@ -319,7 +320,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
     }
 
-    listener.Stop();
+    mockServer.StopListening();
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 

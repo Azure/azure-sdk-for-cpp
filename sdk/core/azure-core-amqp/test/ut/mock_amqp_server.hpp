@@ -53,8 +53,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : m_connectionId{"Mock Server for " + name}, m_testPort{listeningPort}
       {
       }
+
       virtual void Poll() const {}
 
+    private:
       bool WaitForConnection(
           Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
           Azure::Core::Context const& context = {})
@@ -131,6 +133,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
       };
 
+    public:
       uint16_t GetPort() const { return m_testPort; }
       Azure::Core::Context& GetListenerContext() { return m_listenerContext; }
 
