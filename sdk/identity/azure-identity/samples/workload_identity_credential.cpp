@@ -12,7 +12,8 @@
 // * AZURE_FEDERATED_TOKEN_FILE: The path of a file containing a Kubernetes service account token.
 std::string GetTenantId() { return std::getenv("AZURE_TENANT_ID"); }
 std::string GetClientId() { return std::getenv("AZURE_CLIENT_ID"); }
-std::string GetTokenFilePath() {
+std::string GetTokenFilePath()
+{
   char const* const tokenFilePath{std::getenv("AZURE_FEDERATED_TOKEN_FILE")};
   if (tokenFilePath == nullptr)
   {
