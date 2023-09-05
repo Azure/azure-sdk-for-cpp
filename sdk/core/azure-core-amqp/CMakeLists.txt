@@ -100,6 +100,7 @@ add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
+create_code_coverage(core azure-core-amqp azure-core-amqp-uamqp-tests "tests?/*;samples?/*")
 
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
