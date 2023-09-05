@@ -313,9 +313,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // When the connection transitions into the error or end state, it is no longer pollable.
       Log::Stream(Logger::Level::Verbose)
-          << "Connection " << connection->m_containerId
-          << " state changed to " << UamqpConnectionStateToStringMap.at(newState) << " : "
-          << static_cast<int>(newState) << std::endl;
+          << "Connection " << connection->m_containerId << " state changed to "
+          << UamqpConnectionStateToStringMap.at(newState) << " : " << static_cast<int>(newState)
+          << std::endl;
     }
     connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
   }
