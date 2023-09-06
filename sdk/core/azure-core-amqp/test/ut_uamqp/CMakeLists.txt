@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# AMQP Tests which require using the uAMQP library to force certain scenarios.
+
 cmake_minimum_required (VERSION 3.13)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

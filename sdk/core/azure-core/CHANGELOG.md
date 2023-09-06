@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Concurrency issues in `Azure::Core::Diagnostics::_internal::Log::Stream` have been fixed.
+
 ### Other Changes
 
 ## 1.10.2 (2023-08-04)
