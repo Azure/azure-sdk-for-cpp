@@ -459,7 +459,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     milliseconds ms;
     if (connection_get_idle_timeout(m_connection.get(), &ms))
     {
-      throw std::runtime_error("COuld not set max frame size."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not set max frame size."); // LCOV_EXCL_LINE
     }
     return std::chrono::milliseconds(ms);
   }
