@@ -174,6 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                   GTEST_LOG_(INFO) << "Cancelling thread.";
                   return;
                 }
+                GTEST_LOG_(INFO) << "Message receiver present for " << val.first;
               }
               if (!val.second.LinkSender)
               {
@@ -183,6 +184,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                   GTEST_LOG_(INFO) << "Cancelling thread.";
                   return;
                 }
+                GTEST_LOG_(INFO) << "Message sender present for " << val.first;
               }
               MessageLoop(val.first, val.second);
             }

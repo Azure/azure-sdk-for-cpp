@@ -581,7 +581,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     ConnectionOptions connectionOptions;
 
     connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.ContainerId = "some";
+    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_case()->name();
     connectionOptions.Port = port;
     Connection connection(hostName, tokenCredential, connectionOptions);
     Session session{connection.CreateSession()};
@@ -601,12 +601,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // Send a message.
     {
+      Azure::Core::Context receiveContext{Azure::Core::Context::ApplicationContext.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(30))};
       server.ShouldSendMessage(true);
-      auto message = receiver.WaitForIncomingMessage();
-      ASSERT_TRUE(message.first.HasValue());
-      ASSERT_FALSE(message.second);
+      GTEST_LOG_(INFO) << "Waiting for message to be received.";
+      std::pair<Azure::Nullable<Azure::Core::Amqp::Models::AmqpMessage>, bool> response;
+      ASSERT_NO_THROW(response = receiver.WaitForIncomingMessage(receiveContext));
+      ASSERT_TRUE(response.first.HasValue());
+      ASSERT_FALSE(response.second);
       EXPECT_EQ(
-          static_cast<std::string>(message.first.Value().GetBodyAsAmqpValue()),
+          static_cast<std::string>(response.first.Value().GetBodyAsAmqpValue()),
           "This is a message body.");
     }
 
