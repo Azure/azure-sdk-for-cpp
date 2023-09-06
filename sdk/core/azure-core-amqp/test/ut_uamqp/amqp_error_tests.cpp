@@ -34,7 +34,7 @@ TEST_F(TestError, SimpleCreate)
   }
 
   {
-    AmqpError error{AmqpErrorCondition::DecodeError, "test", {}};
+    AmqpError error{AmqpErrorCondition::DecodeError, "test", {{"test", "test"}, {23, 299}}};
     AmqpValue value{AmqpErrorFactory::ToAmqp(error)};
     GTEST_LOG_(INFO) << value;
 
@@ -42,6 +42,9 @@ TEST_F(TestError, SimpleCreate)
     ERROR_HANDLE errorHandle;
     EXPECT_EQ(0, amqpvalue_get_error(amqpValue, &errorHandle));
     AmqpError error2 = AmqpErrorFactory::FromUamqp(errorHandle);
+    const char* conditionValue;
+    error_get_condition(errorHandle, &conditionValue);
+    EXPECT_EQ(std::string(conditionValue), AmqpErrorCondition::DecodeError.ToString());
     error_destroy(errorHandle);
     amqpvalue_destroy(amqpValue);
   }
