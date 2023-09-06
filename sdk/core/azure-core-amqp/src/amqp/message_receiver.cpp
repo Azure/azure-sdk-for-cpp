@@ -291,8 +291,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::ostream& operator<<(std::ostream& stream, MESSAGE_RECEIVER_STATE const& state)
   {
-	stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
-	return stream;
+    stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
+    return stream;
   }
 
   void MessageReceiverImpl::OnMessageReceiverStateChangedFn(
@@ -317,8 +317,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         if (receiver->m_options.EnableTrace)
         {
           Log::Stream(Logger::Level::Verbose)
-              << "Message receiver changed state. Old: " << oldState
-              << " -> New: " << newState;
+              << "Message receiver changed state. Old: " << oldState << " -> New: " << newState;
         }
       }
 
