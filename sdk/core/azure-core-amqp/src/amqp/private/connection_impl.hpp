@@ -119,8 +119,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     using LockType = std::recursive_mutex;
 
-    _azure_ACQUIRES_LOCK(m_amqpMutex)
-    std::unique_lock<LockType> Lock() { return std::unique_lock<LockType>(m_amqpMutex); }
+    _azure_ACQUIRES_LOCK(m_amqpMutex) std::unique_lock<LockType> Lock()
+    {
+      return std::unique_lock<LockType>(m_amqpMutex);
+    }
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
