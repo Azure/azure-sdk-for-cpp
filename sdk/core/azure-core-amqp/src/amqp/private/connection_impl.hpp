@@ -17,9 +17,9 @@
 #include <string>
 
 #if defined(_MSC_VER)
-#define AZ_ACQUIRES_LOCK(...) _Acquires_exclusive_lock_(__VA_ARGS__)
+#define _azure_ACQUIRES_LOCK(...) _Acquires_exclusive_lock_(__VA_ARGS__)
 #else
-#define AZ_ACQUIRES_LOCK(...)
+#define _azure_ACQUIRES_LOCK(...)
 #endif
 
 namespace Azure { namespace Core { namespace _internal {
@@ -119,7 +119,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     using LockType = std::recursive_mutex;
 
-    AZ_ACQUIRES_LOCK(m_amqpMutex)
+    _azure_ACQUIRES_LOCK(m_amqpMutex)
     std::unique_lock<LockType> Lock() { return std::unique_lock<LockType>(m_amqpMutex); }
 
   private:

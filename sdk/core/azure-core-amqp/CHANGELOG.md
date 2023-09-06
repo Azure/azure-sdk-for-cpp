@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.3 (Unreleased)
+## 1.0.0-beta.4 (Unreleased)
 
 ### Features Added
 
@@ -17,12 +17,25 @@ before the connection is destroyed.
 - The `Session::End()` method no longer requires that the caller provide session disconnect information.
 - Several asserts have been added which will force termination of the running application if invariants have not been met.
 
-
 ### Bugs Fixed
 
 - Several fixes related to the new asynchronous model. Ensures that message senders and receivers are always closed, 
 and that resources are released.
 
+- When a message sender is destroyed, close the underlying AMQP link if it hasn't been closed already.
+ 
+### Other Changes
+
+## 1.0.0-beta.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- When a message sender is destroyed, close the underlying AMQP link if it hasn't been closed already.
+ 
 ### Other Changes
 
 ## 1.0.0-beta.2 (2023-08-04)
