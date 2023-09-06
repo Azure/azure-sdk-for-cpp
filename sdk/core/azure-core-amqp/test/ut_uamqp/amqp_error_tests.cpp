@@ -29,6 +29,21 @@ TEST_F(TestError, SimpleCreate)
     error.Condition = AmqpErrorCondition::DecodeError;
     error.Description = "test";
     error.Info["test"] = "test";
+
+    GTEST_LOG_(INFO) << error;
+  }
+
+  {
+    AmqpError error{AmqpErrorCondition::DecodeError, "test", {}};
+    AmqpValue value{AmqpErrorFactory::ToAmqp(error)};
+    GTEST_LOG_(INFO) << value;
+
+    AMQP_VALUE amqpValue = static_cast<AMQP_VALUE>(value);
+    ERROR_HANDLE errorHandle;
+    EXPECT_EQ(0, amqpvalue_get_error(amqpValue, &errorHandle));
+    AmqpError error2 = AmqpErrorFactory::FromUamqp(errorHandle);
+    error_destroy(errorHandle);
+    amqpvalue_destroy(amqpValue);
   }
 }
 
