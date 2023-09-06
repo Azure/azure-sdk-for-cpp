@@ -46,7 +46,6 @@ TEST_F(TestError, SimpleCreate)
     error_get_condition(errorHandle, &conditionValue);
     EXPECT_EQ(std::string(conditionValue), AmqpErrorCondition::DecodeError.ToString());
     error_destroy(errorHandle);
-    amqpvalue_destroy(amqpValue);
   }
 }
 
