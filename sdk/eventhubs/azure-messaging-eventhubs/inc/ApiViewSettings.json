@@ -9,6 +9,7 @@
     "../../../storage/azure-storage-blobs/inc"
   ],
   "additionalCompilerSwitches": [
+    "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"
   ],
   "allowInternal": false,
   "includeDetail": false,
