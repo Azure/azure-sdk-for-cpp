@@ -6,7 +6,7 @@
 include(CMakeFindDependencyMacro)
 find_dependency(azure-core-cpp)
 
-if (WIN32)
+if(WIN32 AND NOT CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
   find_dependency(wil)
 else()
   find_dependency(OpenSSL)
