@@ -101,7 +101,7 @@ target_include_directories(
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 
-if(WIN32 AND NOT CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+if(WIN32 AND NOT(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" AND CMAKE_SYSTEM_VERSION STREQUAL "10.0"))
   find_package(wil CONFIG REQUIRED)
   target_link_libraries(azure-identity PRIVATE WIL::WIL bcrypt crypt32)
 else()
