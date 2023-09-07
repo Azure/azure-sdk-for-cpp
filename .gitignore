@@ -10,6 +10,12 @@
 *.sln.docstates
 *.runsettings
 
+# Stress deploy.ps1 script generated files
+generatedValues.yaml
+stress-test-resources.json
+stress-test-addons*.tgz
+Chart.lock
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -342,8 +348,11 @@ build/
 [Dd]ocs/
 
 # vscode
-.vscode/
+.vscode/*
+!.vscode/cspell.json
 .factorypath
 
 # Default Assets restore directory
 .assets
+
+CMakeUserPresets.json

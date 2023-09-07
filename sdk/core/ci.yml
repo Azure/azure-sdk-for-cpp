@@ -17,6 +17,7 @@ trigger:
       - doc/
       - samples/
       - .github/
+      - '*.md'
       - /**/*.md
 
 pr:
@@ -36,6 +37,7 @@ pr:
       - doc/
       - samples/
       - .github/
+      - '*.md'
       - /**/*.md
 
 stages:
@@ -126,6 +128,9 @@ stages:
           Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
         - Name: ATTESTATION_AAD_URL
           Value: https://NotRealAttestationInstanceaad.wus.attest.azure.net
+# EventHubs
+        - Name: CHECKPOINTSTORE_STORAGE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
 
       CMakeTestOptions:
         - Name: Default

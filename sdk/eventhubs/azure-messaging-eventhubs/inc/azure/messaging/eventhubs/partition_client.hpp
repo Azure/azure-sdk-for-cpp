@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
+#include "eventhubs_exception.hpp"
 #include "models/event_data.hpp"
 #include "models/partition_client_models.hpp"
 
@@ -8,8 +9,13 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
+
 namespace Azure { namespace Messaging { namespace EventHubs {
-  /**brief PartitionClientOptions provides options for the CreatePartitionClient function.
+  namespace _detail {
+    class PartitionClientFactory;
+  }
+  /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient
+   * function.
    */
   struct PartitionClientOptions final
   {
@@ -28,7 +34,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * from partition clients with a lower OwnerLevel.
      * Default is off.
      */
-    int64_t OwnerLevel;
+    Azure::Nullable<std::int64_t> OwnerLevel{};
 
     /**@brief Prefetch represents the size of the internal prefetch buffer. When set,
      * this client will attempt to always maintain an internal cache of events of
@@ -48,31 +54,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * This type is instantiated from the [ConsumerClient] type, using
    * [ConsumerClient.CreatePartitionClient].
    */
-  class PartitionClient final {
-
-  protected:
-    /// The message receivers used to receive events from the partition.
-    std::vector<Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
-
-    /// The name of the offset to start receiving events from.
-    std::string m_offsetExpression;
-
-    /// The level of the ownership.
-    uint64_t m_ownerLevel;
-
-    /// The number of events to prefetch at any time.
-    int32_t m_prefetchCount;
-
-    /// The options used to create the PartitionClient.
-    PartitionClientOptions m_partitionOptions;
-
-    /// The name of the partition.
-    std::string m_partitionId;
-
-    /** @brief RetryOptions controls how many times we should retry an operation in
-     * response to being throttled or encountering a transient error.
-     */
-    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
+  class PartitionClient final : private Azure::Core::Amqp::_internal::MessageReceiverEvents {
 
   public:
     /// Create a PartitionClient from another PartitionClient
@@ -80,6 +62,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /// Assign a PartitionClient to another PartitionClient
     PartitionClient& operator=(PartitionClient const& other) = default;
+
+    /** Destroy this partition client.
+     */
+    virtual ~PartitionClient();
 
     /** Receive events from the partition.
      *
@@ -89,51 +75,59 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
-        uint32_t const& maxMessages,
-        Core::Context const& context = {})
-    {
-      std::vector<Models::ReceivedEventData> messages;
-      // bool prefetchDisabled = m_prefetchCount < 0;
-
-      while (messages.size() < maxMessages && !context.IsCancelled())
-      {
-        auto message = m_receivers[0].WaitForIncomingMessage(context);
-        if (message.first.HasValue())
-        {
-          messages.push_back(Models::ReceivedEventData{message.first.Value()});
-        }
-      }
-      return messages;
-    }
+        uint32_t maxMessages,
+        Core::Context const& context = {});
 
     /** @brief Closes the connection to the Event Hub service.
      */
-    void Close()
-    {
-      for (size_t i = 0; i < m_receivers.size(); i++)
-      {
-        m_receivers[i].Close();
-      }
-    }
+    void Close() { m_receiver.Close(); }
+
+  private:
+    friend class _detail::PartitionClientFactory;
+    /// The message receiver used to receive events from the partition.
+    Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
+
+    /// The name of the offset to start receiving events from.
+    //    std::string m_offsetExpression;
+
+    /// The options used to create the PartitionClient.
+    PartitionClientOptions m_partitionOptions;
+
+    /// The name of the partition.
+    //    std::string m_partitionId;
+
+    /** @brief RetryOptions controls how many times we should retry an operation in
+     * response to being throttled or encountering a transient error.
+     */
+    Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
+
+    // Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+    //    Azure::Core::Amqp::Models::AmqpMessage,
+    //    Azure::Core::Amqp::Models::_internal::AmqpError>
+    //    m_receivedMessageQueue;
 
     /** Creates a new PartitionClient
      *
-     * @param options The options used to create the PartitionClient.
-     * @param retryOptions The retry options used to create the PartitionClient.
-     *
+     * @param messageReceiver Message Receiver for the partition client.
+     * @param options options used to create the PartitionClient.
+     * @param retryOptions controls how many times we should retry an operation in response to being
+     * throttled or encountering a transient error.
      */
     PartitionClient(
+        Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
         PartitionClientOptions options,
-        Azure::Core::Http::Policies::RetryOptions retryOptions)
-    {
-      m_partitionOptions = options;
-      RetryOptions = retryOptions;
-    }
+        Azure::Core::Http::Policies::RetryOptions retryOptions);
 
-    /// @brief Push the message receiver back to the vector of receivers.
-    void PushBackReceiver(Azure::Core::Amqp::_internal::MessageReceiver& receiver)
-    {
-      m_receivers.push_back(std::move(receiver));
-    }
+    std::string GetStartExpression(Models::StartPosition const& startPosition);
+
+    virtual void OnMessageReceiverStateChanged(
+        Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+        Azure::Core::Amqp::_internal::MessageReceiverState newState,
+        Azure::Core::Amqp::_internal::MessageReceiverState oldState);
+    virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+        Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+        Azure::Core::Amqp::Models::AmqpMessage const& message);
+    virtual void OnMessageReceiverDisconnected(
+        Azure::Core::Amqp::Models::_internal::AmqpError const& error);
   };
 }}} // namespace Azure::Messaging::EventHubs

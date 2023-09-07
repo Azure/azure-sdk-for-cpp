@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   void MessageSender::Open(Context const& context) { m_impl->Open(context); }
   void MessageSender::Close() { m_impl->Close(); }
-  std::tuple<MessageSendStatus, Models::AmqpValue> MessageSender::Send(
+  std::tuple<MessageSendStatus, Models::_internal::AmqpError> MessageSender::Send(
       Models::AmqpMessage const& message,
       Context const& context)
   {
@@ -50,6 +50,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     return m_impl->QueueSend(message, onSendComplete, context);
   }
+
+  std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
 
   MessageSender::~MessageSender() noexcept {}
 }}}} // namespace Azure::Core::Amqp::_internal
@@ -107,6 +109,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_target);
     PopulateLinkProperties();
   }
+
   void MessageSenderImpl::CreateLink()
   {
     m_link = std::make_shared<_detail::LinkImpl>(
@@ -129,7 +132,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       // Cache the error we received in the OnDetach notification so we can return it to the user
       // on the next send which fails.
-      m_savedMessageError = Models::_internal::AmqpErrorFactory::ToAmqp(error);
+      m_savedMessageError = error;
     });
   }
 
@@ -149,8 +152,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
     }
+    if (m_options.MaxLinkCredits != 0)
+    {
+      m_link->SetMaxLinkCredit(m_options.MaxLinkCredits);
+    }
     m_link->SetSenderSettleMode(m_options.SettleMode);
   }
+
+  std::uint64_t MessageSenderImpl::GetMaxMessageSize() const { return m_link->GetMaxMessageSize(); }
 
   _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
   {
@@ -281,19 +290,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     (void)context;
   }
 
-  std::tuple<_internal::MessageSendStatus, Models::AmqpValue> MessageSenderImpl::Send(
+  std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> MessageSenderImpl::Send(
       Models::AmqpMessage const& message,
       Context const& context)
   {
-    Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<Azure::Core::Amqp::_internal::MessageSendStatus, Models::AmqpValue>
-            sendCompleteQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+        Azure::Core::Amqp::_internal::MessageSendStatus,
+        Models::_internal::AmqpError>
+        sendCompleteQueue;
 
     QueueSend(
         message,
         [&sendCompleteQueue, this](
             Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
             Models::AmqpValue deliveryStatus) {
+          Models::_internal::AmqpError error;
+
           // If the send failed. then we need to return the error. If the send completed because
           // of an error, it's possible that the deliveryStatus provided is null. In that case,
           // we use the cached saved error because it is highly likely to be better than
@@ -302,16 +314,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           {
             if (deliveryStatus.IsNull())
             {
-              deliveryStatus = m_savedMessageError;
+              error = m_savedMessageError;
+            }
+            else
+            {
+              if (deliveryStatus.GetType() != Models::AmqpValueType::List)
+              {
+                throw std::runtime_error("Delivery status is not a list");
+              }
+              auto deliveryStatusAsList{deliveryStatus.AsList()};
+              if (deliveryStatusAsList.size() != 1)
+              {
+                throw std::runtime_error("Delivery Status list is not of size 1");
+              }
+              Models::AmqpValue firstState{deliveryStatusAsList[0]};
+              ERROR_HANDLE errorHandle;
+              if (!amqpvalue_get_error(firstState, &errorHandle))
+              {
+                Models::_internal::UniqueAmqpErrorHandle uniqueError{
+                    errorHandle}; // This will free the error handle when it goes out of scope.
+                error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
+              }
             }
           }
           else
           {
             // If we successfully sent the message, then whatever saved error should be cleared,
             // it's no longer valid.
-            m_savedMessageError = Models::AmqpValue();
+            m_savedMessageError = Models::_internal::AmqpError();
           }
-          sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
+          sendCompleteQueue.CompleteOperation(sendResult, error);
         },
         context);
     auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());

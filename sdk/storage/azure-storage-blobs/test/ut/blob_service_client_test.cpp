@@ -100,11 +100,13 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     Azure::Storage::Blobs::ListBlobContainersOptions options;
-    options.PageSizeHint = 4;
+    options.PageSizeHint = 3;
     std::set<std::string> listContainers;
+    int numPages = 0;
     for (auto pageResult = serviceClient.ListBlobContainers(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
+      ++numPages;
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
       EXPECT_FALSE(
@@ -115,6 +117,7 @@ namespace Azure { namespace Storage { namespace Test {
         listContainers.insert(container.Name);
       }
     }
+    EXPECT_GT(numPages, 2);
     EXPECT_TRUE(std::includes(
         listContainers.begin(),
         listContainers.end(),
@@ -463,10 +466,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
 
-  TEST_F(BlobServiceClientTest, DISABLED_RenameBlobContainer)
+  TEST_F(BlobServiceClientTest, RenameBlobContainer_PLAYBACKONLY_)
   {
     auto serviceClient = *m_blobServiceClient;
-    const std::string prefix = RandomString();
+    const std::string prefix = LowercaseRandomString() + "2";
 
     const std::string srcContainerName = prefix + "src";
     auto srcContainerClient = serviceClient.CreateBlobContainer(srcContainerName).Value;
@@ -478,13 +481,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(srcContainerClient.GetProperties(), StorageException);
     EXPECT_NO_THROW(destContainerClient.GetProperties());
 
-    Blobs::BlobLeaseClient leaseClient(
-        destContainerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+    Blobs::BlobLeaseClient leaseClient(destContainerClient, RandomUUID());
     leaseClient.Acquire(std::chrono::seconds(60));
 
     const std::string destContainerName2 = prefix + "dest2";
     Blobs::RenameBlobContainerOptions renameOptions;
-    renameOptions.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    renameOptions.SourceAccessConditions.LeaseId = RandomUUID();
     EXPECT_THROW(
         serviceClient.RenameBlobContainer(destContainerName, destContainerName2, renameOptions),
         StorageException);

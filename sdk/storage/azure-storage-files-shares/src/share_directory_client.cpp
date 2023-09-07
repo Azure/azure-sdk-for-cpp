@@ -290,6 +290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileContentType = options.ContentType;
 
     auto response = _detail::FileClient::Rename(
         *m_pipeline, destinationFileUrl, protocolLayerOptions, context);
@@ -550,7 +551,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.Marker;
+    pagedResponse.NextPageToken = response.Value.NextMarker;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;

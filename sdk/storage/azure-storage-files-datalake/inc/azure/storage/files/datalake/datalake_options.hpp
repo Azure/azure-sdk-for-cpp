@@ -86,6 +86,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using SetServicePropertiesOptions = Blobs::SetServicePropertiesOptions;
   using EncryptionKey = Blobs::EncryptionKey;
 
+  namespace _detail {
+    struct DatalakeClientConfiguration
+    {
+
+      /**
+       * API version used by this client.
+       */
+      std::string ApiVersion;
+
+      /**
+       * @brief The token credential used to initialize the client.
+       */
+      std::shared_ptr<Core::Credentials::TokenCredential> TokenCredential;
+
+      /**
+       * @brief Holds the customer provided key used when making requests.
+       */
+      Azure::Nullable<EncryptionKey> CustomerProvidedKey;
+    };
+  } // namespace _detail
+
   /**
    * @brief Client options used to initialize all DataLake clients.
    */
@@ -109,6 +130,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Holds the customer provided key used when making requests.
      */
     Azure::Nullable<EncryptionKey> CustomerProvidedKey;
+
+    /**
+     * Enables tenant discovery through the authorization challenge when the client is configured to
+     * use a TokenCredential. When enabled, the client will attempt an initial un-authorized request
+     * to prompt a challenge in order to discover the correct tenant for the resource.
+     */
+    bool EnableTenantDiscovery = false;
   };
 
   /**

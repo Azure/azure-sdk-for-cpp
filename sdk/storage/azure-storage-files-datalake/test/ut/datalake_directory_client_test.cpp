@@ -21,7 +21,46 @@ namespace Azure { namespace Storage { namespace Test {
     m_directoryName = RandomString();
     m_directoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
         m_fileSystemClient->GetDirectoryClient(m_directoryName));
-    m_fileSystemClient->GetFileClient(m_directoryName).Create();
+    m_fileSystemClient->GetDirectoryClient(m_directoryName).Create();
+  }
+
+  namespace {
+    bool CompareDirectoryMetadata(const Storage::Metadata& lhs, const Storage::Metadata& rhs)
+    {
+      /* cspell:disable-next-line */
+      const std::string c_hdiIsFolder = "hdi_isfolder";
+      std::vector<std::pair<std::string, std::string>> symmetricDiff;
+      std::set_symmetric_difference(
+          lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::back_inserter(symmetricDiff));
+      return symmetricDiff.empty()
+          || (symmetricDiff.size() == 1 && symmetricDiff[0].first == c_hdiIsFolder);
+    }
+  } // namespace
+
+  TEST_F(DataLakeDirectoryClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    {
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, m_directoryName, clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+    {
+      auto credential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+      Files::DataLake::DataLakeDirectoryClient directoryClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
+          credential,
+          clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+    {
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
   }
 
   TEST_F(DataLakeDirectoryClientTest, CreateDeleteDirectory)
@@ -101,6 +140,33 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, OAuthDelete)
+  {
+    const std::string baseName = RandomString();
+    auto oauthFileSystemClient = Files::DataLake::DataLakeFileSystemClient(
+        Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    // Delete empty
+    auto emptyDir = baseName + "OAuthEmptyDir";
+    auto emptyDirClient = oauthFileSystemClient.GetDirectoryClient(emptyDir);
+    EXPECT_NO_THROW(emptyDirClient.Create());
+    EXPECT_NO_THROW(emptyDirClient.DeleteEmpty());
+
+    // Recursive delete
+    auto rootDir = baseName + "OAuthRoot";
+    auto rootDirClient = oauthFileSystemClient.GetDirectoryClient(rootDir);
+    EXPECT_NO_THROW(rootDirClient.Create());
+    for (int32_t i = 0; i < 5; ++i)
+    {
+      auto client = m_fileSystemClient->GetDirectoryClient(rootDir + "/d" + std::to_string(i));
+      EXPECT_NO_THROW(client.Create());
+    }
+    EXPECT_THROW(rootDirClient.DeleteEmpty(), StorageException);
+    EXPECT_NO_THROW(rootDirClient.DeleteRecursive());
+  }
+
   TEST_F(DataLakeDirectoryClientTest, CreateDeleteIfExistsDirectory)
   {
     std::string const baseName = RandomString();
@@ -122,6 +188,16 @@ namespace Azure { namespace Storage { namespace Test {
       bool deleted = false;
       EXPECT_NO_THROW(deleted = dirClient.DeleteEmptyIfExists().Value.Deleted);
       EXPECT_FALSE(deleted);
+    }
+    {
+      // Recursive delete if exists
+      auto rootDir = baseName + "root";
+      auto rootDirClient = m_fileSystemClient->GetDirectoryClient(rootDir);
+      EXPECT_NO_THROW(rootDirClient.Create());
+      auto fileClient = rootDirClient.GetFileClient(RandomString());
+      EXPECT_NO_THROW(fileClient.Create());
+      EXPECT_THROW(rootDirClient.DeleteEmpty(), StorageException);
+      EXPECT_NO_THROW(rootDirClient.DeleteRecursiveIfExists());
     }
   }
 
@@ -317,10 +393,10 @@ namespace Azure { namespace Storage { namespace Test {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
       auto result = m_directoryClient->GetProperties().Value.Metadata;
-      EXPECT_EQ(metadata1, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata1, result));
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
       result = m_directoryClient->GetProperties().Value.Metadata;
-      EXPECT_EQ(metadata2, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata2, result));
     }
 
     {
@@ -336,13 +412,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
       auto result = client1.GetProperties().Value.Metadata;
-      /* cspell:disable-next-line */
-      metadata1["hdi_isfolder"] = "true";
-      /* cspell:disable-next-line */
-      metadata2["hdi_isfolder"] = "true";
-      EXPECT_EQ(metadata1, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata1, result));
       result = client2.GetProperties().Value.Metadata;
-      EXPECT_EQ(metadata2, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata2, result));
     }
   }
 
@@ -354,10 +426,10 @@ namespace Azure { namespace Storage { namespace Test {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
       auto result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata1, result.Value.Metadata);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata1, result.Value.Metadata));
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
       result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata2, result.Value.Metadata);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata2, result.Value.Metadata));
     }
 
     {
@@ -404,6 +476,26 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.DeleteEmpty());
       }
     }
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursiveMultiPage)
+  {
+    auto dirClient = m_fileSystemClient->GetDirectoryClient(RandomString());
+    for (int i = 0; i < 5; ++i)
+    {
+      auto fileClient = dirClient.GetFileClient(RandomString());
+      fileClient.Create();
+    }
+    auto acls = GetAclsForTesting();
+    Files::DataLake::SetPathAccessControlListRecursiveOptions options;
+    options.PageSizeHint = 2;
+    int numPages = 0;
+    for (auto page = dirClient.SetAccessControlListRecursive(acls, options); page.HasPage();
+         page.MoveToNextPage())
+    {
+      ++numPages;
+    }
+    EXPECT_GT(numPages, 2);
   }
 
   TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursive)
@@ -675,4 +767,121 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, ListPaths)
+  {
+    std::set<std::string> paths;
+    const std::string dir1 = RandomString();
+    const std::string dir2 = RandomString();
+
+    std::set<std::string> rootPaths;
+    rootPaths.emplace(dir1);
+    rootPaths.emplace(dir2);
+    paths.emplace(dir1);
+    paths.emplace(dir2);
+
+    {
+      // This is to ensure path filter is correctly set for listing, items out of the directory
+      // won't be listed.
+      m_fileSystemClient->GetDirectoryClient(RandomString()).Create();
+      m_fileSystemClient->GetFileClient(RandomString()).Create();
+    }
+    {
+      auto dirClient = m_directoryClient->GetSubdirectoryClient(dir1);
+
+      for (int i = 0; i < 3; ++i)
+      {
+        std::string filename = RandomString();
+        auto fileClient = dirClient.GetFileClient(filename);
+        fileClient.CreateIfNotExists();
+        paths.emplace(dir1 + "/" + filename);
+      }
+
+      dirClient = m_directoryClient->GetSubdirectoryClient(dir2);
+      for (int i = 0; i < 4; ++i)
+      {
+        std::string filename = RandomString();
+        auto fileClient = dirClient.GetFileClient(filename);
+        fileClient.CreateIfNotExists();
+        paths.emplace(dir2 + "/" + filename);
+      }
+      std::string filename = RandomString();
+      auto fileClient = m_directoryClient->GetFileClient(filename);
+      fileClient.CreateIfNotExists();
+      paths.emplace(filename);
+      rootPaths.emplace(filename);
+    }
+
+    {
+      // append root directory prefix
+      std::set<std::string> tmp;
+      for (const auto& i : rootPaths)
+      {
+        tmp.insert(m_directoryName + "/" + i);
+      }
+      rootPaths = tmp;
+      tmp.clear();
+      for (const auto& i : paths)
+      {
+        tmp.insert(m_directoryName + "/" + i);
+      }
+      paths = tmp;
+    }
+
+    {
+      // Normal list recursively.
+      std::set<std::string> results;
+      for (auto page = m_directoryClient->ListPaths(true); page.HasPage(); page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          results.insert(path.Name);
+        }
+      }
+
+      EXPECT_EQ(results, paths);
+    }
+    {
+      // non-recursive
+      std::set<std::string> results;
+      for (auto page = m_directoryClient->ListPaths(false); page.HasPage(); page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          results.insert(path.Name);
+        }
+      }
+
+      EXPECT_EQ(results, rootPaths);
+    }
+    {
+      // List max result
+      Files::DataLake::ListPathsOptions options;
+      options.PageSizeHint = 2;
+      int numPages = 0;
+      for (auto page = m_directoryClient->ListPaths(true, options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Paths.size(), 2U);
+        ++numPages;
+      }
+      EXPECT_GT(numPages, 2);
+    }
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, ListPathsExpiresOn)
+  {
+    const std::string fileName = RandomString();
+    auto fileClient = m_directoryClient->GetFileClient(fileName);
+    fileClient.Create();
+    Files::DataLake::ScheduleFileDeletionOptions options;
+    options.ExpiresOn = Azure::DateTime::Parse(
+        "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
+    EXPECT_NO_THROW(fileClient.ScheduleDeletion(
+        Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options));
+
+    auto pagedResult = m_directoryClient->ListPaths(true);
+    EXPECT_EQ(1L, pagedResult.Paths.size());
+    ASSERT_TRUE(pagedResult.Paths[0].ExpiresOn.HasValue());
+    EXPECT_EQ(options.ExpiresOn.Value(), pagedResult.Paths[0].ExpiresOn.Value());
+  }
 }}} // namespace Azure::Storage::Test

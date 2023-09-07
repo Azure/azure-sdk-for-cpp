@@ -1,6 +1,18 @@
 # Release History
 
-## 1.0.0-beta.2 (Unreleased)
+## 1.0.0-beta.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- When a message sender is destroyed, close the underlying AMQP link if it hasn't been closed already.
+
+### Other Changes
+
+## 1.0.0-beta.2 (2023-08-04)
 
 ### Features Added
 
@@ -9,14 +21,13 @@
 - Collection types (`AmqpArray`, `AmqpMap`, `AmqpList`, `AmqpBinaryData`, `AmqpSymbol` and `AmqpComposite`):
   - Added explicit cast operator to underlying collection type.
   - Added `find()`.
+- Rationalized the return code for AMQP MessageSender and MessageReceiver and Management APIs to use AmqpError for error codes.
+- Added additional AMQP Error values.
 
 ### Breaking Changes
 
 - Renamed `Azure::Core::Amqp::Models::AmqpMessageFormatValue` to `AmqpDefaultMessageFormatValue`.
-
-### Bugs Fixed
-
-### Other Changes
+- Changed the return values for the MessageSender, MessageReceiver and Management APIs.
 
 ## 1.0.0-beta.1 (2023-07-06)
 

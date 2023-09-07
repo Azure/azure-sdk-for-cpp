@@ -247,6 +247,9 @@ void TestProxyManager::SetProxySanitizer()
   addSanitizer(SanitizerType::Uri, storageSasSignatureRegex, "sassig");
   addSanitizer(SanitizerType::Header, storageSasSignatureRegex, "sassig", "x-ms-copy-source");
   addSanitizer(SanitizerType::Header, storageSasSignatureRegex, "sassig", "x-ms-rename-source");
+  addSanitizer(SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-copy-source-authorization");
+  addSanitizer(SanitizerType::Header, "(?<cookie>.+)", "cookie", "Cookie");
+  addSanitizer(SanitizerType::Header, "(?<cookie>.+)", "cookie", "Set-Cookie");
   const std::string storageUserDelegationKeyRegex
       = "\\u003CValue\\u003E(?<userdelegationkey>[a-zA-Z0-9\\/=+]+).*\\u003C\\/"
         "UserDelegationKey\\u003E";
@@ -277,6 +280,7 @@ void TestProxyManager::SetProxySanitizer()
         "x-ms-file-creation-time",
         "x-ms-file-last-write-time",
         "x-ms-rename-source",
+        "x-ms-immutability-policy-until-date",
     };
     const std::vector<std::string> ignoreQueryParameters = {
         "st",

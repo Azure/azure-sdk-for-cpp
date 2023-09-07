@@ -59,10 +59,10 @@ set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
     inc/azure/messaging/eventhubs.hpp
     inc/azure/messaging/eventhubs/checkpoint_store.hpp
-    inc/azure/messaging/eventhubs/eventhub_constants.hpp
     inc/azure/messaging/eventhubs/consumer_client.hpp
     inc/azure/messaging/eventhubs/dll_import_export.hpp
     inc/azure/messaging/eventhubs/event_data_batch.hpp
+    inc/azure/messaging/eventhubs/eventhubs_exception.hpp
     inc/azure/messaging/eventhubs/models/checkpoint_store_models.hpp
     inc/azure/messaging/eventhubs/models/consumer_client_models.hpp
     inc/azure/messaging/eventhubs/models/event_data.hpp
@@ -84,16 +84,22 @@ set(
     src/consumer_client.cpp
     src/event_data.cpp 
     src/event_data_batch.cpp
+    src/partition_client.cpp
+    src/partition_client_models.cpp
     src/private/package_version.hpp
+    src/private/eventhubs_constants.hpp
+    src/private/eventhubs_utilities.hpp
     src/processor_load_balancer.cpp
+    src/processor_partition_client.cpp
     src/producer_client.cpp
     src/retry_operation.cpp
+    src/eventhubs_utilities.cpp
 )
 
 add_library(
   azure-messaging-eventhubs
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
-   )
+)
 create_per_service_target_build(eventhubs azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
@@ -112,14 +118,10 @@ create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhu
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-messaging-eventhubs ${AZ_LIBRARY_VERSION})
 
-if(BUILD_TESTING)
-  add_compile_definitions(TESTING_BUILD_AMQP)
-  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
-    include(AddGoogleTest)
-    enable_testing ()
-  endif()
-  
-  add_subdirectory(test/ut)
+add_subdirectory(test)
+
+if (BUILD_SAMPLES)
+  add_subdirectory(samples)
 endif()
 
 az_vcpkg_export(

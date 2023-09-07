@@ -47,7 +47,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::map<std::string, std::vector<std::string>> byOwnerID{};
       for (auto const& ownership : ownerships)
       {
-        byOwnerID[ownership.OwnerID].push_back(ownership.PartitionID);
+        byOwnerID[ownership.OwnerId].push_back(ownership.PartitionId);
       }
 
       return byOwnerID;
@@ -123,8 +123,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto const& ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
 
     EXPECT_EQ(ownerships.size(), 2ul);
-    EXPECT_TRUE(ownerships[0].PartitionID == "1" || ownerships[0].PartitionID == "2");
-    EXPECT_TRUE(ownerships[1].PartitionID == "1" || ownerships[1].PartitionID == "2");
+    EXPECT_TRUE(ownerships[0].PartitionId == "1" || ownerships[0].PartitionId == "2");
+    EXPECT_TRUE(ownerships[1].PartitionId == "1" || ownerships[1].PartitionId == "2");
 
     auto finalOwneships = loadBalancer.m_checkpointStore->ListOwnership(
         testEventHubFQDN, testEventHubName, testConsumerGroup);

@@ -26,6 +26,31 @@ namespace Azure { namespace Storage { namespace Test {
             StandardStorageConnectionString(), options));
   }
 
+  TEST_F(FileShareServiceClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    {
+      auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+      auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+      auto keyCredential
+          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+      Sas::AccountSasBuilder accountSasBuilder;
+      accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      accountSasBuilder.StartsOn = sasStartsOn;
+      accountSasBuilder.ExpiresOn = sasExpiresOn;
+      accountSasBuilder.Services = Sas::AccountSasServices::Files;
+      accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+      accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::Read);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+
+      auto serviceClient = Files::Shares::ShareServiceClient(
+          m_shareServiceClient->GetUrl() + sasToken, clientOptions);
+      EXPECT_NO_THROW(serviceClient.GetProperties());
+    }
+  }
+
   TEST_F(FileShareServiceClientTest, ListShares)
   {
     std::string prefix1 = LowercaseRandomString();
@@ -88,8 +113,14 @@ namespace Azure { namespace Storage { namespace Test {
       // List max result
       Files::Shares::ListSharesOptions options;
       options.PageSizeHint = 2;
-      auto response = m_shareServiceClient->ListShares(options);
-      EXPECT_LE(2U, response.Shares.size());
+      int numPages = 0;
+      for (auto page = m_shareServiceClient->ListShares(options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Shares.size(), 2U);
+        ++numPages;
+      }
+      EXPECT_GT(numPages, 2);
     }
     for (const auto& shareName : shareSet1)
     {
@@ -120,6 +151,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareServiceClientTest, SetProperties)
   {
     auto properties = m_shareServiceClient->GetProperties().Value;
+    properties.Protocol.Reset();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -206,11 +238,12 @@ namespace Azure { namespace Storage { namespace Test {
     m_shareServiceClient->SetProperties(originalProperties);
   }
 
-  TEST_F(FileShareServiceClientTest, DISABLED_SetPremiumFileProperties)
+  TEST_F(FileShareServiceClientTest, SetPremiumFileProperties)
   {
     auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
-            PremiumFileConnectionString()));
+            PremiumFileConnectionString(),
+            InitStorageClientOptions<Files::Shares::ShareClientOptions>()));
     auto properties = premiumFileShareServiceClient->GetProperties().Value;
     auto originalProperties = properties;
 

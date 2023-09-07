@@ -3,6 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 
+#include "azure/storage/files/datalake/datalake_directory_client.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
 #include "private/datalake_utilities.hpp"
@@ -90,7 +91,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   void ListPathsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
-    *this = m_onNextPageFunc(NextPageToken.Value(), context);
+    m_operationOptions.ContinuationToken = NextPageToken;
+    if (m_fileSystemClient)
+    {
+      *this = m_fileSystemClient->ListPaths(m_recursive, m_operationOptions, context);
+    }
+    else if (m_directoryClient)
+    {
+      *this = m_directoryClient->ListPaths(m_recursive, m_operationOptions, context);
+    }
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
+    }
   }
 
   void ListDeletedPathsPagedResponse::OnNextPage(const Azure::Core::Context& context)
@@ -118,7 +131,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       *this = m_dataLakePathClient->RemoveAccessControlListRecursive(
           m_acls, m_operationOptions, context);
     }
-    AZURE_UNREACHABLE_CODE();
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
+    }
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -11,6 +11,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
@@ -48,9 +49,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_pathUrl(pathUrl), m_blobClient(
                                 _detail::GetBlobUrlFromUrl(pathUrl),
                                 credential,
-                                _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<_internal::SharedKeyPolicy>(credential));
@@ -77,9 +81,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_pathUrl(pathUrl), m_blobClient(
                                 _detail::GetBlobUrlFromUrl(pathUrl),
                                 credential,
-                                _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.TokenCredential = credential;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
@@ -89,8 +97,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              credential, tokenContext));
+          std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
+              credential, tokenContext, options.EnableTenantDiscovery));
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
@@ -106,9 +114,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUrl,
       const DataLakeClientOptions& options)
       : m_pathUrl(pathUrl),
-        m_blobClient(_detail::GetBlobUrlFromUrl(pathUrl), _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+        m_blobClient(_detail::GetBlobUrlFromUrl(pathUrl), _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
@@ -235,11 +246,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       protocolLayerOptions.ExpiresOn
           = std::to_string(options.ScheduleDeletionOptions.TimeToExpire.Value().count());
     }
-    if (m_customerProvidedKey.HasValue())
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
     return _detail::PathClient::Create(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
   }
@@ -271,14 +284,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DeletePathOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::PathClient::DeletePathOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.Recursive = options.Recursive;
-    return _detail::PathClient::Delete(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
+    bool paginated = m_clientConfiguration.ApiVersion >= "2023-08-03"
+        && m_clientConfiguration.TokenCredential && options.Recursive.HasValue()
+        && options.Recursive.Value();
+    std::string continuationToken;
+    while (true)
+    {
+      _detail::PathClient::DeletePathOptions protocolLayerOptions;
+      protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+      protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+      protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+      protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+      protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+      protocolLayerOptions.Recursive = options.Recursive;
+      protocolLayerOptions.ContinuationToken = continuationToken;
+      if (options.Recursive.HasValue())
+      {
+        protocolLayerOptions.Paginated = paginated;
+      }
+      auto response
+          = _detail::PathClient::Delete(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
+      continuationToken = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+          response.RawResponse->GetHeaders(), "x-ms-continuation");
+      if (continuationToken.empty())
+      {
+        return response;
+      }
+    }
   }
 
   Azure::Response<Models::DeletePathResult> DataLakePathClient::DeleteIfExists(

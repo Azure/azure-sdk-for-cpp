@@ -347,10 +347,12 @@ directive:
       delete $.ShareSmbSettings;
       $.ShareProtocolSettings.properties["Smb"]["$ref"] = "#/definitions/SmbSettings";
       $.ShareProtocolSettings.properties["Settings"] = $.ShareProtocolSettings.properties["Smb"];
+      $.ShareProtocolSettings.properties["Settings"]["x-ms-xml"] = { "name": "SMB" };
       delete $.ShareProtocolSettings.properties["Smb"];
       $.ProtocolSettings = $.ShareProtocolSettings;
       delete $.ShareProtocolSettings;
       $.StorageServiceProperties.properties["Protocol"]["$ref"] = "#/definitions/ProtocolSettings";
+      $.StorageServiceProperties.properties["Protocol"]["x-ms-xml"] = { "name": "ProtocolSettings" };
       $.ShareServiceProperties = $.StorageServiceProperties;
       delete $.StorageServiceProperties;
       $.ShareServiceProperties.xml = { "name": "StorageServiceProperties" };

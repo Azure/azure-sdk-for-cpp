@@ -39,6 +39,48 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->CreateIfNotExists();
   }
 
+  TEST_F(DataLakeFileClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    {
+      auto fileClient = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, m_fileName, clientOptions);
+      EXPECT_NO_THROW(fileClient.GetProperties());
+    }
+    {
+      auto credential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+      Files::DataLake::DataLakeFileClient fileClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileClient->GetUrl()),
+          credential,
+          clientOptions);
+      EXPECT_NO_THROW(fileClient.GetProperties());
+    }
+    {
+      auto fileClient = Files::DataLake::DataLakeFileClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          clientOptions);
+      EXPECT_NO_THROW(fileClient.GetProperties());
+    }
+  }
+
+  TEST_F(DataLakeFileClientTest, BlobUndelete)
+  {
+    auto containerName = m_fileSystemName;
+    auto blobName = m_fileName;
+    auto blobClient = Blobs::BlobClient::CreateFromConnectionString(
+        AdlsGen2ConnectionString(),
+        containerName,
+        blobName,
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_NO_THROW(blobClient.GetProperties());
+    blobClient.Delete();
+    EXPECT_THROW(blobClient.GetProperties(), StorageException);
+    blobClient.Undelete();
+    EXPECT_NO_THROW(blobClient.GetProperties());
+  }
+
   TEST_F(DataLakeFileClientTest, CreateDeleteFiles)
   {
     {
@@ -97,6 +139,19 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
+  }
+
+  TEST_F(DataLakeFileClientTest, OAuthDelete)
+  {
+    auto oauthFileSystemClient = Files::DataLake::DataLakeFileSystemClient(
+        Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    const std::string oauthFileName = RandomString();
+    auto oauthFileClient = oauthFileSystemClient.GetFileClient(oauthFileName);
+    EXPECT_NO_THROW(oauthFileClient.Create());
+    EXPECT_NO_THROW(oauthFileClient.Delete());
   }
 
   TEST_F(DataLakeFileClientTest, CreateDeleteIfExistsFiles)
@@ -273,6 +328,55 @@ namespace Azure { namespace Storage { namespace Test {
       auto properties2 = client.GetProperties();
       EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
       EXPECT_EQ(0ll, properties2.Value.FileSize);
+    }
+  }
+
+  TEST_F(DataLakeFileClientTest, AppendFileWithHash)
+  {
+    const int32_t bufferSize = 1;
+    auto buffer = RandomBuffer(bufferSize);
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
+    const std::vector<uint8_t> contentMd5
+        = Azure::Core::Cryptography::Md5Hash().Final(buffer.data(), buffer.size());
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(buffer.data(), buffer.size());
+
+    // MD5
+    {
+      auto client = m_fileSystemClient->GetFileClient(RandomString());
+      client.Create();
+      auto properties1 = client.GetProperties();
+      Files::DataLake::AppendFileOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+      bufferStream->Rewind();
+      EXPECT_THROW(client.Append(*bufferStream, 0, options), StorageException);
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      bufferStream->Rewind();
+      EXPECT_NO_THROW(client.Append(*bufferStream, 0, options));
+
+      Files::DataLake::FlushFileOptions flushOptions;
+      flushOptions.ContentHash = ContentHash();
+      flushOptions.ContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      flushOptions.ContentHash.Value().Value = contentMd5;
+      EXPECT_NO_THROW(client.Flush(buffer.size(), flushOptions));
+    }
+
+    // CRC64
+    {
+      auto client = m_fileSystemClient->GetFileClient(RandomString());
+      client.Create();
+      auto properties1 = client.GetProperties();
+      Files::DataLake::AppendFileOptions options;
+      options.Flush = true;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      options.TransactionalContentHash.Value().Value
+          = Azure::Core::Convert::Base64Decode(DummyCrc64);
+      bufferStream->Rewind();
+      EXPECT_THROW(client.Append(*bufferStream, 0, options), StorageException);
     }
   }
 

@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "eventhub_constants.hpp"
 #include "models/event_data.hpp"
 
 #include <azure/core/amqp/models/amqp_message.hpp>
@@ -14,12 +13,16 @@
 
 // cspell: words vbin
 
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
+  class EventDataBatchFactory;
+}}}} // namespace Azure::Messaging::EventHubs::_detail
+
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   /** @brief EventDataBatchOptions contains optional parameters for the
    * [ProducerClient.CreateEventDataBatch] function.
    *
-   * @remark If both PartitionKey and PartitionID are nil, Event Hubs will choose an arbitrary
+   * @remark If both PartitionKey and PartitionId are empty, Event Hubs will choose an arbitrary
    * partition for any events in this [EventDataBatch].
    */
   struct EventDataBatchOptions final
@@ -28,18 +31,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief MaxBytes overrides the max size (in bytes) for a batch.
      * By default CreateEventDataBatch will use the max message size provided by the service.
      */
-    uint32_t MaxBytes = std::numeric_limits<int32_t>::max();
+    Azure::Nullable<std::uint64_t> MaxBytes;
 
     /** @brief PartitionKey is hashed to calculate the partition assignment.Messages and message
      * batches with the same PartitionKey are guaranteed to end up in the same partition.
-     * Note that if you use this option then PartitionID cannot be set.
+     * Note that if you use this option then PartitionId cannot be set.
      */
     std::string PartitionKey;
 
-    /** @brief PartitionID is the ID of the partition to send these messages to.
+    /** @brief PartitionId is the ID of the partition to send these messages to.
      * Note that if you use this option then PartitionKey cannot be set.
      */
-    std::string PartitionID;
+    std::string PartitionId;
   };
 
   /**@brief EventDataBatch is used to efficiently pack up EventData before sending it to Event Hubs.
@@ -53,9 +56,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const std::string anyPartitionId = "";
 
     std::mutex m_rwMutex;
-    std::string m_partitionID;
+    std::string m_partitionId;
     std::string m_partitionKey;
-    uint64_t m_maxBytes;
+    Azure::Nullable<std::uint64_t> m_maxBytes;
     std::vector<std::vector<uint8_t>> m_marshalledMessages;
     // Annotation properties
     const uint32_t BatchedMessageFormat = 0x80013700;
@@ -70,7 +73,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     EventDataBatch(EventDataBatch const& other)
         // Copy constructor cannot be defaulted because of m_rwMutex.
-        : m_rwMutex{}, m_partitionID{other.m_partitionID}, m_partitionKey{other.m_partitionKey},
+        : m_rwMutex{}, m_partitionId{other.m_partitionId}, m_partitionKey{other.m_partitionKey},
           m_maxBytes{other.m_maxBytes}, m_marshalledMessages{other.m_marshalledMessages},
           m_batchEnvelope{other.m_batchEnvelope}, m_currentSize(other.m_currentSize){};
 
@@ -80,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // Assignment operator cannot be defaulted because of m_rwMutex.
       if (this != &other)
       {
-        m_partitionID = other.m_partitionID;
+        m_partitionId = other.m_partitionId;
         m_partitionKey = other.m_partitionKey;
         m_maxBytes = other.m_maxBytes;
         m_marshalledMessages = other.m_marshalledMessages;
@@ -90,58 +93,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return *this;
     }
 
-    /** @brief Event Data Batch constructor
-     *
-     * @param options Options settings for creating the data batch
-     */
-    EventDataBatch(EventDataBatchOptions options = {})
-    {
-      SetPartitionID(anyPartitionId);
-
-      if (!options.PartitionID.empty() && !options.PartitionKey.empty())
-      {
-        throw std::runtime_error("Either PartionID or PartitionKey can be set.");
-      }
-
-      if (!options.PartitionID.empty())
-      {
-        SetPartitionID(options.PartitionID);
-      }
-      else if (!options.PartitionKey.empty())
-      {
-        SetPartitionKey(options.PartitionKey);
-      }
-
-      if (options.MaxBytes == 0)
-      {
-        SetMaxBytes(std::numeric_limits<uint16_t>::max());
-      }
-      else
-      {
-        SetMaxBytes(options.MaxBytes);
-      }
-    };
-
-    /** @brief Sets the partition ID for the data batch
-     *
-     * @param partitionID The partition ID to set
-     */
-    void SetPartitionID(std::string partitionID) { m_partitionID = partitionID; }
-
-    /** @brief Sets the partition key for the data batch
-     *
-     * @param partitionKey The partition key to set
-     */
-    void SetPartitionKey(std::string partitionKey) { m_partitionKey = partitionKey; }
-
-    /** @brief Sets the maximum size of the data batch */
-    void SetMaxBytes(uint64_t maxBytes) { m_maxBytes = maxBytes; }
-
     /** @brief Gets the partition ID for the data batch
      *
      * @return std::string
      */
-    std::string GetPartitionID() const { return m_partitionID; }
+    std::string GetPartitionId() const { return m_partitionId; }
 
     /** @brief Gets the partition key for the data batch
      * @return std::string
@@ -152,19 +108,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @return uint64_t
      */
-    uint64_t GetMaxBytes() const { return m_maxBytes; }
+    uint64_t GetMaxBytes() const { return m_maxBytes.Value(); }
 
-    /** @brief Adds a message to the data batch
+    /** @brief Attempts to add a raw AMQP message to the data batch
+     *
+     * @param message The AMQP message to add to the batch
+     *
+     * @returns true if the message was added to the batch, false otherwise.
+     */
+    bool TryAddMessage(Azure::Core::Amqp::Models::AmqpMessage const& message)
+    {
+      return TryAddAmqpMessage(message);
+    }
+
+    /** @brief Attempts to add a message to the data batch
      *
      * @param message The message to add to the batch
-     */
-    void AddMessage(Azure::Core::Amqp::Models::AmqpMessage& message) { AddAmqpMessage(message); }
-
-    /** @brief Adds a message to the data batch
      *
-     * @param message The message to add to the batch
+     * @returns true if the message was added to the batch, false otherwise.
      */
-    void AddMessage(Azure::Messaging::EventHubs::Models::EventData& message);
+    bool TryAddMessage(Azure::Messaging::EventHubs::Models::EventData const& message);
 
     /** @brief Gets the number of messages in the batch
      *
@@ -180,73 +143,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @return Azure::Core::Amqp::Models::AmqpMessage
      */
-    Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const
-    {
-      Azure::Core::Amqp::Models::AmqpMessage returnValue{m_batchEnvelope};
-      if (m_marshalledMessages.size() == 0)
-      {
-        throw std::runtime_error("No messages added to the batch.");
-      }
-
-      // Make sure that the partition key in the message is the current partition key.
-      if (!m_partitionKey.empty())
-      {
-        returnValue.DeliveryAnnotations.emplace(
-            _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
-      }
-
-      std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
-      for (auto const& marshalledMessage : m_marshalledMessages)
-      {
-        Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
-        messageList.push_back(data);
-      }
-
-      returnValue.SetBody(messageList);
-      Azure::Core::Diagnostics::_internal::Log::Stream(
-          Azure::Core::Diagnostics::Logger::Level::Informational)
-          << "EventDataBatch::ToAmqpMessage: " << returnValue << std::endl;
-      return returnValue;
-    }
+    Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const;
 
   private:
-    void AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
-    {
-      std::lock_guard<std::mutex> lock(m_rwMutex);
-
-      if (!message.Properties.MessageId.HasValue())
-      {
-        message.Properties.MessageId
-            = Azure::Core::Amqp::Models::AmqpValue(Azure::Core::Uuid::CreateUuid().ToString());
-      }
-
-      if (!m_partitionKey.empty())
-      {
-        message.MessageAnnotations.emplace(
-            _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
-      }
-
-      auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);
-
-      if (m_marshalledMessages.size() == 0)
-      {
-        // The first message is special - we use its properties and annotations on the envelope for
-        // the batch message.
-        m_batchEnvelope = CreateBatchEnvelope(message);
-        m_currentSize = serializedMessage.size();
-      }
-      auto actualPayloadSize = CalculateActualSizeForPayload(serializedMessage);
-      if (m_currentSize + actualPayloadSize > m_maxBytes)
-      {
-        m_currentSize = 0;
-        m_batchEnvelope = nullptr;
-
-        throw std::runtime_error("EventDataBatch size is too large.");
-      }
-
-      m_currentSize += actualPayloadSize;
-      m_marshalledMessages.push_back(serializedMessage);
-    }
+    bool TryAddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message);
 
     size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {
@@ -270,5 +170,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       batchEnvelope.MessageFormat = BatchedMessageFormat;
       return batchEnvelope;
     }
+
+    /** @brief Event Data Batch constructor
+     *
+     * @param options Options settings for creating the data batch
+     */
+    EventDataBatch(EventDataBatchOptions options = {})
+        : m_partitionId{options.PartitionId}, m_partitionKey{options.PartitionKey},
+          m_maxBytes{options.MaxBytes}, m_marshalledMessages{}, m_batchEnvelope{}, m_currentSize{0}
+    {
+      if (!options.PartitionId.empty() && !options.PartitionKey.empty())
+      {
+        throw std::runtime_error("Either PartionID or PartitionKey can be set, but not both.");
+      }
+
+      if (options.PartitionId.empty())
+      {
+        m_partitionId = anyPartitionId;
+      }
+    };
+
+    friend class _detail::EventDataBatchFactory;
   };
 }}} // namespace Azure::Messaging::EventHubs

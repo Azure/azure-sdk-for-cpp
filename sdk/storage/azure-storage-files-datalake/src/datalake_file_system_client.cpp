@@ -14,6 +14,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
@@ -50,9 +51,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                            _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<_internal::SharedKeyPolicy>(credential));
@@ -79,9 +83,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                            _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.TokenCredential = credential;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
@@ -91,8 +99,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              credential, tokenContext));
+          std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
+              credential, tokenContext, options.EnableTenantDiscovery));
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
@@ -109,9 +117,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
-                                            _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                            _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
@@ -133,7 +144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     builder.AppendPath(_internal::UrlEncodePath(fileName));
     auto blobClient = m_blobContainerClient.GetBlobClient(fileName);
     return DataLakeFileClient(
-        std::move(builder), std::move(blobClient), m_pipeline, m_customerProvidedKey);
+        std::move(builder), std::move(blobClient), m_pipeline, m_clientConfiguration);
   }
 
   DataLakeDirectoryClient DataLakeFileSystemClient::GetDirectoryClient(
@@ -142,10 +153,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto builder = m_fileSystemUrl;
     builder.AppendPath(_internal::UrlEncodePath(directoryName));
     return DataLakeDirectoryClient(
-        builder,
+        std::move(builder),
         m_blobContainerClient.GetBlobClient(directoryName),
         m_pipeline,
-        m_customerProvidedKey);
+        m_clientConfiguration);
   }
 
   Azure::Response<Models::CreateFileSystemResult> DataLakeFileSystemClient::Create(
@@ -264,57 +275,45 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Recursive = recursive;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
 
-    auto clientCopy = *this;
-    std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)> func;
-    func = [func, clientCopy, protocolLayerOptions](
-               std::string continuationToken, const Azure::Core::Context& context) {
-      auto protocolLayerOptionsCopy = protocolLayerOptions;
-      if (!continuationToken.empty())
+    auto response = _detail::FileSystemClient::ListPaths(
+        *m_pipeline, m_fileSystemUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    ListPathsPagedResponse pagedResponse;
+    for (auto& path : response.Value.Paths)
+    {
+      Models::PathItem item;
+      item.Name = std::move(path.Name);
+      item.IsDirectory = path.IsDirectory;
+      item.LastModified = std::move(path.LastModified);
+      item.FileSize = path.FileSize;
+      item.Owner = std::move(path.Owner);
+      item.Group = std::move(path.Group);
+      item.Permissions = std::move(path.Permissions);
+      item.EncryptionScope = std::move(path.EncryptionScope);
+      item.EncryptionContext = std::move(path.EncryptionContext);
+      item.ETag = std::move(path.ETag);
+      if (path.CreatedOn.HasValue())
       {
-        protocolLayerOptionsCopy.ContinuationToken = continuationToken;
+        item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+            std::stoll(path.CreatedOn.Value()));
       }
-      auto response = _detail::FileSystemClient::ListPaths(
-          *clientCopy.m_pipeline,
-          clientCopy.m_fileSystemUrl,
-          protocolLayerOptionsCopy,
-          _internal::WithReplicaStatus(context));
-
-      ListPathsPagedResponse pagedResponse;
-      for (auto& path : response.Value.Paths)
+      if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != "0")
       {
-        Models::PathItem item;
-        item.Name = std::move(path.Name);
-        item.IsDirectory = path.IsDirectory;
-        item.LastModified = std::move(path.LastModified);
-        item.FileSize = path.FileSize;
-        item.Owner = std::move(path.Owner);
-        item.Group = std::move(path.Group);
-        item.Permissions = std::move(path.Permissions);
-        item.EncryptionScope = std::move(path.EncryptionScope);
-        item.EncryptionContext = std::move(path.EncryptionContext);
-        item.ETag = std::move(path.ETag);
-        if (path.CreatedOn.HasValue())
-        {
-          item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
-              std::stoll(path.CreatedOn.Value()));
-        }
-        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != "0")
-        {
-          item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
-              std::stoll(path.ExpiresOn.Value()));
-        }
-        pagedResponse.Paths.push_back(std::move(item));
+        item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+            std::stoll(path.ExpiresOn.Value()));
       }
-      pagedResponse.m_onNextPageFunc = func;
-      pagedResponse.CurrentPageToken = continuationToken;
-      pagedResponse.NextPageToken = response.Value.ContinuationToken;
-      pagedResponse.RawResponse = std::move(response.RawResponse);
+      pagedResponse.Paths.push_back(std::move(item));
+    }
+    pagedResponse.m_fileSystemClient = std::make_shared<DataLakeFileSystemClient>(*this);
+    pagedResponse.m_recursive = recursive;
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
+    pagedResponse.RawResponse = std::move(response.RawResponse);
 
-      return pagedResponse;
-    };
-
-    return func(options.ContinuationToken.ValueOr(std::string()), context);
+    return pagedResponse;
   }
 
   Azure::Response<Models::FileSystemAccessPolicy> DataLakeFileSystemClient::GetAccessPolicy(
@@ -392,12 +391,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
+        m_pipeline,
+        m_clientConfiguration.CustomerProvidedKey);
     auto renamedFileClient = DataLakeFileClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
         m_pipeline,
-        m_customerProvidedKey);
+        m_clientConfiguration);
     return Azure::Response<DataLakeFileClient>(
         std::move(renamedFileClient), std::move(result.RawResponse));
   }
@@ -443,12 +444,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
+        m_pipeline,
+        m_clientConfiguration.CustomerProvidedKey);
     auto renamedDirectoryClient = DataLakeDirectoryClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
         m_pipeline,
-        m_customerProvidedKey);
+        m_clientConfiguration);
     return Azure::Response<DataLakeDirectoryClient>(
         std::move(renamedDirectoryClient), std::move(result.RawResponse));
   }

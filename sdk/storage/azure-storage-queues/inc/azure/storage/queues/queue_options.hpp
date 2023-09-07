@@ -56,6 +56,12 @@ namespace Azure { namespace Storage { namespace Queues {
      */
     AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2018_03_28;
 
+    /**
+     * @brief API version 2019-12-12.
+     *
+     */
+    AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2019_12_12;
+
   private:
     std::string m_version;
   };
@@ -78,6 +84,13 @@ namespace Azure { namespace Storage { namespace Queues {
      * API version used by this client.
      */
     ServiceVersion ApiVersion{_detail::ApiVersion};
+
+    /**
+     * Enables tenant discovery through the authorization challenge when the client is configured to
+     * use a TokenCredential. When enabled, the client will attempt an initial un-authorized request
+     * to prompt a challenge in order to discover the correct tenant for the resource.
+     */
+    bool EnableTenantDiscovery = false;
   };
 
   /**

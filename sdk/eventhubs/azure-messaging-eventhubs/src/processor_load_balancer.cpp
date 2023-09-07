@@ -18,23 +18,23 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
   std::vector<Models::Ownership> ownerships = m_checkpointStore->ListOwnership(
       m_consumerClientDetails.EventHubName,
       m_consumerClientDetails.ConsumerGroup,
-      m_consumerClientDetails.ClientID,
+      m_consumerClientDetails.ClientId,
       context);
 
   std::vector<Models::Ownership> unownedOrExpired;
   std::map<std::string, bool> alreadyProcessed;
   std::map<std::string, std::vector<Models::Ownership>> groupedByOwner;
-  groupedByOwner[m_consumerClientDetails.ClientID] = std::vector<Models::Ownership>();
+  groupedByOwner[m_consumerClientDetails.ClientId] = std::vector<Models::Ownership>();
   for (auto& ownership : ownerships)
   {
-    if (alreadyProcessed.find(ownership.PartitionID) != alreadyProcessed.end())
+    if (alreadyProcessed.find(ownership.PartitionId) != alreadyProcessed.end())
     {
       continue;
     }
-    alreadyProcessed[ownership.PartitionID] = true;
+    alreadyProcessed[ownership.PartitionId] = true;
     Azure::DateTime now(Azure::_detail::Clock::now());
 
-    if (ownership.OwnerID.empty()
+    if (ownership.OwnerId.empty()
         || std::chrono::duration_cast<std::chrono::minutes>(
                now - ownership.LastModifiedTime.Value())
             > m_duration)
@@ -42,7 +42,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
       unownedOrExpired.push_back(ownership);
       continue;
     }
-    groupedByOwner[ownership.OwnerID].push_back(ownership);
+    groupedByOwner[ownership.OwnerId].push_back(ownership);
   }
 
   for (auto& partitionID : partitionIDs)
@@ -55,9 +55,9 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
     unownedOrExpired.push_back(Ownership{
         m_consumerClientDetails.ConsumerGroup,
         m_consumerClientDetails.EventHubName,
-        m_consumerClientDetails.HostName,
+        m_consumerClientDetails.FullyQualifiedNamespace,
         partitionID,
-        m_consumerClientDetails.ClientID,
+        m_consumerClientDetails.ClientId,
     });
   }
 
@@ -82,7 +82,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
   }
 
   return Models::LoadBalancerInfo{
-      groupedByOwner[m_consumerClientDetails.ClientID],
+      groupedByOwner[m_consumerClientDetails.ClientId],
       unownedOrExpired,
       aboveMax,
       maxAllowed,
@@ -113,7 +113,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetRandomOwnerships(
 Azure::Messaging::EventHubs::Models::Ownership
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::ResetOwnership(Models::Ownership ownership)
 {
-  ownership.OwnerID = m_consumerClientDetails.ClientID;
+  ownership.OwnerId = m_consumerClientDetails.ClientId;
   return ownership;
 }
 

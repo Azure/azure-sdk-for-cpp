@@ -57,6 +57,7 @@ set(
     inc/azure/identity/environment_credential.hpp
     inc/azure/identity/managed_identity_credential.hpp
     inc/azure/identity/rtti.hpp
+    inc/azure/identity/workload_identity_credential.hpp
     inc/azure/identity.hpp
 )
 
@@ -80,6 +81,7 @@ set(
     src/tenant_id_resolver.cpp
     src/token_cache.cpp
     src/token_credential_impl.cpp
+    src/workload_identity_credential.cpp
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
@@ -99,8 +101,13 @@ target_include_directories(
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(azure-identity PRIVATE OpenSSL::Crypto)
+if(WIN32)
+  find_package(wil CONFIG REQUIRED)
+  target_link_libraries(azure-identity PRIVATE WIL::WIL bcrypt crypt32)
+else()
+  find_package(OpenSSL REQUIRED)
+  target_link_libraries(azure-identity PRIVATE OpenSSL::Crypto)
+endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})

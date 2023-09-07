@@ -74,6 +74,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief The Maximum message size for the link associated with the message receiver. */
     Nullable<uint64_t> MaxMessageSize;
 
+    /** @brief The default link credit used when communicating with the service. The link credit
+     * defines the maximum number of messages which can be outstanding between the service and the
+     * client. */
+    uint32_t MaxLinkCredit{};
+
+    /** @brief Attach properties for the link associated with the message receiver. */
+    Models::AmqpMap Properties;
+
     /** @brief If true, the message receiver will generate low level events */
     bool EnableTrace{false};
 

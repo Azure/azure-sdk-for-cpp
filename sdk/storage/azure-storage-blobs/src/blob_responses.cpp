@@ -75,10 +75,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       *this = m_blobServiceClient->FindBlobsByTags(
           m_tagFilterSqlExpression, m_operationOptions, context);
     }
-    else
+    else if (m_blobContainerClient)
     {
       *this = m_blobContainerClient->FindBlobsByTags(
           m_tagFilterSqlExpression, m_operationOptions, context);
+    }
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -113,7 +117,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       *this = m_pageBlobClient->GetManagedDiskPageRangesDiff(
           m_previousSnapshotUrl.Value(), m_operationOptions, context);
     }
-    AZURE_UNREACHABLE_CODE();
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
+    }
   }
 
 }}} // namespace Azure::Storage::Blobs

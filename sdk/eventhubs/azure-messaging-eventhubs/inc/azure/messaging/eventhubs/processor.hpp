@@ -63,7 +63,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class Processor final {
 #ifdef TESTING_BUILD_AMQP
-
     friend class Test::ProcessorTest_LoadBalancing_Test;
 #endif
 
@@ -71,7 +70,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::StartPositions m_defaultStartPositions;
     std::shared_ptr<CheckpointStore> m_checkpointStore;
     int32_t m_prefetch;
-    std::shared_ptr<ConsumerClient> m_ConsumerClient;
+    std::shared_ptr<ConsumerClient> m_consumerClient;
     std::vector<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
     uint32_t m_currentPartitionClient;
     Models::ConsumerClientDetails m_consumerClientDetails;
@@ -92,13 +91,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::shared_ptr<CheckpointStore> checkpointStore,
         ProcessorOptions const& options = {})
         : m_defaultStartPositions(options.StartPositions), m_checkpointStore(checkpointStore),
-          m_prefetch(options.Prefetch), m_ConsumerClient(consumerClient)
+          m_prefetch(options.Prefetch), m_consumerClient(consumerClient)
     {
       m_ownershipUpdateInterval = options.UpdateInterval == Azure::DateTime::duration::zero()
           ? std::chrono::seconds(10)
           : options.UpdateInterval;
 
-      m_consumerClientDetails = m_ConsumerClient->GetDetails();
+      m_consumerClientDetails = m_consumerClient->GetDetails();
       m_loadBalancer = std::make_shared<ProcessorLoadBalancer>(
           m_checkpointStore,
           m_consumerClientDetails,
@@ -133,7 +132,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     void Run(Core::Context const& context = {})
     {
-      Models::EventHubProperties eventHubProperties = m_ConsumerClient->GetEventHubProperties();
+      Models::EventHubProperties eventHubProperties
+          = m_consumerClient->GetEventHubProperties(context);
       ConsumersType consumers;
       Dispatch(eventHubProperties, consumers, context);
       //      time_t timeNowSeconds
@@ -160,7 +160,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context)
     {
       std::vector<Models::Ownership> ownerships
-          = m_loadBalancer->LoadBalance(eventHubProperties.PartitionIDs, context);
+          = m_loadBalancer->LoadBalance(eventHubProperties.PartitionIds, context);
 
       std::map<std::string, Models::Checkpoint> checkpoints = GetCheckpointsMap(context);
 
@@ -192,16 +192,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       std::shared_ptr<ProcessorPartitionClient> processorPartitionClient
           = std::make_shared<ProcessorPartitionClient>(
-              ownership.PartitionID,
-              m_ConsumerClient->CreatePartitionClient(
-                  ownership.PartitionID, {startPosition, m_processorOwnerLevel, m_prefetch}),
+              ownership.PartitionId,
+              m_consumerClient->CreatePartitionClient(
+                  ownership.PartitionId, {startPosition, m_processorOwnerLevel, m_prefetch}),
               m_checkpointStore,
               m_consumerClientDetails,
-              [&]() { consumers.erase(ownership.PartitionID); });
+              [&]() { consumers.erase(ownership.PartitionId); });
 
-      if (consumers.find(ownership.PartitionID) == consumers.end())
+      if (consumers.find(ownership.PartitionId) == consumers.end())
       {
-        consumers.emplace(ownership.PartitionID, processorPartitionClient);
+        consumers.emplace(ownership.PartitionId, processorPartitionClient);
       }
 
       m_nextPartitionClients.push_back(processorPartitionClient);
@@ -213,9 +213,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       Models::StartPosition startPosition = m_defaultStartPositions.Default;
 
-      if (checkpoints.find(ownership.PartitionID) != checkpoints.end())
+      if (checkpoints.find(ownership.PartitionId) != checkpoints.end())
       {
-        Models::Checkpoint checkpoint = checkpoints.at(ownership.PartitionID);
+        Models::Checkpoint checkpoint = checkpoints.at(ownership.PartitionId);
 
         if (checkpoint.Offset.HasValue())
         {
@@ -228,14 +228,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         else
         {
           throw std::runtime_error(
-              "invalid checkpoint" + ownership.PartitionID + "no offset or sequence number");
+              "invalid checkpoint" + ownership.PartitionId + "no offset or sequence number");
         }
       }
       else if (
-          m_defaultStartPositions.PerPartition.find(ownership.PartitionID)
+          m_defaultStartPositions.PerPartition.find(ownership.PartitionId)
           != m_defaultStartPositions.PerPartition.end())
       {
-        startPosition = m_defaultStartPositions.PerPartition.at(ownership.PartitionID);
+        startPosition = m_defaultStartPositions.PerPartition.at(ownership.PartitionId);
       }
       return startPosition;
     }
@@ -243,7 +243,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Models::Checkpoint> GetCheckpointsMap(Core::Context const& context)
     {
       std::vector<Models::Checkpoint> checkpoints = m_checkpointStore->ListCheckpoints(
-          m_consumerClientDetails.HostName,
+          m_consumerClientDetails.FullyQualifiedNamespace,
           m_consumerClientDetails.EventHubName,
           m_consumerClientDetails.ConsumerGroup,
           context);
@@ -251,7 +251,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::map<std::string, Models::Checkpoint> checkpointsMap;
       for (auto& checkpoint : checkpoints)
       {
-        checkpointsMap.emplace(checkpoint.PartitionID, checkpoint);
+        checkpointsMap.emplace(checkpoint.PartitionId, checkpoint);
       }
 
       return checkpointsMap;

@@ -4,37 +4,13 @@
 #include <azure/core/amqp.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  /** @brief The type of the body of an EventData Message.
-   *
-   */
-  struct EventDataBody final
-  {
-    /** @brief Value is encoded / decoded as the amqp - value section in the body.
-     *
-     * The type of Value can be any of the AMQP simple types, as listed in the comment for
-     * AmqpMessage, as well as slices or maps of AMQP simple types.
-     */
-    Azure::Core::Amqp::Models::AmqpValue Value;
-
-    /** @brief  Sequence is encoded/decoded as one or more amqp-sequence sections in the body.
-     *
-     * The values of the slices are are restricted to AMQP simple types, as listed in the comment
-     * for AmqpMessage.
-     */
-    Azure::Core::Amqp::Models::AmqpList Sequence;
-
-    /** @brief Data is encoded decoded as multiple data sections in the body.
-     */
-    Azure::Core::Amqp::Models::AmqpBinaryData Data;
-  };
-
   /** @brief Represents an event sent to the Azure Event Hubs service.
    */
-  struct EventData
-  {
+  class EventData {
+  public:
     /** @brief The body of the event data.
      */
-    EventDataBody Body;
+    std::vector<uint8_t> Body;
 
     /** Represents the MIME ContentType of the event data. */
     Azure::Nullable<std::string> ContentType;
@@ -60,7 +36,33 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     std::map<std::string, Azure::Core::Amqp::Models::AmqpValue> Properties;
 
-    EventData() = default;
+    /** @brief Construct a default EventData object. */
+    EventData() : m_message{nullptr} {};
+
+    /** @brief Construct a new EventData object from an AMQP message.
+     *
+     * @param message - AMQP message to construct the EventData from.
+     */
+    EventData(Azure::Core::Amqp::Models::AmqpMessage const& message);
+
+    /** @brief Construct a new EventData object from an initializer list of bytes
+     *
+     * @param body - Body for the newly created EventData.
+     */
+    EventData(std::initializer_list<uint8_t> const& body) : Body(body), m_message{nullptr} {}
+
+    /** @brief Construct a new EventData object from a vector of bytes.
+     *
+     * @param body - Body for the newly created EventData.
+     */
+    EventData(std::vector<uint8_t> const& body) : Body(body), m_message{nullptr} {}
+
+    /** @brief Construct a new EventData object from a string.
+     *
+     * @param body - Body for the newly created EventData.
+     */
+    EventData(std::string const& body) : Body(body.begin(), body.end()), m_message{nullptr} {}
+
     virtual ~EventData() = default;
 
     /** Copy an EventData to another.
@@ -78,7 +80,23 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** Move an EventData to another.
      */
     EventData& operator=(EventData&&) = default;
+
+    /** @brief Get the AMQP message associated with this EventData.
+     *
+     * Returns an underlying AMQP message corresponding to this EventData object.
+     *
+     * @note When this method is called on an EventData object, the returned message is
+     * constructed from the fields of the EventData object and does NOT reflect the value received
+     * from the service.
+     *
+     */
+    virtual Azure::Core::Amqp::Models::AmqpMessage const GetRawAmqpMessage() const;
+
+  protected:
+    /** The incoming AMQP message, if one was received. */
+    Azure::Core::Amqp::Models::AmqpMessage m_message;
   };
+  std::ostream& operator<<(std::ostream&, EventData const&);
 
   /** @brief Represents an event received from the Azure Event Hubs service.
    *
@@ -131,9 +149,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *
      * Returns the underlying AMQP message that was received from the Event Hubs service.
      */
-    Azure::Core::Amqp::Models::AmqpMessage const& RawAmqpMessage() const { return m_message; }
-
-  private:
-    Azure::Core::Amqp::Models::AmqpMessage const m_message;
+    Azure::Core::Amqp::Models::AmqpMessage const GetRawAmqpMessage() const { return m_message; }
   };
+  std::ostream& operator<<(std::ostream&, ReceivedEventData const&);
 }}}} // namespace Azure::Messaging::EventHubs::Models

@@ -10,6 +10,22 @@
 
 ### Other Changes
 
+- SDK consumption documentation improvement. (A community contribution, courtesy of _[kou](https://github.com/kou)_)
+- Fixed GCC 13 compilation error. (A community contribution, courtesy of _[adamdebreceni](https://github.com/adamdebreceni)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Sutou Kouhei _([GitHub](https://github.com/kou))_
+- adamdebreceni _([GitHub](https://github.com/adamdebreceni))_
+
+## 1.10.2 (2023-08-04)
+
+### Bugs Fixed
+
+- [[#4792]](https://github.com/Azure/azure-sdk-for-cpp/issues/4792) Only support CURL's root cert validation when CURL version is >= 7.77.0.
+
 ## 1.10.1 (2023-07-06)
 
 ### Breaking Changes

@@ -371,6 +371,11 @@
       "displayName": "Linux c++ Debug+Tests"
     },
     {
+      "name": "linux-g++-debug-tests-samples",
+      "inherits": [ "linux-basic-g++", "debug-build", "enable-tests", "enable-samples" ],
+      "displayName": "Linux c++ Debug+Tests, samples"
+    },
+    {
       "name": "generate-doxygen",
       "displayName": "zz-Generate Doxygen",
       "inherits": "x64-static",

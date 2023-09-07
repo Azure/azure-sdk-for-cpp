@@ -171,6 +171,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> rootPaths;
     rootPaths.emplace(dir1);
     rootPaths.emplace(dir2);
+    paths.emplace(dir1);
+    paths.emplace(dir2);
 
     {
       auto dirClient = m_fileSystemClient->GetDirectoryClient(dir1);
@@ -208,10 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
 
-      for (const auto& path : paths)
-      {
-        EXPECT_NE(results.find(path), results.end());
-      }
+      EXPECT_EQ(results, paths);
     }
     {
       // non-recursive
@@ -224,19 +223,38 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
 
-      for (const auto& path : rootPaths)
-      {
-        EXPECT_NE(results.find(path), results.end());
-      }
-      EXPECT_LT(results.size(), paths.size());
+      EXPECT_EQ(results, rootPaths);
     }
     {
       // List max result
       Files::DataLake::ListPathsOptions options;
       options.PageSizeHint = 2;
-      auto response = m_fileSystemClient->ListPaths(true, options);
-      EXPECT_LE(2U, response.Paths.size());
+      int numPages = 0;
+      for (auto page = m_fileSystemClient->ListPaths(true, options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Paths.size(), 2U);
+        ++numPages;
+      }
+      EXPECT_GT(numPages, 2);
     }
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, ListPathsExpiresOn)
+  {
+    const std::string fileName = RandomString();
+    auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+    fileClient.Create();
+    Files::DataLake::ScheduleFileDeletionOptions options;
+    options.ExpiresOn = Azure::DateTime::Parse(
+        "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
+    EXPECT_NO_THROW(fileClient.ScheduleDeletion(
+        Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options));
+
+    auto pagedResult = m_fileSystemClient->ListPaths(true);
+    EXPECT_EQ(1L, pagedResult.Paths.size());
+    ASSERT_TRUE(pagedResult.Paths[0].ExpiresOn.HasValue());
+    EXPECT_EQ(options.ExpiresOn.Value(), pagedResult.Paths[0].ExpiresOn.Value());
   }
 
   TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)
@@ -771,12 +789,15 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListDeletedPathsOptions options;
       options.PageSizeHint = 1;
       std::vector<Files::DataLake::Models::PathDeletedItem> paths;
+      int numPages = 0;
       for (auto pageResult = m_fileSystemClient->ListDeletedPaths(options); pageResult.HasPage();
            pageResult.MoveToNextPage())
       {
+        ++numPages;
         paths.insert(paths.end(), pageResult.DeletedPaths.begin(), pageResult.DeletedPaths.end());
         EXPECT_LE(pageResult.DeletedPaths.size(), 1);
       }
+      EXPECT_GT(numPages, 1);
       EXPECT_EQ(2, paths.size());
     }
     // prefix works
@@ -801,6 +822,27 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(1, paths.size());
       EXPECT_EQ(directoryName + "/" + filename, paths[0].Name);
     }
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, ListDeletedPathsEncoded)
+  {
+    const std::string prefix = "prefix\xEF\xBF\xBF";
+    const std::string specialFileName = prefix + "file";
+    const std::string specialDirectoryName = prefix + "directory";
+    auto fileClient = m_fileSystemClient->GetFileClient(specialFileName);
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(specialDirectoryName);
+    fileClient.Create();
+    fileClient.Delete();
+    directoryClient.Create();
+    directoryClient.DeleteEmpty();
+    auto fileUrl = fileClient.GetUrl();
+    auto directoryUrl = directoryClient.GetUrl();
+    Files::DataLake::ListDeletedPathsOptions options;
+    options.Prefix = prefix;
+    auto response = m_fileSystemClient->ListDeletedPaths(options);
+    EXPECT_EQ(response.DeletedPaths.size(), 2L);
+    EXPECT_EQ(response.DeletedPaths[0].Name, specialDirectoryName);
+    EXPECT_EQ(response.DeletedPaths[1].Name, specialFileName);
   }
 
   TEST_F(DataLakeFileSystemClientTest, Undelete)

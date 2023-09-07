@@ -1,6 +1,6 @@
 # Release History
 
-## 12.7.0-beta.1 (Unreleased)
+## 12.7.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,24 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `ShareServiceClient::SetProperties` and `ShareServiceClient::GetProperties` threw exception if property `Protocol` is not null.
+
 ### Other Changes
+
+## 12.7.0-beta.1 (2023-08-12)
+
+### Features Added
+
+- TenantId can now be discovered through the service challenge response, when using a TokenCredential for authorization.
+    - A new property is now available on `ShareClientOptions` called `EnableTenantDiscovery`. If set to `true`, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.
+- Added a new field `SourceAuthorization` in options for copy operations, which can be used to specify authorization for copy source.
+- Added a new field `ContentType` in `RenameFileOptions`.
+
+## 12.6.1 (2023-08-08)
+
+### Bugs Fixed
+
+- Fixed a bug where `ShareDirectoryClient::ListFilesAndDirectories` only returns the first page without ContinuationToken, even if there are more pages.
 
 ## 12.6.0 (2023-07-11)
 

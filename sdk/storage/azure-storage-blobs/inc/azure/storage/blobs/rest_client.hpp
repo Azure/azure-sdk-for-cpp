@@ -1106,6 +1106,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToHot;
       /** Constant value of type ArchiveStatus: RehydratePendingToCool */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
+      /** Constant value of type ArchiveStatus: RehydratePendingToCold */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCold;
 
     private:
       std::string m_value;

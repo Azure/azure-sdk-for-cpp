@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto blobClient = m_blobClient;
     blobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(fileName));
     return DataLakeFileClient(
-        std::move(builder), std::move(blobClient), m_pipeline, m_customerProvidedKey);
+        std::move(builder), std::move(blobClient), m_pipeline, m_clientConfiguration);
   }
 
   DataLakeDirectoryClient DataLakeDirectoryClient::GetSubdirectoryClient(
@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto blobClient = m_blobClient;
     blobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
     return DataLakeDirectoryClient(
-        std::move(builder), std::move(blobClient), m_pipeline, m_customerProvidedKey);
+        std::move(builder), std::move(blobClient), m_pipeline, m_clientConfiguration);
   }
 
   Azure::Response<DataLakeFileClient> DataLakeDirectoryClient::RenameFile(
@@ -122,12 +122,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
+        m_pipeline,
+        m_clientConfiguration.CustomerProvidedKey);
     auto renamedFileClient = DataLakeFileClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
         m_pipeline,
-        m_customerProvidedKey);
+        m_clientConfiguration);
     return Azure::Response<DataLakeFileClient>(
         std::move(renamedFileClient), std::move(response.RawResponse));
   }
@@ -173,12 +175,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
+        m_pipeline,
+        m_clientConfiguration.CustomerProvidedKey);
     auto renamedDirectoryClient = DataLakeDirectoryClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
         m_pipeline,
-        m_customerProvidedKey);
+        m_clientConfiguration);
     return Azure::Response<DataLakeDirectoryClient>(
         std::move(renamedDirectoryClient), std::move(response.RawResponse));
   }
@@ -214,6 +218,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Recursive = recursive;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
 
     const std::string currentPath = m_pathUrl.GetPath();
     auto firstSlashPos = std::find(currentPath.begin(), currentPath.end(), '/');
@@ -231,55 +236,42 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto fileSystemUrl = m_pathUrl;
     fileSystemUrl.SetPath(fileSystemName);
 
-    auto clientCopy = *this;
-    std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)> func;
-    func = [func, clientCopy, protocolLayerOptions, fileSystemUrl](
-               std::string continuationToken, const Azure::Core::Context& context) {
-      auto protocolLayerOptionsCopy = protocolLayerOptions;
-      if (!continuationToken.empty())
+    auto response = _detail::FileSystemClient::ListPaths(
+        *m_pipeline, fileSystemUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    ListPathsPagedResponse pagedResponse;
+    for (auto& path : response.Value.Paths)
+    {
+      Models::PathItem item;
+      item.Name = std::move(path.Name);
+      item.IsDirectory = path.IsDirectory;
+      item.LastModified = std::move(path.LastModified);
+      item.FileSize = path.FileSize;
+      item.Owner = std::move(path.Owner);
+      item.Group = std::move(path.Group);
+      item.Permissions = std::move(path.Permissions);
+      item.EncryptionScope = std::move(path.EncryptionScope);
+      item.ETag = std::move(path.ETag);
+      if (path.CreatedOn.HasValue())
       {
-        protocolLayerOptionsCopy.ContinuationToken = continuationToken;
+        item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+            std::stoll(path.CreatedOn.Value()));
       }
-      auto response = _detail::FileSystemClient::ListPaths(
-          *clientCopy.m_pipeline,
-          fileSystemUrl,
-          protocolLayerOptionsCopy,
-          _internal::WithReplicaStatus(context));
-
-      ListPathsPagedResponse pagedResponse;
-      for (auto& path : response.Value.Paths)
+      if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != "0")
       {
-        Models::PathItem item;
-        item.Name = std::move(path.Name);
-        item.IsDirectory = path.IsDirectory;
-        item.LastModified = std::move(path.LastModified);
-        item.FileSize = path.FileSize;
-        item.Owner = std::move(path.Owner);
-        item.Group = std::move(path.Group);
-        item.Permissions = std::move(path.Permissions);
-        item.EncryptionScope = std::move(path.EncryptionScope);
-        item.ETag = std::move(path.ETag);
-        if (path.CreatedOn.HasValue())
-        {
-          item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
-              std::stoll(path.CreatedOn.Value()));
-        }
-        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != "0")
-        {
-          item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
-              std::stoll(path.ExpiresOn.Value()));
-        }
-        pagedResponse.Paths.push_back(std::move(item));
+        item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+            std::stoll(path.ExpiresOn.Value()));
       }
-      pagedResponse.m_onNextPageFunc = func;
-      pagedResponse.CurrentPageToken = continuationToken;
-      pagedResponse.NextPageToken = response.Value.ContinuationToken;
-      pagedResponse.RawResponse = std::move(response.RawResponse);
+      pagedResponse.Paths.push_back(std::move(item));
+    }
+    pagedResponse.m_directoryClient = std::make_shared<DataLakeDirectoryClient>(*this);
+    pagedResponse.m_recursive = recursive;
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
+    pagedResponse.RawResponse = std::move(response.RawResponse);
 
-      return pagedResponse;
-    };
-
-    return func(options.ContinuationToken.ValueOr(std::string()), context);
+    return pagedResponse;
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

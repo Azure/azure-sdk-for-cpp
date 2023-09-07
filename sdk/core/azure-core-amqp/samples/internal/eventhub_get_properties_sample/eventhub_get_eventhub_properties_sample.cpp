@@ -122,7 +122,7 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
   bool error{false};
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::cerr << "Error: " << result.Description;
+    std::cerr << "Error: " << result.Error.Description;
     error = true;
   }
   else

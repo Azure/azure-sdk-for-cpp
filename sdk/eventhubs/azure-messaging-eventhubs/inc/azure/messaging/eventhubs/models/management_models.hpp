@@ -20,8 +20,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::string Name;
 
     /// A list of the partitions in the Event Hub.
-    std::vector<std::string> PartitionIDs;
+    std::vector<std::string> PartitionIds;
   };
+  std::ostream& operator<<(std::ostream&, EventHubProperties const&);
 
   /**@brief EventHubPartitionProperties represents properties of an Event Hub partition
    */
@@ -40,7 +41,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** The sequence number of the last observed event to be enqueued in the partition. */
     int64_t LastEnqueuedSequenceNumber{};
     /** The offset of the last observed event to be enqueued in the partition */
-    std::string LastEnqueuedOffset;
+    int64_t LastEnqueuedOffset{};
 
     /** The date and time, in UTC, that the last observed event was enqueued in the partition. */
     Azure::DateTime LastEnqueuedTimeUtc;
@@ -48,5 +49,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** Indicates whether or not the partition is currently empty. */
     bool IsEmpty{};
   };
+  std::ostream& operator<<(std::ostream&, EventHubPartitionProperties const&);
 
 }}}} // namespace Azure::Messaging::EventHubs::Models

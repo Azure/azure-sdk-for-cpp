@@ -54,6 +54,46 @@ namespace Azure { namespace Storage { namespace Test {
     Queues::QueueClientOptions m_options;
   };
 
+  TEST_F(QueueServiceClientTest, Constructors)
+  {
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+    auto getSas = [&]() {
+      auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+      auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+      Sas::AccountSasBuilder accountSasBuilder;
+      accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      accountSasBuilder.StartsOn = sasStartsOn;
+      accountSasBuilder.ExpiresOn = sasExpiresOn;
+      accountSasBuilder.Services = Sas::AccountSasServices::Queue;
+      accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+      accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::Read);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+      return sasToken;
+    };
+
+    auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
+    {
+      auto queueClient = Queues::QueueServiceClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), clientOptions);
+      EXPECT_NO_THROW(queueClient.GetProperties());
+    }
+
+    {
+      auto queueClient = Queues::QueueServiceClient(
+          m_queueServiceClient->GetUrl(), keyCredential, clientOptions);
+      EXPECT_NO_THROW(queueClient.GetProperties());
+    }
+
+    {
+      auto queueClient
+          = Queues::QueueServiceClient(m_queueServiceClient->GetUrl() + getSas(), clientOptions);
+      EXPECT_NO_THROW(queueClient.GetProperties());
+    }
+  }
+
   TEST_F(QueueServiceClientTest, ListQueues)
   {
     const std::string prefix1 = "prefix1-a-";
@@ -83,6 +123,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Queues::ListQueuesOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listQueues;
+    int numPages = 0;
     for (auto pageResult = m_queueServiceClient->ListQueues(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
@@ -95,7 +136,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         listQueues.insert(q.Name);
       }
+      ++numPages;
     }
+    EXPECT_GT(numPages, 2);
     EXPECT_TRUE(
         std::includes(listQueues.begin(), listQueues.end(), p1p2Queues.begin(), p1p2Queues.end()));
 

@@ -133,6 +133,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
     }
+    if (m_options.MaxLinkCredit != 0)
+    {
+      m_link->SetMaxLinkCredit(m_options.MaxLinkCredit);
+    }
+    m_link->SetAttachProperties(static_cast<Models::AmqpValue>(m_options.Properties));
   }
 
   AMQP_VALUE MessageReceiverImpl::OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message)
@@ -193,6 +198,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_eventHandler = nullptr;
     }
+    if (m_receiverOpen)
+    {
+      Close();
+    }
   }
 
   MessageReceiverState MessageReceiverStateFromLowLevel(MESSAGE_RECEIVER_STATE lowLevel)
@@ -241,10 +250,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
-      Log::Stream(Logger::Level::Verbose)
-          << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
-          << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState];
-      ;
+      if (receiver->m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
+            << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState];
+      }
     }
 
     // If we are transitioning to the error state, we want to stick a response on the incoming
@@ -301,6 +312,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       // LCOV_EXCL_STOP
     }
+    m_receiverOpen = true;
   }
 
   void MessageReceiverImpl::Close()
@@ -309,6 +321,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
     }
+    m_receiverOpen = false;
   }
 
   std::string MessageReceiverImpl::GetLinkName() const

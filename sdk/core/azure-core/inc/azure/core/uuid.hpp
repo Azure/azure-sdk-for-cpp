@@ -11,6 +11,7 @@
 #include "azure/core/platform.hpp"
 
 #include <array>
+#include <cstdint>
 #include <cstring>
 #include <string>
 

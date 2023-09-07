@@ -90,6 +90,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief The Maximum message size for the link associated with the message sender. */
     Nullable<uint64_t> MaxMessageSize;
 
+    /** @brief The link maximum credits.
+     *
+     * Each message sent over a link reduces the link-credit by one. When the link-credit reaches
+     * zero, no more messages can be sent until the sender receives a disposition indicating that at
+     * least one message has been settled. The sender MAY send as many messages as it likes before
+     * receiving a disposition, but it MUST NOT send more messages than the link-credit. The sender
+     * MUST NOT send any messages after sending a disposition that indicates an error.
+     *
+     */
+    uint32_t MaxLinkCredits{};
+
     /** @brief The initial delivery count for the link associated with the message.
      *
      * The delivery-count is initialized by the sender when a link endpoint is created, and is
@@ -130,6 +141,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     void Close();
 
+    /** @brief Returns the link negotiated maximum message size
+     *
+     * @return The negotiated maximum message size.
+     */
+    std::uint64_t GetMaxMessageSize() const;
+
     /** @brief Send a message synchronously to the target of the message sender.
      *
      * @param message The message to send.
@@ -137,7 +154,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A tuple containing the status of the send operation and the send disposition.
      */
-    std::tuple<MessageSendStatus, Models::AmqpValue> Send(
+    std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context = {});
 

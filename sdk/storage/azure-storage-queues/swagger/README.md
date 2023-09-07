@@ -77,8 +77,13 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2018-03-28"]
+        "enum": ["2019-12-12"],
+        "description": "The version used for the operations to Azure storage services."
       };
+  - from: swagger-document
+    where: $.parameters
+    transform: >
+      $.ApiVersionParameter.enum[0] = "2019-12-12";
 ```
 
 ### Rename Operations

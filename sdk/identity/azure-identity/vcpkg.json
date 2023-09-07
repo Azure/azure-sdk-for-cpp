@@ -3,6 +3,13 @@
     "version-string": "1.0.0",
     "dependencies": [
         "azure-core-cpp",
-        "openssl"
+        {
+          "name": "openssl",
+          "platform": "!windows & !uwp"
+        },
+        {
+          "name": "wil",
+          "platform": "windows"
+        }
     ]
 }
