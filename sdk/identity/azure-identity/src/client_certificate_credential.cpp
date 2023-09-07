@@ -33,7 +33,8 @@
 #endif // UWP
 #endif
 
-#if !defined(AZ_PLATFORM_WINDOWS) || (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP)
+#if !defined(AZ_PLATFORM_WINDOWS) \
+    || (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP)
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/ossl_typ.h>
