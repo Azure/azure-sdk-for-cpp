@@ -21,6 +21,7 @@
 #if defined(AZ_PLATFORM_WINDOWS)
 #include <Windows.h>
 
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 #pragma warning(push)
 #pragma warning(disable : 6553)
 #pragma warning(disable : 6001) // Using uninitialized memory 'pNode'.
@@ -29,7 +30,10 @@
 #include <wil/resource.h>
 #include <wil/result.h>
 #pragma warning(pop)
-#else
+#endif // UWP
+#endif
+
+#if !defined(AZ_PLATFORM_WINDOWS) || (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP)
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/ossl_typ.h>
@@ -71,7 +75,7 @@ using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZ_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
 enum PrivateKeyType
 {
   Rsa,
@@ -360,7 +364,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 
 void Azure::Identity::_detail::FreePrivateKeyImpl(void* pkey)
 {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZ_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
   BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(pkey));
 #else
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
