@@ -83,7 +83,7 @@ add_executable (
     simplified_header_test.cpp
     string_test.cpp
     telemetry_policy_test.cpp
-    test_traits.hpp
+    azure_core_test_traits.hpp
     transport_adapter_base_test.cpp
     transport_adapter_base_test.hpp
     transport_adapter_implementation_test.cpp
