@@ -8,6 +8,9 @@
 
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/internal/cryptography/sha_hash.hpp>
+#include <azure/core/io/body_stream.hpp>
+#include <azure/core/platform.hpp>
 #include <azure/core/uuid.hpp>
 
 #include <chrono>
@@ -15,12 +18,30 @@
 #include <sstream>
 #include <vector>
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <Windows.h>
+
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
+#pragma warning(push)
+#pragma warning(disable : 6553)
+#pragma warning(disable : 6001) // Using uninitialized memory 'pNode'.
+#pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
+                                // 'GetProcAddress'.
+#include <wil/resource.h>
+#include <wil/result.h>
+#pragma warning(pop)
+#endif // UWP
+#endif
+
+#if !defined(AZ_PLATFORM_WINDOWS) \
+    || (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP)
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/ossl_typ.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
+#endif
 
 using Azure::Identity::ClientCertificateCredential;
 
@@ -34,6 +55,7 @@ using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
+using Azure::Core::IO::FileBodyStream;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
@@ -50,6 +72,204 @@ template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
   return outVec;
 }
 
+using CertificateThumbprint = std::vector<unsigned char>;
+using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
+using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
+
+#if defined(AZ_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
+enum PrivateKeyType
+{
+  Rsa,
+  Ecdsa,
+  Pkcs
+};
+
+std::vector<uint8_t> PemToBinary(LPCSTR str, DWORD count)
+{
+  DWORD size = 0;
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      str, count, CRYPT_STRING_BASE64HEADER, nullptr, &size, nullptr, nullptr));
+  std::vector<uint8_t> buffer(size);
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      str, count, CRYPT_STRING_BASE64HEADER, buffer.data(), &size, nullptr, nullptr));
+  return buffer;
+}
+
+CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
+{
+  DWORD size = 0;
+  THROW_IF_WIN32_BOOL_FALSE(
+      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, nullptr, &size));
+  std::vector<unsigned char> thumbprint(size);
+  THROW_IF_WIN32_BOOL_FALSE(
+      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, thumbprint.data(), &size));
+  return thumbprint;
+}
+
+wil::unique_cert_context ImportPemCertificate(std::string const& pem)
+{
+  auto headerStart = pem.find("-----BEGIN CERTIFICATE-----");
+  if (headerStart == std::string::npos)
+  {
+    throw AuthenticationException("PEM file does not contain certificate.");
+  }
+  auto certBuffer
+      = PemToBinary(pem.c_str() + headerStart, static_cast<DWORD>(pem.size() - headerStart));
+  auto cert = CertCreateCertificateContext(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      certBuffer.data(),
+      static_cast<DWORD>(certBuffer.size()));
+  THROW_LAST_ERROR_IF_NULL(cert);
+  return wil::unique_cert_context{cert};
+}
+
+size_t FindPemPrivateKeyHeader(std::string const& pem, PrivateKeyType& keyType)
+{
+  auto headerStart = pem.find("-----BEGIN RSA PRIVATE KEY-----");
+  if (headerStart != std::string::npos)
+  {
+    keyType = PrivateKeyType::Rsa;
+    return headerStart;
+  }
+  headerStart = pem.find("-----BEGIN EC PRIVATE KEY-----");
+  if (headerStart != std::string::npos)
+  {
+    keyType = PrivateKeyType::Ecdsa;
+    return headerStart;
+  }
+  keyType = PrivateKeyType::Pkcs;
+  return pem.find("-----BEGIN PRIVATE KEY-----");
+}
+
+wil::unique_bcrypt_algorithm OpenAlgorithm(LPCWSTR algId)
+{
+  wil::unique_bcrypt_algorithm alg;
+  THROW_IF_NTSTATUS_FAILED(BCryptOpenAlgorithmProvider(wil::out_param(alg), algId, nullptr, 0));
+  return alg;
+}
+
+UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
+{
+  DWORD keySize = 0;
+  wil::unique_hlocal_ptr<BCRYPT_RSAKEY_BLOB> rsaKeyBlob;
+  THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      CNG_RSA_PRIVATE_KEY_BLOB,
+      data,
+      size,
+      CRYPT_DECODE_ALLOC_FLAG,
+      nullptr,
+      wil::out_param(rsaKeyBlob),
+      &keySize));
+  BCRYPT_KEY_HANDLE key;
+  auto alg = OpenAlgorithm(BCRYPT_RSA_ALGORITHM);
+  THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
+      alg.get(),
+      nullptr,
+      BCRYPT_RSAPRIVATE_BLOB,
+      &key,
+      reinterpret_cast<uint8_t*>(rsaKeyBlob.get()),
+      keySize,
+      0));
+  return UniquePrivateKey{key};
+}
+
+UniquePrivateKey ImportEccPrivateKey(const BYTE*, DWORD)
+{
+  throw AuthenticationException("ECDSA private keys are not supported.");
+}
+
+UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
+{
+  PrivateKeyType keyType{};
+  auto headerStart = FindPemPrivateKeyHeader(pem, keyType);
+  if (headerStart == std::string::npos)
+  {
+    throw AuthenticationException("PEM file does not contain private key.");
+  }
+  auto keyBuffer{
+      PemToBinary(pem.c_str() + headerStart, static_cast<DWORD>(pem.size() - headerStart))};
+
+  if (keyType == PrivateKeyType::Rsa)
+  {
+    return ImportRsaPrivateKey(keyBuffer.data(), static_cast<DWORD>(keyBuffer.size()));
+  }
+
+  if (keyType == PrivateKeyType::Ecdsa)
+  {
+    return ImportEccPrivateKey(keyBuffer.data(), static_cast<DWORD>(keyBuffer.size()));
+  }
+
+  wil::unique_hlocal_ptr<CRYPT_PRIVATE_KEY_INFO> privateKeyInfo;
+  DWORD keySize = 0;
+  THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      PKCS_PRIVATE_KEY_INFO,
+      keyBuffer.data(),
+      static_cast<DWORD>(keyBuffer.size()),
+      CRYPT_DECODE_ALLOC_FLAG,
+      nullptr,
+      wil::out_param(privateKeyInfo),
+      &keySize));
+  if (strcmp(privateKeyInfo->Algorithm.pszObjId, szOID_RSA_RSA) == 0)
+  {
+    return ImportRsaPrivateKey(
+        privateKeyInfo->PrivateKey.pbData, privateKeyInfo->PrivateKey.cbData);
+  }
+  if (strcmp(privateKeyInfo->Algorithm.pszObjId, szOID_ECC_PUBLIC_KEY) == 0)
+  {
+    return ImportEccPrivateKey(
+        privateKeyInfo->PrivateKey.pbData, privateKeyInfo->PrivateKey.cbData);
+  }
+  throw AuthenticationException("Invalid private key.");
+}
+
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(std::string const& path)
+{
+  auto pemContent{FileBodyStream(path).ReadToEnd()};
+  std::string pem{pemContent.begin(), pemContent.end()};
+  pemContent = {};
+
+  auto certContext = ImportPemCertificate(pem);
+  return std::make_tuple(GetThumbprint(certContext.get()), ImportPemPrivateKey(pem));
+}
+
+std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, size_t size)
+{
+  auto hash = Azure::Core::Cryptography::_internal::Sha256Hash().Final(data, size);
+  BCRYPT_PKCS1_PADDING_INFO paddingInfo;
+  paddingInfo.pszAlgId = BCRYPT_SHA256_ALGORITHM;
+  DWORD signatureSize = 0;
+  auto status = BCryptSignHash(
+      key,
+      &paddingInfo,
+      hash.data(),
+      static_cast<ULONG>(hash.size()),
+      nullptr,
+      0,
+      &signatureSize,
+      BCRYPT_PAD_PKCS1);
+  if (status != ERROR_SUCCESS)
+  {
+    return {};
+  }
+  std::vector<unsigned char> signature(signatureSize);
+  status = BCryptSignHash(
+      key,
+      &paddingInfo,
+      hash.data(),
+      static_cast<ULONG>(hash.size()),
+      signature.data(),
+      static_cast<ULONG>(signature.size()),
+      &signatureSize,
+      BCRYPT_PAD_PKCS1);
+  if (status != ERROR_SUCCESS)
+  {
+    return {};
+  }
+  return signature;
+}
+#else
 template <typename> struct UniqueHandleHelper;
 
 template <> struct UniqueHandleHelper<BIO>
@@ -69,11 +289,87 @@ template <> struct UniqueHandleHelper<EVP_MD_CTX>
 
 template <typename T>
 using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
+
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std::string& path)
+{
+  // Open certificate file, then get private key and X509:
+  UniqueHandle<BIO> bio(BIO_new_file(path.c_str(), "r"));
+  if (!bio)
+  {
+    throw AuthenticationException("Failed to open certificate file.");
+  }
+
+  UniquePrivateKey pkey{PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr)};
+  if (!pkey)
+  {
+    throw AuthenticationException("Failed to read certificate private key.");
+  }
+
+  UniqueHandle<X509> x509{PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr)};
+  if (!x509)
+  {
+    std::ignore = BIO_seek(bio.get(), 0);
+    x509.reset(PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
+    if (!x509)
+    {
+      throw AuthenticationException("Failed to read X509 section.");
+    }
+  }
+
+  CertificateThumbprint thumbprint(EVP_MAX_MD_SIZE);
+  // Get certificate thumbprint:
+  unsigned int mdLen = 0;
+  const auto digestResult = X509_digest(x509.get(), EVP_sha1(), thumbprint.data(), &mdLen);
+
+  if (!digestResult)
+  {
+    throw AuthenticationException("Failed to get certificate thumbprint.");
+  }
+
+  // Drop unused buffer space:
+  const auto mdLenSz = static_cast<decltype(thumbprint)::size_type>(mdLen);
+  if (thumbprint.size() > mdLenSz)
+  {
+    thumbprint.resize(mdLenSz);
+  }
+
+  return std::make_tuple(thumbprint, std::move(pkey));
+}
+
+std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, size_t size)
+{
+  UniqueHandle<EVP_MD_CTX> mdCtx(EVP_MD_CTX_new());
+  if (!mdCtx)
+  {
+    return {};
+  }
+  EVP_PKEY_CTX* signCtx = nullptr;
+  if ((EVP_DigestSignInit(mdCtx.get(), &signCtx, EVP_sha256(), nullptr, static_cast<EVP_PKEY*>(key))
+       == 1)
+      && (EVP_PKEY_CTX_set_rsa_padding(signCtx, RSA_PKCS1_PADDING) == 1))
+  {
+    size_t sigLen = 0;
+    if (EVP_DigestSign(mdCtx.get(), nullptr, &sigLen, nullptr, 0) == 1)
+    {
+      std::vector<unsigned char> sigVec(sigLen);
+      if (EVP_DigestSign(mdCtx.get(), sigVec.data(), &sigLen, data, size) == 1)
+      {
+        return sigVec;
+      }
+    }
+  }
+  return {};
+}
+#endif
 } // namespace
 
-void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
+void Azure::Identity::_detail::FreePrivateKeyImpl(void* pkey)
 {
+#if defined(AZ_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
+  BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(pkey));
+#else
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
+#endif
 }
 
 ClientCertificateCredential::ClientCertificateCredential(
@@ -100,50 +396,19 @@ ClientCertificateCredential::ClientCertificateCredential(
   std::string thumbprintBase64Str;
 
   {
-    std::vector<unsigned char> mdVec(EVP_MAX_MD_SIZE);
+    CertificateThumbprint mdVec;
+    try
     {
-      UniqueHandle<X509> x509;
-      {
-        // Open certificate file, then get private key and X509:
-        UniqueHandle<BIO> bio(BIO_new_file(clientCertificatePath.c_str(), "r"));
-        if (!bio)
-        {
-          throw AuthenticationException("Failed to open certificate file.");
-        }
-
-        m_pkey.reset(PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr));
-        if (!m_pkey)
-        {
-          throw AuthenticationException("Failed to read certificate private key.");
-        }
-
-        x509.reset(PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
-        if (!x509)
-        {
-          static_cast<void>(BIO_seek(bio.get(), 0));
-          x509.reset(PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
-          if (!x509)
-          {
-            throw AuthenticationException("Failed to read X509 section.");
-          }
-        }
-      }
-
-      // Get certificate thumbprint:
-      unsigned int mdLen = 0;
-      const auto digestResult = X509_digest(x509.get(), EVP_sha1(), mdVec.data(), &mdLen);
-
-      if (!digestResult)
-      {
-        throw AuthenticationException("Failed to get certificate thumbprint.");
-      }
-
-      // Drop unused buffer space:
-      const auto mdLenSz = static_cast<decltype(mdVec)::size_type>(mdLen);
-      if (mdVec.size() > mdLenSz)
-      {
-        mdVec.resize(mdLenSz);
-      }
+      std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificatePath);
+    }
+    catch (AuthenticationException&)
+    {
+      throw;
+    }
+    catch (std::exception& e)
+    {
+      // WIL does not throw AuthenticationException.
+      throw AuthenticationException(e.what());
     }
 
     // Get thumbprint as hex string:
@@ -256,41 +521,14 @@ AccessToken ClientCertificateCredential::GetToken(
         }
 
         // Get assertion signature.
-        std::string signature;
-        {
-          UniqueHandle<EVP_MD_CTX> mdCtx(EVP_MD_CTX_new());
-          if (mdCtx)
-          {
-            EVP_PKEY_CTX* signCtx = nullptr;
-            if ((EVP_DigestSignInit(
-                     mdCtx.get(),
-                     &signCtx,
-                     EVP_sha256(),
-                     nullptr,
-                     static_cast<EVP_PKEY*>(m_pkey.get()))
-                 == 1)
-                && (EVP_PKEY_CTX_set_rsa_padding(signCtx, RSA_PKCS1_PADDING) == 1))
-            {
-              size_t sigLen = 0;
-              if (EVP_DigestSign(mdCtx.get(), nullptr, &sigLen, nullptr, 0) == 1)
-              {
-                const auto bufToSign = reinterpret_cast<const unsigned char*>(assertion.data());
-                const auto bufToSignLen = static_cast<size_t>(assertion.size());
-
-                std::vector<unsigned char> sigVec(sigLen);
-                if (EVP_DigestSign(mdCtx.get(), sigVec.data(), &sigLen, bufToSign, bufToSignLen)
-                    == 1)
-                {
-                  signature = Base64Url::Base64UrlEncode(ToUInt8Vector(sigVec));
-                }
-              }
-            }
-          }
-        }
+        std::string signature = Base64Url::Base64UrlEncode(SignPkcs1Sha256(
+            m_pkey.get(),
+            reinterpret_cast<const unsigned char*>(assertion.data()),
+            static_cast<size_t>(assertion.size())));
 
         if (signature.empty())
         {
-          throw Azure::Core::Credentials::AuthenticationException("Failed to sign token request.");
+          throw AuthenticationException("Failed to sign token request.");
         }
 
         // Add signature to the end of assertion

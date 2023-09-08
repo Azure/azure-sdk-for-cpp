@@ -14,8 +14,10 @@ Azure Storage is a Microsoft-managed service providing cloud storage that is hig
 
 ## Contributing
 
-See the [Storage CONTRIBUTING.md][storage_contrib] for details on building,
+See the [C++ Contributing Guide][sdk_contrib] for details on building,
 testing, and contributing to these libraries.
+
+See the [Storage Testing Guide][storage_testing] for how to set up storage resources running unit tests.
 
 This project welcomes contributions and suggestions.  Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
@@ -28,7 +30,8 @@ or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
 <!-- LINKS -->
-[storage_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[sdk_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[storage_testing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/TestingGuide.md
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

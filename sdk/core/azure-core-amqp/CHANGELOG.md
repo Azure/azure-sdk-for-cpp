@@ -22,21 +22,13 @@ before the connection is destroyed.
 - Several fixes related to the new asynchronous model. Ensures that message senders and receivers are always closed, 
 and that resources are released.
 
-- When a message sender is destroyed, close the underlying AMQP link if it hasn't been closed already.
- 
 ### Other Changes
 
-## 1.0.0-beta.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0-beta.3 (2023-09-07)
 
 ### Bugs Fixed
 
 - When a message sender is destroyed, close the underlying AMQP link if it hasn't been closed already.
- 
-### Other Changes
 
 ## 1.0.0-beta.2 (2023-08-04)
 
