@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    * "CompleteOperation" which sets the result, and a consumer calls WaitForResult which reads from
    * the AsyncOperationQueue. WaitForResult will block until a result is available.
    */
-  template <typename... T> class AsyncOperationQueue {
+  template <typename... T> class AsyncOperationQueue final {
 
   public:
     AsyncOperationQueue() = default;
