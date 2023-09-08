@@ -599,10 +599,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     receiver.Open();
 
-    // Send a message.
+    // Receive a message with a 15 second timeout. It shouldn't throw.
     {
       Azure::Core::Context receiveContext{Azure::Core::Context::ApplicationContext.WithDeadline(
-          std::chrono::system_clock::now() + std::chrono::seconds(30))};
+          std::chrono::system_clock::now() + std::chrono::seconds(15))};
+
+      // Tell the server it should send a message in the polling loop.
       server.ShouldSendMessage(true);
       GTEST_LOG_(INFO) << "Waiting for message to be received.";
       std::pair<Azure::Nullable<Azure::Core::Amqp::Models::AmqpMessage>, bool> response;

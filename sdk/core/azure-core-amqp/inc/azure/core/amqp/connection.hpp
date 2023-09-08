@@ -156,6 +156,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Error,
   };
+  std::ostream& operator<<(std::ostream& stream, ConnectionState const value);
 
   class Connection;
 

@@ -98,6 +98,59 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     m_impl->SetIdleEmptyFrameSendPercentage(ratio);
   }
+  std::ostream& operator<<(std::ostream& stream, ConnectionState state)
+  {
+    switch (state)
+    {
+      case Azure::Core::Amqp::_internal::ConnectionState::Start:
+        stream << "Start";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::HeaderReceived:
+        stream << "HeaderReceived";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::HeaderSent:
+        stream << "HeaderSent";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::HeaderExchanged:
+        stream << "HeaderExchanged";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::OpenPipe:
+        stream << "OpenPipe";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::OcPipe:
+        stream << "OcPipe";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::OpenReceived:
+        stream << "OpenReceived";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::OpenSent:
+        stream << "OpenSent";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::ClosePipe:
+        stream << "ClosePipe";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::Opened:
+        stream << "Opened";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::CloseReceived:
+        stream << "CloseReceived";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::CloseSent:
+        stream << "CloseSent";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::Discarding:
+        stream << "Discarding";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::End:
+        stream << "End";
+        break;
+      case Azure::Core::Amqp::_internal::ConnectionState::Error:
+        stream << "Error";
+        break;
+    }
+    return stream;
+  }
+
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace {

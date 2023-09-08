@@ -56,6 +56,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       virtual void Poll() const {}
 
+      bool WaitForConnection(Azure::Core::Context const& context = {})
+      {
+        GTEST_LOG_(INFO) << "Wait for connection to be established on Mock Server.";
+        auto result = m_externalConnectionQueue.WaitForResult(context);
+        if (!result)
+        {
+          throw std::runtime_error("Connection not received");
+        }
+        GTEST_LOG_(INFO) << "Connection has been established.";
+        return result != nullptr;
+      }
+
     private:
       bool WaitForConnection(
           Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
@@ -65,6 +77,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         if (result)
         {
           m_connectionValid = true;
+          m_externalConnectionQueue.CompleteOperation(true);
         }
         return result != nullptr;
       }
@@ -165,6 +178,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             std::this_thread::yield();
             for (const auto& val : m_linkMessageQueues)
             {
+#if 0
               if (!val.second.LinkReceiver)
               {
                 GTEST_LOG_(INFO) << "Wait for message receiver for " << val.first;
@@ -186,6 +200,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                 }
                 GTEST_LOG_(INFO) << "Message sender present for " << val.first;
               }
+#endif
               MessageLoop(val.first, val.second);
             }
           }
@@ -243,6 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::shared_ptr<Azure::Core::Amqp::_internal::Session> m_session;
 
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_connectionQueue;
+      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_externalConnectionQueue;
 
       std::string m_connectionId;
       std::thread m_serverThread;
@@ -404,9 +420,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::_internal::ConnectionState newState,
           Azure::Core::Amqp::_internal::ConnectionState oldState) override
       {
-        GTEST_LOG_(INFO) << "Connection State changed. Old state: "
-                         << ConnectionStateToString(oldState)
-                         << " New state: " << ConnectionStateToString(newState);
+        GTEST_LOG_(INFO) << "Connection State changed. Old state: " << oldState
+                         << " New state: " << newState;
         if (newState == Azure::Core::Amqp::_internal::ConnectionState::End
             || newState == Azure::Core::Amqp::_internal::ConnectionState::Error)
         {
@@ -506,9 +521,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::_internal::MessageReceiverState newState,
           Azure::Core::Amqp::_internal::MessageReceiverState oldState) override
       {
-        GTEST_LOG_(INFO) << "Message Receiver State changed. Old state: "
-                         << ReceiverStateToString(oldState)
-                         << " New state: " << ReceiverStateToString(newState);
+        GTEST_LOG_(INFO) << "Message Receiver State changed. Old state: " << oldState
+                         << " New state: " << newState;
       }
       Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
           Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
@@ -526,9 +540,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::_internal::MessageSenderState newState,
           Azure::Core::Amqp::_internal::MessageSenderState oldState) override
       {
-        GTEST_LOG_(INFO) << "Message Sender State changed. Old state: "
-                         << SenderStateToString(oldState)
-                         << " New state: " << SenderStateToString(newState);
+        GTEST_LOG_(INFO) << "Message Sender State changed. Old state: " << oldState
+                         << " New state: " << newState;
       }
 
       void OnMessageSenderDisconnected(
@@ -540,85 +553,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
       {
         GTEST_LOG_(INFO) << "Message receiver disconnected: " << error << std::endl;
-      }
-
-      const char* ConnectionStateToString(Azure::Core::Amqp::_internal::ConnectionState state)
-      {
-        switch (state)
-        {
-          case Azure::Core::Amqp::_internal::ConnectionState::Start:
-            return "Start";
-          case Azure::Core::Amqp::_internal::ConnectionState::HeaderReceived:
-            return "HeaderReceived";
-          case Azure::Core::Amqp::_internal::ConnectionState::HeaderSent:
-            return "HeaderSent";
-          case Azure::Core::Amqp::_internal::ConnectionState::HeaderExchanged:
-            return "HeaderExchanged";
-          case Azure::Core::Amqp::_internal::ConnectionState::OpenPipe:
-            return "OpenPipe";
-          case Azure::Core::Amqp::_internal::ConnectionState::OcPipe:
-            return "OcPipe";
-          case Azure::Core::Amqp::_internal::ConnectionState::OpenReceived:
-            return "OpenReceived";
-          case Azure::Core::Amqp::_internal::ConnectionState::OpenSent:
-            return "OpenSent";
-          case Azure::Core::Amqp::_internal::ConnectionState::ClosePipe:
-            return "ClosePipe";
-          case Azure::Core::Amqp::_internal::ConnectionState::Opened:
-            return "Opened";
-          case Azure::Core::Amqp::_internal::ConnectionState::CloseReceived:
-            return "CloseReceived";
-          case Azure::Core::Amqp::_internal::ConnectionState::CloseSent:
-            return "CloseSent";
-          case Azure::Core::Amqp::_internal::ConnectionState::Discarding:
-            return "Discarding";
-          case Azure::Core::Amqp::_internal::ConnectionState::End:
-            return "End";
-          case Azure::Core::Amqp::_internal::ConnectionState::Error:
-            return "Error";
-        }
-        throw std::runtime_error("Unknown connection state");
-      }
-
-      const char* ReceiverStateToString(Azure::Core::Amqp::_internal::MessageReceiverState state)
-      {
-        switch (state)
-        {
-          case Azure::Core::Amqp::_internal::MessageReceiverState::Invalid:
-            return "Invalid";
-          case Azure::Core::Amqp::_internal::MessageReceiverState::Idle:
-            return "Idle";
-          case Azure::Core::Amqp::_internal::MessageReceiverState::Opening:
-            return "Opening";
-          case Azure::Core::Amqp::_internal::MessageReceiverState::Open:
-            return "Open";
-          case Azure::Core::Amqp::_internal::MessageReceiverState::Closing:
-            return "Closing";
-          case Azure::Core::Amqp::_internal::MessageReceiverState::Error:
-            return "Error";
-        }
-        throw std::runtime_error("Unknown receiver state");
-      }
-
-      const char* SenderStateToString(Azure::Core::Amqp::_internal::MessageSenderState state)
-      {
-        // Return the stringized version of the values in the MessageSenderState enumeration
-        switch (state)
-        {
-          case Azure::Core::Amqp::_internal::MessageSenderState::Invalid:
-            return "Invalid";
-          case Azure::Core::Amqp::_internal::MessageSenderState::Idle:
-            return "Idle";
-          case Azure::Core::Amqp::_internal::MessageSenderState::Opening:
-            return "Opening";
-          case Azure::Core::Amqp::_internal::MessageSenderState::Open:
-            return "Open";
-          case Azure::Core::Amqp::_internal::MessageSenderState::Closing:
-            return "Closing";
-          case Azure::Core::Amqp::_internal::MessageSenderState::Error:
-            return "Error";
-        }
-        throw std::runtime_error("Unknown sender state");
       }
     };
   } // namespace MessageTests

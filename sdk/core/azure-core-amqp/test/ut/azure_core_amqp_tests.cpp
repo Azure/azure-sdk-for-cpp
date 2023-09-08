@@ -9,6 +9,22 @@
 
 #include <gtest/gtest.h>
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(_DEBUG) && defined(_MSC_VER)
+#include <Windows.h>
+int ReportCrtError(int level, char*message, int*returnValue)
+{
+  OutputDebugStringA(message);
+  *returnValue = 0;
+  if (level == _CRT_ERROR)
+  {
+    *returnValue = 1;
+  }
+  return TRUE;
+}
+#endif // _DEBUG && _MSC_VER
+#endif // AZ_PLATFORM_WINDOWS
+
 int main(int argc, char** argv)
 {
 #if defined(AZ_PLATFORM_POSIX)
@@ -23,6 +39,12 @@ int main(int argc, char** argv)
   // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
 #if defined(_DEBUG) && defined(_MSC_VER)
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+  _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+  // Enable CRT error reporting.
+  _CrtSetReportHook(ReportCrtError);
+  // auto currentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+  // currentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
+  //_CrtSetDbgFlag(currentFlags);
 #endif
 
   signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
@@ -31,5 +53,10 @@ int main(int argc, char** argv)
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(_DEBUG) && defined(_MSC_VER)
+//  _CrtDumpMemoryLeaks();
+#endif // _DEBUG && _MSC_VER
+#endif // AZ_PLATFORM_WINDOWS
   return r;
 }
