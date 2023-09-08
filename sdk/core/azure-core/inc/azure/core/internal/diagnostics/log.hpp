@@ -147,7 +147,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
      * underlying stream object is flushed thus ensuring that the output is generated at the end of
      * the statement, even if the caller does not insert the std::endl object.
      */
-    class Stream {
+    class Stream final {
     public:
       /** @brief Construct a new Stream object with the configured I/O level.
        *
@@ -166,6 +166,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
 #else
         std::unique_lock<std::mutex> lock(m_mutex);
         Log::Write(m_level, m_stream.str());
+        lock.unlock(); // Release the lock before destroying the mutex.
 #endif
       }
       Stream(Stream const&) = delete;

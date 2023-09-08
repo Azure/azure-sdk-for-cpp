@@ -299,7 +299,5 @@ TEST(Logger, LoggerStreamInsertion)
   Log::Stream(Logger::Level::Verbose) << "Verbose" << std::oct << 16 << std::endl;
   Log::Stream(Logger::Level::Verbose) << "Verbose" << std::hex << std::setw(4) << std::setfill('0') << 16 << std::endl;
   auto time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  tm timeblock;
-  localtime_s(&timeblock, &time_t);
-  Log::Stream(Logger::Level::Verbose) << "Verbose" << std::put_time(&timeblock, "%c")<< std::endl;
+  Log::Stream(Logger::Level::Verbose) << "Verbose" << std::put_time(localtime(&time_t), "%c") << std::endl;
 }
