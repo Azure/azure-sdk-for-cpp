@@ -12,7 +12,7 @@
 #if defined(AZ_PLATFORM_WINDOWS)
 #if defined(_DEBUG) && defined(_MSC_VER)
 #include <Windows.h>
-int ReportCrtError(int level, char*message, int*returnValue)
+int ReportCrtError(int level, char* message, int* returnValue)
 {
   OutputDebugStringA(message);
   *returnValue = 0;
