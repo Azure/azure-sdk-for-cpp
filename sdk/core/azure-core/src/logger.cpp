@@ -57,7 +57,7 @@ int Log::LoggerStringBuffer::sync()
   // We need to protect the underlying buffer from access in multiple threads, so we use a mutex.
   // This will serialize all calls to Write but more importantly will protect the code which resets
   // the underlying string.
-//  std::unique_lock<std::recursive_mutex> lock{m_mutex};
+  //  std::unique_lock<std::recursive_mutex> lock{m_mutex};
   // Note that in the case of the caller inserting std::endl, the buffer will be flushed twice, once
   // with the \n terminated string, the second time with an empty string (from the destructor of
   // Log::Stream). This depends on the code in Log::Write which discards empty strings.
@@ -70,13 +70,13 @@ int Log::LoggerStringBuffer::sync()
 // The xsputn method appends a string to the underlying buffer, so we serialize all calls to it.
 std::streamsize Log::LoggerStringBuffer::xsputn(const char_type* ptr, std::streamsize count)
 {
-//  std::unique_lock<std::recursive_mutex> lock{m_mutex};
+  std::unique_lock<std::recursive_mutex> lock{m_mutex};
   return std::stringbuf::xsputn(ptr, count);
 }
 
 Log::LoggerStringBuffer::int_type Log::LoggerStringBuffer::overflow(int_type ch)
 {
-//  std::unique_lock<std::recursive_mutex> lock{m_mutex};
+  std::unique_lock<std::recursive_mutex> lock{m_mutex};
   return std::stringbuf::overflow(ch);
 }
 
