@@ -54,7 +54,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       {
       }
 
-      virtual void Poll() const {}
+      virtual void Poll() const
+      {
+        if (!m_connectionValid)
+        {
+          throw std::runtime_error("Polling with invalid connection.");
+        }
+      }
 
       bool WaitForConnection(Azure::Core::Context const& context = {})
       {
@@ -161,48 +167,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         //    Azure::Core::Context listenerContext;
         m_serverThread = std::thread([this, &threadStarted, &running]() {
           Azure::Core::Amqp::Network::_internal::SocketListener listener(GetPort(), this);
-          GTEST_LOG_(INFO) << "Start test listener on port " << GetPort();
-          listener.Start();
-          GTEST_LOG_(INFO) << "listener started";
-          running = true;
-          threadStarted.notify_one();
+          try
+          {
+            GTEST_LOG_(INFO) << "Start test listener on port " << GetPort();
+            listener.Start();
+            GTEST_LOG_(INFO) << "listener started";
+            running = true;
+            threadStarted.notify_one();
 
-          GTEST_LOG_(INFO) << "Wait for connection on listener.";
-          if (!WaitForConnection(listener, m_listenerContext))
-          {
-            GTEST_LOG_(INFO) << "Cancelling thread.";
-            return;
-          }
-          while (!m_listenerContext.IsCancelled())
-          {
-            std::this_thread::yield();
-            for (const auto& val : m_linkMessageQueues)
+            GTEST_LOG_(INFO) << "Wait for connection on listener.";
+            if (!WaitForConnection(listener, m_listenerContext))
             {
-#if 0
-              if (!val.second.LinkReceiver)
-              {
-                GTEST_LOG_(INFO) << "Wait for message receiver for " << val.first;
-
-                if (!WaitForMessageReceiver(val.first, m_listenerContext))
-                {
-                  GTEST_LOG_(INFO) << "Cancelling thread.";
-                  return;
-                }
-                GTEST_LOG_(INFO) << "Message receiver present for " << val.first;
-              }
-              if (!val.second.LinkSender)
-              {
-                GTEST_LOG_(INFO) << "Wait for message sender for " << val.first;
-                if (!WaitForMessageSender(val.first, m_listenerContext))
-                {
-                  GTEST_LOG_(INFO) << "Cancelling thread.";
-                  return;
-                }
-                GTEST_LOG_(INFO) << "Message sender present for " << val.first;
-              }
-#endif
-              MessageLoop(val.first, val.second);
+              GTEST_LOG_(INFO) << "Cancelling thread.";
+              return;
             }
+            while (!m_listenerContext.IsCancelled())
+            {
+              std::this_thread::yield();
+              for (const auto& val : m_linkMessageQueues)
+              {
+                MessageLoop(val.first, val.second);
+              }
+            }
+          }
+          catch (std::exception& ex)
+          {
+            GTEST_LOG_(ERROR) << "Exception " << ex.what() << " thrown in listener thread.";
           }
           listener.Stop();
         });
@@ -420,8 +410,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::_internal::ConnectionState newState,
           Azure::Core::Amqp::_internal::ConnectionState oldState) override
       {
-        GTEST_LOG_(INFO) << "Connection State changed. Old state: " << oldState
-                         << " New state: " << newState;
+        GTEST_LOG_(INFO) << "Connection State changed. Connection: " << m_connectionId
+                         << " Old state : " << oldState << " New state: " << newState;
         if (newState == Azure::Core::Amqp::_internal::ConnectionState::End
             || newState == Azure::Core::Amqp::_internal::ConnectionState::Error)
         {
