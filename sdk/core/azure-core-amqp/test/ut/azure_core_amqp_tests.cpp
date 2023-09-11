@@ -11,14 +11,24 @@
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if defined(_DEBUG) && defined(_MSC_VER)
-#include <Windows.h>
-int ReportCrtError(int level, char* message, int* returnValue)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+// MSVC CRT error callback.
+// This function is called when a CRT error is detected.
+// It will print the error message to the debugger output.
+// On exit, the breakOnError flag indicates whether the CRT should break into the debugger on this
+// error. The return value of this function determines if the CRT error processing logic should
+// continue.
+//
+int ReportCrtError(int level, char* message, int* breakOnError)
 {
   OutputDebugStringA(message);
-  *returnValue = 0;
-  if (level == _CRT_ERROR)
+  *breakOnError = FALSE;
+  // If this is a CRT error, we want to break into the debugger, otherwise just print the
+  // diagnostic.
+  if (level == _CRT_ERROR && IsDebuggerPresent())
   {
-    *returnValue = 1;
+    *breakOnError = TRUE;
   }
   return TRUE;
 }
