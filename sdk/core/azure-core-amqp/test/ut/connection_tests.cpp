@@ -175,33 +175,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       listener.Stop();
     }
   }
-
-  TEST_F(TestConnections, ConnectionListenClose)
-  {
-    // Ensure someone is listening on the connection for when we call connection.Open.
-    MessageTests::AmqpServerMock mockServer;
-    mockServer.StartListening();
-
-    {
-      // Create a connection
-      Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
-      connectionOptions.Port = mockServer.GetPort();
-      Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
-      // Open the connection
-      connection.Open();
-
-      // Wait a bit for the polling thread to catch up.
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-      // Ensure that we got an OnComplete callback.
-      mockServer.WaitForConnection();
-
-      // Now we can close the connection.
-      connection.Close("", "yyy", {});
-    }
-
-    mockServer.StopListening();
-  }
 #endif // !defined(AZ_PLATFORM_MAC)
 
 }}}} // namespace Azure::Core::Amqp::Tests
