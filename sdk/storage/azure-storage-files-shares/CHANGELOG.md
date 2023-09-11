@@ -1,16 +1,14 @@
 # Release History
 
-## 12.7.0-beta.2 (Unreleased)
+## 12.7.0 (2023-09-12)
 
 ### Features Added
 
-### Breaking Changes
+- Features in `12.7.0-beta.1` and `12.7.0-beta.2` are now generally available.
 
 ### Bugs Fixed
 
 - Fixed a bug where `ShareServiceClient::SetProperties` and `ShareServiceClient::GetProperties` threw exception if property `Protocol` is not null.
-
-### Other Changes
 
 ## 12.7.0-beta.1 (2023-08-12)
 
