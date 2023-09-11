@@ -180,6 +180,13 @@
   ],
   "overrides": [
     {
+      "filename": "CMakePresets.json",
+      "words": [
+        "ASAN",
+        "fsanitize"
+      ]
+    },
+    {
       "filename": "**/eng/pipelines/templates/**/*.yml",
       "words": [
         "lcov",

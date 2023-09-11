@@ -98,10 +98,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        */
       Stream(Logger::Level level) : m_level{level} {}
       /** @brief Called when the Stream object goes out of scope. */
-      ~Stream()
-      {
-        Log::Write(m_level, m_stream.str());
-      }
+      ~Stream() { Log::Write(m_level, m_stream.str()); }
       Stream(Stream const&) = delete;
       Stream& operator=(Stream const&) = delete;
 
@@ -110,10 +107,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        * @tparam T Type of the object being inserted.
        * @param val value to be inserted into the underlying stream.
        */
-      template <typename T> std::ostream& operator<<(T val)
-      {
-        return m_stream << val;
-      }
+      template <typename T> std::ostream& operator<<(T val) { return m_stream << val; }
 
     private:
       std::stringstream m_stream;
