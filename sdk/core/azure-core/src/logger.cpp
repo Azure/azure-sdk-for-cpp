@@ -41,6 +41,7 @@ void Log::Write(Logger::Level level, std::string const& message)
     }
   }
 }
+
 void Logger::SetListener(
     std::function<void(Logger::Level level, std::string const& message)> listener)
 {
