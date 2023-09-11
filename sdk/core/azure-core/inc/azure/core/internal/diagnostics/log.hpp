@@ -100,9 +100,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
       /** @brief Called when the Stream object goes out of scope. */
       ~Stream()
       {
-        std::unique_lock<std::mutex> lock(m_mutex);
         Log::Write(m_level, m_stream.str());
-        lock.unlock(); // Release the lock before destroying the mutex.
       }
       Stream(Stream const&) = delete;
       Stream& operator=(Stream const&) = delete;
@@ -114,12 +112,10 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
        */
       template <typename T> std::ostream& operator<<(T val)
       {
-        std::unique_lock<std::mutex> lock(m_mutex);
         return m_stream << val;
       }
 
     private:
-      std::mutex m_mutex;
       std::stringstream m_stream;
       Logger::Level m_level;
     };
