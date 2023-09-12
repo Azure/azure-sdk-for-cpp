@@ -285,7 +285,7 @@ void TestProxyManager::SetProxySanitizer()
     const std::vector<std::string> ignoreQueryParameters = {
         "st",
         "se",
-        "sig", 
+        "sig",
         "sv",
     };
     jsonRoot["ignoredHeaders"] = std::accumulate(
