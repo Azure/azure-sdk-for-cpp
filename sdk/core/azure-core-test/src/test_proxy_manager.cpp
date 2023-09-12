@@ -286,6 +286,7 @@ void TestProxyManager::SetProxySanitizer()
         "st",
         "se",
         "sig",
+        "sv",
     };
     jsonRoot["ignoredHeaders"] = std::accumulate(
         ignoredHeaders.begin(),
