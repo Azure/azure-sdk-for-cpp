@@ -27,6 +27,8 @@
 
 ## 12.6.0 (2023-07-11)
 
+### Features Added
+
 - New features in `12.6.0-beta.1` are now generally available.
 
 ## 12.6.0-beta.1 (2023-05-31)

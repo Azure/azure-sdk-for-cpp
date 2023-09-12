@@ -2,6 +2,8 @@
 
 ## 12.9.0 (2023-09-12)
 
+### Features Added
+
 - Features in `12.9.0-beta.1` and `12.9.0-beta.2` are now generally available.
 
 ## 12.9.0-beta.2 (2023-08-12)
@@ -23,6 +25,8 @@
 - Fixed a bug where `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff` crash when getting the second page.
 
 ## 12.8.0 (2023-07-11)
+
+### Features Added
 
 - Features in `12.8.0-beta.1` are now generally available.
 
