@@ -1439,4 +1439,27 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(downloadResponse.Details.ObjectReplicationDestinationPolicyId.Value().empty());
     }
   }
+
+  TEST_F(BlobContainerClientTest, Audience)
+  {
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+
+    // default audience
+    auto containerClient
+        = Blobs::BlobContainerClient(m_blobContainerClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(containerClient.GetProperties());
+
+    // custom audience
+    auto containerUrl = Azure::Core::Url(containerClient.GetUrl());
+    clientOptions.Audience = Blobs::Models::BlobAudience(
+        containerUrl.GetScheme() + "://" + containerUrl.GetHost() + "/.default");
+    containerClient
+        = Blobs::BlobContainerClient(m_blobContainerClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(containerClient.GetProperties());
+  }
 }}} // namespace Azure::Storage::Test
