@@ -5,8 +5,8 @@
 
 #include "azure/identity/azure_cli_credential.hpp"
 #include "azure/identity/environment_credential.hpp"
-#include "azure/identity/workload_identity_credential.hpp"
 #include "azure/identity/managed_identity_credential.hpp"
+#include "azure/identity/workload_identity_credential.hpp"
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
