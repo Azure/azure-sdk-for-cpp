@@ -77,7 +77,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     class Namespace;
     class EventHub {
-      EventHub(std::string const& name, std::string const& resourceGroup, std::string const& subscriptionId)
+      EventHub(
+          std::string const& name,
+          std::string const& resourceGroup,
+          std::string const& subscriptionId)
           : m_name(name), m_resourceGroup(resourceGroup), m_subscriptionId{subscriptionId}
       {
       }

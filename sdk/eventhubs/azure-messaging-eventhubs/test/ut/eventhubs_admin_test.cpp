@@ -14,7 +14,8 @@
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class AdminTest : public EventHubsTestBase {};
+  class AdminTest : public EventHubsTestBase {
+  };
   namespace {
 
     std::string GetRandomName(std::string const& baseName = "checkpoint")

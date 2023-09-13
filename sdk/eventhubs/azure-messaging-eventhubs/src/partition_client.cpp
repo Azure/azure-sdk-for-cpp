@@ -198,7 +198,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // If we haven't gotten *any* messages, we're done. Otherwise, we'll wait for more.
       else if (!messages.empty())
       {
-          break;
+        break;
       }
       {
         result = m_receiver.WaitForIncomingMessage(context);

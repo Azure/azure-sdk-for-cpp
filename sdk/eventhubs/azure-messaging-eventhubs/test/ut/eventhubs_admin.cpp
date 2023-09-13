@@ -610,7 +610,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     if (jsonOutput.find("WARNING:") == 0)
     {
       // Erase the warning from the CLI.
-      jsonOutput = jsonOutput.erase(0, cliOutput.find('\n')+1);
+      jsonOutput = jsonOutput.erase(0, cliOutput.find('\n') + 1);
     }
     if (jsonOutput.find("ERROR:") == 0)
     {
