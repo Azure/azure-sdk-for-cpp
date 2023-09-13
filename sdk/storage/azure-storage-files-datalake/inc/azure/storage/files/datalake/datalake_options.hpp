@@ -104,6 +104,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * @brief Holds the customer provided key used when making requests.
        */
       Azure::Nullable<EncryptionKey> CustomerProvidedKey;
+
+      /**
+       * The filesystem url. This is only non-null for directory clients that are created from a
+       * filesystem client, so that this directory client knows where to send ListPaths requests.
+       */
+      Azure::Nullable<Azure::Core::Url> FileSystemUrl;
     };
   } // namespace _detail
 
