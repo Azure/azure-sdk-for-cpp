@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 
+- Modify the order of the credentials used within the `DefaultAzureCredential` to be consistent with other languages.
 - Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
 
 ### Bugs Fixed
