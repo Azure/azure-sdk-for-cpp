@@ -79,14 +79,6 @@ namespace Azure { namespace Identity {
     std::string m_requestBody;
     std::string m_tokenFilePath;
 
-    explicit WorkloadIdentityCredential(
-        std::string const& tenantIdOptions,
-        std::string const& clientIdOptions,
-        std::string const& authorityHostOptions,
-        std::string const& tokenFilePathOptions,
-        std::vector<std::string> additionallyAllowedTenants,
-        Core::Credentials::TokenCredentialOptions const& options);
-
   public:
     /**
      * @brief Constructs a Workload Identity Credential.
