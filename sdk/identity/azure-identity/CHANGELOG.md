@@ -4,9 +4,9 @@
 
 ### Features Added
 
-- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
-
 ### Breaking Changes
+
+- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
 
 ### Bugs Fixed
 

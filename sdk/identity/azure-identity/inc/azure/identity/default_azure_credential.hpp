@@ -28,7 +28,7 @@ namespace Azure { namespace Identity {
    * #Azure::Identity::EnvironmentCredential, #Azure::Identity::WorkloadIdentityCredential,
    * #Azure::Identity::AzureCliCredential, and #Azure::Identity::ManagedIdentityCredential. Even
    * though the credentials being used and their order is documented, it may be changed in the
-   * future versions of the SDK, potentially bringing breaking changes in its behavior.
+   * future versions of the SDK, potentially introducing breaking changes in its behavior.
    *
    * @note This credential is intended to be used at the early stages of development, to allow the
    * developer some time to work with the other aspects of the SDK, and later to replace this
