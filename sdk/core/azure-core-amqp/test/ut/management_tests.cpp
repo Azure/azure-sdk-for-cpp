@@ -34,42 +34,40 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       ManagementClient management(session.CreateManagementClient("Test", {}));
     }
   }
+  TEST_F(TestManagement, ManagementOpenCloseNoListener)
+  {
+    ConnectionOptions options;
+    options.Port = 5151;
+    Connection connection("localhost", nullptr, options);
+
+    Session session{connection.CreateSession({})};
+    ManagementClient management(session.CreateManagementClient("Test", {}));
+
+    // EXPECT_ANY_THROW(management.Open());
+    auto openResult = management.Open();
+    EXPECT_EQ(openResult, ManagementOpenStatus::Error);
+  }
   TEST_F(TestManagement, ManagementOpenClose)
   {
-    {
-      ConnectionOptions options;
-      options.Port = 5151;
-      Connection connection("localhost", nullptr, options);
+    MessageTests::AmqpServerMock mockServer;
 
-      Session session{connection.CreateSession({})};
-      ManagementClient management(session.CreateManagementClient("Test", {}));
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
 
-      EXPECT_ANY_THROW(management.Open());
-      //    auto openResult = management.Open();
-      //    EXPECT_EQ(openResult, ManagementOpenResult::Error);
-    }
+    Session session{connection.CreateSession({})};
+    ManagementClientOptions options;
+    options.EnableTrace = 1;
+    ManagementClient management(session.CreateManagementClient("Test", options));
 
-    {
-      MessageTests::AmqpServerMock mockServer;
+    mockServer.StartListening();
 
-      ConnectionOptions connectionOptions;
-      connectionOptions.Port = mockServer.GetPort();
-      Connection connection("localhost", nullptr, connectionOptions);
+    auto openResult = management.Open();
+    EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
 
-      Session session{connection.CreateSession({})};
-      ManagementClientOptions options;
-      options.EnableTrace = 1;
-      ManagementClient management(session.CreateManagementClient("Test", options));
+    management.Close();
 
-      mockServer.StartListening();
-
-      auto openResult = management.Open();
-      EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
-
-      management.Close();
-
-      mockServer.StopListening();
-    }
+    mockServer.StopListening();
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 #if !defined(AZ_PLATFORM_MAC)

@@ -163,7 +163,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
-  PartitionClient::~PartitionClient() {}
+  PartitionClient::~PartitionClient() { m_receiver.Close(); }
 
   /** Receive events from the partition.
    *

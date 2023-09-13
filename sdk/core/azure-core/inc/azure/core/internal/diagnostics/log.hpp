@@ -8,6 +8,7 @@
 
 #include <atomic>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 #include <type_traits>
 
@@ -68,44 +69,6 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     Log() = delete;
     ~Log() = delete;
 
-    /** @brief String buffer for use in the logger.
-     *
-     * A specialization of std::stringbuf for use in the logger.
-     *
-     * This function primarily exists to implement the sync() function which triggers a call to
-     * Log::Write().
-     */
-    class LoggerStringBuffer : public std::stringbuf {
-    public:
-      /** @brief Configure a LogStringBuffer with the specified logging level. */
-      LoggerStringBuffer(Logger::Level level) : m_level{level} {}
-      LoggerStringBuffer(LoggerStringBuffer&& that) = default;
-      LoggerStringBuffer& operator=(LoggerStringBuffer&& that) = default;
-      ~LoggerStringBuffer() override = default;
-
-      /** @brief Implementation of std::basic_streambuf<char>::sync.
-       *
-       * @returns 0 on success, -1 otherwise.
-       */
-      virtual int sync() override;
-
-    private:
-      Logger::Level m_level;
-    };
-
-    /** @brief Logger Stream used internally by the GetStream() private method.
-     *
-     * Stream class used to wrap a LoggerStringBuffer stringbuf object.
-     */
-    class LoggerStream : public std::basic_ostream<char> {
-    public:
-      LoggerStream(Logger::Level level) : std::ostream(&m_stringBuffer), m_stringBuffer{level} {}
-      ~LoggerStream() override = default;
-
-    private:
-      LoggerStringBuffer m_stringBuffer;
-    };
-
   public:
     /** @brief Stream class used to enable using iomanip operators on an I/O stream.
      * Usage:
@@ -127,16 +90,15 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
      * underlying stream object is flushed thus ensuring that the output is generated at the end of
      * the statement, even if the caller does not insert the std::endl object.
      */
-    class Stream {
+    class Stream final {
     public:
       /** @brief Construct a new Stream object with the configured I/O level.
        *
        * @param level - Represents the desired diagnostic level for the operation.
        */
-      Stream(Logger::Level level) : m_stream(GetStream(level)) {}
-
+      Stream(Logger::Level level) : m_level{level} {}
       /** @brief Called when the Stream object goes out of scope. */
-      ~Stream() { m_stream.flush(); }
+      ~Stream() { Log::Write(m_level, m_stream.str()); }
       Stream(Stream const&) = delete;
       Stream& operator=(Stream const&) = delete;
 
@@ -148,7 +110,8 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
       template <typename T> std::ostream& operator<<(T val) { return m_stream << val; }
 
     private:
-      LoggerStream& m_stream;
+      std::stringstream m_stream;
+      Logger::Level m_level;
     };
 
     /** @brief Returns true if the logger would write a string at the specified level.
@@ -201,10 +164,5 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     static void SetLogLevel(Logger::Level logLevel);
 
   private:
-    static LoggerStream g_verboseLogger;
-    static LoggerStream g_informationalLogger;
-    static LoggerStream g_warningLogger;
-    static LoggerStream g_errorLogger;
-    static LoggerStream& GetStream(Logger::Level level);
   };
 }}}} // namespace Azure::Core::Diagnostics::_internal

@@ -6,6 +6,7 @@
 #include "azure/identity/azure_cli_credential.hpp"
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/managed_identity_credential.hpp"
+#include "azure/identity/workload_identity_credential.hpp"
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
@@ -38,12 +39,13 @@ DefaultAzureCredential::DefaultAzureCredential(
 
   // Creating credentials in order to ensure the order of log messages.
   auto const envCred = std::make_shared<EnvironmentCredential>(options);
+  auto const wiCred = std::make_shared<WorkloadIdentityCredential>(options);
   auto const managedIdentityCred = std::make_shared<ManagedIdentityCredential>(options);
   auto const azCliCred = std::make_shared<AzureCliCredential>(options);
 
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
       GetCredentialName(),
-      ChainedTokenCredential::Sources{envCred, managedIdentityCred, azCliCred});
+      ChainedTokenCredential::Sources{envCred, wiCred, managedIdentityCred, azCliCred});
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;

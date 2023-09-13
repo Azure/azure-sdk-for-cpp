@@ -17,67 +17,6 @@ using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
 namespace LocalServerSample {
 
-// Convert a ConnectionState enum to a string for diagnostic purposes.
-const char* ConnectionStateToString(ConnectionState const state)
-{
-  switch (state)
-  {
-    case ConnectionState::Start:
-      return "Start";
-    case ConnectionState::HeaderReceived:
-      return "HeaderReceived";
-    case ConnectionState::HeaderSent:
-      return "HeaderSent";
-    case ConnectionState::HeaderExchanged:
-      return "HeaderExchanged";
-    case ConnectionState::OpenPipe:
-      return "OpenPipe";
-    case ConnectionState::OcPipe:
-      return "OcPipe";
-    case ConnectionState::OpenReceived:
-      return "OpenReceived";
-    case ConnectionState::OpenSent:
-      return "OpenSent";
-    case ConnectionState::ClosePipe:
-      return "ClosePipe";
-    case ConnectionState::Opened:
-      return "Opened";
-    case ConnectionState::CloseReceived:
-      return "CloseReceived";
-    case ConnectionState::CloseSent:
-      return "CloseSent";
-    case ConnectionState::Discarding:
-      return "Discarding";
-    case ConnectionState::End:
-      return "End";
-    case ConnectionState::Error:
-      return "Error";
-    default:
-      return "Unknown";
-  }
-}
-
-const char* MessageStateToString(MessageReceiverState const state)
-{
-  switch (state)
-  {
-    case MessageReceiverState::Closing:
-      return "Closing";
-    case MessageReceiverState::Invalid:
-      return "Invalid";
-    case MessageReceiverState::Error:
-      return "Error";
-    case MessageReceiverState::Opening:
-      return "Opening";
-    case MessageReceiverState::Idle:
-      return "Idle";
-    case MessageReceiverState::Open:
-      return "Open";
-    default:
-      throw std::logic_error("Unknown message state");
-  }
-}
-
 class SampleEvents : public ConnectionEvents,
                      public SessionEvents,
                      public MessageReceiverEvents,
@@ -157,8 +96,7 @@ private:
       ConnectionState newState,
       ConnectionState oldState) override
   {
-    std::cout << "Connection state changed. Was: " << ConnectionStateToString(oldState)
-              << " now: " << ConnectionStateToString(newState) << std::endl;
+    std::cout << "Connection state changed. Was: " << oldState << " now: " << newState << std::endl;
     (void)connection;
   };
 
@@ -198,8 +136,8 @@ private:
       MessageReceiverState newState,
       MessageReceiverState oldState) override
   {
-    std::cout << "Message Receiver state changed. Was: " << MessageStateToString(oldState)
-              << " now: " << MessageStateToString(newState) << std::endl;
+    std::cout << "Message Receiver state changed. Was: " << oldState << " now: " << newState
+              << std::endl;
     (void)receiver;
   }
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(

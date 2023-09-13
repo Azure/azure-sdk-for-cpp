@@ -4,9 +4,12 @@
 
 ### Features Added
 
+- Add support for reading the tenant id, client id, and the token file path for `WorkloadIdentityCredential` from the environment variables.
+
 ### Breaking Changes
 
 - Modify the order of the credentials used within the `DefaultAzureCredential` to be consistent with other languages.
+- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
 
 ### Bugs Fixed
 

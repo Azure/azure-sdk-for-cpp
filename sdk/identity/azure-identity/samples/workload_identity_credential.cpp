@@ -10,26 +10,14 @@
 // * AZURE_TENANT_ID: Tenant ID for the Azure account.
 // * AZURE_CLIENT_ID: The Client ID to authenticate the request.
 // * AZURE_FEDERATED_TOKEN_FILE: The path of a file containing a Kubernetes service account token.
-std::string GetTenantId() { return std::getenv("AZURE_TENANT_ID"); }
-std::string GetClientId() { return std::getenv("AZURE_CLIENT_ID"); }
-std::string GetTokenFilePath()
-{
-  char const* const tokenFilePath{std::getenv("AZURE_FEDERATED_TOKEN_FILE")};
-  if (tokenFilePath == nullptr)
-  {
-    std::cerr << "Missing environment variable AZURE_FEDERATED_TOKEN_FILE" << std::endl;
-    return std::string();
-  }
-  return tokenFilePath;
-}
 
 int main()
 {
   try
   {
     // Step 1: Initialize Workload Identity Credential.
-    auto workloadIdentityCredential = std::make_shared<Azure::Identity::WorkloadIdentityCredential>(
-        GetTenantId(), GetClientId(), GetTokenFilePath());
+    auto workloadIdentityCredential
+        = std::make_shared<Azure::Identity::WorkloadIdentityCredential>();
 
     // Step 2: Pass the credential to an Azure Service Client.
     Azure::Service::Client azureServiceClient("serviceUrl", workloadIdentityCredential);
