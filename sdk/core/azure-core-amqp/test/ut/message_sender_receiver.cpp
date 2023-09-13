@@ -98,206 +98,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   }
 
-  namespace MessageTests {
-#if 1
-
-    class MessageListenerEvents
-        : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents,
-          public Azure::Core::Amqp::_internal::ConnectionEvents,
-          public Azure::Core::Amqp::_internal::SessionEvents,
-          public Azure::Core::Amqp::_internal::MessageReceiverEvents {
-    public:
-      MessageListenerEvents() = default;
-
-      std::shared_ptr<Azure::Core::Amqp::_internal::Connection> WaitForConnection(
-          Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
-          Azure::Core::Context const& context)
-      {
-        auto result = m_listeningQueue.WaitForPolledResult(context, listener);
-        if (result)
-        {
-          return std::move(std::get<0>(*result));
-        }
-        return nullptr;
-      }
-      std::unique_ptr<Azure::Core::Amqp::_internal::Session> WaitForSession(
-          Azure::Core::Context const& context)
-      {
-        auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connectionToPoll);
-        if (result)
-        {
-          return std::move(std::get<0>(*result));
-        }
-        return nullptr;
-      }
-      std::unique_ptr<MessageReceiver> WaitForReceiver(Azure::Core::Context const& context)
-      {
-        auto result = m_messageReceiverQueue.WaitForPolledResult(context, *m_connectionToPoll);
-        if (result)
-        {
-          return std::move(std::get<0>(*result));
-        }
-        return nullptr;
-      }
-      Azure::Core::Amqp::Models::AmqpMessage WaitForMessage(Azure::Core::Context const& context)
-      {
-        auto result = m_messageQueue.WaitForPolledResult(context, *m_connectionToPoll);
-        if (result)
-        {
-          return std::move(std::get<0>(*result));
-        }
-        return nullptr;
-      }
-
-    private:
-      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-          std::shared_ptr<Azure::Core::Amqp::_internal::Connection>>
-          m_listeningQueue;
-      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-          std::unique_ptr<Azure::Core::Amqp::_internal::Session>>
-          m_listeningSessionQueue;
-      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>>
-          m_messageReceiverQueue;
-      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-          Azure::Core::Amqp::Models::AmqpMessage>
-          m_messageQueue;
-      std::shared_ptr<Connection> m_connectionToPoll;
-
-      // Inherited via MessageReceiver
-
-      // Inherited via SocketListenerEvents.
-      virtual void OnSocketAccepted(
-          std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
-      {
-        GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-        auto amqpTransport{
-            Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
-                transport, nullptr)};
-        Azure::Core::Amqp::_internal::ConnectionOptions options;
-        //    options.IdleTimeout = std::chrono::minutes(5);
-        options.ContainerId = "some";
-        options.EnableTrace = true;
-        m_connectionToPoll = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
-            amqpTransport, options, this);
-        m_connectionToPoll->Listen();
-        m_listeningQueue.CompleteOperation(m_connectionToPoll);
-      }
-
-      // Inherited via ConnectionEvents
-      virtual void OnConnectionStateChanged(
-          Azure::Core::Amqp::_internal::Connection const&,
-          ConnectionState newState,
-          ConnectionState oldState) override
-      {
-        (void)oldState;
-        (void)newState;
-      }
-      virtual bool OnNewEndpoint(
-          Azure::Core::Amqp::_internal::Connection const& connection,
-          Endpoint& endpoint) override
-      {
-        GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
-        Azure::Core::Amqp::_internal::SessionOptions options;
-        options.InitialIncomingWindowSize = 10000;
-        auto listeningSession{std::make_unique<Azure::Core::Amqp::_internal::Session>(
-            connection.CreateSession(endpoint, options, this))};
-        listeningSession->Begin();
-
-        m_listeningSessionQueue.CompleteOperation(std::move(listeningSession));
-
-        return true;
-      }
-      virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override {}
-
-      // Inherited via SessionEvents
-      virtual bool OnLinkAttached(
-          Azure::Core::Amqp::_internal::Session const& session,
-          Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
-          std::string const& name,
-          Azure::Core::Amqp::_internal::SessionRole,
-          Azure::Core::Amqp::Models::AmqpValue const& source,
-          Azure::Core::Amqp::Models::AmqpValue const& target,
-          Azure::Core::Amqp::Models::AmqpValue const& properties) override
-      {
-        GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
-        MessageReceiverOptions receiverOptions;
-        Azure::Core::Amqp::Models::_internal::MessageTarget messageTarget(target);
-        Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
-        receiverOptions.MessageTarget = messageTarget;
-        receiverOptions.Name = name;
-        receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-        receiverOptions.EnableTrace = true;
-        auto receiver = std::make_unique<MessageReceiver>(
-            session.CreateMessageReceiver(newLinkInstance, messageSource, receiverOptions, this));
-        GTEST_LOG_(INFO) << "Opening the message receiver.";
-        receiver->Open();
-        m_messageReceiverQueue.CompleteOperation(std::move(receiver));
-        (void)properties;
-        return true;
-      }
-      virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-          Azure::Core::Amqp::_internal::MessageReceiver const&,
-          Azure::Core::Amqp::Models::AmqpMessage const& message) override
-      {
-        GTEST_LOG_(INFO) << "Message received";
-        m_messageQueue.CompleteOperation(message);
-
-        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
-      }
-      void OnMessageReceiverStateChanged(
-          MessageReceiver const& receiver,
-          MessageReceiverState newState,
-          MessageReceiverState oldState) override
-      {
-        GTEST_LOG_(INFO) << "OnMessageReceiverStateChanged";
-        (void)receiver;
-        (void)newState;
-        (void)oldState;
-      }
-      void OnMessageReceiverDisconnected(
-          Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
-      {
-        GTEST_LOG_(INFO) << "Message receiver disconnected: " << error;
-      }
-    };
-  } // namespace MessageTests
-#endif
-
   TEST_F(TestMessages, ReceiverOpenClose)
   {
-    uint16_t testPort = FindAvailableSocket();
+    MessageTests::AmqpServerMock mockServer;
 
-    GTEST_LOG_(INFO) << "Test port: " << testPort;
-
-    MessageTests::MessageListenerEvents events;
     ConnectionOptions connectionOptions;
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
     connectionOptions.EnableTrace = true;
-    connectionOptions.Port = testPort;
+    connectionOptions.Port = mockServer.GetPort();
+    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->name();
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession()};
 
-    Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
+    mockServer.StartListening();
 
     Azure::Core::Context context;
 
-    // Ensure that the thread is started before we start using the message sender.
-    std::mutex threadRunningMutex;
-    std::condition_variable threadStarted;
-    bool running = false;
-
-    std::thread listenerThread([&]() {
-      listener.Start();
-      running = true;
-      threadStarted.notify_one();
-
-      auto listeningConnection = events.WaitForConnection(listener, context);
-
-      listener.Stop();
-    });
-
-    std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
-    threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
     {
       class ReceiverEvents : public MessageReceiverEvents {
         virtual void OnMessageReceiverStateChanged(
@@ -335,9 +151,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       receiver.Close();
     }
 
-    context.Cancel();
+    mockServer.StopListening();
 
-    listenerThread.join();
+    context.Cancel();
   }
 
   TEST_F(TestMessages, SenderOpenClose)
@@ -347,6 +163,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     ConnectionOptions connectionOptions;
     connectionOptions.IdleTimeout = std::chrono::minutes(5);
     connectionOptions.Port = testPort;
+    connectionOptions.ContainerId = ::testing::UnitTest::GetInstance()->current_test_info()->name();
 
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession()};
@@ -361,7 +178,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sender.Open();
       sender.Close();
     }
-    connection.Close("Test complete", "", Models::AmqpValue());
     listener.Stop();
   }
 
@@ -372,8 +188,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StartListening();
 
     ConnectionOptions connectionOptions;
-    //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.ContainerId = "some";
+    connectionOptions.ContainerId = ::testing::UnitTest::GetInstance()->current_test_info()->name();
     //  connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
     Connection connection("localhost", nullptr, connectionOptions);
@@ -411,22 +226,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
 
       Azure::Core::Context context;
-      Azure::Core::Amqp::Common::_internal::
-          AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
-              sendCompleteQueue;
-      sender.QueueSend(
-          message,
-          [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
-            GTEST_LOG_(INFO) << "Send Complete!";
-            sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-          });
       try
       {
+        auto result = sender.Send(message, context);
 
-        auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
         // Because we're trying to use TLS to connect to a non-TLS port, we should get an error
         // sending the message.
-        EXPECT_EQ(std::get<0>(*result), MessageSendStatus::Error);
+        EXPECT_EQ(std::get<0>(result), MessageSendStatus::Error);
       }
       catch (Azure::Core::OperationCancelledException const&)
       {
@@ -440,21 +246,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       sender.Close();
     }
-    connection.Close("", "", Models::AmqpValue());
     mockServer.StopListening();
   }
 
   TEST_F(TestMessages, SenderSendAsync)
   {
-    uint16_t testPort = FindAvailableSocket();
+    MessageTests::AmqpServerMock mockServer{};
 
-    GTEST_LOG_(INFO) << "Test port: " << testPort;
+    GTEST_LOG_(INFO) << "Test port: " << mockServer.GetPort();
 
     ConnectionOptions connectionOptions;
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
     connectionOptions.ContainerId = "some";
     //  connectionOptions.EnableTrace = true;
-    connectionOptions.Port = testPort;
+    connectionOptions.Port = mockServer.GetPort();
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession()};
 
@@ -463,50 +268,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::DateTime::clock::now() + std::chrono::seconds(15));
 
     // Ensure that the thread is started before we start using the message sender.
-    std::mutex threadRunningMutex;
-    std::condition_variable threadStarted;
-    bool running = false;
-
-    std::thread listenerThread([&]() {
-      try
-      {
-
-        MessageTests::MessageListenerEvents events;
-        Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
-        ASSERT_NO_THROW(listener.Start());
-
-        running = true;
-        threadStarted.notify_one();
-
-        auto listeningConnection = events.WaitForConnection(listener, receiveContext);
-        auto listeningSession = events.WaitForSession(receiveContext);
-        auto messageReceiver = events.WaitForReceiver(receiveContext);
-        GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
-
-        auto message = events.WaitForMessage(receiveContext);
-        GTEST_LOG_(INFO) << "Received incoming message!!";
-        listener.Stop();
-      }
-      catch (std::exception const& ex)
-      {
-        GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
-      }
-    });
-
-    std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
-    threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
+    mockServer.StartListening();
 
     {
       class SenderEvents : public MessageSenderEvents {
         virtual void OnMessageSenderStateChanged(
-            MessageSender const& sender,
+            MessageSender const&,
             MessageSenderState newState,
             MessageSenderState oldState) override
         {
-          GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderSTateChanged.";
-          (void)sender;
-          (void)newState;
-          (void)oldState;
+          GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Old State: "
+                           << oldState << " New State: " << newState;
         }
         virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
         {
@@ -528,76 +300,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
 
       Azure::Core::Context context;
-      Azure::Core::Amqp::Common::_internal::
-          AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
-              sendCompleteQueue;
-      sender.QueueSend(
-          message,
-          [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
-            GTEST_LOG_(INFO) << "Send Complete!";
-            sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-          });
-      auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
-      EXPECT_EQ(std::get<0>(*result), MessageSendStatus::Ok);
+      auto result = sender.Send(message);
+      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
 
       sender.Close();
     }
     receiveContext.Cancel();
-    listenerThread.join();
-    connection.Close("", "", Models::AmqpValue());
+    mockServer.StopListening();
   }
 
   TEST_F(TestMessages, SenderSendSync)
   {
+    MessageTests::AmqpServerMock mockServer{};
     ConnectionOptions connectionOptions;
 
-    uint16_t testPort = FindAvailableSocket();
-    GTEST_LOG_(INFO) << "Test port: " << testPort;
+    GTEST_LOG_(INFO) << "Test port: " << mockServer.GetPort();
 
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.ContainerId = "some";
-    connectionOptions.Port = testPort;
+    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_case()->name();
+
+    connectionOptions.Port = mockServer.GetPort();
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession()};
 
     Azure::Core::Context receiveContext;
 
     // Ensure that the thread is started before we start using the message sender.
-    std::mutex threadRunningMutex;
-    std::condition_variable threadStarted;
-    bool running = false;
-
-    std::thread listenerThread([&]() {
-      try
-      {
-
-        MessageTests::MessageListenerEvents events;
-        Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
-        EXPECT_NO_THROW(listener.Start());
-
-        running = true;
-        threadStarted.notify_one();
-
-        auto listeningConnection = events.WaitForConnection(listener, receiveContext);
-        auto listeningSession = events.WaitForSession(receiveContext);
-        auto messageReceiver = events.WaitForReceiver(receiveContext);
-        GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
-
-        auto message = events.WaitForMessage(receiveContext);
-        GTEST_LOG_(INFO) << "Received incoming message!!";
-
-        listener.Stop();
-      }
-      catch (std::exception const& ex)
-      {
-        GTEST_LOG_(ERROR) << std::string("Exception thrown in listener thread. ") + ex.what();
-      }
-    });
-
-    // Block waiting until the listening thread has called listener.Start() to ensure that we
-    // don't race with the listener startup.
-    std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
-    threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
+    mockServer.StartListening();
 
     {
       MessageSenderOptions options;
@@ -620,7 +349,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sender.Close();
     }
     receiveContext.Cancel();
-    listenerThread.join();
+    mockServer.StopListening();
   }
 
   TEST_F(TestMessages, AuthenticatedSender)
@@ -634,7 +363,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     ConnectionOptions connectionOptions;
 
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.ContainerId = "some";
+    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->name();
     connectionOptions.Port = server.GetPort();
     Connection connection("localhost", sasCredential, connectionOptions);
     Session session{connection.CreateSession()};
@@ -646,7 +375,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     senderOptions.MessageSource = "ingress";
     senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
     senderOptions.MaxMessageSize = 65536;
-    senderOptions.Name = "sender-link";
     MessageSender sender(
         session.CreateMessageSender(sasCredential->GetEntityPath(), senderOptions, nullptr));
 
@@ -753,7 +481,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     ConnectionOptions connectionOptions;
 
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.ContainerId = "some";
+    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->name();
     connectionOptions.Port = server.GetPort();
     Connection connection("localhost", sasCredential, connectionOptions);
     Session session{connection.CreateSession()};
@@ -853,7 +581,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     ConnectionOptions connectionOptions;
 
     connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.ContainerId = "some";
+    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_case()->name();
     connectionOptions.Port = port;
     Connection connection(hostName, tokenCredential, connectionOptions);
     Session session{connection.CreateSession()};
@@ -871,14 +599,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     receiver.Open();
 
-    // Send a message.
+    // Receive a message with a 15 second timeout. It shouldn't throw.
     {
+      Azure::Core::Context receiveContext{Azure::Core::Context::ApplicationContext.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(15))};
+
+      // Tell the server it should send a message in the polling loop.
       server.ShouldSendMessage(true);
-      auto message = receiver.WaitForIncomingMessage();
-      ASSERT_TRUE(message.first.HasValue());
-      ASSERT_FALSE(message.second);
+      GTEST_LOG_(INFO) << "Waiting for message to be received.";
+      std::pair<Azure::Nullable<Azure::Core::Amqp::Models::AmqpMessage>, bool> response;
+      ASSERT_NO_THROW(response = receiver.WaitForIncomingMessage(receiveContext));
+      ASSERT_TRUE(response.first.HasValue());
+      ASSERT_FALSE(response.second);
       EXPECT_EQ(
-          static_cast<std::string>(message.first.Value().GetBodyAsAmqpValue()),
+          static_cast<std::string>(response.first.Value().GetBodyAsAmqpValue()),
           "This is a message body.");
     }
 

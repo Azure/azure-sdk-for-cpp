@@ -2,6 +2,15 @@
 
 ## 1.6.0-beta.2 (2023-09-13)
 
+### Features Added
+
+- Add support for reading the tenant id, client id, and the token file path for `WorkloadIdentityCredential` from the environment variables.
+
+### Breaking Changes
+
+- Modify the order of the credentials used within the `DefaultAzureCredential` to be consistent with other languages.
+- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
+
 ### Bugs Fixed
 
 - [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)

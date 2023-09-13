@@ -38,6 +38,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestMessages_SenderOpenClose_Test;
   class TestMessages_TestLocalhostVsTls_Test;
   class TestMessages_SenderSendAsync_Test;
+  class TestMessages_SenderOpenClose_Test;
+  class TestMessages_ReceiverOpenClose_Test;
+  class TestMessages_ReceiverReceiveAsync_Test;
+
 }}}} // namespace Azure::Core::Amqp::Tests
 #endif // TESTING_BUILD
 #if defined(SAMPLES_BUILD)
@@ -152,6 +156,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Error,
   };
+
+  std::ostream& operator<<(std::ostream& stream, ConnectionState const value);
 
   class Connection;
 
@@ -336,6 +342,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * will be opened implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
      *
+     * @remarks If you call Open() or Listen(), then you MUST call Close() when you are done with
+     * the connection, BEFORE destroying it.
+     *
      */
     void Open();
 
@@ -348,6 +357,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * will be opened implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
      *
+     * @remarks If you call Open() or Listen(), then you MUST call Close() when you are done with
+     * the connection, BEFORE destroying it.
      */
     void Listen();
 
@@ -361,11 +372,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * will be closed implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
      *
+     * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
+     *
      */
     void Close(
-        std::string const& condition,
-        std::string const& description,
-        Models::AmqpValue info);
+        std::string const& condition = {},
+        std::string const& description = {},
+        Models::AmqpValue info = {});
 
     /** @brief Gets host configured by the connection.
      *
@@ -450,6 +463,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
     friend class Azure::Core::Amqp::Tests::TestMessages_TestLocalhostVsTls_Test;
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
+
 #endif // TESTING_BUILD
 #if SAMPLES_BUILD
     friend int LocalServerSample::LocalServerSampleMain();

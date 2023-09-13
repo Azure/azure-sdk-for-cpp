@@ -3,6 +3,8 @@
 
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <iomanip>
+
 #include <gtest/gtest.h>
 
 using Azure::Core::Diagnostics::Logger;
@@ -288,4 +290,16 @@ TEST(Logger, LoggerStream)
     EXPECT_EQ(message, "Error");
     message.clear();
   }
+}
+
+TEST(Logger, LoggerStreamInsertion)
+{
+  Log::Stream(Logger::Level::Verbose) << "Verbose" << std::hex << 16 << std::endl;
+  Log::Stream(Logger::Level::Verbose) << "Verbose" << std::dec << 16 << std::endl;
+  Log::Stream(Logger::Level::Verbose) << "Verbose" << std::oct << 16 << std::endl;
+  Log::Stream(Logger::Level::Verbose)
+      << "Verbose" << std::hex << std::setw(4) << std::setfill('0') << 16 << std::endl;
+  auto time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  Log::Stream(Logger::Level::Verbose)
+      << "Verbose" << std::put_time(localtime(&time_t), "%c") << std::endl;
 }

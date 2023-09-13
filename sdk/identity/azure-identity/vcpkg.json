@@ -9,7 +9,7 @@
         },
         {
           "name": "wil",
-          "platform": "windows"
+          "platform": "windows & !uwp"
         }
     ]
 }

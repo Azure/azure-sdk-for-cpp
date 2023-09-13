@@ -90,9 +90,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringNoEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = "unit-test";
+    options.ApplicationID
+        = std::string(testing::UnitTest::GetInstance()->current_test_info()->name())
+        + " Application";
 
-    options.Name = "unit-test";
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, eventHubName, "$Default", options);
@@ -118,9 +120,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
 
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = "unit-test";
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
 
-    options.Name = "unit-test";
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
@@ -141,9 +143,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
 
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = "unit-test";
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
 
-    options.Name = "unit-test";
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;

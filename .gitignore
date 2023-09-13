@@ -47,6 +47,9 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# CTest test results
+[Tt]esting/
+
 # NUNIT
 *.VisualState.xml
 TestResult.xml

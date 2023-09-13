@@ -237,7 +237,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       //    auto listeningSession = listeningConnection->WaitForSession();
       //    auto listeningLink = listeningSession->WaitForLink();
     }
-    connection.Close("Test complete", "Completed", Models::AmqpValue());
     listener.Stop();
   }
 #endif // defined(AZ_PLATFORM_MAC)
