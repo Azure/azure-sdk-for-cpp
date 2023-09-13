@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.0-beta.2 (Unreleased)
+## 1.6.0-beta.2 (2023-09-13)
 
 ### Features Added
 
@@ -20,8 +20,6 @@
 Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
 
 - Theodore Tsirpanis _([GitHub](https://github.com/teo-tsirpanis))_
-
-### Other Changes
 
 ## 1.6.0-beta.1 (2023-08-11)
 
