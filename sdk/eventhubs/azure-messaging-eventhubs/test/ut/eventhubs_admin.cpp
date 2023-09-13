@@ -699,7 +699,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::stringstream deleteNamespaceCommand;
     deleteNamespaceCommand << "az eventhubs namespace delete --resource-group " << m_resourceGroup
-                           << " --name " << namespaceName << "--subscription" << m_subscriptionId;
+                           << " --name " << namespaceName << " --subscription " << m_subscriptionId;
     if (force)
     {
       deleteNamespaceCommand << " --force";
@@ -708,8 +708,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         deleteNamespaceCommand.str(),
         Azure::DateTime::clock::duration(std::chrono::minutes(2)),
         context)};
-    // The output of the AZ command should look something like:
-    //}
+    auto jsonOutput = ParseAzureCliOutput(output);
   }
 
   std::vector<std::string> EventHubsManagement::ListNamespaces(Azure::Core::Context const& context)
@@ -774,8 +773,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       return Namespace(namespaceName, m_resourceGroup, m_subscriptionId);
     }
-    return CreateNamespace(
-        namespaceName, EventHubsManagement::EventHubsPricingTier::Standard, context);
+    else
+    {
+	  throw std::runtime_error("Namespace does not exist!");
+	}
   }
 
   std::vector<std::string> EventHubsManagement::Namespace::ListEventHubs(

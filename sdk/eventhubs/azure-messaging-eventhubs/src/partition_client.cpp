@@ -190,6 +190,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       if (result.first.HasValue())
       {
         messages.push_back(Models::ReceivedEventData{result.first.Value()});
+        Log::Stream(Logger::Level::Verbose) << "Peeked message. Message count now " << messages.size();
       }
       else if (result.second)
       {
@@ -200,10 +201,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       {
         break;
       }
+      else
       {
         result = m_receiver.WaitForIncomingMessage(context);
         if (result.first.HasValue())
         {
+          Log::Stream(Logger::Level::Verbose)
+              << "Received message. Message count now " << messages.size();
           messages.push_back(Models::ReceivedEventData{result.first.Value()});
         }
         else
@@ -212,6 +216,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         }
       }
     }
+    Log::Stream(Logger::Level::Verbose) << "Receive Events. Return " << messages.size() << " messages.";
+
     return messages;
   }
   void PartitionClient::OnMessageReceiverStateChanged(

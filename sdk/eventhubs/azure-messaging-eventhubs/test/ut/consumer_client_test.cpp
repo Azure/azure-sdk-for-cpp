@@ -177,6 +177,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
     // Populate the eventhub instance with 50 messages.
+    GTEST_LOG_(INFO) << "Populate eventhubs instance.";
     {
       Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
       producerOptions.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -191,8 +192,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       EXPECT_NO_THROW(producer.Send(batch));
     }
+
+
     // Now receive the messages - it should take almost no time because they should have been queued
     // up asynchronously.
+    GTEST_LOG_(INFO) << "Receive events from instance.";
     {
       Azure::Messaging::EventHubs::ConsumerClientOptions options;
       options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -207,7 +211,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Messaging::EventHubs::PartitionClient partitionClient
           = client.CreatePartitionClient("0", partitionOptions);
 
-      // Sleep for 500 seconds for the messages to be received.
+      // Sleep for a bit for the messages to be received.
+      GTEST_LOG_(INFO) << "Sleep until messages received.";
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
       {

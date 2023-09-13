@@ -14,8 +14,7 @@
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class AdminTest : public EventHubsTestBase {
-  };
+  class AdminTest : public EventHubsTestBase {};
   namespace {
 
     std::string GetRandomName(std::string const& baseName = "checkpoint")
@@ -43,7 +42,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(AdminTest, CreateDeleteNamespaceTest_LIVEONLY_)
   {
     EventHubsManagement administrationClient;
-    std::string namespaceName = GetRandomName("eventhub");
+    std::string namespaceName = GetRandomName("ehCreate");
     administrationClient.CreateNamespace(namespaceName);
     administrationClient.DeleteNamespace(namespaceName);
   }
@@ -53,7 +52,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EventHubsManagement administrationClient;
     std::string namespaceName = GetRandomName("eventhub");
     auto eventhubsNamespace = administrationClient.GetNamespace(
-        "eh-t7d71a09db13a76aa" /* Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE")*/);
+        Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));
 
     auto eventhubs = eventhubsNamespace.ListEventHubs();
     EXPECT_TRUE(eventhubs.size() > 0);
