@@ -3,6 +3,7 @@
 
 // cspell: words hehe
 
+#include "eventhubs_admin.hpp"
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
@@ -137,7 +138,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(ConsumerClientTest, GetPartitionProperties_LIVEONLY_)
   {
-
     std::string eventHubName{GetEnv("EVENTHUB_NAME")};
     std::string const connStringEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
@@ -157,6 +157,87 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto result = client.GetPartitionProperties("0");
     EXPECT_EQ(result.Name, eventHubName);
     EXPECT_EQ(result.PartitionId, "0");
+  }
+  std::string GetRandomName(const char* baseName = "checkpoint")
+  {
+    std::string name = baseName;
+    name.append(Azure::Core::Uuid::CreateUuid().ToString());
+    return name;
+  }
+
+  TEST_F(ConsumerClientTest, RetrieveMultipleEvents_LIVEONLY_)
+  {
+    EventHubsManagement administrationClient;
+
+    auto eventhubNamespace{administrationClient.GetNamespace(GetEnv("EVENTHUBS_NAMESPACE"))};
+
+    std::string eventHubName{GetRandomName("eventhub")};
+    auto eventHub{eventhubNamespace.CreateEventHub(eventHubName)};
+
+    std::string const connStringEntityPath
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+    // Populate the eventhub instance with 50 messages.
+    {
+      Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+      producerOptions.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+      producerOptions.Name = testing::UnitTest::GetInstance()->current_test_info()->name();
+      Azure::Messaging::EventHubs::ProducerClient producer{connStringEntityPath, eventHubName};
+      EventDataBatchOptions eventBatchOptions;
+      eventBatchOptions.PartitionId = "0";
+      EventDataBatch batch{producer.CreateBatch(eventBatchOptions)};
+      for (int i = 0; i < 50; ++i)
+      {
+        EXPECT_TRUE(batch.TryAddMessage(Models::EventData{"Test"}));
+      }
+      EXPECT_NO_THROW(producer.Send(batch));
+    }
+    // Now receive the messages - it should take almost no time because they should have been queued
+    // up asynchronously.
+    {
+      Azure::Messaging::EventHubs::ConsumerClientOptions options;
+      options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+
+      options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+
+      auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
+      Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+      partitionOptions.StartPosition.Earliest = true;
+      partitionOptions.StartPosition.Inclusive = true;
+
+      Azure::Messaging::EventHubs::PartitionClient partitionClient
+          = client.CreatePartitionClient("0", partitionOptions);
+
+      // Sleep for 500 seconds for the messages to be received.
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+      {
+        std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+        auto messages = partitionClient.ReceiveEvents(5);
+        std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end - start;
+        EXPECT_EQ(messages.size(), 5ul);
+        EXPECT_TRUE(elapsed_seconds.count() < 1);
+      }
+
+      // We should have 45 messages left, which we should get immediately.
+      {
+        std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+        auto messages = partitionClient.ReceiveEvents(50);
+        std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end - start;
+        EXPECT_EQ(messages.size(), 45ul);
+        EXPECT_TRUE(elapsed_seconds.count() < 1);
+      }
+
+      // Now when we wait, we should block.
+      {
+        Azure::Core::Context timeout = Azure::Core::Context::ApplicationContext.WithDeadline(
+            Azure::DateTime::clock::now() + std::chrono::seconds(3));
+        EXPECT_THROW(
+            partitionClient.ReceiveEvents(50, timeout), Azure::Core::OperationCancelledException);
+      }
+    }
+    eventhubNamespace.DeleteEventHub(eventHubName);
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

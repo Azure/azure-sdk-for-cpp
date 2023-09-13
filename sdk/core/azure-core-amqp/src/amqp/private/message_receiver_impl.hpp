@@ -71,6 +71,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
     WaitForIncomingMessage(Context const& context);
 
+    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+    TryWaitForIncomingMessage();
+
   private:
     UniqueMessageReceiver m_messageReceiver{};
     bool m_receiverOpen{false};
