@@ -138,7 +138,8 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(
             log[9].second,
             "Identity: DefaultAzureCredential: Created with the following credentials: "
-            "EnvironmentCredential, AzureCliCredential, ManagedIdentityCredential.");
+            "EnvironmentCredential, WorkloadIdentityCredential, AzureCliCredential, "
+            "ManagedIdentityCredential.");
 
         log.clear();
 
