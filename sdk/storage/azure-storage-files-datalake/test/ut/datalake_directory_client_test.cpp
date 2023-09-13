@@ -841,6 +841,24 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(results, paths);
     }
     {
+      // List without FileSystemUrl in client configuration
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
+          _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential,
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+
+      std::set<std::string> results;
+      for (auto page = directoryClient.ListPaths(false); page.HasPage(); page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          results.insert(path.Name);
+        }
+      }
+
+      EXPECT_EQ(results, rootPaths);
+    }
+    {
       // non-recursive
       std::set<std::string> results;
       for (auto page = m_directoryClient->ListPaths(false); page.HasPage(); page.MoveToNextPage())
