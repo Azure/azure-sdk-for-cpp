@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Modify the order of the credentials used within the `DefaultAzureCredential` to be consistent with other languages.
+
 ### Bugs Fixed
 
 - [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)

@@ -38,12 +38,12 @@ DefaultAzureCredential::DefaultAzureCredential(
 
   // Creating credentials in order to ensure the order of log messages.
   auto const envCred = std::make_shared<EnvironmentCredential>(options);
-  auto const azCliCred = std::make_shared<AzureCliCredential>(options);
   auto const managedIdentityCred = std::make_shared<ManagedIdentityCredential>(options);
+  auto const azCliCred = std::make_shared<AzureCliCredential>(options);
 
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
       GetCredentialName(),
-      ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred});
+      ChainedTokenCredential::Sources{envCred, managedIdentityCred, azCliCred});
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;
