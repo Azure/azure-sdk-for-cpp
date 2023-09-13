@@ -3,8 +3,10 @@
 
 #pragma once
 
+#include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/network/transport.hpp"
+#include "azure/core/platform.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 
@@ -13,6 +15,12 @@
 #include <chrono>
 #include <memory>
 #include <string>
+
+#if defined(_MSC_VER)
+#define _azure_ACQUIRES_LOCK(...) _Acquires_exclusive_lock_(__VA_ARGS__)
+#else
+#define _azure_ACQUIRES_LOCK(...)
+#endif
 
 namespace Azure { namespace Core { namespace _internal {
   template <> struct UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
@@ -43,7 +51,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   };
 
-  class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl> {
+  class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl>,
+                               public Common::_detail::Pollable {
   public:
     ConnectionImpl(
         std::shared_ptr<Network::_detail::TransportImpl> transport,
@@ -81,12 +90,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Open();
     void Listen();
 
-    void Close(
-        std::string const& condition,
-        std::string const& description,
-        Models::AmqpValue info);
+    void Close();
 
-    void Poll();
+    void Close(
+        std::string const& condition = {},
+        std::string const& description = {},
+        Models::AmqpValue info = {});
+
+    void Poll() override;
 
     std::string GetHost() const { return m_hostName; }
     uint16_t GetPort() const { return m_port; }
@@ -97,13 +108,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::chrono::milliseconds GetIdleTimeout() const;
     void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
 
-    void SetProperties(Models::AmqpValue properties);
     Models::AmqpMap GetProperties() const;
     std::shared_ptr<Credentials::TokenCredential> GetCredential() const { return m_credential; }
-    bool EnableTrace() const { return m_options.EnableTrace; }
+    void EnableAsyncOperation(bool enable);
+    bool IsAsyncOperation() { return m_enableAsyncOperation; }
+    bool IsTraceEnabled() { return m_options.EnableTrace; }
     bool IsSasCredential() const;
     std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context)
         const;
+
+    using LockType = std::recursive_mutex;
+
+    _azure_ACQUIRES_LOCK(m_amqpMutex) std::unique_lock<LockType> Lock()
+    {
+      return std::unique_lock<LockType>(m_amqpMutex);
+    }
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
@@ -118,6 +137,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
     std::shared_ptr<Credentials::TokenCredential> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
+    LockType m_amqpMutex;
+    bool m_enableAsyncOperation = false;
+    bool m_isClosing = false;
+    bool m_connectionOpened = false;
+    std::atomic<uint32_t> m_openCount{0};
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,
@@ -125,11 +149,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
 
-    static void OnEndpointFrameReceivedFn(
-        void* context,
-        AMQP_VALUE value,
-        uint32_t framePayloadSize,
-        uint8_t* payloadBytes);
     static void OnConnectionStateChangedFn(
         void* context,
         CONNECTION_STATE newState,

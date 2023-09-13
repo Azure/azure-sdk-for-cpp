@@ -20,6 +20,11 @@ TEST_F(TestMessage, SimpleCreate)
   }
 
   {
+    AmqpMessage nullMessage(nullptr);
+    EXPECT_FALSE(nullMessage);
+  }
+
+  {
     AmqpMessage message1;
     message1.Properties.MessageId = 12345;
     message1.SetBody("Hello world");
@@ -170,7 +175,7 @@ TEST_F(TestMessage, TestBodyAmqpData)
   message.SetBody(AmqpBinaryData{'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0});
   EXPECT_EQ(message.GetBodyAsBinary().size(), 1);
 
-  auto body = message.GetBodyAsBinary()[0];
+  auto const& body = message.GetBodyAsBinary()[0];
   EXPECT_EQ(body.size(), sizeof(testBody));
   EXPECT_EQ(memcmp(body.data(), testBody, sizeof(testBody)), 0);
 
@@ -180,7 +185,7 @@ TEST_F(TestMessage, TestBodyAmqpData)
   AmqpMessage message2(_internal::AmqpMessageFactory::FromUamqp(messageInstance));
   EXPECT_EQ(message2.GetBodyAsBinary().size(), 1);
 
-  auto body2 = message2.GetBodyAsBinary()[0];
+  auto const& body2 = message2.GetBodyAsBinary()[0];
   EXPECT_EQ(body2.size(), sizeof(testBody));
   EXPECT_EQ(memcmp(body2.data(), testBody, sizeof(testBody)), 0);
 

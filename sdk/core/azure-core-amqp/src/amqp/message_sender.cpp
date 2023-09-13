@@ -43,17 +43,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     return m_impl->Send(message, context);
   }
-  void MessageSender::QueueSend(
-      Models::AmqpMessage const& message,
-      MessageSendCompleteCallback onSendComplete,
-      Context const& context)
-  {
-    return m_impl->QueueSend(message, onSendComplete, context);
-  }
 
   std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
 
   MessageSender::~MessageSender() noexcept {}
+  std::ostream& operator<<(std::ostream& stream, _internal::MessageSenderState const& state)
+  {
+    switch (state)
+    {
+      case _internal::MessageSenderState::Invalid:
+        stream << "Invalid";
+        break;
+      case _internal::MessageSenderState::Idle:
+        stream << "Idle";
+        break;
+      case _internal::MessageSenderState::Opening:
+        stream << "Opening";
+        break;
+      case _internal::MessageSenderState::Open:
+        stream << "Open";
+        break;
+      case _internal::MessageSenderState::Closing:
+        stream << "Closing";
+        break;
+      case _internal::MessageSenderState::Error:
+        stream << "Error";
+        break;
+      default:
+        throw std::runtime_error("Unknown message sender state operation type.");
+    }
+    return stream;
+  }
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -84,17 +104,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   MessageSenderImpl::~MessageSenderImpl() noexcept
   {
-    if (m_link)
-    {
-      // Unsubscribe from any detach events before clearing out the event handler to short-circuit
-      // any events firing after the object is destroyed.
-      m_link->UnsubscribeFromDetachEvent();
-    }
     // Clear the event callback before calling messagesender_destroy to short-circuit any state
     // change events firing after the object is destroyed.
     if (m_events)
     {
       m_events = nullptr;
+    }
+
+    auto lock{m_session->GetConnection()->Lock()};
+    if (m_senderOpen)
+    {
+      AZURE_ASSERT_MSG(m_senderOpen, "MessageSenderImpl is being destroyed while open.");
+      Azure::Core::_internal::AzureNoReturnPath("MessageSenderImpl is being destroyed while open.");
+    }
+
+    if (m_messageSender)
+    {
+      m_messageSender.reset();
+    }
+
+    if (m_link)
+    {
+      // Unsubscribe from any detach events before clearing out the event handler to short-circuit
+      // any events firing after the object is destroyed.
+      m_link->UnsubscribeFromDetachEvent();
+
+      m_link.reset();
     }
   }
 
@@ -121,18 +156,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     PopulateLinkProperties();
 
     m_link->SubscribeToDetachEvent([this](Models::_internal::AmqpError const& error) {
-      if (m_events)
+      if (m_senderOpen)
       {
-        m_events->OnMessageSenderDisconnected(error);
-      }
-      // Log that an error occurred.
-      Log::Stream(Logger::Level::Error)
-          << "Message sender link detached: " << error.Condition.ToString() << ": "
-          << error.Description;
+        if (m_events)
+        {
+          m_events->OnMessageSenderDisconnected(error);
+        }
+        // Log that an error occurred.
+        Log::Stream(Logger::Level::Error)
+            << "Message sender link detached: " << error.Condition.ToString() << ": "
+            << error.Description;
 
-      // Cache the error we received in the OnDetach notification so we can return it to the user
-      // on the next send which fails.
-      m_savedMessageError = error;
+        // Cache the error we received in the OnDetach notification so we can return it to the user
+        // on the next send which fails.
+        m_savedMessageError = error;
+      }
     });
   }
 
@@ -187,18 +225,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       MESSAGE_SENDER_STATE newState,
       MESSAGE_SENDER_STATE oldState)
   {
-    auto sender = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
-    if (sender->m_events)
+    // We only care about the transition between states - uAMQP will sometimes set a state changed
+    // to the current state.
+    if (newState != oldState)
     {
-      sender->m_events->OnMessageSenderStateChanged(
-          MessageSenderFactory::CreateFromInternal(sender->shared_from_this()),
-          MessageSenderStateFromLowLevel(newState),
-          MessageSenderStateFromLowLevel(oldState));
+      auto sender = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
+      if (sender->m_events)
+      {
+        sender->m_events->OnMessageSenderStateChanged(
+            MessageSenderFactory::CreateFromInternal(sender->shared_from_this()),
+            MessageSenderStateFromLowLevel(newState),
+            MessageSenderStateFromLowLevel(oldState));
+      }
+      if (newState == MESSAGE_SENDER_STATE_ERROR)
+      {
+        sender->m_sendCompleteQueue.CompleteOperation(
+            _internal::MessageSendStatus::Error,
+            {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
+             "Message Sender unexpectedly entered the Error State.",
+             {}});
+      }
     }
   }
 
   void MessageSenderImpl::Open(Context const& context)
   {
+    Log::Stream(Logger::Level::Verbose) << "Opening message sender. Authenticate if needed.";
     if (m_options.AuthenticationRequired)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
@@ -206,6 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
     }
 
+    auto lock{m_session->GetConnection()->Lock()};
     if (m_link == nullptr)
     {
       CreateLink();
@@ -230,12 +283,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       // LCOV_EXCL_STOP
     }
+
+    // Mark the connection as async so that we can use the async APIs.
+    Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
+    m_session->GetConnection()->EnableAsyncOperation(true);
+    m_senderOpen = true;
   }
+
   void MessageSenderImpl::Close()
   {
-    if (messagesender_close(m_messageSender.get()))
+    if (m_senderOpen)
     {
-      throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
+      Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
+      auto lock{m_session->GetConnection()->Lock()};
+
+      Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
+      m_session->GetConnection()->EnableAsyncOperation(false);
+
+      //      Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
+      //      m_link->UnsubscribeFromDetachEvent();
+
+      if (messagesender_close(m_messageSender.get()))
+      {
+        throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
+      }
+      m_senderOpen = false;
     }
   }
 
@@ -269,7 +341,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   };
 
-  void MessageSenderImpl::QueueSend(
+  void MessageSenderImpl::QueueSendInternal(
       Models::AmqpMessage const& message,
       Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
       Context const& context)
@@ -294,59 +366,58 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage const& message,
       Context const& context)
   {
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        Azure::Core::Amqp::_internal::MessageSendStatus,
-        Models::_internal::AmqpError>
-        sendCompleteQueue;
+    {
+      auto lock{m_session->GetConnection()->Lock()};
 
-    QueueSend(
-        message,
-        [&sendCompleteQueue, this](
-            Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
-            Models::AmqpValue deliveryStatus) {
-          Models::_internal::AmqpError error;
+      QueueSendInternal(
+          message,
+          [this](
+              Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
+              Models::AmqpValue deliveryStatus) {
+            Models::_internal::AmqpError error;
 
-          // If the send failed. then we need to return the error. If the send completed because
-          // of an error, it's possible that the deliveryStatus provided is null. In that case,
-          // we use the cached saved error because it is highly likely to be better than
-          // nothing.
-          if (sendResult != _internal::MessageSendStatus::Ok)
-          {
-            if (deliveryStatus.IsNull())
+            // If the send failed. then we need to return the error. If the send completed because
+            // of an error, it's possible that the deliveryStatus provided is null. In that case,
+            // we use the cached saved error because it is highly likely to be better than
+            // nothing.
+            if (sendResult != _internal::MessageSendStatus::Ok)
             {
-              error = m_savedMessageError;
+              if (deliveryStatus.IsNull())
+              {
+                error = m_savedMessageError;
+              }
+              else
+              {
+                if (deliveryStatus.GetType() != Models::AmqpValueType::List)
+                {
+                  throw std::runtime_error("Delivery status is not a list");
+                }
+                auto deliveryStatusAsList{deliveryStatus.AsList()};
+                if (deliveryStatusAsList.size() != 1)
+                {
+                  throw std::runtime_error("Delivery Status list is not of size 1");
+                }
+                Models::AmqpValue firstState{deliveryStatusAsList[0]};
+                ERROR_HANDLE errorHandle;
+                if (!amqpvalue_get_error(firstState, &errorHandle))
+                {
+                  Models::_internal::UniqueAmqpErrorHandle uniqueError{
+                      errorHandle}; // This will free the error handle when it goes out of scope.
+                  error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
+                }
+              }
             }
             else
             {
-              if (deliveryStatus.GetType() != Models::AmqpValueType::List)
-              {
-                throw std::runtime_error("Delivery status is not a list");
-              }
-              auto deliveryStatusAsList{deliveryStatus.AsList()};
-              if (deliveryStatusAsList.size() != 1)
-              {
-                throw std::runtime_error("Delivery Status list is not of size 1");
-              }
-              Models::AmqpValue firstState{deliveryStatusAsList[0]};
-              ERROR_HANDLE errorHandle;
-              if (!amqpvalue_get_error(firstState, &errorHandle))
-              {
-                Models::_internal::UniqueAmqpErrorHandle uniqueError{
-                    errorHandle}; // This will free the error handle when it goes out of scope.
-                error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
-              }
+              // If we successfully sent the message, then whatever saved error should be cleared,
+              // it's no longer valid.
+              m_savedMessageError = Models::_internal::AmqpError();
             }
-          }
-          else
-          {
-            // If we successfully sent the message, then whatever saved error should be cleared,
-            // it's no longer valid.
-            m_savedMessageError = Models::_internal::AmqpError();
-          }
-          sendCompleteQueue.CompleteOperation(sendResult, error);
-        },
-        context);
-    auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
+            m_sendCompleteQueue.CompleteOperation(sendResult, error);
+          },
+          context);
+    }
+    auto result = m_sendCompleteQueue.WaitForResult(context);
     if (result)
     {
       return std::move(*result);

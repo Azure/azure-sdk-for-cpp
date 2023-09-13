@@ -38,9 +38,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringNoEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = "processor unit test";
-
-    options.Name = "processor unittest";
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+    options.Name = testing::UnitTest::GetInstance()->current_test_info()->name();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, eventHubName, consumerGroup, options);
@@ -54,7 +53,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         processorOptions);
 
     processor.Run();
+
+    GTEST_LOG_(INFO) << "Sleep for 10 seconds to allow the processor to stabilize.";
     std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    processor.Close();
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

@@ -18,18 +18,6 @@
 #include <memory>
 #include <queue>
 #include <vector>
-#if UAMQP_MANAGEMENT_IMPLEMENTATION
-template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_MANAGEMENT_INSTANCE_TAG>
-{
-  static void FreeAmqpManagement(AMQP_MANAGEMENT_INSTANCE_TAG* obj);
-
-  using type
-      = Azure::Core::_internal::BasicUniqueHandle<AMQP_MANAGEMENT_INSTANCE_TAG, FreeAmqpManagement>;
-};
-
-using UniqueAmqpManagementHandle
-    = Azure::Core::_internal::UniqueHandle<AMQP_MANAGEMENT_INSTANCE_TAG>;
-#endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
@@ -89,14 +77,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Open,
       Error
     };
-#if UAMQP_MANAGEMENT_IMPLEMENTATION
-    UniqueAmqpManagementHandle m_management{};
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<AMQP_MANAGEMENT_OPEN_RESULT>
-        m_openCompleteQueue;
-#else
+
     std::shared_ptr<MessageSenderImpl> m_messageSender;
     std::shared_ptr<MessageReceiverImpl> m_messageReceiver;
     ManagementState m_state = ManagementState::Idle;
+    bool m_isOpen{false};
     bool m_messageSenderOpen{false};
     bool m_messageReceiverOpen{false};
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::ManagementOpenStatus>
@@ -114,7 +99,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& errorCondition,
         std::string const& errorDescription);
 
-#endif
     std::string m_managementNodeName;
     _internal::ManagementClientOptions m_options;
     std::string m_source;
@@ -128,18 +112,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::AmqpError,
         Models::AmqpMessage>
         m_messageQueue;
-
-#if UAMQP_MANAGEMENT_IMPLEMENTATION
-    void CreateManagementClient();
-    static void OnExecuteOperationCompleteFn(
-        void* context,
-        AMQP_MANAGEMENT_EXECUTE_OPERATION_RESULT executeResult,
-        uint32_t statusCode,
-        const char* statusDescription,
-        MESSAGE_HANDLE messageHandle);
-    static void OnManagementErrorFn(void* context);
-    static void OnOpenCompleteFn(void* context, AMQP_MANAGEMENT_OPEN_RESULT openResult);
-#else
 
     // Inherited via MessageSenderEvents
     virtual void OnMessageSenderStateChanged(
@@ -157,6 +129,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::MessageReceiver const& receiver,
         Models::AmqpMessage const& message) override;
     virtual void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) override;
-#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail

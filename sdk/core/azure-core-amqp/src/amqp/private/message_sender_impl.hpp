@@ -57,10 +57,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context);
-    void QueueSend(
-        Models::AmqpMessage const& message,
-        Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
-        Context const& context);
 
     std::uint64_t GetMaxMessageSize() const;
 
@@ -73,13 +69,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
+    void QueueSendInternal(
+        Models::AmqpMessage const& message,
+        Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
+        Context const& context);
 
+    bool m_senderOpen{false};
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;
     Models::_internal::AmqpError m_savedMessageError;
-
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::AmqpMessage> m_messageQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+        Azure::Core::Amqp::_internal::MessageSendStatus,
+        Models::_internal::AmqpError>
+        m_sendCompleteQueue;
 
     std::shared_ptr<_detail::SessionImpl> m_session;
     Models::_internal::MessageTarget m_target;

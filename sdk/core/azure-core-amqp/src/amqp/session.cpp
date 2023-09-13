@@ -99,7 +99,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  SessionImpl::~SessionImpl() noexcept {}
+  SessionImpl::~SessionImpl() noexcept
+  {
+    auto lock{m_connectionToPoll->Lock()};
+    m_session.reset();
+  }
 
   SessionImpl::SessionImpl(
       std::shared_ptr<_detail::ConnectionImpl> connection,
@@ -233,26 +237,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   void SessionImpl::Authenticate(std::string const& audience, Context const& context)
   {
-    if (!m_claimsBasedSecurity)
-    {
-      m_claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(shared_from_this());
-    }
+    auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(shared_from_this());
+
     auto accessToken = GetConnection()->GetSecurityToken(audience, context);
 
-    m_claimsBasedSecurity->SetTrace(GetConnection()->EnableTrace());
-    if (!m_cbsOpen)
+    auto cbsOpenStatus = claimsBasedSecurity->Open(context);
+    if (cbsOpenStatus != CbsOpenResult::Ok)
     {
-      auto cbsOpenStatus = m_claimsBasedSecurity->Open(context);
-      if (cbsOpenStatus == CbsOpenResult::Ok)
-      {
-        m_cbsOpen = true;
-      }
-      else
-      {
-        throw std::runtime_error("Could not open Claims Based Security object."); // LCOV_EXCL_LINE
-      }
+      throw std::runtime_error("Could not open Claims Based Security object."); // LCOV_EXCL_LINE
     }
-    auto result = m_claimsBasedSecurity->PutToken(
+    auto result = claimsBasedSecurity->PutToken(
         (GetConnection()->IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
         audience,
         accessToken,
@@ -261,6 +255,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not put Claims Based Security token."); // LCOV_EXCL_LINE
     }
+    claimsBasedSecurity->Close();
   }
 
   bool SessionImpl::OnLinkAttachedFn(

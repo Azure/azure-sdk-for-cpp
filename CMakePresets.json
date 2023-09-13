@@ -167,6 +167,45 @@
       }
     },
     {
+      "name": "winhttp-transport",
+      "displayName": "Enable WinHTTP Transport",
+      "description": "Enable WinHTTP Transport (Hidden)",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_TRANSPORT_WINHTTP": true
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "curl-transport",
+      "displayName": "Enable CURL Transport",
+      "description": "Enable CURL Transport (Hidden)",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_TRANSPORT_CURL": true
+      }
+    },
+    {
+      "name": "enable-address-sanitizer",
+      "displayName": "Enable Address Sanitizer",
+      "description": "Enable Address Sanitizer (Hidden). Note: ASAN can be extremely disruptive, when enabling ASAN, make sure you run your application under the debugger.",
+      "hidden": true,
+      "environment": {
+        "CFLAGS": "/fsanitize=address",
+        "CXXFLAGS": "/fsanitize=address"
+      },
+      "cacheVariables": { "DISABLE_AZURE_CORE_OPENTELEMETRY": true },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
       "name": "x86-static-debug-tests",
       "displayName": "x86 Debug With Tests, static",
       "description": "Windows x86 Debug build with Tests configured",
@@ -204,19 +243,13 @@
       "name": "x64-static-debug-tests-curl",
       "displayName": "x64 Debug With Tests, static, libcurl",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64-static", "debug-build", "enable-tests" ],
-      "cacheVariables": {
-        "BUILD_TRANSPORT_CURL": true
-      }
+      "inherits": [ "x64-static", "debug-build", "enable-tests", "curl-transport" ]
     },
     {
       "name": "x64-static-debug-tests-winhttp",
       "displayName": "x64 Debug With Tests, static, winhttp",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64-static", "debug-build", "enable-tests" ],
-      "cacheVariables": {
-        "BUILD_TRANSPORT_WINHTTP": true
-      }
+      "inherits": [ "x64-static", "debug-build", "enable-tests", "winhttp-transport" ]
     },
     {
       "name": "x64-static-debug-tests-OpenSSL111",
@@ -234,30 +267,24 @@
       "inherits": [
         "x86-static",
         "release-build",
-        "enable-tests"
-      ],
-      "cacheVariables": {
-        "BUILD_TRANSPORT_CURL": true
-      }
+        "enable-tests",
+        "curl-transport"
+      ]
     },
     {
       "name": "x86-release-tests",
       "displayName": "x86 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": [ "x86", "release-build", "enable-tests" ],
+      "inherits": [ "x86", "release-build", "enable-tests", "curl-transport", "winhttp-transport" ],
       "cacheVariables": {
-        "BUILD_TRANSPORT_CURL": true,
-        "BUILD_TRANSPORT_CUSTOM": true,
-        "BUILD_TRANSPORT_WINHTTP": true
+        "BUILD_TRANSPORT_CUSTOM": true
       }
     },
     {
       "name": "x64-release-tests",
       "displayName": "x64 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": [ "x64", "release-build", "enable-tests" ],
+      "inherits": [ "x64", "release-build", "enable-tests", "curl-transport", "winhttp-transport" ],
       "cacheVariables": {
-        "BUILD_TRANSPORT_CURL": true,
-        "BUILD_TRANSPORT_CUSTOM": true,
-        "BUILD_TRANSPORT_WINHTTP": true
+        "BUILD_TRANSPORT_CUSTOM": true
       }
     },
     {
@@ -268,21 +295,15 @@
         "debug-build",
         "enable-tests",
         "enable-samples",
-        "enable-perf"
-      ],
-      "cacheVariables": {
-        "BUILD_TRANSPORT_CURL": true,
-        "BUILD_TRANSPORT_WINHTTP": true
-      }
+        "enable-perf",
+        "winhttp-transport",
+        "curl-transport"
+      ]
     },
     {
       "name": "x86-msvc-static-debug-perftests",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
-      "inherits": [ "x86-msvc-static", "debug-build", "enable-tests", "enable-perf", "enable-samples" ],
-      "cacheVariables": {
-        "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_TRANSPORT_CURL": true
-      }
+      "inherits": [ "x86-msvc-static", "debug-build", "enable-tests", "enable-perf", "enable-samples", "curl-transport", "winhttp-transport" ]
     },
     {
       "name": "x64-static-release-perftests",

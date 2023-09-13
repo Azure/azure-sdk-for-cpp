@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Concurrency issues in `Azure::Core::Diagnostics::_internal::Log::Stream` have been fixed.
+
 ### Other Changes
 
 - SDK consumption documentation improvement. (A community contribution, courtesy of _[kou](https://github.com/kou)_)

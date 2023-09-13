@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# AMQP Tests which require using the uAMQP library to force certain scenarios.
+
 cmake_minimum_required (VERSION 3.13)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -18,10 +20,10 @@ find_package(azure_macro_utils_c CONFIG REQUIRED)
 find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 # Unit Tests
-add_executable(azure-core-amqp-tests-uamqp
+add_executable(azure-core-amqp-uamqp-tests
   amqp_error_tests.cpp
 )
-add_dependencies(azure-core-amqp-tests-uamqp Azure::azure-core-amqp uamqp)
+add_dependencies(azure-core-amqp-uamqp-tests Azure::azure-core-amqp uamqp)
 
 if (MSVC)
   # Disable warnings:
@@ -36,21 +38,21 @@ if (MSVC)
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
   # - C6326: Google comparisons
-  target_compile_options(azure-core-amqp-tests-uamqp PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
+  target_compile_options(azure-core-amqp-uamqp-tests PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
-target_include_directories(azure-core-amqp-tests-uamqp PRIVATE Azure::azure-core-amqp)
+target_include_directories(azure-core-amqp-uamqp-tests PRIVATE Azure::azure-core-amqp)
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(azure-core-amqp-tests-uamqp PRIVATE GTest::gtest_main Azure::azure-core-amqp uamqp umock_c azure_macro_utils_c)
-gtest_discover_tests( azure-core-amqp-tests-uamqp )
+target_link_libraries(azure-core-amqp-uamqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp uamqp umock_c azure_macro_utils_c)
+gtest_discover_tests(azure-core-amqp-uamqp-tests)
 
-create_per_service_target_build(core azure-core-amqp-tests-uamqp)
-create_map_file(azure-core-amqp-tests-uamqp azure-core-amqp-tests-uamqp.map)
+create_per_service_target_build(core azure-core-amqp-uamqp-tests)
+create_map_file(azure-core-amqp-uamqp-tests azure-core-amqp-uamqp-tests.map)
 
 # gtest_discover_tests will scan the test from azure-core-amqp-tests and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_discover_tests(azure-core-amqp-tests-uamqp
+gtest_discover_tests(azure-core-amqp-uamqp-tests
      TEST_PREFIX azure-core-amqp.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
