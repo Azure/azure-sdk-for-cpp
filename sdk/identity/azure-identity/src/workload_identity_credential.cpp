@@ -90,6 +90,8 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
 
 WorkloadIdentityCredential::WorkloadIdentityCredential(
     Core::Credentials::TokenCredentialOptions const& options)
+    : TokenCredential("WorkloadIdentityCredential"),
+      m_clientCredentialCore("", "", std::vector<std::string>())
 {
   std::string tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
   if (tenantId.empty())

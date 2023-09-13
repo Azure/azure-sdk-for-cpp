@@ -36,6 +36,35 @@ TEST(WorkloadIdentityCredential, GetCredentialName)
   EXPECT_EQ(cred.GetCredentialName(), "WorkloadIdentityCredential");
 }
 
+TEST(WorkloadIdentityCredential, GetOptionsFromEnvironment)
+{
+  CredentialTestHelper::EnvironmentOverride const env(
+      {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+       {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+       {"AZURE_AUTHORITY_HOST", ""},
+       {"AZURE_FEDERATED_TOKEN_FILE", TempCertFile::Path}});
+
+  WorkloadIdentityCredential const credDefault;
+  EXPECT_EQ(credDefault.GetCredentialName(), "WorkloadIdentityCredential");
+
+  WorkloadIdentityCredentialOptions options;
+  WorkloadIdentityCredential const cred(options);
+  EXPECT_EQ(cred.GetCredentialName(), "WorkloadIdentityCredential");
+}
+
+TEST(WorkloadIdentityCredential, GetOptionsFromEnvironmentInvalid)
+{
+  CredentialTestHelper::EnvironmentOverride const env(
+      {{"AZURE_TENANT_ID", ""},
+       {"AZURE_CLIENT_ID", ""},
+       {"AZURE_AUTHORITY_HOST", ""},
+       {"AZURE_FEDERATED_TOKEN_FILE", ""}});
+
+  EXPECT_THROW(std::make_unique<WorkloadIdentityCredential>(), std::runtime_error);
+  WorkloadIdentityCredentialOptions options;
+  EXPECT_THROW(std::make_unique<WorkloadIdentityCredential>(options), std::runtime_error);
+}
+
 TEST(WorkloadIdentityCredential, Regular)
 {
   TempCertFile const tempCertFile;
