@@ -23,7 +23,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   bool operator==(const BlobImmutabilityPolicy& lhs, const BlobImmutabilityPolicy& rhs)
   {
-    return lhs.ExpiresOn == rhs.ExpiresOn && lhs.PolicyMode == rhs.PolicyMode;
+    return lhs.PolicyMode == rhs.PolicyMode
+        && (lhs.ExpiresOn - rhs.ExpiresOn) <= std::chrono::seconds(1);
   }
 
 }}}} // namespace Azure::Storage::Blobs::Models
@@ -135,32 +136,16 @@ namespace Azure { namespace Storage { namespace Test {
 
     blobClient.UploadFrom(nullptr, 0);
 
-    auto getBlobItem = [&]() {
-      Blobs::ListBlobsOptions options;
-      options.Prefix = blobName;
-      options.Include = Blobs::Models::ListBlobsIncludeFlags::Deleted;
-      for (auto page = blobContainerClient.ListBlobs(options); page.HasPage();
-           page.MoveToNextPage())
-      {
-        for (auto& blob : page.Blobs)
-        {
-          if (blob.Name == blobName)
-          {
-            return std::move(blob);
-          }
-        }
-      }
-      std::abort();
-    };
-
-    auto blobItem = getBlobItem();
+    auto blobItem
+        = GetBlobItem(blobContainerClient, blobName, Blobs::Models::ListBlobsIncludeFlags::Deleted);
     EXPECT_FALSE(blobItem.IsDeleted);
     EXPECT_FALSE(blobItem.Details.DeletedOn.HasValue());
     EXPECT_FALSE(blobItem.Details.RemainingRetentionDays.HasValue());
 
     blobClient.Delete();
 
-    blobItem = getBlobItem();
+    blobItem
+        = GetBlobItem(blobContainerClient, blobName, Blobs::Models::ListBlobsIncludeFlags::Deleted);
     EXPECT_TRUE(blobItem.IsDeleted);
     ASSERT_TRUE(blobItem.Details.DeletedOn.HasValue());
     EXPECT_TRUE(IsValidTime(blobItem.Details.DeletedOn.Value()));
@@ -1166,9 +1151,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_Immutability)
+  TEST_F(BlockBlobClientTest, Immutability_PLAYBACKONLY_)
   {
-    const auto ImmutabilityMaxLength = std::chrono::seconds(5);
+    const auto ImmutabilityMaxLength = std::chrono::seconds(30);
     const std::string blobName = m_blobName;
     auto blobClient = *m_blockBlobClient;
 
@@ -1222,12 +1207,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(copyDestinationBlobClient.GetProperties().Value.ImmutabilityPolicy.Value(), policy);
     }
 
-    std::this_thread::sleep_for(ImmutabilityMaxLength);
+    TestSleep(ImmutabilityMaxLength);
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_ImmutabilityAccessCondition)
+  TEST_F(BlockBlobClientTest, ImmutabilityAccessCondition_PLAYBACKONLY_)
   {
-    const auto ImmutabilityMaxLength = std::chrono::seconds(5);
+    const auto ImmutabilityMaxLength = std::chrono::seconds(30);
 
     auto blobClient = *m_blockBlobClient;
     std::vector<uint8_t> emptyContent;
@@ -1249,7 +1234,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.AccessConditions.IfUnmodifiedSince = timeAfterStr;
     EXPECT_NO_THROW(blobClient.SetImmutabilityPolicy(policy, options));
 
-    std::this_thread::sleep_for(ImmutabilityMaxLength);
+    TestSleep(ImmutabilityMaxLength);
   }
 
   TEST_F(BlockBlobClientTest, LegalHold_PLAYBACKONLY_)
@@ -1999,6 +1984,46 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_STREQ(e.what(), "Block size is too big.");
     }
 #endif
+  }
+
+  TEST_F(BlockBlobClientTest, AbortCopy_PLAYBACKONLY_)
+  {
+    const auto sourceContainerName = "container1";
+    const auto sourceBlobName = "b1";
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
+        AdlsGen2ConnectionString(), clientOptions);
+    auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient(sourceContainerName);
+    auto sourceBlobClient = sourceContainerClient.GetBlockBlobClient(sourceBlobName);
+
+    auto getSas = [&]() {
+      Sas::BlobSasBuilder sasBuilder;
+      auto keyCredential
+          = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+      sasBuilder.BlobContainerName = sourceContainerName;
+      sasBuilder.BlobName = sourceBlobName;
+      sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+      sasBuilder.Resource = Sas::BlobSasResource::Blob;
+      sasBuilder.SetPermissions(Sas::BlobSasPermissions::Read);
+      auto sasToken = sasBuilder.GenerateSasToken(*keyCredential);
+      return sasToken;
+    };
+
+    auto copyOperation = m_blockBlobClient->StartCopyFromUri(sourceBlobClient.GetUrl() + getSas());
+    const auto copyId = copyOperation.GetRawResponse().GetHeaders().at("x-ms-copy-id");
+
+    auto properties = m_blockBlobClient->GetProperties().Value;
+    ASSERT_TRUE(properties.CopyStatus.HasValue());
+    EXPECT_EQ(properties.CopyStatus.Value(), Blobs::Models::CopyStatus::Pending);
+    EXPECT_FALSE(properties.CopyProgress.Value().empty());
+
+    TestSleep(1s);
+
+    auto abortCopyResponse = m_blockBlobClient->AbortCopyFromUri(copyId);
+
+    properties = m_blockBlobClient->GetProperties().Value;
+    ASSERT_TRUE(properties.CopyStatus.HasValue());
+    EXPECT_EQ(properties.CopyStatus.Value(), Blobs::Models::CopyStatus::Aborted);
   }
 
 }}} // namespace Azure::Storage::Test

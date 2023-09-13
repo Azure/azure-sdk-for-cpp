@@ -220,21 +220,40 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Recursive = recursive;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
 
-    const std::string currentPath = m_pathUrl.GetPath();
-    auto firstSlashPos = std::find(currentPath.begin(), currentPath.end(), '/');
-    const std::string fileSystemName(currentPath.begin(), firstSlashPos);
-    if (firstSlashPos != currentPath.end())
+    Azure::Core::Url fileSystemUrl;
+    if (m_clientConfiguration.FileSystemUrl.HasValue())
     {
-      ++firstSlashPos;
+      fileSystemUrl = m_clientConfiguration.FileSystemUrl.Value();
+      const std::string fileSystemPath = fileSystemUrl.GetPath();
+      const std::string currentPath = m_pathUrl.GetPath();
+      std::string directoryPath = currentPath.substr(fileSystemPath.length());
+      if (directoryPath.length() > 0 && directoryPath[0] == '/')
+      {
+        directoryPath = directoryPath.substr(1);
+      }
+      if (!directoryPath.empty())
+      {
+        protocolLayerOptions.Path = directoryPath;
+      }
     }
-    const std::string directoryPath(firstSlashPos, currentPath.end());
-    if (!directoryPath.empty())
+    else
     {
-      protocolLayerOptions.Path = directoryPath;
-    }
+      const std::string currentPath = m_pathUrl.GetPath();
+      auto firstSlashPos = std::find(currentPath.begin(), currentPath.end(), '/');
+      const std::string fileSystemName(currentPath.begin(), firstSlashPos);
+      if (firstSlashPos != currentPath.end())
+      {
+        ++firstSlashPos;
+      }
+      const std::string directoryPath(firstSlashPos, currentPath.end());
+      if (!directoryPath.empty())
+      {
+        protocolLayerOptions.Path = directoryPath;
+      }
 
-    auto fileSystemUrl = m_pathUrl;
-    fileSystemUrl.SetPath(fileSystemName);
+      fileSystemUrl = m_pathUrl;
+      fileSystemUrl.SetPath(fileSystemName);
+    }
 
     auto response = _detail::FileSystemClient::ListPaths(
         *m_pipeline, fileSystemUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));

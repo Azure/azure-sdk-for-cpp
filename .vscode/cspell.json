@@ -35,6 +35,7 @@
     "!bahavior",
     "ABFS",
     "ABNF",
+    "adamdebreceni",
     "Adls",
     "ahojnnes",
     "Aloctl",
@@ -82,6 +83,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "HLOCAL",
     "HRESULT",
     "IMDS",
     "immutability",
@@ -94,6 +96,7 @@
     "Jeremi",
     "jnyfah",
     "Kirilov",
+    "Kouhei",
     "lcov",
     "LIBCMTD",
     "Lohmann",
@@ -148,6 +151,8 @@
     "stoll",
     "stoull",
     "STREQ",
+    "Sutou",
+    "Tsirpanis",
     "uaenorth",
     "uamqp",
     "uksouth",
@@ -242,6 +247,12 @@
         "sjoubert",
         "sourav",
         "Sylvain"
+      ]
+    },
+    {
+      "filename": "**/sdk/identity/azure-identity/**",
+      "words": [
+        "PCCERT"
       ]
     },
     {

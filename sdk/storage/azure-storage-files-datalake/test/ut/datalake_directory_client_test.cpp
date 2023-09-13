@@ -37,6 +37,32 @@ namespace Azure { namespace Storage { namespace Test {
     }
   } // namespace
 
+  TEST_F(DataLakeDirectoryClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    {
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, m_directoryName, clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+    {
+      auto credential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+      Files::DataLake::DataLakeDirectoryClient directoryClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
+          credential,
+          clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+    {
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+  }
+
   TEST_F(DataLakeDirectoryClientTest, CreateDeleteDirectory)
   {
     const std::string baseName = RandomString();
@@ -815,6 +841,24 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(results, paths);
     }
     {
+      // List without FileSystemUrl in client configuration
+      auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
+          _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential,
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+
+      std::set<std::string> results;
+      for (auto page = directoryClient.ListPaths(false); page.HasPage(); page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          results.insert(path.Name);
+        }
+      }
+
+      EXPECT_EQ(results, rootPaths);
+    }
+    {
       // non-recursive
       std::set<std::string> results;
       for (auto page = m_directoryClient->ListPaths(false); page.HasPage(); page.MoveToNextPage())
@@ -842,4 +886,20 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, ListPathsExpiresOn)
+  {
+    const std::string fileName = RandomString();
+    auto fileClient = m_directoryClient->GetFileClient(fileName);
+    fileClient.Create();
+    Files::DataLake::ScheduleFileDeletionOptions options;
+    options.ExpiresOn = Azure::DateTime::Parse(
+        "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
+    EXPECT_NO_THROW(fileClient.ScheduleDeletion(
+        Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options));
+
+    auto pagedResult = m_directoryClient->ListPaths(true);
+    EXPECT_EQ(1L, pagedResult.Paths.size());
+    ASSERT_TRUE(pagedResult.Paths[0].ExpiresOn.HasValue());
+    EXPECT_EQ(options.ExpiresOn.Value(), pagedResult.Paths[0].ExpiresOn.Value());
+  }
 }}} // namespace Azure::Storage::Test

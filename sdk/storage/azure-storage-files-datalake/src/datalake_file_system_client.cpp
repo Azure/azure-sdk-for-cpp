@@ -152,11 +152,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     auto builder = m_fileSystemUrl;
     builder.AppendPath(_internal::UrlEncodePath(directoryName));
-    return DataLakeDirectoryClient(
+    auto directoryClient = DataLakeDirectoryClient(
         std::move(builder),
         m_blobContainerClient.GetBlobClient(directoryName),
         m_pipeline,
         m_clientConfiguration);
+    directoryClient.m_clientConfiguration.FileSystemUrl = m_fileSystemUrl;
+    return directoryClient;
   }
 
   Azure::Response<Models::CreateFileSystemResult> DataLakeFileSystemClient::Create(

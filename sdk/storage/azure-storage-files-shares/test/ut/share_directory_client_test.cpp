@@ -21,6 +21,43 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileShareDirectoryClient->Create();
   }
 
+  TEST_F(FileShareDirectoryClientTest, Constructors)
+  {
+    auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    {
+      auto directoryClient = Files::Shares::ShareDirectoryClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_shareName, m_directoryName, clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+    {
+      auto credential
+          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+      Files::Shares::ShareDirectoryClient directoryClient(
+          m_fileShareDirectoryClient->GetUrl(), credential, clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+    {
+      auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+      auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+      auto keyCredential
+          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+      Sas::ShareSasBuilder shareSasBuilder;
+      shareSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      shareSasBuilder.StartsOn = sasStartsOn;
+      shareSasBuilder.ExpiresOn = sasExpiresOn;
+      shareSasBuilder.ShareName = m_shareName;
+      shareSasBuilder.Resource = Sas::ShareSasResource::Share;
+      shareSasBuilder.SetPermissions(Sas::ShareSasPermissions::All);
+      auto sasToken = shareSasBuilder.GenerateSasToken(*keyCredential);
+
+      auto directoryClient = Files::Shares::ShareDirectoryClient(
+          m_fileShareDirectoryClient->GetUrl() + sasToken, clientOptions);
+      EXPECT_NO_THROW(directoryClient.GetProperties());
+    }
+  }
+
   TEST_F(FileShareDirectoryClientTest, CreateDeleteDirectories)
   {
     {
@@ -1124,6 +1161,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Delete
     EXPECT_NO_THROW(directoryClient.Delete());
+
+    // OAuth Constructor
+    auto directoryClient1 = Files::Shares::ShareDirectoryClient(
+        m_fileShareDirectoryClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+        options);
+    EXPECT_NO_THROW(directoryClient1.GetProperties());
   }
 
   // cspell:ignore myshare mydirectory
@@ -1143,5 +1188,21 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(directoryHandles.size(), 1L);
     EXPECT_TRUE(directoryHandles[0].AccessRights.HasValue());
     EXPECT_EQ(allAccessRights, directoryHandles[0].AccessRights.Value());
+  }
+
+  TEST_F(FileShareDirectoryClientTest, WithShareSnapshot)
+  {
+    const std::string timestamp1 = "2001-01-01T01:01:01.1111000Z";
+    const std::string timestamp2 = "2022-02-02T02:02:02.2222000Z";
+
+    auto client1 = m_fileShareDirectoryClient->WithShareSnapshot(timestamp1);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithShareSnapshot(timestamp2);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_FALSE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
+    client1 = client1.WithShareSnapshot("");
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
+    EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
 }}} // namespace Azure::Storage::Test

@@ -17,6 +17,7 @@ trigger:
       - doc/
       - samples/
       - .github/
+      - '*.md'
       - /**/*.md
 
 pr:
@@ -36,6 +37,7 @@ pr:
       - doc/
       - samples/
       - .github/
+      - '*.md'
       - /**/*.md
 
 stages:

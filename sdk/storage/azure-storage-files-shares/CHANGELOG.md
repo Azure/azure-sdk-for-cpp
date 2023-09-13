@@ -1,6 +1,6 @@
 # Release History
 
-## 12.7.0-beta.2 (Unreleased)
+## 12.8.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,17 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where `ShareServiceClient::SetProperties` and `ShareServiceClient::GetProperties` threw exception if property `Protocol` is not null.
-
 ### Other Changes
+
+## 12.7.0 (2023-09-12)
+
+### Features Added
+
+- Features in `12.7.0-beta.1` and `12.7.0-beta.2` are now generally available.
+
+### Bugs Fixed
+
+- Fixed a bug where `ShareServiceClient::SetProperties` and `ShareServiceClient::GetProperties` threw exception if property `Protocol` is not null.
 
 ## 12.7.0-beta.1 (2023-08-12)
 
@@ -28,6 +36,8 @@
 - Fixed a bug where `ShareDirectoryClient::ListFilesAndDirectories` only returns the first page without ContinuationToken, even if there are more pages.
 
 ## 12.6.0 (2023-07-11)
+
+### Features Added
 
 - New features in `12.6.0-beta.1` are now generally available.
 

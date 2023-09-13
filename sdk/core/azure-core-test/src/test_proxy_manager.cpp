@@ -280,11 +280,13 @@ void TestProxyManager::SetProxySanitizer()
         "x-ms-file-creation-time",
         "x-ms-file-last-write-time",
         "x-ms-rename-source",
+        "x-ms-immutability-policy-until-date",
     };
     const std::vector<std::string> ignoreQueryParameters = {
         "st",
         "se",
         "sig",
+        "sv",
     };
     jsonRoot["ignoredHeaders"] = std::accumulate(
         ignoredHeaders.begin(),

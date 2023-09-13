@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2021-06-08";
+    constexpr static const char* SasVersion = Files::DataLake::_detail::ApiVersion;
 
     std::string DataLakeSasResourceToString(DataLakeSasResource resource)
     {

@@ -18,7 +18,7 @@ Here are some alternatives, from easiest to advanced, how you can get, build and
 
 #### CMake Project + Vcpkg - manifest mode
 
-The easiest way to acquire the C++ SDK is leveraging [vcpkg](https://github.com/microsoft/vcpkg#getting-started) package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
+The easiest way to acquire the C++ SDK is leveraging the [vcpkg](https://github.com/microsoft/vcpkg#getting-started) package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
 
 ##### 1. Create a [CMake](https://cmake.org/cmake/help/latest/) project
 
@@ -102,7 +102,7 @@ cmake --build .
 
 #### CMake Project + fetch content
 
-For this scenario, CMake will fetch the Azure SDK source code and make it part of your project. THe SDK client libraries will be compiled at the same time as your application.
+For this scenario, CMake will fetch the Azure SDK source code and make it part of your project. The SDK client libraries will be compiled at the same time as your application.
 
 Follow the step 1 from above to create a CMake project first.
 
