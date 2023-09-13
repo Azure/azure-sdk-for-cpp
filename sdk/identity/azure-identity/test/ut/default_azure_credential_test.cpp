@@ -24,6 +24,7 @@ TEST(DefaultAzureCredential, GetCredentialName)
       {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
       {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
       {"AZURE_AUTHORITY_HOST", ""},
+      {"AZURE_FEDERATED_TOKEN_FILE", "azure-identity-test.pem"},
       {"AZURE_USERNAME", ""},
       {"AZURE_PASSWORD", ""},
       {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
@@ -56,6 +57,7 @@ TEST(DefaultAzureCredential, LogMessages)
             {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
             {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"},
+            {"AZURE_FEDERATED_TOKEN_FILE", "azure-identity-test.pem"},
             {"AZURE_USERNAME", ""},
             {"AZURE_PASSWORD", ""},
             {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
@@ -136,7 +138,8 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(
             log[9].second,
             "Identity: DefaultAzureCredential: Created with the following credentials: "
-            "EnvironmentCredential, AzureCliCredential, ManagedIdentityCredential.");
+            "EnvironmentCredential, WorkloadIdentityCredential, AzureCliCredential, "
+            "ManagedIdentityCredential.");
 
         log.clear();
 
