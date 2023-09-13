@@ -36,11 +36,12 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
                                                          options.AuthorityHost,
                                                          options.AdditionallyAllowedTenants)
 {
-  std::string tenantId;
-  std::string clientId;
-  std::string authorityHost;
+  std::string tenantId = options.TenantId;
+  std::string clientId = options.ClientId;
+  std::string authorityHost = options.AuthorityHost;
+  m_tokenFilePath = options.TokenFilePath;
 
-  if (options.TenantId.empty())
+  if (tenantId.empty())
   {
     tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
     if (tenantId.empty())
@@ -49,7 +50,7 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
           "No tenant ID specified. Check pod configuration or set TenantID in the options.");
     }
   }
-  if (options.ClientId.empty())
+  if (clientId.empty())
   {
     clientId = Environment::GetVariable(AzureClientIdEnvVarName);
     if (clientId.empty())
@@ -58,7 +59,7 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
           "No client ID specified. Check pod configuration or set ClientID in the options.");
     }
   }
-  if (options.AuthorityHost.empty())
+  if (authorityHost.empty())
   {
     authorityHost = Environment::GetVariable(AzureAuthorityHostEnvVarName);
     if (authorityHost.empty())
@@ -66,7 +67,7 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
       authorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
     }
   }
-  if (options.TokenFilePath.empty())
+  if (m_tokenFilePath.empty())
   {
     m_tokenFilePath = Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
     if (m_tokenFilePath.empty())

@@ -60,9 +60,9 @@ TEST(WorkloadIdentityCredential, GetOptionsFromEnvironmentInvalid)
        {"AZURE_AUTHORITY_HOST", ""},
        {"AZURE_FEDERATED_TOKEN_FILE", ""}});
 
-  EXPECT_THROW(std::make_unique<WorkloadIdentityCredential>(), std::runtime_error);
+  EXPECT_THROW((void)WorkloadIdentityCredential{}, std::runtime_error);
   WorkloadIdentityCredentialOptions options;
-  EXPECT_THROW(std::make_unique<WorkloadIdentityCredential>(options), std::runtime_error);
+  EXPECT_THROW((void)WorkloadIdentityCredential{options}, std::runtime_error);
 }
 
 TEST(WorkloadIdentityCredential, Regular)
