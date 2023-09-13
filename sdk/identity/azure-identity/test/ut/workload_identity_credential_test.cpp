@@ -26,12 +26,43 @@ struct TempCertFile final
 TEST(WorkloadIdentityCredential, GetCredentialName)
 {
   TempCertFile const tempCertFile;
-  WorkloadIdentityCredential const cred(
-      "01234567-89ab-cdef-fedc-ba8976543210",
-      "fedcba98-7654-3210-0123-456789abcdef",
-      TempCertFile::Path);
+  WorkloadIdentityCredentialOptions options;
+  options.TenantId = "01234567-89ab-cdef-fedc-ba8976543210";
+  options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+  options.TokenFilePath = TempCertFile::Path;
+
+  WorkloadIdentityCredential const cred(options);
 
   EXPECT_EQ(cred.GetCredentialName(), "WorkloadIdentityCredential");
+}
+
+TEST(WorkloadIdentityCredential, GetOptionsFromEnvironment)
+{
+  CredentialTestHelper::EnvironmentOverride const env(
+      {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+       {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+       {"AZURE_AUTHORITY_HOST", ""},
+       {"AZURE_FEDERATED_TOKEN_FILE", TempCertFile::Path}});
+
+  WorkloadIdentityCredential const credDefault;
+  EXPECT_EQ(credDefault.GetCredentialName(), "WorkloadIdentityCredential");
+
+  WorkloadIdentityCredentialOptions options;
+  WorkloadIdentityCredential const cred(options);
+  EXPECT_EQ(cred.GetCredentialName(), "WorkloadIdentityCredential");
+}
+
+TEST(WorkloadIdentityCredential, GetOptionsFromEnvironmentInvalid)
+{
+  CredentialTestHelper::EnvironmentOverride const env(
+      {{"AZURE_TENANT_ID", ""},
+       {"AZURE_CLIENT_ID", ""},
+       {"AZURE_AUTHORITY_HOST", ""},
+       {"AZURE_FEDERATED_TOKEN_FILE", ""}});
+
+  EXPECT_THROW((void)WorkloadIdentityCredential{}, std::runtime_error);
+  WorkloadIdentityCredentialOptions options;
+  EXPECT_THROW((void)WorkloadIdentityCredential{options}, std::runtime_error);
 }
 
 TEST(WorkloadIdentityCredential, Regular)
@@ -42,12 +73,11 @@ TEST(WorkloadIdentityCredential, Regular)
       [](auto transport) {
         WorkloadIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.TenantId = "01234567-89ab-cdef-fedc-ba8976543210";
+        options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+        options.TokenFilePath = TempCertFile::Path;
 
-        return std::make_unique<WorkloadIdentityCredential>(
-            "01234567-89ab-cdef-fedc-ba8976543210",
-            "fedcba98-7654-3210-0123-456789abcdef",
-            TempCertFile::Path,
-            options);
+        return std::make_unique<WorkloadIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{
@@ -130,9 +160,11 @@ TEST(WorkloadIdentityCredential, AzureStack)
       [](auto transport) {
         WorkloadIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.TenantId = "adfs";
+        options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+        options.TokenFilePath = TempCertFile::Path;
 
-        return std::make_unique<WorkloadIdentityCredential>(
-            "adfs", "fedcba98-7654-3210-0123-456789abcdef", TempCertFile::Path, options);
+        return std::make_unique<WorkloadIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{
@@ -210,14 +242,13 @@ TEST(WorkloadIdentityCredential, Authority)
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         WorkloadIdentityCredentialOptions options;
-        options.AuthorityHost = "https://microsoft.com/";
         options.Transport.Transport = transport;
+        options.TenantId = "01234567-89ab-cdef-fedc-ba8976543210";
+        options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+        options.AuthorityHost = "https://microsoft.com/";
+        options.TokenFilePath = TempCertFile::Path;
 
-        return std::make_unique<WorkloadIdentityCredential>(
-            "01234567-89ab-cdef-fedc-ba8976543210",
-            "fedcba98-7654-3210-0123-456789abcdef",
-            TempCertFile::Path,
-            options);
+        return std::make_unique<WorkloadIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{
