@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #include "eventhubs_test_base.hpp"
-#include "test_checkpoint_store.hpp"
+#include "azure/messaging/eventhubs/checkpointstore_blob/blob_checkpoint_store.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/identity.hpp>
@@ -16,7 +16,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     virtual void SetUp() override
     {
       EventHubsTestBase::SetUp();
-//      m_blobClientOptions = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
+      m_blobClientOptions = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
     }
 
   protected:
@@ -34,14 +34,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return name;
     }
 
-//    Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
+    Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
   };
 
   TEST_F(CheckpointStoreTest, TestCheckpoints)
   {
     std::string const testName = GetRandomName();
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-    Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
+    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
 
     auto checkpoints = checkpointStore.ListCheckpoints(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
@@ -90,8 +92,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(CheckpointStoreTest, TestOwnerships)
   {
     std::string const testName = GetRandomName();
+    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
 
-    TestCheckpointStore checkpointStore;
+    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
 
     auto ownerships = checkpointStore.ListOwnership(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");

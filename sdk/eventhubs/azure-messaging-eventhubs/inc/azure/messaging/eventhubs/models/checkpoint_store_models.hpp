@@ -4,7 +4,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
-#include <azure/storage/blobs.hpp>
+#include <azure/core/etag.hpp>
 
 #include <sstream>
 #include <vector>
