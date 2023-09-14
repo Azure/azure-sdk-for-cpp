@@ -21,7 +21,7 @@ add_executable (
 )
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-blobcheckpointstore-test)
-create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-blobcheckpointstore-test.map)
+create_map_file(azure-messaging-eventhubs-blobcheckpointstore-test azure-messaging-eventhubs-blobcheckpointstore-test.map)
 
 if (MSVC)
   target_compile_options(azure-messaging-eventhubs-blobcheckpointstore-test PUBLIC /wd6326 /wd26495 /wd26812)
