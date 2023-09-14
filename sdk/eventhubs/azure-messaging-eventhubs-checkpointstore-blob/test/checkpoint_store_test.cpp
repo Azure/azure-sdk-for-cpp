@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class CheckpointStoreTest : public EventHubsTestBase {
+  class BlobCheckpointStoreTest : public EventHubsTestBase {
     virtual void SetUp() override
     {
       EventHubsTestBase::SetUp();
@@ -37,7 +37,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
   };
 
-  TEST_F(CheckpointStoreTest, TestCheckpoints)
+  TEST_F(BlobCheckpointStoreTest, TestCheckpoints)
   {
     std::string const testName = GetRandomName();
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
@@ -89,7 +89,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
 
-  TEST_F(CheckpointStoreTest, TestOwnerships)
+  TEST_F(BlobCheckpointStoreTest, TestOwnerships)
   {
     std::string const testName = GetRandomName();
     auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
