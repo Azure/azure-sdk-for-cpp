@@ -3,9 +3,8 @@
 #pragma once
 #include <azure/core/context.hpp>
 
+#include <string>
 #include <vector>
-// EVENTHUBS_RESOURCE_GROUP
-// EVENTHUBS_LOCATION
 
 // Create an event hub:
 //	az eventhubs eventhub create --resource-group $EVENTHUBS_RESOURCE_GROUP --namespace-name

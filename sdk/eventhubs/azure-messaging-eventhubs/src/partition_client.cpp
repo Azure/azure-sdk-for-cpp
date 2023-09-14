@@ -190,7 +190,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       if (result.first.HasValue())
       {
         messages.push_back(Models::ReceivedEventData{result.first.Value()});
-        Log::Stream(Logger::Level::Verbose) << "Peeked message. Message count now " << messages.size();
+        Log::Stream(Logger::Level::Verbose)
+            << "Peeked message. Message count now " << messages.size();
       }
       else if (result.second)
       {
@@ -216,7 +217,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         }
       }
     }
-    Log::Stream(Logger::Level::Verbose) << "Receive Events. Return " << messages.size() << " messages.";
+    Log::Stream(Logger::Level::Verbose)
+        << "Receive Events. Return " << messages.size() << " messages.";
 
     return messages;
   }

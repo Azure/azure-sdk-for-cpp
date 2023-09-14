@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-#pragma once
+
 #include "eventhubs_admin.hpp"
 
 #include <azure/core/context.hpp>
@@ -478,7 +478,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     // * Last element is nullptr.
     // * First element (at index 0) is path to a program.
     {
-      auto const actualPathVarValue = Environment::GetVariable("PATH");
+      auto const actualPathVarValue = Core::_internal::Environment::GetVariable("PATH");
       auto const processPathVarStatement = std::string("PATH=") + actualPathVarValue
           + (actualPathVarValue.empty() ? "" : ":") + "/usr/bin:/usr/local/bin";
 
@@ -775,8 +775,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
     else
     {
-	  throw std::runtime_error("Namespace does not exist!");
-	}
+      throw std::runtime_error("Namespace does not exist!");
+    }
   }
 
   std::vector<std::string> EventHubsManagement::Namespace::ListEventHubs(
@@ -827,7 +827,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       eventHubCommand << " --blob-container " << eventHubsOptions.BlobContainerName;
     }
-    if (!eventHubsOptions.CaptureInterval.count() != 0)
+    if (eventHubsOptions.CaptureInterval.count() != 0)
     {
       eventHubCommand << " --capture-interval " << eventHubsOptions.CaptureInterval.count();
     }

@@ -193,7 +193,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EXPECT_NO_THROW(producer.Send(batch));
     }
 
-
     // Now receive the messages - it should take almost no time because they should have been queued
     // up asynchronously.
     GTEST_LOG_(INFO) << "Receive events from instance.";
