@@ -8,8 +8,6 @@
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
-#include <gtest/gtest.h>
-
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   class BlobCheckpointStoreTest : public EventHubsTestBase {

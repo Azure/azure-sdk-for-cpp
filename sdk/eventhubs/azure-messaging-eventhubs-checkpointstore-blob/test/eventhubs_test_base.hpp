@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <azure/core/test/test_base.hpp>
 
