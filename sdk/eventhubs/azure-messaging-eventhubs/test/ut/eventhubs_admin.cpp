@@ -800,7 +800,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::stringstream existsNamespaceCommand;
     existsNamespaceCommand << "az eventhubs namespace exists"
                            << " --name " << namespaceName << " --subscription " << m_subscriptionId
-                           << " --debug --only-show-errors";
+                           << " --debug";
     std::string output{RunShellCommand(
         existsNamespaceCommand.str(),
         Azure::DateTime::clock::duration(std::chrono::minutes(2)),
