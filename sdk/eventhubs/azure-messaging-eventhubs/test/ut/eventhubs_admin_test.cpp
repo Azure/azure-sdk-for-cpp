@@ -25,7 +25,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   } // namespace
 
-  TEST_F(AdminTest, Login)
+  TEST_F(AdminTest, Login_LIVEONLY_)
   {
     EventHubsManagement administrationClient;
 
