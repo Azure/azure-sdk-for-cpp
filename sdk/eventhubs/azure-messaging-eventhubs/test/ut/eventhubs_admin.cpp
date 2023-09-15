@@ -799,7 +799,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::stringstream existsNamespaceCommand;
     existsNamespaceCommand << "az eventhubs namespace exists"
-                           << " --name " << namespaceName << " --subscription " << m_subscriptionId;
+                           << " --name " << namespaceName << " --subscription " << m_subscriptionId
+                           << " --debug --only-show-errors";
     std::string output{RunShellCommand(
         existsNamespaceCommand.str(),
         Azure::DateTime::clock::duration(std::chrono::minutes(2)),
@@ -809,9 +810,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     //"2023-08-10T18:41:54.19Z", "disableLocalAuth": false, "id":}]
 
     Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(output);
+    if (jsonOutput.is_null())
+    {
+      throw std::runtime_error("JSON output is null!");
+    }
     if (!jsonOutput.is_object())
     {
-      throw std::runtime_error("JSON output is not an array!");
+      throw std::runtime_error("JSON output is not an object!");
     }
 
     return !jsonOutput["nameAvailable"].get<bool>();
