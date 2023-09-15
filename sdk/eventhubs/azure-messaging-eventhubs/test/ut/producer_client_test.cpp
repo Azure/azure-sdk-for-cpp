@@ -16,7 +16,7 @@
 class ProducerClientTest : public EventHubsTestBase {
 };
 
-TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
+TEST_F(ProducerClientTest, ConnectionStringNoEntityPath)
 {
   std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
@@ -25,7 +25,7 @@ TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   EXPECT_EQ(eventHubName, client.GetEventHubName());
 }
 
-TEST_F(ProducerClientTest, ConnectionStringEntityPath_LIVEONLY_)
+TEST_F(ProducerClientTest, ConnectionStringEntityPath)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
   std::string const connStringEntityPath
