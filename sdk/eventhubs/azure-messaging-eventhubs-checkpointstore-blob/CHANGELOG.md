@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Initial release. Split from azure-messaging-eventubs package
+- Initial release. Split from the `azure-messaging-eventubs` package.
 
 ### Breaking Changes
 
