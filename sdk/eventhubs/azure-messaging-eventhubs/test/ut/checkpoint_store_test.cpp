@@ -13,10 +13,7 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   class CheckpointStoreTest : public EventHubsTestBase {
-    virtual void SetUp() override
-    {
-      EventHubsTestBase::SetUp();
-    }
+    virtual void SetUp() override { EventHubsTestBase::SetUp(); }
 
   protected:
     std::string GetRandomName()
