@@ -2047,5 +2047,11 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
+
+    // error audience
+    clientOptions.Audience = Blobs::Models::BlobAudience("https://disk.compute.azure.com/.default");
+    blockBlobClient
+        = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
+    EXPECT_THROW(blockBlobClient.GetProperties(), StorageException);
   }
 }}} // namespace Azure::Storage::Test

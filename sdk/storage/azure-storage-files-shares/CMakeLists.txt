@@ -64,6 +64,7 @@ set(
     src/share_directory_client.cpp
     src/share_file_client.cpp
     src/share_lease_client.cpp
+    src/share_options.cpp
     src/share_responses.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp
