@@ -141,7 +141,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // const auto current = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
       //// TODO : this is where we re load balance on the update interval
-      //while (!context.IsCancelled())
+      // while (!context.IsCancelled())
       //{
       //  std::this_thread::sleep_for(m_ownershipUpdateInterval);
       //  Dispatch(eventHubProperties, consumers, context);

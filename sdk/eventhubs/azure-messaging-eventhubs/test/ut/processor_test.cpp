@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "./test_checkpoint_store.hpp"
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
-#include "./test_checkpoint_store.hpp"
 
 #include <gtest/gtest.h>
 
@@ -46,9 +46,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(
-        std::make_shared<ConsumerClient>(client),
-        checkpointStore,
-        processorOptions);
+        std::make_shared<ConsumerClient>(client), checkpointStore, processorOptions);
 
     processor.Run({});
 

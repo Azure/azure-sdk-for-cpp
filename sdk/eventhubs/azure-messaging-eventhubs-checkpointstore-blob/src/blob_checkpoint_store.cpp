@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-#include "azure/messaging/eventhubs/checkpoint_store.hpp"
 #include "azure/messaging/eventhubs/checkpointstore_blob/blob_checkpoint_store.hpp"
+
+#include "azure/messaging/eventhubs/checkpoint_store.hpp"
 
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <stdexcept>
 
 using namespace Azure::Messaging::EventHubs::Models;
-
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
     Azure::Storage::Metadata const& metadata,

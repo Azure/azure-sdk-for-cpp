@@ -17,7 +17,7 @@ SetUpTestProxy("sdk/eventhubs")
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-blobcheckpointstore-test
-    checkpoint_store_test.cpp 
+    blob_checkpoint_store_test.cpp
 )
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-blobcheckpointstore-test)

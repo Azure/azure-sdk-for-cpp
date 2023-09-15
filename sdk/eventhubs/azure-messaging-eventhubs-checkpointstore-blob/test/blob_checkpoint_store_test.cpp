@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "eventhubs_test_base.hpp"
 #include "azure/messaging/eventhubs/checkpointstore_blob/blob_checkpoint_store.hpp"
+#include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/identity.hpp>

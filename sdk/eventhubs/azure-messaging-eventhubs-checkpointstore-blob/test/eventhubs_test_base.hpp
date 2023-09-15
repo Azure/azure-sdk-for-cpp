@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <gtest/gtest.h>
-
 #include <azure/core/test/test_base.hpp>
+
+#include <gtest/gtest.h>
 
 class EventHubsTestBase : public Azure::Core::Test::TestBase {
 public:

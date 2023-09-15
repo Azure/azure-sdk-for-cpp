@@ -56,4 +56,3 @@ std::string Azure::Messaging::EventHubs::Models::Checkpoint::GetCheckpointBlobNa
   }
   return GetCheckpointBlobPrefixName() + PartitionId;
 }
-

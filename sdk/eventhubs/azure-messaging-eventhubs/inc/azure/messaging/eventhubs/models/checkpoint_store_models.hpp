@@ -3,8 +3,8 @@
 #pragma once
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
-#include <azure/core/nullable.hpp>
 #include <azure/core/etag.hpp>
+#include <azure/core/nullable.hpp>
 
 #include <sstream>
 #include <vector>
