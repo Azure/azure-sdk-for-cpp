@@ -609,6 +609,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   Azure::Core::Json::_internal::json ParseAzureCliOutput(std::string const& cliOutput)
   {
+    GTEST_LOG_(INFO) << "Azure CLI output: " << cliOutput;
     std::string jsonOutput = cliOutput;
     if (jsonOutput.find("WARNING:") == 0)
     {
