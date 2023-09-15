@@ -8,7 +8,7 @@
     "Microsoft Azure Messaging Event Hubs SDK for C++ Blob Checkpoint Store",
     "This library provides an Azure-Storage-Blobs based implementation of an Azure Messaging Event Hubs SDK Checkpoint Store."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs/azure-messaging-eventhubs",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob",
   "license": "MIT",
   "dependencies": [
     {
