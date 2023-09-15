@@ -616,6 +616,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       // Erase the warning from the CLI.
       jsonOutput = jsonOutput.erase(0, cliOutput.find('\n') + 1);
     }
+    if (jsonOutput.find("DEBUG:") == 0)
+    {
+      // Erase the warning from the CLI.
+      GTEST_LOG_(WARNING) << "Azure CLI debug output: " << jsonOutput;
+      jsonOutput = jsonOutput.erase(0, cliOutput.find('\n') + 1);
+    }
     if (jsonOutput.find("ERROR:") == 0)
     {
       throw std::runtime_error("Error processing Azure CLI: " + jsonOutput);
