@@ -14,6 +14,8 @@
 #include <thread>
 #include <vector>
 
+#include <gtest/gtest.h>
+
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
@@ -154,6 +156,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::DateTime::duration timeout,
       Azure::Core::Context const& context)
   {
+    GTEST_LOG_(INFO) << "Execute shell command: " << command;
     // Use steady_clock so we're not affected by system time rewinding.
     auto const terminateAfter = std::chrono::steady_clock::now()
         + std::chrono::duration_cast<std::chrono::steady_clock::duration>(timeout);
@@ -624,6 +627,54 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       return Azure::Core::Json::_internal::json::parse(jsonOutput);
     }
+  }
+
+  void EventHubsManagement::Login(Azure::Core::Context const& context)
+  {
+    std::stringstream loginCommand;
+    std::string clientId{Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_ID")};
+    std::string tenantId{Azure::Core::_internal::Environment::GetVariable("AZURE_TENANT_ID")};
+    std::string clientSecret{
+        Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_SECRET")};
+    loginCommand << "az login"
+                 << " --service-principal"
+                 << " -u " << clientId << " -p " << clientSecret << " --tenant " << tenantId;
+    std::string output{RunShellCommand(
+        loginCommand.str(), Azure::DateTime::clock::duration(std::chrono::minutes(2)), context)};
+    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(output);
+    // Expected output: 
+    //[
+    //  {
+    //    "cloudName": "AzureCloud",
+    //    "homeTenantId": "<Tenant ID>",
+    //    "id": "<Subscription ID>",
+    //    "isDefault": true,
+    //    "managedByTenants": [
+    //      {
+    //        "tenantId": "<TenantId>"
+    //      },
+    //    ],
+    //    "name": "<Subscription Name>",
+    //    "state": "Enabled",
+    //    "tenantId": "<Tenant ID>",
+    //    "user": {
+    //      "name": "<User Id>",
+    //      "type": "<User Type>"
+    //    }
+    //  }
+    //]
+  }
+
+  void EventHubsManagement::Logout(Azure::Core::Context const& context)
+  {
+    std::stringstream loginCommand;
+    std::string clientId{Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_ID")};
+    loginCommand << "az logout"
+                 << " --username " << clientId;
+    std::string output{RunShellCommand(
+        loginCommand.str(), Azure::DateTime::clock::duration(std::chrono::minutes(2)), context)};
+    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(output);
+    // Expected output: None.
   }
 
   // Create a namespace:

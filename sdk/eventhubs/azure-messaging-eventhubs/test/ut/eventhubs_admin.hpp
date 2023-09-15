@@ -161,6 +161,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       friend class EventHubsManagement;
     };
 
+    void Login(Azure::Core::Context const& context = {});
+    void Logout(Azure::Core::Context const& context = {});
+
     Namespace CreateNamespace(
         std::string const& namespaceName,
         EventHubsPricingTier pricingTier = EventHubsPricingTier::Standard,

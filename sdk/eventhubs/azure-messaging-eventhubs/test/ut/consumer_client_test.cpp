@@ -168,7 +168,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, RetrieveMultipleEvents_LIVEONLY_)
   {
     EventHubsManagement administrationClient;
-
+    // Log into the service.
+    administrationClient.Login();
     auto eventhubNamespace{administrationClient.GetNamespace(GetEnv("EVENTHUBS_NAMESPACE"))};
 
     std::string eventHubName{GetRandomName("eventhub")};
