@@ -3,7 +3,7 @@
 
 The EventHubs Blob Storage Checkpoint Store is a checkpoint store for the 
 [Azure Event Hubs](https://azure.microsoft.com/services/event-hubs/) service, used to enable an 
-[Event Processor](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-event-processor-host) to store checkpoints and partition ownership information in Azure Blob Storage.
+[Event Processor](https://learn.microsoft.com/azure/event-hubs/event-hubs-event-processor-host) to store checkpoints and partition ownership information in Azure Blob Storage.
 
 For information on how to use an EventHubs processor, see the [Azure SDK for C++ EventHubs documentation](https://azure.github.io/azure-sdk-for-cpp/eventhubs.html).
 
