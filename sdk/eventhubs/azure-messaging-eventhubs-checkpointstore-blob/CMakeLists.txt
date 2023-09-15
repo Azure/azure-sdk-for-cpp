@@ -84,7 +84,7 @@ target_link_libraries(azure-messaging-eventhubs-checkpoint-blob
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(azure-messaging-eventhubs-checkpoint-blob azure-messaging-eventhubs-checkpoint-blob azure-messaging-eventhubs-blobcheckpointstore-test "tests?/*;samples?/*")
+create_code_coverage(eventhubs azure-messaging-eventhubs-checkpoint-blob azure-messaging-eventhubs-blobcheckpointstore-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-messaging-eventhubs-checkpoint-blob ${AZ_LIBRARY_VERSION})
