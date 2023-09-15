@@ -642,7 +642,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string output{RunShellCommand(
         loginCommand.str(), Azure::DateTime::clock::duration(std::chrono::minutes(2)), context)};
     Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(output);
-    // Expected output: 
+    // Expected output:
     //[
     //  {
     //    "cloudName": "AzureCloud",
