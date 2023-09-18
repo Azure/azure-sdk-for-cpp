@@ -1206,7 +1206,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
 
-  TEST_F(FileShareDirectoryClientTest, Audience)
+  TEST_F(FileShareDirectoryClientTest, Audience_PLAYBACKONLY_)
   {
     auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         AadTenantId(),
