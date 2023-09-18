@@ -36,10 +36,16 @@ stages:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
+        - Name: azure-messaging-eventhubs-checkpointstore-blob
+          Path: azure-messaging-eventhubs-checkpointstore-blob
+          VcpkgPortName: azure-messaging-eventhubs-checkpointstore-blob-cpp
       ArtifactsSource:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
+        - Name: azure-messaging-eventhubs-checkpointstore-blob
+          Path: azure-messaging-eventhubs-checkpointstore-blob
+          VcpkgPortName: azure-messaging-eventhubs-checkpointstore-blob-cpp
       TestEnv:
         - Name: AZURE_TENANT_ID
           Value: "33333333-3333-3333-3333-333333333333"
