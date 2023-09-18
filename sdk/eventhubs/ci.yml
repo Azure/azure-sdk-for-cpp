@@ -75,4 +75,4 @@ stages:
           Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
       CMakeSourceTestOptions:
         - Name: Source
-          Value: '-DFETCH_SOURCE_DEPS=LATEST'
+          Value: '-DFETCH_SOURCE_DEPS=LATEST -DDISABLE_AZURE_CORE_OPENTELEMETRY'
