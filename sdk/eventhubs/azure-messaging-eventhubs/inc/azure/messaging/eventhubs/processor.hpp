@@ -190,6 +190,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       Models::StartPosition startPosition = GetStartPosition(ownership, checkpoints);
 
+      // The consumers parameter is not stabilized across the lifetime of the partition client. Leak
+      // the partition for now.
       std::shared_ptr<ProcessorPartitionClient> processorPartitionClient
           = std::make_shared<ProcessorPartitionClient>(
               ownership.PartitionId,
@@ -197,7 +199,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
                   ownership.PartitionId, {startPosition, m_processorOwnerLevel, m_prefetch}),
               m_checkpointStore,
               m_consumerClientDetails,
-              [&]() { consumers.erase(ownership.PartitionId); });
+              []() { /*
+                      consumers.erase(ownership.PartitionId);*/
+              });
 
       if (consumers.find(ownership.PartitionId) == consumers.end())
       {
