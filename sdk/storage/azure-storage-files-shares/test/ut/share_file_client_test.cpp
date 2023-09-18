@@ -1692,6 +1692,51 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
 
+  TEST_F(FileShareFileClientTest, Audience_PLAYBACKONLY_)
+  {
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
+    // default audience
+    auto fileClient
+        = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(fileClient.GetProperties());
+
+    // custom audience
+    auto fileUrl = Azure::Core::Url(fileClient.GetUrl());
+    clientOptions.Audience = Files::Shares::Models::ShareAudience(
+        fileUrl.GetScheme() + "://" + fileUrl.GetHost() + "/.default");
+    fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(fileClient.GetProperties());
+
+    fileClient = Files::Shares::ShareServiceClient(
+                     m_shareServiceClient->GetUrl(), credential, clientOptions)
+                     .GetShareClient(m_shareName)
+                     .GetRootDirectoryClient()
+                     .GetSubdirectoryClient(m_directoryName)
+                     .GetFileClient(m_fileName);
+    EXPECT_NO_THROW(fileClient.GetProperties());
+
+    // error audience
+    clientOptions.Audience
+        = Files::Shares::Models::ShareAudience("https://disk.compute.azure.com/.default");
+    fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
+    EXPECT_THROW(fileClient.GetProperties(), StorageException);
+
+    fileClient = Files::Shares::ShareServiceClient(
+                     m_shareServiceClient->GetUrl(), credential, clientOptions)
+                     .GetShareClient(m_shareName)
+                     .GetRootDirectoryClient()
+                     .GetSubdirectoryClient(m_directoryName)
+                     .GetFileClient(m_fileName);
+    EXPECT_THROW(fileClient.GetProperties(), StorageException);
+  }
+
   TEST(ShareFileHandleAccessRightsTest, ShareFileHandleAccessRights)
   {
     Files::Shares::Models::ShareFileHandleAccessRights accessRightsA

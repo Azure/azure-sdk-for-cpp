@@ -343,4 +343,33 @@ namespace Azure { namespace Storage { namespace Test {
     auto res = m_dataLakeServiceClient->SetProperties(originalProperties);
   }
 
+  TEST_F(DataLakeServiceClientTest, Audience)
+  {
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+
+    // default audience
+    auto serviceClient = Files::DataLake::DataLakeServiceClient(
+        m_dataLakeServiceClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(serviceClient.GetProperties());
+
+    // custom audience
+    auto fileSystemUrl = Azure::Core::Url(serviceClient.GetUrl());
+    clientOptions.Audience = Files::DataLake::Models::DataLakeAudience(
+        fileSystemUrl.GetScheme() + "://" + fileSystemUrl.GetHost() + "/.default");
+    serviceClient = Files::DataLake::DataLakeServiceClient(
+        m_dataLakeServiceClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(serviceClient.GetProperties());
+
+    // error audience
+    clientOptions.Audience
+        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com/.default");
+    serviceClient = Files::DataLake::DataLakeServiceClient(
+        m_dataLakeServiceClient->GetUrl(), credential, clientOptions);
+    EXPECT_THROW(serviceClient.GetProperties(), StorageException);
+  }
 }}} // namespace Azure::Storage::Test

@@ -11,12 +11,42 @@
 #include "azure/storage/queues/rest_client.hpp"
 
 #include <azure/core/internal/client_options.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
 #include <chrono>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Queues {
+  namespace Models {
+
+    /**
+     * @brief Audiences available for Blobs
+     *
+     */
+    class QueueAudience final
+        : public Azure::Core::_internal::ExtendableEnumeration<QueueAudience> {
+    public:
+      /**
+       * @brief Construct a new QueueAudience object
+       *
+       * @param queueAudience The Azure Active Directory audience to use when forming authorization
+       * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
+       * cloud where the resource is located. For more information: See
+       * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+       */
+      explicit QueueAudience(std::string queueAudience)
+          : ExtendableEnumeration(std::move(queueAudience))
+      {
+      }
+
+      /**
+       * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
+       * Storage account.
+       */
+      AZ_STORAGE_QUEUES_DLLEXPORT const static QueueAudience PublicAudience;
+    };
+  } // namespace Models
 
   /**
    * @brief API version for Storage Queue service.
@@ -91,6 +121,13 @@ namespace Azure { namespace Storage { namespace Queues {
      * to prompt a challenge in order to discover the correct tenant for the resource.
      */
     bool EnableTenantDiscovery = false;
+
+    /**
+     * The Audience to use for authentication with Azure Active Directory (AAD).
+     * #Azure::Storage::Queues::Models::QueueAudience::PublicAudience will be assumed if
+     * Audience is not set.
+     */
+    Azure::Nullable<Models::QueueAudience> Audience;
   };
 
   /**
