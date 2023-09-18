@@ -2,7 +2,8 @@
   "name": "azure-messaging-eventhubs-checkpointstore-cpp",
   "version-string": "1.0.0",
   "dependencies": [
-    "azure-messaging-eventhubs-cpp",
+    "azure-core-cpp",
+    "azure-core-amqp-cpp",
     "azure-storage-blobs-cpp"
   ]
 }
