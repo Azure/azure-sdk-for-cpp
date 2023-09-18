@@ -233,6 +233,12 @@
       ]
     },
     {
+      "filename": "**/sdk/core/**/*Docker*",
+      "words": [
+        "Osterman"
+      ]
+    }
+    {
       "filename": "**/sdk/core/azure-core/README.md",
       "words": [
         "myprogram"
