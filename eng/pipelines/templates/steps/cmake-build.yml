@@ -16,7 +16,7 @@ steps:
     displayName: cmake --version
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
+      ${{ parameters.Env }} cmake --debug ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
     displayName: cmake generate
     env:
