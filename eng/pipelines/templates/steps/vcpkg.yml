@@ -13,7 +13,3 @@ steps:
       arguments: -StorageAccountKey '$(cpp-vcpkg-cache-storage-key)'
     displayName: Set Vcpkg Write-mode Cache
     condition: and(succeeded(), eq(variables['System.TeamProject'], 'internal'))
-
-  - pwsh:
-      $env:X_VCPKG_ASSET_SOURCES -like '*readwrite'
-    displayName: Check Vcpkg Asset Sources ends with readwrite
