@@ -4,6 +4,7 @@
   "dependencies": [
     "azure-core-cpp",
     "azure-core-amqp-cpp",
+    "azure-messaging-eventhubs-cpp",
     "azure-storage-blobs-cpp"
   ]
 }

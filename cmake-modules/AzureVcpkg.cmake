@@ -6,6 +6,7 @@ set(AZ_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 
 macro(az_vcpkg_integrate)
   message("Vcpkg integrate step.")
+
   # AUTO CMAKE_TOOLCHAIN_FILE:
   #   User can call `cmake -DCMAKE_TOOLCHAIN_FILE="path_to_the_toolchain"` as the most specific scenario.
   #   As the last alternative (default case), Azure SDK will automatically clone VCPKG folder and set toolchain from there.
@@ -17,7 +18,7 @@ macro(az_vcpkg_integrate)
       message("AZURE_SDK_DISABLE_AUTO_VCPKG is not defined. Fetch a local copy of vcpkg.")
       # GET VCPKG FROM SOURCE
       #  User can set env var AZURE_SDK_VCPKG_COMMIT to pick the VCPKG commit to fetch
-      set(VCPKG_COMMIT_STRING dafef74af53669ef1cc9015f55e0ce809ead62aa) # default SDK tested commit
+      set(VCPKG_COMMIT_STRING 33409307f1e3411112a0a6bbf3011ea3cca1bfc9) # default SDK tested commit
       if(DEFINED ENV{AZURE_SDK_VCPKG_COMMIT})
         message("AZURE_SDK_VCPKG_COMMIT is defined. Using that instead of the default.")
         set(VCPKG_COMMIT_STRING "$ENV{AZURE_SDK_VCPKG_COMMIT}") # default SDK tested commit
