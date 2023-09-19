@@ -56,10 +56,24 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_containerClient.CreateIfNotExists();
     }
 
+    /**@brief  ClaimOwnership Claims ownership for a particular partition.
+     *
+     * @param partitionOwnership - The list of partition ownerships this instance is claiming.
+     * @param context - The context for cancelling long running operations.
+     */
     std::vector<Models::Ownership> ClaimOwnership(
         std::vector<Models::Ownership> const& partitionOwnership,
         Core::Context const& context = {}) override;
 
+    /**@brief  List the checkpoints from storage.
+     *
+     * @param fullyQualifiedNamespace - The fully qualified Event Hubs namespace.
+     * @param eventHubName - The name of the specific Event Hub.
+     * @param consumerGroup - The name of the specific consumer group.
+     * @param context - The context for cancelling long running operations.
+     *
+     * @return A list of checkpoints.
+     */
     std::vector<Models::Checkpoint> ListCheckpoints(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
@@ -67,6 +81,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {}) override;
 
     /**@brief  ListOwnership lists all ownerships.
+     *
+     * @param fullyQualifiedNamespace - The fully qualified Event Hubs namespace.
+     * @param eventHubName - The name of the specific Event Hub.
+     * @param consumerGroup - The name of the specific consumer group.
+     * @param context - The context for cancelling long running operations.
+     *
+     * @return A list of ownerships.
      */
     std::vector<Models::Ownership> ListOwnership(
         std::string const& fullyQualifiedNamespace,

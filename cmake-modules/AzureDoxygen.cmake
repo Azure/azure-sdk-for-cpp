@@ -6,7 +6,7 @@
 # Usage: generate_documentation(azure-core 1.0.0-preview.1)
 # Requires: Doxygen
 # Target name in the form of ${PROJECT_NAME}-docs (e.g. azure-core-docs)
-
+# Note that PROJECT_NAME is also the directory containing the package.
 function(generate_documentation PROJECT_NAME PROJECT_VERSION)
     if(BUILD_DOCUMENTATION)
         find_package(Doxygen 1.9.7 REQUIRED doxygen)
