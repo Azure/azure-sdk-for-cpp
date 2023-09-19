@@ -21,6 +21,7 @@ steps:
     displayName: cmake generate
     env:
       VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
+      X_VCPKG_ASSET_SOURCES: $(X_VCPKG_ASSET_SOURCES_SECRET)
 
 # Core should build all cmake tagets
   - ${{ if and(eq(parameters.Build, true), eq(parameters.ServiceDirectory, 'core')) }}:
