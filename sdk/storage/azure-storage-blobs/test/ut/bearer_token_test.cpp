@@ -49,6 +49,18 @@ namespace Azure { namespace Storage { namespace Test {
         clientOptions);
     EXPECT_NO_THROW(blobClient.GetProperties());
 
+    // With custom audience
+    auto blobUrl = Azure::Core::Url(m_blockBlobClient->GetUrl());
+    clientOptions.Audience = Blobs::Models::BlobAudience(
+        blobUrl.GetScheme() + "://" + blobUrl.GetHost() + "/.default");
+    blobClient = Blobs::BlobClient(
+        m_blockBlobClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_NO_THROW(blobClient.GetProperties());
+    clientOptions.Audience.Reset();
+
     // With error tenantId
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
