@@ -36,7 +36,7 @@ stages:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
-        - Name: azure-messaging-eventhubs-checkpointstore-blob
+        - Name: blob-store
           Path: blob-store
           VcpkgPortName: azure-messaging-eventhubs-checkpointstore-blob-cpp
       ArtifactsSource:
