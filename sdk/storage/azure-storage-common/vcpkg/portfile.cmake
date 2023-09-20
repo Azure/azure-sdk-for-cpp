@@ -8,8 +8,12 @@ vcpkg_from_github(
     SHA512 0
 )
 
+file(RENAME ${SOURCE_PATH}/sdk/storage/azure-storage-common ${SOURCE_PATH}/sdk/storage/_)
+file(RENAME ${SOURCE_PATH}/sdk/storage ${SOURCE_PATH}/sdk/_)
+file(RENAME ${SOURCE_PATH}/sdk ${SOURCE_PATH}/_)
+
 vcpkg_cmake_configure(
-    SOURCE_PATH "${SOURCE_PATH}/sdk/storage/azure-storage-common/"
+    SOURCE_PATH "${SOURCE_PATH}/_/_/_/"
     OPTIONS
         -DWARNINGS_AS_ERRORS=OFF
         -DBUILD_TESTING=OFF
