@@ -78,7 +78,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
-
   EventHubsManagement::EventHubsCreateOrUpdateOperation EventHubsManagement::CreateNamespace(
       std::string const& namespaceName,
       EventHubsPricingTier pricingTier,
@@ -142,7 +141,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     return EventHubsCreateOrUpdateOperation{m_pipeline, jsonOutput};
   }
 
-    EventHubsManagement::EventHubsCreateOrUpdateOperation::EventHubsCreateOrUpdateOperation(
+  EventHubsManagement::EventHubsCreateOrUpdateOperation::EventHubsCreateOrUpdateOperation(
       std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
       Azure::Core::Json::_internal::json const& json)
       : m_pipeline{pipeline}, m_namespaceInfo{EventHubsNamespace::Deserialize(json)}
@@ -244,7 +243,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     throw std::runtime_error("Not implemented!");
   }
 
-
   EventHubsManagement::EventHubsDeleteOperation EventHubsManagement::DeleteNamespace(
       std::string const& namespaceName,
       bool force,
@@ -272,7 +270,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     return EventHubsDeleteOperation{m_pipeline, result->GetHeaders().at("location")};
   }
 
-    EventHubsManagement::EventHubsDeleteOperation::EventHubsDeleteOperation(
+  EventHubsManagement::EventHubsDeleteOperation::EventHubsDeleteOperation(
       std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
       std::string const& pollingUrl)
       : m_pipeline{pipeline}, m_pollingUrl{pollingUrl}
@@ -327,7 +325,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     throw std::runtime_error("Not implemented!");
   }
-
 
   std::vector<std::string> EventHubsManagement::ListNamespaces(Azure::Core::Context const& context)
   {
@@ -633,7 +630,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     rv.Type = json["type"];
     return rv;
   }
-
-
 
 }}}} // namespace Azure::Messaging::EventHubs::Test
