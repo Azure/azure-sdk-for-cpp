@@ -28,7 +28,6 @@ namespace {
 constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
 constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
 constexpr auto AzureClientSecretEnvVarName = "AZURE_CLIENT_SECRET";
-constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
 constexpr auto AzureClientCertificatePathEnvVarName = "AZURE_CLIENT_CERTIFICATE_PATH";
 
 void PrintCredentialCreationLogMessage(
@@ -46,7 +45,7 @@ EnvironmentCredential::EnvironmentCredential(
   auto clientId = Environment::GetVariable(AzureClientIdEnvVarName);
 
   auto clientSecret = Environment::GetVariable(AzureClientSecretEnvVarName);
-  auto authority = Environment::GetVariable(AzureAuthorityHostEnvVarName);
+  auto authority = Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
 
   auto clientCertificatePath = Environment::GetVariable(AzureClientCertificatePathEnvVarName);
 

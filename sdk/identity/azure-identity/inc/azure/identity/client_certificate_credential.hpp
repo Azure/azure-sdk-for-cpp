@@ -13,6 +13,7 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/url.hpp>
 
@@ -50,7 +51,8 @@ namespace Azure { namespace Identity {
      * clouds' Azure AD authentication endpoints:
      * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
+    std::string AuthorityHost
+        = Azure::Core::_internal::Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
 
     /**
      * @brief For multi-tenant applications, specifies additional tenants for which the credential
