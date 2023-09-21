@@ -50,8 +50,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     processor.Run({});
 
-    GTEST_LOG_(INFO) << "Sleep for 10 seconds to allow the processor to stabilize.";
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    GTEST_LOG_(INFO) << "Sleep for 2 seconds to allow the processor to stabilize.";
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     processor.Close();
   }

@@ -39,3 +39,4 @@ $vcpkgBinarySourceSas = $token.Substring(1)
 
 Write-Host "Setting vcpkg binary cache to read and write"
 Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$vcpkgBinarySourceSas,readwrite"
+Write-Host "##vso[task.setvariable variable=X_VCPKG_ASSET_SOURCES_SECRET;issecret=true;]clear;x-azurl,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-asset-container/,?$vcpkgBinarySourceSas,readwrite"

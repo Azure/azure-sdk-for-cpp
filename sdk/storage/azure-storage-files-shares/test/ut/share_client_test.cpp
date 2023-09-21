@@ -696,4 +696,38 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
+
+  TEST_F(FileShareClientTest, Audience_PLAYBACKONLY_)
+  {
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+    std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
+                             "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
+                             "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
+
+    // default audience
+    auto shareClient
+        = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, clientOptions);
+    Files::Shares::Models::CreateSharePermissionResult created;
+    EXPECT_NO_THROW(created = shareClient.CreatePermission(permission).Value);
+    EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
+
+    // custom audience
+    auto shareUrl = Azure::Core::Url(shareClient.GetUrl());
+    clientOptions.Audience = Files::Shares::Models::ShareAudience(
+        shareUrl.GetScheme() + "://" + shareUrl.GetHost() + "/.default");
+    shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
+
+    // error audience
+    clientOptions.Audience
+        = Files::Shares::Models::ShareAudience("https://disk.compute.azure.com/.default");
+    shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, clientOptions);
+    EXPECT_THROW(shareClient.GetPermission(created.FilePermissionKey), StorageException);
+  }
 }}} // namespace Azure::Storage::Test

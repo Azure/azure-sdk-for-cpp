@@ -49,6 +49,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     return m_impl->WaitForIncomingMessage(context);
   }
+
+  std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+  MessageReceiver::TryWaitForIncomingMessage()
+  {
+    return m_impl->TryWaitForIncomingMessage();
+  }
+
   std::string MessageReceiver::GetLinkName() const { return m_impl->GetLinkName(); }
   std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState const& state)
   {
@@ -228,6 +235,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     else
     {
       throw Azure::Core::OperationCancelledException("Receive Operation was cancelled.");
+    }
+  }
+  std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+  MessageReceiverImpl::TryWaitForIncomingMessage()
+  {
+    if (m_eventHandler)
+    {
+      throw std::runtime_error("Cannot call WaitForIncomingMessage when using an event handler.");
+    }
+
+    auto result = m_messageQueue.TryWaitForResult();
+    if (result)
+    {
+      std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError> rv;
+      Models::AmqpMessage message{std::move(std::get<0>(*result))};
+      if (message)
+      {
+        rv.first = std::move(message);
+      }
+      rv.second = std::move(std::get<1>(*result));
+      return rv;
+    }
+    else
+    {
+      // There is no data available, let the caller know that there's nothing happening here.
+      return {};
     }
   }
 

@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+using Azure::Core::Credentials::AuthenticationException;
+using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::WorkloadIdentityCredential;
 using Azure::Identity::WorkloadIdentityCredentialOptions;
@@ -60,9 +62,14 @@ TEST(WorkloadIdentityCredential, GetOptionsFromEnvironmentInvalid)
        {"AZURE_AUTHORITY_HOST", ""},
        {"AZURE_FEDERATED_TOKEN_FILE", ""}});
 
-  EXPECT_THROW((void)WorkloadIdentityCredential{}, std::runtime_error);
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://storage.azure.com/.default");
+
+  WorkloadIdentityCredential const credDefault;
+  EXPECT_THROW(credDefault.GetToken(trc, {}), AuthenticationException);
   WorkloadIdentityCredentialOptions options;
-  EXPECT_THROW((void)WorkloadIdentityCredential{options}, std::runtime_error);
+  WorkloadIdentityCredential const cred(options);
+  EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
 }
 
 TEST(WorkloadIdentityCredential, Regular)

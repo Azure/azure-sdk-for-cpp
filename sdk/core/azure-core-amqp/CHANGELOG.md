@@ -4,7 +4,9 @@
 
 ### Features Added
 
-- AMQP moved from a polling model to an asynchronous model. 
+- AMQP moved from a polling model to an asynchronous model.
+- Added a new `MessageReceiver::TryWaitForIncomingMessage` API which allows callers to "peek" at the contents of 
+the incoming message queue, returning an already received message or an empty message if none is available.
 
 ### Breaking Changes
 

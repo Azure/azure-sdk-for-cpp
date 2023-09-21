@@ -1205,4 +1205,35 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp1) == std::string::npos);
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
+
+  TEST_F(FileShareDirectoryClientTest, Audience_PLAYBACKONLY_)
+  {
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
+    // default audience
+    auto directoryClient = Files::Shares::ShareDirectoryClient(
+        m_fileShareDirectoryClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(directoryClient.GetProperties());
+
+    // custom audience
+    auto directoryUrl = Azure::Core::Url(directoryClient.GetUrl());
+    clientOptions.Audience = Files::Shares::Models::ShareAudience(
+        directoryUrl.GetScheme() + "://" + directoryUrl.GetHost() + "/.default");
+    directoryClient = Files::Shares::ShareDirectoryClient(
+        m_fileShareDirectoryClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(directoryClient.GetProperties());
+
+    // error audience
+    clientOptions.Audience
+        = Files::Shares::Models::ShareAudience("https://disk.compute.azure.com/.default");
+    directoryClient = Files::Shares::ShareDirectoryClient(
+        m_fileShareDirectoryClient->GetUrl(), credential, clientOptions);
+    EXPECT_THROW(directoryClient.GetProperties(), StorageException);
+  }
 }}} // namespace Azure::Storage::Test
