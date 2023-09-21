@@ -180,16 +180,46 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     while (messages.size() < maxMessages && !context.IsCancelled())
     {
-      auto message = m_receiver.WaitForIncomingMessage(context);
-      if (message.first.HasValue())
+      std::pair<
+          Azure::Nullable<Azure::Core::Amqp::Models::AmqpMessage>,
+          Azure::Core::Amqp::Models::_internal::AmqpError>
+          result;
+
+      // TryPeekForIncomingMessage will return two empty values if there is no data available.
+      result = m_receiver.TryWaitForIncomingMessage();
+      if (result.first.HasValue())
       {
-        messages.push_back(Models::ReceivedEventData{message.first.Value()});
+        messages.push_back(Models::ReceivedEventData{result.first.Value()});
+        Log::Stream(Logger::Level::Verbose)
+            << "Peeked message. Message count now " << messages.size();
+      }
+      else if (result.second)
+      {
+        throw _detail::EventHubsExceptionFactory::CreateEventHubsException(result.second);
+      }
+      // If we haven't gotten *any* messages, we're done. Otherwise, we'll wait for more.
+      else if (!messages.empty())
+      {
+        break;
       }
       else
       {
-        throw _detail::EventHubsExceptionFactory::CreateEventHubsException(message.second);
+        result = m_receiver.WaitForIncomingMessage(context);
+        if (result.first.HasValue())
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Received message. Message count now " << messages.size();
+          messages.push_back(Models::ReceivedEventData{result.first.Value()});
+        }
+        else
+        {
+          throw _detail::EventHubsExceptionFactory::CreateEventHubsException(result.second);
+        }
       }
     }
+    Log::Stream(Logger::Level::Verbose)
+        << "Receive Events. Return " << messages.size() << " messages.";
+
     return messages;
   }
   void PartitionClient::OnMessageReceiverStateChanged(

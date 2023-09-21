@@ -58,7 +58,7 @@ This should output something like:
 }
 ```
 
-Create an EventHubs instance:
+Create an EventHubs namespace:
 ```pwsh
  az eventhubs namespace create --resource-group <your group name> --name <your namespace name> --sku Standard  --subscription <your subscription>
  ```
