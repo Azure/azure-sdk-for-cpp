@@ -3,7 +3,7 @@
 
 // cspell: words hehe
 
-#include "eventhubs_admin.hpp"
+#include "eventhubs_admin_client.hpp"
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
@@ -168,8 +168,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, RetrieveMultipleEvents_LIVEONLY_)
   {
     EventHubsManagement administrationClient;
-    // Log into the service.
-    administrationClient.Login();
     auto eventhubNamespace{administrationClient.GetNamespace(GetEnv("EVENTHUBS_NAMESPACE"))};
 
     std::string eventHubName{GetRandomName("eventhub")};
