@@ -8,12 +8,18 @@ vcpkg_from_github(
     SHA512 0
 )
 
-file(RENAME ${SOURCE_PATH}/sdk/template/azure-template ${SOURCE_PATH}/sdk/template/_)
-file(RENAME ${SOURCE_PATH}/sdk/template ${SOURCE_PATH}/sdk/_)
-file(RENAME ${SOURCE_PATH}/sdk ${SOURCE_PATH}/_)
+if(EXISTS "${SOURCE_PATH}/sdk/template/azure-template")
+  file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/template/_")
+  file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/_")
+  file(REMOVE_RECURSE "${SOURCE_PATH}/_")
+
+  file(RENAME "${SOURCE_PATH}/sdk/template/azure-template" "${SOURCE_PATH}/sdk/template/_")
+  file(RENAME "${SOURCE_PATH}/sdk/template" "${SOURCE_PATH}/sdk/_")
+  file(RENAME "${SOURCE_PATH}/sdk" "${SOURCE_PATH}/_")
+endif()
 
 vcpkg_cmake_configure(
-    SOURCE_PATH "${SOURCE_PATH}/_/_/_/"
+    SOURCE_PATH "${SOURCE_PATH}/_/_/_"
     OPTIONS
         -DWARNINGS_AS_ERRORS=OFF
         -DBUILD_TESTING=OFF
