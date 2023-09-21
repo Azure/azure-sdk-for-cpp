@@ -33,7 +33,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       ManagedIdentity,
       Key,
     };
-    struct SystemData
+    struct NamespaceSystemData
     {
       std::string CreatedBy;
       SystemDataByType CreatedByType;
@@ -41,7 +41,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string LastModifiedBy;
       SystemDataByType LastModifiedByType;
       std::string LastModifiedAt;
-      static SystemData Deserialize(Azure::Core::Json::_internal::json const& json);
+      static NamespaceSystemData Deserialize(Azure::Core::Json::_internal::json const& json);
     };
     struct NamespaceProperties
     {
@@ -75,7 +75,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       NamespaceSku Sku;
       NamespaceIdentity Identity;
-      SystemData SystemDataValue;
+      NamespaceSystemData SystemData;
       NamespaceProperties Properties;
       std::int32_t Capacity;
       std::string Name;
