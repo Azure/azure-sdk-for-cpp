@@ -75,7 +75,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       NamespaceSku Sku;
       NamespaceIdentity Identity;
-      SystemData SystemData;
+      SystemData SystemDataValue;
       NamespaceProperties Properties;
       std::int32_t Capacity;
       std::string Name;
