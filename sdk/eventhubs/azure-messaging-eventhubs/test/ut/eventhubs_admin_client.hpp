@@ -62,7 +62,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       // PrivateEndpointConnections - SKIPPED.
       bool DisableLocalAuth;
       std::string AlternateName;
-      // GEODR - SKIPPED.
       static NamespaceProperties Deserialize(Azure::Core::Json::_internal::json const& json);
     };
     struct NamespaceSku

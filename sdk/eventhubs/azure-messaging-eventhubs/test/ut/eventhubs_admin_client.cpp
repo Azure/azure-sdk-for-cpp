@@ -22,11 +22,11 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   EventHubsManagement::EventHubsManagement()
-      : m_subscriptionId{Azure::Core::_internal::Environment::GetVariable(
-          "EVENTHUBS_SUBSCRIPTION_ID")},
-        m_resourceGroup{
-            Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_RESOURCE_GROUP")},
-        m_location{Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_LOCATION")}
+      : m_resourceGroup{Azure::Core::_internal::Environment::GetVariable(
+          "EVENTHUBS_RESOURCE_GROUP")},
+        m_location{Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_LOCATION")},
+        m_subscriptionId{
+            Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_SUBSCRIPTION_ID")}
   {
     Azure::Core::_internal::ClientOptions options;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
@@ -144,7 +144,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   EventHubsManagement::EventHubsCreateOrUpdateOperation::EventHubsCreateOrUpdateOperation(
       std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
       Azure::Core::Json::_internal::json const& json)
-      : m_pipeline{pipeline}, m_namespaceInfo{EventHubsNamespace::Deserialize(json)}
+      : m_namespaceInfo{EventHubsNamespace::Deserialize(json)}, m_pipeline{pipeline}
   {
     UpdateStatus();
   }
@@ -273,7 +273,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   EventHubsManagement::EventHubsDeleteOperation::EventHubsDeleteOperation(
       std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
       std::string const& pollingUrl)
-      : m_pipeline{pipeline}, m_pollingUrl{pollingUrl}
+      : m_pollingUrl{pollingUrl}, m_pipeline{pipeline}
   {
   }
 
@@ -433,8 +433,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string const& resourceGroup,
       std::string const& subscriptionId,
       Azure::Core::Context const& context)
-      : m_pipeline{pipeline}, m_name(name), m_resourceGroup(resourceGroup),
-        m_subscriptionId(subscriptionId)
+      : m_name(name), m_resourceGroup(resourceGroup),
+        m_subscriptionId(subscriptionId), m_pipeline{pipeline}
   {
     Azure::Core::Url requestUrl(
         "https://management.azure.com/subscriptions/" + Azure::Core::Url::Encode(m_subscriptionId)
@@ -600,7 +600,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       rv.AlternateName = json["alternateName"];
     }
-    // Skipped: geoDataReplication
     // Skipped: encryption
     return rv;
   }
