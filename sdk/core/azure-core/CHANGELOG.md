@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- [[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983) Added support for setting `CURLOPT_CAPATH` libcurl option on Linux.
+
+
 ### Breaking Changes
 
 ### Bugs Fixed

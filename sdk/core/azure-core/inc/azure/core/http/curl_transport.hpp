@@ -12,6 +12,11 @@
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/platform.hpp"
+
+#if defined(AZ_PLATFORM_LINUX) && OPENSSL_VERSION_NUMBER >= 0x00905100L
+#define SUPPORT_SETTING_CAPATH
+#endif
 
 namespace Azure { namespace Core { namespace Http {
   class CurlNetworkConnection;
@@ -121,6 +126,20 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     std::string CAInfo;
+
+#if defined(SUPPORT_SETTING_CAPATH)
+    /**
+     * @brief Path to a directory which holds PEM encoded file, containing the certificate
+     * authorities sent to libcurl handle directly.
+     *
+     * @remark The Azure SDK will not check if the path is valid or not.
+     *
+     * @remark The default is the built-in system specific path. More about this option:
+     * https://curl.se/libcurl/c/CURLOPT_CAPATH.html
+     *
+     */
+    std::string CAPath;
+#endif
 
     /**
      * @brief All HTTP requests will keep the connection channel open to the service.

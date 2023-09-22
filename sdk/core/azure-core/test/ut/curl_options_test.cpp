@@ -12,6 +12,7 @@
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"
+#include "openssl/x509.h"
 #endif
 
 #include "transport_adapter_base_test.hpp"
@@ -233,6 +234,47 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                         .ConnectionPoolIndex.clear());
   }
+
+#if defined(SUPPORT_SETTING_CAPATH)
+  TEST(CurlTransportOptions, setCADirectory)
+  {
+    Azure::Core::Http::CurlTransportOptions curlOptions;
+    // openssl default cert location will be used only if environment variable SSL_CERT_DIR
+    // is not set
+    const char* ca = getenv(X509_get_default_cert_dir_env());
+    if (ca)
+    {
+      curlOptions.CAPath = ca;
+    }
+    else
+    {
+      curlOptions.CAPath = X509_get_default_cert_dir();
+    }
+
+    auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+    Azure::Core::Http::Policies::TransportOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy
+        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
+
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+    policies.emplace_back(std::move(transportPolicy));
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+
+    // Use HTTPS
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> response;
+    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+    EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+
+    // Clean the connection from the pool *Windows fails to clean if we leave to be clean upon
+    // app-destruction
+    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                        .ConnectionPoolIndex.clear());
+  }
+#endif
 
   TEST(CurlTransportOptions, httpsDefault)
   {
