@@ -36,10 +36,16 @@ stages:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
+        - Name: azure-messaging-eventhubs-checkpointstore-blob
+          Path: blob-store
+          VcpkgPortName: azure-messaging-eventhubs-checkpointstore-blob-cpp
       ArtifactsSource:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
+        - Name: azure-messaging-eventhubs-checkpointstore-blob
+          Path: blob-store
+          VcpkgPortName: azure-messaging-eventhubs-checkpointstore-blob-cpp
       TestEnv:
         - Name: AZURE_TENANT_ID
           Value: "33333333-3333-3333-3333-333333333333"
@@ -69,4 +75,7 @@ stages:
           Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
       CMakeSourceTestOptions:
         - Name: Source
-          Value: '-DFETCH_SOURCE_DEPS=OFF'
+  # FETCH_SOURCE_DEPS is disabled because azure-messaging-eventhubs is not present in the vcpkg catalog at the current Azure SDK baseline commit.
+  # Disabling DISABLE_AZURE_CORE_OPENTELEMETRY because eventhubs does not have a dependency on azure-core-opentelemetry, but azure core includes 
+  # azure-core-opentelemetry in builds unless disabled.
+          Value: '-DFETCH_SOURCE_DEPS=OFF -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON'

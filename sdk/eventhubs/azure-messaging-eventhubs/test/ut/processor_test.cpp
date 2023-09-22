@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "./test_checkpoint_store.hpp"
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
@@ -26,11 +27,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ProcessorTest, LoadBalancing_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
-    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        Azure::Core::_internal::Environment::GetVariable(
-            "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName)};
-    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
+    std::shared_ptr<Azure::Messaging::EventHubs::CheckpointStore> checkpointStore{
+        std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
     std::string eventHubName{GetEnv("EVENTHUB_NAME")};
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
@@ -48,11 +46,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(
-        std::make_shared<ConsumerClient>(client),
-        std::make_shared<BlobCheckpointStore>(checkpointStore),
-        processorOptions);
+        std::make_shared<ConsumerClient>(client), checkpointStore, processorOptions);
 
-    processor.Run();
+    processor.Run({});
 
     GTEST_LOG_(INFO) << "Sleep for 2 seconds to allow the processor to stabilize.";
     std::this_thread::sleep_for(std::chrono::seconds(2));

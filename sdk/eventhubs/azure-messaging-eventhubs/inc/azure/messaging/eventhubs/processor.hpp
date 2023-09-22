@@ -130,7 +130,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param context The context to control the request lifetime.
      */
-    void Run(Core::Context const& context = {})
+    void Run(Core::Context const& context)
     {
       Models::EventHubProperties eventHubProperties
           = m_consumerClient->GetEventHubProperties(context);
@@ -140,12 +140,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       //        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
       // const auto current = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
-      // TODO : this is where we re load balance on the update interval
-      /* while (!context.IsCancelled())
-      {
-        std::this_thread::sleep_for(m_ownershipUpdateInterval);
-        Dispatch(eventHubProperties, consumers, context);
-      }*/
+      //// TODO : this is where we re load balance on the update interval
+      // while (!context.IsCancelled())
+      //{
+      //  std::this_thread::sleep_for(m_ownershipUpdateInterval);
+      //  Dispatch(eventHubProperties, consumers, context);
+      //}
     }
 
     /** @brief Dispatches events to the appropriate partition clients.
