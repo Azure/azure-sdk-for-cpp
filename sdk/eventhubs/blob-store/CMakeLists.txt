@@ -97,13 +97,13 @@ endif()
 az_vcpkg_export(
     azure-messaging-eventhubs-checkpoint-blob
     MESSAGING_EVENTHUBS_CHECKPOINTSTORE_BLOB
-    azure/messaging/eventhubs/checkpointstore_blob/dll_import_export.hpp
+    azure/messaging/eventhubs/blob_store/dll_import_export.hpp
   )
 
 az_rtti_setup(
   azure-messaging-eventhubs-checkpoint-blob
   MESSAGING_EVENTHUBS_CHECKPOINTSTORE_BLOB
-  azure/messaging/eventhubs/checkpointstore_blob/rtti.hpp
+  azure/messaging/eventhubs/blob_store/rtti.hpp
 )
 
 unset(FETCH_SOURCE_DEPS CACHE)
