@@ -4,16 +4,17 @@
   ],
   "additionalIncludeDirectories": [
     "../../../core/azure-core/inc",
-    "../../../core/azure-core-amqp/inc"
+    "../../azure-messaging-eventhubs/inc",
+    "../../../storage/azure-storage-common/inc",
+    "../../../storage/azure-storage-blobs/inc"
   ],
   "additionalCompilerSwitches": [
-    "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"
   ],
   "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Messaging",
-  "reviewName": "Azure Messaging EventHubs API Review",
+  "reviewName": "Azure Messaging EventHubs Blob Checkpoint Store API Review",
   "serviceName": null,
-  "packageName": "azure-messaging-eventhubs-cpp"
+  "packageName": "azure-messaging-eventhubs-checkpointstore-blob-cpp"
 }
