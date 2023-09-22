@@ -127,7 +127,7 @@ jobs:
                 -DefaultBranch $(DefaultBranch)
                 -ConfigFileDir $(Build.ArtifactStagingDirectory)/PackageInfo
                 -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
-                -SourcePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.name }}/inc
+                -SourcePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.path }}/inc
               pwsh: true
               workingDirectory: $(Pipeline.Workspace)
             displayName: Create API Review for ${{ artifact.name }}
