@@ -40,5 +40,9 @@ Get-ChildItem -Path $parentPath -Recurse
 
 & $ParserPath -o $OutPath/$ArtifactName/$ArtifactName.json $SourcePath
 
+Write-Host Invoking CreateApiReviewTool. ArtifactName: $ArtifactName, OutPath: $OutPath, ApiviewUri: $ApiviewUri, SourceBranch: $SourceBranch, DefaultBranch: $DefaultBranch, ConfigFileDir: $ConfigFileDir
+Get-ChildItem -Path $ConfigFileDir -Recurse
+
+    
 Write-Host "Send request to APIView to create review for $ArtifactName"
 &($createReviewScript) -ArtifactPath $OutPath -APIViewUri $ApiviewUri -APIKey $ApiKey -APILabel $ApiLabel -PackageName $ArtifactName -SourceBranch $SourceBranch -DefaultBranch $DefaultBranch -ConfigFileDir $ConfigFileDir
