@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp"
+#include "azure/storage/common/internal/storage_bearer_token_auth.hpp"
 
 #include "azure/storage/common/internal/constants.hpp"
 
