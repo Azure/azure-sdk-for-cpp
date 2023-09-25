@@ -41,7 +41,12 @@ Get-ChildItem -Path $parentPath -Recurse
 & $ParserPath -o $OutPath/$ArtifactName/$ArtifactName.json $SourcePath
 
 Write-Host Invoking CreateApiReviewTool. ArtifactName: $ArtifactName, OutPath: $OutPath, ApiviewUri: $ApiviewUri, SourceBranch: $SourceBranch, DefaultBranch: $DefaultBranch, ConfigFileDir: $ConfigFileDir
+
+Write-Host "Contents in $($ConfigFileDir)"
 Get-ChildItem -Path $ConfigFileDir -Recurse
+
+Write-Host "Deleting all files in $($ConfigFileDir)"
+Get-ChildItem $ConfigFileDir -Recurse | Delete-Item $_
 
     
 Write-Host "Send request to APIView to create review for $ArtifactName"
