@@ -49,10 +49,10 @@ Get-ChildItem -Path $ConfigFileDir -Recurse
 
 # The eng\common\Save-Package-Properties.ps1 script does not contemplate a scenario where the artifact name is different from the source name.
 # Rename the incorrect artifact name in the $ConfigFileDir directory to match the correct package name.
-if $ArtifactName -NE $SourceName
+if ($ArtifactName -NE $SourceName)
 {
 	Write-Host "Copying $SourceName to $ArtifactName"
-	Rename-Item -Path $ConfigFileDir/$SourceName.json -Destination $ConfigFileDir/$ArtifactName.json
+	Rename-Item -Path $ConfigFileDir/$SourceName.json -NewName $ConfigFileDir/$ArtifactName.json
 }
 
 Write-Host "Contents in $($ConfigFileDir)" after rename.
