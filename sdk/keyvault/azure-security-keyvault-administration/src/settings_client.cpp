@@ -5,7 +5,6 @@
 #include "private/keyvault_settings_common_request.hpp"
 #include "private/package_version.hpp"
 
-
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
