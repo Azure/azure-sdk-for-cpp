@@ -119,6 +119,7 @@ jobs:
               filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Create-APIReview.ps1
               arguments: >
                 -ArtifactName ${{ artifact.name }}
+                -SourceName ${{ artifact.path }}
                 -OutPath $(Build.ArtifactStagingDirectory)
                 -ApiviewUri "$(azuresdk-apiview-uri)"
                 -ApiKey "$(azuresdk-apiview-apikey)"

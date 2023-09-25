@@ -86,8 +86,6 @@ else
     exit(1)
 }
 
-Write-Host Packages: $packages
-
 # Check if package config file is present. This file has package version, SDK type etc info.
 if (-not $ConfigFileDir)
 {

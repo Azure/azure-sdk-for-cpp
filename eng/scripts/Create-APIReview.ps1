@@ -2,6 +2,8 @@ Param(
     [Parameter(Mandatory=$True)]
     [string] $ArtifactName,
     [Parameter(Mandatory=$True)]
+    [string] $SourceName,
+    [Parameter(Mandatory=$True)]
     [string] $OutPath,
     [Parameter(Mandatory=$True)]
     [string] $ApiviewUri,
@@ -45,10 +47,15 @@ Write-Host Invoking CreateApiReviewTool. ArtifactName: $ArtifactName, OutPath: $
 Write-Host "Contents in $($ConfigFileDir)"
 Get-ChildItem -Path $ConfigFileDir -Recurse
 
-Write-Host "Deleting all files in $($ConfigFileDir)"
-Remove-Item -Path $ConfigFileDir -Recurse 
+# The eng\common\Save-Package-Properties.ps1 script does not contemplate a scenario where the artifact name is different from the source name.
+# Rename the incorrect artifact name in the $ConfigFileDir directory to match the correct package name.
+if $ArtifactName -NE $SourceName
+{
+	Write-Host "Copying $SourceName to $ArtifactName"
+	Rename-Item -Path $ConfigFileDir/$SourceName.json -Destination $ConfigFileDir/$ArtifactName.json
+}
 
-Write-Host "Contents in $($ConfigFileDir)"
+Write-Host "Contents in $($ConfigFileDir)" after rename.
 Get-ChildItem -Path $ConfigFileDir -Recurse
     
 Write-Host "Send request to APIView to create review for $ArtifactName"
