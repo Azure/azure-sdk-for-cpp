@@ -52,6 +52,7 @@ set(
     inc/azure/storage/common/internal/file_io.hpp
     inc/azure/storage/common/internal/reliable_stream.hpp
     inc/azure/storage/common/internal/shared_key_policy.hpp
+    inc/azure/storage/common/internal/storage_bearer_token_auth.hpp
     inc/azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp
     inc/azure/storage/common/internal/storage_per_retry_policy.hpp
     inc/azure/storage/common/internal/storage_service_version_policy.hpp
