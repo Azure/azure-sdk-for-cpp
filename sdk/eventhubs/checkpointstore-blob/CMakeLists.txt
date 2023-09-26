@@ -88,7 +88,7 @@ create_code_coverage(eventhubs azure-messaging-eventhubs-checkpoint-blob azure-m
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 #generate_documentation(azure-messaging-eventhubs-checkpoint-blob ${AZ_LIBRARY_VERSION})
-generate_documentation(blob-store ${AZ_LIBRARY_VERSION})
+generate_documentation(checkpointstore-blob ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
   add_subdirectory(test)
