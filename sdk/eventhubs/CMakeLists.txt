@@ -10,4 +10,4 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_subdirectory(azure-messaging-eventhubs)
 #add_subdirectory(azure-messaging-eventhubs-checkpointstore-blob)
-add_subdirectory(blob-store)
+add_subdirectory(checkpointstore-blob)
