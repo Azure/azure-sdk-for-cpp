@@ -14,9 +14,12 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_LINUX) && OPENSSL_VERSION_NUMBER >= 0x00905100L
-#define SUPPORT_SETTING_CAPATH
-#endif
+#if defined(AZ_PLATFORM_LINUX)
+#include <openssl/opensslv.h>
+#if OPENSSL_VERSION_NUMBER >= 0x00905100L
+#define _azure_SUPPORT_SETTING_CAPATH
+#endif // OPENSSL_VERSION_NUMBER >= 0x00905100L
+#endif // defined(AZ_PLATFORM_LINUX)
 
 namespace Azure { namespace Core { namespace Http {
   class CurlNetworkConnection;
@@ -127,7 +130,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::string CAInfo;
 
-#if defined(SUPPORT_SETTING_CAPATH)
+#if defined(_azure_SUPPORT_SETTING_CAPATH)
     /**
      * @brief Path to a directory which holds PEM encoded file, containing the certificate
      * authorities sent to libcurl handle directly.
