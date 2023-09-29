@@ -31,6 +31,7 @@ vcpkg_cmake_configure(
         ${FEATURE_OPTIONS}
         -DWARNINGS_AS_ERRORS=OFF
         -DBUILD_TESTING=OFF
+        -DNO_AUTOMATIC_TRANSPORT_BUILD=ON
 )
 
 vcpkg_cmake_install()
