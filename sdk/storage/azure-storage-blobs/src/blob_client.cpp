@@ -16,7 +16,7 @@
 #include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/internal/reliable_stream.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
-#include <azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp>
+#include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
@@ -86,7 +86,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
-      tokenContext.Scopes.emplace_back(_internal::StorageScope);
+      tokenContext.Scopes.emplace_back(
+          options.Audience.HasValue() ? options.Audience.Value().ToString()
+                                      : Models::BlobAudience::PublicAudience.ToString());
       perRetryPolicies.emplace_back(
           std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
               credential, tokenContext, options.EnableTenantDiscovery));

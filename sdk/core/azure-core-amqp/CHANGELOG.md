@@ -4,9 +4,25 @@
 
 ### Features Added
 
+- AMQP moved from a polling model to an asynchronous model.
+- Added a new `MessageReceiver::TryWaitForIncomingMessage` API which allows callers to "peek" at the contents of 
+the incoming message queue, returning an already received message or an empty message if none is available.
+
 ### Breaking Changes
 
+- Removed the `QueueSend` API from `MessageSender` because it was not compatible with the new asynchronous model.
+- The new asynchronous model requires the user to call `Close()` on the `MessageSender` and `MessageReceiver` 
+to ensure operations have stabilized before destroying the object.
+- For connection listeners (primarily test scenarios), if you call `Open()` or `Listen()` on a connection, you MUST call `Close()` 
+before the connection is destroyed.
+- The `Connection::Close()` method no longer requires that the caller provide connection disconnect information.
+- The `Session::End()` method no longer requires that the caller provide session disconnect information.
+- Several asserts have been added which will force termination of the running application if invariants have not been met.
+
 ### Bugs Fixed
+
+- Several fixes related to the new asynchronous model. Ensures that message senders and receivers are always closed, 
+and that resources are released.
 
 ### Other Changes
 

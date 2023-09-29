@@ -1,6 +1,6 @@
 # Release History
 
-## 12.8.0-beta.3 (Unreleased)
+## 12.9.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.8.0 (2023-09-12)
+
+### Features Added
+
+- Features in `12.8.0-beta.1` and `12.8.0-beta.2` are now generally available.
 
 ## 12.8.0-beta.2 (2023-08-12)
 
@@ -31,6 +37,8 @@
 
 ## 12.7.0 (2023-07-11)
 
+### Features Added
+
 - New features in `12.7.0-beta.1` are now generally available.
 
 ## 12.7.0-beta.1 (2023-05-31)
@@ -41,6 +49,8 @@
 
 ## 12.6.0 (2023-05-09)
 
+### Features Added
+
 - New features in `12.6.0-beta.1` are now generally available.
 
 ## 12.6.0-beta.1 (2023-04-11)
@@ -50,6 +60,8 @@
   - new field `EncryptionContext` in `CreatePathOptions` , `PathItem`, `PathProperties`,  `DownloadFileDetails`.
 
 ## 12.5.0 (2023-01-10)
+
+### Features Added
 
 - New features in `12.5.0-beta.1` are now generally available.
 
@@ -62,6 +74,8 @@
   - Added new field `EncryptionScope` in `PathProperties`.
 
 ## 12.4.0 (2022-11-08)
+
+### Features Added
 
 - New features in `12.4.0-beta.1` are now generally available.
 

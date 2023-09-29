@@ -130,7 +130,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param context The context to control the request lifetime.
      */
-    void Run(Core::Context const& context = {})
+    void Run(Core::Context const& context)
     {
       Models::EventHubProperties eventHubProperties
           = m_consumerClient->GetEventHubProperties(context);
@@ -140,12 +140,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       //        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
       // const auto current = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
-      // TODO : this is where we re load balance on the update interval
-      /* while (!context.IsCancelled())
-      {
-        std::this_thread::sleep_for(m_ownershipUpdateInterval);
-        Dispatch(eventHubProperties, consumers, context);
-      }*/
+      //// TODO : this is where we re load balance on the update interval
+      // while (!context.IsCancelled())
+      //{
+      //  std::this_thread::sleep_for(m_ownershipUpdateInterval);
+      //  Dispatch(eventHubProperties, consumers, context);
+      //}
     }
 
     /** @brief Dispatches events to the appropriate partition clients.
@@ -190,6 +190,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       Models::StartPosition startPosition = GetStartPosition(ownership, checkpoints);
 
+      // The consumers parameter is not stabilized across the lifetime of the partition client. Leak
+      // the partition for now.
       std::shared_ptr<ProcessorPartitionClient> processorPartitionClient
           = std::make_shared<ProcessorPartitionClient>(
               ownership.PartitionId,
@@ -197,7 +199,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
                   ownership.PartitionId, {startPosition, m_processorOwnerLevel, m_prefetch}),
               m_checkpointStore,
               m_consumerClientDetails,
-              [&]() { consumers.erase(ownership.PartitionId); });
+              []() { /*
+                      consumers.erase(ownership.PartitionId);*/
+              });
 
       if (consumers.find(ownership.PartitionId) == consumers.end())
       {

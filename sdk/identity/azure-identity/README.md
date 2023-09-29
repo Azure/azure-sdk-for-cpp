@@ -57,8 +57,9 @@ The `DefaultAzureCredential` attempts to authenticate via the following mechanis
 ![DefaultAzureCredential authentication flow][default_azure_credential_auth_flow]
 
 1. **Environment** - The `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables) and use it to authenticate.
-1. **Azure CLI** - If the developer has authenticated an account via the Azure CLI `az login` command, the `DefaultAzureCredential` will authenticate with that account.
+1. **Workload Identity Credential** - If the developer authenticates using a Kubernetes service account token.
 1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, the `DefaultAzureCredential` will authenticate with that account.
+1. **Azure CLI** - If the developer has authenticated an account via the Azure CLI `az login` command, the `DefaultAzureCredential` will authenticate with that account.
 
 Even though the credentials being used and their order is documented, it may change from release to release.
 

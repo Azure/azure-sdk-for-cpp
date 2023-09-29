@@ -1,10 +1,25 @@
 # Release History
 
-## 1.6.0-beta.2 (Unreleased)
+## 1.6.0-beta.3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.0-beta.2 (2023-09-13)
+
+### Features Added
+
+- Add support for reading the tenant id, client id, and the token file path for `WorkloadIdentityCredential` from the environment variables.
+
+### Breaking Changes
+
+- Modify the order of the credentials used within the `DefaultAzureCredential` to be consistent with other languages.
+- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
 
 ### Bugs Fixed
 
@@ -15,8 +30,6 @@
 Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
 
 - Theodore Tsirpanis _([GitHub](https://github.com/teo-tsirpanis))_
-
-### Other Changes
 
 ## 1.6.0-beta.1 (2023-08-11)
 

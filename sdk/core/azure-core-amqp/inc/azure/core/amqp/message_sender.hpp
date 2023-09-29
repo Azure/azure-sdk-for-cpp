@@ -39,6 +39,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Closing,
     Error,
   };
+  std::ostream& operator<<(std::ostream& stream, MessageSenderState const& state);
 
   enum class SenderSettleMode
   {
@@ -156,13 +157,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
-        Context const& context = {});
-
-    /** @brief Queue a message to be sent to the target of the message sender.
-     */
-    void QueueSend(
-        Models::AmqpMessage const& message,
-        MessageSendCompleteCallback onSendComplete,
         Context const& context = {});
 
   private:

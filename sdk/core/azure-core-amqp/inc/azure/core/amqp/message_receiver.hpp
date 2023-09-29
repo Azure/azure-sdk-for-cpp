@@ -32,6 +32,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Closing,
     Error,
   };
+  std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState const& state);
 
   enum class ReceiverSettleMode
   {
@@ -168,6 +169,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
     WaitForIncomingMessage(Context const& context = {});
+
+    /** @brief Return if there are messages waiting to be processed.
+     *
+     * @return A pair of the received message and the error if any. If both values are empty, then
+     * no messages are available and the caller should call WaitForIncomingMessage.
+     */
+    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+    TryWaitForIncomingMessage();
 
   private:
     MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}

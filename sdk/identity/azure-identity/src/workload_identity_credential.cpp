@@ -6,6 +6,8 @@
 #include "private/tenant_id_resolver.hpp"
 #include "private/token_credential_impl.hpp"
 
+#include <azure/core/internal/environment.hpp>
+
 #include <fstream>
 #include <streambuf>
 
@@ -13,61 +15,97 @@ using Azure::Identity::WorkloadIdentityCredential;
 
 using Azure::Core::Context;
 using Azure::Core::Url;
+using Azure::Core::_internal::Environment;
 using Azure::Core::Credentials::AccessToken;
+using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
+namespace {
+constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
+constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
+constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
+constexpr auto AzureFederatedTokenFileEnvVarName = "AZURE_FEDERATED_TOKEN_FILE";
+} // namespace
+
 WorkloadIdentityCredential::WorkloadIdentityCredential(
-    std::string tenantId,
-    std::string const& clientId,
-    std::string const& tokenFilePath,
-    std::string const& authorityHost,
-    std::vector<std::string> additionallyAllowedTenants,
-    Core::Credentials::TokenCredentialOptions const& options)
-    : TokenCredential("WorkloadIdentityCredential"),
-      m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
-      m_tokenCredentialImpl(std::make_unique<TokenCredentialImpl>(options)),
-      m_requestBody(
-          std::string(
+    WorkloadIdentityCredentialOptions const& options)
+    : TokenCredential("WorkloadIdentityCredential"), m_clientCredentialCore(
+                                                         options.TenantId,
+                                                         options.AuthorityHost,
+                                                         options.AdditionallyAllowedTenants)
+{
+  std::string tenantId = options.TenantId;
+  std::string clientId = options.ClientId;
+  std::string authorityHost = options.AuthorityHost;
+  m_tokenFilePath = options.TokenFilePath;
+
+  if (tenantId.empty())
+  {
+    tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
+  }
+  if (clientId.empty())
+  {
+    clientId = Environment::GetVariable(AzureClientIdEnvVarName);
+  }
+  if (authorityHost.empty())
+  {
+    authorityHost = Environment::GetVariable(AzureAuthorityHostEnvVarName);
+    if (authorityHost.empty())
+    {
+      authorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
+    }
+  }
+  if (m_tokenFilePath.empty())
+  {
+    m_tokenFilePath = Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
+  }
+
+  if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
+  {
+    m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
+        tenantId, authorityHost, options.AdditionallyAllowedTenants);
+    m_tokenCredentialImpl = std::make_unique<TokenCredentialImpl>(options);
+    m_requestBody
+        = std::string(
               "grant_type=client_credentials"
               "&client_assertion_type="
               "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
               "&client_id=")
-          + Url::Encode(clientId)),
-      m_tokenFilePath(tokenFilePath)
-{
+        + Url::Encode(clientId);
+  }
 }
 
 WorkloadIdentityCredential::WorkloadIdentityCredential(
-    std::string tenantId,
-    std::string const& clientId,
-    std::string const& tokenFilePath,
-    WorkloadIdentityCredentialOptions const& options)
-    : WorkloadIdentityCredential(
-        tenantId,
-        clientId,
-        tokenFilePath,
-        options.AuthorityHost,
-        options.AdditionallyAllowedTenants,
-        options)
-{
-}
-
-WorkloadIdentityCredential::WorkloadIdentityCredential(
-    std::string tenantId,
-    std::string const& clientId,
-    std::string const& tokenFilePath,
     Core::Credentials::TokenCredentialOptions const& options)
-    : WorkloadIdentityCredential(
-        tenantId,
-        clientId,
-        tokenFilePath,
-        WorkloadIdentityCredentialOptions{}.AuthorityHost,
-        WorkloadIdentityCredentialOptions{}.AdditionallyAllowedTenants,
-        options)
+    : TokenCredential("WorkloadIdentityCredential"),
+      m_clientCredentialCore("", "", std::vector<std::string>())
 {
+  std::string tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
+  std::string clientId = Environment::GetVariable(AzureClientIdEnvVarName);
+  m_tokenFilePath = Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
+
+  if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
+  {
+    std::string authorityHost = Environment::GetVariable(AzureAuthorityHostEnvVarName);
+    if (authorityHost.empty())
+    {
+      authorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
+    }
+
+    m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
+        tenantId, authorityHost, std::vector<std::string>());
+    m_tokenCredentialImpl = std::make_unique<TokenCredentialImpl>(options);
+    m_requestBody
+        = std::string(
+              "grant_type=client_credentials"
+              "&client_assertion_type="
+              "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
+              "&client_id=")
+        + Url::Encode(clientId);
+  }
 }
 
 WorkloadIdentityCredential::~WorkloadIdentityCredential() = default;
@@ -76,6 +114,14 @@ AccessToken WorkloadIdentityCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
+  if (!m_tokenCredentialImpl)
+  {
+    auto const AuthUnavailable = GetCredentialName() + " authentication unavailable. ";
+
+    throw AuthenticationException(
+        AuthUnavailable + "Environment variables are not fully configured.");
+  }
+
   auto const tenantId = TenantIdResolver::Resolve(
       m_clientCredentialCore.GetTenantId(),
       tokenRequestContext,

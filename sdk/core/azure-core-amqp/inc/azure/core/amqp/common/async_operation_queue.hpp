@@ -4,6 +4,8 @@
 #pragma once
 
 #include <azure/core/context.hpp>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 
 #include <condition_variable>
 #include <list>
@@ -19,7 +21,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    * "CompleteOperation" which sets the result, and a consumer calls WaitForResult which reads from
    * the AsyncOperationQueue. WaitForResult will block until a result is available.
    */
-  template <typename... T> class AsyncOperationQueue {
+  template <typename... T> class AsyncOperationQueue final {
 
   public:
     AsyncOperationQueue() = default;
@@ -61,6 +63,79 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         // CompleteOperation function.
         Poll(pollers...);
       } while (true);
+    }
+
+    /**
+     * @brief Wait for a result to be available.
+     *
+     * @param context The context to use for cancellation.
+     * @param pollers optional set of pollers to call.
+     * @return std::unique_ptr<std::tuple<T...>> The result.
+     *
+     * @remarks The pollers parameter is a TEST HOOK to allow test message receivers to interact
+     * with the message loop. in general clients should NOT provide a poller.
+     *
+     */
+    template <class... Poller>
+    std::unique_ptr<std::tuple<T...>> WaitForResult(Context const& context, Poller&... pollers)
+    {
+      // If the queue is not empty, return the first element.
+      do
+      {
+        {
+          std::unique_lock<std::mutex> lock(m_operationComplete);
+
+          if (!m_operationQueue.empty())
+          {
+            std::unique_ptr<std::tuple<T...>> rv;
+            rv = std::move(m_operationQueue.front());
+            m_operationQueue.pop_front();
+            return rv;
+          }
+
+          // There's nothing in the queue, wait until something is put into the queue.
+          // This will block until either something is put into the queue or the context is
+          // cancelled.
+          m_operationCondition.wait_for(
+              lock, std::chrono::milliseconds(100), [this, &context]() -> bool {
+                // If the context is cancelled, we should return immediately.
+                if (context.IsCancelled())
+                {
+                  return true;
+                }
+                return !m_operationQueue.empty();
+              });
+
+          if (context.IsCancelled())
+          {
+            return nullptr;
+          }
+        }
+        // Note: We need to call Poll() *outside* the lock because the poller is going to call the
+        // CompleteOperation function.
+        Poll(pollers...);
+      } while (true);
+    }
+
+    /**
+     * @brief Tries to wait for a result to be available.
+     *
+     * @return std::unique_ptr<std::tuple<T...>> The result. If no result is available, returns
+     * nullptr.
+     */
+    std::unique_ptr<std::tuple<T...>> TryWaitForResult()
+    {
+      // If the queue is not empty, return the first element.
+      std::unique_lock<std::mutex> lock(m_operationComplete);
+
+      if (!m_operationQueue.empty())
+      {
+        std::unique_ptr<std::tuple<T...>> rv;
+        rv = std::move(m_operationQueue.front());
+        m_operationQueue.pop_front();
+        return rv;
+      }
+      return nullptr;
     }
 
     // Clear any pending elements from the queue. This may be needed because some queued elements

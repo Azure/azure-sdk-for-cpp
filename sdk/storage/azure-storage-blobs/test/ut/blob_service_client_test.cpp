@@ -497,4 +497,33 @@ namespace Azure { namespace Storage { namespace Test {
     auto destContainerClient2 = serviceClient.GetBlobContainerClient(destContainerName2);
     destContainerClient2.Delete();
   }
+
+  TEST_F(BlobServiceClientTest, Audience)
+  {
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+
+    // default audience
+    auto serviceClient
+        = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(serviceClient.GetProperties());
+
+    // custom audience
+    auto serviceUrl = Azure::Core::Url(serviceClient.GetUrl());
+    clientOptions.Audience = Blobs::Models::BlobAudience(
+        serviceUrl.GetScheme() + "://" + serviceUrl.GetHost() + "/.default");
+    serviceClient
+        = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(serviceClient.GetProperties());
+
+    // error audience
+    clientOptions.Audience = Blobs::Models::BlobAudience("https://disk.compute.azure.com/.default");
+    serviceClient
+        = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);
+    EXPECT_THROW(serviceClient.GetProperties(), StorageException);
+  }
 }}} // namespace Azure::Storage::Test

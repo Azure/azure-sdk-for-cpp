@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "eventhubs_test_base.hpp"
+#include "test_checkpoint_store.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/identity.hpp>
@@ -12,11 +13,7 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   class CheckpointStoreTest : public EventHubsTestBase {
-    virtual void SetUp() override
-    {
-      EventHubsTestBase::SetUp();
-      m_blobClientOptions = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-    }
+    virtual void SetUp() override { EventHubsTestBase::SetUp(); }
 
   protected:
     std::string GetRandomName()
@@ -32,17 +29,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       return name;
     }
-
-    Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
   };
 
   TEST_F(CheckpointStoreTest, TestCheckpoints)
   {
     std::string const testName = GetRandomName();
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
-    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
+    Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
     auto checkpoints = checkpointStore.ListCheckpoints(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
@@ -91,10 +84,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(CheckpointStoreTest, TestOwnerships)
   {
     std::string const testName = GetRandomName();
-    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
 
-    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
+    TestCheckpointStore checkpointStore;
 
     auto ownerships = checkpointStore.ListOwnership(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");

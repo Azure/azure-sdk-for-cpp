@@ -6,6 +6,7 @@
 #include "azure/storage/blobs/rest_client.hpp"
 
 #include <azure/core/internal/client_options.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/match_conditions.hpp>
 #include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
@@ -19,6 +20,35 @@
 #include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
+
+  namespace Models {
+
+    /**
+     * @brief Audiences available for Blobs
+     *
+     */
+    class BlobAudience final : public Azure::Core::_internal::ExtendableEnumeration<BlobAudience> {
+    public:
+      /**
+       * @brief Construct a new BlobAudience object
+       *
+       * @param blobAudience The Azure Active Directory audience to use when forming authorization
+       * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
+       * cloud where the resource is located. For more information: See
+       * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+       */
+      explicit BlobAudience(std::string blobAudience)
+          : ExtendableEnumeration(std::move(blobAudience))
+      {
+      }
+
+      /**
+       * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
+       * Storage account.
+       */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobAudience PublicAudience;
+    };
+  } // namespace Models
 
   /**
    * @brief Specifies access conditions for a container.
@@ -165,6 +195,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * to prompt a challenge in order to discover the correct tenant for the resource.
      */
     bool EnableTenantDiscovery = false;
+
+    /**
+     * The Audience to use for authentication with Azure Active Directory (AAD).
+     * #Azure::Storage::Blobs::Models::BlobAudience::PublicAudience will be assumed if Audience is
+     * not set.
+     */
+    Azure::Nullable<Models::BlobAudience> Audience;
   };
 
   /**

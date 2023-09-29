@@ -49,10 +49,6 @@ elseif(NOT AZ_ALL_LIBRARIES)
     find_package(azure-core-amqp-cpp REQUIRED)
   endif()
 
-  find_package(azure-storage-blobs-cpp CONFIG QUIET)
-  if(NOT azure-storage-blobs-cpp_FOUND)
-    find_package(azure-storage-blobs-cpp REQUIRED)
-  endif()
 endif()
 
 set(
@@ -110,7 +106,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp Azure::azure-storage-blobs)
+target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")

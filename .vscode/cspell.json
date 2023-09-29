@@ -47,6 +47,7 @@
     "azsdkengsys",
     "azurecr",
     "azuresdk",
+    "azurl",
     "azuresdkforcpp",
     "centralus",
     "centraluseuap",
@@ -126,6 +127,7 @@
     "otel",
     "PBYTE",
     "pdbs",
+    "phoebusm",
     "Piotrowski",
     "pscredential",
     "PUCHAR",
@@ -179,6 +181,13 @@
     "XSMB"
   ],
   "overrides": [
+    {
+      "filename": "CMakePresets.json",
+      "words": [
+        "ASAN",
+        "fsanitize"
+      ]
+    },
     {
       "filename": "**/eng/pipelines/templates/**/*.yml",
       "words": [
