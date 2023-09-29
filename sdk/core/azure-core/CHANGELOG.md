@@ -4,8 +4,7 @@
 
 ### Features Added
 
-- [[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983) Added support for setting `CURLOPT_CAPATH` libcurl option on Linux.
-
+- [[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983) Added support for setting `CURLOPT_CAPATH` libcurl option on Linux. (A community contribution, courtesy of _[phoebusm](https://github.com/phoebusm)_)
 
 ### Breaking Changes
 
@@ -24,6 +23,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 - Sutou Kouhei _([GitHub](https://github.com/kou))_
 - adamdebreceni _([GitHub](https://github.com/adamdebreceni))_
+- Phoebus Mak _([GitHub](https://github.com/phoebusm))_
 
 ## 1.10.2 (2023-08-04)
 
