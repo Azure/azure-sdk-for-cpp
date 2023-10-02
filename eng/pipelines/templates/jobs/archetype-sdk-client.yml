@@ -254,7 +254,7 @@ jobs:
                 }
               displayName: Copy CHANGELOG.md to package artifact
 
-            - script: cmake --build . --target ${{ artifact.Name }}-docs
+            - script: cmake --build . --target ${{ artifact.Path }}-docs
               workingDirectory: build
               displayName: Generate docs (${{ artifact.Name }}-docs)
 

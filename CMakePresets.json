@@ -91,6 +91,22 @@
       "architecture": "win32"
     },
     {
+      "name": "x64-msvc-static",
+      "displayName": "Windows x64 MSVC Static",
+      "description": "Windows Default, MSVC, x64 architecture.",
+      "inherits": "msvc-windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "MSVC_USE_STATIC_CRT": true
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+
+    {
       "name": "x64",
       "displayName": "Windows x64",
       "description": "x64 architecture.",
@@ -304,6 +320,16 @@
       "name": "x86-msvc-static-debug-perftests",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
       "inherits": [ "x86-msvc-static", "debug-build", "enable-tests", "enable-perf", "enable-samples", "curl-transport", "winhttp-transport" ]
+    },
+    {
+      "name": "x64-msvc-static-debug-perftests",
+      "displayName": "x64 MSVC Debug static With Perf Tests and samples",
+      "inherits": [ "x64-msvc-static", "debug-build", "enable-tests", "enable-perf", "enable-samples", "curl-transport", "winhttp-transport" ]
+    },
+    {
+      "name": "x64-msvc-static-release-perftests",
+      "displayName": "x64 MSVC Release static With Perf Tests and samples",
+      "inherits": [ "x64-msvc-static", "release-build", "enable-tests", "enable-perf", "enable-samples", "curl-transport", "winhttp-transport" ]
     },
     {
       "name": "x64-static-release-perftests",

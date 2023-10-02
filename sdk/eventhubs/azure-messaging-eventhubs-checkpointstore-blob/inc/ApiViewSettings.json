@@ -1,0 +1,20 @@
+{
+  "sourceFilesToProcess": null,
+  "sourceFilesToSkip": [
+  ],
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-messaging-eventhubs/inc",
+    "../../../storage/azure-storage-common/inc",
+    "../../../storage/azure-storage-blobs/inc"
+  ],
+  "additionalCompilerSwitches": [
+  ],
+  "allowInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Messaging",
+  "reviewName": "Azure Messaging EventHubs Blob Checkpoint Store API Review",
+  "serviceName": null,
+  "packageName": "azure-messaging-eventhubs-checkpointstore-blob-cpp"
+}

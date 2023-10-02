@@ -117,6 +117,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       } while (true);
     }
 
+    /**
+     * @brief Tries to wait for a result to be available.
+     *
+     * @return std::unique_ptr<std::tuple<T...>> The result. If no result is available, returns
+     * nullptr.
+     */
+    std::unique_ptr<std::tuple<T...>> TryWaitForResult()
+    {
+      // If the queue is not empty, return the first element.
+      std::unique_lock<std::mutex> lock(m_operationComplete);
+
+      if (!m_operationQueue.empty())
+      {
+        std::unique_ptr<std::tuple<T...>> rv;
+        rv = std::move(m_operationQueue.front());
+        m_operationQueue.pop_front();
+        return rv;
+      }
+      return nullptr;
+    }
+
     // Clear any pending elements from the queue. This may be needed because some queued elements
     // may have ordering dependencies that need to be cleared before the object containing the queue
     // can be released.

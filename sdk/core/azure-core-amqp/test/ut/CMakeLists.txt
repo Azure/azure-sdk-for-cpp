@@ -18,6 +18,7 @@ add_executable(azure-core-amqp-tests
   amqp_message_tests.cpp
   amqp_properties_tests.cpp
   amqp_value_tests.cpp
+  async_operation_queue_tests.cpp
   azure_core_amqp_tests.cpp
   claim_based_security_tests.cpp
   connection_string_tests.cpp

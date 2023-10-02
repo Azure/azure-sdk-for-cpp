@@ -233,6 +233,10 @@
       "type": "string",
       "value": "[concat(variables('eventHubsNamespace'), '.servicebus.windows.net')]"
     },
+    "EVENTHUBS_NAMESPACE": {
+      "type": "string",
+      "value": "[variables('eventHubsNamespace')]"
+    },
     "EVENTHUB_STORAGE_ENDPOINT_SUFFIX": {
       "type": "string",
       "value": "[parameters('storageEndpointSuffix')]"
