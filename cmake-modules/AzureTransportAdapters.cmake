@@ -13,9 +13,10 @@ endif()
 
 #  Defines `BUILD_TRANSPORT_WINHTTP_ADAPTER` and `BUILD_CURL_HTTP_TRANSPORT_ADAPTER` for source code
 
-# On Windows: Make sure to build WinHTTP either if it was user-requested or no transport was selected at all.
-# On POSIX: Make sure to build Curl either if it was user-requested or no transport was selected at all.
 if (NO_AUTOMATIC_TRANSPORT_BUILD)
+  # `NO_AUTOMATIC_TRANSPORT_BUILD` is not supported to be used publicly and is only used by vcpkg manifest.
+  # Vcpkg needs it to be able to build azure-core-cpp[core] which should represent a core that is built without any transport.
+  # There's no expected scenario where SDK customers only install azure-core-cpp[core].
   message("Automatic transport build option detection is disabled.")
 
   if (BUILD_TRANSPORT_CURL)
@@ -26,6 +27,9 @@ if (NO_AUTOMATIC_TRANSPORT_BUILD)
     add_compile_definitions(BUILD_TRANSPORT_WINHTTP_ADAPTER)
   endif()
 else()
+  # On Windows: Make sure to build WinHTTP either if it was user-requested or no transport was selected at all.
+  # On POSIX: Make sure to build Curl either if it was user-requested or no transport was selected at all.
+
   if (WIN32 OR MINGW OR MSYS OR CYGWIN)
     if (BUILD_TRANSPORT_CURL)
       # Specified by user on CMake input Libcurl
