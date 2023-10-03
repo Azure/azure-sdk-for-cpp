@@ -7,7 +7,7 @@ include(AzureVcpkg)
 az_vcpkg_integrate()
 
 cmake_minimum_required (VERSION 3.13)
-project(azure-messaging-eventhubs-checkpoint-blob LANGUAGES CXX)
+project(azure-messaging-eventhubs-checkpointstore-blob LANGUAGES CXX)
 
 # Compile Options
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
@@ -19,7 +19,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
-    SetCompileOptions(EVENTHUBS_CHECKPOINT_BLOB)
+    SetCompileOptions(EVENTHUBS_CHECKPOINTSTORE_BLOB)
 endif()
 
 include(AzureVersion)
@@ -66,28 +66,28 @@ set(
 )
 
 add_library(
-  azure-messaging-eventhubs-checkpoint-blob
+  azure-messaging-eventhubs-checkpointstore-blob
     ${AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_HEADER} ${AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_SOURCE}
 )
-create_per_service_target_build(eventhubs azure-messaging-eventhubs-checkpoint-blob)
-add_library(Azure::azure-messaging-eventhubs-checkpoint-blob ALIAS azure-messaging-eventhubs-checkpoint-blob)
+create_per_service_target_build(eventhubs azure-messaging-eventhubs-checkpointstore-blob)
+add_library(Azure::azure-messaging-eventhubs-checkpointstore-blob ALIAS azure-messaging-eventhubs-checkpointstore-blob)
 
 target_include_directories(
-  azure-messaging-eventhubs-checkpoint-blob
+  azure-messaging-eventhubs-checkpointstore-blob
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-messaging-eventhubs-checkpoint-blob 
+target_link_libraries(azure-messaging-eventhubs-checkpointstore-blob 
     PUBLIC Azure::azure-core Azure::azure-messaging-eventhubs Azure::azure-storage-blobs
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(eventhubs azure-messaging-eventhubs-checkpoint-blob azure-messaging-eventhubs-blobcheckpointstore-test "tests?/*;samples?/*")
+create_code_coverage(eventhubs azure-messaging-eventhubs-checkpointstore-blob azure-messaging-eventhubs-blobcheckpointstore-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
-#generate_documentation(azure-messaging-eventhubs-checkpoint-blob ${AZ_LIBRARY_VERSION})
+#generate_documentation(azure-messaging-eventhubs-checkpointstore-blob ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-messaging-eventhubs-checkpointstore-blob ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
@@ -95,13 +95,13 @@ if(BUILD_TESTING)
 endif()
 
 az_vcpkg_export(
-    azure-messaging-eventhubs-checkpoint-blob
+    azure-messaging-eventhubs-checkpointstore-blob
     MESSAGING_EVENTHUBS_CHECKPOINTSTORE_BLOB
     azure/messaging/eventhubs/checkpointstore_blob/dll_import_export.hpp
   )
 
 az_rtti_setup(
-  azure-messaging-eventhubs-checkpoint-blob
+  azure-messaging-eventhubs-checkpointstore-blob
   MESSAGING_EVENTHUBS_CHECKPOINTSTORE_BLOB
   azure/messaging/eventhubs/checkpointstore_blob/rtti.hpp
 )
