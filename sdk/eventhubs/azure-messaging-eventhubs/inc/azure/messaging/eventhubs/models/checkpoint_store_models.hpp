@@ -38,6 +38,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The blob storage name prefix for this ownership.
     std::string GetOwnershipPrefixName() const;
   };
+  std::ostream& operator<<(std::ostream& os, Ownership const& value);
+
 
   /**@brief Checkpoint tracks the last successfully processed event in a partition.
    */
@@ -62,4 +64,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief Returns the name of the blob that stores the checkpoint.
     std::string GetCheckpointBlobName() const;
   };
+  std::ostream& operator<<(std::ostream& os, Checkpoint const& value);
 }}}} // namespace Azure::Messaging::EventHubs::Models

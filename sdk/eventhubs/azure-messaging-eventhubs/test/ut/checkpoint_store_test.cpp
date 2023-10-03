@@ -35,14 +35,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const testName = GetRandomName();
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-    Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
-    auto checkpoints = checkpointStore.ListCheckpoints(
+    std::shared_ptr<CheckpointStore> checkpointStore{
+        std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
+
+    auto checkpoints = checkpointStore->ListCheckpoints(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
 
     EXPECT_EQ(0ul, checkpoints.size());
 
-    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
+    checkpointStore->UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         consumerGroup,
         "event-hub-name",
         "ns.servicebus.windows.net",
@@ -51,7 +53,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         202,
     });
 
-    checkpoints = checkpointStore.ListCheckpoints(
+    {
+      // There still should be no checkpoints in the partition we first queried.
+      checkpoints = checkpointStore->ListCheckpoints(
+          "fully-qualified-namespace", "event-hub-name", "consumer-group");
+      EXPECT_EQ(0, checkpoints.size());
+    }
+
+    checkpoints = checkpointStore->ListCheckpoints(
         "ns.servicebus.windows.net", "event-hub-name", consumerGroup);
     EXPECT_EQ(checkpoints.size(), 1ul);
     EXPECT_EQ(consumerGroup, checkpoints[0].ConsumerGroup);
@@ -61,7 +70,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(202, checkpoints[0].SequenceNumber.Value());
     EXPECT_EQ(101, checkpoints[0].Offset.Value());
 
-    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
+    checkpointStore->UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         consumerGroup,
         "event-hub-name",
         "ns.servicebus.windows.net",
@@ -70,7 +79,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         203,
     });
 
-    checkpoints = checkpointStore.ListCheckpoints(
+    checkpoints = checkpointStore->ListCheckpoints(
         "ns.servicebus.windows.net", "event-hub-name", consumerGroup);
     EXPECT_EQ(checkpoints.size(), 1ul);
     EXPECT_EQ(consumerGroup, checkpoints[0].ConsumerGroup);
@@ -85,17 +94,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const testName = GetRandomName();
 
-    TestCheckpointStore checkpointStore;
+    std::unique_ptr<CheckpointStore> checkpointStore = std::make_unique<TestCheckpointStore>();
 
-    auto ownerships = checkpointStore.ListOwnership(
+    auto ownerships = checkpointStore->ListOwnership(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
     EXPECT_EQ(0ul, ownerships.size());
 
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{});
     EXPECT_EQ(0ul, ownerships.size());
 
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
                 "$Default",
@@ -118,7 +127,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     //
     // This ownership should NOT take precedence over the previous ownership, so the set of
     // ownerships returned should be empty.
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
                 "$Default",
@@ -129,7 +138,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 Azure::ETag("randomETAG")}});
     EXPECT_EQ(0ul, ownerships.size());
 
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
                 "$Default",

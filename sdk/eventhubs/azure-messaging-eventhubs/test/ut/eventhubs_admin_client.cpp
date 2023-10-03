@@ -129,7 +129,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput = Azure::Core::Json::_internal::json::parse(bodyAsString);
     if (jsonOutput.is_null())
     {
       throw std::runtime_error("JSON output is null!");
@@ -343,7 +343,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
     if (jsonOutput.is_null())
     {
       throw std::runtime_error("JSON output is null!");
@@ -396,7 +397,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
     if (jsonOutput.is_null())
     {
       throw std::runtime_error("JSON output is null!");
@@ -452,7 +454,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
     if (jsonOutput.is_null())
     {
       throw std::runtime_error("JSON output is null!");
@@ -482,7 +485,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
     if (jsonOutput.is_null())
     {
       throw std::runtime_error("JSON output is null!");
@@ -544,7 +548,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
 
     return EventHub(eventHubName, m_resourceGroup, m_subscriptionId);
   }
@@ -571,7 +576,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = ParseAzureCliOutput(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
     return true;
   }
 

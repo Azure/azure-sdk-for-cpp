@@ -13,15 +13,14 @@
 
 #include <gtest/gtest.h>
 
-class ProducerClientTest : public EventHubsTestBase {
-};
+class ProducerClientTest : public EventHubsTestBase {};
 
 TEST_F(ProducerClientTest, ConnectionStringNoEntityPath)
 {
   std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(connStringNoEntityPath, eventHubName);
+  Azure::Messaging::EventHubs::ProducerClient client{connStringNoEntityPath, eventHubName};
   EXPECT_EQ(eventHubName, client.GetEventHubName());
 }
 
@@ -31,7 +30,7 @@ TEST_F(ProducerClientTest, ConnectionStringEntityPath)
   std::string const connStringEntityPath
       = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(connStringEntityPath, eventHubName);
+  Azure::Messaging::EventHubs::ProducerClient client{connStringEntityPath, eventHubName};
   EXPECT_EQ(eventHubName, client.GetEventHubName());
 }
 
@@ -44,8 +43,8 @@ TEST_F(ProducerClientTest, TokenCredential_LIVEONLY_)
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.ApplicationID = "appId";
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      "gearamaeh1.servicebus.windows.net", eventHubName, credential);
+  Azure::Messaging::EventHubs::ProducerClient client{
+      "gearamaeh1.servicebus.windows.net", eventHubName, credential};
   EXPECT_EQ(eventHubName, client.GetEventHubName());
 }
 
@@ -59,8 +58,8 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connStringEntityPath, eventHubName, producerOptions);
+  Azure::Messaging::EventHubs::ProducerClient client{
+      connStringEntityPath, eventHubName, producerOptions};
 
   Azure::Core::Amqp::Models::AmqpMessage message2;
   Azure::Messaging::EventHubs::Models::EventData message1;
@@ -104,8 +103,8 @@ TEST_F(ProducerClientTest, EventHubRawMessageSend_LIVEONLY_)
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connStringEntityPath, eventHubName, producerOptions);
+  Azure::Messaging::EventHubs::ProducerClient client{
+      connStringEntityPath, eventHubName, producerOptions};
 
   client.Send(Azure::Messaging::EventHubs::Models::EventData{"This is a test message"});
 
@@ -126,12 +125,14 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connStringEntityPath, eventHubName, producerOptions);
+  Azure::Messaging::EventHubs::ProducerClient client{
+      connStringEntityPath, eventHubName, producerOptions};
 
-  auto result = client.GetEventHubProperties();
-  EXPECT_EQ(result.Name, eventHubName);
-  EXPECT_TRUE(result.PartitionIds.size() > 0);
+  ASSERT_NO_THROW([&]() {
+    auto result = client.GetEventHubProperties();
+    EXPECT_EQ(result.Name, eventHubName);
+    EXPECT_TRUE(result.PartitionIds.size() > 0);
+  });
 }
 
 TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
@@ -144,10 +145,12 @@ TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connStringEntityPath, eventHubName, producerOptions);
+  Azure::Messaging::EventHubs::ProducerClient client{
+      connStringEntityPath, eventHubName, producerOptions};
 
-  auto result = client.GetPartitionProperties("0");
-  EXPECT_EQ(result.Name, eventHubName);
-  EXPECT_EQ(result.PartitionId, "0");
+  ASSERT_NO_THROW([&]() {
+    auto result = client.GetPartitionProperties("0");
+    EXPECT_EQ(result.Name, eventHubName);
+    EXPECT_EQ(result.PartitionId, "0");
+  });
 }

@@ -4,7 +4,17 @@
 
 #include "private/eventhubs_constants.hpp"
 
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
+
+#include <iomanip>
+
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
+
 namespace Azure { namespace Messaging { namespace EventHubs {
+
+  ProcessorPartitionClient::~ProcessorPartitionClient() {}
 
   void ProcessorPartitionClient::UpdateCheckpoint(
       Azure::Core::Amqp::Models::AmqpMessage const& amqpMessage,
@@ -44,4 +54,34 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     m_checkpointStore->UpdateCheckpoint(checkpoint, context);
   }
+
+  void ProcessorPartitionClient::UpdateCheckpoint(
+      Models::ReceivedEventData const& eventData,
+      Core::Context const& context)
+  {
+    uint64_t sequenceNumber{};
+    if (!eventData.SequenceNumber.HasValue())
+    {
+      throw std::runtime_error("Event does not have a sequence number.");
+    }
+    if (eventData.SequenceNumber.HasValue())
+    {
+      sequenceNumber = eventData.SequenceNumber.Value();
+    }
+    uint64_t offset{};
+    if (!eventData.Offset.HasValue())
+    {
+      offset = eventData.Offset.Value();
+    }
+
+    Models::Checkpoint checkpoint;
+    checkpoint.ConsumerGroup = m_consumerClientDetails.ConsumerGroup;
+    checkpoint.FullyQualifiedNamespaceName = m_consumerClientDetails.FullyQualifiedNamespace;
+    checkpoint.PartitionId = m_partitionId;
+    checkpoint.EventHubName = m_consumerClientDetails.EventHubName;
+    checkpoint.SequenceNumber = sequenceNumber;
+    checkpoint.Offset = offset;
+    m_checkpointStore->UpdateCheckpoint(checkpoint, context);
+  }
+
 }}} // namespace Azure::Messaging::EventHubs

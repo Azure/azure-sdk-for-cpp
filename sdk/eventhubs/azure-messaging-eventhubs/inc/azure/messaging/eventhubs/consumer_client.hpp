@@ -48,10 +48,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class ConsumerClient final {
   public:
     /** Create a new ConsumerClient from an existing one. */
-    ConsumerClient(ConsumerClient const& other) = default;
+    ConsumerClient(ConsumerClient const& other) = delete;
+
+    /** Move a consumer client */
+    ConsumerClient(ConsumerClient&& other) = default;
 
     /** Assign a ConsumerClient to an existing one. */
-    ConsumerClient& operator=(ConsumerClient const& other) = default;
+    ConsumerClient& operator=(ConsumerClient const& other) = delete;
+
+    /** Move a consumer client */
+    ConsumerClient& operator=(ConsumerClient&& other) = default;
 
     /** @brief Getter for event hub name
      *
@@ -155,9 +161,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
-    void EnsureSession(std::string const& partitionId = {});
-    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = {});
-
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;
 
@@ -177,11 +180,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_hostUrl;
 
     /// @brief The message receivers used to receive messages for a given partition.
+    std::mutex m_receiversLock;
     std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers;
+
     /// @brief The AMQP Sessions used to receive messages for a given partition.
+    std::mutex m_sessionsLock;
+    std::unique_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions;
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
+
+    void EnsureConnection();
+    void EnsureSession(std::string const& partitionId = {});
+    Azure::Core::Amqp::_internal::Session CreateSession();
+    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = {});
   };
 }}} // namespace Azure::Messaging::EventHubs

@@ -24,13 +24,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     auto sasCredential
         = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-            connectionString);
+            connectionString, eventHub);
 
     m_credential = sasCredential;
 
     m_eventHub
         = (sasCredential->GetEntityPath().empty() ? eventHub : sasCredential->GetEntityPath());
     m_fullyQualifiedNamespace = sasCredential->GetHostName();
+    m_targetUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub;
   }
 
   ProducerClient::ProducerClient(
@@ -39,74 +40,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
-        m_credential{credential}, m_producerClientOptions(options)
+        m_credential{credential}, m_producerClientOptions(options),
+        m_targetUrl{"amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub}
   {
-  }
-
-  void ProducerClient::EnsureSession(std::string const& partitionId = {})
-  {
-    if (m_sessions.find(partitionId) == m_sessions.end())
-    {
-      Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-      connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
-      connectOptions.EnableTrace = true;
-      connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
-
-      // Set the UserAgent related properties on this message sender.
-      _detail::EventHubsUtilities::SetUserAgent(
-          connectOptions, m_producerClientOptions.ApplicationID);
-
-      std::string fullyQualifiedNamespace{m_fullyQualifiedNamespace};
-
-      Azure::Core::Amqp::_internal::Connection connection(
-          fullyQualifiedNamespace, m_credential, connectOptions);
-
-      Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-      sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
-      sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
-
-      Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
-      m_sessions.emplace(partitionId, session);
-    }
-  }
-
-  Azure::Core::Amqp::_internal::Session ProducerClient::GetSession(std::string const& partitionId)
-  {
-    return m_sessions.at(partitionId);
-  }
-
-  void ProducerClient::EnsureSender(
-      std::string const& partitionId,
-      Azure::Core::Context const& context)
-  {
-    if (m_senders.find(partitionId) == m_senders.end())
-    {
-      m_targetUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub;
-
-      EnsureSession(partitionId);
-
-      std::string targetUrl = m_targetUrl;
-
-      if (!partitionId.empty())
-      {
-        targetUrl += "/Partitions/" + partitionId;
-      }
-
-      Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
-      senderOptions.Name = m_producerClientOptions.Name;
-      senderOptions.EnableTrace = true;
-      senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
-
-      Azure::Core::Amqp::_internal::MessageSender sender
-          = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions, nullptr);
-      sender.Open(context);
-      m_senders.emplace(partitionId, sender);
-    }
-  }
-  Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(
-      std::string const& partitionId)
-  {
-    return m_senders.at(partitionId);
   }
 
   EventDataBatch ProducerClient::CreateBatch(
@@ -168,23 +104,107 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     Send(batch, context);
   }
+  void ProducerClient::EnsureConnection()
+  {
+    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    if (!m_connection)
+    {
+      Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+      connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
+      connectOptions.EnableTrace = _detail::EnableAmqpTrace;
+      connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
+
+      // Set the UserAgent related properties on this message sender.
+      _detail::EventHubsUtilities::SetUserAgent(
+          connectOptions, m_producerClientOptions.ApplicationID);
+
+      m_connection = std::make_unique<Azure::Core::Amqp::_internal::Connection>(
+          m_fullyQualifiedNamespace, m_credential, connectOptions);
+    }
+  }
+
+  void ProducerClient::EnsureSession(std::string const& partitionId = {})
+  {
+    // Ensure that a connection has been created for this producer.
+    EnsureConnection();
+
+    // Ensure that a session has been created for this partition.
+    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    if (m_sessions.find(partitionId) == m_sessions.end())
+    {
+//      Azure::Core::Amqp::_internal::Session session{CreateSession()};
+//      m_sessions.emplace(partitionId, std::move(session));
+      m_sessions.emplace(partitionId, CreateSession());
+    }
+  }
+
+  Azure::Core::Amqp::_internal::Session ProducerClient::GetSession(std::string const& partitionId)
+  {
+    return m_sessions.at(partitionId);
+  }
+
+  void ProducerClient::EnsureSender(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
+  {
+    std::unique_lock<std::mutex> lock(m_sendersLock);
+    if (m_senders.find(partitionId) == m_senders.end())
+    {
+      EnsureSession(partitionId);
+
+      std::string targetUrl{m_targetUrl};
+      if (!partitionId.empty())
+      {
+        targetUrl += "/Partitions/" + partitionId;
+      }
+
+      Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+      senderOptions.Name = m_producerClientOptions.Name;
+      senderOptions.EnableTrace = _detail::EnableAmqpTrace;
+      senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
+
+      Azure::Core::Amqp::_internal::MessageSender sender
+          = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions, nullptr);
+      sender.Open(context);
+      m_senders.emplace(partitionId, std::move(sender));
+    }
+  }
+  Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(
+      std::string const& partitionId)
+  {
+    return m_senders.at(partitionId);
+  }
+
+
+  Azure::Core::Amqp::_internal::Session ProducerClient::CreateSession()
+  {
+    Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+    sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
+    sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+    return m_connection->CreateSession(sessionOptions);
+  }
 
   Models::EventHubProperties ProducerClient::GetEventHubProperties(Core::Context const& context)
   {
-    // EventHub properties are not associated with a particular partition, so create a message
-    // sender on the empty partition.
-    EnsureSession();
+    EnsureConnection();
 
-    return _detail::EventHubsUtilities::GetEventHubsProperties(GetSession(), m_eventHub, context);
+//    auto session{CreateSession()};
+    auto session{GetSession()};
+    EnsureSession("");
+    return _detail::EventHubsUtilities::GetEventHubsProperties(session, m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ProducerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    EnsureSession(partitionId);
+    EnsureConnection();
+
+//    Azure::Core::Amqp::_internal::Session session{CreateSession()};
+    EnsureSession("");
+    Azure::Core::Amqp::_internal::Session session{GetSession()};
 
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        GetSession(partitionId), m_eventHub, partitionId, context);
+        session, m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

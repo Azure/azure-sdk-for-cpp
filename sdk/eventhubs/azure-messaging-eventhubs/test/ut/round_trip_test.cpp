@@ -10,8 +10,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class RoundTripTests : public EventHubsTestBase {
-  };
+  class RoundTripTests : public EventHubsTestBase {};
 
   // Round trip a message with a string body using a sequence number filter.
   TEST_F(RoundTripTests, SendAndReceiveStringSequenceNumber_LIVEONLY_)
@@ -23,7 +22,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     int64_t startSequenceNumber = 0;
 
     {
-      auto producer = Azure::Messaging::EventHubs::ProducerClient(connectionString, eventHubName);
+      Azure::Messaging::EventHubs::ProducerClient producer{connectionString, eventHubName};
       auto partitionProperties = producer.GetPartitionProperties("1");
       startSequenceNumber = partitionProperties.LastEnqueuedSequenceNumber;
 
@@ -38,7 +37,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
       partitionOptions.StartPosition.SequenceNumber = startSequenceNumber;
 
-      auto consumer = Azure::Messaging::EventHubs::ConsumerClient(
+      Azure::Messaging::EventHubs::ConsumerClient consumer(
           connectionString, eventHubName, consumerGroup);
       auto receiver = consumer.CreatePartitionClient("1", partitionOptions);
 
@@ -59,7 +58,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     int64_t startOffset = 0;
     {
-      auto producer = Azure::Messaging::EventHubs::ProducerClient(connectionString, eventHubName);
+      Azure::Messaging::EventHubs::ProducerClient producer(connectionString, eventHubName);
       auto partitionProperties = producer.GetPartitionProperties("1");
       startOffset = partitionProperties.LastEnqueuedOffset;
 
@@ -71,7 +70,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     {
-      auto consumer = Azure::Messaging::EventHubs::ConsumerClient(
+      Azure::Messaging::EventHubs::ConsumerClient consumer(
           connectionString, eventHubName, consumerGroup);
 
       Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
@@ -104,7 +103,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     Azure::DateTime startTime;
     {
-      auto producer = Azure::Messaging::EventHubs::ProducerClient(connectionString, eventHubName);
+      Azure::Messaging::EventHubs::ProducerClient producer(connectionString, eventHubName);
       auto partitionProperties = producer.GetPartitionProperties("1");
       GTEST_LOG_(INFO) << "Partition Properties: " << partitionProperties;
       startTime = partitionProperties.LastEnqueuedTimeUtc + std::chrono::seconds(1);
@@ -124,7 +123,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     {
-      auto consumer = Azure::Messaging::EventHubs::ConsumerClient(
+      Azure::Messaging::EventHubs::ConsumerClient consumer(
           connectionString, eventHubName, consumerGroup);
 
       Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;

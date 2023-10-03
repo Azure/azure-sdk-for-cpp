@@ -222,42 +222,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void SessionImpl::AuthenticateIfNeeded(std::string const& audience, Context const& context)
-  {
-    if (GetConnection()->GetCredential())
-    {
-      std::string tokenAudience = audience;
-      // If the caller provided a URL, use that url, otherwise build the URL to be used.
-      if ((audience.find("amqps://") != 0) && (audience.find("amqp://") != 0))
-      {
-        tokenAudience = "amqps://" + m_connectionToPoll->GetHost() + "/" + audience;
-      }
-      Authenticate(tokenAudience, context);
-    }
-  }
-  void SessionImpl::Authenticate(std::string const& audience, Context const& context)
-  {
-    auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(shared_from_this());
-
-    auto accessToken = GetConnection()->GetSecurityToken(audience, context);
-
-    auto cbsOpenStatus = claimsBasedSecurity->Open(context);
-    if (cbsOpenStatus != CbsOpenResult::Ok)
-    {
-      throw std::runtime_error("Could not open Claims Based Security object."); // LCOV_EXCL_LINE
-    }
-    auto result = claimsBasedSecurity->PutToken(
-        (GetConnection()->IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
-        audience,
-        accessToken,
-        context);
-    if (std::get<0>(result) != CbsOperationResult::Ok)
-    {
-      throw std::runtime_error("Could not put Claims Based Security token."); // LCOV_EXCL_LINE
-    }
-    claimsBasedSecurity->Close();
-  }
-
   bool SessionImpl::OnLinkAttachedFn(
       void* context,
       LINK_ENDPOINT_INSTANCE_TAG* newLinkEndpoint,

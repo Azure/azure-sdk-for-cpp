@@ -125,6 +125,7 @@ EnvironmentLogLevelListener::GetLogListener()
                   << Azure::DateTime(std::chrono::system_clock::now())
                          .ToString(
                              DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
+                  << " T: " << std::hex << std::this_thread::get_id() << std::dec
                   << "] " << LogLevelToConsoleString(level) << " : " << message;
 
         // If the message ends with a new line, flush the stream otherwise insert a new line to
@@ -149,7 +150,7 @@ EnvironmentLogLevelListener::GetLogListener()
 namespace {
 static bool g_initialized;
 } // namespace
-
+ 
 bool EnvironmentLogLevelListener::IsInitialized() { return g_initialized; }
 
 void EnvironmentLogLevelListener::SetInitialized(bool value) { g_initialized = value; }

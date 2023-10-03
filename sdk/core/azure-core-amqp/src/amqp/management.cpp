@@ -84,8 +84,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      */
     if (m_options.ManagementNodeName == "$management")
     {
-      m_session->AuthenticateIfNeeded(
-          m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
+      m_accessToken = m_session->GetConnection()->AuthenticateAudience(
+          m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
     }
     {
       _internal::MessageSenderOptions messageSenderOptions;
@@ -152,10 +152,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage messageToSend,
       Context const& context)
   {
-    auto token = m_session->GetConnection()->GetSecurityToken(m_managementNodeName, context);
-    if (!token.empty())
+    // If the connection is authenticated, include the token in the message.
+    if (!m_accessToken.Token.empty())
     {
-      messageToSend.ApplicationProperties["security_token"] = Models::AmqpValue{token};
+      messageToSend.ApplicationProperties["security_token"]
+          = Models::AmqpValue{m_accessToken.Token};
     }
     messageToSend.ApplicationProperties.emplace("operation", operationToPerform);
     messageToSend.ApplicationProperties.emplace("type", typeOfOperation);
@@ -202,10 +203,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (m_messageSender && m_messageSenderOpen)
     {
       m_messageSender->Close();
+      m_messageSenderOpen = false;
     }
     if (m_messageReceiver && m_messageReceiverOpen)
     {
       m_messageReceiver->Close();
+      m_messageReceiverOpen = false;
     }
     m_isOpen = false;
   }
@@ -531,7 +534,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (!m_sendCompleted)
     {
-      Log::Stream(Logger::Level::Error) << "Received message before send completed.";
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Informational) << "Received message before send completed.";
+      }
     }
 
     Models::_internal::AmqpError messageError;

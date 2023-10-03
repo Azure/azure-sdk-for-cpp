@@ -14,25 +14,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     os << "StartPosition:[";
     if (sp.Offset.HasValue())
     {
-      os << "Off: " << sp.Offset.Value() << std::endl;
+      os << "Off: " << sp.Offset.Value();
     }
     if (sp.SequenceNumber.HasValue())
     {
-      os << "Seq: " << sp.SequenceNumber.Value() << std::endl;
+      os << "Seq: " << sp.SequenceNumber.Value();
     }
     if (sp.EnqueuedTime.HasValue())
     {
       os << "Enq: " << sp.EnqueuedTime.Value().ToString();
     }
-    os << " Inclusive: " << std::boolalpha << sp.Inclusive;
     if (sp.Earliest.HasValue())
     {
-      os << " Earliest: " << std::boolalpha << sp.Earliest.Value() << std::endl;
+      os << " Earliest: " << std::boolalpha << sp.Earliest.Value();
     }
     if (sp.Latest.HasValue())
     {
-      os << "Latest: " << std::boolalpha << sp.Latest.Value() << std::endl;
+      os << "Latest: " << std::boolalpha << sp.Latest.Value();
     }
+    os << " Inclusive: " << std::boolalpha << sp.Inclusive;
     os << "]";
 
     return os;

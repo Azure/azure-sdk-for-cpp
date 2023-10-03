@@ -42,24 +42,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /**@brief  ProducerClient can be used to send events to an Event Hub.
    */
   class ProducerClient final {
-    /// The connection string for the Event Hubs namespace
-    std::string m_connectionString;
-
-    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
-    std::string m_fullyQualifiedNamespace;
-
-    /// The name of the Event Hub
-    std::string m_eventHub{};
-
-    /// The URL to the Event Hubs namespace
-    std::string m_targetUrl{};
-
-    /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
-
-    ProducerClientOptions m_producerClientOptions{};
-    std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
-    std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
   public:
     /** Get the fully qualified namespace from the connection string */
@@ -72,10 +54,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     /** Create a ProducerClient from another ProducerClient. */
-    ProducerClient(ProducerClient const& other) = default;
+    ProducerClient(ProducerClient const& other) = delete;
 
     /** Assign a ProducerClient another ProducerClient. */
-    ProducerClient& operator=(ProducerClient const& other) = default;
+    ProducerClient& operator=(ProducerClient const& other) = delete;
+
+    ProducerClient(ProducerClient&& other) = default;
+    ProducerClient& operator=(ProducerClient&& other) = default;
 
     /** Default Constructor for a ProducerClient */
     ProducerClient() = default;
@@ -170,12 +155,46 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
+    /// The connection string for the Event Hubs namespace
+    std::string m_connectionString;
+
+    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
+    std::string m_fullyQualifiedNamespace;
+
+    /// The name of the Event Hub
+    std::string m_eventHub{};
+
+    /// The URL to the Event Hubs namespace
+    std::string m_targetUrl{};
+
+    /// Credentials to be used to authenticate the client.
+    std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
+
+    ProducerClientOptions m_producerClientOptions{};
+
+    // Protects m_senders and m_connection.
+    std::mutex m_sendersLock;
+    std::unique_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
+
+    std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
+    std::mutex m_sessionsLock;
+    std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
+
+    // Ensure that the connection for this producer has been established.
+    void EnsureConnection();
+
+    // Ensure that a session for the specified partition ID has been established.
+    void EnsureSession(std::string const& partitionId);
+
+    // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(
         std::string const& partitionId = "",
         Azure::Core::Context const& context = {});
+
+    Azure::Core::Amqp::_internal::Session CreateSession();
+
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
 
-    void EnsureSession(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = "");
   };
 }}} // namespace Azure::Messaging::EventHubs

@@ -68,7 +68,6 @@ set(
     inc/azure/messaging/eventhubs/models/processor_models.hpp
     inc/azure/messaging/eventhubs/partition_client.hpp
     inc/azure/messaging/eventhubs/processor.hpp
-    inc/azure/messaging/eventhubs/processor_load_balancer.hpp
     inc/azure/messaging/eventhubs/processor_partition_client.hpp
     inc/azure/messaging/eventhubs/producer_client.hpp
     inc/azure/messaging/eventhubs/rtti.hpp
@@ -90,7 +89,7 @@ set(
     src/producer_client.cpp
     src/retry_operation.cpp
     src/eventhubs_utilities.cpp
-)
+ "src/processor.cpp")
 
 add_library(
   azure-messaging-eventhubs

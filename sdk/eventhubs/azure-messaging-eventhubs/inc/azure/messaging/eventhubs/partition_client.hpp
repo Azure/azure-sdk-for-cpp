@@ -58,10 +58,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   public:
     /// Create a PartitionClient from another PartitionClient
-    PartitionClient(PartitionClient const& other) = default;
+    PartitionClient(PartitionClient const& other) = delete;
+    PartitionClient(PartitionClient && other) = default;
 
     /// Assign a PartitionClient to another PartitionClient
-    PartitionClient& operator=(PartitionClient const& other) = default;
+    PartitionClient& operator=(PartitionClient const& other) = delete;
+    PartitionClient& operator=(PartitionClient && other) = default;
 
     /** Destroy this partition client.
      */
