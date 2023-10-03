@@ -14,7 +14,7 @@ endif()
 #  Defines `BUILD_TRANSPORT_WINHTTP_ADAPTER` and `BUILD_CURL_HTTP_TRANSPORT_ADAPTER` for source code
 
 if (NO_AUTOMATIC_TRANSPORT_BUILD)
-  # `NO_AUTOMATIC_TRANSPORT_BUILD` is not publically documented and is only used by vcpkg manifest.
+  # `NO_AUTOMATIC_TRANSPORT_BUILD` is not supported to be used publicly and is only used by vcpkg manifest.
   # vcpkg needs it to be able to build azure-core-cpp[core] which should represent a core that is built without any transport.
   message("Automatic transport build option detection is disabled.")
 
