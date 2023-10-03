@@ -15,7 +15,8 @@ endif()
 
 if (NO_AUTOMATIC_TRANSPORT_BUILD)
   # `NO_AUTOMATIC_TRANSPORT_BUILD` is not supported to be used publicly and is only used by vcpkg manifest.
-  # vcpkg needs it to be able to build azure-core-cpp[core] which should represent a core that is built without any transport.
+  # Vcpkg needs it to be able to build azure-core-cpp[core] which should represent a core that is built without any transport.
+  # There's no expected scenario where SDK customers only install azure-core-cpp[core].
   message("Automatic transport build option detection is disabled.")
 
   if (BUILD_TRANSPORT_CURL)
