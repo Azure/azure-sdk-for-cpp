@@ -5,6 +5,7 @@
 
 #include "azure/identity/client_certificate_credential.hpp"
 #include "azure/identity/client_secret_credential.hpp"
+#include "azure/identity/detail/client_credential_core.hpp"
 #include "private/identity_log.hpp"
 
 #include <azure/core/azure_assert.hpp>
@@ -64,7 +65,7 @@ EnvironmentCredential::EnvironmentCredential(
 
       if (!authority.empty())
       {
-        envVarsToParams.push_back({AzureAuthorityHostEnvVarName, "authorityHost"});
+        envVarsToParams.push_back({_detail::AzureAuthorityHostEnvVarName, "authorityHost"});
         clientSecretCredentialOptions.AuthorityHost = authority;
       }
 
@@ -84,7 +85,7 @@ EnvironmentCredential::EnvironmentCredential(
 
       if (!authority.empty())
       {
-        envVarsToParams.push_back({AzureAuthorityHostEnvVarName, "authorityHost"});
+        envVarsToParams.push_back({_detail::AzureAuthorityHostEnvVarName, "authorityHost"});
         clientCertificateCredentialOptions.AuthorityHost = authority;
       }
 
@@ -108,7 +109,7 @@ EnvironmentCredential::EnvironmentCredential(
       auto logMsg = GetCredentialName() + ": Both '" + AzureTenantIdEnvVarName + "' and '"
           + AzureClientIdEnvVarName + "', and at least one of '" + AzureClientSecretEnvVarName
           + "', '" + AzureClientCertificatePathEnvVarName + "' needs to be set. Additionally, '"
-          + AzureAuthorityHostEnvVarName
+          + _detail::AzureAuthorityHostEnvVarName
           + "' could be set to override the default authority host. Currently:\n";
 
       std::pair<char const*, bool> envVarStatus[] = {
@@ -116,7 +117,7 @@ EnvironmentCredential::EnvironmentCredential(
           {AzureClientIdEnvVarName, !clientId.empty()},
           {AzureClientSecretEnvVarName, !clientSecret.empty()},
           {AzureClientCertificatePathEnvVarName, !clientCertificatePath.empty()},
-          {AzureAuthorityHostEnvVarName, !authority.empty()},
+          {_detail::AzureAuthorityHostEnvVarName, !authority.empty()},
       };
       for (auto const& status : envVarStatus)
       {
