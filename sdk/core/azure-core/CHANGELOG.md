@@ -6,6 +6,18 @@
 
 - [[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983) Added support for setting `CURLOPT_CAPATH` libcurl option on Linux. (A community contribution, courtesy of _[phoebusm](https://github.com/phoebusm)_)
 
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Phoebus Mak _([GitHub](https://github.com/phoebusm))_
+
+## 1.10.3 (2023-10-05)
+
+### Bugs Fixed
+
+- Concurrency issues in `Azure::Core::Diagnostics::_internal::Log::Stream` have been fixed.
+
 ### Other Changes
 
 - SDK consumption documentation improvement. (A community contribution, courtesy of _[kou](https://github.com/kou)_)
@@ -17,13 +29,6 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 - Sutou Kouhei _([GitHub](https://github.com/kou))_
 - adamdebreceni _([GitHub](https://github.com/adamdebreceni))_
-- Phoebus Mak _([GitHub](https://github.com/phoebusm))_
-
-## 1.10.3 (2023-10-05)
-
-### Bugs Fixed
-
-- Concurrency issues in `Azure::Core::Diagnostics::_internal::Log::Stream` have been fixed.
 
 ## 1.10.2 (2023-08-04)
 
