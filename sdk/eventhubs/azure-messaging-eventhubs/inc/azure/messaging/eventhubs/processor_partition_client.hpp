@@ -4,8 +4,6 @@
 #include "checkpoint_store.hpp"
 #include "consumer_client.hpp"
 
-//#include <azure/core/amqp.hpp>
-
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   /**@brief  ProcessorPartitionClient allows you to receive events, similar to a [PartitionClient],
@@ -22,11 +20,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   public:
     /// Copy a ProcessorPartitionClient to another ProcessorPartitionClient.
     ProcessorPartitionClient(ProcessorPartitionClient const& other) = delete;
-    ProcessorPartitionClient(ProcessorPartitionClient && other) = default;
+    ProcessorPartitionClient(ProcessorPartitionClient&& other) = default;
 
     /// Assignment operator.
     ProcessorPartitionClient& operator=(ProcessorPartitionClient const& other) = delete;
-    ProcessorPartitionClient& operator=(ProcessorPartitionClient && other) = default;
+    ProcessorPartitionClient& operator=(ProcessorPartitionClient&& other) = default;
 
     ~ProcessorPartitionClient();
 
@@ -65,7 +63,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::function<void()> m_cleanupFunc;
     Models::ConsumerClientDetails m_consumerClientDetails;
 
-
     /**  Constructs a new instance of the ProcessorPartitionClient.
      * @param partitionId The identifier of the partition to connect the client to.
      * @param partitionClient The [PartitionClient] to use for receiving events.
@@ -78,16 +75,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::shared_ptr<CheckpointStore> checkpointStore,
         Models::ConsumerClientDetails consumerClientDetails,
         std::function<void()> cleanupFunc)
-        : m_partitionId(partitionId),
-          m_checkpointStore(checkpointStore), m_cleanupFunc(cleanupFunc),
-          m_consumerClientDetails(consumerClientDetails)
+        : m_partitionId(partitionId), m_checkpointStore(checkpointStore),
+          m_cleanupFunc(cleanupFunc), m_consumerClientDetails(consumerClientDetails)
     {
     }
 
-    void SetPartitionClient(std::unique_ptr<PartitionClient> &partitionClient)
+    void SetPartitionClient(std::unique_ptr<PartitionClient>& partitionClient)
     {
-	  m_partitionClient = std::move(partitionClient);
-	}
+      m_partitionClient = std::move(partitionClient);
+    }
 
     void UpdateCheckpoint(
         Azure::Core::Amqp::Models::AmqpMessage const& amqpMessage,

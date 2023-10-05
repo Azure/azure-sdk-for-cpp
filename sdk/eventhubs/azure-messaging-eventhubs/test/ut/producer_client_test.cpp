@@ -27,10 +27,9 @@ TEST_F(ProducerClientTest, ConnectionStringNoEntityPath)
 TEST_F(ProducerClientTest, ConnectionStringEntityPath)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-  std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+  std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
 
-  Azure::Messaging::EventHubs::ProducerClient client{connStringEntityPath, eventHubName};
+  Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName};
   EXPECT_EQ(eventHubName, client.GetEventHubName());
 }
 
@@ -51,15 +50,13 @@ TEST_F(ProducerClientTest, TokenCredential_LIVEONLY_)
 TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-  std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+  std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  Azure::Messaging::EventHubs::ProducerClient client{
-      connStringEntityPath, eventHubName, producerOptions};
+  Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName, producerOptions};
 
   Azure::Core::Amqp::Models::AmqpMessage message2;
   Azure::Messaging::EventHubs::Models::EventData message1;
@@ -96,15 +93,13 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 TEST_F(ProducerClientTest, EventHubRawMessageSend_LIVEONLY_)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-  std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+  std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  Azure::Messaging::EventHubs::ProducerClient client{
-      connStringEntityPath, eventHubName, producerOptions};
+  Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName, producerOptions};
 
   client.Send(Azure::Messaging::EventHubs::Models::EventData{"This is a test message"});
 
@@ -118,15 +113,13 @@ TEST_F(ProducerClientTest, EventHubRawMessageSend_LIVEONLY_)
 TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-  std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+  std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  Azure::Messaging::EventHubs::ProducerClient client{
-      connStringEntityPath, eventHubName, producerOptions};
+  Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName, producerOptions};
 
   ASSERT_NO_THROW([&]() {
     auto result = client.GetEventHubProperties();
@@ -138,15 +131,13 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-  std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
+  std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
-  Azure::Messaging::EventHubs::ProducerClient client{
-      connStringEntityPath, eventHubName, producerOptions};
+  Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName, producerOptions};
 
   ASSERT_NO_THROW([&]() {
     auto result = client.GetPartitionProperties("0");

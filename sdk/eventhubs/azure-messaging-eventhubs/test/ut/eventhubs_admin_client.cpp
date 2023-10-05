@@ -129,7 +129,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput = Azure::Core::Json::_internal::json::parse(bodyAsString);
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
     if (jsonOutput.is_null())
     {
       throw std::runtime_error("JSON output is null!");
@@ -435,8 +436,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string const& resourceGroup,
       std::string const& subscriptionId,
       Azure::Core::Context const& context)
-      : m_name(name), m_resourceGroup(resourceGroup),
-        m_subscriptionId(subscriptionId), m_pipeline{pipeline}
+      : m_name(name), m_resourceGroup(resourceGroup), m_subscriptionId(subscriptionId),
+        m_pipeline{pipeline}
   {
     Azure::Core::Url requestUrl(
         "https://management.azure.com/subscriptions/" + Azure::Core::Url::Encode(m_subscriptionId)
@@ -569,15 +570,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     request.SetHeader("Accept", "application/json");
     auto result = m_pipeline->Send(request, context);
 
-    auto& val = result->GetBody();
-    std::string bodyAsString{reinterpret_cast<const char*>(val.data()), val.size()};
-    if (result->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Ok)
+    if (result->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Ok
+        && result->GetStatusCode() != Azure::Core::Http::HttpStatusCode::NoContent)
     {
       throw Azure::Core::RequestFailedException(result);
     }
 
-    Azure::Core::Json::_internal::json jsonOutput
-        = Azure::Core::Json::_internal::json::parse(bodyAsString);
+    // There is no expected body on a delete eventhub response.
+
     return true;
   }
 

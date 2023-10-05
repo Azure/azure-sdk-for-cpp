@@ -357,7 +357,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       checkpointStore->ClaimOwnership(
           {TestOwnership("0", clientA),
            TestOwnership("1", clientA),
-           TestOwnership("2", ""),
            TestOwnership("3", clientB),
            TestOwnership("4", clientB)});
 
@@ -405,7 +404,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
-        auto &clientOwned = GroupByOwner(ownerships)[clientA];
+        auto clientOwned = GroupByOwner(ownerships)[clientA];
         std::sort(clientOwned.begin(), clientOwned.end());
         ASSERT_EQ(clientOwned.size(), 3ul);
         EXPECT_EQ(clientOwned[0], "0");
@@ -420,7 +419,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
-        auto &clientOwned = GroupByOwner(ownerships)[clientB];
+        auto clientOwned = GroupByOwner(ownerships)[clientB];
         EXPECT_EQ(clientOwned.size(), 2ul);
 
         RequireBalanced(

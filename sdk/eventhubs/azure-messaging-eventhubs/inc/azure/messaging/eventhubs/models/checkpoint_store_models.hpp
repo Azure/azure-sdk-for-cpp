@@ -40,7 +40,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   };
   std::ostream& operator<<(std::ostream& os, Ownership const& value);
 
-
   /**@brief Checkpoint tracks the last successfully processed event in a partition.
    */
   class Checkpoint final {

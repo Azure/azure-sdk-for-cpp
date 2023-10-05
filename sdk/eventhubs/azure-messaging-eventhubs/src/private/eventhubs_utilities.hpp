@@ -20,7 +20,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
-    constexpr bool EnableAmqpTrace = true;
+  constexpr bool EnableAmqpTrace = true;
 
   class EventHubsExceptionFactory {
   public:
@@ -129,7 +129,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       auto result = managementClient.ExecuteOperation(
           "READ" /* operation */,
           "com.microsoft:eventhub" /* type of operation */,
-          {},
+          "" /* locales */,
           message,
           context);
 
@@ -198,7 +198,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       auto result = managementClient.ExecuteOperation(
           "READ" /* operation */,
           "com.microsoft:partition" /* type of operation */,
-          {},
+          "" /* locales */,
           message,
           context);
 

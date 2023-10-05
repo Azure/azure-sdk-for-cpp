@@ -61,7 +61,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
     }
 
-//    Log::Stream(Logger::Level::Informational) << "Insert AMQP message: " << message;
+    //    Log::Stream(Logger::Level::Informational) << "Insert AMQP message: " << message;
     auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);
 
     if (m_marshalledMessages.size() == 0)

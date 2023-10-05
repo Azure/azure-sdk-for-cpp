@@ -48,9 +48,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         + m_consumerGroup;
   }
 
-  void ConsumerClient::EnsureConnection()
+  Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection()
   {
-    std::unique_lock<std::mutex> lock(m_sessionsLock);
     ConnectionOptions connectOptions;
     connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
     connectOptions.EnableTrace = _detail::EnableAmqpTrace;
@@ -61,30 +60,40 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     _detail::EventHubsUtilities::SetUserAgent(
         connectOptions, m_consumerClientOptions.ApplicationID);
 
-    m_connection = std::make_unique<Azure::Core::Amqp::_internal::Connection>(
-        m_fullyQualifiedNamespace, m_credential, connectOptions);
+    return Azure::Core::Amqp::_internal::Connection{
+        m_fullyQualifiedNamespace, m_credential, connectOptions};
   }
 
-  Azure::Core::Amqp::_internal::Session ConsumerClient::CreateSession()
+  void ConsumerClient::EnsureConnection(std::string const& partitionId)
+  {
+    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    if (m_connections.find(partitionId) == m_connections.end())
+    {
+      m_connections.emplace(partitionId, CreateConnection());
+    }
+  }
+
+  Azure::Core::Amqp::_internal::Session ConsumerClient::CreateSession(std::string const& partitionId)
   {
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize
         = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
 
-    return m_connection->CreateSession(sessionOptions);
+    return m_connections.at(partitionId).CreateSession(sessionOptions);
   }
 
   void ConsumerClient::EnsureSession(std::string const& partitionId)
   {
-    EnsureConnection();
+    EnsureConnection(partitionId);
     std::unique_lock<std::mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      m_sessions.emplace(partitionId, CreateSession());
+      m_sessions.emplace(partitionId, CreateSession(partitionId));
     }
   }
 
-  Azure::Core::Amqp::_internal::Session ConsumerClient::GetSession(std::string const& partitionId)
+  Azure::Core::Amqp::_internal::Session ConsumerClient::GetSession(
+      std::string const& partitionId = {})
   {
     return m_sessions.at(partitionId);
   }
@@ -111,9 +120,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)
   {
     // Since EventHub properties are not tied to a partition, we don't specify a partition ID.
-    EnsureConnection();
-
-    EnsureSession("");
+    EnsureSession({});
 
     return _detail::EventHubsUtilities::GetEventHubsProperties(
         //        CreateSession(), m_eventHub, context);
@@ -126,9 +133,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& partitionId,
       Core::Context const& context)
   {
-    EnsureConnection();
-
-    EnsureSession("");
+    EnsureSession({});
 
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
         //        CreateSession(), m_eventHub, partitionId, context);

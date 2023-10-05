@@ -174,27 +174,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     // Protects m_senders and m_connection.
     std::mutex m_sendersLock;
-    std::unique_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
-
+    std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
+
     std::mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
+    Azure::Core::Amqp::_internal::Connection CreateConnection();
+    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
+
     // Ensure that the connection for this producer has been established.
-    void EnsureConnection();
+    void EnsureConnection(const std::string& partitionId);
 
     // Ensure that a session for the specified partition ID has been established.
     void EnsureSession(std::string const& partitionId);
 
     // Ensure that a message sender for the specified partition has been created.
-    void EnsureSender(
-        std::string const& partitionId = "",
-        Azure::Core::Context const& context = {});
+    void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context = {});
 
-    Azure::Core::Amqp::_internal::Session CreateSession();
-
-    Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
-
-    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = "");
+    Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
   };
 }}} // namespace Azure::Messaging::EventHubs

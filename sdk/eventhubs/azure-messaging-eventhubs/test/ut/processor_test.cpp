@@ -228,11 +228,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
               for (int j = 0; j < batchSize; j++)
               {
                 std::stringstream ss;
-                ss << "[" << partitionClient->PartitionId() << ":[" << i << ":" << j << "]] Message";
+                ss << "[" << partitionClient->PartitionId() << ":[" << i << ":" << j
+                   << "]] Message";
                 batch.TryAddMessage(Models::EventData{ss.str()});
                 counter += 1;
               }
-              GTEST_LOG_(INFO) << "Send batch " << i << ", targeting partition " << partitionClient->PartitionId();
+              GTEST_LOG_(INFO) << "Send batch " << i << ", targeting partition "
+                               << partitionClient->PartitionId();
               producerClient.Send(batch, producerContext);
             }
           }
@@ -576,7 +578,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
   }
-  #if 0
+#if 0
   TEST_F(ProcessorTest, Processor_Balanced_AcquisitionOnly_LIVEONLY_)
   {
     TestPartitionAcquisition(Models::ProcessorStrategy::ProcessorStrategyBalanced);
@@ -585,6 +587,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     TestPartitionAcquisition(Models::ProcessorStrategy::ProcessorStrategyGreedy);
   }
-  #endif
+#endif
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

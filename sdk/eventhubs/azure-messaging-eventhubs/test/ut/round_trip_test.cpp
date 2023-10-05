@@ -10,7 +10,8 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class RoundTripTests : public EventHubsTestBase {};
+  class RoundTripTests : public EventHubsTestBase {
+  };
 
   // Round trip a message with a string body using a sequence number filter.
   TEST_F(RoundTripTests, SendAndReceiveStringSequenceNumber_LIVEONLY_)
