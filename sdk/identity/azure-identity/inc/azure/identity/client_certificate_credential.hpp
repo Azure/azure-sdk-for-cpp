@@ -45,8 +45,8 @@ namespace Azure { namespace Identity {
   {
     /**
      * @brief Authentication authority URL.
-     * @note Default value is read from the 'AZURE_AUTHORITY_HOST' environment variable with Azure
-     * AD global authority as the fallback (https://login.microsoftonline.com/).
+     * @note Defaults to the value of the environment variable 'AZURE_AUTHORITY_HOST'. If that's not
+     * set, the default value is Azure AD global authority (https://login.microsoftonline.com/).
      *
      * @note Example of an authority host string: "https://login.microsoftonline.us/". See national
      * clouds' Azure AD authentication endpoints:

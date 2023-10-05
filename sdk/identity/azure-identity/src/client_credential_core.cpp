@@ -17,7 +17,7 @@ namespace {
 const std::string AadGlobalAuthority = "https://login.microsoftonline.com/";
 }
 
-// The authority host used be the credentials is in the following order of precedence:
+// The authority host used by the credentials is in the following order of precedence:
 // 1. AuthorityHost option set/overriden by the user.
 // 2. The value of AZURE_AUTHORITY_HOST environment variable, which is the default value of the
 // option.
