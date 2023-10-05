@@ -235,7 +235,7 @@ namespace Azure { namespace Core { namespace Test {
                         .ConnectionPoolIndex.clear());
   }
 
-#if defined(_azure_SUPPORT_SETTING_CAPATH)
+#if defined(AZ_PLATFORM_LINUX)
   TEST(CurlTransportOptions, setCADirectory)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
