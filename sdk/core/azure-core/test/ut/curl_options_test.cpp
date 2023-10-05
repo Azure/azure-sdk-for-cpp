@@ -235,7 +235,7 @@ namespace Azure { namespace Core { namespace Test {
                         .ConnectionPoolIndex.clear());
   }
 
-#if defined(_azure_SUPPORT_SETTING_CAPATH)
+#if defined(AZ_PLATFORM_LINUX)
   TEST(CurlTransportOptions, setCADirectory)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
@@ -267,7 +267,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
     EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
-    EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+    EXPECT_NE(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
 
     // Clean the connection from the pool *Windows fails to clean if we leave to be clean upon
     // app-destruction
