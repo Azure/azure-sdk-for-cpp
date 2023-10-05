@@ -14,10 +14,6 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_LINUX)
-#include <openssl/opensslv.h>
-#endif // defined(AZ_PLATFORM_LINUX)
-
 namespace Azure { namespace Core { namespace Http {
   class CurlNetworkConnection;
 
