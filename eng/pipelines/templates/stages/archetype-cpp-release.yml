@@ -202,7 +202,7 @@ stages:
                             -ClientId '$(opensource-aad-app-id)' `
                             -ClientSecret '$(opensource-aad-secret)' `
                             -TenantId '$(opensource-aad-tenant-id)' `
-                            -Fallback '@rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman'
+                            -Fallback '@rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman'
 
                           $prComment = "Adding ${{ artifact.Name }} to release"
                           if ($notifyUsers) {
