@@ -327,8 +327,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       if (m_options.EnableTrace)
       {
         Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
+        Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
       }
-      Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
       m_link->UnsubscribeFromDetachEvent();
 #if SENDER_SYNCHRONOUS_CLOSE
       bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing

@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <azure/core/azure_assert.hpp>
+
 #include <list>
 #include <memory>
 #include <mutex>
@@ -49,6 +51,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
       std::lock_guard<std::mutex> lock(m_pollablesMutex);
       m_pollables.remove(pollable);
+    }
+
+    void AssertIdle()
+    {
+      std::lock_guard<std::mutex> lock(m_pollablesMutex);
+      AZURE_ASSERT(m_pollables.empty());
+      if (!m_pollables.empty())
+      {
+        Azure::Core::_internal::AzureNoReturnPath("Global state is not idle.");
+      }
     }
   };
 }}}}} // namespace Azure::Core::Amqp::Common::_detail

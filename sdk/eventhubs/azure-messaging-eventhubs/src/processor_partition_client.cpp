@@ -14,7 +14,22 @@ using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
-  ProcessorPartitionClient::~ProcessorPartitionClient() {}
+  ProcessorPartitionClient::~ProcessorPartitionClient()
+  {
+    // Only log the destructor if the partition client has a value.
+    if (!m_partitionId.empty())
+    {
+      Log::Stream(Logger::Level::Verbose) << "~ProcessorPartitionClient() for " << m_partitionId;
+      if (!m_partitionClient)
+      {
+        Log::Stream(Logger::Level::Verbose) << "PartitionClient is null.";
+      }
+      else
+      {
+        Log::Stream(Logger::Level::Verbose) << "PartitionClient is not null.";
+      }
+    }
+  }
 
   void ProcessorPartitionClient::UpdateCheckpoint(
       Azure::Core::Amqp::Models::AmqpMessage const& amqpMessage,

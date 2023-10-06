@@ -171,6 +171,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto eventHub{eventhubNamespace.CreateEventHub(eventHubName)};
 
     std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
+
     // Populate the eventhub instance with 50 messages.
     GTEST_LOG_(INFO) << "Populate eventhubs instance.";
     {
@@ -194,7 +195,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       Azure::Messaging::EventHubs::ConsumerClientOptions options;
       options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
-
       options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
 
       Azure::Messaging::EventHubs::ConsumerClient client(connString, eventHubName);
@@ -209,13 +209,15 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       GTEST_LOG_(INFO) << "Sleep until messages received.";
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
+      size_t totalReceived{0};
       {
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
         auto messages = partitionClient.ReceiveEvents(5);
         std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
-        EXPECT_EQ(messages.size(), 5ul);
+        EXPECT_LE(messages.size(), 5ul);
         EXPECT_TRUE(elapsed_seconds.count() < 1);
+        totalReceived += messages.size();
       }
 
       // We should have 45 messages left, which we should get immediately.
@@ -224,11 +226,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         auto messages = partitionClient.ReceiveEvents(50);
         std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
-        EXPECT_EQ(messages.size(), 45ul);
+        EXPECT_LE(messages.size(), 45ul);
+        totalReceived += messages.size();
         EXPECT_TRUE(elapsed_seconds.count() < 1);
       }
+      EXPECT_EQ(totalReceived, 50);
 
-      // Now when we wait, we should block.
+      // We have consumed all the events. Attempting to consume one more should block.
       {
         Azure::Core::Context timeout = Azure::Core::Context::ApplicationContext.WithDeadline(
             Azure::DateTime::clock::now() + std::chrono::seconds(3));

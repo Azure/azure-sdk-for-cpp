@@ -4,6 +4,7 @@
 #include "./test_checkpoint_store.hpp"
 #include "eventhubs_test_base.hpp"
 
+#include <azure/core/amqp/common/global_state.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity.hpp>
@@ -72,6 +73,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   protected:
     static void SetUpTestSuite() { EventHubsTestBase::SetUpTestSuite(); }
     static void TearDownTestSuite() { EventHubsTestBase::TearDownTestSuite(); }
+
+    void TearDown() override
+    {
+      EventHubsTestBase::TearDown();
+      // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
+      Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+    }
+
     void TestWithLoadBalancer(Models::ProcessorStrategy processorStrategy)
     {
       Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
@@ -119,14 +128,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         WaitGroup waitGroup;
         for (auto const& partitionId : eventHubProperties.PartitionIds)
         {
-          auto partitionClient = processor.NextPartitionClient(context);
+          std::shared_ptr<ProcessorPartitionClient> partitionClient
+              = processor.NextPartitionClient(context);
           waitGroup.AddWaiter();
           ASSERT_EQ(partitionsAcquired.find(partitionId), partitionsAcquired.end())
               << "No previous client for " << partitionClient->PartitionId();
           processEventsThreads.push_back(
               std::thread([&waitGroup, &producerClient, partitionClient, &context, this] {
                 scope_guard onExit([&] { waitGroup.CompleteWaiter(); });
-                ProcessEventsForTest(producerClient, partitionClient, context);
+                ProcessEventsForLoadBalancerTest(producerClient, partitionClient, context);
+                // We've processed events for the client, close it so it gets recycled into the
+                // queue.
+                partitionClient->Close();
               }));
         }
         // Block until all the events have been processed.
@@ -140,13 +153,15 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             thread.join();
           }
         }
-        context.Cancel();
+        // Stop the processor, we're done with the test.
+        processor.Stop();
       });
 
       processor.Run(context);
 
       processEventsThread.join();
     }
+
     void TestPartitionAcquisition(Models::ProcessorStrategy processorStrategy)
     {
       Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
@@ -193,7 +208,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         partitionsAcquired.emplace(partitionClient->PartitionId());
       }
     }
-    void ProcessEventsForTest(
+
+    void ProcessEventsForLoadBalancerTest(
         ProducerClient& producerClient,
         std::shared_ptr<ProcessorPartitionClient> partitionClient,
         Azure::Core::Context const& context)
@@ -576,7 +592,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
   TEST_F(ProcessorTest, Processor_Greedy_LIVEONLY_)
   {
-    TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
+    TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyGreedy);
   }
 #if 0
   TEST_F(ProcessorTest, Processor_Balanced_AcquisitionOnly_LIVEONLY_)

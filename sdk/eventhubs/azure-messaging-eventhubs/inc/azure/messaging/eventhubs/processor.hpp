@@ -166,10 +166,37 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
   private:
-    template <typename T> class Channel {
+    /** Representation of Go channel construct.
+     *
+     * A channel represents a size limited queue, where items can be inserted and removed. If there
+     * are no items in the queue, the caller will block until an item is inserted into the queue.
+     *
+     * @tparam T The type of the items in the queue.
+     * @tparam Cleanup The type of the cleanup function to call when the queue is destroyed.
+     *
+     */
+    template <class T> class Channel {
     public:
-      Channel(size_t maximumDepth) : m_maximumDepth{maximumDepth} {}
       Channel() : m_maximumDepth{0} {}
+
+      ~Channel()
+      {
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Verbose)
+            << "~Channel. Currently depth is " << m_channelDepth << " and maximum depth is "
+            << m_maximumDepth;
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Verbose)
+            << "Clear channel queue.";
+        while (m_channelDepth > 0)
+        {
+          auto value = m_channelQueue.TryWaitForResult();
+          if (value)
+          {
+            m_channelDepth -= 1;
+          }
+        }
+      }
 
       // Insert an item into the channel, returning true if successful, false if the channel is
       // full.
@@ -198,12 +225,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         return std::get<0>(*value);
       }
 
+      /** Try to remove an item from the channel, returning an item from the channel or a default
+       * constructed object.
+       *
+       * @return An item from the channel or a default constructed object.
+       *
+       * @remark The T type should have semantics that can distinguish between a default constructed
+       * item and a valid item. So for example, if T is a pointer, then a nullptr should be returned
+       * if the channel is empty. But if T is a value such as a string, it will not be possible to
+       * distinguish between an empty string inserted into the channel and an empty channel.
+       */
       T TryRemove()
       {
+        std::lock_guard<std::mutex> lock{m_channelLock};
         auto value = m_channelQueue.TryWaitForResult();
         if (value)
         {
-          std::lock_guard<std::mutex> lock{m_channelLock};
           m_channelDepth -= 1;
           return std::get<0>(*value);
         }
@@ -220,8 +257,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::mutex m_channelLock;
       size_t m_channelDepth{};
       size_t m_maximumDepth{};
-      Core::Amqp::Common::_internal::AsyncOperationQueue<std::shared_ptr<ProcessorPartitionClient>>
-          m_channelQueue;
+      Core::Amqp::Common::_internal::AsyncOperationQueue<T> m_channelQueue;
     };
 
     Azure::DateTime::duration m_ownershipUpdateInterval;
@@ -230,12 +266,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::shared_ptr<CheckpointStore> m_checkpointStore;
     std::shared_ptr<ConsumerClient> m_consumerClient;
     int32_t m_prefetch;
-    //  std::mutex m_partitionClientsLock;
-    //  std::condition_variable m_partititionClientsAvailable;
-    //  std::vector<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
     Channel<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
-    //  Core::Amqp::Common::_internal::AsyncOperationQueue<std::shared_ptr<ProcessorPartitionClient>>
-    //      m_nextPartitionClients;
     uint32_t m_currentPartitionClient{};
     Models::ConsumerClientDetails m_consumerClientDetails;
     std::shared_ptr<_private::ProcessorLoadBalancer> m_loadBalancer;
@@ -259,7 +290,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     void AddPartitionClient(
         Models::Ownership const& ownership,
         std::map<std::string, Models::Checkpoint>& checkpoints,
-        std::shared_ptr<ConsumersType> consumers);
+        std::weak_ptr<ConsumersType> consumers);
 
     void RunInternal(Core::Context const& context, bool manualRun);
 

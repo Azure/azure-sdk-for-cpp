@@ -13,7 +13,8 @@
 
 #include <gtest/gtest.h>
 
-class ProducerClientTest : public EventHubsTestBase {};
+class ProducerClientTest : public EventHubsTestBase {
+};
 
 TEST_F(ProducerClientTest, ConnectionStringNoEntityPath)
 {

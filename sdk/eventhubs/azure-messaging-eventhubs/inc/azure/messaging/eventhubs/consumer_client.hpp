@@ -47,17 +47,19 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class ConsumerClient final {
   public:
-    /** Create a new ConsumerClient from an existing one. */
+    /** Copy a new ConsumerClient from an existing one. */
     ConsumerClient(ConsumerClient const& other) = delete;
 
     /** Move a consumer client */
-    ConsumerClient(ConsumerClient&& other) = default;
+    ConsumerClient(ConsumerClient&& other) = delete;
 
     /** Assign a ConsumerClient to an existing one. */
     ConsumerClient& operator=(ConsumerClient const& other) = delete;
 
     /** Move a consumer client */
-    ConsumerClient& operator=(ConsumerClient&& other) = default;
+    ConsumerClient& operator=(ConsumerClient&& other) = delete;
+
+    ~ConsumerClient();
 
     /** @brief Getter for event hub name
      *
@@ -185,15 +187,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /// @brief The AMQP Sessions used to receive messages for a given partition.
     std::mutex m_sessionsLock;
-    std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions;
+    std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections;
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
 
     void EnsureConnection(std::string const& partitionId);
     void EnsureSession(std::string const& partitionId);
-    Azure::Core::Amqp::_internal::Connection CreateConnection();
+    Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
   };

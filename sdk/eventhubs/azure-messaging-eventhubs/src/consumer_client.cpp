@@ -48,10 +48,30 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         + m_consumerGroup;
   }
 
-  Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection()
+  ConsumerClient::~ConsumerClient()
+  {
+    Log::Stream(Logger::Level::Informational) << "Destroy consumer client.";
+    // Tear down the sessions and then the connections, in that order.
+    for (auto& sender : m_receivers)
+    {
+      sender.second.Close();
+    }
+    while (!m_sessions.empty())
+    {
+      m_sessions.erase(m_sessions.begin());
+    }
+    while (!m_connections.empty())
+    {
+      m_connections.erase(m_connections.begin());
+    };
+  }
+
+  Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection(
+      std::string const& partitionId)
   {
     ConnectionOptions connectOptions;
-    connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
+    connectOptions.ContainerId
+        = "Consumer for " + m_consumerClientOptions.ApplicationID + " on " + partitionId;
     connectOptions.EnableTrace = _detail::EnableAmqpTrace;
     connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
 
@@ -69,11 +89,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_lock<std::mutex> lock(m_sessionsLock);
     if (m_connections.find(partitionId) == m_connections.end())
     {
-      m_connections.emplace(partitionId, CreateConnection());
+      m_connections.emplace(partitionId, CreateConnection(partitionId));
     }
   }
 
-  Azure::Core::Amqp::_internal::Session ConsumerClient::CreateSession(std::string const& partitionId)
+  Azure::Core::Amqp::_internal::Session ConsumerClient::CreateSession(
+      std::string const& partitionId)
   {
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize

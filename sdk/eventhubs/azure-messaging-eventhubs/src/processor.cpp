@@ -23,7 +23,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       ProcessorOptions const& options)
       : m_maximumNumberOfPartitions{options.MaximumNumberOfPartitions},
         m_defaultStartPositions(options.StartPositions), m_checkpointStore(checkpointStore),
-        m_prefetch(options.Prefetch), m_consumerClient(consumerClient)
+        m_prefetch(options.Prefetch), m_consumerClient(consumerClient), m_nextPartitionClients{}
   {
     m_ownershipUpdateInterval = options.UpdateInterval == Azure::DateTime::duration::zero()
         ? std::chrono::seconds(10)
@@ -40,7 +40,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
                 options.PartitionExpirationDuration));
   }
 
-  Processor::~Processor() { Stop(); }
+  Processor::~Processor()
+  {
+    Log::Stream(Logger::Level::Verbose) << "~Processor.";
+    Stop();
+    m_consumerClient.reset();
+  }
 
   void Processor::Start(Azure::Core::Context const& context)
   {
@@ -61,6 +66,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   // Stop the running processor, waiting for the processor to terminate.
   void Processor::Stop()
   {
+    Log::Stream(Logger::Level::Verbose) << "Stop processor.";
     m_isRunning = false;
 
     if (m_processorThread.joinable())
@@ -85,10 +91,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_nextPartitionClients.SetMaximumDepth(eventHubProperties.PartitionIds.size());
 
     auto consumers = std::make_shared<ConsumersType>();
-    //    Dispatch(eventHubProperties, consumers, context);
-    //    time_t timeNowSeconds =
-    //    std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()); const auto current
-    //    = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
     try
     {
@@ -149,7 +151,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void Processor::AddPartitionClient(
       Models::Ownership const& ownership,
       std::map<std::string, Models::Checkpoint>& checkpoints,
-      std::shared_ptr<ConsumersType> consumers)
+      std::weak_ptr<ConsumersType> consumers)
   {
     Log::Stream(Logger::Level::Verbose) << "Add partition client for " << ownership;
 
@@ -158,16 +160,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             ownership.PartitionId,
             m_checkpointStore,
             m_consumerClientDetails,
-            [consumers, ownership]() { consumers->erase(ownership.PartitionId); })));
+            [consumers, ownership]() {
+              if (auto strongConsumers = consumers.lock())
+              {
+                strongConsumers->erase(ownership.PartitionId);
+              }
+            })));
 
-    //    if (consumers->find(ownership.PartitionId) == consumers->end())
+    // Try to add the partition client to the map. If it's already there, we discard the one we just
+    // created in favor of the existing processor partition client.
     {
-      auto added = consumers->emplace(ownership.PartitionId, processorPartitionClient);
-      if (!added.second)
+      ;
+      if (auto strongConsumers = consumers.lock())
       {
-        Log::Stream(Logger::Level::Verbose)
-            << "Partition client already in consumers map, ignoring.";
-        return;
+        auto added = strongConsumers->emplace(ownership.PartitionId, processorPartitionClient);
+        if (!added.second)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Partition client already in consumers map, ignoring.";
+          return;
+        }
       }
     }
 
@@ -183,13 +195,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_consumerClient->CreatePartitionClient(ownership.PartitionId, partitionClientOptions))};
     processorPartitionClient->SetPartitionClient(partitionClient);
 
-    //    std::unique_lock<std::mutex> lock{m_partitionClientsLock};
-    //    m_nextPartitionClients.push_back(processorPartitionClient);
-    //    m_partititionClientsAvailable.notify_all();
     // Add the new processor partition client to the next partitions client queue. If the queue
     // is full, discard the client.
     if (!m_nextPartitionClients.Insert(processorPartitionClient))
     {
+      Log::Stream(Logger::Level::Verbose)
+          << "nextPartitionClients is full, discarding partition client..";
       processorPartitionClient->Close();
     }
   }
