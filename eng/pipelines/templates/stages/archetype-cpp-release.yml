@@ -193,15 +193,20 @@ stages:
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
+                      # Workaround: -Fallback uses names from CODEOWNERS who
+                      # should be notified about the release in the event of a
+                      # failure to resolve the appropriate aliases.
                       - pwsh: |
-                          $codeOwnersToNotify = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
-                            -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/" `
-                            -CodeownersFileLocation "$(Build.SourcesDirectory)/.github/CODEOWNERS"
+                          $notifyUsers = ./eng/scripts/Get-TriggeringUserGitHubAlias.ps1 `
+                            -EmailAddress '$(Build.RequestedForEmail)' `
+                            -ClientId '$(opensource-aad-app-id)' `
+                            -ClientSecret '$(opensource-aad-secret)' `
+                            -TenantId '$(opensource-aad-tenant-id)' `
+                            -Fallback '@rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman'
 
                           $prComment = "Adding ${{ artifact.Name }} to release"
-                          if ($codeOwnersToNotify) {
-                            $codeOwners = $codeOwnersToNotify.ForEach({ "@$_" }) -join ", "
-                            $prComment += "`n`ncc: $codeOwners"
+                          if ($notifyUsers) {
+                            $prComment += "`n`ncc: $notifyUsers"
                           }
 
                           ./eng/common/scripts/Add-IssueComment.ps1 `
