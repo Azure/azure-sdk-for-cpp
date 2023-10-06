@@ -21,9 +21,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::shared_ptr<ConsumerClient> consumerClient,
       std::shared_ptr<CheckpointStore> checkpointStore,
       ProcessorOptions const& options)
-      : m_maximumNumberOfPartitions{options.MaximumNumberOfPartitions},
-        m_defaultStartPositions(options.StartPositions), m_checkpointStore(checkpointStore),
-        m_prefetch(options.Prefetch), m_consumerClient(consumerClient), m_nextPartitionClients{}
+      : m_defaultStartPositions(options.StartPositions),
+        m_maximumNumberOfPartitions{options.MaximumNumberOfPartitions},
+        m_checkpointStore(checkpointStore), m_consumerClient(consumerClient),
+        m_prefetch(options.Prefetch), m_nextPartitionClients{}
   {
     m_ownershipUpdateInterval = options.UpdateInterval == Azure::DateTime::duration::zero()
         ? std::chrono::seconds(10)
@@ -156,7 +157,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Log::Stream(Logger::Level::Verbose) << "Add partition client for " << ownership;
 
     std::shared_ptr<ProcessorPartitionClient> processorPartitionClient
-        = std::make_shared<ProcessorPartitionClient>(std::move(ProcessorPartitionClient(
+        = std::make_shared<ProcessorPartitionClient>(ProcessorPartitionClient(
             ownership.PartitionId,
             m_checkpointStore,
             m_consumerClientDetails,
@@ -165,21 +166,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               {
                 strongConsumers->erase(ownership.PartitionId);
               }
-            })));
+            }));
 
     // Try to add the partition client to the map. If it's already there, we discard the one we just
     // created in favor of the existing processor partition client.
+    if (auto strongConsumers = consumers.lock())
     {
-      ;
-      if (auto strongConsumers = consumers.lock())
+      auto added = strongConsumers->emplace(ownership.PartitionId, processorPartitionClient);
+      if (!added.second)
       {
-        auto added = strongConsumers->emplace(ownership.PartitionId, processorPartitionClient);
-        if (!added.second)
-        {
-          Log::Stream(Logger::Level::Verbose)
-              << "Partition client already in consumers map, ignoring.";
-          return;
-        }
+        Log::Stream(Logger::Level::Verbose)
+            << "Partition client already in consumers map, ignoring.";
+        return;
       }
     }
 

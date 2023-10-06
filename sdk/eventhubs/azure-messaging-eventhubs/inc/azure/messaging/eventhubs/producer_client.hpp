@@ -59,8 +59,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Assign a ProducerClient another ProducerClient. */
     ProducerClient& operator=(ProducerClient const& other) = delete;
 
-    ProducerClient(ProducerClient&& other) = default;
-    ProducerClient& operator=(ProducerClient&& other) = default;
+    ProducerClient(ProducerClient&& other) = delete;
+    ProducerClient& operator=(ProducerClient&& other) = delete;
 
     /** Default Constructor for a ProducerClient */
     ProducerClient() = default;

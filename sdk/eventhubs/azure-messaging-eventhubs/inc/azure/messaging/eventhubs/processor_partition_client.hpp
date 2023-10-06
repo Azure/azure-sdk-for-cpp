@@ -65,7 +65,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /**  Constructs a new instance of the ProcessorPartitionClient.
      * @param partitionId The identifier of the partition to connect the client to.
-     * @param partitionClient The [PartitionClient] to use for receiving events.
      * @param checkpointStore The [CheckpointStore] to use for storing checkpoints.
      * @param consumerClientDetails The [ConsumerClientDetails] to use for storing checkpoints.
      * @param cleanupFunc The function to call when the ProcessorPartitionClient is closed.

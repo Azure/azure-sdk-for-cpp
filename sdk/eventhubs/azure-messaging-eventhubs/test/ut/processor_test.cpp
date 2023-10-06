@@ -232,7 +232,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           std::this_thread::sleep_for(std::chrono::seconds(10));
           try
           {
-            int counter = 0;
             GTEST_LOG_(INFO) << "Generate " << std::dec << expectedEventsCount << " events in "
                              << std::dec << (expectedEventsCount / batchSize) << " batch messages.";
             for (int i = 0; i < expectedEventsCount / batchSize; i++)
@@ -247,7 +246,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 ss << "[" << partitionClient->PartitionId() << ":[" << i << ":" << j
                    << "]] Message";
                 batch.TryAddMessage(Models::EventData{ss.str()});
-                counter += 1;
               }
               GTEST_LOG_(INFO) << "Send batch " << i << ", targeting partition "
                                << partitionClient->PartitionId();

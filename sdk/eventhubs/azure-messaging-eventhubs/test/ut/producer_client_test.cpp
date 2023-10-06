@@ -126,7 +126,7 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
     auto result = client.GetEventHubProperties();
     EXPECT_EQ(result.Name, eventHubName);
     EXPECT_TRUE(result.PartitionIds.size() > 0);
-  });
+  }());
 }
 
 TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
@@ -144,5 +144,5 @@ TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
     auto result = client.GetPartitionProperties("0");
     EXPECT_EQ(result.Name, eventHubName);
     EXPECT_EQ(result.PartitionId, "0");
-  });
+  }());
 }

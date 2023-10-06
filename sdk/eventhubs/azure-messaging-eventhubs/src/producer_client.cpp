@@ -40,8 +40,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
-        m_credential{credential}, m_producerClientOptions(options),
-        m_targetUrl{"amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub}
+        m_targetUrl{"amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub},
+        m_credential{credential}, m_producerClientOptions(options)
   {
   }
 

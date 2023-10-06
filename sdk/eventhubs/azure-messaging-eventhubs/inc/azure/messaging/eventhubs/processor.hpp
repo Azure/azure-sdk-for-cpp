@@ -172,7 +172,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * are no items in the queue, the caller will block until an item is inserted into the queue.
      *
      * @tparam T The type of the items in the queue.
-     * @tparam Cleanup The type of the cleanup function to call when the queue is destroyed.
      *
      */
     template <class T> class Channel {
@@ -267,7 +266,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::shared_ptr<ConsumerClient> m_consumerClient;
     int32_t m_prefetch;
     Channel<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
-    uint32_t m_currentPartitionClient{};
     Models::ConsumerClientDetails m_consumerClientDetails;
     std::shared_ptr<_private::ProcessorLoadBalancer> m_loadBalancer;
     int64_t m_processorOwnerLevel{0};
