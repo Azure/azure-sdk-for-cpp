@@ -30,7 +30,7 @@ endif()
 target_link_libraries(
     azure-messaging-eventhubs-blobstore-test
       PRIVATE 
-        azure-messaging-eventhubs-checkpoint-blob
+        azure-messaging-eventhubs-checkpointstore-blob
         azure-messaging-eventhubs 
         azure-core-test-fw
         azure-identity 
