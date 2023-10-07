@@ -16,6 +16,8 @@
 
 #include <gtest/gtest.h>
 
+// cspell: words azeventhubs
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   namespace {
 
