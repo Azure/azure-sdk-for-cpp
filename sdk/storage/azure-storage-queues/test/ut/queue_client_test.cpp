@@ -246,6 +246,11 @@ namespace Azure { namespace Storage { namespace Test {
     auto queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueClient.GetProperties());
 
+    // public audience
+    clientOptions.Audience = Queues::Models::QueueAudience::PublicAudience;
+    queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(queueClient.GetProperties());
+
     // custom audience
     auto queueUrl = Azure::Core::Url(queueClient.GetUrl());
     clientOptions.Audience

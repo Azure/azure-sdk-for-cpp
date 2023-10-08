@@ -2040,6 +2040,12 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
 
+    // public audience
+    clientOptions.Audience = Blobs::Models::BlobAudience::PublicAudience;
+    blockBlobClient
+        = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(blockBlobClient.GetProperties());
+
     // custom audience
     auto blobUrl = Azure::Core::Url(blockBlobClient.GetUrl());
     clientOptions.Audience
