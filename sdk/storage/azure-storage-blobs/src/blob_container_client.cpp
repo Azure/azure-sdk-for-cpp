@@ -170,8 +170,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(
-          options.Audience.HasValue() ? options.Audience.Value().ToString()
-                                      : Models::BlobAudience::PublicAudience.ToString());
+          options.Audience.HasValue()
+              ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
+              : _internal::StorageScope);
       tokenAuthPolicy = std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
           credential, tokenContext, options.EnableTenantDiscovery);
       perRetryPolicies.emplace_back(tokenAuthPolicy->Clone());

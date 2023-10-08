@@ -494,17 +494,23 @@ namespace Azure { namespace Storage { namespace Test {
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
+    // public audience
+    clientOptions.Audience = Files::DataLake::Models::DataLakeAudience::PublicAudience;
+    pathClient
+        = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(pathClient.GetProperties());
+
     // custom audience
     auto pathUrl = Azure::Core::Url(pathClient.GetUrl());
     clientOptions.Audience = Files::DataLake::Models::DataLakeAudience(
-        pathUrl.GetScheme() + "://" + pathUrl.GetHost() + "/.default");
+        pathUrl.GetScheme() + "://" + pathUrl.GetHost());
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
     // error audience
     clientOptions.Audience
-        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com/.default");
+        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com");
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(pathClient.GetProperties(), StorageException);

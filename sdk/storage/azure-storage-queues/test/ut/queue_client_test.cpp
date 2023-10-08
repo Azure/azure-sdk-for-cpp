@@ -246,10 +246,15 @@ namespace Azure { namespace Storage { namespace Test {
     auto queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueClient.GetProperties());
 
+    // public audience
+    clientOptions.Audience = Queues::Models::QueueAudience::PublicAudience;
+    queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(queueClient.GetProperties());
+
     // custom audience
     auto queueUrl = Azure::Core::Url(queueClient.GetUrl());
-    clientOptions.Audience = Queues::Models::QueueAudience(
-        queueUrl.GetScheme() + "://" + queueUrl.GetHost() + "/.default");
+    clientOptions.Audience
+        = Queues::Models::QueueAudience(queueUrl.GetScheme() + "://" + queueUrl.GetHost());
     queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueClient.GetProperties());
 
@@ -259,8 +264,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(queueClient.GetProperties());
 
     // error audience
-    clientOptions.Audience
-        = Queues::Models::QueueAudience("https://disk.compute.azure.com/.default");
+    clientOptions.Audience = Queues::Models::QueueAudience("https://disk.compute.azure.com");
     queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(queueClient.GetProperties(), StorageException);
 
