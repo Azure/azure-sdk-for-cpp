@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::string GetDefaultScopeForAudience(const std::string& audience)
   {
-    if (!audience.empty() && audience[audience.size() - 1] == '/')
+    if (!audience.empty() && audience.back() == '/')
     {
       return audience + ".default";
     }
