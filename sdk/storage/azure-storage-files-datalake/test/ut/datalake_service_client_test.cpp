@@ -360,14 +360,14 @@ namespace Azure { namespace Storage { namespace Test {
     // custom audience
     auto fileSystemUrl = Azure::Core::Url(serviceClient.GetUrl());
     clientOptions.Audience = Files::DataLake::Models::DataLakeAudience(
-        fileSystemUrl.GetScheme() + "://" + fileSystemUrl.GetHost() + "/.default");
+        fileSystemUrl.GetScheme() + "://" + fileSystemUrl.GetHost());
     serviceClient = Files::DataLake::DataLakeServiceClient(
         m_dataLakeServiceClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(serviceClient.GetProperties());
 
     // error audience
     clientOptions.Audience
-        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com/.default");
+        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com");
     serviceClient = Files::DataLake::DataLakeServiceClient(
         m_dataLakeServiceClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(serviceClient.GetProperties(), StorageException);

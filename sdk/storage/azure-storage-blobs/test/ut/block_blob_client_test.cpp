@@ -2042,14 +2042,19 @@ namespace Azure { namespace Storage { namespace Test {
 
     // custom audience
     auto blobUrl = Azure::Core::Url(blockBlobClient.GetUrl());
-    clientOptions.Audience = Blobs::Models::BlobAudience(
-        blobUrl.GetScheme() + "://" + blobUrl.GetHost() + "/.default");
+    clientOptions.Audience
+        = Blobs::Models::BlobAudience(blobUrl.GetScheme() + "://" + blobUrl.GetHost());
+    blockBlobClient
+        = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(blockBlobClient.GetProperties());
+    clientOptions.Audience
+        = Blobs::Models::BlobAudience(blobUrl.GetScheme() + "://" + blobUrl.GetHost() + "/");
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
 
     // error audience
-    clientOptions.Audience = Blobs::Models::BlobAudience("https://disk.compute.azure.com/.default");
+    clientOptions.Audience = Blobs::Models::BlobAudience("https://disk.compute.azure.com");
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(blockBlobClient.GetProperties(), StorageException);
