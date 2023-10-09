@@ -122,11 +122,11 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 
   Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName, producerOptions};
 
-  ASSERT_NO_THROW([&]() {
-    auto result = client.GetEventHubProperties();
-    EXPECT_EQ(result.Name, eventHubName);
-    EXPECT_TRUE(result.PartitionIds.size() > 0);
-  }());
+  //  EXPECT_NO_THROW([&]() {
+  auto result = client.GetEventHubProperties();
+  EXPECT_EQ(result.Name, eventHubName);
+  EXPECT_TRUE(result.PartitionIds.size() > 0);
+  //  }());
 }
 
 TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)

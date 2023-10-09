@@ -230,7 +230,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         totalReceived += messages.size();
         EXPECT_TRUE(elapsed_seconds.count() < 1);
       }
-      EXPECT_EQ(totalReceived, 50);
+      EXPECT_EQ(totalReceived, 50ul);
 
       // We have consumed all the events. Attempting to consume one more should block.
       {

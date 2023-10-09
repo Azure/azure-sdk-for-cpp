@@ -194,8 +194,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     EnsureConnection({});
 
     //    auto session{CreateSession()};
-    auto session{GetSession({})};
     EnsureSession({});
+    auto session{GetSession({})};
     return _detail::EventHubsUtilities::GetEventHubsProperties(session, m_eventHub, context);
   }
 

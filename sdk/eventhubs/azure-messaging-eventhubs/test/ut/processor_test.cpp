@@ -222,8 +222,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         // initialize any resources needed to process the partition
         // This is the equivalent to PartitionOpen
         GTEST_LOG_(INFO) << "Started processing partition " << partitionClient->PartitionId();
-        const int32_t expectedEventsCount = 1000;
-        const int32_t batchSize = 100;
+        constexpr int32_t expectedEventsCount = 1000;
+        constexpr int32_t batchSize = 100;
         EXPECT_EQ(0, expectedEventsCount % batchSize)
             << "Keep the math simple - even # of messages for each batch";
 

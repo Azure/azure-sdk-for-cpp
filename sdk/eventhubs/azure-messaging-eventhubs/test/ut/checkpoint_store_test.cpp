@@ -57,7 +57,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       // There still should be no checkpoints in the partition we first queried.
       checkpoints = checkpointStore->ListCheckpoints(
           "fully-qualified-namespace", "event-hub-name", "consumer-group");
-      EXPECT_EQ(0, checkpoints.size());
+      EXPECT_EQ(0ul, checkpoints.size());
     }
 
     checkpoints = checkpointStore->ListCheckpoints(
