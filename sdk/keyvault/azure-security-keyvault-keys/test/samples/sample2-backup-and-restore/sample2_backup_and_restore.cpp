@@ -74,7 +74,7 @@ int main()
     // Let's wait for a bit so we know the key was purged.
     try
     {
-      // To check if the key was purged we attemppt to get the key from the Key Vault.
+      // To check if the key was purged we attempt to get the key from the Key Vault.
       // If we get an exception, the key was purged.
       // If not, we wait a bit more,since the key is in the purge process.
       while (!keyClient.GetDeletedKey(rsaKeyName).Value.Name().empty())
