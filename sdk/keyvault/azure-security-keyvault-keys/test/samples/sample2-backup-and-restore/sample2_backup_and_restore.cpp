@@ -70,8 +70,22 @@ int main()
     // You only need to wait for completion if you want to purge or recover the key.
     operation.PollUntilDone(std::chrono::milliseconds(2000));
     keyClient.PurgeDeletedKey(rsaKeyName);
-    // let's wait for one minute so we know the key was purged.
-    std::this_thread::sleep_for(std::chrono::seconds(60));
+
+    // Let's wait for a bit so we know the key was purged.
+    try
+    {
+      // To check if the key was purged we attemppt to get the key from the Key Vault.
+      // If we get an exception, the key was purged.
+      // If not, we wait a bit more,since the key is in the purge process.
+      while (!keyClient.GetDeletedKey(rsaKeyName).Value.Name().empty())
+      {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+      }
+    }
+    catch (Azure::Core::RequestFailedException const&)
+    {
+      std::cout << "\t-Key purged" << std::endl;
+    }
 
     // Restore the key from the file backup
     std::cout << "\t-Read from file." << std::endl;
