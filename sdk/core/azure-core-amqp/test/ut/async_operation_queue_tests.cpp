@@ -51,7 +51,6 @@ TEST_F(TestAsyncQueue, TryReadFromQueue)
   {
     AsyncOperationQueue<int> queue;
     std::unique_ptr<std::tuple<int>> item;
-    Azure::Core::Context context;
     item = queue.TryWaitForResult();
     EXPECT_FALSE(item);
   }
@@ -61,9 +60,20 @@ TEST_F(TestAsyncQueue, TryReadFromQueue)
     AsyncOperationQueue<int> queue;
     queue.CompleteOperation(25);
     std::unique_ptr<std::tuple<int>> item;
-    Azure::Core::Context context;
     item = queue.TryWaitForResult();
     EXPECT_TRUE(item);
     EXPECT_EQ(25, std::get<0>(*item));
+  }
+}
+
+TEST_F(TestAsyncQueue, ReadCanceled)
+{
+  {
+    AsyncOperationQueue<int> queue;
+    Azure::Core::Context context;
+    context.Cancel();
+
+    auto item = queue.WaitForResult(context);
+    EXPECT_FALSE(item);
   }
 }
