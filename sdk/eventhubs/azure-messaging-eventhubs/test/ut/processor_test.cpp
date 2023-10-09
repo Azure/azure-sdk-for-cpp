@@ -227,7 +227,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         EXPECT_EQ(0, expectedEventsCount % batchSize)
             << "Keep the math simple - even # of messages for each batch";
 
-        std::thread produceEvents([partitionClient, &producerClient, &producerContext]() {
+        std::thread produceEvents([partitionClient, &producerClient, &producerContext, expectedEventsCount, batchSize]() {
           // Wait for 10 seconds for all of the consumer clients to be spun up.
           GTEST_LOG_(INFO)
               << "Produce Events thread: Wait for 10 seconds for processor to create receivers.";
