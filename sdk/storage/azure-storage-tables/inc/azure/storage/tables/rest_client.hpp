@@ -23,6 +23,13 @@
 #include <vector>
 
 namespace Azure { namespace Storage { namespace Tables {
+  namespace _detail {
+    /**
+     * The version used for the operations to Azure storage services.
+     */
+    constexpr static const char* ApiVersion = "2023-01-01";
+  } // namespace _detail
+
   class AllowedMethods final : public Core::_internal::ExtendableEnumeration<AllowedMethods> {
   public:
     AllowedMethods() = default;
@@ -54,6 +61,108 @@ namespace Azure { namespace Storage { namespace Tables {
   struct CorsRules final
   {
     std::vector<CorsRule> CorsRules;
+  };
+  /**
+   * @brief API version for Storage Queue service.
+   */
+  class ServiceVersion final {
+  public:
+    /**
+     * @brief Construct a new Service Version object
+     *
+     * @param version The string version for Storage Queue Service.
+     */
+    explicit ServiceVersion(std::string version) : m_version(std::move(version)) {}
+
+    /**
+     * @brief Enable comparing between two versions.
+     *
+     * @param other Another service version to be compared.
+     */
+    bool operator==(const ServiceVersion& other) const { return m_version == other.m_version; }
+
+    /**
+     * @brief Enable comparing between two versions.
+     *
+     * @param other Another service version to be compared.
+     */
+    bool operator!=(const ServiceVersion& other) const { return !(*this == other); }
+
+    /**
+     * @brief Returns string representation.
+     *
+     */
+    std::string const& ToString() const { return m_version; }
+
+     /**
+     * @brief API version 2019-12-12.
+     *
+     */
+    AZ_STORAGE_TABLES_DLLEXPORT const static ServiceVersion V2023_01_01;
+
+  private:
+    std::string m_version;
+  };
+
+      /**
+   * @brief Audiences available for Blobs
+   *
+   */
+  class TablesAudience final
+      : public Azure::Core::_internal::ExtendableEnumeration<TablesAudience> {
+  public:
+    /**
+     * @brief Construct a new QueueAudience object
+     *
+     * @param queueAudience The Azure Active Directory audience to use when forming authorization
+     * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
+     * cloud where the resource is located. For more information: See
+     * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+     */
+    explicit TablesAudience(std::string TablesAudience)
+        : ExtendableEnumeration(std::move(TablesAudience))
+    {
+    }
+
+    /**
+     * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
+     * Storage account.
+     */
+    AZ_STORAGE_TABLES_DLLEXPORT const static TablesAudience PublicAudience;
+  };
+
+  /**
+   * @brief Optional parameters for constructing a new QueueClient.
+   */
+  struct TableClientOptions final : Azure::Core::_internal::ClientOptions
+  {
+    /**
+     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
+     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
+     * operations are not retried against another host. NOTE: Before setting this field, make sure
+     * you understand the issues around reading stale & potentially-inconsistent data at this
+     * webpage: https://docs.microsoft.com/azure/storage/common/geo-redundant-design.
+     */
+    std::string SecondaryHostForRetryReads;
+
+    /**
+     * API version used by this client.
+     */
+    ServiceVersion ApiVersion{_detail::ApiVersion};
+
+    /**
+     * Enables tenant discovery through the authorization challenge when the client is configured to
+     * use a TokenCredential. When enabled, the client will attempt an initial un-authorized request
+     * to prompt a challenge in order to discover the correct tenant for the resource.
+     */
+    bool EnableTenantDiscovery = false;
+
+    /**
+     * The Audience to use for authentication with Azure Active Directory (AAD).
+     * #Azure::Storage::Queues::Models::QueueAudience::PublicAudience will be assumed if
+     * Audience is not set.
+     */
+    Azure::Nullable<TablesAudience> Audience;
   };
 
   struct TableServicePropertiesProperties final
@@ -151,6 +260,13 @@ namespace Azure { namespace Storage { namespace Tables {
   class TableServicesClient final {
   public:
     explicit TableServicesClient(std::string subscriptionId);
+    explicit TableServicesClient(const std::string& tablesUrl, TableClientOptions options = {});
+
+    explicit TableServicesClient(
+        const std::string& tablesUrl,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        TableClientOptions options={});
+
 
     Response<ListTableServices> List(
         ListOptions const& options = {},

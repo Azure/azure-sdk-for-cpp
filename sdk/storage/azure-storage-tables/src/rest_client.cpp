@@ -30,6 +30,16 @@ TableServicesClient::TableServicesClient(std::string subscriptionId)
 {
 }
 
+TableServicesClient::TableServicesClient(
+   const std::string& tablesUrl,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+    TableClientOptions options)
+    : m_url(tablesUrl)
+{
+  (void)tablesUrl;
+  (void)credential;
+}
+
 Azure::Response<ListTableServices> TableServicesClient::List(
     ListOptions const& options,
     Core::Context const& context)
@@ -58,7 +68,7 @@ Azure::Response<ListTableServices> TableServicesClient::List(
 
   ListTableServices response{};
   {
-//    auto const& responseBody = rawResponse->GetBody();
+    //    auto const& responseBody = rawResponse->GetBody();
     /* gearama if (responseBody.size() > 0)
     {
       auto const jsonRoot
@@ -120,8 +130,8 @@ Azure::Response<ListTableServices> TableServicesClient::List(
     }*/ // gearama
   }
 
-    return Response<ListTableServices>(std::move(response), std::move(rawResponse));
-  }
+  return Response<ListTableServices>(std::move(response), std::move(rawResponse));
+}
 
 Azure::Response<TableServiceProperties> TableServicesClient::SetServiceProperties(
     SetServicePropertiesOptions const& options,
@@ -296,7 +306,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
 
   TableServiceProperties response{};
   {
-//    auto const& responseBody = rawResponse->GetBody();
+    //    auto const& responseBody = rawResponse->GetBody();
     /* if (responseBody.size() > 0)
     {
       auto const jsonRoot
@@ -351,7 +361,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
     }
  */ }
 
-  return Response<TableServiceProperties>(std::move(response), std::move(rawResponse));
+    return Response<TableServiceProperties>(std::move(response), std::move(rawResponse));
 }
 
 TableClient::TableClient(std::string subscriptionId)
@@ -364,338 +374,338 @@ Azure::Response<Table> TableClient::Create(
     CreateOptions const& options,
     Core::Context const& context)
 {
-  auto url = m_url;
-  url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default/tables/");
-  url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
+    auto url = m_url;
+    url.AppendPath("subscriptions/");
+    url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+    url.AppendPath("resourceGroups/");
+    url.AppendPath(
+        !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
+    url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
+    url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
+    url.AppendPath("tableServices/default/tables/");
+    url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
 
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
+    url.SetQueryParameters({{"api-version", "2023-01-01"}});
 
-  std::string jsonBody;
-  {
-    auto jsonRoot = Core::Json::_internal::json::object();
-
-    jsonRoot["properties"]["tableName"] = options.Parameters.Properties.TableName;
-    jsonRoot["properties"]["signedIdentifiers"] = Core::Json::_internal::json::array();
-
-    for (auto i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
+    std::string jsonBody;
     {
-      jsonRoot["properties"]["signedIdentifiers"][i]["id"]
-          = options.Parameters.Properties.SignedIdentifiers[i].Id;
+      auto jsonRoot = Core::Json::_internal::json::object();
 
-      if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.StartTime.HasValue())
+      jsonRoot["properties"]["tableName"] = options.Parameters.Properties.TableName;
+      jsonRoot["properties"]["signedIdentifiers"] = Core::Json::_internal::json::array();
+
+      for (auto i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
       {
-        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["startTime"]
-            = options.Parameters.Properties.SignedIdentifiers[i]
-                  .AccessPolicy.StartTime.Value()
-                  .ToString();
-      }
+        jsonRoot["properties"]["signedIdentifiers"][i]["id"]
+            = options.Parameters.Properties.SignedIdentifiers[i].Id;
 
-      if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.ExpiryTime.HasValue())
-      {
-        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["expiryTime"]
-            = options.Parameters.Properties.SignedIdentifiers[i]
-                  .AccessPolicy.ExpiryTime.Value()
-                  .ToString();
-      }
-
-      jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["permission"]
-          = options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.Permission;
-    }
-
-    jsonBody = jsonRoot.dump();
-  }
-
-  Core::IO::MemoryBodyStream requestBody(
-      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
-
-  Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
-
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
-
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
-
-  Table response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-
-      response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
-
-      for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
-      {
-        TableSignedIdentifier vectorItem{};
-
-        vectorItem.Id = jsonItem["id"].get<std::string>();
-
-        if (jsonItem.contains("startTime"))
+        if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.StartTime.HasValue())
         {
-          vectorItem.AccessPolicy.StartTime = DateTime::Parse(
-              jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["startTime"]
+              = options.Parameters.Properties.SignedIdentifiers[i]
+                    .AccessPolicy.StartTime.Value()
+                    .ToString();
         }
 
-        if (jsonItem.contains("expiryTime"))
+        if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.ExpiryTime.HasValue())
         {
-          vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
-              jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["expiryTime"]
+              = options.Parameters.Properties.SignedIdentifiers[i]
+                    .AccessPolicy.ExpiryTime.Value()
+                    .ToString();
         }
 
-        vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
+        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["permission"]
+            = options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.Permission;
+      }
 
-        response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
+      jsonBody = jsonRoot.dump();
+    }
+
+    Core::IO::MemoryBodyStream requestBody(
+        reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
+
+    Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
+
+    request.SetHeader("Content-Type", "application/json");
+    request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+
+    auto rawResponse = m_pipeline->Send(request, context);
+    auto const httpStatusCode = rawResponse->GetStatusCode();
+
+    if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+    {
+      throw Core::RequestFailedException(rawResponse);
+    }
+
+    Table response{};
+    {
+      auto const& responseBody = rawResponse->GetBody();
+      if (responseBody.size() > 0)
+      {
+        auto const jsonRoot
+            = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+
+        response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
+
+        for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
+        {
+          TableSignedIdentifier vectorItem{};
+
+          vectorItem.Id = jsonItem["id"].get<std::string>();
+
+          if (jsonItem.contains("startTime"))
+          {
+            vectorItem.AccessPolicy.StartTime = DateTime::Parse(
+                jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          if (jsonItem.contains("expiryTime"))
+          {
+            vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
+                jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
+
+          response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
+        }
       }
     }
-  }
 
-  return Response<Table>(std::move(response), std::move(rawResponse));
+    return Response<Table>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<Table> TableClient::Update(
     UpdateOptions const& options,
     Core::Context const& context)
 {
-  auto url = m_url;
-  url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default/tables/");
-  url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
+    auto url = m_url;
+    url.AppendPath("subscriptions/");
+    url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+    url.AppendPath("resourceGroups/");
+    url.AppendPath(
+        !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
+    url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
+    url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
+    url.AppendPath("tableServices/default/tables/");
+    url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
 
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
+    url.SetQueryParameters({{"api-version", "2023-01-01"}});
 
-  std::string jsonBody;
-  {
-    auto jsonRoot = Core::Json::_internal::json::object();
-
-    jsonRoot["properties"]["tableName"] = options.Parameters.Properties.TableName;
-    jsonRoot["properties"]["signedIdentifiers"] = Core::Json::_internal::json::array();
-
-    for (auto i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
+    std::string jsonBody;
     {
-      jsonRoot["properties"]["signedIdentifiers"][i]["id"]
-          = options.Parameters.Properties.SignedIdentifiers[i].Id;
+      auto jsonRoot = Core::Json::_internal::json::object();
 
-      if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.StartTime.HasValue())
+      jsonRoot["properties"]["tableName"] = options.Parameters.Properties.TableName;
+      jsonRoot["properties"]["signedIdentifiers"] = Core::Json::_internal::json::array();
+
+      for (auto i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
       {
-        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["startTime"]
-            = options.Parameters.Properties.SignedIdentifiers[i]
-                  .AccessPolicy.StartTime.Value()
-                  .ToString();
-      }
+        jsonRoot["properties"]["signedIdentifiers"][i]["id"]
+            = options.Parameters.Properties.SignedIdentifiers[i].Id;
 
-      if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.ExpiryTime.HasValue())
-      {
-        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["expiryTime"]
-            = options.Parameters.Properties.SignedIdentifiers[i]
-                  .AccessPolicy.ExpiryTime.Value()
-                  .ToString();
-      }
-
-      jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["permission"]
-          = options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.Permission;
-    }
-
-    jsonBody = jsonRoot.dump();
-  }
-
-  Core::IO::MemoryBodyStream requestBody(
-      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
-
-  Core::Http::Request request(Core::Http::HttpMethod::Patch, url, &requestBody);
-
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
-
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
-
-  Table response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-
-      response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
-
-      for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
-      {
-        TableSignedIdentifier vectorItem{};
-
-        vectorItem.Id = jsonItem["id"].get<std::string>();
-
-        if (jsonItem.contains("startTime"))
+        if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.StartTime.HasValue())
         {
-          vectorItem.AccessPolicy.StartTime = DateTime::Parse(
-              jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["startTime"]
+              = options.Parameters.Properties.SignedIdentifiers[i]
+                    .AccessPolicy.StartTime.Value()
+                    .ToString();
         }
 
-        if (jsonItem.contains("expiryTime"))
+        if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.ExpiryTime.HasValue())
         {
-          vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
-              jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["expiryTime"]
+              = options.Parameters.Properties.SignedIdentifiers[i]
+                    .AccessPolicy.ExpiryTime.Value()
+                    .ToString();
         }
 
-        vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
+        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["permission"]
+            = options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.Permission;
+      }
 
-        response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
+      jsonBody = jsonRoot.dump();
+    }
+
+    Core::IO::MemoryBodyStream requestBody(
+        reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
+
+    Core::Http::Request request(Core::Http::HttpMethod::Patch, url, &requestBody);
+
+    request.SetHeader("Content-Type", "application/json");
+    request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+
+    auto rawResponse = m_pipeline->Send(request, context);
+    auto const httpStatusCode = rawResponse->GetStatusCode();
+
+    if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+    {
+      throw Core::RequestFailedException(rawResponse);
+    }
+
+    Table response{};
+    {
+      auto const& responseBody = rawResponse->GetBody();
+      if (responseBody.size() > 0)
+      {
+        auto const jsonRoot
+            = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+
+        response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
+
+        for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
+        {
+          TableSignedIdentifier vectorItem{};
+
+          vectorItem.Id = jsonItem["id"].get<std::string>();
+
+          if (jsonItem.contains("startTime"))
+          {
+            vectorItem.AccessPolicy.StartTime = DateTime::Parse(
+                jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          if (jsonItem.contains("expiryTime"))
+          {
+            vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
+                jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
+
+          response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
+        }
       }
     }
-  }
 
-  return Response<Table>(std::move(response), std::move(rawResponse));
+    return Response<Table>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<Table> TableClient::Get(GetOptions const& options, Core::Context const& context)
 {
-  auto url = m_url;
-  url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default/tables/");
-  url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
+    auto url = m_url;
+    url.AppendPath("subscriptions/");
+    url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+    url.AppendPath("resourceGroups/");
+    url.AppendPath(
+        !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
+    url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
+    url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
+    url.AppendPath("tableServices/default/tables/");
+    url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
 
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
+    url.SetQueryParameters({{"api-version", "2023-01-01"}});
 
-  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+    Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+    auto rawResponse = m_pipeline->Send(request, context);
+    auto const httpStatusCode = rawResponse->GetStatusCode();
 
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
-
-  Table response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
+    if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
     {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+      throw Core::RequestFailedException(rawResponse);
+    }
 
-      response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
-
-      for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
+    Table response{};
+    {
+      auto const& responseBody = rawResponse->GetBody();
+      if (responseBody.size() > 0)
       {
-        TableSignedIdentifier vectorItem{};
+        auto const jsonRoot
+            = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-        vectorItem.Id = jsonItem["id"].get<std::string>();
+        response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
 
-        if (jsonItem.contains("startTime"))
+        for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
         {
-          vectorItem.AccessPolicy.StartTime = DateTime::Parse(
-              jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          TableSignedIdentifier vectorItem{};
+
+          vectorItem.Id = jsonItem["id"].get<std::string>();
+
+          if (jsonItem.contains("startTime"))
+          {
+            vectorItem.AccessPolicy.StartTime = DateTime::Parse(
+                jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          if (jsonItem.contains("expiryTime"))
+          {
+            vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
+                jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
+
+          response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
         }
-
-        if (jsonItem.contains("expiryTime"))
-        {
-          vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
-              jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
-        }
-
-        vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
-
-        response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
       }
     }
-  }
 
-  return Response<Table>(std::move(response), std::move(rawResponse));
+    return Response<Table>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<DeleteResult> TableClient::Delete(
     DeleteOptions const& options,
     Core::Context const& context)
 {
-  auto url = m_url;
-  url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default/tables/");
-  url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
+    auto url = m_url;
+    url.AppendPath("subscriptions/");
+    url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+    url.AppendPath("resourceGroups/");
+    url.AppendPath(
+        !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
+    url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
+    url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
+    url.AppendPath("tableServices/default/tables/");
+    url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
 
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
+    url.SetQueryParameters({{"api-version", "2023-01-01"}});
 
-  Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
+    Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+    auto rawResponse = m_pipeline->Send(request, context);
+    auto const httpStatusCode = rawResponse->GetStatusCode();
 
-  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
+    if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
+    {
+      throw Core::RequestFailedException(rawResponse);
+    }
 
-  DeleteResult response{};
+    DeleteResult response{};
 
-  return Response<DeleteResult>(std::move(response), std::move(rawResponse));
+    return Response<DeleteResult>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<ListTableResource> TableClient::List(
     ListOptions const& options,
     Core::Context const& context)
 {
-  auto url = m_url;
-  url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default/tables");
+    auto url = m_url;
+    url.AppendPath("subscriptions/");
+    url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+    url.AppendPath("resourceGroups/");
+    url.AppendPath(
+        !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
+    url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
+    url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
+    url.AppendPath("tableServices/default/tables");
 
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
+    url.SetQueryParameters({{"api-version", "2023-01-01"}});
 
-  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+    Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+    auto rawResponse = m_pipeline->Send(request, context);
+    auto const httpStatusCode = rawResponse->GetStatusCode();
 
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
+    if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+    {
+      throw Core::RequestFailedException(rawResponse);
+    }
 
-  ListTableResource response{};
-  {
-    //auto const& responseBody = rawResponse->GetBody();
+    ListTableResource response{};
+    {
+    // auto const& responseBody = rawResponse->GetBody();
     /* if (responseBody.size() > 0)
     {
       auto const jsonRoot
@@ -737,5 +747,5 @@ Azure::Response<ListTableResource> TableClient::List(
     }
  */ }
 
-  return Response<ListTableResource>(std::move(response), std::move(rawResponse));
+    return Response<ListTableResource>(std::move(response), std::move(rawResponse));
 }
