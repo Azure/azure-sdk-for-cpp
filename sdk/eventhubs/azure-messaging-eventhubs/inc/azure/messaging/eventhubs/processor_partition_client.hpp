@@ -20,6 +20,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   public:
     /// Copy a ProcessorPartitionClient to another ProcessorPartitionClient.
     ProcessorPartitionClient(ProcessorPartitionClient const& other) = delete;
+
+    /// Move a ProcessorPartitionClient to another.
     ProcessorPartitionClient(ProcessorPartitionClient&& other) = default;
 
     /// Assignment operator.

@@ -76,6 +76,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     class ProcessorLoadBalancer;
   }
 
+  /** @brief Processor uses a ConsumerClient and CheckpointStore to provide automatic load balancing
+   * between multiple Processor instances, even in separate processes or on separate machines.
+   */
   class Processor final {
 #ifdef TESTING_BUILD_AMQP
     friend class Test::ProcessorTest_LoadBalancing_Test;
