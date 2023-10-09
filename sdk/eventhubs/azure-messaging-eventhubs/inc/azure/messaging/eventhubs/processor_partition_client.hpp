@@ -24,6 +24,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /// Assignment operator.
     ProcessorPartitionClient& operator=(ProcessorPartitionClient const& other) = delete;
+
+    /// Move a ProcessorPartitionClient to another.
     ProcessorPartitionClient& operator=(ProcessorPartitionClient&& other) = default;
 
     ~ProcessorPartitionClient();
@@ -39,14 +41,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return m_partitionClient->ReceiveEvents(maxBatchSize, context);
     }
 
+    /**
+     * @brief Updates the checkpoint for this partition using the given event data.
+     *
+     * Subsequent partition client reads will start from this event.
+     *
+     * @param eventData The event data to use for updating the checkpoint.
+     * @param context The context to pass to the update checkpoint operation.
+     */
     void UpdateCheckpoint(
         Models::ReceivedEventData const& eventData,
         Core::Context const& context = {});
 
+    /// Returns the partition ID associated with this ProcessorPartitionClient.
     std::string PartitionId() const { return m_partitionId; }
 
-    /** Closes the partition client.
-     */
+    /** Closes the partition client.     */
     void Close()
     {
       if (m_cleanupFunc)
