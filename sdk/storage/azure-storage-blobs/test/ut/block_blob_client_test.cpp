@@ -2035,13 +2035,13 @@ namespace Azure { namespace Storage { namespace Test {
         InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
 
-    // default audience
+    // audience by default
     auto blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
 
-    // public audience
-    clientOptions.Audience = Blobs::Models::BlobAudience::PublicAudience;
+    // default audience
+    clientOptions.Audience = Blobs::Models::BlobAudience::DefaultAudience;
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());

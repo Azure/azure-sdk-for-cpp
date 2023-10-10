@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
        * Storage account.
        */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static DataLakeAudience PublicAudience;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static DataLakeAudience DefaultAudience;
     };
   } // namespace Models
 
@@ -173,8 +173,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Files::DataLake::Models::DataLakeAudience::PublicAudience will be assumed if
-     * Audience is not set.
+     * #Azure::Storage::Files::DataLake::Models::DataLakeAudience::DefaultAudience will be assumed
+     * if Audience is not set.
      */
     Azure::Nullable<Models::DataLakeAudience> Audience;
   };

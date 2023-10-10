@@ -242,12 +242,12 @@ namespace Azure { namespace Storage { namespace Test {
         InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
 
-    // default audience
+    // audience by default
     auto queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueClient.GetProperties());
 
-    // public audience
-    clientOptions.Audience = Queues::Models::QueueAudience::PublicAudience;
+    // default audience
+    clientOptions.Audience = Queues::Models::QueueAudience::DefaultAudience;
     queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueClient.GetProperties());
 

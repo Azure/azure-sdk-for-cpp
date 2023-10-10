@@ -1702,13 +1702,13 @@ namespace Azure { namespace Storage { namespace Test {
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
-    // default audience
+    // audience by default
     auto fileClient
         = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(fileClient.GetProperties());
 
-    // public audience
-    clientOptions.Audience = Files::Shares::Models::ShareAudience::PublicAudience;
+    // default audience
+    clientOptions.Audience = Files::Shares::Models::ShareAudience::DefaultAudience;
     fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(fileClient.GetProperties());
 
