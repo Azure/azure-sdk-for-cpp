@@ -222,7 +222,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::ostream& operator<<(std::ostream& os, MESSAGE_SENDER_STATE state)
   {
-    os << MessageSenderStateFromLowLevel(state) << "(" << static_cast<int>(state) << ")";
+    os << MessageSenderStateFromLowLevel(state) << "("
+       << static_cast<std::underlying_type<MESSAGE_SENDER_STATE>::type>(state) << ")";
     return os;
   }
 
@@ -237,8 +238,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       auto sender = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
       sender->m_currentState = MessageSenderStateFromLowLevel(newState);
-      Log::Stream(Logger::Level::Verbose)
-          << "Message sender state changed from " << oldState << " to " << newState << ".";
+      if (sender->m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Message sender state changed from " << oldState << " to " << newState << ".";
+      }
       if (sender->m_events)
       {
         sender->m_events->OnMessageSenderStateChanged(

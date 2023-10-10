@@ -157,7 +157,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         os << "InstanceClosed";
         break;
       default:
-        os << "Unknown CbsOperationResult." << static_cast<int>(operationResult);
+        os << "Unknown CbsOperationResult."
+           << static_cast<std::underlying_type<CbsOperationResult>::type>(operationResult);
     }
     return os;
   }
@@ -179,7 +180,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         os << "Cancelled";
         break;
       default:
-        os << "Unknown CbsOpenResult." << static_cast<int>(openResult);
+        os << "Unknown CbsOpenResult."
+           << static_cast<std::underlying_type<CbsOpenResult>::type>(openResult);
     }
     return os;
   }

@@ -342,7 +342,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       else
       {
-        os << val->second << "(" << static_cast<int>(state) << ")";
+        os << val->second << "(" << static_cast<std::underlying_type<CONNECTION_STATE>::type>(state)
+           << ")";
       }
       return os;
     }
@@ -365,9 +366,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     ConnectionImpl* connection = static_cast<ConnectionImpl*>(context);
 
-    Log::Stream(Logger::Level::Verbose) << "Connection " << connection->m_containerId
-                                        << " state changed from " << oldState << " to " << newState;
-
+    if (connection->m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Verbose)
+          << "Connection " << connection->m_containerId << " state changed from " << oldState
+          << " to " << newState;
+    }
     if (connection->m_eventHandler)
     {
       if (!connection->m_isClosing)
@@ -382,9 +386,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // When the connection transitions into the error or end state, it is no longer pollable.
       Log::Stream(Logger::Level::Verbose)
-          << "Connection " << connection->m_containerId << " state changed to "
-          << UamqpConnectionStateToStringMap.at(newState) << " : " << static_cast<int>(newState)
-          << std::endl;
+          << "Connection " << connection->m_containerId << " state changed to " << newState;
     }
     connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
   }

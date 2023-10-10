@@ -227,11 +227,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         EXPECT_EQ(0, expectedEventsCount % batchSize)
             << "Keep the math simple - even # of messages for each batch";
 
-        std::thread produceEvents([partitionClient,
-                                   &producerClient,
-                                   &producerContext,
-                                   expectedEventsCount,
-                                   batchSize]() {
+        std::thread produceEvents([&, partitionClient]() {
           // Wait for 10 seconds for all of the consumer clients to be spun up.
           GTEST_LOG_(INFO)
               << "Produce Events thread: Wait for 10 seconds for processor to create receivers.";
@@ -295,76 +291,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         GTEST_LOG_(FATAL) << "Exception thrown receiving messages." << ex.what();
         producerContext.Cancel();
       }
-#if 0 
-	t.Logf("goroutine started for partition %s", partitionClient.PartitionID())
-
-	const expectedEventsCount = 1000
-	const batchSize = 1000
-	require.Zero(t, expectedEventsCount%batchSize, "keep the math simple - even # of messages for each batch")
-
-	// start producing events. We'll give the consumer client a moment, just to ensure
-	// it's actually started up the link.
-	go func() {
-		time.Sleep(10 * time.Second)
-
-		ctr := 0
-
-		for i := 0; i < expectedEventsCount/batchSize; i++ {
-			pid := partitionClient.PartitionID()
-			batch, err := producerClient.NewEventDataBatch(context.Background(), &azeventhubs.EventDataBatchOptions{
-				PartitionID: &pid,
-			})
-			require.NoError(t, err)
-
-			for j := 0; j < batchSize; j++ {
-				err := batch.AddEventData(&azeventhubs.EventData{
-					Body: []byte(fmt.Sprintf("[%s:%d] Message", partitionClient.PartitionID(), ctr)),
-				}, nil)
-				require.NoError(t, err)
-				ctr++
-			}
-
-			err = producerClient.SendEventDataBatch(context.Background(), batch, nil)
-			require.NoError(t, err)
-		}
-	}()
-
-	var allEvents []*azeventhubs.ReceivedEventData
-
-	for {
-		receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), 3*time.Second)
-		events, err := partitionClient.ReceiveEvents(receiveCtx, 100, nil)
-		receiveCtxCancel()
-
-		if err != nil && !errors.Is(err, context.DeadlineExceeded) {
-			if eventHubError := (*azeventhubs.Error)(nil); errors.As(err, &eventHubError) && eventHubError.Code == exported.ErrorCodeOwnershipLost {
-				fmt.Printf("Partition %s was stolen\n", partitionClient.PartitionID())
-			}
-
-			return err
-		}
-
-		if len(events) != 0 {
-			t.Logf("Processing %d event(s) for partition %s", len(events), partitionClient.PartitionID())
-
-			allEvents = append(allEvents, events...)
-
-			// Update the checkpoint with the last event received. If the processor is restarted
-			// it will resume from this point in the partition.
-
-			t.Logf("Updating checkpoint for partition %s", partitionClient.PartitionID())
-
-			if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1], nil); err != nil {
-				return err
-			}
-
-			if len(allEvents) == expectedEventsCount {
-				t.Logf("! All events acquired for partition %s, ending...", partitionClient.PartitionID())
-				return nil
-			}
-		}
-	}
-#endif
     }
   };
 
