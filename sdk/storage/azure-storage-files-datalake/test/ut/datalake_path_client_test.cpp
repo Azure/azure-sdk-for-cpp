@@ -489,13 +489,13 @@ namespace Azure { namespace Storage { namespace Test {
         InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
 
-    // default audience
+    // audience by default
     auto pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
-    // public audience
-    clientOptions.Audience = Files::DataLake::Models::DataLakeAudience::PublicAudience;
+    // default audience
+    clientOptions.Audience = Files::DataLake::Models::DataLakeAudience::DefaultAudience;
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());

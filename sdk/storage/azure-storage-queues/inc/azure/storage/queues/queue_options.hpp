@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Queues {
        * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
        * Storage account.
        */
-      AZ_STORAGE_QUEUES_DLLEXPORT const static QueueAudience PublicAudience;
+      AZ_STORAGE_QUEUES_DLLEXPORT const static QueueAudience DefaultAudience;
     };
   } // namespace Models
 
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Queues {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Queues::Models::QueueAudience::PublicAudience will be assumed if
+     * #Azure::Storage::Queues::Models::QueueAudience::DefaultAudience will be assumed if
      * Audience is not set.
      */
     Azure::Nullable<Models::QueueAudience> Audience;

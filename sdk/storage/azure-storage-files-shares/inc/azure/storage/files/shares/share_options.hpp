@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
        * Storage account.
        */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAudience PublicAudience;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAudience DefaultAudience;
     };
   } // namespace Models
 
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Files::Shares::Models::ShareAudience::PublicAudience will be assumed if
+     * #Azure::Storage::Files::Shares::Models::ShareAudience::DefaultAudience will be assumed if
      * Audience is not set.
      */
     Azure::Nullable<Models::ShareAudience> Audience;
