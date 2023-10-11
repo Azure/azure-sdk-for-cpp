@@ -155,6 +155,11 @@ jobs:
           parameters:
             ContinueOnError: false
 
+        - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
+          parameters:
+            SourceDIrectory: $(Build.SourcesDirectory)
+            BasePathLength: 30
+
         - template: /eng/common/pipelines/templates/steps/verify-links.yml
           parameters:
             ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
