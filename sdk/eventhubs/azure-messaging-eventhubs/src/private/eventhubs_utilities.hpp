@@ -20,7 +20,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
-  constexpr bool EnableAmqpTrace = false;
+  constexpr bool EnableAmqpTrace = true;
 
   class EventHubsExceptionFactory {
   public:
