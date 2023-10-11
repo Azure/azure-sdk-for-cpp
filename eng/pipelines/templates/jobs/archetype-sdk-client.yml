@@ -157,8 +157,8 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
           parameters:
-            SourceDIrectory: $(Build.SourcesDirectory)
-            BasePathLength: 30
+            SourceDirectory: $(Build.SourcesDirectory)
+            BasePathLength: 60
 
         - template: /eng/common/pipelines/templates/steps/verify-links.yml
           parameters:
