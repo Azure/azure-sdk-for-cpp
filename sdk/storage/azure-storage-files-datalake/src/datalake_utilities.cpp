@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     blobOptions.EnableTenantDiscovery = options.EnableTenantDiscovery;
     if (options.Audience.HasValue())
     {
-      blobOptions.Audience = Blobs::Models::BlobAudience(options.Audience.Value().ToString());
+      blobOptions.Audience = Blobs::BlobAudience(options.Audience.Value().ToString());
     }
     return blobOptions;
   }

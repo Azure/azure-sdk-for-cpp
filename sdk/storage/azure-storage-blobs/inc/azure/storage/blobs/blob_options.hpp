@@ -21,34 +21,30 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  namespace Models {
+  /**
+   * @brief Audiences available for Blobs
+   *
+   */
+  class BlobAudience final : public Azure::Core::_internal::ExtendableEnumeration<BlobAudience> {
+  public:
+    /**
+     * @brief Construct a new BlobAudience object
+     *
+     * @param blobAudience The Azure Active Directory audience to use when forming authorization
+     * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
+     * cloud where the resource is located. For more information: See
+     * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+     */
+    explicit BlobAudience(std::string blobAudience) : ExtendableEnumeration(std::move(blobAudience))
+    {
+    }
 
     /**
-     * @brief Audiences available for Blobs
-     *
+     * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
+     * Storage account.
      */
-    class BlobAudience final : public Azure::Core::_internal::ExtendableEnumeration<BlobAudience> {
-    public:
-      /**
-       * @brief Construct a new BlobAudience object
-       *
-       * @param blobAudience The Azure Active Directory audience to use when forming authorization
-       * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
-       * cloud where the resource is located. For more information: See
-       * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
-       */
-      explicit BlobAudience(std::string blobAudience)
-          : ExtendableEnumeration(std::move(blobAudience))
-      {
-      }
-
-      /**
-       * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
-       * Storage account.
-       */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobAudience DefaultAudience;
-    };
-  } // namespace Models
+    AZ_STORAGE_BLOBS_DLLEXPORT const static BlobAudience DefaultAudience;
+  };
 
   /**
    * @brief Specifies access conditions for a container.
@@ -198,10 +194,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Blobs::Models::BlobAudience::DefaultAudience will be assumed if Audience is
+     * #Azure::Storage::Blobs::BlobAudience::DefaultAudience will be assumed if Audience is
      * not set.
      */
-    Azure::Nullable<Models::BlobAudience> Audience;
+    Azure::Nullable<BlobAudience> Audience;
   };
 
   /**

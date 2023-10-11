@@ -78,33 +78,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        */
       static std::string SerializeAcls(const std::vector<Acl>& aclsArray);
     };
-
-    /**
-     * @brief Audiences available for Blobs
-     *
-     */
-    class DataLakeAudience final
-        : public Azure::Core::_internal::ExtendableEnumeration<DataLakeAudience> {
-    public:
-      /**
-       * @brief Construct a new DataLakeAudience object
-       *
-       * @param dataLakeAudience The Azure Active Directory audience to use when forming
-       * authorization scopes. For the Language service, this value corresponds to a URL that
-       * identifies the Azure cloud where the resource is located. For more information: See
-       * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
-       */
-      explicit DataLakeAudience(std::string dataLakeAudience)
-          : ExtendableEnumeration(std::move(dataLakeAudience))
-      {
-      }
-
-      /**
-       * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
-       * Storage account.
-       */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static DataLakeAudience DefaultAudience;
-    };
   } // namespace Models
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
@@ -141,6 +114,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   } // namespace _detail
 
   /**
+   * @brief Audiences available for Blobs
+   *
+   */
+  class DataLakeAudience final
+      : public Azure::Core::_internal::ExtendableEnumeration<DataLakeAudience> {
+  public:
+    /**
+     * @brief Construct a new DataLakeAudience object
+     *
+     * @param dataLakeAudience The Azure Active Directory audience to use when forming
+     * authorization scopes. For the Language service, this value corresponds to a URL that
+     * identifies the Azure cloud where the resource is located. For more information: See
+     * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+     */
+    explicit DataLakeAudience(std::string dataLakeAudience)
+        : ExtendableEnumeration(std::move(dataLakeAudience))
+    {
+    }
+
+    /**
+     * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
+     * Storage account.
+     */
+    AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static DataLakeAudience DefaultAudience;
+  };
+
+  /**
    * @brief Client options used to initialize all DataLake clients.
    */
   struct DataLakeClientOptions final : Azure::Core::_internal::ClientOptions
@@ -173,10 +173,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Files::DataLake::Models::DataLakeAudience::DefaultAudience will be assumed
+     * #Azure::Storage::Files::DataLake::DataLakeAudience::DefaultAudience will be assumed
      * if Audience is not set.
      */
-    Azure::Nullable<Models::DataLakeAudience> Audience;
+    Azure::Nullable<DataLakeAudience> Audience;
   };
 
   /**

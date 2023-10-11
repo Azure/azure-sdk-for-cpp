@@ -18,35 +18,31 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
-  namespace Models {
+  /**
+   * @brief Audiences available for Blobs
+   *
+   */
+  class ShareAudience final : public Azure::Core::_internal::ExtendableEnumeration<ShareAudience> {
+  public:
+    /**
+     * @brief Construct a new ShareAudience object
+     *
+     * @param shareAudience The Azure Active Directory audience to use when forming authorization
+     * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
+     * cloud where the resource is located. For more information: See
+     * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+     */
+    explicit ShareAudience(std::string shareAudience)
+        : ExtendableEnumeration(std::move(shareAudience))
+    {
+    }
 
     /**
-     * @brief Audiences available for Blobs
-     *
+     * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
+     * Storage account.
      */
-    class ShareAudience final
-        : public Azure::Core::_internal::ExtendableEnumeration<ShareAudience> {
-    public:
-      /**
-       * @brief Construct a new ShareAudience object
-       *
-       * @param shareAudience The Azure Active Directory audience to use when forming authorization
-       * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
-       * cloud where the resource is located. For more information: See
-       * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
-       */
-      explicit ShareAudience(std::string shareAudience)
-          : ExtendableEnumeration(std::move(shareAudience))
-      {
-      }
-
-      /**
-       * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
-       * Storage account.
-       */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAudience DefaultAudience;
-    };
-  } // namespace Models
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareAudience DefaultAudience;
+  };
 
   /**
    * @brief Client options used to initialize share clients.
@@ -80,10 +76,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Files::Shares::Models::ShareAudience::DefaultAudience will be assumed if
+     * #Azure::Storage::Files::Shares::ShareAudience::DefaultAudience will be assumed if
      * Audience is not set.
      */
-    Azure::Nullable<Models::ShareAudience> Audience;
+    Azure::Nullable<ShareAudience> Audience;
   };
 
   /**

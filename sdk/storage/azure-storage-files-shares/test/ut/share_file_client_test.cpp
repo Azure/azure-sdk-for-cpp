@@ -1708,14 +1708,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.GetProperties());
 
     // default audience
-    clientOptions.Audience = Files::Shares::Models::ShareAudience::DefaultAudience;
+    clientOptions.Audience = Files::Shares::ShareAudience::DefaultAudience;
     fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(fileClient.GetProperties());
 
     // custom audience
     auto fileUrl = Azure::Core::Url(fileClient.GetUrl());
     clientOptions.Audience
-        = Files::Shares::Models::ShareAudience(fileUrl.GetScheme() + "://" + fileUrl.GetHost());
+        = Files::Shares::ShareAudience(fileUrl.GetScheme() + "://" + fileUrl.GetHost());
     fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(fileClient.GetProperties());
 
@@ -1728,7 +1728,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.GetProperties());
 
     // error audience
-    clientOptions.Audience = Files::Shares::Models::ShareAudience("https://disk.compute.azure.com");
+    clientOptions.Audience = Files::Shares::ShareAudience("https://disk.compute.azure.com");
     fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(fileClient.GetProperties(), StorageException);
 
