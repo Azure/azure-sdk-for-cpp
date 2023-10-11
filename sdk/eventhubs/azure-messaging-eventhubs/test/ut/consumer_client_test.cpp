@@ -183,7 +183,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EventDataBatchOptions eventBatchOptions;
       eventBatchOptions.PartitionId = "0";
       EventDataBatch batch{producer.CreateBatch(eventBatchOptions)};
-      for (int i = 0; i < numberOfEvents; ++i)
+      for (size_t i = 0; i < numberOfEvents; ++i)
       {
         EXPECT_TRUE(batch.TryAddMessage(Models::EventData{"Test"}));
       }
