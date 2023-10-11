@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   } // namespace _detail
 
   /**
-   * @brief Audiences available for Blobs
+   * @brief Audiences available for DataLake
    *
    */
   class DataLakeAudience final
