@@ -173,6 +173,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
 
     // Populate the eventhub instance with 50 messages.
+    constexpr size_t numberOfEvents = 50;
     GTEST_LOG_(INFO) << "Populate eventhubs instance.";
     {
       Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
@@ -182,7 +183,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EventDataBatchOptions eventBatchOptions;
       eventBatchOptions.PartitionId = "0";
       EventDataBatch batch{producer.CreateBatch(eventBatchOptions)};
-      for (int i = 0; i < 50; ++i)
+      for (int i = 0; i < numberOfEvents; ++i)
       {
         EXPECT_TRUE(batch.TryAddMessage(Models::EventData{"Test"}));
       }
@@ -207,7 +208,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       // Sleep for a bit for the messages to be received.
       GTEST_LOG_(INFO) << "Sleep until messages received.";
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      std::this_thread::sleep_for(std::chrono::seconds(2));
 
       size_t totalReceived{0};
       {
@@ -215,12 +216,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         auto messages = partitionClient.ReceiveEvents(5);
         std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
+        EXPECT_GE(messages.size(), 1ul);
         EXPECT_LE(messages.size(), 5ul);
         EXPECT_TRUE(elapsed_seconds.count() < 1);
         totalReceived += messages.size();
       }
 
       // We should have 45 messages left, which we should get immediately.
+      do
       {
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
         auto messages = partitionClient.ReceiveEvents(50);
@@ -229,8 +232,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         EXPECT_LE(messages.size(), 45ul);
         totalReceived += messages.size();
         EXPECT_TRUE(elapsed_seconds.count() < 1);
-      }
-      EXPECT_EQ(totalReceived, 50ul);
+      } while (totalReceived < numberOfEvents);
+
+      EXPECT_EQ(totalReceived, numberOfEvents);
 
       // We have consumed all the events. Attempting to consume one more should block.
       {
