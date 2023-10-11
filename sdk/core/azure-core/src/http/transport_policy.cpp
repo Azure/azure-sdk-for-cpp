@@ -118,7 +118,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
    ***********************************************************************************
    *
    */
-  auto response = m_options.Transport->Send(request, context);
+  auto response = m_options.Transport->Send(request, context); 
   auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
       response->GetStatusCode());
 

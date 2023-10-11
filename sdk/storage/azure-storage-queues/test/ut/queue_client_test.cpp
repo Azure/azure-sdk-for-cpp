@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Queues { namespace Models {
 namespace Azure { namespace Storage { namespace Test {
 
   void QueueClientTest::SetUp()
-  {
+{
     StorageTest::SetUp();
     if (shouldSkipTest())
     {

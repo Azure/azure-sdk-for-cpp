@@ -10,7 +10,7 @@
 #include <azure/core/http/http_status_code.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
-
+#include <azure/core/internal/environment.hpp>
 using namespace Azure::Storage::Tables;
 
 AllowedMethods const AllowedMethods::Delete{"DELETE"};
@@ -23,23 +23,17 @@ AllowedMethods const AllowedMethods::Put{"PUT"};
 AllowedMethods const AllowedMethods::Patch{"PATCH"};
 AllowedMethods const AllowedMethods::Connect{"CONNECT"};
 AllowedMethods const AllowedMethods::Trace{"TRACE"};
-
-TableServicesClient::TableServicesClient(std::string subscriptionId)
+/*
+TableServicesClient::TableServicesClient(
+    std::string subscriptionId,
+    const TableClientOptions& options)
     : m_pipeline(new Core::Http::_internal::HttpPipeline({}, "storage-tables", "", {}, {})),
       m_url("https://management.azure.com"), m_subscriptionId(std::move(subscriptionId))
 {
+  (void)options;
 }
-
-TableServicesClient::TableServicesClient(
-   const std::string& tablesUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
-    TableClientOptions options)
-    : m_url(tablesUrl)
-{
-  (void)tablesUrl;
-  (void)credential;
-}
-
+*/
+const TablesAudience TablesAudience::PublicAudience(Azure::Storage::_internal::TablesManagementScope);
 Azure::Response<ListTableServices> TableServicesClient::List(
     ListOptions const& options,
     Core::Context const& context)
@@ -282,12 +276,14 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
     GetServicePropertiesOptions const& options,
     Core::Context const& context)
 {
+  (void)options;
   auto url = m_url;
   url.AppendPath("subscriptions/");
+  m_subscriptionId = Azure::Core::_internal::Environment::GetVariable(
+      "STORAGE_SUBSCRIPTION_ID"); // gearama: this is the subscription ID
   url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
   url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
+  url.AppendPath( !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
   url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
   url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
   url.AppendPath("tableServices/default");
@@ -306,7 +302,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
 
   TableServiceProperties response{};
   {
-    //    auto const& responseBody = rawResponse->GetBody();
+  //    auto const& responseBody = rawResponse->GetBody();
     /* if (responseBody.size() > 0)
     {
       auto const jsonRoot

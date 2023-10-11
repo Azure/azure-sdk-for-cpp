@@ -43,6 +43,13 @@
             "metadata": {
                 "description": "Storage endpoint suffix. The default value uses Azure Public Cloud (core.windows.net)"
             }
+        },
+        "cosmosEndpointSuffix": {
+            "type": "string",
+            "defaultValue": "cosmos.azure.com",
+            "metadata": {
+                "description": "The url suffix to use when accessing the cosmos data plane."
+            }
         }
     },
     "variables": {
@@ -63,7 +70,25 @@
         "authorizationApiVersion": "2018-01-01-preview",
         "blobDataContributorRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
         "blobDataOwnerRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/b7e6dc6d-f1e8-4753-8033-0f276bb0955b')]",
-        "premiumFileAccountName": "[concat(parameters('baseName'), 'pfile')]"
+        "premiumFileAccountName": "[concat(parameters('baseName'), 'pfile')]",
+        "primaryAccountName": "[concat(parameters('baseName'), 'prim')]",
+        "networkAcls": {
+            "bypass": "AzureServices",
+            "virtualNetworkRules": [],
+            "ipRules": [],
+            "defaultAction": "Allow"
+        },
+        "encryption": {
+            "services": {
+                "file": {
+                    "enabled": true
+                },
+                "blob": {
+                    "enabled": true
+                }
+            },
+            "keySource": "Microsoft.Storage"
+        }
     },
     "resources": [
         {
@@ -87,6 +112,23 @@
                 "roleDefinitionId": "[variables('blobDataOwnerRoleId')]",
                 "principalId": "[parameters('testApplicationOid')]"
             }
+        },
+       {
+           "type": "Microsoft.Storage/storageAccounts",
+           "apiVersion": "[variables('storageApiVersion')]",
+           "name": "[variables('primaryAccountName')]",
+           "location": "[variables('location')]",
+           "sku": {
+               "name": "Standard_RAGRS",
+               "tier": "Standard"
+           },
+           "kind": "StorageV2",
+           "properties": {
+               "networkAcls": "[variables('networkAcls')]",
+               "supportsHttpsTrafficOnly": true,
+               "encryption": "[variables('encryption')]",
+               "accessTier": "Cool"
+           }
         },
         {
             "name": "[variables('accountName')]",
@@ -289,6 +331,48 @@
                 },
                 "accessTier": "Hot"
             }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "2020-04-01",
+            "name": "[variables('primaryAccountName')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "defaultExperience": "Azure Table",
+                "hidden-cosmos-mmspecial": "",
+                "CosmosAccountType": "Non-Production"
+            },
+            "kind": "GlobalDocumentDB",
+            "properties": {
+                "publicNetworkAccess": "Enabled",
+                "enableAutomaticFailover": false,
+                "enableMultipleWriteLocations": false,
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "disableKeyBasedMetadataWriteAccess": false,
+                "enableFreeTier": false,
+                "enableAnalyticalStorage": false,
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "BoundedStaleness",
+                    "maxIntervalInSeconds": 86400,
+                    "maxStalenessPrefix": 1000000
+                },
+                "locations": [
+                    {
+                        "locationName": "[variables('location')]",
+                        "provisioningState": "Succeeded",
+                        "failoverPriority": 0,
+                        "isZoneRedundant": false
+                    }
+                ],
+                "capabilities": [
+                    {
+                        "name": "EnableTable"
+                    }
+                ],
+                "ipRules": []
+            }
         }
     ],
     "outputs": {
@@ -343,6 +427,30 @@
         "RESOURCE_GROUP": {
             "type": "string",
             "value": "[concat('rg-storage-', variables('accountName'))]"
+        },
+        "COSMOS_TABLES_ENDPOINT_SUFFIX": {
+            "type": "string",
+            "value": "[parameters('cosmosEndpointSuffix')]"
+        },
+        "STORAGE_ENDPOINT_SUFFIX": {
+            "type": "string",
+            "value": "[parameters('storageEndpointSuffix')]"
+        },
+        "TABLES_STORAGE_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[variables('primaryAccountName')]"
+        },
+        "TABLES_PRIMARY_STORAGE_ACCOUNT_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('storageApiVersion')).keys[0].value]"
+        },
+        "TABLES_COSMOS_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[variables('primaryAccountName')]"
+        },
+        "TABLES_PRIMARY_COSMOS_ACCOUNT_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('primaryAccountName')), '2020-04-01').primaryMasterKey]"
         }
     }
 }

@@ -6,16 +6,27 @@
 #pragma once
 
 #include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
+#include <azure/storage/common/storage_credential.hpp>
 #include <azure/storage/tables/dll_import_export.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/rtti.hpp>
-
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
+#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
+#include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -63,14 +74,14 @@ namespace Azure { namespace Storage { namespace Tables {
     std::vector<CorsRule> CorsRules;
   };
   /**
-   * @brief API version for Storage Queue service.
+   * @brief API version for Storage Tables service.
    */
   class ServiceVersion final {
   public:
     /**
      * @brief Construct a new Service Version object
      *
-     * @param version The string version for Storage Queue Service.
+     * @param version The string version for Storage Tables Service.
      */
     explicit ServiceVersion(std::string version) : m_version(std::move(version)) {}
 
@@ -94,7 +105,7 @@ namespace Azure { namespace Storage { namespace Tables {
      */
     std::string const& ToString() const { return m_version; }
 
-     /**
+    /**
      * @brief API version 2019-12-12.
      *
      */
@@ -104,7 +115,7 @@ namespace Azure { namespace Storage { namespace Tables {
     std::string m_version;
   };
 
-      /**
+  /**
    * @brief Audiences available for Blobs
    *
    */
@@ -112,15 +123,15 @@ namespace Azure { namespace Storage { namespace Tables {
       : public Azure::Core::_internal::ExtendableEnumeration<TablesAudience> {
   public:
     /**
-     * @brief Construct a new QueueAudience object
+     * @brief Construct a new TablesAudience object
      *
-     * @param queueAudience The Azure Active Directory audience to use when forming authorization
+     * @param TablesAudience The Azure Active Directory audience to use when forming authorization
      * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
      * cloud where the resource is located. For more information: See
      * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
      */
-    explicit TablesAudience(std::string TablesAudience)
-        : ExtendableEnumeration(std::move(TablesAudience))
+    explicit TablesAudience(std::string tablesAudience)
+        : ExtendableEnumeration(std::move(tablesAudience))
     {
     }
 
@@ -132,7 +143,7 @@ namespace Azure { namespace Storage { namespace Tables {
   };
 
   /**
-   * @brief Optional parameters for constructing a new QueueClient.
+   * @brief Optional parameters for constructing a new TableClient.
    */
   struct TableClientOptions final : Azure::Core::_internal::ClientOptions
   {
@@ -159,7 +170,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Queues::Models::QueueAudience::PublicAudience will be assumed if
+     * #Azure::Storage::Queues::Models::TablesAudience::PublicAudience will be assumed if
      * Audience is not set.
      */
     Azure::Nullable<TablesAudience> Audience;
@@ -259,14 +270,53 @@ namespace Azure { namespace Storage { namespace Tables {
 
   class TableServicesClient final {
   public:
-    explicit TableServicesClient(std::string subscriptionId);
-    explicit TableServicesClient(const std::string& tablesUrl, TableClientOptions options = {});
+    explicit TableServicesClient(std::string subscriptionId, const TableClientOptions& options = {})
+        : m_url("https://management.azure.com"), m_subscriptionId(std::move(subscriptionId))
+    {
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+          m_url.GetHost(), options.SecondaryHostForRetryReads));
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+      perOperationPolicies.emplace_back(
+          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+          options,
+          "storage-tables",
+          _detail::ApiVersion,
+          std::move(perRetryPolicies),
+          std::move(perOperationPolicies));
+    };
 
-    explicit TableServicesClient(
-        const std::string& tablesUrl,
+     explicit TableServicesClient(
+        const std::string& serviceUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        TableClientOptions options={});
-
+        const TableClientOptions& options = {})
+        : TableServicesClient(serviceUrl, options)
+    {
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+          m_url.GetHost(), options.SecondaryHostForRetryReads));
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+      {
+        Azure::Core::Credentials::TokenRequestContext tokenContext;
+        tokenContext.Scopes.emplace_back(
+            options.Audience.HasValue() ? options.Audience.Value().ToString()
+                                        :  TablesAudience::PublicAudience.ToString());
+        perRetryPolicies.emplace_back(
+            std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
+                credential, tokenContext, options.EnableTenantDiscovery));
+      }
+      perOperationPolicies.emplace_back(
+          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+          options,
+          _internal::TablesServicePackageName,
+          _detail::ApiVersion,
+          std::move(perRetryPolicies),
+          std::move(perOperationPolicies));
+    };
 
     Response<ListTableServices> List(
         ListOptions const& options = {},
