@@ -209,35 +209,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Log::Stream(Logger::Level::Verbose) << "NextPartitionClient: Retrieve next client";
     auto nextClient = m_nextPartitionClients.Remove(context);
     return nextClient;
-
-    // while (true)
-    //{
-    //   std::unique_lock<std::mutex> lock{m_partitionClientsLock};
-    //   if (!m_nextPartitionClients.empty())
-    //   {
-    //     uint32_t currentPartition = m_currentPartitionClient;
-    //     if (currentPartition > m_nextPartitionClients.size() - 1)
-    //     {
-    //       currentPartition = 0;
-    //     }
-    //     Log::Stream(Logger::Level::Verbose) << "Return partition client " << currentPartition <<
-    //     " for partition " << m_nextPartitionClients[currentPartition]->PartitionId();
-
-    //    m_currentPartitionClient = currentPartition + 1;
-    //    return m_nextPartitionClients[currentPartition];
-    //  }
-    //  else
-    //  {
-    //    Log::Stream(Logger::Level::Verbose) << "No partition clients available; waiting";
-    //    if (!m_partititionClientsAvailable.wait_until(
-    //            lock, std::chrono::system_clock::now() + std::chrono::milliseconds(100), [this]()
-    //            {
-    //              return m_nextPartitionClients.empty();
-    //            }))
-    //    {
-    //      context.ThrowIfCancelled();
-    //    }
-    //  }
-    //}
   }
 }}} // namespace Azure::Messaging::EventHubs
