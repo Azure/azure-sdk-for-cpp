@@ -5,6 +5,7 @@
 ### Bugs Fixed
 
 - Change the default value for the authority host option to be read from the environment variable first.
+- Do not throw an exception during `AzureCliCredential` construction, but rather delay it to the `GetToken()` call.
 
 ## 1.6.0-beta.2 (2023-09-13)
 
