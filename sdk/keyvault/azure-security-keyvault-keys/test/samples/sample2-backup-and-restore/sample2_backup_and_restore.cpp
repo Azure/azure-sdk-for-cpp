@@ -72,9 +72,10 @@ int main()
     // keyClient.PurgeDeletedKey(rsaKeyName);
 
     // Let's wait for a bit (maximum ~5 minutes) so we know the key was purged.
+    uint16_t loop = 0;
     try
     {
-      uint16_t loop = 0;
+      
       // To check if the key was purged we attempt to get the key from the Key Vault.
       // If we get an exception, the key was purged.
       // If not, we wait a bit more,since the key is in the purge process.
@@ -90,6 +91,7 @@ int main()
     {
       std::cout << "\t" << e.what() << std::endl;
       std::cout << e.Message << std::endl;
+      std::cout << loop << std::endl;
       std::cout << "\t-Key purged" << std::endl;
     }
     // let's wait for one minute so we know the key was purged.
