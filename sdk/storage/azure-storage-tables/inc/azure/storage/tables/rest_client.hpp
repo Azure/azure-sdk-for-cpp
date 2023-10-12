@@ -193,12 +193,14 @@ namespace Azure { namespace Storage { namespace Tables {
   {
     std::string ResourceGroupName;
     std::string AccountName;
+    std::string SubcriptionId;
   };
 
   struct SetServicePropertiesOptions final
   {
     std::string ResourceGroupName;
     std::string AccountName;
+    std::string SubscriptionId;
     TableServiceProperties Parameters;
   };
 
@@ -206,6 +208,7 @@ namespace Azure { namespace Storage { namespace Tables {
   {
     std::string ResourceGroupName;
     std::string AccountName;
+    std::string SubscriptionId;
   };
   struct TableAccessPolicy final
   {

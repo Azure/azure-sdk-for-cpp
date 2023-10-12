@@ -40,7 +40,7 @@ Azure::Response<ListTableServices> TableServicesClient::List(
 {
   auto url = m_url;
   url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+  url.AppendPath(!options.SubcriptionId.empty() ? Core::Url::Encode(options.SubcriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath(
       !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
@@ -62,66 +62,67 @@ Azure::Response<ListTableServices> TableServicesClient::List(
 
   ListTableServices response{};
   {
-    //    auto const& responseBody = rawResponse->GetBody();
-    /* gearama if (responseBody.size() > 0)
+    auto const& responseBody = rawResponse->GetBody();
+    std::string bodyString(responseBody.begin(), responseBody.end());
+    if (responseBody.size() > 0)
     {
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
       for (auto const& jsonItem : jsonRoot["value"])
       {
-        TableServiceProperties vectorItem{};
+        TableServiceProperties vectorRootItem{};
 
-        for (auto const& jsonItem : jsonItem["corsRules"])
+        for (auto const& jsonRulesItem : jsonItem["properties"]["cors"]["corsRules"])
         {
           CorsRule vectorItem{};
 
-          for (auto const& jsonItem : jsonItem["allowedOrigins"])
+          for (auto const& jsonSubItem : jsonRulesItem["allowedOrigins"])
           {
-            std::string vectorItem{};
+            std::string allowedOrigins{};
 
-            vectorItem = jsonItem.get<std::string>();
+            allowedOrigins = jsonSubItem.get<std::string>();
 
-  //gearama          vectorItem.AllowedOrigins.emplace_back(std::move(vectorItem));
+            vectorItem.AllowedOrigins.emplace_back(std::move(allowedOrigins));
           }
 
-          for (auto const& jsonItem : jsonItem["allowedMethods"])
+          for (auto const& jsonSubItem : jsonRulesItem["allowedMethods"])
           {
-            AllowedMethods vectorItem{};
+            AllowedMethods allowedMethods{};
 
-            vectorItem = AllowedMethods(jsonItem.get<std::string>());
+            allowedMethods = AllowedMethods(jsonSubItem.get<std::string>());
 
- // gearama               vectorItem.AllowedMethods.emplace_back(std::move(vectorItem));
+           vectorItem.AllowedMethods.emplace_back(std::move(allowedMethods));
           }
 
-          vectorItem.MaxAgeInSeconds = jsonItem["maxAgeInSeconds"].is_string()
-              ? std::stoi(jsonItem["maxAgeInSeconds"].get<std::string>())
-              : jsonItem["maxAgeInSeconds"].get<std::int32_t>();
+          vectorItem.MaxAgeInSeconds = jsonRulesItem["maxAgeInSeconds"].is_string()
+              ? std::stoi(jsonRulesItem["maxAgeInSeconds"].get<std::string>())
+              : jsonRulesItem["maxAgeInSeconds"].get<std::int32_t>();
 
-          for (auto const& jsonItem : jsonItem["exposedHeaders"])
+          for (auto const& jsonSubItem : jsonRulesItem["exposedHeaders"])
           {
-            std::string vectorItem{};
+           std::string exposedHeaders{};
 
-            vectorItem = jsonItem.get<std::string>();
+            exposedHeaders = jsonSubItem.get<std::string>();
 
-  // gearama              vectorItem.ExposedHeaders.emplace_back(std::move(vectorItem));
+                vectorItem.ExposedHeaders.emplace_back(std::move(exposedHeaders));
           }
 
-          for (auto const& jsonItem : jsonItem["allowedHeaders"])
+          for (auto const& jsonSubItem : jsonRulesItem["allowedHeaders"])
           {
-            std::string vectorItem{};
+                std::string allowedHeaders{};
 
-            vectorItem = jsonItem.get<std::string>();
+            allowedHeaders = jsonSubItem.get<std::string>();
 
-  // gearama              vectorItem.AllowedHeaders.emplace_back(std::move(vectorItem));
+                vectorItem.AllowedHeaders.emplace_back(std::move(allowedHeaders));
           }
 
-  // gearama vectorItem.Properties.Cors.CorsRules.emplace_back(std::move(vectorItem));
+           vectorRootItem.Properties.Cors.CorsRules.emplace_back(std::move(vectorItem));
         }
 
-        response.Value.emplace_back(std::move(vectorItem));
+        response.Value.emplace_back(std::move(vectorRootItem));
       }
-    }*/ // gearama
+    }
   }
 
   return Response<ListTableServices>(std::move(response), std::move(rawResponse));
@@ -133,7 +134,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
 {
   auto url = m_url;
   url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+  
+  url.AppendPath(!options.SubscriptionId.empty() ? Core::Url::Encode(options.SubscriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath(
       !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
@@ -213,60 +215,61 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
   }
 
   TableServiceProperties response{};
-  { /*
+  { 
     auto const& responseBody = rawResponse->GetBody();
+    std::string responseString (responseBody.begin(), responseBody.end());
     if (responseBody.size() > 0)
     {
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-      for (auto const& jsonItem : jsonRoot["corsRules"])
+      for (auto const& jsonItem : jsonRoot["properties"]["cors"]["corsRules"])
       {
         CorsRule vectorItem{};
 
-        for (auto const& jsonItem : jsonItem["allowedOrigins"])
+        for (auto const& jsonSubItem : jsonItem["allowedOrigins"])
         {
-          std::string vectorItem{};
+          std::string origins{};
 
-          vectorItem = jsonItem.get<std::string>();
+          origins = jsonSubItem.get<std::string>();
 
-          vectorItem.AllowedOrigins.emplace_back(std::move(vectorItem));
+          vectorItem.AllowedOrigins.emplace_back(std::move(origins));
         }
 
-        for (auto const& jsonItem : jsonItem["allowedMethods"])
+        for (auto const& jsonSubItem : jsonItem["allowedMethods"])
         {
-          AllowedMethods vectorItem{};
+          AllowedMethods methods{};
 
-          vectorItem = AllowedMethods(jsonItem.get<std::string>());
+          methods = AllowedMethods(jsonSubItem.get<std::string>());
 
-          vectorItem.AllowedMethods.emplace_back(std::move(vectorItem));
+          vectorItem.AllowedMethods.emplace_back(std::move(methods));
         }
 
         vectorItem.MaxAgeInSeconds = jsonItem["maxAgeInSeconds"].is_string()
             ? std::stoi(jsonItem["maxAgeInSeconds"].get<std::string>())
             : jsonItem["maxAgeInSeconds"].get<std::int32_t>();
 
-        for (auto const& jsonItem : jsonItem["exposedHeaders"])
+        for (auto const& jsonSubItem : jsonItem["exposedHeaders"])
         {
-          std::string vectorItem{};
+          std::string headers{};
 
-          vectorItem = jsonItem.get<std::string>();
+          headers = jsonSubItem.get<std::string>();
 
-          vectorItem.ExposedHeaders.emplace_back(std::move(vectorItem));
+          vectorItem.ExposedHeaders.emplace_back(std::move(headers));
         }
 
-        for (auto const& jsonItem : jsonItem["allowedHeaders"])
+        for (auto const& jsonSubItem : jsonItem["allowedHeaders"])
         {
-          std::string vectorItem{};
+          std::string allowedHeaders{};
 
-          vectorItem = jsonItem.get<std::string>();
+          allowedHeaders = jsonSubItem.get<std::string>();
 
-          vectorItem.AllowedHeaders.emplace_back(std::move(vectorItem));
+          vectorItem.AllowedHeaders.emplace_back(std::move(allowedHeaders));
         }
 
         response.Properties.Cors.CorsRules.emplace_back(std::move(vectorItem));
       }
-    } */
+    } 
   }
 
   return Response<TableServiceProperties>(std::move(response), std::move(rawResponse));
@@ -279,9 +282,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
   (void)options;
   auto url = m_url;
   url.AppendPath("subscriptions/");
-  m_subscriptionId = Azure::Core::_internal::Environment::GetVariable(
-      "STORAGE_SUBSCRIPTION_ID"); // gearama: this is the subscription ID
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
+  url.AppendPath(!options.SubscriptionId.empty() ? Core::Url::Encode(options.SubscriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath( !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
   url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
@@ -302,60 +303,61 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
 
   TableServiceProperties response{};
   {
-  //    auto const& responseBody = rawResponse->GetBody();
-    /* if (responseBody.size() > 0)
+     auto const& responseBody = rawResponse->GetBody();
+     std::string responseString (responseBody.begin(), responseBody.end());
+     if (responseBody.size() > 0)
     {
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-      for (auto const& jsonItem : jsonRoot["corsRules"])
+      for (auto const& jsonItem : jsonRoot["properties"]["cors"]["corsRules"])
       {
         CorsRule vectorItem{};
 
-        for (auto const& jsonItem : jsonItem["allowedOrigins"])
+        for (auto const& jsonSubItem : jsonItem["allowedOrigins"])
         {
-          std::string vectorItem{};
+          std::string allowedOrigins{};
 
-          vectorItem = jsonItem.get<std::string>();
+          allowedOrigins = jsonSubItem.get<std::string>();
 
-          vectorItem.AllowedOrigins.emplace_back(std::move(vectorItem));
+          vectorItem.AllowedOrigins.emplace_back(std::move(allowedOrigins));
         }
 
-        for (auto const& jsonItem : jsonItem["allowedMethods"])
+        for (auto const& jsonSubItem : jsonItem["allowedMethods"])
         {
-          AllowedMethods vectorItem{};
+          AllowedMethods allowedMethods{};
 
-          vectorItem = AllowedMethods(jsonItem.get<std::string>());
+          allowedMethods = AllowedMethods(jsonSubItem.get<std::string>());
 
-          vectorItem.AllowedMethods.emplace_back(std::move(vectorItem));
+          vectorItem.AllowedMethods.emplace_back(std::move(allowedMethods));
         }
 
         vectorItem.MaxAgeInSeconds = jsonItem["maxAgeInSeconds"].is_string()
             ? std::stoi(jsonItem["maxAgeInSeconds"].get<std::string>())
             : jsonItem["maxAgeInSeconds"].get<std::int32_t>();
 
-        for (auto const& jsonItem : jsonItem["exposedHeaders"])
+        for (auto const& jsonSubItem : jsonItem["exposedHeaders"])
         {
-          std::string vectorItem{};
+          std::string exposedHeaders{};
 
-          vectorItem = jsonItem.get<std::string>();
+          exposedHeaders = jsonSubItem.get<std::string>();
 
-          vectorItem.ExposedHeaders.emplace_back(std::move(vectorItem));
+          vectorItem.ExposedHeaders.emplace_back(std::move(exposedHeaders));
         }
 
-        for (auto const& jsonItem : jsonItem["allowedHeaders"])
+        for (auto const& jsonSubItem : jsonItem["allowedHeaders"])
         {
-          std::string vectorItem{};
+          std::string allowedHeaders{};
 
-          vectorItem = jsonItem.get<std::string>();
+          allowedHeaders = jsonSubItem.get<std::string>();
 
-          vectorItem.AllowedHeaders.emplace_back(std::move(vectorItem));
+          vectorItem.AllowedHeaders.emplace_back(std::move(allowedHeaders));
         }
 
         response.Properties.Cors.CorsRules.emplace_back(std::move(vectorItem));
       }
     }
- */ }
+  }
 
     return Response<TableServiceProperties>(std::move(response), std::move(rawResponse));
 }
