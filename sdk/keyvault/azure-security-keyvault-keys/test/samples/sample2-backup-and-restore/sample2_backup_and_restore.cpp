@@ -69,7 +69,7 @@ int main()
     DeleteKeyOperation operation = keyClient.StartDeleteKey(rsaKeyName);
     // You only need to wait for completion if you want to purge or recover the key.
     operation.PollUntilDone(std::chrono::milliseconds(2000));
-    keyClient.PurgeDeletedKey(rsaKeyName);
+    // keyClient.PurgeDeletedKey(rsaKeyName);
 
     // Let's wait for a bit (maximum ~5 minutes) so we know the key was purged.
     try
@@ -88,11 +88,12 @@ int main()
     }
     catch (Azure::Core::RequestFailedException const& e)
     {
-      std::cout << "\t" <<e.what() << std::endl << e.Message << std::endl;
+      std::cout << "\t" << e.what() << std::endl;
+      std::cout << e.Message << std::endl;
       std::cout << "\t-Key purged" << std::endl;
     }
     // let's wait for one minute so we know the key was purged.
-    std::this_thread::sleep_for(std::chrono::seconds(60));
+    // std::this_thread::sleep_for(std::chrono::seconds(60));
     // Restore the key from the file backup
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
