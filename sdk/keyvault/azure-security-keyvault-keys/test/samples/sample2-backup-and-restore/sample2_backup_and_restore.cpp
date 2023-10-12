@@ -86,11 +86,13 @@ int main()
       }
       throw std::runtime_error("Key was not purged.");
     }
-    catch (Azure::Core::RequestFailedException const&)
+    catch (Azure::Core::RequestFailedException const& e)
     {
+      std::cout << "\t" <<e.what() << std::endl << e.Message << std::endl;
       std::cout << "\t-Key purged" << std::endl;
     }
-
+    // let's wait for one minute so we know the key was purged.
+    std::this_thread::sleep_for(std::chrono::seconds(60));
     // Restore the key from the file backup
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
