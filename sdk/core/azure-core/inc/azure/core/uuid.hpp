@@ -11,8 +11,9 @@
 #include "azure/core/platform.hpp"
 
 #include <array>
-#include <cstdint>
+#include <cstdint> // define std::uint8_t
 #include <cstring>
+#include <stdint.h> // deprecated but defines uint8_t.
 #include <string>
 
 namespace Azure { namespace Core {
