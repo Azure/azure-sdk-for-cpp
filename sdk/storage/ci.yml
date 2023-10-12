@@ -51,7 +51,7 @@ stages:
           VcpkgPortName: azure-storage-queues-cpp
       TestEnv:
         - Name: AAD_TENANT_ID
-          Value: "33333333-3333-3333-3333-333333333333"
+          Value: "72f988bf-86f1-41af-91ab-2d7cd011db47"
         - Name: AAD_CLIENT_ID
           Value: "non-real-client"
         - Name: AAD_CLIENT_SECRET

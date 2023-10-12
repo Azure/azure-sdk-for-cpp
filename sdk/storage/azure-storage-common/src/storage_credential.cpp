@@ -114,4 +114,13 @@ namespace Azure { namespace Storage { namespace _internal {
 
     return connectionStringParts;
   }
+
+  std::string GetDefaultScopeForAudience(const std::string& audience)
+  {
+    if (!audience.empty() && audience.back() == '/')
+    {
+      return audience + ".default";
+    }
+    return audience + "/.default";
+  }
 }}} // namespace Azure::Storage::_internal

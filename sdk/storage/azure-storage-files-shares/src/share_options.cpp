@@ -5,6 +5,6 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
-  const ShareAudience ShareAudience::PublicAudience(Azure::Storage::_internal::StorageScope);
+  const ShareAudience ShareAudience::DefaultAudience(_internal::StorageDefaultAudience);
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models
