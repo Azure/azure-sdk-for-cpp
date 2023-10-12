@@ -198,7 +198,7 @@ stages:
                       # failure to resolve the appropriate aliases.
                       - pwsh: |
                           $notifyUsers = ./eng/scripts/Get-TriggeringUserGitHubAlias.ps1 `
-                            -EmailAddress '$(Build.RequestedForEmail)' `
+                            -EmailAddress "$($env:BUILD_REQUESTEDFOREMAIL)" `
                             -ClientId '$(opensource-aad-app-id)' `
                             -ClientSecret '$(opensource-aad-secret)' `
                             -TenantId '$(opensource-aad-tenant-id)' `
