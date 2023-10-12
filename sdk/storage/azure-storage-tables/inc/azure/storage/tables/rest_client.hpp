@@ -174,6 +174,8 @@ namespace Azure { namespace Storage { namespace Tables {
      * Audience is not set.
      */
     Azure::Nullable<TablesAudience> Audience;
+
+    std::string SubscriptionId;
   };
 
   struct TableServicePropertiesProperties final
@@ -193,14 +195,12 @@ namespace Azure { namespace Storage { namespace Tables {
   {
     std::string ResourceGroupName;
     std::string AccountName;
-    std::string SubcriptionId;
   };
 
   struct SetServicePropertiesOptions final
   {
     std::string ResourceGroupName;
     std::string AccountName;
-    std::string SubscriptionId;
     TableServiceProperties Parameters;
   };
 
@@ -208,7 +208,6 @@ namespace Azure { namespace Storage { namespace Tables {
   {
     std::string ResourceGroupName;
     std::string AccountName;
-    std::string SubscriptionId;
   };
   struct TableAccessPolicy final
   {
@@ -274,7 +273,7 @@ namespace Azure { namespace Storage { namespace Tables {
   class TableServicesClient final {
   public:
     explicit TableServicesClient(std::string subscriptionId, const TableClientOptions& options = {})
-        : m_url("https://management.azure.com"), m_subscriptionId(std::move(subscriptionId))
+        : m_subscriptionId(std::move(subscriptionId))
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -292,11 +291,14 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
      explicit TableServicesClient(
-        const std::string& serviceUrl,
+        std::string subscriptionId,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        const std::string& serviceUrl = Azure::Storage::_internal::TablesManagementPublicEndpoint,
         const TableClientOptions& options = {})
-        : TableServicesClient(serviceUrl, options)
+        : TableServicesClient(subscriptionId, options)
+         
     {
+      m_url = Azure::Core::Url(serviceUrl);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
       perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(

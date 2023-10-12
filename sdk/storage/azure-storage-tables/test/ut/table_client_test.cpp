@@ -19,7 +19,8 @@ namespace Azure { namespace Storage { namespace Test {
           GetEnv("STORAGE_CLIENT_ID"),
           GetEnv("STORAGE_CLIENT_SECRET"));
       m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-          Azure::Storage::Tables::TableServicesClient::TableServicesClient("", m_credential));
+          Azure::Storage::Tables::TableServicesClient::TableServicesClient(
+              GetEnv("STORAGE_SUBSCRIPTION_ID"), m_credential));
     }
   }
 
@@ -33,9 +34,8 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Tables::GetServicePropertiesOptions getOptions;
     getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
     getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    getOptions.SubscriptionId = GetEnv("STORAGE_SUBSCRIPTION_ID");
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
-    EXPECT_EQ(response.Value.Properties.Cors.CorsRules.size(), 2);
+    EXPECT_EQ(response.Value.Properties.Cors.CorsRules.size(), 0);
   }
 
   TEST_F(TablesClientTest, ServiceClientList)
@@ -43,7 +43,6 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Tables::ListOptions list;
     list.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
     list.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    list.SubcriptionId = GetEnv("STORAGE_SUBSCRIPTION_ID"); 
     auto response = m_tableServiceClient->List(list);
     EXPECT_EQ(response.Value.Value.size(), 1);
   }
@@ -53,7 +52,6 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Tables::SetServicePropertiesOptions setOptions;
     setOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
     setOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    setOptions.SubscriptionId= GetEnv("STORAGE_SUBSCRIPTION_ID");
     auto response = m_tableServiceClient->SetServiceProperties(setOptions);
     EXPECT_EQ(response.Value.Properties.Cors.CorsRules.size(), 0);
   }

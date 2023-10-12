@@ -40,7 +40,7 @@ Azure::Response<ListTableServices> TableServicesClient::List(
 {
   auto url = m_url;
   url.AppendPath("subscriptions/");
-  url.AppendPath(!options.SubcriptionId.empty() ? Core::Url::Encode(options.SubcriptionId) : "null");
+  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath(
       !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
@@ -135,7 +135,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
   auto url = m_url;
   url.AppendPath("subscriptions/");
   
-  url.AppendPath(!options.SubscriptionId.empty() ? Core::Url::Encode(options.SubscriptionId) : "null");
+  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath(
       !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
@@ -282,7 +282,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
   (void)options;
   auto url = m_url;
   url.AppendPath("subscriptions/");
-  url.AppendPath(!options.SubscriptionId.empty() ? Core::Url::Encode(options.SubscriptionId) : "null");
+  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath( !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
   url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
