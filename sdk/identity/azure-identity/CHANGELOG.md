@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.0 (2023-10-10)
+## 1.6.0-beta.3 (2023-10-12)
 
 ### Bugs Fixed
 
