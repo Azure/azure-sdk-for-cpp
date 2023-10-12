@@ -181,12 +181,12 @@
         "clang-13": {
           "AptDependencies": "clang-13",
           "CC": "/usr/bin/clang-13",
-          "CXX": "/usr/bin/clangg++-13"
+          "CXX": "/usr/bin/clang++-13"
         },
         "clang-15": {
           "AptDependencies": "clang-15",
           "CC": "/usr/bin/clang-15",
-          "CXX": "/usr/bin/clangg++-15"
+          "CXX": "/usr/bin/clang++-15"
         },
         "included_debug": {
           "CMAKE_BUILD_TYPE": "Debug",
