@@ -92,8 +92,6 @@ AzureCliCredential::AzureCliCredential(
 {
   static_cast<void>(options);
 
-  ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
-
   IdentityLog::Write(
       IdentityLog::Level::Informational,
       GetCredentialName()
@@ -123,6 +121,7 @@ std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::str
     const
 {
   ThrowIfNotSafeCmdLineInput(scopes, "Scopes");
+  ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())

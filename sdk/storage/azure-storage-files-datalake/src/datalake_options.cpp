@@ -5,6 +5,6 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 
-  const DataLakeAudience DataLakeAudience::PublicAudience(Azure::Storage::_internal::StorageScope);
+  const DataLakeAudience DataLakeAudience::DefaultAudience(_internal::StorageDefaultAudience);
 
 }}}}} // namespace Azure::Storage::Files::DataLake::Models

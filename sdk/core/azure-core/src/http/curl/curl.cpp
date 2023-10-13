@@ -1283,7 +1283,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
   key.append(",");
-#if defined(_azure_SUPPORT_SETTING_CAPATH)
+#if defined(AZ_PLATFORM_LINUX)
   key.append(!options.CAPath.empty() ? options.CAPath : "0");
 #else
   key.append("0"); // CAPath is always empty on Windows;
@@ -2320,7 +2320,7 @@ CurlConnection::CurlConnection(
     }
   }
 
-#if defined(_azure_SUPPORT_SETTING_CAPATH)
+#if defined(AZ_PLATFORM_LINUX)
   if (!options.CAPath.empty())
   {
     if (!SetLibcurlOption(m_handle, CURLOPT_CAPATH, options.CAPath.c_str(), &result))

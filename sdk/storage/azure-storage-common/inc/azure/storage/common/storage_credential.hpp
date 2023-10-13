@@ -90,6 +90,8 @@ namespace Azure { namespace Storage {
 
     ConnectionStringParts ParseConnectionString(const std::string& connectionString);
 
+    std::string GetDefaultScopeForAudience(const std::string& audience);
+
   } // namespace _internal
 
 }} // namespace Azure::Storage

@@ -325,9 +325,11 @@ TEST(AzureCliCredential, UnsafeChars)
     AzureCliCredentialOptions options;
     options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
     options.TenantId += Exploit;
+    AzureCliCredential azCliCred(options);
 
-    EXPECT_THROW(
-        static_cast<void>(std::make_unique<AzureCliCredential>(options)), AuthenticationException);
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
   }
 
   {

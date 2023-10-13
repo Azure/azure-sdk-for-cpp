@@ -489,22 +489,28 @@ namespace Azure { namespace Storage { namespace Test {
         InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
 
-    // default audience
+    // audience by default
     auto pathClient
+        = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(pathClient.GetProperties());
+
+    // default audience
+    clientOptions.Audience = Files::DataLake::Models::DataLakeAudience::DefaultAudience;
+    pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
     // custom audience
     auto pathUrl = Azure::Core::Url(pathClient.GetUrl());
     clientOptions.Audience = Files::DataLake::Models::DataLakeAudience(
-        pathUrl.GetScheme() + "://" + pathUrl.GetHost() + "/.default");
+        pathUrl.GetScheme() + "://" + pathUrl.GetHost());
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
     // error audience
     clientOptions.Audience
-        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com/.default");
+        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com");
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(pathClient.GetProperties(), StorageException);

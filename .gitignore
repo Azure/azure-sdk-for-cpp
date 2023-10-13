@@ -31,6 +31,7 @@ bld*/
 [Oo]bj/
 [Ll]og/
 [Oo]ut/
+[Tt]emp
 #these are for build from source temp directories 
 [Ss]dk/**/[Ss]dk/
 **/[Oo]ut/**

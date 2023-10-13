@@ -79,8 +79,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(
-          options.Audience.HasValue() ? options.Audience.Value().ToString()
-                                      : Models::ShareAudience::PublicAudience.ToString());
+          options.Audience.HasValue()
+              ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
+              : _internal::StorageScope);
       perRetryPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));

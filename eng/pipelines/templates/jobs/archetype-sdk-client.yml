@@ -155,6 +155,17 @@ jobs:
           parameters:
             ContinueOnError: false
 
+        # Base Path Length calculated based on Visual Studio's defaults for projects.
+        # By default, Visual Studio puts projects in a folder structure like this:
+        # C:\Users\<username>\source\repos\<project>. That is 34 characters before project.
+        # The default project name for the C++ SDK is azure-sdk-for-cpp. That is 18 additional characters (52).
+        # Assuming that the user is building with the default cmake presets, cmake will create a build folder 
+        # which is about 25 characters long (x64-static-debug-perftests).
+        - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
+          parameters:
+            SourceDirectory: $(Build.SourcesDirectory)
+            BasePathLength: 75
+
         - template: /eng/common/pipelines/templates/steps/verify-links.yml
           parameters:
             ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:

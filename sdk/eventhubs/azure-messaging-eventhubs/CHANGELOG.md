@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.3 (Unreleased)
+## 1.0.0-beta.4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0-beta.3 (2023-10-10)
+
+### Breaking Changes
+
+- Removed all direct dependencies on Azure Blob Storage and moved those dependencies into a helper package (`azure-messaging-eventhubs-checkpointstore-blob-cpp`).
 
 ## 1.0.0-beta.2 (2023-09-12)
 

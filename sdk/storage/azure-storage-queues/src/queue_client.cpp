@@ -75,8 +75,9 @@ namespace Azure { namespace Storage { namespace Queues {
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(
-          options.Audience.HasValue() ? options.Audience.Value().ToString()
-                                      : Models::QueueAudience::PublicAudience.ToString());
+          options.Audience.HasValue()
+              ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
+              : _internal::StorageScope);
       perRetryPolicies.emplace_back(
           std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
               credential, tokenContext, options.EnableTenantDiscovery));

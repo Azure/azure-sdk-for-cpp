@@ -148,6 +148,26 @@ TEST_P(GetCredentialName, )
   EXPECT_EQ(cred.GetCredentialName(), "ClientCertificateCredential");
 }
 
+TEST(ClientCertificateCredential, GetOptionsFromEnvironment)
+{
+  {
+    std::map<std::string, std::string> envVars = {{"AZURE_AUTHORITY_HOST", ""}};
+    CredentialTestHelper::EnvironmentOverride const env(envVars);
+
+    ClientCertificateCredentialOptions options;
+    EXPECT_EQ(options.AuthorityHost, "");
+  }
+
+  {
+    std::map<std::string, std::string> envVars
+        = {{"AZURE_AUTHORITY_HOST", "https://microsoft.com/"}};
+    CredentialTestHelper::EnvironmentOverride const env(envVars);
+
+    ClientCertificateCredentialOptions options;
+    EXPECT_EQ(options.AuthorityHost, "https://microsoft.com/");
+  }
+}
+
 TEST_P(GetToken, )
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(

@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
        * Storage account.
        */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobAudience PublicAudience;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobAudience DefaultAudience;
     };
   } // namespace Models
 
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Blobs::Models::BlobAudience::PublicAudience will be assumed if Audience is
+     * #Azure::Storage::Blobs::Models::BlobAudience::DefaultAudience will be assumed if Audience is
      * not set.
      */
     Azure::Nullable<Models::BlobAudience> Audience;
