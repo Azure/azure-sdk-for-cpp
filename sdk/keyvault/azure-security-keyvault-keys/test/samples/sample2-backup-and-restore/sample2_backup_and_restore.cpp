@@ -69,13 +69,13 @@ int main()
     DeleteKeyOperation operation = keyClient.StartDeleteKey(rsaKeyName);
     // You only need to wait for completion if you want to purge or recover the key.
     operation.PollUntilDone(std::chrono::milliseconds(2000));
-    // keyClient.PurgeDeletedKey(rsaKeyName);
+    keyClient.PurgeDeletedKey(rsaKeyName);
 
     // Let's wait for a bit (maximum ~5 minutes) so we know the key was purged.
     uint16_t loop = 0;
     try
     {
-      
+
       // To check if the key was purged we attempt to get the key from the Key Vault.
       // If we get an exception, the key was purged.
       // If not, we wait a bit more,since the key is in the purge process.
