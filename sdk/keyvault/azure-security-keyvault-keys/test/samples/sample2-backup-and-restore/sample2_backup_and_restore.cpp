@@ -127,9 +127,9 @@ int main()
     }
 
     if (!restored)
-	{
-	  throw std::runtime_error("Key was not restored.");
-	}
+    {
+      throw std::runtime_error("Key was not restored.");
+    }
     AssertKeysEqual(storedKey.Properties, restoredKey.Properties);
 
     operation = keyClient.StartDeleteKey(rsaKeyName);
