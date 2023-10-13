@@ -21,7 +21,7 @@ if (!$allUsers) {
 $targetUser = $allUsers.Where({ $_.aad.userPrincipalName -eq $EmailAddress -and $_.github.login }, 'First')
 
 if (!$targetUser) {
-    Write-Host "Failed to find GitHub user for $EmailAddress"
+    Write-Host "Failed to find GitHub user for triggering user"
     return $Fallback
 }
 
