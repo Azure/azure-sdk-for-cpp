@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new extendbale enum `DataLakeAudience`
+- Added new extendable enum `DataLakeAudience`
 - Added new field `Audience` in `DataLakeClientOptions`
 
 ## 12.8.0 (2023-09-12)

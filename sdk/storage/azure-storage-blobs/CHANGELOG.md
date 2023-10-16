@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new extendbale enum `BlobAudience`
+- Added new extendable enum `BlobAudience`
 - Added new field `Audience` in `BlobClientOptions`
 
 ## 12.9.0 (2023-09-12)

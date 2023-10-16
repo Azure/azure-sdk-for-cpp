@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new extendbale enum `ShareAudience`
+- Added new extendable enum `ShareAudience`
 - Added new field `Audience` in `ShareClientOptions`
 
 ## 12.7.0 (2023-09-12)
