@@ -331,13 +331,13 @@ namespace Azure { namespace Storage { namespace Test {
     // custom audience
     auto queueUrl = Azure::Core::Url(queueServiceClient.GetUrl());
     clientOptions.Audience
-        = Queues::Models::QueueAudience(queueUrl.GetScheme() + "://" + queueUrl.GetHost());
+        = Queues::QueueAudience(queueUrl.GetScheme() + "://" + queueUrl.GetHost());
     queueServiceClient
         = Queues::QueueServiceClient(m_queueServiceClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueServiceClient.GetProperties());
 
     // error audience
-    clientOptions.Audience = Queues::Models::QueueAudience("https://disk.compute.azure.com");
+    clientOptions.Audience = Queues::QueueAudience("https://disk.compute.azure.com");
     queueServiceClient
         = Queues::QueueServiceClient(m_queueServiceClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(queueServiceClient.GetProperties(), StorageException);

@@ -515,13 +515,13 @@ namespace Azure { namespace Storage { namespace Test {
     // custom audience
     auto serviceUrl = Azure::Core::Url(serviceClient.GetUrl());
     clientOptions.Audience
-        = Blobs::Models::BlobAudience(serviceUrl.GetScheme() + "://" + serviceUrl.GetHost());
+        = Blobs::BlobAudience(serviceUrl.GetScheme() + "://" + serviceUrl.GetHost());
     serviceClient
         = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(serviceClient.GetProperties());
 
     // error audience
-    clientOptions.Audience = Blobs::Models::BlobAudience("https://disk.compute.azure.com");
+    clientOptions.Audience = Blobs::BlobAudience("https://disk.compute.azure.com");
     serviceClient
         = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(serviceClient.GetProperties(), StorageException);

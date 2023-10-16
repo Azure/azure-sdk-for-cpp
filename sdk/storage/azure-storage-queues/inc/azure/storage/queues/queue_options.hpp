@@ -18,35 +18,44 @@
 #include <string>
 
 namespace Azure { namespace Storage { namespace Queues {
-  namespace Models {
+
+  /**
+   * @brief Audiences available for queue service
+   *
+   */
+  class QueueAudience final : public Azure::Core::_internal::ExtendableEnumeration<QueueAudience> {
+  public:
+    /**
+     * @brief Construct a new QueueAudience object
+     *
+     * @param queueAudience The Azure Active Directory audience to use when forming authorization
+     * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
+     * cloud where the resource is located. For more information: See
+     * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+     */
+    explicit QueueAudience(std::string queueAudience)
+        : ExtendableEnumeration(std::move(queueAudience))
+    {
+    }
 
     /**
-     * @brief Audiences available for Blobs
+     * @brief The service endpoint for a given storage account. Use this method to acquire a token
+     * for authorizing requests to that specific Azure Storage account and service only.
      *
+     * @param storageAccountName he storage account name used to populate the service endpoint.
+     * @return The service endpoint for a given storage account.
      */
-    class QueueAudience final
-        : public Azure::Core::_internal::ExtendableEnumeration<QueueAudience> {
-    public:
-      /**
-       * @brief Construct a new QueueAudience object
-       *
-       * @param queueAudience The Azure Active Directory audience to use when forming authorization
-       * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
-       * cloud where the resource is located. For more information: See
-       * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
-       */
-      explicit QueueAudience(std::string queueAudience)
-          : ExtendableEnumeration(std::move(queueAudience))
-      {
-      }
+    static QueueAudience CreateQueueServiceAccountAudience(const std::string& storageAccountName)
+    {
+      return QueueAudience("https://" + storageAccountName + ".queue.core.windows.net/");
+    }
 
-      /**
-       * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
-       * Storage account.
-       */
-      AZ_STORAGE_QUEUES_DLLEXPORT const static QueueAudience DefaultAudience;
-    };
-  } // namespace Models
+    /**
+     * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
+     * Storage account.
+     */
+    AZ_STORAGE_QUEUES_DLLEXPORT const static QueueAudience DefaultAudience;
+  };
 
   /**
    * @brief API version for Storage Queue service.
@@ -124,10 +133,10 @@ namespace Azure { namespace Storage { namespace Queues {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Queues::Models::QueueAudience::DefaultAudience will be assumed if
+     * #Azure::Storage::Queues::QueueAudience::DefaultAudience will be assumed if
      * Audience is not set.
      */
-    Azure::Nullable<Models::QueueAudience> Audience;
+    Azure::Nullable<QueueAudience> Audience;
   };
 
   /**
