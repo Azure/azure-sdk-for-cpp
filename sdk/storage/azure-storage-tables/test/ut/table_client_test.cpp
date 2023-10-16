@@ -82,11 +82,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(
-        setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
-        "x-ms-meta-data*");
+    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0], "x-ms-meta-data*");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0], Tables::AllowedMethods::Get);
+    EXPECT_EQ(
+        setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
+        Tables::AllowedMethods::Get);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
@@ -177,7 +177,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);
 
-   Azure::Storage::Tables::ListOptions list;
+    Azure::Storage::Tables::ListOptions list;
     list.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
     list.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
     auto listResponse = m_tableServiceClient->List(list);
