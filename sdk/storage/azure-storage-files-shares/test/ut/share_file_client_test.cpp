@@ -1712,6 +1712,15 @@ namespace Azure { namespace Storage { namespace Test {
     fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(fileClient.GetProperties());
 
+    // service audience
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+    clientOptions.Audience
+        = Files::Shares::ShareAudience::CreateShareServiceAccountAudience(accountName);
+    fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(fileClient.GetProperties());
+
     // custom audience
     auto fileUrl = Azure::Core::Url(fileClient.GetUrl());
     clientOptions.Audience

@@ -40,6 +40,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     /**
+     * @brief The service endpoint for a given storage account. Use this method to acquire a token
+     * for authorizing requests to that specific Azure Storage account and service only.
+     *
+     * @param storageAccountName he storage account name used to populate the service endpoint.
+     * @return The service endpoint for a given storage account.
+     */
+    static BlobAudience CreateBlobServiceAccountAudience(const std::string& storageAccountName)
+    {
+      return BlobAudience("https://" + storageAccountName + ".blob.core.windows.net/");
+    }
+
+    /**
      * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
      * Storage account.
      */

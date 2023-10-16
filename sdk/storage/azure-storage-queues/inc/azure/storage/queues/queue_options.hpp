@@ -20,7 +20,7 @@
 namespace Azure { namespace Storage { namespace Queues {
 
   /**
-   * @brief Audiences available for Blobs
+   * @brief Audiences available for Queues
    *
    */
   class QueueAudience final : public Azure::Core::_internal::ExtendableEnumeration<QueueAudience> {
@@ -36,6 +36,18 @@ namespace Azure { namespace Storage { namespace Queues {
     explicit QueueAudience(std::string queueAudience)
         : ExtendableEnumeration(std::move(queueAudience))
     {
+    }
+
+    /**
+     * @brief The service endpoint for a given storage account. Use this method to acquire a token
+     * for authorizing requests to that specific Azure Storage account and service only.
+     *
+     * @param storageAccountName he storage account name used to populate the service endpoint.
+     * @return The service endpoint for a given storage account.
+     */
+    static QueueAudience CreateQueueServiceAccountAudience(const std::string& storageAccountName)
+    {
+      return QueueAudience("https://" + storageAccountName + ".queue.core.windows.net/");
     }
 
     /**

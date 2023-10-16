@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   } // namespace _detail
 
   /**
-   * @brief Audiences available for Blobs
+   * @brief Audiences available for DataLake
    *
    */
   class DataLakeAudience final
@@ -131,6 +131,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit DataLakeAudience(std::string dataLakeAudience)
         : ExtendableEnumeration(std::move(dataLakeAudience))
     {
+    }
+
+    /**
+     * @brief The service endpoint for a given storage account. Use this method to acquire a token
+     * for authorizing requests to that specific Azure Storage account and service only.
+     *
+     * @param storageAccountName he storage account name used to populate the service endpoint.
+     * @return The service endpoint for a given storage account.
+     */
+    static DataLakeAudience CreateDataLakeServiceAccountAudience(
+        const std::string& storageAccountName)
+    {
+      return DataLakeAudience("https://" + storageAccountName + ".blob.core.windows.net/");
     }
 
     /**

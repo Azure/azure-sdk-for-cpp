@@ -19,7 +19,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
-   * @brief Audiences available for Blobs
+   * @brief Audiences available for Shares
    *
    */
   class ShareAudience final : public Azure::Core::_internal::ExtendableEnumeration<ShareAudience> {
@@ -35,6 +35,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit ShareAudience(std::string shareAudience)
         : ExtendableEnumeration(std::move(shareAudience))
     {
+    }
+
+    /**
+     * @brief The service endpoint for a given storage account. Use this method to acquire a token
+     * for authorizing requests to that specific Azure Storage account and service only.
+     *
+     * @param storageAccountName he storage account name used to populate the service endpoint.
+     * @return The service endpoint for a given storage account.
+     */
+    static ShareAudience CreateShareServiceAccountAudience(const std::string& storageAccountName)
+    {
+      return ShareAudience("https://" + storageAccountName + ".file.core.windows.net/");
     }
 
     /**

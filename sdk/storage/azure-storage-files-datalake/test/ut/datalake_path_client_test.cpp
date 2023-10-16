@@ -500,6 +500,15 @@ namespace Azure { namespace Storage { namespace Test {
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
+    // service audience
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+    clientOptions.Audience
+        = Files::DataLake::DataLakeAudience::CreateDataLakeServiceAccountAudience(accountName);
+    pathClient
+        = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(pathClient.GetProperties());
+
     // custom audience
     auto pathUrl = Azure::Core::Url(pathClient.GetUrl());
     clientOptions.Audience

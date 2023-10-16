@@ -251,6 +251,14 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueClient.GetProperties());
 
+    // service audience
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+    clientOptions.Audience = Queues::QueueAudience::CreateQueueServiceAccountAudience(accountName);
+    queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(queueClient.GetProperties());
+
     // custom audience
     auto queueUrl = Azure::Core::Url(queueClient.GetUrl());
     clientOptions.Audience
