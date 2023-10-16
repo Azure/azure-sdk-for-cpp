@@ -1,14 +1,11 @@
 # Release History
 
-## 12.10.0-beta.1 (Unreleased)
+## 12.10.0-beta.1 (2023-10-16)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new extendbale enum `BlobAudience`
+- Added new field `Audience` in `BlobClientOptions`
 
 ## 12.9.0 (2023-09-12)
 

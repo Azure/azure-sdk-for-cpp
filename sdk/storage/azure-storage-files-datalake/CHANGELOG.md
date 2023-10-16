@@ -1,14 +1,11 @@
 # Release History
 
-## 12.9.0-beta.1 (Unreleased)
+## 12.9.0-beta.1 (2023-10-16)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new extendbale enum `DataLakeAudience`
+- Added new field `Audience` in `DataLakeClientOptions`
 
 ## 12.8.0 (2023-09-12)
 
