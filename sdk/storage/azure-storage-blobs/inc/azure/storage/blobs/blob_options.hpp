@@ -22,7 +22,7 @@
 namespace Azure { namespace Storage { namespace Blobs {
 
   /**
-   * @brief Audiences available for Blobs
+   * @brief Audiences available for blob service
    *
    */
   class BlobAudience final : public Azure::Core::_internal::ExtendableEnumeration<BlobAudience> {

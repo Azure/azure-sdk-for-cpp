@@ -20,7 +20,7 @@
 namespace Azure { namespace Storage { namespace Queues {
 
   /**
-   * @brief Audiences available for Queues
+   * @brief Audiences available for queue service
    *
    */
   class QueueAudience final : public Azure::Core::_internal::ExtendableEnumeration<QueueAudience> {

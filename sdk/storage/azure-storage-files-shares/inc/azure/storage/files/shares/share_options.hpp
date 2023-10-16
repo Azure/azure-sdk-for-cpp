@@ -19,7 +19,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
-   * @brief Audiences available for Shares
+   * @brief Audiences available for share service
    *
    */
   class ShareAudience final : public Azure::Core::_internal::ExtendableEnumeration<ShareAudience> {
