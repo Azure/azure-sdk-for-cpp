@@ -63,7 +63,6 @@ Azure::Response<ListTableServices> TableServicesClient::List(
   ListTableServices response{};
   {
     auto const& responseBody = rawResponse->GetBody();
-    std::string bodyString(responseBody.begin(), responseBody.end());
     if (responseBody.size() > 0)
     {
       auto const jsonRoot
@@ -155,8 +154,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
       jsonRoot["properties"]["cors"]["corsRules"][i]["allowedOrigins"]
           = Core::Json::_internal::json::array();
 
-      for (auto j = 0; j < options.Parameters.Properties.Cors.CorsRules[j].AllowedOrigins.size();
-           ++j)
+      for (auto j = 0; j < options.Parameters.Properties.Cors.CorsRules[i].AllowedOrigins.size();
+           j++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["allowedOrigins"][j]
             = options.Parameters.Properties.Cors.CorsRules[i].AllowedOrigins[j];
@@ -166,7 +165,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
           = Core::Json::_internal::json::array();
 
       for (auto k = 0; k < options.Parameters.Properties.Cors.CorsRules[i].AllowedMethods.size();
-           ++k)
+           k++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["allowedMethods"][k]
             = options.Parameters.Properties.Cors.CorsRules[i].AllowedMethods[k].ToString();
@@ -177,8 +176,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
       jsonRoot["properties"]["cors"]["corsRules"][i]["exposedHeaders"]
           = Core::Json::_internal::json::array();
 
-      for (auto l = 0; l < options.Parameters.Properties.Cors.CorsRules[l].ExposedHeaders.size();
-           ++l)
+      for (auto l = 0; l < options.Parameters.Properties.Cors.CorsRules[i].ExposedHeaders.size();
+           l++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["exposedHeaders"][l]
             = options.Parameters.Properties.Cors.CorsRules[i].ExposedHeaders[l];
@@ -187,8 +186,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
       jsonRoot["properties"]["cors"]["corsRules"][i]["allowedHeaders"]
           = Core::Json::_internal::json::array();
 
-      for (auto m = 0; m < options.Parameters.Properties.Cors.CorsRules[m].AllowedHeaders.size();
-           ++m)
+      for (auto m = 0; m < options.Parameters.Properties.Cors.CorsRules[i].AllowedHeaders.size();
+           m++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["allowedHeaders"][m]
             = options.Parameters.Properties.Cors.CorsRules[i].AllowedHeaders[m];
@@ -304,7 +303,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
   TableServiceProperties response{};
   {
      auto const& responseBody = rawResponse->GetBody();
-     std::string responseString (responseBody.begin(), responseBody.end());
+    
      if (responseBody.size() > 0)
     {
       auto const jsonRoot
