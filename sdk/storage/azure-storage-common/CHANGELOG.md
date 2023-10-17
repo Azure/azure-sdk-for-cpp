@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new constant `StorageDefaultAudience`.
+- No public changes in this release.
 
 ## 12.4.0 (2023-09-12)
 
