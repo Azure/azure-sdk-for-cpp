@@ -1,8 +1,8 @@
 # Azure Identity client library for C++
-The Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK. It provides a set of `TokenCredential` implementations which can be used to construct Azure SDK clients which support AAD token authentication.
+The Azure Identity library provides Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/azure/active-directory/fundamentals/new-name)) token authentication support across the Azure SDK. It provides a set of `TokenCredential` implementations which can be used to construct Azure SDK clients which support Microsoft Entra token authentication.
 This library follows the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
-  [Source code][source] | [API reference documentation][doxygen] | [Azure Active Directory documentation][aad_doc]
+  [Source code][source] | [API reference documentation][doxygen] | [Microsoft Entra ID documentation][meid_doc]
 
 ## Getting started
 ### Include the package
@@ -42,7 +42,7 @@ To authenticate with the [Azure CLI][azure_cli], users can run the command `az l
 
 A credential is a class which contains or can obtain the data needed for a service client to authenticate requests. Service clients across Azure SDK accept credentials when they are constructed, and service clients use those credentials to authenticate requests to the service.
 
-The Azure Identity library focuses on OAuth authentication with Azure Active directory, and it offers a variety of credential classes capable of acquiring an AAD token to authenticate service requests. All of the credential classes in this library are implementations of the `TokenCredential` abstract class in [azure-core][azure_core_library], and any of them can be used by to construct service clients capable of authenticating with a `TokenCredential`.
+The Azure Identity library focuses on OAuth authentication with Azure Active directory, and it offers a variety of credential classes capable of acquiring a Microsoft Entra token to authenticate service requests. All of the credential classes in this library are implementations of the `TokenCredential` abstract class in [azure-core][azure_core_library], and any of them can be used by to construct service clients capable of authenticating with a `TokenCredential`.
 
 See [Credential Classes](#credential-classes) for a complete listing of available credential types.
 
@@ -103,8 +103,8 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 
 |Variable name|Value
 |-|-
-|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
-|`AZURE_CLIENT_ID`|ID of an Azure AD application
+|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
+|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
 |`AZURE_CLIENT_SECRET`|one of the application's client secrets
 |`AZURE_AUTHORITY_HOST`|(optional) [authentication authority URL](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud)
 
@@ -112,8 +112,8 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 
 |variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|ID of an Azure AD application
-|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
+|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
+|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
 |`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PFX or PEM-encoded certificate file including private key
 |`AZURE_AUTHORITY_HOST`|(optional) [authentication authority URL](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud)
 
@@ -187,6 +187,6 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
 [default_azure_credential_auth_flow]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/img/mermaidjs/DefaultAzureCredentialAuthFlow.svg
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
-[aad_doc]: https://docs.microsoft.com/azure/active-directory/
+[meid_doc]: https://learn.microsoft.com/azure/active-directory/
 [azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core
 [doxygen]: https://azure.github.io/azure-sdk-for-cpp/
