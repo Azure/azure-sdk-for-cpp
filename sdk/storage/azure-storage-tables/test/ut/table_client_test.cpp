@@ -26,13 +26,13 @@ namespace Azure { namespace Storage { namespace Test {
               m_credential,
               Azure::Storage::_internal::TablesManagementPublicEndpoint,
               clientOptions));
+      auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       m_tableClient
-          = std::make_shared<Tables::TableClient>(CreateTableClientForTest(clientOptions));
+          = std::make_shared<Tables::TableClient>(CreateTableClientForTest(tableClientOptions));
     }
   }
 
   Azure::Storage::Tables::TableClient TablesClientTest::CreateTableClientForTest(
-
       Tables::TableClientOptions clientOptions)
   {
 
@@ -58,6 +58,52 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
   }
 
+  TEST_F(TablesClientTest, GetTable)
+  {
+    Tables::CreateOptions createOptions;
+    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    createOptions.TableName = m_tableName;
+
+    auto createResponse = m_tableClient->Create(createOptions);
+    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+
+    Tables::GetOptions getOptions;
+    getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    getOptions.TableName = m_tableName;
+
+    auto getResponse = m_tableClient->Get(getOptions);
+    EXPECT_EQ(getResponse.Value.Properties.TableName, m_tableName);
+  }
+
+  TEST_F(TablesClientTest, UpdateTable)
+  {
+    Tables::CreateOptions createOptions;
+    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    createOptions.TableName = m_tableName;
+
+    auto createResponse = m_tableClient->Create(createOptions);
+    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+
+    Tables::GetOptions getOptions;
+    getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    getOptions.TableName = m_tableName;
+
+    auto getResponse = m_tableClient->Get(getOptions);
+    EXPECT_EQ(getResponse.Value.Properties.TableName, m_tableName);
+
+    Tables::UpdateOptions updateOptions;
+	updateOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+	updateOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+	updateOptions.TableName = m_tableName;
+
+	auto updateResponse = m_tableClient->Update(updateOptions);
+	EXPECT_EQ(updateResponse.Value.Properties.TableName, m_tableName);
+  }
+
   TEST_F(TablesClientTest, ListTables)
   {
     Tables::CreateOptions createOptions;
@@ -74,16 +120,62 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto listResponse = m_tableClient->List(listOptions);
     bool found = false;
-    for (auto table: listResponse.Value.Value)
-	{
-	  if (table.Properties.TableName == m_tableName)
-	  {
-      found = true; 
-      break;
-	  }
-	}
+    for (auto table : listResponse.Value.Value)
+    {
+      if (table.Properties.TableName == m_tableName)
+      {
+        found = true;
+        break;
+      }
+    }
 
     EXPECT_TRUE(found);
+  }
+
+  TEST_F(TablesClientTest, DeleteTable)
+  {
+    Tables::CreateOptions createOptions;
+    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    createOptions.TableName = m_tableName;
+
+    auto createResponse = m_tableClient->Create(createOptions);
+    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+
+    Tables::ListOptions listOptions;
+    listOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    listOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+
+    auto listResponse = m_tableClient->List(listOptions);
+    bool found = false;
+    for (auto table : listResponse.Value.Value)
+    {
+      if (table.Properties.TableName == m_tableName)
+      {
+        found = true;
+        break;
+      }
+    }
+
+    Tables::DeleteOptions deleteOptions;
+    deleteOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    deleteOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    deleteOptions.TableName = m_tableName;
+
+    m_tableClient->Delete(deleteOptions);
+    EXPECT_TRUE(found);
+
+    listResponse = m_tableClient->List(listOptions);
+    found = false;
+    for (auto table : listResponse.Value.Value)
+    {
+      if (table.Properties.TableName == m_tableName)
+      {
+        found = true;
+        break;
+      }
+    }
+    EXPECT_FALSE(found);
   }
 
   TEST_F(TablesClientTest, ServiceClientConstructors)

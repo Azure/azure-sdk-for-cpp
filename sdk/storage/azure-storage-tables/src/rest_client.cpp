@@ -544,29 +544,31 @@ Azure::Response<Table> TableClient::Update(
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-      response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
-
-      for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
+      response.Properties.TableName = jsonRoot["properties"]["tableName"].get<std::string>();
+      if (jsonRoot["properties"].contains("signedIdentifiers"))
       {
-        TableSignedIdentifier vectorItem{};
-
-        vectorItem.Id = jsonItem["id"].get<std::string>();
-
-        if (jsonItem.contains("startTime"))
+        for (auto const& jsonItem : jsonRoot["properties"]["signedIdentifiers"])
         {
-          vectorItem.AccessPolicy.StartTime = DateTime::Parse(
-              jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          TableSignedIdentifier vectorItem{};
+
+          vectorItem.Id = jsonItem["id"].get<std::string>();
+
+          if (jsonItem.contains("startTime"))
+          {
+            vectorItem.AccessPolicy.StartTime = DateTime::Parse(
+                jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          if (jsonItem.contains("expiryTime"))
+          {
+            vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
+                jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
+
+          response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
         }
-
-        if (jsonItem.contains("expiryTime"))
-        {
-          vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
-              jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
-        }
-
-        vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
-
-        response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
       }
     }
   }
@@ -602,14 +604,16 @@ Azure::Response<Table> TableClient::Get(GetOptions const& options, Core::Context
   Table response{};
   {
     auto const& responseBody = rawResponse->GetBody();
+    std::string responseString = std::string(responseBody.begin(), responseBody.end());
     if (responseBody.size() > 0)
     {
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-      response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
-
-      for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
+      response.Properties.TableName = jsonRoot["properties"]["tableName"].get<std::string>();
+      if (jsonRoot["properties"].contains("signedIdentifiers"))
+      {
+        for (auto const& jsonItem : jsonRoot["properties"]["signedIdentifiers"])
       {
         TableSignedIdentifier vectorItem{};
 
@@ -630,6 +634,7 @@ Azure::Response<Table> TableClient::Get(GetOptions const& options, Core::Context
         vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
 
         response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
+      }
       }
     }
   }
