@@ -1,14 +1,11 @@
 # Release History
 
-## 12.8.0-beta.1 (Unreleased)
+## 12.8.0-beta.1 (2023-10-17)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new extendable enum `ShareAudience`
+- Added new field `Audience` in `ShareClientOptions`
 
 ## 12.7.0 (2023-09-12)
 
