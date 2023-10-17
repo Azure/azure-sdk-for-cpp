@@ -42,7 +42,8 @@ namespace Azure { namespace Identity {
     /**
      * @brief Authentication authority URL.
      * @note Defaults to the value of the environment variable 'AZURE_AUTHORITY_HOST'. If that's not
-     * set, the default value is Microsoft Entra global authority (https://login.microsoftonline.com/).
+     * set, the default value is Microsoft Entra global authority
+     * (https://login.microsoftonline.com/).
      *
      * @note Example of an authority host string: "https://login.microsoftonline.us/". See national
      * clouds' Microsoft Entra authentication endpoints:
