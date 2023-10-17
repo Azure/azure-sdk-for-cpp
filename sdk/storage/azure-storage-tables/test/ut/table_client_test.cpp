@@ -26,7 +26,36 @@ namespace Azure { namespace Storage { namespace Test {
               m_credential,
               Azure::Storage::_internal::TablesManagementPublicEndpoint,
               clientOptions));
+      m_tableClient = std::make_shared<Tables::TableClient>(
+          CreateTableClientForTest(clientOptions));
     }
+  }
+
+  Azure::Storage::Tables::TableClient TablesClientTest::CreateTableClientForTest(
+      
+      Tables::TableClientOptions clientOptions)
+  {
+
+    Tables::TableClientOptions tableOptions;
+    m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
+    tableOptions.EnableTenantDiscovery = true;
+
+    auto tableClient
+        = Tables::TableClient(GetEnv("STORAGE_SUBSCRIPTION_ID"), m_credential, clientOptions);
+    return tableClient;
+  }
+
+  TEST_F(TablesClientTest, ClientConstructor) { EXPECT_FALSE(m_tableClient == nullptr); }
+
+  TEST_F(TablesClientTest, CreateTable)
+  {
+    Tables::CreateOptions createOptions;
+    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    createOptions.TableName = m_tableName;
+
+    auto createResponse = m_tableClient->Create(createOptions);
+    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
   }
 
   TEST_F(TablesClientTest, ServiceClientConstructors)

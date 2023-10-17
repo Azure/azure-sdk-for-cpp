@@ -23,17 +23,9 @@ AllowedMethods const AllowedMethods::Put{"PUT"};
 AllowedMethods const AllowedMethods::Patch{"PATCH"};
 AllowedMethods const AllowedMethods::Connect{"CONNECT"};
 AllowedMethods const AllowedMethods::Trace{"TRACE"};
-/*
-TableServicesClient::TableServicesClient(
-    std::string subscriptionId,
-    const TableClientOptions& options)
-    : m_pipeline(new Core::Http::_internal::HttpPipeline({}, "storage-tables", "", {}, {})),
-      m_url("https://management.azure.com"), m_subscriptionId(std::move(subscriptionId))
-{
-  (void)options;
-}
-*/
+
 const TablesAudience TablesAudience::PublicAudience(Azure::Storage::_internal::TablesManagementScope);
+
 Azure::Response<ListTableServices> TableServicesClient::List(
     ListOptions const& options,
     Core::Context const& context)
@@ -438,14 +430,15 @@ Azure::Response<Table> TableClient::Create(
     Table response{};
     {
       auto const& responseBody = rawResponse->GetBody();
+      std::string responseString = std::string(responseBody.begin(), responseBody.end());
       if (responseBody.size() > 0)
       {
         auto const jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-        response.Properties.TableName = jsonRoot["tableName"].get<std::string>();
+        response.Properties.TableName = jsonRoot["properties"]["tableName"].get<std::string>();
 
-        for (auto const& jsonItem : jsonRoot["signedIdentifiers"])
+        for (auto const& jsonItem : jsonRoot["properties"]["signedIdentifiers"])
         {
           TableSignedIdentifier vectorItem{};
 

@@ -11,15 +11,14 @@ namespace Azure { namespace Storage { namespace Test {
   protected:
     void SetUp() override;
 
-   // Azure::Storage::Tables::TableClient GetTableClientForTest(
-   //     const std::string& queueName,
-   //     Table::QueueClientOptions clientOptions = Queues::QueueClientOptions());
+    Azure::Storage::Tables::TableClient CreateTableClientForTest(
+        Tables::TableClientOptions clientOptions = {});
 
   protected:
-   // std::shared_ptr<Queues::QueueServiceClient> m_queueServiceClient;
-   // std::shared_ptr<Queues::QueueClient> m_queueClient;
-   // std::string m_queueName;
+
+    std::string m_tableName;
       std::shared_ptr<Tables::TableServicesClient> m_tableServiceClient;
+      std::shared_ptr<Tables::TableClient> m_tableClient;
   };
 
 }}} // namespace Azure::Storage::Test
