@@ -13,16 +13,16 @@
 #include <azure/core/io/body_stream.hpp>
 using namespace Azure::Storage::Tables;
 
-AllowedMethods const AllowedMethods::Delete{"DELETE"};
-AllowedMethods const AllowedMethods::Get{"GET"};
-AllowedMethods const AllowedMethods::Head{"HEAD"};
-AllowedMethods const AllowedMethods::Merge{"MERGE"};
-AllowedMethods const AllowedMethods::Post{"POST"};
-AllowedMethods const AllowedMethods::Options{"OPTIONS"};
-AllowedMethods const AllowedMethods::Put{"PUT"};
-AllowedMethods const AllowedMethods::Patch{"PATCH"};
-AllowedMethods const AllowedMethods::Connect{"CONNECT"};
-AllowedMethods const AllowedMethods::Trace{"TRACE"};
+AllowedMethodsType const AllowedMethodsType::Delete{"DELETE"};
+AllowedMethodsType const AllowedMethodsType::Get{"GET"};
+AllowedMethodsType const AllowedMethodsType::Head{"HEAD"};
+AllowedMethodsType const AllowedMethodsType::Merge{"MERGE"};
+AllowedMethodsType const AllowedMethodsType::Post{"POST"};
+AllowedMethodsType const AllowedMethodsType::Options{"OPTIONS"};
+AllowedMethodsType const AllowedMethodsType::Put{"PUT"};
+AllowedMethodsType const AllowedMethodsType::Patch{"PATCH"};
+AllowedMethodsType const AllowedMethodsType::Connect{"CONNECT"};
+AllowedMethodsType const AllowedMethodsType::Trace{"TRACE"};
 
 const TablesAudience TablesAudience::PublicAudience(
     Azure::Storage::_internal::TablesManagementScope);
@@ -80,9 +80,9 @@ Azure::Response<ListTableServices> TableServicesClient::List(
 
           for (auto const& jsonSubItem : jsonRulesItem["allowedMethods"])
           {
-            AllowedMethods allowedMethods{};
+            AllowedMethodsType allowedMethods{};
 
-            allowedMethods = AllowedMethods(jsonSubItem.get<std::string>());
+            allowedMethods = AllowedMethodsType(jsonSubItem.get<std::string>());
 
             vectorItem.AllowedMethods.emplace_back(std::move(allowedMethods));
           }
@@ -142,7 +142,7 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
     auto jsonRoot = Core::Json::_internal::json::object();
     jsonRoot["properties"]["cors"]["corsRules"] = Core::Json::_internal::json::array();
 
-    for (auto i = 0; i < options.Parameters.Properties.Cors.CorsRules.size(); ++i)
+    for (std::size_t i = 0; i < options.Parameters.Properties.Cors.CorsRules.size(); ++i)
     {
       jsonRoot["properties"]["cors"]["corsRules"][i]["allowedOrigins"]
           = Core::Json::_internal::json::array();
@@ -157,7 +157,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
       jsonRoot["properties"]["cors"]["corsRules"][i]["allowedMethods"]
           = Core::Json::_internal::json::array();
 
-      for (auto k = 0; k < options.Parameters.Properties.Cors.CorsRules[i].AllowedMethods.size();
+      for (std::size_t k = 0;
+           k < options.Parameters.Properties.Cors.CorsRules[i].AllowedMethods.size();
            k++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["allowedMethods"][k]
@@ -169,7 +170,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
       jsonRoot["properties"]["cors"]["corsRules"][i]["exposedHeaders"]
           = Core::Json::_internal::json::array();
 
-      for (auto l = 0; l < options.Parameters.Properties.Cors.CorsRules[i].ExposedHeaders.size();
+      for (std::size_t l = 0;
+           l < options.Parameters.Properties.Cors.CorsRules[i].ExposedHeaders.size();
            l++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["exposedHeaders"][l]
@@ -179,7 +181,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
       jsonRoot["properties"]["cors"]["corsRules"][i]["allowedHeaders"]
           = Core::Json::_internal::json::array();
 
-      for (auto m = 0; m < options.Parameters.Properties.Cors.CorsRules[i].AllowedHeaders.size();
+      for (std::size_t m = 0;
+           m < options.Parameters.Properties.Cors.CorsRules[i].AllowedHeaders.size();
            m++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["allowedHeaders"][m]
@@ -230,9 +233,9 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
 
         for (auto const& jsonSubItem : jsonItem["allowedMethods"])
         {
-          AllowedMethods methods{};
+          AllowedMethodsType methods{};
 
-          methods = AllowedMethods(jsonSubItem.get<std::string>());
+          methods = AllowedMethodsType(jsonSubItem.get<std::string>());
 
           vectorItem.AllowedMethods.emplace_back(std::move(methods));
         }
@@ -318,9 +321,9 @@ Azure::Response<TableServiceProperties> TableServicesClient::GetServicePropertie
 
         for (auto const& jsonSubItem : jsonItem["allowedMethods"])
         {
-          AllowedMethods allowedMethods{};
+          AllowedMethodsType allowedMethods{};
 
-          allowedMethods = AllowedMethods(jsonSubItem.get<std::string>());
+          allowedMethods = AllowedMethodsType(jsonSubItem.get<std::string>());
 
           vectorItem.AllowedMethods.emplace_back(std::move(allowedMethods));
         }
@@ -385,7 +388,7 @@ Azure::Response<Table> TableClient::Create(
     jsonRoot["properties"]["tableName"] = options.Parameters.Properties.TableName;
     jsonRoot["properties"]["signedIdentifiers"] = Core::Json::_internal::json::array();
 
-    for (auto i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
+    for (std::size_t i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
     {
       jsonRoot["properties"]["signedIdentifiers"][i]["id"]
           = options.Parameters.Properties.SignedIdentifiers[i].Id;
@@ -492,7 +495,7 @@ Azure::Response<Table> TableClient::Update(
     jsonRoot["properties"]["tableName"] = options.Parameters.Properties.TableName;
     jsonRoot["properties"]["signedIdentifiers"] = Core::Json::_internal::json::array();
 
-    for (auto i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
+    for (std::size_t i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
     {
       jsonRoot["properties"]["signedIdentifiers"][i]["id"]
           = options.Parameters.Properties.SignedIdentifiers[i].Id;

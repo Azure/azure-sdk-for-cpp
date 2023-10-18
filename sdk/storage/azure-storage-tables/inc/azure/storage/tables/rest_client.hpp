@@ -41,30 +41,31 @@ namespace Azure { namespace Storage { namespace Tables {
     constexpr static const char* ApiVersion = "2023-01-01";
   } // namespace _detail
 
-  class AllowedMethods final : public Core::_internal::ExtendableEnumeration<AllowedMethods> {
+  class AllowedMethodsType final
+      : public Core::_internal::ExtendableEnumeration<AllowedMethodsType> {
   public:
-    AllowedMethods() = default;
+    AllowedMethodsType() = default;
 
-    explicit AllowedMethods(std::string allowedMethods)
+    explicit AllowedMethodsType(std::string allowedMethods)
         : ExtendableEnumeration(std::move(allowedMethods))
     {
     }
 
-    static AllowedMethods const Delete;
-    static AllowedMethods const Get;
-    static AllowedMethods const Head;
-    static AllowedMethods const Merge;
-    static AllowedMethods const Post;
-    static AllowedMethods const Options;
-    static AllowedMethods const Put;
-    static AllowedMethods const Patch;
-    static AllowedMethods const Connect;
-    static AllowedMethods const Trace;
+    static AllowedMethodsType const Delete;
+    static AllowedMethodsType const Get;
+    static AllowedMethodsType const Head;
+    static AllowedMethodsType const Merge;
+    static AllowedMethodsType const Post;
+    static AllowedMethodsType const Options;
+    static AllowedMethodsType const Put;
+    static AllowedMethodsType const Patch;
+    static AllowedMethodsType const Connect;
+    static AllowedMethodsType const Trace;
   };
   struct CorsRule final
   {
     std::vector<std::string> AllowedOrigins;
-    std::vector<AllowedMethods> AllowedMethods;
+    std::vector<AllowedMethodsType> AllowedMethods;
     std::int32_t MaxAgeInSeconds = 0;
     std::vector<std::string> ExposedHeaders;
     std::vector<std::string> AllowedHeaders;

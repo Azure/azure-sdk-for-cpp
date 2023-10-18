@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Tables::CorsRule oneRule;
     oneRule.AllowedHeaders = {"x-ms-meta-data*"};
-    oneRule.AllowedMethods = {Tables::AllowedMethods::Get};
+    oneRule.AllowedMethods = {Tables::AllowedMethodsType::Get};
     oneRule.AllowedOrigins = {"234"};
     oneRule.ExposedHeaders = {"x-ms-meta-*"};
     oneRule.MaxAgeInSeconds = 100;
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethods::Get);
+        Tables::AllowedMethodsType::Get);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Tables::CorsRule oneRule;
     oneRule.AllowedHeaders = {"x-ms-meta-data*"};
-    oneRule.AllowedMethods = {Tables::AllowedMethods::Get};
+    oneRule.AllowedMethods = {Tables::AllowedMethodsType::Get};
     oneRule.AllowedOrigins = {"234"};
     oneRule.ExposedHeaders = {"x-ms-meta-*"};
     oneRule.MaxAgeInSeconds = 100;
@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethods::Get);
+        Tables::AllowedMethodsType::Get);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethods::Get);
+        Tables::AllowedMethodsType::Get);
     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
@@ -304,7 +304,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Tables::CorsRule oneRule;
     oneRule.AllowedHeaders = {"x-ms-meta-data*"};
-    oneRule.AllowedMethods = {Tables::AllowedMethods::Get};
+    oneRule.AllowedMethods = {Tables::AllowedMethodsType::Get};
     oneRule.AllowedOrigins = {"234"};
     oneRule.ExposedHeaders = {"x-ms-meta-*"};
     oneRule.MaxAgeInSeconds = 100;
@@ -319,7 +319,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethods::Get);
+        Tables::AllowedMethodsType::Get);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
@@ -340,7 +340,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethods::Get);
+        Tables::AllowedMethodsType::Get);
     EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
     EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
     EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
