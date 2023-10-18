@@ -147,7 +147,8 @@ Azure::Response<TableServiceProperties> TableServicesClient::SetServicePropertie
       jsonRoot["properties"]["cors"]["corsRules"][i]["allowedOrigins"]
           = Core::Json::_internal::json::array();
 
-      for (auto j = 0; j < options.Parameters.Properties.Cors.CorsRules[i].AllowedOrigins.size();
+      for (std::size_t j = 0;
+           j < options.Parameters.Properties.Cors.CorsRules[i].AllowedOrigins.size();
            j++)
       {
         jsonRoot["properties"]["cors"]["corsRules"][i]["allowedOrigins"][j]
