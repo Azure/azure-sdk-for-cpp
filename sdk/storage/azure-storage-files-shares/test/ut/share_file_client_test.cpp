@@ -1163,7 +1163,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, OAuthUploadRangeFromUri)
+  TEST_F(FileShareFileClientTest, OAuthUploadRangeFromUri_PLAYBACKONLY_)
   {
     size_t fileSize = 1 * 1024;
     std::string containerName = LowercaseRandomString();
