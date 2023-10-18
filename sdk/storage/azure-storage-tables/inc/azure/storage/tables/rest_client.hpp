@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Tables {
     std::vector<std::string> ExposedHeaders;
     std::vector<std::string> AllowedHeaders;
   };
-  struct CorsRules final
+  struct CorsRulesType final
   {
     std::vector<CorsRule> CorsRules;
   };
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
   struct TableServicePropertiesProperties final
   {
-    CorsRules Cors;
+    CorsRulesType Cors;
   };
   struct TableServiceProperties final
   {
