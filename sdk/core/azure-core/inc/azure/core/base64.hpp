@@ -10,8 +10,9 @@
 #pragma once
 
 #include <algorithm>
-#include <cstdint>
+#include <cstdint> // defines std::uint8_t
 #include <stdexcept>
+#include <stdint.h> // deprecated, defines uint8_t in global namespace. TODO: Remove when uint8_t in the global namespace is removed.
 #include <string>
 #include <vector>
 

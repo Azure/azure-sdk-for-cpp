@@ -11,8 +11,9 @@
 #include "azure/core/platform.hpp"
 
 #include <array>
-#include <cstdint>
+#include <cstdint> // defines std::uint8_t
 #include <cstring>
+#include <stdint.h> // deprecated, defines uint8_t in global namespace. TODO: Remove in the future when references to uint8_t and friends are removed.
 #include <string>
 
 namespace Azure { namespace Core {

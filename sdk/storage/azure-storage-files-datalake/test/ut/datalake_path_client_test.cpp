@@ -495,22 +495,30 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pathClient.GetProperties());
 
     // default audience
-    clientOptions.Audience = Files::DataLake::Models::DataLakeAudience::DefaultAudience;
+    clientOptions.Audience = Files::DataLake::DataLakeAudience::DefaultAudience;
+    pathClient
+        = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(pathClient.GetProperties());
+
+    // service audience
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+    clientOptions.Audience
+        = Files::DataLake::DataLakeAudience::CreateDataLakeServiceAccountAudience(accountName);
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
     // custom audience
     auto pathUrl = Azure::Core::Url(pathClient.GetUrl());
-    clientOptions.Audience = Files::DataLake::Models::DataLakeAudience(
-        pathUrl.GetScheme() + "://" + pathUrl.GetHost());
+    clientOptions.Audience
+        = Files::DataLake::DataLakeAudience(pathUrl.GetScheme() + "://" + pathUrl.GetHost());
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(pathClient.GetProperties());
 
     // error audience
-    clientOptions.Audience
-        = Files::DataLake::Models::DataLakeAudience("https://disk.compute.azure.com");
+    clientOptions.Audience = Files::DataLake::DataLakeAudience("https://disk.compute.azure.com");
     pathClient
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(pathClient.GetProperties(), StorageException);
