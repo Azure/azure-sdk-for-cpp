@@ -100,7 +100,10 @@ namespace Azure { namespace Core {
        *
        * @remark The Proxy Information string is composed of a set of elements
        * formatted as follows:
+       *
+       * @code
        * (\[\<scheme\>=\]\[\<scheme\>"://"\]\<server\>\[":"\<port\>\])
+       * @endcode
        *
        * Each element should be separated with semicolons or whitespace.
        */
