@@ -15,7 +15,6 @@ void Azure::Core::Test::TestBase::TearDown()
   if (m_wasSkipped || m_testContext.IsLiveMode())
   {
     return;
-
   }
   if (m_testProxy)
   {

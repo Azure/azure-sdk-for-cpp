@@ -74,23 +74,23 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
 
 TransportPolicy::TransportPolicy(TransportOptions const& options) : m_options(options)
 {
-  // If there's no transport specified, then we need to create one.
-  // If there is one specified, it's an error to specify other options.
-  if (m_options.Transport)
-  {
+// If there's no transport specified, then we need to create one.
+// If there is one specified, it's an error to specify other options.
+if (m_options.Transport)
+{
 #if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
-    if (_detail::AreAnyTransportOptionsSpecified(options))
-    {
-      AZURE_ASSERT_MSG(
-          false, "Invalid parameter: Proxies cannot be specified when a transport is specified.");
-    }
+if (_detail::AreAnyTransportOptionsSpecified(options))
+{
+AZURE_ASSERT_MSG(
+    false, "Invalid parameter: Proxies cannot be specified when a transport is specified.");
+}
 #endif
-  }
-  else
-  {
-    // Configure a transport adapter based on the options and compiler switches.
-    m_options.Transport = _detail::GetTransportAdapter(m_options);
-  }
+}
+else
+{
+// Configure a transport adapter based on the options and compiler switches.
+m_options.Transport = _detail::GetTransportAdapter(m_options);
+}
 }
 
 std::unique_ptr<RawResponse> TransportPolicy::Send(
@@ -98,43 +98,43 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
     NextHttpPolicy,
     Context const& context) const
 {
-  // Before doing any work, check to make sure that the context hasn't already been cancelled.
-  context.ThrowIfCancelled();
+// Before doing any work, check to make sure that the context hasn't already been cancelled.
+context.ThrowIfCancelled();
 
-  /*
-   * The transport policy is always the last policy.
-   *
-   * Default behavior for all requests is to download the full response to the RawResponse's
-   * buffer.
-   *
-   ********************************** Notes ************************************************
-   *
-   * - If ReadToEnd() fails while downloading all the response, the retry policy will make sure to
-   * re-send the request to re-start the download.
-   *
-   * - If the request returns error (statusCode >= 300), even if `request.ShouldBufferResponse()`,
-   *the response will be download to the response's buffer.
-   *
-   ***********************************************************************************
-   *
-   */
-  auto response = m_options.Transport->Send(request, context); 
-  auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-      response->GetStatusCode());
+/*
+ * The transport policy is always the last policy.
+ *
+ * Default behavior for all requests is to download the full response to the RawResponse's
+ * buffer.
+ *
+ ********************************** Notes ************************************************
+ *
+ * - If ReadToEnd() fails while downloading all the response, the retry policy will make sure to
+ * re-send the request to re-start the download.
+ *
+ * - If the request returns error (statusCode >= 300), even if `request.ShouldBufferResponse()`,
+ *the response will be download to the response's buffer.
+ *
+ ***********************************************************************************
+ *
+ */
+auto response = m_options.Transport->Send(request, context);
+auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
+    response->GetStatusCode());
 
-  // special case to return a response with BodyStream to read directly from socket
-  // Return only if response did not fail.
-  if (!request.ShouldBufferResponse() && statusCode < 300)
-  {
-    return response;
-  }
+// special case to return a response with BodyStream to read directly from socket
+// Return only if response did not fail.
+if (!request.ShouldBufferResponse() && statusCode < 300)
+{
+return response;
+}
 
-  // At this point, either the request is `shouldBufferResponse` or it return with an error code.
-  // The entire payload needs must be downloaded to the response's buffer.
-  auto bodyStream = response->ExtractBodyStream();
-  response->SetBody(bodyStream->ReadToEnd(context));
-  std::string bodyText(response->GetBody().begin(), response->GetBody().end());
-  // BodyStream is moved out of response. This makes transport implementation to clean any active
-  // session with sockets or internal state.
-  return response;
+// At this point, either the request is `shouldBufferResponse` or it return with an error code.
+// The entire payload needs must be downloaded to the response's buffer.
+auto bodyStream = response->ExtractBodyStream();
+response->SetBody(bodyStream->ReadToEnd(context));
+std::string bodyText(response->GetBody().begin(), response->GetBody().end());
+// BodyStream is moved out of response. This makes transport implementation to clean any active
+// session with sockets or internal state.
+return response;
 }

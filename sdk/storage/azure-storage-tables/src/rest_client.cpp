@@ -618,27 +618,27 @@ Azure::Response<Table> TableClient::Get(GetOptions const& options, Core::Context
       if (jsonRoot["properties"].contains("signedIdentifiers"))
       {
         for (auto const& jsonItem : jsonRoot["properties"]["signedIdentifiers"])
-      {
-        TableSignedIdentifier vectorItem{};
-
-        vectorItem.Id = jsonItem["id"].get<std::string>();
-
-        if (jsonItem.contains("startTime"))
         {
-          vectorItem.AccessPolicy.StartTime = DateTime::Parse(
-              jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          TableSignedIdentifier vectorItem{};
+
+          vectorItem.Id = jsonItem["id"].get<std::string>();
+
+          if (jsonItem.contains("startTime"))
+          {
+            vectorItem.AccessPolicy.StartTime = DateTime::Parse(
+                jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          if (jsonItem.contains("expiryTime"))
+          {
+            vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
+                jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
+          }
+
+          vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
+
+          response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
         }
-
-        if (jsonItem.contains("expiryTime"))
-        {
-          vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
-              jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
-        }
-
-        vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
-
-        response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
-      }
       }
     }
   }

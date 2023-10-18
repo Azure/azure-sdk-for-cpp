@@ -96,12 +96,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(getResponse.Value.Properties.TableName, m_tableName);
 
     Tables::UpdateOptions updateOptions;
-	updateOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-	updateOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-	updateOptions.TableName = m_tableName;
+    updateOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    updateOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    updateOptions.TableName = m_tableName;
 
-	auto updateResponse = m_tableClient->Update(updateOptions);
-	EXPECT_EQ(updateResponse.Value.Properties.TableName, m_tableName);
+    auto updateResponse = m_tableClient->Update(updateOptions);
+    EXPECT_EQ(updateResponse.Value.Properties.TableName, m_tableName);
   }
 
   TEST_F(TablesClientTest, ListTables)

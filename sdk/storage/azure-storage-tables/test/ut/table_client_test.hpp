@@ -15,10 +15,9 @@ namespace Azure { namespace Storage { namespace Test {
         Tables::TableClientOptions clientOptions = {});
 
   protected:
-
     std::string m_tableName;
-      std::shared_ptr<Tables::TableServicesClient> m_tableServiceClient;
-      std::shared_ptr<Tables::TableClient> m_tableClient;
+    std::shared_ptr<Tables::TableServicesClient> m_tableServiceClient;
+    std::shared_ptr<Tables::TableClient> m_tableClient;
   };
 
 }}} // namespace Azure::Storage::Test

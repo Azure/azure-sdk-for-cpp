@@ -8,25 +8,26 @@
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
-#include <azure/storage/common/storage_credential.hpp>
-#include <azure/storage/tables/dll_import_export.hpp>
-#include <azure/storage/tables/rest_client.hpp>
-#include <azure/storage/tables/rtti.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_credential.hpp>
+#include <azure/storage/tables/dll_import_export.hpp>
+#include <azure/storage/tables/rest_client.hpp>
+#include <azure/storage/tables/rtti.hpp>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -291,13 +292,13 @@ namespace Azure { namespace Storage { namespace Tables {
           std::move(perOperationPolicies));
     };
 
-     explicit TableServicesClient(
+    explicit TableServicesClient(
         std::string subscriptionId,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const std::string& serviceUrl = Azure::Storage::_internal::TablesManagementPublicEndpoint,
         const TableClientOptions& options = {})
         : TableServicesClient(subscriptionId, options)
-         
+
     {
       m_url = Azure::Core::Url(serviceUrl);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
@@ -309,7 +310,7 @@ namespace Azure { namespace Storage { namespace Tables {
         Azure::Core::Credentials::TokenRequestContext tokenContext;
         tokenContext.Scopes.emplace_back(
             options.Audience.HasValue() ? options.Audience.Value().ToString()
-                                        :  TablesAudience::PublicAudience.ToString());
+                                        : TablesAudience::PublicAudience.ToString());
         perRetryPolicies.emplace_back(
             std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
                 credential, tokenContext, options.EnableTenantDiscovery));
