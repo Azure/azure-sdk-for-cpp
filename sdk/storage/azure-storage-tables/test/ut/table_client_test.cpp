@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Test {
     getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
     getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
-    EXPECT_EQ(response.Value.Properties.Cors.CorsRules.size(), 0);
+    EXPECT_EQ(response.Value.Properties.Cors.CorsRules.size(), 1);
   }
 
   TEST_F(TablesClientTest, ServiceClientList)
