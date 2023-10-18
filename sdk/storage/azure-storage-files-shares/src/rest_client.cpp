@@ -3678,6 +3678,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "x-ms-source-allow-trailing-dot",
             options.AllowSourceTrailingDot.Value() ? "true" : "false");
       }
+      if (options.FileRequestIntent.HasValue()
+          && !options.FileRequestIntent.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)

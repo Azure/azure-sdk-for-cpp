@@ -2551,6 +2551,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
         Nullable<bool> AllowTrailingDot;
         Nullable<bool> AllowSourceTrailingDot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,

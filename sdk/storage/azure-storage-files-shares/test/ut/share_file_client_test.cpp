@@ -1179,8 +1179,20 @@ namespace Azure { namespace Storage { namespace Test {
     auto sourceBlobClient = containerClient.GetBlockBlobClient(blobName);
     sourceBlobClient.Upload(memBodyStream);
 
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> oauthCredential
+        = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(),
+            AadClientId(),
+            AadClientSecret(),
+            InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
     auto destFileClient
-        = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "f2");
+        = Files::Shares::ShareClient(m_shareClient->GetUrl(), oauthCredential, clientOptions)
+              .GetRootDirectoryClient()
+              .GetFileClient(RandomString());
+
     destFileClient.Create(fileSize * 4);
     Azure::Core::Http::HttpRange sourceRange;
     Azure::Core::Http::HttpRange destRange;
@@ -1188,14 +1200,9 @@ namespace Azure { namespace Storage { namespace Test {
     destRange.Length = fileSize;
 
     // Get oauth token of source file
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+    auto oauthToken = oauthCredential->GetToken(requestContext, Azure::Core::Context());
 
     Files::Shares::UploadFileRangeFromUriOptions options;
     options.SourceAuthorization = "Bearer " + oauthToken.Token;
