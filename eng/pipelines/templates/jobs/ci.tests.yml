@@ -251,14 +251,13 @@ jobs:
           displayName: Generate Code Coverage Data
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: PublishCodeCoverageResults@1
+        - task: PublishCodeCoverageResults@2
           inputs:
-            codeCoverageTool: Cobertura
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@9
           displayName: Check line coverage
           inputs:
             checkCoverage: true
@@ -268,7 +267,7 @@ jobs:
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@9
           displayName: Check branch coverage
           inputs:
             checkCoverage: true
