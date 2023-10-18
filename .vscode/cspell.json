@@ -38,10 +38,12 @@
     "adamdebreceni",
     "Adls",
     "ahojnnes",
+    "ahsonkhan",
     "Aloctl",
     "AMQP",
     "AMQPS",
     "AMQPVALUE",
+    "antkmsft",
     "azcore",
     "azsdk",
     "azsdkengsys",
@@ -76,6 +78,7 @@
     "echsmkey",
     "Edlund",
     "EKUs",
+    "Entra",
     "euap",
     "Favicon",
     "gcovr",
@@ -124,6 +127,7 @@
     "OIDC",
     "okhttp",
     "opentelemetry",
+    "Osterman",
     "otel",
     "PBYTE",
     "pdbs",
@@ -261,6 +265,7 @@
     {
       "filename": "**/sdk/identity/azure-identity/**",
       "words": [
+        "meid",
         "PCCERT"
       ]
     },

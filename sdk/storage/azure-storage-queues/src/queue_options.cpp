@@ -5,10 +5,7 @@
 
 namespace Azure { namespace Storage { namespace Queues {
 
-  namespace Models {
-
-    const QueueAudience QueueAudience::PublicAudience(Azure::Storage::_internal::StorageScope);
-  } // namespace Models
+  const QueueAudience QueueAudience::DefaultAudience(_internal::StorageDefaultAudience);
 
   const ServiceVersion ServiceVersion::V2018_03_28(std::string("2018-03-28"));
   const ServiceVersion ServiceVersion::V2019_12_12(std::string("2019-12-12"));

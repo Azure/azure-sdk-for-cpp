@@ -5,9 +5,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  namespace Models {
-    const BlobAudience BlobAudience::PublicAudience(Azure::Storage::_internal::StorageScope);
-  } // namespace Models
+  const BlobAudience BlobAudience::DefaultAudience(_internal::StorageDefaultAudience);
 
   BlobQueryInputTextOptions BlobQueryInputTextOptions::CreateCsvTextOptions(
       const std::string& recordSeparator,

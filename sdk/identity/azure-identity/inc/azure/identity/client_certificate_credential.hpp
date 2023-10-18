@@ -13,6 +13,7 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/url.hpp>
 
@@ -44,13 +45,16 @@ namespace Azure { namespace Identity {
   {
     /**
      * @brief Authentication authority URL.
-     * @note Default value is Azure AD global authority (https://login.microsoftonline.com/).
+     * @note Defaults to the value of the environment variable 'AZURE_AUTHORITY_HOST'. If that's not
+     * set, the default value is Microsoft Entra global authority
+     * (https://login.microsoftonline.com/).
      *
      * @note Example of an authority host string: "https://login.microsoftonline.us/". See national
-     * clouds' Azure AD authentication endpoints:
-     * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
+     * clouds' Microsoft Entra authentication endpoints:
+     * https://learn.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
+    std::string AuthorityHost
+        = Azure::Core::_internal::Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
 
     /**
      * @brief For multi-tenant applications, specifies additional tenants for which the credential

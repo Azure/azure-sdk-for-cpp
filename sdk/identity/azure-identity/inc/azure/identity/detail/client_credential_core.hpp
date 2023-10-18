@@ -12,14 +12,14 @@
 #include <vector>
 
 namespace Azure { namespace Identity { namespace _detail {
+  constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
+
   class ClientCredentialCore final {
     std::vector<std::string> m_additionallyAllowedTenants;
     Core::Url m_authorityHost;
     std::string m_tenantId;
 
   public:
-    AZ_IDENTITY_DLLEXPORT static std::string const AadGlobalAuthority;
-
     explicit ClientCredentialCore(
         std::string tenantId,
         std::string const& authorityHost,

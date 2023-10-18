@@ -3,8 +3,8 @@
 
 #include "azure/storage/files/shares/share_options.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
+namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
-  const ShareAudience ShareAudience::PublicAudience(Azure::Storage::_internal::StorageScope);
+  const ShareAudience ShareAudience::DefaultAudience(_internal::StorageDefaultAudience);
 
-}}}}} // namespace Azure::Storage::Files::Shares::Models
+}}}} // namespace Azure::Storage::Files::Shares

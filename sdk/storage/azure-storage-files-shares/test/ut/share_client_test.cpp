@@ -719,14 +719,13 @@ namespace Azure { namespace Storage { namespace Test {
 
     // custom audience
     auto shareUrl = Azure::Core::Url(shareClient.GetUrl());
-    clientOptions.Audience = Files::Shares::Models::ShareAudience(
-        shareUrl.GetScheme() + "://" + shareUrl.GetHost() + "/.default");
+    clientOptions.Audience
+        = Files::Shares::ShareAudience(shareUrl.GetScheme() + "://" + shareUrl.GetHost());
     shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
 
     // error audience
-    clientOptions.Audience
-        = Files::Shares::Models::ShareAudience("https://disk.compute.azure.com/.default");
+    clientOptions.Audience = Files::Shares::ShareAudience("https://disk.compute.azure.com");
     shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(shareClient.GetPermission(created.FilePermissionKey), StorageException);
   }

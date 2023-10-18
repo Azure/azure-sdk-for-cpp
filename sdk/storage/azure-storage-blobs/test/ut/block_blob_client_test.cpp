@@ -2035,21 +2035,41 @@ namespace Azure { namespace Storage { namespace Test {
         InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
 
-    // default audience
+    // audience by default
     auto blockBlobClient
+        = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(blockBlobClient.GetProperties());
+
+    // default audience
+    clientOptions.Audience = Blobs::BlobAudience::DefaultAudience;
+    blockBlobClient
+        = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(blockBlobClient.GetProperties());
+
+    // service audience
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+    clientOptions.Audience = Blobs::BlobAudience::CreateBlobServiceAccountAudience(accountName);
+    blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
 
     // custom audience
     auto blobUrl = Azure::Core::Url(blockBlobClient.GetUrl());
-    clientOptions.Audience = Blobs::Models::BlobAudience(
-        blobUrl.GetScheme() + "://" + blobUrl.GetHost() + "/.default");
+    clientOptions.Audience = Blobs::BlobAudience(blobUrl.GetScheme() + "://" + blobUrl.GetHost());
+    blockBlobClient
+        = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
+    EXPECT_NO_THROW(blockBlobClient.GetProperties());
+    clientOptions.Audience
+        = Blobs::BlobAudience(blobUrl.GetScheme() + "://" + blobUrl.GetHost() + "/");
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
 
     // error audience
-    clientOptions.Audience = Blobs::Models::BlobAudience("https://disk.compute.azure.com/.default");
+    clientOptions.Audience = Blobs::BlobAudience("https://disk.compute.azure.com");
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(blockBlobClient.GetProperties(), StorageException);

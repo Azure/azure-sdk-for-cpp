@@ -26,7 +26,6 @@ using Azure::Identity::_detail::TokenCredentialImpl;
 namespace {
 constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
 constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
-constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
 constexpr auto AzureFederatedTokenFileEnvVarName = "AZURE_FEDERATED_TOKEN_FILE";
 } // namespace
 
@@ -52,11 +51,7 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
   }
   if (authorityHost.empty())
   {
-    authorityHost = Environment::GetVariable(AzureAuthorityHostEnvVarName);
-    if (authorityHost.empty())
-    {
-      authorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
-    }
+    authorityHost = Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
   }
   if (m_tokenFilePath.empty())
   {
@@ -89,11 +84,7 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
 
   if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
   {
-    std::string authorityHost = Environment::GetVariable(AzureAuthorityHostEnvVarName);
-    if (authorityHost.empty())
-    {
-      authorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
-    }
+    std::string authorityHost = Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
 
     m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
         tenantId, authorityHost, std::vector<std::string>());

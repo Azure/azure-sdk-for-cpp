@@ -51,8 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // With custom audience
     auto blobUrl = Azure::Core::Url(m_blockBlobClient->GetUrl());
-    clientOptions.Audience = Blobs::Models::BlobAudience(
-        blobUrl.GetScheme() + "://" + blobUrl.GetHost() + "/.default");
+    clientOptions.Audience = Blobs::BlobAudience(blobUrl.GetScheme() + "://" + blobUrl.GetHost());
     blobClient = Blobs::BlobClient(
         m_blockBlobClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(

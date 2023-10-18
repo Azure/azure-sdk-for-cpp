@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.0-beta.3 (Unreleased)
+## 1.6.0-beta.4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.6.0-beta.3 (2023-10-12)
+
+### Bugs Fixed
+
+- Change the default value for the authority host option to be read from the environment variable first.
+- Do not throw an exception during `AzureCliCredential` construction, but rather delay it to the `GetToken()` call.
 
 ## 1.6.0-beta.2 (2023-09-13)
 

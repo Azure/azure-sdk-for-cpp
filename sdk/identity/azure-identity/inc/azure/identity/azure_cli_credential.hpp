@@ -46,7 +46,7 @@ namespace Azure { namespace Identity {
   };
 
   /**
-   * @brief Enables authentication to Azure Active Directory using Azure CLI to obtain an access
+   * @brief Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access
    * token.
    */
   class AzureCliCredential
