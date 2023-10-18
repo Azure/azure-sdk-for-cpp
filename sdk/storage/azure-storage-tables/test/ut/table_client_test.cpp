@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Test {
           GetEnv("STORAGE_CLIENT_SECRET"));
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-          Azure::Storage::Tables::TableServicesClient::TableServicesClient(
+          Azure::Storage::Tables::TableServicesClient(
               GetEnv("STORAGE_SUBSCRIPTION_ID"),
               m_credential,
               Azure::Storage::_internal::TablesManagementPublicEndpoint,
