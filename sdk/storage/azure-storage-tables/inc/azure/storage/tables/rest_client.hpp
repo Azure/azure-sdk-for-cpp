@@ -312,7 +312,7 @@ namespace Azure { namespace Storage { namespace Tables {
         Azure::Core::Credentials::TokenRequestContext tokenContext;
         tokenContext.Scopes.emplace_back(
             newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                        : TablesAudience::PublicAudience.ToString());
+                                           : TablesAudience::PublicAudience.ToString());
         perRetryPolicies.emplace_back(
             std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
                 credential, tokenContext, newOptions.EnableTenantDiscovery));

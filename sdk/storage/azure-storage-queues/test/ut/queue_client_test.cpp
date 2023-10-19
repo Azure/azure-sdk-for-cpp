@@ -55,7 +55,8 @@ void QueueClientTest::SetUp()
     }
   }
 
-  m_resourceCleanupFunctions.push_back([queueClient = *m_queueClient]() { queueClient.Delete(); });
+  m_resourceCleanupFunctions.push_back(
+      [queueClient = *m_queueClient]() { queueClient.Delete(); });
 }
 
 Queues::QueueClient QueueClientTest::GetQueueClientForTest(

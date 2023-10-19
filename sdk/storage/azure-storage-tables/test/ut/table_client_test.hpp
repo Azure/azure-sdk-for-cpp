@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
     void SetUp() override;
 
     Azure::Storage::Tables::TableClient CreateTableClientForTest(
-        Tables::TableClientOptions& clientOptions );
+        Tables::TableClientOptions& clientOptions);
 
   protected:
     std::string m_tableName;

@@ -19,12 +19,12 @@ namespace Azure { namespace Storage { namespace Test {
     if (m_tableServiceClient.get() == nullptr)
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-     
+
       m_credential = CreateClientSecretCredential(
           GetEnv("STORAGE_TENANT_ID"),
           GetEnv("STORAGE_CLIENT_ID"),
           GetEnv("STORAGE_CLIENT_SECRET"));
-      
+
       m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
           Azure::Storage::Tables::TableServicesClient(
               GetEnv("STORAGE_SUBSCRIPTION_ID"),
