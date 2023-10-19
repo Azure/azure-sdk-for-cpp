@@ -728,7 +728,7 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
   if (!WinHttpSetOption(
           sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
-    GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
+    GetErrorAndThrow("Error while enforcing TLS version for connection request.");
   }
 
   return sessionHandle;
