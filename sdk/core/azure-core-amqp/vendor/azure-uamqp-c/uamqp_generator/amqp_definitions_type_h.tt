@@ -1,0 +1,103 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="amqplib_generator" #>
+
+<# amqp amqp = Program.LoadAMQPTypes(); #>
+
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+// This file is generated. DO NOT EDIT it manually.
+// The generator that produces it is located at /uamqp_generator/uamqp_generator.sln
+
+<# type type = Program.CurrentTypeObject; #>
+<# string type_name = type.name.ToLower().Replace('-', '_'); #>
+<# string amqpDefinitionName = $"AMQP_DEFINITIONS_{type_name.ToUpper()}_H"; #>
+#ifndef <#=amqpDefinitionName#>
+#define <#=amqpDefinitionName#>
+
+
+#ifdef __cplusplus
+#include <cstdint>
+extern "C" {
+#else
+#include <stdint.h>
+#include <stdbool.h>
+#endif
+
+#include "azure_uamqp_c/amqpvalue.h"
+#include "umock_c/umock_c_prod.h"
+
+<#          if (type.@class == typeClass.composite) #>
+<#          { #>
+    typedef struct <#= type_name.ToUpper() #>_INSTANCE_TAG* <#= type_name.ToUpper() #>_HANDLE;
+
+<#              string arg_list = Program.GetMandatoryArgListMock(type); #>
+    MOCKABLE_FUNCTION(, <#= type_name.ToUpper() #>_HANDLE, <#= type_name #>_create <#= arg_list #>);
+    MOCKABLE_FUNCTION(, <#= type_name.ToUpper() #>_HANDLE, <#= type_name #>_clone, <#= type_name.ToUpper() #>_HANDLE, value);
+    MOCKABLE_FUNCTION(, void, <#= type_name #>_destroy, <#= type_name.ToUpper() #>_HANDLE, <#= type_name #>);
+    MOCKABLE_FUNCTION(, bool, is_<#= type_name #>_type_by_descriptor, AMQP_VALUE, descriptor);
+    MOCKABLE_FUNCTION(, int, amqpvalue_get_<#= type_name #>, AMQP_VALUE, value, <#= type_name.ToUpper() #>_HANDLE*, <#= type_name.ToUpper() #>_handle);
+    MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_<#= type_name #>, <#= type_name.ToUpper() #>_HANDLE, <#= type_name #>);
+
+<#              foreach (field field in type.Items.Where(item => item is field)) #>
+<#              { #>
+<#                  string field_name = field.name.ToLower().Replace('-', '_'); #>
+<#                  string c_type = Program.GetCType(field.type, field.multiple == "true").Replace('-', '_').Replace(':', '_'); #>
+<#                  type field_type = Program.GetTypeByName(field.type); #>
+<#                  if ((field_type != null) && (field_type.@class == typeClass.composite)) c_type = field_type.name.ToUpper().Replace('-', '_').Replace(':', '_') + "_HANDLE"; #>
+    MOCKABLE_FUNCTION(, int, <#= type_name #>_get_<#= field_name #>, <#= type_name.ToUpper() #>_HANDLE, <#= type_name #>, <#= c_type #>*, <#= field_name #>_value);
+    MOCKABLE_FUNCTION(, int, <#= type_name #>_set_<#= field_name #>, <#= type_name.ToUpper() #>_HANDLE, <#= type_name #>, <#= c_type #>, <#= field_name #>_value);
+<#              } #>
+
+<#          } #>
+<#          else #>
+<#          if (type.@class == typeClass.restricted) #>
+<#          { #>
+<#              string c_type = Program.GetCType(type.source, false).Replace('-', '_').Replace(':', '_'); #>
+
+    typedef <#= c_type #> <#= type_name.ToLower() #>;
+
+<#              if (c_type != "AMQP_VALUE") #>
+<#              { #>
+    MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_<#= type_name.ToLower() #>, <#= type_name.ToLower() #>, value);
+<#              } #>
+<#              else #>
+<#              { #>
+    MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_<#= type_name.ToLower() #>, AMQP_VALUE, value);
+    #define <#= type_name.ToLower() #>_clone amqpvalue_clone
+    #define <#= type_name.ToLower() #>_destroy amqpvalue_destroy
+<#              } #>
+
+<#              if ((type.Items != null) && (type.Items.Where(item => item is descriptor).Count() > 0)) #>
+<#              { #>
+    MOCKABLE_FUNCTION(, bool, is_<#= type_name #>_type_by_descriptor, AMQP_VALUE, descriptor);
+<#              } #>
+
+    #define amqpvalue_get_<#= type_name.ToLower() #> amqpvalue_get_<#= type.source.Replace('-', '_').Replace(':', '_') #>
+
+<#              if (type.Items != null) #>
+<#              { #>
+<#                  foreach (choice choice in type.Items.Where(item => item is choice)) #>
+<#                  { #>
+<#                      if (type.@source == "symbol") #>
+<#                      { #>
+    #define <#= type_name #>_<#= choice.name.Replace('-', '_').Replace(':', '_') #> "<#= choice.value #>"
+<#                      } #>
+<#                      else #>
+<#                      { #>
+    #define <#= type_name #>_<#= choice.name.Replace('-', '_').Replace(':', '_') #> <#= choice.value.Replace('-', '_').Replace(':', '_') #>
+<#                      } #>
+<#                  } #>
+<#              } #>
+
+<#          } #>
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* <#=amqpDefinitionName#> */

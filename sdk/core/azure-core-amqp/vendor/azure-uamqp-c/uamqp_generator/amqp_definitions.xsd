@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://tempuri.org/amqp_definitions" elementFormDefault="qualified" targetNamespace="http://tempuri.org/amqp_definitions" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="amqp">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="doc" />
+        <xs:element ref="section" />
+      </xs:choice>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="label" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="section">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="doc" />
+        <xs:element ref="definition" />
+        <xs:element ref="type" />
+      </xs:choice>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="title" type="xs:string" />
+      <xs:attribute name="label" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="definition">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="doc" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="value" type="xs:string" use="required" />
+      <xs:attribute name="label" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="type">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="encoding" />
+        <xs:element ref="descriptor" />
+        <xs:element ref="field" />
+        <xs:element ref="choice" />
+        <xs:element ref="doc" />
+      </xs:choice>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="class" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="primitive" />
+            <xs:enumeration value="composite" />
+            <xs:enumeration value="restricted" />
+            <xs:enumeration value="union" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="source" type="xs:string" />
+      <xs:attribute name="provides" type="xs:string" />
+      <xs:attribute name="label" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="encoding">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="doc" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" />
+      <xs:attribute name="label" type="xs:string" />
+      <xs:attribute name="code" type="xs:string" use="required" />
+      <xs:attribute name="category" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="fixed" />
+            <xs:enumeration value="variable" />
+            <xs:enumeration value="compound" />
+            <xs:enumeration value="array" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="width" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="descriptor">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="doc" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" />
+      <xs:attribute name="code" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="field">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="doc" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="type" type="xs:string" />
+      <xs:attribute name="requires" type="xs:string" />
+      <xs:attribute name="default" type="xs:string" />
+      <xs:attribute name="label" type="xs:string" />
+      <xs:attribute name="mandatory" type="xs:string" />
+      <xs:attribute name="multiple" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="choice">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="doc" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="doc">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" />
+      <xs:attribute name="title" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
