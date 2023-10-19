@@ -72,12 +72,12 @@ int main()
     keyClient.PurgeDeletedKey(rsaKeyName);
 
     // Let's wait for a bit (maximum ~5 minutes) so we know the key was purged.
+    uint16_t loop = 0;
     try
     {
-      uint16_t loop = 0;
-      // To check if the key was purged we attempt to get the key from the Key Vault.
-      // If we get an exception, the key was purged.
-      // If not, we wait a bit more,since the key is in the purge process.
+
+      // To check if the key purged has started we attempt to get the key from the Key Vault.
+      // If we get an exception, the key purge has started.
       // If we get more than 300 loops (~5minutes), we assume something went wrong.
       while (!keyClient.GetDeletedKey(rsaKeyName).Value.Name().empty() && loop < 300)
       {
@@ -86,11 +86,13 @@ int main()
       }
       throw std::runtime_error("Key was not purged.");
     }
-    catch (Azure::Core::RequestFailedException const&)
+    catch (Azure::Core::RequestFailedException const& e)
     {
-      std::cout << "\t-Key purged" << std::endl;
+      std::cout << "\t" << e.what() << std::endl;
+      std::cout << e.Message << std::endl;
+      std::cout << loop << std::endl;
+      std::cout << "\t-Key purge started" << std::endl;
     }
-
     // Restore the key from the file backup
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
@@ -100,8 +102,34 @@ int main()
     inFile.close();
 
     std::cout << "\t-Restore Key" << std::endl;
-    auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).Value;
 
+    KeyVaultKey restoredKey;
+    bool restored = false;
+    loop = 0;
+    // the purge process is not instantaneous, so when we try to restore the key, it might fail.
+    // we will attempt to restore the key for 5 times, waiting 20 seconds between each try.
+    // If the key is not restored after 5 tries, we assume something went wrong.
+    while (!restored && loop < 5)
+    {
+      try
+      {
+        restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).Value;
+        restored = true;
+        break;
+      }
+      catch (Azure::Core::RequestFailedException const& e)
+      {
+        std::cout << "\t" << e.what() << std::endl;
+        std::cout << e.Message << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(20));
+        loop++;
+      }
+    }
+
+    if (!restored)
+    {
+      throw std::runtime_error("Key was not restored.");
+    }
     AssertKeysEqual(storedKey.Properties, restoredKey.Properties);
 
     operation = keyClient.StartDeleteKey(rsaKeyName);

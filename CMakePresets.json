@@ -404,8 +404,18 @@
     },
     {
       "name": "linux-clang-11-debug-tests",
-      "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ],
-      "displayName": "Linux clang 11 Debug+Tests"
+      "displayName": "Linux clang 11 Debug+tests",
+      "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ]
+    },
+    {
+      "name": "linux-clang-13-debug",
+      "inherits": [ "linux-basic-clang-13", "debug-build" ],
+      "displayName": "Linux clang 13 Debug+Tests"
+    },
+    {
+      "name": "linux-clang-13-debug-tests",
+      "inherits": [ "linux-basic-clang-13", "debug-build", "enable-tests" ],
+      "displayName": "Linux clang 13 Debug+Tests"
     },
     {
       "name": "linux-g++-debug",

@@ -78,6 +78,7 @@
     "echsmkey",
     "Edlund",
     "EKUs",
+    "Entra",
     "euap",
     "Favicon",
     "gcovr",
@@ -265,6 +266,7 @@
     {
       "filename": "**/sdk/identity/azure-identity/**",
       "words": [
+        "meid",
         "PCCERT"
       ]
     },
