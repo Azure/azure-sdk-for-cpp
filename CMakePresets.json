@@ -523,11 +523,6 @@
     },
     {
       "name": "linux-clang-11-debug-tests",
-      "displayName": "Linux clang 11 Debug",
-      "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ]
-    },
-    {
-      "name": "linux-clang-11-debug-tests",
       "displayName": "Linux clang 11 Debug+tests",
       "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ]
     },
