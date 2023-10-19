@@ -723,8 +723,8 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
       sizeof(tls_false_start));
 #endif
 
-  // Enforce TLS version 1.2
-  auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+  // Enforce TLS version 1.2 or 1.3
+  auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2 | WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3;
   if (!WinHttpSetOption(
           sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
