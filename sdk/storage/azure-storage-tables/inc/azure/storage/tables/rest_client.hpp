@@ -277,15 +277,16 @@ namespace Azure { namespace Storage { namespace Tables {
     explicit TableServicesClient(std::string subscriptionId, const TableClientOptions& options = {})
         : m_subscriptionId(std::move(subscriptionId))
     {
+      TableClientOptions newOptions = options;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
       perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
+          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
       perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+      perOperationPolicies.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
+          newOptions.ApiVersion.ToString()));
       m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          options,
+          newOptions,
           "storage-tables",
           _detail::ApiVersion,
           std::move(perRetryPolicies),
@@ -300,25 +301,26 @@ namespace Azure { namespace Storage { namespace Tables {
         : TableServicesClient(subscriptionId, options)
 
     {
+      TableClientOptions newOptions = options;
       m_url = Azure::Core::Url(serviceUrl);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
       perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
+          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
       perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
       {
         Azure::Core::Credentials::TokenRequestContext tokenContext;
         tokenContext.Scopes.emplace_back(
-            options.Audience.HasValue() ? options.Audience.Value().ToString()
+            newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
                                         : TablesAudience::PublicAudience.ToString());
         perRetryPolicies.emplace_back(
             std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-                credential, tokenContext, options.EnableTenantDiscovery));
+                credential, tokenContext, newOptions.EnableTenantDiscovery));
       }
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+      perOperationPolicies.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
+          newOptions.ApiVersion.ToString()));
       m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          options,
+          newOptions,
           _internal::TablesServicePackageName,
           _detail::ApiVersion,
           std::move(perRetryPolicies),

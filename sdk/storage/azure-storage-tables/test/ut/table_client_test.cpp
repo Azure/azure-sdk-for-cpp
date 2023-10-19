@@ -10,16 +10,21 @@ namespace Azure { namespace Storage { namespace Test {
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
   void TablesClientTest::SetUp()
   {
+    Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
     StorageTest::SetUp();
+    if (shouldSkipTest())
+    {
+      return;
+    }
     if (m_tableServiceClient.get() == nullptr)
     {
-      Tables::TableClientOptions tableOptions;
-      tableOptions.EnableTenantDiscovery = true;
-      m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+      auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
+     
+      m_credential = CreateClientSecretCredential(
           GetEnv("STORAGE_TENANT_ID"),
           GetEnv("STORAGE_CLIENT_ID"),
           GetEnv("STORAGE_CLIENT_SECRET"));
-      auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
+      
       m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
           Azure::Storage::Tables::TableServicesClient(
               GetEnv("STORAGE_SUBSCRIPTION_ID"),
@@ -28,18 +33,15 @@ namespace Azure { namespace Storage { namespace Test {
               clientOptions));
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       m_tableClient
-          = std::make_shared<Tables::TableClient>(CreateTableClientForTest(tableClientOptions));
+          = std::make_shared<Tables::TableClient>(CreateTableClientForTest(clientOptions));
     }
   }
 
   Azure::Storage::Tables::TableClient TablesClientTest::CreateTableClientForTest(
-      Tables::TableClientOptions clientOptions)
+      Tables::TableClientOptions& clientOptions)
   {
 
-    Tables::TableClientOptions tableOptions;
     m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
-    tableOptions.EnableTenantDiscovery = true;
-
     auto tableClient
         = Tables::TableClient(GetEnv("STORAGE_SUBSCRIPTION_ID"), m_credential, clientOptions);
     return tableClient;
