@@ -1,0 +1,5 @@
+azure-uamqp-c (0.2.0.0-1xenial) xenial; urgency=low
+
+  * See https://github.com/Azure/azure-iot-sdk-c/releases for details of the release
+
+ -- AzureIoT User <aziotsdklinux@outlook.com>  Tue, 29 Sep 2016 11:00:00 +0000

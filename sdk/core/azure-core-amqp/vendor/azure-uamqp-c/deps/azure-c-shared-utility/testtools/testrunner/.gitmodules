@@ -1,0 +1,3 @@
+[submodule "deps/azure-macro-utils-c"]
+	path = deps/azure-macro-utils-c
+	url = https://github.com/Azure/azure-macro-utils-c

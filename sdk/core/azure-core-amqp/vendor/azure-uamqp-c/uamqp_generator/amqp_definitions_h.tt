@@ -1,0 +1,45 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="amqplib_generator" #>
+
+<# amqp amqp = Program.LoadAMQPTypes(); #>
+
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+// This file is generated. DO NOT EDIT it manually.
+// The generator that produces it is located at /uamqp_generator/uamqp_generator.sln
+
+#ifndef AMQP_DEFINITIONS_H
+#define AMQP_DEFINITIONS_H
+
+#ifdef __cplusplus
+#include <cstdint>
+extern "C" {
+#else
+#include <stdint.h>
+#include <stdbool.h>
+#endif
+
+#include "azure_uamqp_c/amqpvalue.h"
+#include "umock_c/umock_c_prod.h"
+
+<#  foreach (section section in amqp.Items.Where(item => item is section)) #>
+<#  { #>
+<#      List<type> types = new List<type>(); #>
+<#      types.AddRange(section.Items.Where(item => item is type).Cast<type>()); #>
+<#      foreach (type type in types) #>
+<#      { #>
+<#          string type_name = type.name.ToLower().Replace('-', '_'); #>
+#include "<#=$"azure_uamqp_c/amqp_definitions_{type_name}.h"  #>"
+<#      } #>
+<#  } #>
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* AMQP_DEFINITIONS_H */

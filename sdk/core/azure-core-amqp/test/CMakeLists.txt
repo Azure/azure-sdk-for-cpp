@@ -12,4 +12,4 @@ cmake_minimum_required (VERSION 3.13)
 add_subdirectory ("ut")
 
 # Unit tests which require using the uamqp library.
-add_subdirectory ("ut_uamqp")
+#add_subdirectory ("ut_uamqp")

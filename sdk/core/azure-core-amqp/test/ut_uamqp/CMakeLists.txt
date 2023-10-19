@@ -14,16 +14,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include(AzureBuildTargetForCI)
 include(GoogleTest)
 
-find_package(uamqp CONFIG REQUIRED)
+#set(USE_INSTALLED_DEPENDENCIES ON CACHE BOOL "Use vcpkg dependencies." FORCE)
+#set(skip_samples ON CACHE BOOL "Skip building samples" FORCE)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../vendor/azure-uamqp-c ${CMAKE_CURRENT_BINARY_DIR}/../../vendor/azure-uamqp-c SYSTEM)
+
+#find_package(uamqp CONFIG REQUIRED)
 find_package(umock_c)
 find_package(azure_macro_utils_c CONFIG REQUIRED)
 find_package(azure_c_shared_utility CONFIG REQUIRED)
+
 
 # Unit Tests
 add_executable(azure-core-amqp-uamqp-tests
   amqp_error_tests.cpp
 )
 add_dependencies(azure-core-amqp-uamqp-tests Azure::azure-core-amqp uamqp)
+
+# UAMQP Definitions and headers.
+target_compile_definitions(azure-core-amqp-uamqp-tests PRIVATE _CRT_SECURE_NO_WARNINGS)
+target_include_directories(azure-core-amqp-uamqp-tests SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
+
 
 if (MSVC)
   # Disable warnings:
