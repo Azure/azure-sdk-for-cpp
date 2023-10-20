@@ -1,6 +1,0 @@
-#Typical cmake folder
-/cmake*
-/build
-*.jar
-
-/.vscode
