@@ -309,6 +309,12 @@
         "mdfile",
         "Xlinker"
       ]
+    },
+    {
+      "filename": "**/vcpkg.json",
+      "words": [
+        "umock"
+      ]
     }
   ],
   "allowCompoundWords": true
