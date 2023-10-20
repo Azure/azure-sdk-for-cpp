@@ -5,10 +5,6 @@
   "dependencies": [
     "azure-core-cpp",
     {
-      "name": "azure-uamqp-c",
-      "platform": "!uwp"
-    },
-    {
       "name": "vcpkg-cmake",
       "host": true
     },
@@ -21,6 +17,18 @@
     },
     {
       "name": "gtest"
+    },
+    {
+      "name": "azure-c-shared-utility",
+      "platform": "!uwp"
+    },
+    {
+      "name": "azure-macro-utils-c",
+      "platform": "!uwp"
+    },
+    {
+      "name": "umock-c",
+      "platform": "!uwp"
     }
   ]
 }
