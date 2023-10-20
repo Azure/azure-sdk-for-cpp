@@ -3,16 +3,20 @@
 
 cmake_minimum_required (VERSION 3.5)
 
-set(theseTestsName lock_ut)
+set(theseTestsName x509_openssl_ut_no_engine)
 
-generate_cppunittest_wrapper(${theseTestsName})
+set(${theseTestsName}_test_files
+../x509_openssl_ut.c
+)
 
 set(${theseTestsName}_c_files
-	${LOCK_C_FILE}
+../../../adapters/x509_openssl.c
 )
 
 set(${theseTestsName}_h_files
 )
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DOPENSSL_NO_ENGINE")
 
 build_c_test_artifacts(${theseTestsName} ON "tests/azure_c_shared_utility_tests")
 

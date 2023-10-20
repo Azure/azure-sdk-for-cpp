@@ -12,7 +12,15 @@
 #define UUID_STRING_LENGTH          36
 #define UUID_STRING_SIZE            (UUID_STRING_LENGTH + 1)
 #define __SUCCESS__                 0
-#define UUID_FORMAT_STRING          "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x"
+#define HEXA_DIGIT_VAL(c) \
+    ((((c) >= '0') && ((c) <= '9')) \
+        ? ((c) - '0') \
+        : (((c) >= 'a') && ((c) <= 'f')) \
+            ? ((c) - 'a' + 10) \
+            : (((c) >= 'A') && ((c) <= 'F')) ? ((c) - 'A' + 10) : -1)
+#define MUST_BE_DASH(pos) \
+    (pos == 8 || pos == 13 || pos == 18 || pos == 23)
+
 
 int UUID_from_string(const char* uuid_string, UUID_T* uuid)
 {
@@ -47,18 +55,27 @@ int UUID_from_string(const char* uuid_string, UUID_T* uuid)
             {
                 if (uuid_string[i] == '-')
                 {
-                    i++;
+                    if (!MUST_BE_DASH(i))
+                    {
+                        // Codes_SRS_UUID_09_009: [ If uuid fails to be generated, UUID_from_string shall return a non-zero value ]
+                        LogError("Failed decoding UUID string (%lu)", (unsigned long)i);
+                        result = MU_FAILURE;
+                        break;
+                    }
+                    else
+                    {
+                        i++;
+                    }
                 }
                 else
                 {
-                    char double_hex_digit[3] = { 0, 0, 0 };
-
-                    (void)memcpy(double_hex_digit, uuid_string + i, 2);
+                    int higherOrderDigit = HEXA_DIGIT_VAL(uuid_string[i]);
+                    int lowerOrderDigit = HEXA_DIGIT_VAL(uuid_string[i + 1]);
 
 #ifdef _MSC_VER
 #pragma warning(disable:6328) // warning C6328: Size mismatch
 #endif
-                    if (sscanf(double_hex_digit, "%02hhx", uuid_bytes + j) != 1)
+                    if (higherOrderDigit == -1 || lowerOrderDigit == -1)
 #ifdef _MSC_VER
 #pragma warning (default:6328)
 #endif
@@ -70,6 +87,8 @@ int UUID_from_string(const char* uuid_string, UUID_T* uuid)
                     }
                     else
                     {
+                        // Multiplying the higherOrderDigit by 16.
+                        uuid_bytes[j] = (char)((higherOrderDigit << 4) + lowerOrderDigit);
                         i += 2;
                         j++;
                     }

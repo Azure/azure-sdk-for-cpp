@@ -21,14 +21,14 @@ static char* vprintf_alloc(const char* format, va_list va)
     }
     else
     {
-        result = (char*)malloc(neededSize + 1);
+        result = (char*)malloc((size_t)neededSize + 1);
         if (result == NULL)
         {
             /*return as is*/
         }
         else
         {
-            if (vsnprintf(result, neededSize + 1, format, va) != neededSize)
+            if (vsnprintf(result, (size_t)neededSize + 1, format, va) != neededSize)
             {
                 free(result);
                 result = NULL;

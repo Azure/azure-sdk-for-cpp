@@ -8,5 +8,5 @@ int main(void)
 {
     size_t failedTestCount = 0;
     RUN_TEST_SUITE(GBAlloc_For_Init_UnitTests, failedTestCount);
-    return failedTestCount;
+    return (int)failedTestCount;
 }

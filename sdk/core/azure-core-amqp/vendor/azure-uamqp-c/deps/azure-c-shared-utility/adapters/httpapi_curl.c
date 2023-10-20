@@ -47,8 +47,10 @@ typedef struct HTTP_HANDLE_DATA_TAG
     const char* certificates; /*a list of CA certificates*/
 #if USE_OPENSSL
     OPTION_OPENSSL_KEY_TYPE x509privatekeytype;
+#ifndef OPENSSL_NO_ENGINE
     char* engineId;
     ENGINE* engine;
+#endif // OPENSSL_NO_ENGINE
 #elif USE_MBEDTLS
     mbedtls_x509_crt cert;
     mbedtls_pk_context key;
@@ -198,8 +200,10 @@ HTTP_HANDLE HTTPAPI_CreateConnection(const char* hostName)
                 httpHandleData->certificates = NULL;
 #ifdef USE_OPENSSL
                 httpHandleData->x509privatekeytype = KEY_TYPE_DEFAULT;
+#ifndef OPENSSL_NO_ENGINE
                 httpHandleData->engineId = NULL;
                 httpHandleData->engine = NULL;
+#endif // OPENSSL_NO_ENGINE
 #elif USE_MBEDTLS
                 mbedtls_x509_crt_init(&httpHandleData->cert);
                 mbedtls_pk_init(&httpHandleData->key);
@@ -220,6 +224,7 @@ void HTTPAPI_CloseConnection(HTTP_HANDLE handle)
         free(httpHandleData->hostURL);
         curl_easy_cleanup(httpHandleData->curl);
 #ifdef USE_OPENSSL
+#ifndef OPENSSL_NO_ENGINE
         if (httpHandleData->engine != NULL)
         {
             ENGINE_free(httpHandleData->engine);
@@ -231,6 +236,7 @@ void HTTPAPI_CloseConnection(HTTP_HANDLE handle)
             free(httpHandleData->engineId);
             httpHandleData->engineId = NULL;
         }
+#endif // OPENSSL_NO_ENGINE
 #elif USE_MBEDTLS
         mbedtls_x509_crt_free(&httpHandleData->cert);
         mbedtls_pk_free(&httpHandleData->key);
@@ -315,6 +321,7 @@ static CURLcode ssl_ctx_callback(CURL *curl, void *ssl_ctx, void *userptr)
         HTTP_HANDLE_DATA *httpHandleData = (HTTP_HANDLE_DATA *)userptr;
 #ifdef USE_OPENSSL
         /*trying to set the x509 per device certificate*/
+#ifndef OPENSSL_NO_ENGINE
         if (httpHandleData->x509privatekeytype == KEY_TYPE_ENGINE) {
             ENGINE_load_builtin_engines();
             httpHandleData->engine = ENGINE_by_id(httpHandleData->engineId);
@@ -328,10 +335,18 @@ static CURLcode ssl_ctx_callback(CURL *curl, void *ssl_ctx, void *userptr)
             (httpHandleData->x509certificate != NULL) && (httpHandleData->x509privatekey != NULL) &&
             (x509_openssl_add_credentials(ssl_ctx, httpHandleData->x509certificate, httpHandleData->x509privatekey, httpHandleData->x509privatekeytype, httpHandleData->engine) != 0)
            )
+#else // OPENSSL_NO_ENGINE
+        if (
+            (httpHandleData->x509certificate != NULL) && (httpHandleData->x509privatekey != NULL) &&
+            (x509_openssl_add_credentials(ssl_ctx, httpHandleData->x509certificate, httpHandleData->x509privatekey, httpHandleData->x509privatekeytype) != 0)
+           )
+#endif // OPENSSL_NO_ENGINE
         {
             LogError("unable to x509_openssl_add_credentials");
             result = CURLE_SSL_CERTPROBLEM;
+#ifndef OPENSSL_NO_ENGINE
             ENGINE_free(httpHandleData->engine);
+#endif // OPENSSL_NO_ENGINE
         }
         /*trying to set CA certificates*/
         else if (
@@ -341,7 +356,9 @@ static CURLcode ssl_ctx_callback(CURL *curl, void *ssl_ctx, void *userptr)
         {
             LogError("failure in x509_openssl_add_certificates");
             result = CURLE_SSL_CERTPROBLEM;
+#ifndef OPENSSL_NO_ENGINE
             ENGINE_free(httpHandleData->engine);
+#endif // OPENSSL_NO_ENGINE
         }
 #elif USE_WOLFSSL
         if (
@@ -850,6 +867,7 @@ HTTPAPI_RESULT HTTPAPI_SetOption(HTTP_HANDLE handle, const char* optionName, con
                 result = HTTPAPI_ERROR;
             }
         }
+#ifndef OPENSSL_NO_ENGINE
         else if (strcmp(OPTION_OPENSSL_ENGINE, optionName) == 0)
         {
             if (mallocAndStrcpy_s((char**)&httpHandleData->engineId, value) != 0)
@@ -862,6 +880,7 @@ HTTPAPI_RESULT HTTPAPI_SetOption(HTTP_HANDLE handle, const char* optionName, con
                 result = HTTPAPI_OK;
             }
         }
+#endif // OPENSSL_NO_ENGINE
 #endif
         else if (strcmp(SU_OPTION_X509_PRIVATE_KEY, optionName) == 0 || strcmp(OPTION_X509_ECC_KEY, optionName) == 0)
         {

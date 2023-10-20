@@ -40,6 +40,9 @@ declare -a arr=(
     "-Denable_raw_logging=ON"
     "-Denable_raw_logging=ON -Dno_logging=ON"
     "-Duse_builtin_httpapi=ON"
+    "-Duse_default_uuid=ON"
+    "-Dno_openssl_engine=ON"
+    "-Duse_http=OFF"
 )
 
 for item in "${arr[@]}"

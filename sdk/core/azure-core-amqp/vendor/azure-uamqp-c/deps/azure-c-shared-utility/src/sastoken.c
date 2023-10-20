@@ -23,7 +23,7 @@ static double getExpiryValue(const char* expiryASCII)
     {
         if (expiryASCII[i] >= '0' && expiryASCII[i] <= '9')
         {
-            value = value * 10 + ((double)expiryASCII[i] - (double)'0');
+            value = value * 10.0 + ((double)expiryASCII[i] - (double)'0');
         }
         else
         {
@@ -152,7 +152,7 @@ bool SASToken_Validate(STRING_HANDLE sasToken)
             }
             else
             {
-                char* expiryASCII = (char*)malloc(seStop - seStart + 1);
+                char* expiryASCII = (char*)malloc((size_t)seStop - (size_t)seStart + 1);
                 /*Codes_SRS_SASTOKEN_25_031: [**If malloc fails during validation then SASToken_Validate shall return false.**]***/
                 if (expiryASCII == NULL)
                 {
@@ -162,7 +162,7 @@ bool SASToken_Validate(STRING_HANDLE sasToken)
                 {
                     double expiry;
                     // Add the Null terminator here
-                    memset(expiryASCII, 0, seStop - seStart + 1);
+                    memset(expiryASCII, 0, (size_t)seStop - (size_t)seStart + 1);
                     for (i = seStart; i < seStop; i++)
                     {
                         // The se contains the expiration values, if a & token is encountered then

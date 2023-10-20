@@ -30,7 +30,7 @@ if(${run_unittests})
         add_subdirectory(httpapicompact_ut)
     endif()
     add_subdirectory(singlylinkedlist_ut)
-    add_subdirectory(lock_ut)    
+    add_subdirectory(lock_ut)
     add_subdirectory(map_ut)
     add_subdirectory(refcount_ut)
     add_subdirectory(sastoken_ut)
@@ -47,8 +47,9 @@ if(${run_unittests})
     endif()
 
     #normally, with proper include paths, the below tests can be run under windows too.
-    if(${use_openssl})
-        add_subdirectory(x509_openssl_ut)
+    if(${use_openssl} AND NOT DEFINED MACOSX)
+        add_subdirectory(x509_openssl_ut/engine)
+        add_subdirectory(x509_openssl_ut/no_engine)
     endif()
 
     add_subdirectory(string_tokenizer_ut)
@@ -92,9 +93,9 @@ if(${run_unittests})
 
     add_subdirectory(utf8_checker_ut)
     add_subdirectory(http_proxy_io_ut)
-    if(NOT DEFINED MACOSX)
-        #add_subdirectory(socket_async_ut)
-        #add_subdirectory(dns_resolver_ut)
+    if(DEFINED LINUX)
+        add_subdirectory(dns_resolver_ut)
+        add_subdirectory(socket_async_ut)
     endif()
 
     #Add template as reference for new tests

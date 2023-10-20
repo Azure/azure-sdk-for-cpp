@@ -33,7 +33,7 @@ endif()
 set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
 if (VENDOR_UAMQP)
 message(STATUS "Using vendored uamqp")
-set(USE_INSTALLED_DEPENDENCIES ON CACHE BOOL "Use vcpkg dependencies." FORCE)
+#set(USE_INSTALLED_DEPENDENCIES ON CACHE BOOL "Use vcpkg dependencies." FORCE)
 set(skip_samples ON CACHE BOOL "Skip building samples" FORCE)
 add_subdirectory(vendor/azure-uamqp-c SYSTEM)
 else()
@@ -41,6 +41,7 @@ message(STATUS "Using vcpkg uamqp")
 find_package(uamqp CONFIG REQUIRED)
 endif()
 
+find_package(uamqp CONFIG REQUIRED)
 find_package(umock_c CONFIG REQUIRED)
 find_package(azure_macro_utils_c CONFIG REQUIRED)
 find_package(azure_c_shared_utility CONFIG REQUIRED)
@@ -122,9 +123,9 @@ create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tes
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
 target_link_libraries(azure-core-amqp PRIVATE
     uamqp 
-    umock_c
-    azure_macro_utils_c
-    aziotsharedutil 
+#    umock_c
+#    azure_macro_utils_c
+#    aziotsharedutil 
     PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")

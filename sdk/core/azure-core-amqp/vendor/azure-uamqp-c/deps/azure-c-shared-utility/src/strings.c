@@ -145,11 +145,11 @@ STRING_HANDLE STRING_construct_sprintf(const char* format, ...)
             result = (STRING*)malloc(sizeof(STRING));
             if (result != NULL)
             {
-                result->s = (char*)malloc(length+1);
+                result->s = (char*)malloc((size_t)length+1);
                 if (result->s != NULL)
                 {
                     va_start(arg_list, format);
-                    if (vsnprintf(result->s, length+1, format, arg_list) < 0)
+                    if (vsnprintf(result->s, (size_t)length+1, format, arg_list) < 0)
                     {
                         /* Codes_SRS_STRING_07_040: [If any error is encountered STRING_construct_sprintf shall return NULL.] */
                         free(result->s);

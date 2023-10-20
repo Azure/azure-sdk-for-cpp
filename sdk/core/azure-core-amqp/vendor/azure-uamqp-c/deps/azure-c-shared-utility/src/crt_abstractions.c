@@ -597,7 +597,7 @@ float strtof_s(const char* nptr, char** endptr)
             result = NAN;
             break;
         case FST_NUMBER:
-            val = fraction * pow(10.0, (double)exponential) * (double)signal;
+            val = fraction * pow((double)10.0, (double)exponential) * (double)signal;
             if ((val >= ((double)FLT_MAX * (-1.0))) && (val <= (double)FLT_MAX))
             {
                 /*Codes_SRS_CRT_ABSTRACTIONS_21_016: [The strtof_s must return the float that represents the value in the initial part of the string. If any.]*/

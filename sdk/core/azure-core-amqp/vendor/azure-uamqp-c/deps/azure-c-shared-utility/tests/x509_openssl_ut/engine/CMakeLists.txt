@@ -3,12 +3,23 @@
 
 cmake_minimum_required (VERSION 3.5)
 
-set(theseTestsName lock_ut)
+set(theseTestsName x509_openssl_ut_engine)
 
-generate_cppunittest_wrapper(${theseTestsName})
+set(${theseTestsName}_test_files
+../x509_openssl_ut.c
+)
+
+if(LINUX)
+  set_property(
+    SOURCE
+      ../../adapters/x509_openssl.c
+    PROPERTY COMPILE_OPTIONS
+      -Wno-deprecated-declarations
+  )
+endif()
 
 set(${theseTestsName}_c_files
-	${LOCK_C_FILE}
+../../../adapters/x509_openssl.c
 )
 
 set(${theseTestsName}_h_files

@@ -21,11 +21,19 @@
 // The default definition handles lwIP. Please add comments for other systems tested.
 #define EXTRACT_IPV4(ptr) ((struct sockaddr_in *) ptr->ai_addr)->sin_addr.s_addr
 
+#ifdef IPV6_ENABLED
+// EXTRACT_IPV6 pulls the uint32_t IPv6 address out of an addrinfo struct
+#define EXTRACT_IPV6(ptr) ((struct sockaddr_in6 *) ptr->ai_addr)->sin6_addr.s6_addr
+#endif // IPV6_ENABLED
+
 typedef struct
 {
     char* hostname;
     int port;
     uint32_t ip_v4;
+#ifdef IPV6_ENABLED
+    uint8_t ip_v6[16];
+#endif // IPV6_ENABLED
     bool is_complete;
     bool is_failed;
     bool in_progress;
@@ -47,7 +55,7 @@ DNSRESOLVER_HANDLE dns_resolver_create(const char* hostname, int port, const DNS
     }
     else
     {
-        result = malloc(sizeof(DNSRESOLVER_INSTANCE));
+        result = calloc(1, sizeof(DNSRESOLVER_INSTANCE));
         if (result == NULL)
         {
             /* Codes_SRS_dns_resolver_30_014: [ On any failure, dns_resolver_create shall log an error and return NULL. ]*/
@@ -61,6 +69,9 @@ DNSRESOLVER_HANDLE dns_resolver_create(const char* hostname, int port, const DNS
             result->is_failed = false;
             result->in_progress = false;
             result->ip_v4 = 0;
+#ifdef IPV6_ENABLED
+            memset(result->ip_v6, 0, sizeof(result->ip_v6)); // zero out the IPv6 address
+#endif // IPV6_ENABLED
             result->port = port;
             /* Codes_SRS_dns_resolver_30_010: [ dns_resolver_create shall make a copy of the hostname parameter to allow immediate deletion by the caller. ]*/
             ms_result = mallocAndStrcpy_s(&result->hostname, hostname);
@@ -108,7 +119,10 @@ static void query_completed_cb(void *arg, int status, int timeouts, struct hoste
     int i;
     struct addrinfo *ptr = NULL;
     struct sockaddr_in *addr;
-    
+#ifdef IPV6_ENABLED
+    struct sockaddr_in6 *addr6;
+#endif // IPV6_ENABLED
+
     DNSRESOLVER_INSTANCE *dns = (DNSRESOLVER_INSTANCE *)arg;
     (void)timeouts;
 
@@ -126,11 +140,13 @@ static void query_completed_cb(void *arg, int status, int timeouts, struct hoste
             dns->is_complete = true;
             dns->in_progress = false;
         }
-        else
+#ifdef IPV6_ENABLED
+        else if (he->h_addrtype == AF_INET6)
         {
             ptr = dns->addrInfo;
-            
-            ptr->ai_addr = calloc(1, sizeof(struct sockaddr_in));
+
+            ptr->ai_addr = calloc(1, sizeof(struct sockaddr_in6));
+
             if(ptr->ai_addr == NULL)
             {
                 LogError("dns addrinfo ai_addr: allocation failed");
@@ -138,8 +154,43 @@ static void query_completed_cb(void *arg, int status, int timeouts, struct hoste
                 dns->is_failed = true;
                 dns->is_complete = true;
                 dns->in_progress = false;
+            } 
+            else 
+            {
+                addr6 = (void *)ptr->ai_addr;
+
+                memcpy(&addr6->sin6_addr, he->h_addr_list[0], sizeof(struct in6_addr));
+                addr6->sin6_family = AF_INET6;
+                addr6->sin6_port = htons((unsigned short)dns->port);
+
+                /* Codes_SRS_dns_resolver_30_033: [ If dns_resolver_is_create_complete has returned true and the lookup process has failed, dns_resolver_get_ipv4 shall return 0. ]*/
+                memcpy(dns->ip_v6, EXTRACT_IPV6(ptr), 16); // IPv6 address is 16 bytes
+                dns->addrInfo->ai_addrlen = sizeof(struct sockaddr_in6);
+                dns->addrInfo->ai_family = AF_INET6;
+                dns->addrInfo->ai_socktype = SOCK_STREAM;
+                dns->addrInfo->ai_protocol = IPPROTO_TCP;
+
+                dns->is_failed = (dns->ip_v6 == 0);
+                dns->is_complete = true;
+                dns->in_progress = false;
             }
-            else
+        }
+#endif // IPV6_ENABLED
+        else
+        {
+            ptr = dns->addrInfo;
+
+            ptr->ai_addr = calloc(1, sizeof(struct sockaddr_in));
+
+            if(ptr->ai_addr == NULL)
+            {
+                LogError("dns addrinfo ai_addr: allocation failed");
+                free(dns->addrInfo);
+                dns->is_failed = true;
+                dns->is_complete = true;
+                dns->in_progress = false;
+            } 
+            else 
             {
                 addr = (void *)ptr->ai_addr;
 
@@ -151,10 +202,16 @@ static void query_completed_cb(void *arg, int status, int timeouts, struct hoste
 
                     /* Codes_SRS_dns_resolver_30_033: [ If dns_resolver_is_create_complete has returned true and the lookup process has failed, dns_resolver_get_ipv4 shall return 0. ]*/
                     dns->ip_v4 = EXTRACT_IPV4(ptr);
+                    dns->addrInfo->ai_addrlen = sizeof(struct sockaddr_in);
+                    dns->addrInfo->ai_family = AF_INET;
+                    dns->addrInfo->ai_socktype = SOCK_STREAM;
+                    dns->addrInfo->ai_protocol = IPPROTO_TCP;
+
                     dns->is_failed = (dns->ip_v4 == 0);
                     dns->is_complete = true;
                     dns->in_progress = false;
                 }
+
 
             }
         }
@@ -188,7 +245,11 @@ bool dns_resolver_is_lookup_complete(DNSRESOLVER_HANDLE dns_in)
         }
         else if(!dns->in_progress)
         {
+#ifdef IPV6_ENABLED
+            ares_gethostbyname(dns->ares_resolver, dns->hostname, AF_UNSPEC, query_completed_cb, (void*)dns);
+#else
             ares_gethostbyname(dns->ares_resolver, dns->hostname, AF_INET, query_completed_cb, (void*)dns);
+#endif // IPV6_ENABLED
             dns->in_progress = true;
             // This synchronous implementation is incapable of being incomplete, so SRS_dns_resolver_30_023 does not ever happen
             /* Codes_SRS_dns_resolver_30_023: [ If the DNS lookup process is not yet complete, dns_resolver_is_create_complete shall return false. ]*/

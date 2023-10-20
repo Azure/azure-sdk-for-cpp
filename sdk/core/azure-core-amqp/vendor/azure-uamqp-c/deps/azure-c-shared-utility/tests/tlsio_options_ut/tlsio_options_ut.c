@@ -444,12 +444,11 @@ TEST_FUNCTION(tlsio_options__set_malloc_fail__fails)
 TEST_FUNCTION(tlsio_options__release_resources__succeeds)
 {
     ///arrange
-    TLSIO_OPTIONS_RESULT result;
     TLSIO_OPTIONS options;
     tlsio_options_initialize(&options, TLSIO_OPTION_BIT_TRUSTED_CERTS | TLSIO_OPTION_BIT_x509_RSA_CERT);
-    result = tlsio_options_set(&options, OPTION_TRUSTED_CERT, fake_trusted_cert);
-    result = tlsio_options_set(&options, SU_OPTION_X509_CERT, fake_x509_cert);
-    result = tlsio_options_set(&options, SU_OPTION_X509_PRIVATE_KEY, fake_x509_key);
+    tlsio_options_set(&options, OPTION_TRUSTED_CERT, fake_trusted_cert);
+    tlsio_options_set(&options, SU_OPTION_X509_CERT, fake_x509_cert);
+    tlsio_options_set(&options, SU_OPTION_X509_PRIVATE_KEY, fake_x509_key);
 
     ///act
     tlsio_options_release_resources(&options);

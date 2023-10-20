@@ -8,5 +8,5 @@ int main(void)
 {
     size_t failedTestCount = 0;
     RUN_TEST_SUITE(HTTPHeaders_UnitTests, failedTestCount);
-    return failedTestCount;
+    return (int)failedTestCount;
 }
