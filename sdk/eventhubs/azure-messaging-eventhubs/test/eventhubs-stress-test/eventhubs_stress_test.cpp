@@ -192,6 +192,7 @@ private:
 
     auto events = partitionClient.ReceiveEvents(m_batchSize, context);
     total += events.size();
+    std::cout << "Total: " << total << std::endl;
   }
 };
 
