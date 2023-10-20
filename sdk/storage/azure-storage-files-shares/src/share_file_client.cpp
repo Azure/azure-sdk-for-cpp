@@ -1271,6 +1271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.Value() - 1);
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     if (!options.SourceAuthorization.empty())
     {
       protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
