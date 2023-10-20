@@ -553,7 +553,7 @@ static int send_chunk(CONCRETE_IO_HANDLE tls_io, const void* buffer, size_t size
                     }
                     else
                     {
-                        if (xio_send(tls_io_instance->socket_io, out_buffer, security_buffers[0].cbBuffer + security_buffers[1].cbBuffer + security_buffers[2].cbBuffer, on_send_complete, callback_context) != 0)
+                        if (xio_send(tls_io_instance->socket_io, out_buffer, (size_t)security_buffers[0].cbBuffer + (size_t)security_buffers[1].cbBuffer + (size_t)security_buffers[2].cbBuffer, on_send_complete, callback_context) != 0)
                         {
                             LogError("xio_send failed");
                             result = MU_FAILURE;

@@ -6704,7 +6704,6 @@ TEST_FUNCTION(when_xio_close_fails_in_on_underlying_io_close_sent_and_CLOSE_init
     UWS_CLIENT_HANDLE uws_client;
     const char test_upgrade_response[] = "HTTP/1.1 101 Switching Protocols\r\n\r\n";
     const unsigned char close_frame[] = { 0x88, 0x00 };
-    int result;
 
     tlsio_config.hostname = "test_host";
     tlsio_config.port = 444;
@@ -6732,7 +6731,7 @@ TEST_FUNCTION(when_xio_close_fails_in_on_underlying_io_close_sent_and_CLOSE_init
         .IgnoreArgument_on_io_error_context();
 
     // act
-    result = uws_client_open_async(uws_client, test_on_ws_open_complete, (void*)0x4242, test_on_ws_frame_received, (void*)0x4243, test_on_ws_peer_closed, (void*)0x4301, test_on_ws_error, (void*)0x4244);
+    uws_client_open_async(uws_client, test_on_ws_open_complete, (void*)0x4242, test_on_ws_frame_received, (void*)0x4243, test_on_ws_peer_closed, (void*)0x4301, test_on_ws_error, (void*)0x4244);
 
     // assert
     ASSERT_ARE_EQUAL(char_ptr, umock_c_get_expected_calls(), umock_c_get_actual_calls());

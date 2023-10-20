@@ -12,5 +12,5 @@ int main(void)
      */
     RUN_TEST_SUITE(dns_resolver_ut, failedTestCount);
 
-    return failedTestCount;
+    return (int)failedTestCount;
 }

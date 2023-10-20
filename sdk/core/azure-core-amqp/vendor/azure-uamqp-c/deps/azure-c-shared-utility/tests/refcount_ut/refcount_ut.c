@@ -184,9 +184,9 @@ BEGIN_TEST_SUITE(refcount_unittests)
     TEST_FUNCTION(refcount_INC_REF_and_DEC_REF_after_create_says_we_should_not_free)
     {
         ///arrange
-        POS_HANDLE p, clone_of_p;
+        POS_HANDLE p;
         p = Pos_Create(2);
-        clone_of_p = Pos_Clone(p);
+        Pos_Clone(p);
         umock_c_reset_all_calls();
 
         ///act

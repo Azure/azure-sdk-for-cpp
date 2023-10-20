@@ -7,5 +7,5 @@ int main(void)
 {
     size_t failedTestCount = 0;
     RUN_TEST_SUITE(tlsio_cyclonessl_unittests, failedTestCount);
-    return failedTestCount;
+    return (int)failedTestCount;
 }

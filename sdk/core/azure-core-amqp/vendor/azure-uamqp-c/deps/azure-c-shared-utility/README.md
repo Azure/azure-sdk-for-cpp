@@ -85,7 +85,8 @@ In order to turn on/off the tlsio implementations use the following CMAKE option
 * `-Duse_http:bool={ON/OFF}` - turns on/off the HTTP API support. 
 * `-Duse_installed_dependencies:bool={ON/OFF}` - turns on/off building azure-c-shared-utility using installed dependencies. This package may only be installed if this flag is ON.
 * `-Drun_unittests:bool={ON/OFF}` - enables building of unit tests. Default is OFF.
-
+* `-Duse_default_uuid:bool={ON/OFF}` - use the out-of-the-box UUID implementation that comes with the SDK rather than platform specific implementations. Default is OFF.
+* `-Dno_openssl_engine:bool={ON/OFF}` - disables the use of ENGINEs in OpenSSL. Default is OFF.
 
 ## Porting to new devices
 

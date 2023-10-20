@@ -780,7 +780,7 @@ static HTTPAPI_RESULT ReceiveResponseHeaders(HINTERNET requestHandle, HTTP_HEADE
         &responseHeadersTempLength,
         WINHTTP_NO_HEADER_INDEX);
 
-    if ((responseHeadersTemp = (wchar_t*)malloc(responseHeadersTempLength + 2)) == NULL)
+    if ((responseHeadersTemp = (wchar_t*)malloc((size_t)responseHeadersTempLength + 2)) == NULL)
     {
         result = HTTPAPI_ALLOC_FAILED;
         LogError("malloc failed: (result = %" PRI_MU_ENUM ")", MU_ENUM_VALUE(HTTPAPI_RESULT, result));

@@ -130,11 +130,9 @@ static void* socketio_CloneOption(const char* name, const void* value)
                 {
                     LogError("Failed cloning option %s (malloc failed)", name);
                 }
-                else if (strcpy((char*)result, (char*)value) == NULL)
+                else
                 {
-                    LogError("Failed cloning option %s (strcpy failed)", name);
-                    free(result);
-                    result = NULL;
+                    strcpy((char *)result, (char *)value);
                 }
             }
         }
@@ -283,165 +281,6 @@ static int lookup_address(SOCKET_IO_INSTANCE* socket_io_instance)
     return result;
 }
 
-static int initiate_socket_connection(SOCKET_IO_INSTANCE* socket_io_instance)
-{
-    int result;
-    int flags;
-    struct addrinfo* addr = NULL;
-    struct sockaddr* connect_addr = NULL;
-    struct sockaddr_un addrInfoUn;
-    socklen_t connect_addr_len;
-
-    if(socket_io_instance->address_type == ADDRESS_TYPE_IP)
-    {
-        if(!dns_resolver_is_lookup_complete(socket_io_instance->dns_resolver))
-        {
-            LogError("DNS did not resolve IP address");
-            result = MU_FAILURE;
-        }
-        else
-        {
-            addr = dns_resolver_get_addrInfo(socket_io_instance->dns_resolver);
-
-            if (addr == NULL)
-            {
-                LogError("DNS resolution failed");
-                result = MU_FAILURE;
-            }
-            else
-            {
-                connect_addr = addr->ai_addr;
-                connect_addr_len = sizeof(*addr->ai_addr);
-                result = 0;
-            }
-        }
-    }
-    else
-    {
-        size_t hostname_len = strlen(socket_io_instance->hostname);
-        if (hostname_len + 1 > sizeof(addrInfoUn.sun_path))
-        {
-            LogError("Hostname %s is too long for a unix socket (max len = %lu)", socket_io_instance->hostname, (unsigned long)sizeof(addrInfoUn.sun_path));
-            result = MU_FAILURE;
-        }
-        else
-        {
-            memset(&addrInfoUn, 0, sizeof(addrInfoUn));
-            addrInfoUn.sun_family = AF_UNIX;
-            // No need to add NULL terminator due to the above memset
-            (void)memcpy(addrInfoUn.sun_path, socket_io_instance->hostname, hostname_len);
-
-            connect_addr = (struct sockaddr*)&addrInfoUn;
-            connect_addr_len = sizeof(addrInfoUn);
-            result = 0;
-        }
-    }
-
-    if(result == 0)
-    {
-        if ((-1 == (flags = fcntl(socket_io_instance->socket, F_GETFL, 0))) ||
-            (fcntl(socket_io_instance->socket, F_SETFL, flags | O_NONBLOCK) == -1))
-        {
-            LogError("Failure: fcntl failure.");
-            result = MU_FAILURE;
-        }
-        else
-        {
-            result = connect(socket_io_instance->socket, connect_addr, connect_addr_len);
-            if ((result != 0) && (errno != EINPROGRESS))
-            {
-                LogError("Failure: connect failure %d.", errno);
-                result = MU_FAILURE;
-            }
-            else
-            {
-                // Async connect will return -1.
-                result = 0;
-                if (socket_io_instance->on_io_open_complete != NULL)
-                {
-                    socket_io_instance->on_io_open_complete(socket_io_instance->on_io_open_complete_context, IO_OPEN_OK /*: IO_OPEN_ERROR*/);
-                }
-            }
-        }
-    }
-
-    return result;
-}
-
-static int lookup_address_and_initiate_socket_connection(SOCKET_IO_INSTANCE* socket_io_instance)
-{
-    int result;
-
-    result = lookup_address(socket_io_instance);
-
-    if(socket_io_instance->io_state == IO_STATE_OPEN)
-    {
-        if (result == 0)
-        {
-            result = initiate_socket_connection(socket_io_instance);
-        }
-    }
-
-    return result;
-}
-
-static int wait_for_connection(SOCKET_IO_INSTANCE* socket_io_instance)
-{
-    int result;
-    int err;
-    int retval;
-    int select_errno = 0;
-
-    fd_set fdset;
-    struct timeval tv;
-
-    FD_ZERO(&fdset);
-    FD_SET(socket_io_instance->socket, &fdset);
-    tv.tv_sec = CONNECT_TIMEOUT;
-    tv.tv_usec = 0;
-
-    do
-    {
-        retval = select(socket_io_instance->socket + 1, NULL, &fdset, NULL, &tv);
-
-        if (retval < 0)
-        {
-            select_errno = errno;
-        }
-    } while (retval < 0 && select_errno == EINTR);
-
-    if (retval != 1)
-    {
-        LogError("Failure: select failure.");
-        result = MU_FAILURE;
-    }
-    else
-    {
-        int so_error = 0;
-        socklen_t len = sizeof(so_error);
-        err = getsockopt(socket_io_instance->socket, SOL_SOCKET, SO_ERROR, &so_error, &len);
-        if (err != 0)
-        {
-            LogError("Failure: getsockopt failure %d.", errno);
-            result = MU_FAILURE;
-        }
-        else if (so_error != 0)
-        {
-            err = so_error;
-            LogError("Failure: connect failure %d.", so_error);
-            result = MU_FAILURE;
-        }
-        else
-        {
-            result = 0;
-        }
-    }
-
-    return result;
-}
-
-
-
 #ifndef __APPLE__
 static void destroy_network_interface_descriptions(NETWORK_INTERFACE_DESCRIPTION* nid)
 {
@@ -485,14 +324,10 @@ static NETWORK_INTERFACE_DESCRIPTION* create_network_interface_description(struc
         destroy_network_interface_descriptions(result);
         result = NULL;
     }
-    else if (strcpy(result->name, ifr->ifr_name) == NULL)
-    {
-        LogError("failed setting interface description name (strcpy failed)");
-        destroy_network_interface_descriptions(result);
-        result = NULL;
-    }
     else
     {
+        strcpy(result->name, ifr->ifr_name);
+
         char* ip_address;
         unsigned char* mac = (unsigned char*)ifr->ifr_hwaddr.sa_data;
 
@@ -520,14 +355,9 @@ static NETWORK_INTERFACE_DESCRIPTION* create_network_interface_description(struc
             destroy_network_interface_descriptions(result);
             result = NULL;
         }
-        else if (strcpy(result->ip_address, ip_address) == NULL)
-        {
-            LogError("failed setting the ip address (strcpy failed)");
-            destroy_network_interface_descriptions(result);
-            result = NULL;
-        }
         else
         {
+            strcpy(result->ip_address, ip_address);
             result->next = NULL;
 
             if (previous_nid != NULL)
@@ -658,6 +488,212 @@ static int set_target_network_interface(int socket, char* mac_address)
     return result;
 }
 #endif //__APPLE__
+
+static int initiate_socket_connection(SOCKET_IO_INSTANCE* socket_io_instance)
+{
+    int result;
+    int flags;
+    struct addrinfo* addr = NULL;
+    struct sockaddr_un addrInfoUn;
+
+    if(socket_io_instance->address_type == ADDRESS_TYPE_IP)
+    {
+        if(!dns_resolver_is_lookup_complete(socket_io_instance->dns_resolver))
+        {
+            LogError("DNS did not resolve IP address");
+            result = MU_FAILURE;
+        }
+        else
+        {
+            addr = dns_resolver_get_addrInfo(socket_io_instance->dns_resolver);
+
+            if (addr == NULL)
+            {
+                LogError("DNS resolution failed");
+                result = MU_FAILURE;
+            } 
+            else 
+            {
+                result = 0;
+            }
+        }
+    }
+    else
+    {
+        if (socket_io_instance->hostname != NULL)
+        {
+            size_t hostname_len = strlen(socket_io_instance->hostname);
+            if (hostname_len + 1 > sizeof(addrInfoUn.sun_path))
+            {
+                LogError("Hostname %s is too long for a unix socket (max len = %lu)", socket_io_instance->hostname, (unsigned long)sizeof(addrInfoUn.sun_path));
+                result = MU_FAILURE;
+            }
+            else
+            {
+                memset(&addrInfoUn, 0, sizeof(addrInfoUn));
+                addrInfoUn.sun_family = AF_UNIX;
+                // No need to add NULL terminator due to the above memset
+                (void)memcpy(addrInfoUn.sun_path, socket_io_instance->hostname, hostname_len);
+                result = 0;
+            }
+        }
+        else
+        {
+            LogError("Hostname is NULL");
+            result = MU_FAILURE;
+        }
+    }
+
+    if(result == 0)
+    {
+        if (socket_io_instance->address_type == ADDRESS_TYPE_IP)
+        {
+            socket_io_instance->socket = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        }
+        else
+        {
+            socket_io_instance->socket = socket(AF_UNIX, SOCK_STREAM, 0);
+        }
+
+        if (socket_io_instance->socket < SOCKET_SUCCESS)
+        {
+            LogError("Failure: socket create failure %d.", socket_io_instance->socket);
+            result = MU_FAILURE;
+        }
+        #ifndef __APPLE__
+        else if (socket_io_instance->target_mac_address != NULL &&
+                    set_target_network_interface(socket_io_instance->socket, socket_io_instance->target_mac_address) != 0)
+        {
+            LogError("Failure: failed selecting target network interface (MACADDR=%s).", socket_io_instance->target_mac_address);
+            result = MU_FAILURE;
+        }
+        #endif //__APPLE__
+        else if ((-1 == (flags = fcntl(socket_io_instance->socket, F_GETFL, 0))) ||
+            (fcntl(socket_io_instance->socket, F_SETFL, flags | O_NONBLOCK) == -1))
+        {
+            LogError("Failure: fcntl failure.");
+            result = MU_FAILURE;
+        }
+        else
+        {
+            if (socket_io_instance->address_type == ADDRESS_TYPE_IP)
+            {
+                result = connect(socket_io_instance->socket, addr->ai_addr, addr->ai_addrlen);
+            }
+            else
+            {
+                result = connect(socket_io_instance->socket, (struct sockaddr *)&addrInfoUn, sizeof(addrInfoUn));
+            }
+
+            if ((result != 0) && (errno != EINPROGRESS))
+            {
+                LogError("Failure: connect failure %d.", errno);
+                result = MU_FAILURE;
+            }
+            else  // result == 0 || errno == EINPROGRESS
+            {
+                // Async connect will return -1.
+                result = 0;
+                if (socket_io_instance->on_io_open_complete != NULL)
+                {
+                    socket_io_instance->on_io_open_complete(socket_io_instance->on_io_open_complete_context, IO_OPEN_OK /*: IO_OPEN_ERROR*/);
+                }
+            }
+        }
+
+        if (result != 0)
+        {
+            if (socket_io_instance->socket >= SOCKET_SUCCESS)
+            {
+                close(socket_io_instance->socket);
+            }
+            socket_io_instance->socket = INVALID_SOCKET;
+        }
+    }
+
+    return result;
+}
+
+static int lookup_address_and_initiate_socket_connection(SOCKET_IO_INSTANCE* socket_io_instance)
+{
+    int result;
+
+    result = lookup_address(socket_io_instance);
+
+    if(socket_io_instance->io_state == IO_STATE_OPEN)
+    {
+        if (result == 0)
+        {
+            result = initiate_socket_connection(socket_io_instance);
+        }
+    }
+
+    return result;
+}
+
+static int wait_for_socket_connection(SOCKET_IO_INSTANCE* socket_io_instance)
+{
+    int result;
+    int err;
+    int retval;
+    int select_errno = 0;
+
+    fd_set fdset;
+    struct timeval tv;
+
+    FD_ZERO(&fdset);
+    FD_SET(socket_io_instance->socket, &fdset);
+    tv.tv_sec = CONNECT_TIMEOUT;
+    tv.tv_usec = 0;
+
+    do
+    {
+        retval = select(socket_io_instance->socket + 1, NULL, &fdset, NULL, &tv);
+
+        if (retval < 0)
+        {
+            select_errno = errno;
+        }
+    } while (retval < 0 && select_errno == EINTR);
+
+    if (retval != 1)
+    {
+        LogError("Failure: select failure.");
+        result = MU_FAILURE;
+    }
+    else
+    {
+        int so_error = 0;
+        socklen_t len = sizeof(so_error);
+        err = getsockopt(socket_io_instance->socket, SOL_SOCKET, SO_ERROR, &so_error, &len);
+        if (err != 0)
+        {
+            LogError("Failure: getsockopt failure %d.", errno);
+            result = MU_FAILURE;
+        }
+        else if (so_error != 0)
+        {
+            err = so_error;
+            LogError("Failure: connect failure %d.", so_error);
+            result = MU_FAILURE;
+        }
+        else
+        {
+            result = 0;
+        }
+    }
+
+    if (result != 0)
+    {
+        if (socket_io_instance->socket >= SOCKET_SUCCESS)
+        {
+            close(socket_io_instance->socket);
+        }
+        socket_io_instance->socket = INVALID_SOCKET;
+    }
+
+    return result;
+}
 
 static void destroy_socket_io_instance(SOCKET_IO_INSTANCE* instance)
 {
@@ -810,30 +846,15 @@ int socketio_open(CONCRETE_IO_HANDLE socket_io, ON_IO_OPEN_COMPLETE on_io_open_c
         }
         else
         {
-            socket_io_instance->socket = socket (socket_io_instance->address_type == ADDRESS_TYPE_IP ? AF_INET : AF_UNIX, SOCK_STREAM, 0);
-            if (socket_io_instance->socket < SOCKET_SUCCESS)
-            {
-                LogError("Failure: socket create failure %d.", socket_io_instance->socket);
-                result = MU_FAILURE;
-            }
-#ifndef __APPLE__
-            else if (socket_io_instance->target_mac_address != NULL &&
-                     set_target_network_interface(socket_io_instance->socket, socket_io_instance->target_mac_address) != 0)
-            {
-                LogError("Failure: failed selecting target network interface (MACADDR=%s).", socket_io_instance->target_mac_address);
-                result = MU_FAILURE;
-            }
-#endif //__APPLE__
-            else if ((result = lookup_address_and_initiate_socket_connection(socket_io_instance)) != 0)
+            if ((result = lookup_address_and_initiate_socket_connection(socket_io_instance)) != 0)
             {
                 LogError("lookup_address_and_connect_socket failed");
             }
-            else if ((result = wait_for_connection(socket_io_instance)) != 0)
+            else if ((socket_io_instance->io_state == IO_STATE_OPEN) && (result = wait_for_socket_connection(socket_io_instance)) != 0)
             {
-                LogError("wait_for_connection failed");
-            }
-
-            if (result == 0)
+                LogError("wait_for_socket_connection failed");
+            } 
+            else
             {
                 socket_io_instance->on_bytes_received = on_bytes_received;
                 socket_io_instance->on_bytes_received_context = on_bytes_received_context;
@@ -843,14 +864,6 @@ int socketio_open(CONCRETE_IO_HANDLE socket_io, ON_IO_OPEN_COMPLETE on_io_open_c
 
                 socket_io_instance->on_io_open_complete = on_io_open_complete;
                 socket_io_instance->on_io_open_complete_context = on_io_open_complete_context;
-            }
-            else
-            {
-                if (socket_io_instance->socket >= SOCKET_SUCCESS)
-                {
-                    close(socket_io_instance->socket);
-                }
-                socket_io_instance->socket = INVALID_SOCKET;
             }
         }
     }
@@ -1049,7 +1062,7 @@ void socketio_dowork(CONCRETE_IO_HANDLE socket_io)
                 ssize_t received = 0;
                 do
                 {
-                    received = recv(socket_io_instance->socket, socket_io_instance->recv_bytes, XIO_RECEIVE_BUFFER_SIZE, 0);
+                    received = recv(socket_io_instance->socket, socket_io_instance->recv_bytes, XIO_RECEIVE_BUFFER_SIZE, MSG_NOSIGNAL);
                     if (received > 0)
                     {
                         if (socket_io_instance->on_bytes_received != NULL)
@@ -1085,7 +1098,16 @@ void socketio_dowork(CONCRETE_IO_HANDLE socket_io)
                 {
                     if(socket_io_instance->io_state == IO_STATE_OPEN)
                     {
-                        initiate_socket_connection(socket_io_instance);
+                        if (initiate_socket_connection(socket_io_instance) != 0)
+                        {
+                            LogError("Socketio_Failure: initiate_socket_connection failed");
+                            indicate_error(socket_io_instance);
+                        }
+                        else if (wait_for_socket_connection(socket_io_instance) != 0)
+                        {
+                            LogError("Socketio_Failure: wait_for_socket_connection failed");
+                            indicate_error(socket_io_instance);
+                        }
                     }
                 }
 
@@ -1193,15 +1215,9 @@ int socketio_setoption(CONCRETE_IO_HANDLE socket_io, const char* optionName, con
                 LogError("failed setting net_interface_mac_address option (malloc failed)");
                 result = MU_FAILURE;
             }
-            else if (strcpy(socket_io_instance->target_mac_address, value) == NULL)
-            {
-                LogError("failed setting net_interface_mac_address option (strcpy failed)");
-                free(socket_io_instance->target_mac_address);
-                socket_io_instance->target_mac_address = NULL;
-                result = MU_FAILURE;
-            }
             else
             {
+                strcpy(socket_io_instance->target_mac_address, value);
                 strtoup(socket_io_instance->target_mac_address);
                 result = 0;
             }

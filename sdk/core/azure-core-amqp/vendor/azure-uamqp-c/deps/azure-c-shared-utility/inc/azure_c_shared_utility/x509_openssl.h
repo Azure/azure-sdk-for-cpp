@@ -14,7 +14,11 @@ extern "C" {
 #include "umock_c/umock_c_prod.h"
 
 MOCKABLE_FUNCTION(,int, x509_openssl_add_certificates, SSL_CTX*, ssl_ctx, const char*, certificates);
+#ifndef OPENSSL_NO_ENGINE
 MOCKABLE_FUNCTION(,int, x509_openssl_add_credentials, SSL_CTX*, ssl_ctx, const char*, x509certificate, const char*, x509privatekey, OPTION_OPENSSL_KEY_TYPE, x509privatekeytype, ENGINE*, engine);
+#else // OPENSSL_NO_ENGINE
+MOCKABLE_FUNCTION(,int, x509_openssl_add_credentials, SSL_CTX*, ssl_ctx, const char*, x509certificate, const char*, x509privatekey, OPTION_OPENSSL_KEY_TYPE, x509privatekeytype);
+#endif // OPENSSL_NO_ENGINE
 
 #ifdef __cplusplus
 }

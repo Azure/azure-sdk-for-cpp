@@ -316,7 +316,7 @@ static void on_underlying_io_open_complete(void* context, IO_OPEN_RESULT open_re
                     }
                     else
                     {
-                        plain_auth_string_bytes = (char*)malloc(plain_auth_string_length + 1);
+                        plain_auth_string_bytes = (char*)malloc((size_t)plain_auth_string_length + 1);
                         if (plain_auth_string_bytes == NULL)
                         {
                             /* Codes_SRS_HTTP_PROXY_IO_01_062: [ If any failure is encountered while constructing the request, the on_open_complete callback shall be triggered with IO_OPEN_ERROR, passing also the on_open_complete_context argument as context. ]*/
@@ -392,7 +392,7 @@ static void on_underlying_io_open_complete(void* context, IO_OPEN_RESULT open_re
                     }
                     else
                     {
-                        char* connect_request = (char*)malloc(connect_request_length + 1);
+                        char* connect_request = (char*)malloc((size_t)connect_request_length + 1);
                         if (connect_request == NULL)
                         {
                             /* Codes_SRS_HTTP_PROXY_IO_01_062: [ If any failure is encountered while constructing the request, the on_open_complete callback shall be triggered with IO_OPEN_ERROR, passing also the on_open_complete_context argument as context. ]*/
