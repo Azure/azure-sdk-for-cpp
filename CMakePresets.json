@@ -428,7 +428,7 @@
     {
       "name": "linux-clang-13-debug",
       "inherits": [ "linux-basic-clang-13", "debug-build" ],
-      "displayName": "Linux clang 13 Debug+Tests"
+      "displayName": "Linux clang 13 Debug"
     },
     {
       "name": "linux-clang-13-debug-tests",

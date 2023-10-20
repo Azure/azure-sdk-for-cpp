@@ -33,19 +33,17 @@ endif()
 set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
 if (VENDOR_UAMQP)
 message(STATUS "Using vendored uamqp")
-message(STATUS "CXX Flags: ")
-#set(USE_INSTALLED_DEPENDENCIES ON CACHE BOOL "Use vcpkg dependencies." FORCE)
+set(use_installed_dependencies ON CACHE BOOL "Use vcpkg dependencies." FORCE)
 set(skip_samples ON CACHE BOOL "Skip building samples" FORCE)
 add_subdirectory(vendor/azure-uamqp-c SYSTEM)
 else()
 message(STATUS "Using vcpkg uamqp")
 find_package(uamqp CONFIG REQUIRED)
-endif()
-
-find_package(uamqp CONFIG REQUIRED)
 #find_package(umock_c CONFIG REQUIRED)
 #find_package(azure_macro_utils_c CONFIG REQUIRED)
 #find_package(azure_c_shared_utility CONFIG REQUIRED)
+endif()
+
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/cancellable.hpp
