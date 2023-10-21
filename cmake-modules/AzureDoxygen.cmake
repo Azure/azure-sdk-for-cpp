@@ -37,6 +37,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
             */out/*
             */build/*
             */samples/*
+            */vendor/*
             )
         # Skip documenting internal and private symbols (all from ::_detail/_::internal namespaces)
         set(DOXYGEN_EXCLUDE_SYMBOLS _detail _internal)

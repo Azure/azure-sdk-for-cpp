@@ -43,14 +43,16 @@ if (VENDOR_UAMQP)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(uamqp PUBLIC -Wno-extra-semi -Wno-gnu-zero-variadic-macro-arguments -Wno-cast-qual -Wno-format-pedantic)
   else()
+    target_compile_options(uamqp PUBLIC -Wno-pedantic -Wno-implicit-fallthrough)
   endif()
 else()
   message(STATUS "Using vcpkg uamqp")
   find_package(uamqp CONFIG REQUIRED)
-  #find_package(umock_c CONFIG REQUIRED)
-  #find_package(azure_macro_utils_c CONFIG REQUIRED)
-  #find_package(azure_c_shared_utility CONFIG REQUIRED)
 endif()
+
+find_package(umock_c CONFIG REQUIRED)
+find_package(azure_macro_utils_c CONFIG REQUIRED)
+find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 
 set (AZURE_CORE_AMQP_HEADER
@@ -129,26 +131,26 @@ create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tes
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
 target_link_libraries(azure-core-amqp PRIVATE
-    uamqp 
-#    umock_c
-#    azure_macro_utils_c
-#    aziotsharedutil 
+    uamqp
+    umock_c
+    azure_macro_utils_c
+    aziotsharedutil
     PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
 
-  az_vcpkg_export(
-    azure-core-amqp
-    CORE_AMQP
-    azure/core/amqp/dll_import_export.hpp
-  )
+az_vcpkg_export(
+  azure-core-amqp
+  CORE_AMQP
+  azure/core/amqp/dll_import_export.hpp
+)
 
-  az_rtti_setup(
-    azure-core-amqp
-    CORE_AMQP
-    azure/core/amqp/rtti.hpp
-  )
+az_rtti_setup(
+  azure-core-amqp
+  CORE_AMQP
+  azure/core/amqp/rtti.hpp
+)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code

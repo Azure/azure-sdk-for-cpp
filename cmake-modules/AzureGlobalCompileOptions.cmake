@@ -26,11 +26,17 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   endif()
 
   add_compile_options(-fno-operator-names -Wold-style-cast -Xclang -Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG} -Wdocumentation -Wdocumentation-unknown-command -Wcast-qual)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  if(WARNINGS_AS_ERRORS)
+    set(WARNINGS_AS_ERRORS_FLAG "-Werror")
+  endif()
+  # GCC objects to -fno-operator-names, and -Wold-style-cast for C code. So use a genex to limit flags per language.
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-operator-names$<SEMICOLON>-Wold-style-cast$<SEMICOLON>-Wall$<SEMICOLON>-Wextra$<SEMICOLON>-pedantic$<SEMICOLON>${WARNINGS_AS_ERRORS_FLAG}>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wall$<SEMICOLON>-Wextra$<SEMICOLON>-pedantic$<SEMICOLON>${WARNINGS_AS_ERRORS_FLAG}>)
 else()
   if(WARNINGS_AS_ERRORS)
     set(WARNINGS_AS_ERRORS_FLAG "-Werror")
   endif()
-
   add_compile_options(-fno-operator-names -Wold-style-cast -Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG})
 endif()
 
