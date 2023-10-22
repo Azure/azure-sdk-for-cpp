@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
-#
+# cspell: words genex
 
 if(MSVC)
   if(WARNINGS_AS_ERRORS)
