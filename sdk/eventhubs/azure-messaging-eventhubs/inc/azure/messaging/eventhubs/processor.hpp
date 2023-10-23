@@ -12,7 +12,7 @@
 #include <chrono>
 #include <thread>
 
-#ifdef TESTING_BUILD_AMQP
+#ifdef azure_TESTING_BUILD_AMQP
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class ProcessorTest_LoadBalancing_Test;
 }}}} // namespace Azure::Messaging::EventHubs::Test
@@ -72,7 +72,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    *processes or on separate machines.
    */
 
-  namespace _private {
+  namespace _detail {
     class ProcessorLoadBalancer;
   }
 
@@ -80,7 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * between multiple Processor instances, even in separate processes or on separate machines.
    */
   class Processor final {
-#ifdef TESTING_BUILD_AMQP
+#ifdef azure_TESTING_BUILD_AMQP
     friend class Test::ProcessorTest_LoadBalancing_Test;
 #endif
 
@@ -270,7 +270,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     int32_t m_prefetch;
     Channel<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
     Models::ConsumerClientDetails m_consumerClientDetails;
-    std::shared_ptr<_private::ProcessorLoadBalancer> m_loadBalancer;
+    std::shared_ptr<_detail::ProcessorLoadBalancer> m_loadBalancer;
     int64_t m_processorOwnerLevel{0};
     bool m_isRunning{false};
     std::thread m_processorThread;

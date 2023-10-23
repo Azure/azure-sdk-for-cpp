@@ -17,8 +17,8 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
 using namespace Azure::Messaging::EventHubs::Models;
-using namespace Azure::Messaging::EventHubs::_private;
-using namespace Azure::Messaging::EventHubs::Models::_private;
+using namespace Azure::Messaging::EventHubs::_detail;
+using namespace Azure::Messaging::EventHubs::Models::_detail;
 
 LoadBalancerInfo ProcessorLoadBalancer::GetAvailablePartitions(
     std::vector<std::string> const& partitionIDs,

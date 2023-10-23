@@ -338,7 +338,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto val{UamqpConnectionStateToStringMap.find(state)};
       if (val == UamqpConnectionStateToStringMap.end())
       {
-        os << "Unknown connection state: " << static_cast<int>(state);
+        os << "Unknown connection state: "
+           << static_cast<std::underlying_type<decltype(state)>::type>(state);
       }
       else
       {

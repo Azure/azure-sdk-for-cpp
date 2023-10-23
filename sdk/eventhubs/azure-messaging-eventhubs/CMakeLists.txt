@@ -84,12 +84,13 @@ set(
     src/private/package_version.hpp
     src/private/eventhubs_constants.hpp
     src/private/eventhubs_utilities.hpp
+    src/processor.cpp
     src/processor_load_balancer.cpp
     src/processor_partition_client.cpp
     src/producer_client.cpp
     src/retry_operation.cpp
     src/eventhubs_utilities.cpp
- "src/processor.cpp")
+)
 
 add_library(
   azure-messaging-eventhubs

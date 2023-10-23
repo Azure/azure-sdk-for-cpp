@@ -378,7 +378,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageReceiverState::Closing:
           case _internal::MessageReceiverState::Error:
             Log::Stream(Logger::Level::Error)
-                << "Message Receiver Changed State to " << static_cast<int>(newState)
+                << "Message Receiver Changed State to "
+                << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
                 << " while management client is opening";
             SetState(ManagementState::Closing);
             m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
@@ -396,7 +397,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageReceiverState::Closing:
           case _internal::MessageReceiverState::Error:
             Log::Stream(Logger::Level::Error)
-                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << "Message Sender Changed State to "
+                << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
                 << " while management client is open";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
@@ -419,7 +421,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageReceiverState::Opening:
           case _internal::MessageReceiverState::Error:
             Log::Stream(Logger::Level::Error)
-                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << "Message Sender Changed State to "
+                << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
                 << " while management client is closing";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
@@ -437,7 +440,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       case ManagementState::Idle:
       case ManagementState::Error:
         Log::Stream(Logger::Level::Error)
-            << "Message sender state changed to " << static_cast<int>(newState)
+            << "Message sender state changed to "
+            << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
             << " when management client is in the error state, ignoring.";
         break;
         // LCOV_EXCL_STOP

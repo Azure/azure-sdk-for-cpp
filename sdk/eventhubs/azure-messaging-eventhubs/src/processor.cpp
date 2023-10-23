@@ -31,7 +31,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         : options.UpdateInterval;
 
     m_consumerClientDetails = m_consumerClient->GetDetails();
-    m_loadBalancer = std::make_shared<_private::ProcessorLoadBalancer>(
+    m_loadBalancer = std::make_shared<_detail::ProcessorLoadBalancer>(
         m_checkpointStore,
         m_consumerClientDetails,
         options.LoadBalancingStrategy,

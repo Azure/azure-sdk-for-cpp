@@ -116,6 +116,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   Azure::Core::Amqp::_internal::Session ConsumerClient::GetSession(
       std::string const& partitionId = {})
   {
+    std::unique_lock<std::mutex> lock(m_sessionsLock);
     return m_sessions.at(partitionId);
   }
 

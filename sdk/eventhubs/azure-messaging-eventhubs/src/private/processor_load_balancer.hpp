@@ -12,7 +12,7 @@
 
 #include <chrono>
 
-#ifdef TESTING_BUILD_AMQP
+#ifdef azure_TESTING_BUILD_AMQP
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class ProcessorLoadBalancerTest_Greedy_EnoughUnownedPartitions_Test;
   class ProcessorLoadBalancerTest_Balanced_UnownedPartitions_Test;
@@ -25,49 +25,45 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 }}}} // namespace Azure::Messaging::EventHubs::Test
 #endif
 
-namespace Azure {
-  namespace Messaging {
-    namespace EventHubs {
-      namespace Models {
-        namespace _private {
-  /**
-   * @brief COnfiguration options for the load balancer.
-   */
-  struct LoadBalancerInfo final
-  {
-    /// current are the partitions that _we_ own
-    std::vector<Ownership> Current;
+namespace Azure { namespace Messaging { namespace EventHubs { namespace Models { namespace _detail {
+    /**
+     * @brief COnfiguration options for the load balancer.
+     */
+    struct LoadBalancerInfo final
+    {
+      /// current are the partitions that _we_ own
+      std::vector<Ownership> Current;
 
-    /// unownedOrExpired partitions either had no claim _ever_ or were once
-    /// owned but the ownership claim has expired.
-    std::vector<Ownership> UnownedOrExpired;
+      /// unownedOrExpired partitions either had no claim _ever_ or were once
+      /// owned but the ownership claim has expired.
+      std::vector<Ownership> UnownedOrExpired;
 
-    /// aboveMax are ownerships where the specific owner has too many partitions
-    /// it contains _all_ the partitions for that particular consumer.
-    std::vector<Ownership> AboveMax;
+      /// aboveMax are ownerships where the specific owner has too many partitions
+      /// it contains _all_ the partitions for that particular consumer.
+      std::vector<Ownership> AboveMax;
 
-    /// maxAllowed is the maximum number of partitions a consumer should have
-    /// If partitions do not divide evenly this will be the "theoretical" max
-    /// with the assumption that this particular consumer will get an extra
-    /// partition.
-    size_t MaxAllowed;
+      /// maxAllowed is the maximum number of partitions a consumer should have
+      /// If partitions do not divide evenly this will be the "theoretical" max
+      /// with the assumption that this particular consumer will get an extra
+      /// partition.
+      size_t MaxAllowed;
 
-    /// extraPartitionPossible is true if the partitions cannot split up evenly
-    /// amongst all the known consumers.
-    bool ExtraPartitionPossible;
+      /// extraPartitionPossible is true if the partitions cannot split up evenly
+      /// amongst all the known consumers.
+      bool ExtraPartitionPossible;
 
-    /// Raw ownerships are the raw ownerships from the checkpoint store.
-    std::vector<Ownership> Raw;
-  };
-}}}}} // namespace Azure::Messaging::EventHubs::Models::_private
+      /// Raw ownerships are the raw ownerships from the checkpoint store.
+      std::vector<Ownership> Raw;
+    };
+}}}}} // namespace Azure::Messaging::EventHubs::Models::_detail
 
-namespace Azure { namespace Messaging { namespace EventHubs { namespace _private {
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
   /**@brief ProcessorLoadBalancer is used by [Processor] to provide automatic load balancing
    * between multiple Processor instances, even in separate processes or on separate machines.
    */
   class ProcessorLoadBalancer final {
-#ifdef TESTING_BUILD_AMQP
+#ifdef azure_TESTING_BUILD_AMQP
     friend class Test::ProcessorLoadBalancerTest_Greedy_EnoughUnownedPartitions_Test;
     friend class Test::ProcessorLoadBalancerTest_Balanced_UnownedPartitions_Test;
     friend class Test::ProcessorLoadBalancerTest_Greedy_ForcedToSteal_Test;
@@ -85,7 +81,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _private
     /**@brief  GetAvailablePartitions finds all partitions that are either completely unowned _or_
      * their ownership is stale.
      */
-    Models::_private::LoadBalancerInfo GetAvailablePartitions(
+    Models::_detail::LoadBalancerInfo GetAvailablePartitions(
         std::vector<std::string> const& partitionIDs,
         Core::Context const& context);
 
@@ -105,11 +101,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _private
      *know it exists until then.
      */
     std::vector<Models::Ownership> BalancedLoadBalancer(
-        Models::_private::LoadBalancerInfo const& lbinfo,
+        Models::_detail::LoadBalancerInfo const& lbinfo,
         Core::Context const& context);
 
     std::vector<Models::Ownership> GreedyLoadBalancer(
-        Models::_private::LoadBalancerInfo const& lbInfo,
+        Models::_detail::LoadBalancerInfo const& lbInfo,
         Core::Context const& context);
 
   public:

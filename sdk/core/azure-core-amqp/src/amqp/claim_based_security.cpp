@@ -131,7 +131,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         default:
           throw std::runtime_error("Unknown management operation status."); // LCOV_EXCL_LINE
       }
-      Log::Stream(Logger::Level::Informational)
+      Log::Stream(Logger::Level::Error)
           << "CBS PutToken result: " << cbsResult << " status code: " << result.StatusCode
           << " Error: " << result.Error.Description << ".";
       return std::make_tuple(cbsResult, result.StatusCode, result.Error.Description);
