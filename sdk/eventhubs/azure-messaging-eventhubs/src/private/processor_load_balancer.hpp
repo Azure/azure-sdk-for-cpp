@@ -26,35 +26,35 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 #endif
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models { namespace _detail {
-    /**
-     * @brief Configuration options for the load balancer.
-     */
-    struct LoadBalancerInfo final
-    {
-      /// current are the partitions that _we_ own
-      std::vector<Ownership> Current;
+  /**
+   * @brief Configuration options for the load balancer.
+   */
+  struct LoadBalancerInfo final
+  {
+    /// current are the partitions that _we_ own
+    std::vector<Ownership> Current;
 
-      /// unownedOrExpired partitions either had no claim _ever_ or were once
-      /// owned but the ownership claim has expired.
-      std::vector<Ownership> UnownedOrExpired;
+    /// unownedOrExpired partitions either had no claim _ever_ or were once
+    /// owned but the ownership claim has expired.
+    std::vector<Ownership> UnownedOrExpired;
 
-      /// aboveMax are ownerships where the specific owner has too many partitions
-      /// it contains _all_ the partitions for that particular consumer.
-      std::vector<Ownership> AboveMax;
+    /// aboveMax are ownerships where the specific owner has too many partitions
+    /// it contains _all_ the partitions for that particular consumer.
+    std::vector<Ownership> AboveMax;
 
-      /// maxAllowed is the maximum number of partitions a consumer should have
-      /// If partitions do not divide evenly this will be the "theoretical" max
-      /// with the assumption that this particular consumer will get an extra
-      /// partition.
-      size_t MaxAllowed;
+    /// maxAllowed is the maximum number of partitions a consumer should have
+    /// If partitions do not divide evenly this will be the "theoretical" max
+    /// with the assumption that this particular consumer will get an extra
+    /// partition.
+    size_t MaxAllowed;
 
-      /// extraPartitionPossible is true if the partitions cannot split up evenly
-      /// amongst all the known consumers.
-      bool ExtraPartitionPossible;
+    /// extraPartitionPossible is true if the partitions cannot split up evenly
+    /// amongst all the known consumers.
+    bool ExtraPartitionPossible;
 
-      /// Raw ownerships are the raw ownerships from the checkpoint store.
-      std::vector<Ownership> Raw;
-    };
+    /// Raw ownerships are the raw ownerships from the checkpoint store.
+    std::vector<Ownership> Raw;
+  };
 }}}}} // namespace Azure::Messaging::EventHubs::Models::_detail
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
@@ -158,4 +158,4 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         std::vector<std::string> const& partitionIDs,
         Core::Context const& context = {});
   };
-}}}} // namespace Azure::Messaging::EventHubs::_private
+}}}} // namespace Azure::Messaging::EventHubs::_detail
