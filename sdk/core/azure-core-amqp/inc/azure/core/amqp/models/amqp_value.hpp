@@ -919,6 +919,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return false;
     }
+
     /** @brief Compare this AmqpComposite value with another.
      *
      * @param that - the AmqpComposite to compare with.
