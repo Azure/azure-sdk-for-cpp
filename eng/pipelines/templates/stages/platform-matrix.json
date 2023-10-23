@@ -41,9 +41,9 @@
       }, 
       "BuildSettings": {
         "Curl": {
-          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
+          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON "
         },
-        "WinHttp": { }
+        "WinHttp": { "CmakeArgs": " -DBUILD_TESTING=ON " }
       }
     },
     {
