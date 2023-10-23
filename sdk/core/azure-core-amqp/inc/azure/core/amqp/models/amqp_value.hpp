@@ -1002,6 +1002,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return false;
     }
 
+    /** @brief Compare this AmqpDescribed value with another.
+     *
+     * @param that - the AmqpDescribed to compare with.
+     */
+    bool operator!=(AmqpDescribed const& that) const { return !(*this == that); }
     /**
      * @brief Convert an existing AmqpComposite to an AmqpValue.
      */
