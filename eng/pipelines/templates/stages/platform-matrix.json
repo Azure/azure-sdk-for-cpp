@@ -29,7 +29,7 @@
       }
     },
     {
-      "StaticConfigs": { 
+      "StaticConfigs": {
         "Win2019_x64_Release": {
           "OSVmImage": "windows-2019",
           "Pool": "azsdk-pool-mms-win-2019-general",
@@ -38,12 +38,12 @@
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "BuildArgs": "--parallel 8 --config Release"
         }
-      }, 
+      },
       "BuildSettings": {
         "Curl": {
-          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON "
+          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DMSVC_USE_STATIC_CRT=ON "
         },
-        "WinHttp": { "CmakeArgs": " -DBUILD_TESTING=ON " }
+        "WinHttp": { "CmakeArgs": " -DBUILD_TESTING=ON -DMSVC_USE_STATIC_CRT=ON " }
       }
     },
     {
