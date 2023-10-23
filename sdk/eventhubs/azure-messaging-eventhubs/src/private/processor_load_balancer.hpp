@@ -27,7 +27,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models { namespace _detail {
     /**
-     * @brief COnfiguration options for the load balancer.
+     * @brief Configuration options for the load balancer.
      */
     struct LoadBalancerInfo final
     {

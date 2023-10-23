@@ -4,7 +4,6 @@
 #include "private/eventhubs_utilities.hpp"
 
 #include <azure/core/amqp/models/amqp_error.hpp>
-#include <azure/messaging/eventhubs/models/checkpoint_store_models.hpp>
 
 #include <iomanip>
 #include <iostream>

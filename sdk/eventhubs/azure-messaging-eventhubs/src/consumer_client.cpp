@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/package_version.hpp"
 
@@ -31,8 +32,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_eventHub = sasCredential->GetEntityPath();
     }
     m_fullyQualifiedNamespace = sasCredential->GetHostName();
-    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/"
-        + m_consumerGroup;
+    m_hostUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
+        + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
   }
 
   ConsumerClient::ConsumerClient(
@@ -44,8 +45,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
         m_consumerGroup{consumerGroup}, m_credential{credential}, m_consumerClientOptions(options)
   {
-    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/"
-        + m_consumerGroup;
+    m_hostUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
+        + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
   }
 
   ConsumerClient::~ConsumerClient()
@@ -144,11 +145,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Since EventHub properties are not tied to a partition, we don't specify a partition ID.
     EnsureSession({});
 
-    return _detail::EventHubsUtilities::GetEventHubsProperties(
-        //        CreateSession(), m_eventHub, context);
-        GetSession(),
-        m_eventHub,
-        context);
+    return _detail::EventHubsUtilities::GetEventHubsProperties(GetSession(), m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ConsumerClient::GetPartitionProperties(
@@ -158,10 +155,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     EnsureSession({});
 
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        //        CreateSession(), m_eventHub, partitionId, context);
-        GetSession(""),
-        m_eventHub,
-        partitionId,
-        context);
+        GetSession({}), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

@@ -5,6 +5,7 @@
 
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
+#include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/retry_operation.hpp"
 
@@ -31,7 +32,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_eventHub
         = (sasCredential->GetEntityPath().empty() ? eventHub : sasCredential->GetEntityPath());
     m_fullyQualifiedNamespace = sasCredential->GetHostName();
-    m_targetUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub;
+    m_targetUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub;
   }
 
   ProducerClient::ProducerClient(
@@ -40,7 +41,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
-        m_targetUrl{"amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub},
+        m_targetUrl{_detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub},
         m_credential{credential}, m_producerClientOptions(options)
   {
   }
@@ -137,8 +138,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_lock<std::mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      //      Azure::Core::Amqp::_internal::Session session{CreateSession()};
-      //      m_sessions.emplace(partitionId, std::move(session));
       m_sessions.emplace(partitionId, CreateSession(partitionId));
     }
   }
@@ -194,7 +193,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     EnsureConnection({});
 
-    //    auto session{CreateSession()};
     EnsureSession({});
     auto session{GetSession({})};
     return _detail::EventHubsUtilities::GetEventHubsProperties(session, m_eventHub, context);

@@ -20,14 +20,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     if (!m_partitionId.empty())
     {
       Log::Stream(Logger::Level::Verbose) << "~ProcessorPartitionClient() for " << m_partitionId;
-      if (!m_partitionClient)
-      {
-        Log::Stream(Logger::Level::Verbose) << "PartitionClient is null.";
-      }
-      else
-      {
-        Log::Stream(Logger::Level::Verbose) << "PartitionClient is not null.";
-      }
+      Log::Stream(Logger::Level::Verbose)
+          << "PartitionClient is " << (m_partitionClient ? "not " : "") << "null.";
     }
   }
 
