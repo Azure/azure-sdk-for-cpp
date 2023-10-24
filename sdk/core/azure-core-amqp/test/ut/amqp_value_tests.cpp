@@ -489,7 +489,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(AmqpValue(described2.GetDescriptor()), AmqpValue(value.GetDescriptor()));
   }
 
-    {
+  {
     AmqpDescribed described1{123, {"StringValue"}};
     AmqpDescribed described2{456, {"StringValue"}};
     EXPECT_NE(described1, described2);
