@@ -83,20 +83,20 @@ public:
       case SHASize::SHA384: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha384(), NULL))
         {
-          throw std::runtime_error("Crypto error while init Sha384Hash."); 
+          throw std::runtime_error("Crypto error while init Sha384Hash.");
         }
         break;
       }
       case SHASize::SHA512: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha512(), NULL))
         {
-          throw std::runtime_error("Crypto error while init Sha512Hash."); 
+          throw std::runtime_error("Crypto error while init Sha512Hash.");
         }
         break;
       }
       default:
         // imposible to get here
-        AZURE_UNREACHABLE_CODE(); 
+        AZURE_UNREACHABLE_CODE();
     }
   }
 

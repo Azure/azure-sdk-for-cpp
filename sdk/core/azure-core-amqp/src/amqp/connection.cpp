@@ -401,10 +401,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return cn->m_eventHandler->OnNewEndpoint(
           ConnectionFactory::CreateFromInternal(cn->shared_from_this()), endpoint);
     }
-    return false; 
+    return false;
   }
 
-  
   void ConnectionImpl::OnIOErrorFn(void* context)
   {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
@@ -417,7 +416,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
   }
-  
 
   void ConnectionImpl::EnableAsyncOperation(bool enable)
   {
@@ -471,7 +469,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (connection_open(m_connection.get()))
     {
-      throw std::runtime_error("Could not open connection."); 
+      throw std::runtime_error("Could not open connection.");
     }
     m_connectionOpened = true;
     EnableAsyncOperation(true);
@@ -483,7 +481,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         << "ConnectionImpl::Listen: " << this << " ID: " << m_containerId;
     if (connection_listen(m_connection.get()))
     {
-      throw std::runtime_error("Could not listen on connection."); 
+      throw std::runtime_error("Could not listen on connection.");
     }
     m_connectionOpened = true;
 
@@ -499,7 +497,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
     if (!m_connection)
     {
-      throw std::logic_error("Connection already closed."); 
+      throw std::logic_error("Connection already closed.");
     }
 
     std::unique_lock<LockType> lock(m_amqpMutex);
@@ -526,7 +524,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t maxSize;
     if (connection_get_max_frame_size(m_connection.get(), &maxSize))
     {
-      throw std::runtime_error("COuld not get max frame size."); 
+      throw std::runtime_error("COuld not get max frame size.");
     }
     return maxSize;
   }
@@ -536,7 +534,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint16_t maxChannel;
     if (connection_get_channel_max(m_connection.get(), &maxChannel))
     {
-      throw std::runtime_error("COuld not get channel max."); 
+      throw std::runtime_error("COuld not get channel max.");
     }
     return maxChannel;
   }
@@ -546,7 +544,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     milliseconds ms;
     if (connection_get_idle_timeout(m_connection.get(), &ms))
     {
-      throw std::runtime_error("Could not set max frame size."); 
+      throw std::runtime_error("Could not set max frame size.");
     }
     return std::chrono::milliseconds(ms);
   }
@@ -556,7 +554,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     AMQP_VALUE value;
     if (connection_get_properties(m_connection.get(), &value))
     {
-      throw std::runtime_error("COuld not get properties."); 
+      throw std::runtime_error("COuld not get properties.");
     }
     return Models::AmqpValue{value}.AsMap();
   }
@@ -566,7 +564,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t maxFrameSize;
     if (connection_get_remote_max_frame_size(m_connection.get(), &maxFrameSize))
     {
-      throw std::runtime_error("Could not get remote max frame size."); 
+      throw std::runtime_error("Could not get remote max frame size.");
     }
     return maxFrameSize;
   }
@@ -576,8 +574,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::unique_lock<LockType> lock(m_amqpMutex);
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection.get(), ratio))
     {
-      throw std::runtime_error(
-          "Could not set remote idle timeout send frame ratio."); 
+      throw std::runtime_error("Could not set remote idle timeout send frame ratio.");
     }
   }
 
@@ -654,7 +651,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto cbsOpenStatus = claimsBasedSecurity->Open(context);
       if (cbsOpenStatus != CbsOpenResult::Ok)
       {
-        throw std::runtime_error("Could not open Claims Based Security object."); 
+        throw std::runtime_error("Could not open Claims Based Security object.");
       }
 
       try
@@ -675,7 +672,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             context);
         if (std::get<0>(result) != CbsOperationResult::Ok)
         {
-          throw std::runtime_error("Could not put Claims Based Security token."); 
+          throw std::runtime_error("Could not put Claims Based Security token.");
         }
         claimsBasedSecurity->Close();
         if (m_options.EnableTrace)

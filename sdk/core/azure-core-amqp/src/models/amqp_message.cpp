@@ -217,10 +217,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             rv.BodyType = MessageBodyType::Value;
           }
           break;
-          case MESSAGE_BODY_TYPE_INVALID: 
-            throw std::runtime_error("Invalid message body type."); 
-          default: 
-            throw std::runtime_error("Unknown body type."); 
+          case MESSAGE_BODY_TYPE_INVALID:
+            throw std::runtime_error("Invalid message body type.");
+          default:
+            throw std::runtime_error("Unknown body type.");
         }
       }
     }
@@ -323,9 +323,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           throw std::runtime_error("Could not set message body AMQP value.");
         }
         break;
-      case MessageBodyType::Invalid: 
-      default: 
-        throw std::runtime_error("Unknown message body type."); 
+      case MessageBodyType::Invalid:
+      default:
+        throw std::runtime_error("Unknown message body type.");
     }
     return rv;
   }
@@ -701,8 +701,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           case AmqpDescriptors::Footer:
             m_decodedValue.Footer = describedType.GetValue().AsMap();
             break;
-          default: 
-            throw std::runtime_error("Unknown message descriptor."); 
+          default:
+            throw std::runtime_error("Unknown message descriptor.");
         }
       }
     };
@@ -761,9 +761,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     os << std::endl << "    Body: [" << std::endl;
     switch (message.BodyType)
     {
-      case MessageBodyType::Invalid: 
-        os << "        Invalid"; 
-        break; 
+      case MessageBodyType::Invalid:
+        os << "        Invalid";
+        break;
       case MessageBodyType::None:
         os << "        None";
         break;

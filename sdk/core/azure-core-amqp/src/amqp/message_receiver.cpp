@@ -334,18 +334,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       case MESSAGE_RECEIVER_STATE_CLOSING:
         return MessageReceiverState::Closing;
-      case MESSAGE_RECEIVER_STATE_ERROR: 
-        return MessageReceiverState::Error; 
+      case MESSAGE_RECEIVER_STATE_ERROR:
+        return MessageReceiverState::Error;
       case MESSAGE_RECEIVER_STATE_IDLE:
         return MessageReceiverState::Idle;
-      case MESSAGE_RECEIVER_STATE_INVALID: 
-        return MessageReceiverState::Invalid; 
+      case MESSAGE_RECEIVER_STATE_INVALID:
+        return MessageReceiverState::Invalid;
       case MESSAGE_RECEIVER_STATE_OPEN:
         return MessageReceiverState::Open;
       case MESSAGE_RECEIVER_STATE_OPENING:
         return MessageReceiverState::Opening;
-      default: 
-        throw std::logic_error("Unknown message receiver state."); 
+      default:
+        throw std::logic_error("Unknown message receiver state.");
     }
   }
 
@@ -454,7 +454,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (messagereceiver_open(
             m_messageReceiver.get(), MessageReceiverImpl::OnMessageReceivedFn, this))
     {
-      
+
       auto err = errno;
 #if defined(AZ_PLATFORM_WINDOWS)
       char buf[256];
@@ -464,7 +464,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
       throw std::runtime_error(
           "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
-      
     }
     m_receiverOpen = true;
 
@@ -503,7 +502,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_messageQueue.Clear();
       if (messagereceiver_close(m_messageReceiver.get()))
       {
-        throw std::runtime_error("Could not close message receiver"); 
+        throw std::runtime_error("Could not close message receiver");
       }
 
 // Release the lock so that the polling thread can make forward progress delivering the

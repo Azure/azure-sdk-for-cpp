@@ -205,18 +205,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       case MESSAGE_SENDER_STATE_CLOSING:
         return _internal::MessageSenderState::Closing;
-      case MESSAGE_SENDER_STATE_ERROR: 
-        return _internal::MessageSenderState::Error; 
+      case MESSAGE_SENDER_STATE_ERROR:
+        return _internal::MessageSenderState::Error;
       case MESSAGE_SENDER_STATE_IDLE:
         return _internal::MessageSenderState::Idle;
-      case MESSAGE_SENDER_STATE_INVALID: 
-        return _internal::MessageSenderState::Invalid; 
+      case MESSAGE_SENDER_STATE_INVALID:
+        return _internal::MessageSenderState::Invalid;
       case MESSAGE_SENDER_STATE_OPEN:
         return _internal::MessageSenderState::Open;
       case MESSAGE_SENDER_STATE_OPENING:
         return _internal::MessageSenderState::Opening;
-      default: 
-        throw std::logic_error("Unknown message receiver state."); 
+      default:
+        throw std::logic_error("Unknown message receiver state.");
     }
   }
 
@@ -296,7 +296,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (messagesender_open(m_messageSender.get()))
     {
-      
+
       auto err = errno;
 #if defined(AZ_PLATFORM_WINDOWS)
       char buf[256];
@@ -306,7 +306,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
       throw std::runtime_error(
           "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
-      
     }
 
     // Mark the connection as async so that we can use the async APIs.
@@ -343,7 +342,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       if (messagesender_close(m_messageSender.get()))
       {
-        throw std::runtime_error("Could not close message sender"); 
+        throw std::runtime_error("Could not close message sender");
       }
 
 #if SENDER_SYNCHRONOUS_CLOSE
@@ -367,7 +366,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         if (std::get<0>(*result))
         {
-          throw std::runtime_error("Error closing message sender"); 
+          throw std::runtime_error("Error closing message sender");
         }
       }
 #endif
@@ -386,21 +385,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::MessageSendStatus result{_internal::MessageSendStatus::Ok};
       switch (sendResult)
       {
-        case MESSAGE_SEND_RESULT_INVALID: 
-          result = _internal::MessageSendStatus::Invalid; 
-          break; 
+        case MESSAGE_SEND_RESULT_INVALID:
+          result = _internal::MessageSendStatus::Invalid;
+          break;
         case MESSAGE_SEND_OK:
           result = _internal::MessageSendStatus::Ok;
           break;
-        case MESSAGE_SEND_CANCELLED: 
-          result = _internal::MessageSendStatus::Cancelled; 
-          break; 
-        case MESSAGE_SEND_ERROR: 
-          result = _internal::MessageSendStatus::Error; 
-          break; 
-        case MESSAGE_SEND_TIMEOUT: 
-          result = _internal::MessageSendStatus::Timeout; 
-          break; 
+        case MESSAGE_SEND_CANCELLED:
+          result = _internal::MessageSendStatus::Cancelled;
+          break;
+        case MESSAGE_SEND_ERROR:
+          result = _internal::MessageSendStatus::Error;
+          break;
+        case MESSAGE_SEND_TIMEOUT:
+          result = _internal::MessageSendStatus::Timeout;
+          break;
       }
       onComplete(result, disposition);
     }
@@ -422,7 +421,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         0 /*timeout*/);
     if (result == nullptr)
     {
-      throw std::runtime_error("Could not send message"); 
+      throw std::runtime_error("Could not send message");
     }
     (void)context;
   }
@@ -487,6 +486,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       return std::move(*result);
     }
-    throw std::runtime_error("Error sending message"); 
+    throw std::runtime_error("Error sending message");
   }
 }}}} // namespace Azure::Core::Amqp::_detail

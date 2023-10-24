@@ -178,9 +178,7 @@ void PrintCredentialCreationLogMessage(
 
   auto const envVarsToParamsSize = envVarsToParams.size();
 
-  
   AZURE_ASSERT(envVarsToParamsSize > 1);
-  
 
   constexpr auto Tick = "'";
   constexpr auto Comma = ", ";

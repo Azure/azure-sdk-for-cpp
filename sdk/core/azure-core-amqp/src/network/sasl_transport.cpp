@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-
 #include "azure/core/amqp/network/sasl_transport.hpp"
 
 #include "azure/core/amqp/network/tls_transport.hpp"
@@ -82,4 +81,3 @@ Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
   return _detail::TransportImpl::CreateFromXioHandle(
       xio_create(saslclientio_get_interface_description(), &saslConfig), eventHandler);
 }
-

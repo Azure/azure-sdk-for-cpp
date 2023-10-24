@@ -1205,7 +1205,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          AZURE_UNREACHABLE_CODE(); 
+          AZURE_UNREACHABLE_CODE();
         }
         // clean internal buffer
         this->m_internalBuffer.clear();
@@ -1243,7 +1243,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          AZURE_UNREACHABLE_CODE(); 
+          AZURE_UNREACHABLE_CODE();
         }
       }
     }
@@ -1463,7 +1463,7 @@ namespace Azure { namespace Core {
 
       // Disable Code Coverage across GetOpenSSLError because we don't have a good way of forcing
       // OpenSSL to fail.
-      
+
       std::string GetOpenSSLError(std::string const& what)
       {
         auto bio(Azure::Core::_internal::MakeUniqueHandle(BIO_new, BIO_s_mem()));
@@ -1486,7 +1486,6 @@ namespace Azure { namespace Core {
 
         return returnValue;
       }
-      
 
     } // namespace _detail
 

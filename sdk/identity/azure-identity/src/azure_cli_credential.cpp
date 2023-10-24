@@ -313,7 +313,7 @@ std::string RunShellCommand(
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 void ThrowIfApiCallFails(BOOL apiResult, std::string const& errMsg)
 {
-  
+
   if (!apiResult)
   {
     throw std::runtime_error(
@@ -321,19 +321,17 @@ void ThrowIfApiCallFails(BOOL apiResult, std::string const& errMsg)
 
     );
   }
-  
 }
 #endif // not UWP
 #else // not Windows
 void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
 {
-  
+
   if (apiResult != 0)
   {
     throw std::runtime_error(
         errMsg + ": " + std::to_string(apiResult) + " (errno: " + std::to_string(errno) + ")");
   }
-  
 }
 #endif
 
@@ -393,7 +391,7 @@ void AppendToEnvironmentValuesIfNotEmpty(
     std::string const& envVarName,
     std::string const& value)
 {
-  if (!value.empty()) 
+  if (!value.empty())
   {
     auto const envVarStatement = envVarName + "=" + value;
 
@@ -427,12 +425,10 @@ void EnsureShellExists(std::string const& pathToShell)
 {
   auto file = std::fopen(pathToShell.c_str(), "r");
 
-  
   if (!file)
   {
     throw std::runtime_error("Cannot locate command line shell.");
   }
-  
 
   std::fclose(file);
 }
@@ -473,9 +469,9 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
              {Environment::GetVariable("ProgramFiles"),
               Environment::GetVariable("ProgramFiles(x86)")})
         {
-          if (!pf.empty()) 
+          if (!pf.empty())
           {
-            if (!pathValue.empty()) 
+            if (!pathValue.empty())
             {
               pathValue += ";";
             }
@@ -500,7 +496,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
       // user did log in.
       AppendToEnvironmentValuesIfDefined(environmentValues, "USERPROFILE");
 
-      if (!environmentValues.empty()) 
+      if (!environmentValues.empty())
       {
         environmentValues.push_back('\0'); // terminate the block
         lpEnvironment = environmentValues.data();
@@ -609,14 +605,12 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
     auto const spawnResult
         = posix_spawn(&m_pid, m_argv[0], &m_actions, NULL, m_argv.data(), m_envp.data());
 
-    
     if (spawnResult != 0)
     {
       m_pid = -1;
       Finalize();
       ThrowIfApiCallFails(spawnResult, "Cannot spawn process");
     }
-    
   }
 
   close(outputPipe.m_fd[1]);

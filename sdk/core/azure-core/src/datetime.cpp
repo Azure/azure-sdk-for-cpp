@@ -346,7 +346,7 @@ T ParseNumber(
 
   // ThrowParseError() will always throw, but there's no way to tell that to compiler, so a return
   // statement is required. It is not possible to cover the return line with tests.
-  return T(); 
+  return T();
 }
 
 template <typename T>

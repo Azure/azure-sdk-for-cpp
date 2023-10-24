@@ -64,21 +64,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto rv{m_management->Open(context)};
       switch (rv)
       {
-        case ManagementOpenStatus::Invalid: 
-          return CbsOpenResult::Invalid; 
+        case ManagementOpenStatus::Invalid:
+          return CbsOpenResult::Invalid;
         case ManagementOpenStatus::Ok:
           return CbsOpenResult::Ok;
         case ManagementOpenStatus::Error:
           return CbsOpenResult::Error;
-        case ManagementOpenStatus::Cancelled: 
-          return CbsOpenResult::Cancelled; 
+        case ManagementOpenStatus::Cancelled:
+          return CbsOpenResult::Cancelled;
         default:
           throw std::runtime_error("Unknown return value from Management::Open()");
       }
     }
     else
     {
-      return CbsOpenResult::Error; 
+      return CbsOpenResult::Error;
     }
   }
 
@@ -113,23 +113,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       CbsOperationResult cbsResult;
       switch (result.Status)
       {
-        case ManagementOperationStatus::Invalid: 
-          cbsResult = CbsOperationResult::Invalid; 
+        case ManagementOperationStatus::Invalid:
+          cbsResult = CbsOperationResult::Invalid;
           break;
         case ManagementOperationStatus::Ok:
           cbsResult = CbsOperationResult::Ok;
           break;
-        case ManagementOperationStatus::Error: 
-          cbsResult = CbsOperationResult::Error; 
+        case ManagementOperationStatus::Error:
+          cbsResult = CbsOperationResult::Error;
           break;
-        case ManagementOperationStatus::FailedBadStatus: 
-          cbsResult = CbsOperationResult::Failed; 
+        case ManagementOperationStatus::FailedBadStatus:
+          cbsResult = CbsOperationResult::Failed;
           break;
-        case ManagementOperationStatus::InstanceClosed: 
-          cbsResult = CbsOperationResult::InstanceClosed; 
+        case ManagementOperationStatus::InstanceClosed:
+          cbsResult = CbsOperationResult::InstanceClosed;
           break;
         default:
-          throw std::runtime_error("Unknown management operation status."); 
+          throw std::runtime_error("Unknown management operation status.");
       }
       Log::Stream(Logger::Level::Error)
           << "CBS PutToken result: " << cbsResult << " status code: " << result.StatusCode
