@@ -114,8 +114,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool IsAsyncOperation() { return m_enableAsyncOperation; }
     bool IsTraceEnabled() { return m_options.EnableTrace; }
     bool IsSasCredential() const;
-    std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context)
-        const;
+
+    // Authenticate the audience on this connection using the provided session.
+    Azure::Core::Credentials::AccessToken AuthenticateAudience(
+        std::shared_ptr<SessionImpl> session,
+        std::string const& audience,
+        Azure::Core::Context const& context);
+
+    //    Credentials::AccessToken GetSecurityToken(std::string const& audience,
+    //    Azure::Core::Context const& context)
+    //        const;
+    //    void SetToken(std::string const& audience, Credentials::AccessToken const& token);
 
     using LockType = std::recursive_mutex;
 
@@ -135,13 +144,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_newSessionQueue;
     _internal::ConnectionEvents* m_eventHandler{};
     _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
-    std::shared_ptr<Credentials::TokenCredential> m_credential{};
-    std::map<std::string, Credentials::AccessToken> m_tokenStore;
+
     LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;
     bool m_isClosing = false;
+
     bool m_connectionOpened = false;
     std::atomic<uint32_t> m_openCount{0};
+
+    // mutex protecting the token acquisition process.
+    std::mutex m_tokenMutex;
+    std::shared_ptr<Credentials::TokenCredential> m_credential{};
+    std::map<std::string, Credentials::AccessToken> m_tokenStore;
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,

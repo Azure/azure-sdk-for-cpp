@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../src/private/processor_load_balancer.hpp"
 #include "eventhubs_test_base.hpp"
 #include "test_checkpoint_store.hpp"
 
@@ -110,13 +111,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   } // namespace
   TEST_F(ProcessorLoadBalancerTest, Greedy_EnoughUnownedPartitions)
   {
-    Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+    std::shared_ptr<CheckpointStore> checkpointStore{
+        std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
+    checkpointStore->ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
         TestOwnership("0", "some-client"), TestOwnership("3", "some-client")});
 
-    Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-        std::make_shared<TestCheckpointStore>(checkpointStore),
+    Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+        checkpointStore,
         TestConsumerDetails("new-client"),
         Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy,
         std::chrono::minutes(2));
@@ -133,13 +135,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(ProcessorLoadBalancerTest, Balanced_UnownedPartitions)
   {
-    Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+    std::shared_ptr<CheckpointStore> checkpointStore{
+        std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
+    checkpointStore->ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
         TestOwnership("0", "some-client"), TestOwnership("3", "some-client")});
 
-    Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-        std::make_shared<TestCheckpointStore>(checkpointStore),
+    Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+        checkpointStore,
         TestConsumerDetails("new-client"),
         Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
         std::chrono::minutes(2));
@@ -161,17 +164,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(ProcessorLoadBalancerTest, Greedy_ForcedToSteal)
   {
-    Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+    std::shared_ptr<CheckpointStore> checkpointStore{
+        std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
+    checkpointStore->ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
         TestOwnership("0", "some-client"),
         TestOwnership("1", "some-client"),
         TestOwnership("2", "some-client"),
         TestOwnership("3", "some-client"),
     });
 
-    Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-        std::make_shared<TestCheckpointStore>(checkpointStore),
+    Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+        checkpointStore,
         TestConsumerDetails("new-client"),
         Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy,
         std::chrono::minutes(2));
@@ -192,27 +196,26 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
           Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
-      Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+      std::shared_ptr<TestCheckpointStore> checkpointStore{
+          std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
       const std::string clientA = "clientA";
       const std::string clientB = "clientB";
 
       Models::Ownership midOwner = TestOwnership("2", "clientC");
 
-      checkpointStore.ClaimOwnership(
+      checkpointStore->ClaimOwnership(
           {TestOwnership("0", clientA),
            TestOwnership("1", clientA),
            midOwner,
            TestOwnership("3", clientB),
            TestOwnership("4", clientB)});
 
-      checkpointStore.ExpireOwnership(midOwner);
+      // NOTE: TEST HOOK FOR ExpireOwnership.
+      checkpointStore->ExpireOwnership(midOwner);
 
-      Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-          std::make_shared<TestCheckpointStore>(checkpointStore),
-          TestConsumerDetails(clientB),
-          strategy,
-          std::chrono::minutes(2));
+      Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+          checkpointStore, TestConsumerDetails(clientB), strategy, std::chrono::minutes(2));
 
       auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3", "4"});
 
@@ -231,12 +234,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
           Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
-      Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+      std::shared_ptr<CheckpointStore> checkpointStore{
+          std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
       const std::string clientA = "clientA";
       const std::string clientB = "clientB";
 
-      checkpointStore.ClaimOwnership(
+      checkpointStore->ClaimOwnership(
           {TestOwnership("0", clientA),
            TestOwnership("1", clientA),
            TestOwnership("2", clientA),
@@ -245,11 +249,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       {
 
-        Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_shared<TestCheckpointStore>(checkpointStore),
-            TestConsumerDetails(clientB),
-            strategy,
-            std::chrono::minutes(2));
+        Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+            checkpointStore, TestConsumerDetails(clientB), strategy, std::chrono::minutes(2));
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3", "4"});
 
@@ -266,11 +267,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       {
 
-        Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_shared<TestCheckpointStore>(checkpointStore),
-            TestConsumerDetails(clientA),
-            strategy,
-            std::chrono::minutes(2));
+        Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+            checkpointStore, TestConsumerDetails(clientA), strategy, std::chrono::minutes(2));
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3", "4"});
 
@@ -294,12 +292,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
           Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
-      Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+      std::shared_ptr<CheckpointStore> checkpointStore{
+          std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
       const std::string clientA = "clientA";
       const std::string clientB = "clientB";
 
-      checkpointStore.ClaimOwnership(
+      checkpointStore->ClaimOwnership(
           {TestOwnership("0", clientA),
            TestOwnership("1", clientA),
            TestOwnership("2", clientB),
@@ -307,11 +306,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       {
 
-        Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_shared<TestCheckpointStore>(checkpointStore),
-            TestConsumerDetails(clientB),
-            strategy,
-            std::chrono::minutes(2));
+        Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+            checkpointStore, TestConsumerDetails(clientB), strategy, std::chrono::minutes(2));
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
@@ -328,11 +324,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       {
 
-        Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_shared<TestCheckpointStore>(checkpointStore),
-            TestConsumerDetails(clientA),
-            strategy,
-            std::chrono::minutes(2));
+        Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+            checkpointStore, TestConsumerDetails(clientA), strategy, std::chrono::minutes(2));
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
@@ -355,23 +348,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
           Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
-      Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+      std::shared_ptr<CheckpointStore> checkpointStore{
+          std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
       const std::string clientA = "clientA";
       const std::string clientB = "clientB";
 
-      checkpointStore.ClaimOwnership(
+      checkpointStore->ClaimOwnership(
           {TestOwnership("0", clientA),
            TestOwnership("1", clientA),
-           TestOwnership("2", ""),
            TestOwnership("3", clientB),
            TestOwnership("4", clientB)});
 
-      Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-          std::make_shared<TestCheckpointStore>(checkpointStore),
-          TestConsumerDetails(clientB),
-          strategy,
-          std::chrono::minutes(2));
+      Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+          checkpointStore, TestConsumerDetails(clientB), strategy, std::chrono::minutes(2));
 
       auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3", "4"});
       auto clientOwned = GroupByOwner(ownerships)[clientB];
@@ -395,12 +385,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
           Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
-      Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
+      std::shared_ptr<CheckpointStore> checkpointStore{
+          std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
       const std::string clientA = "clientA";
       const std::string clientB = "clientB";
 
-      checkpointStore.ClaimOwnership(
+      checkpointStore->ClaimOwnership(
           {TestOwnership("0", clientA),
            TestOwnership("1", clientA),
            TestOwnership("2", clientA),
@@ -408,11 +399,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       {
 
-        Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_shared<TestCheckpointStore>(checkpointStore),
-            TestConsumerDetails(clientA),
-            strategy,
-            std::chrono::minutes(2));
+        Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+            checkpointStore, TestConsumerDetails(clientA), strategy, std::chrono::minutes(2));
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
@@ -426,11 +414,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       {
 
-        Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_shared<TestCheckpointStore>(checkpointStore),
-            TestConsumerDetails(clientB),
-            strategy,
-            std::chrono::minutes(2));
+        Azure::Messaging::EventHubs::_detail::ProcessorLoadBalancer loadBalancer(
+            checkpointStore, TestConsumerDetails(clientB), strategy, std::chrono::minutes(2));
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 

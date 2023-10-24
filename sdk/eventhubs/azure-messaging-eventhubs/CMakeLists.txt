@@ -68,7 +68,6 @@ set(
     inc/azure/messaging/eventhubs/models/processor_models.hpp
     inc/azure/messaging/eventhubs/partition_client.hpp
     inc/azure/messaging/eventhubs/processor.hpp
-    inc/azure/messaging/eventhubs/processor_load_balancer.hpp
     inc/azure/messaging/eventhubs/processor_partition_client.hpp
     inc/azure/messaging/eventhubs/producer_client.hpp
     inc/azure/messaging/eventhubs/rtti.hpp
@@ -85,6 +84,7 @@ set(
     src/private/package_version.hpp
     src/private/eventhubs_constants.hpp
     src/private/eventhubs_utilities.hpp
+    src/processor.cpp
     src/processor_load_balancer.cpp
     src/processor_partition_client.cpp
     src/producer_client.cpp

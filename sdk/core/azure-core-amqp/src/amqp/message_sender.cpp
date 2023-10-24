@@ -220,6 +220,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
+  std::ostream& operator<<(std::ostream& os, MESSAGE_SENDER_STATE state)
+  {
+    os << MessageSenderStateFromLowLevel(state) << "("
+       << static_cast<std::underlying_type<MESSAGE_SENDER_STATE>::type>(state) << ")";
+    return os;
+  }
+
   void MessageSenderImpl::OnMessageSenderStateChangedFn(
       void* context,
       MESSAGE_SENDER_STATE newState,
@@ -230,6 +237,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (newState != oldState)
     {
       auto sender = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
+      sender->m_currentState = MessageSenderStateFromLowLevel(newState);
+      if (sender->m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Message sender state changed from " << oldState << " to " << newState << ".";
+      }
       if (sender->m_events)
       {
         sender->m_events->OnMessageSenderStateChanged(
@@ -245,17 +258,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
              "Message Sender unexpectedly entered the Error State.",
              {}});
       }
+#if SENDER_SYNCHRONOUS_CLOSE
+
+      if (oldState == MESSAGE_SENDER_STATE_CLOSING && newState == MESSAGE_SENDER_STATE_IDLE)
+      {
+        sender->m_closeQueue.CompleteOperation(Models::_internal::AmqpError{});
+      }
+#endif
     }
   }
 
   void MessageSenderImpl::Open(Context const& context)
   {
-    Log::Stream(Logger::Level::Verbose) << "Opening message sender. Authenticate if needed.";
+    if (m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Verbose)
+          << "Opening message sender. Authenticate if needed with audience: " << m_target;
+    }
     if (m_options.AuthenticationRequired)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
       // it.
-      m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
+      m_session->GetConnection()->AuthenticateAudience(
+          m_session, static_cast<std::string>(m_target.GetAddress()), context);
     }
 
     auto lock{m_session->GetConnection()->Lock()};
@@ -285,7 +310,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
     // Mark the connection as async so that we can use the async APIs.
-    Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
+    if (m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
+    }
     m_session->GetConnection()->EnableAsyncOperation(true);
     m_senderOpen = true;
   }
@@ -294,19 +322,56 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (m_senderOpen)
     {
-      Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
+      }
       auto lock{m_session->GetConnection()->Lock()};
 
-      Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
-      m_session->GetConnection()->EnableAsyncOperation(false);
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
+        Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
+      }
+      m_link->UnsubscribeFromDetachEvent();
+#if SENDER_SYNCHRONOUS_CLOSE
+      bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
+          || m_currentState == _internal::MessageSenderState::Open;
+#endif
 
-      //      Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
-      //      m_link->UnsubscribeFromDetachEvent();
+      m_session->GetConnection()->EnableAsyncOperation(false);
 
       if (messagesender_close(m_messageSender.get()))
       {
         throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
       }
+
+#if SENDER_SYNCHRONOUS_CLOSE
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Wait for sender detach to complete. Current state: " << m_currentState;
+      }
+
+      // The message sender (and it's underlying link) is in the half open state. Wait until the
+      // link has fully closed.
+      if (shouldWaitForClose && false)
+      {
+        lock.unlock();
+
+        auto result = m_closeQueue.WaitForResult(context);
+        if (!result)
+        {
+          throw Azure::Core::OperationCancelledException(
+              "Message sender close operation cancelled.");
+        }
+        if (std::get<0>(*result))
+        {
+          throw std::runtime_error("Error closing message sender"); // LCOV_EXCL_LINE
+        }
+      }
+#endif
+
       m_senderOpen = false;
     }
   }

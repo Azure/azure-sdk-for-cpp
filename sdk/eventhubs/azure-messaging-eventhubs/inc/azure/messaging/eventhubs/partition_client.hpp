@@ -58,10 +58,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   public:
     /// Create a PartitionClient from another PartitionClient
-    PartitionClient(PartitionClient const& other) = default;
+    PartitionClient(PartitionClient const& other) = delete;
+    /// Create a PartitionClient moving from another PartitionClient
+    PartitionClient(PartitionClient&& other) = default;
 
     /// Assign a PartitionClient to another PartitionClient
-    PartitionClient& operator=(PartitionClient const& other) = default;
+    PartitionClient& operator=(PartitionClient const& other) = delete;
+    /// Move a PartitionClient to another PartitionClient
+    PartitionClient& operator=(PartitionClient&& other) = default;
 
     /** Destroy this partition client.
      */
@@ -87,9 +91,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
-    /// The name of the offset to start receiving events from.
-    //    std::string m_offsetExpression;
-
     /// The options used to create the PartitionClient.
     PartitionClientOptions m_partitionOptions;
 
@@ -100,11 +101,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * response to being throttled or encountering a transient error.
      */
     Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
-
-    // Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-    //    Azure::Core::Amqp::Models::AmqpMessage,
-    //    Azure::Core::Amqp::Models::_internal::AmqpError>
-    //    m_receivedMessageQueue;
 
     /** Creates a new PartitionClient
      *
