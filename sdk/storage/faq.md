@@ -1,4 +1,4 @@
-# Frequently-asked Questions and Common Mistakes
+# Frequently-asked Questions, Common Mistakes and Best Practices
 
 ## How to use list-operations? Why doesn't list-operations return all blobs in a container?
 
@@ -36,7 +36,7 @@ for (auto page = directoryClient.ListFilesAndDirectories(); page.HasPage(); page
 ## Can I specify an API-version other than the default one?
 
 Yes, each client options takes an `ApiVersion` as optional parameter, with which you can specify an API-version used for all the HTTP requests from this client.
-Client spawned from another class will inherit the settings.
+Client spawned from another client instance will inherit the settings.
 
 ```C++
 // serviceClient sends HTTP requests with default API-version, which will change as version evolves.
@@ -70,7 +70,7 @@ clientOptions.Telemetry.ApplicationId = "SomeApplication v1.2.3";
 
 ## What encoding is used for input and output?
 
-All URL should be URL-encoded, other resource names should be in UTF-8 encoding.
+All URLs should be URL-encoded, other resource names should be in UTF-8 encoding.
 This applies to both input variables and output.
 If your code runs in an environment where the default locale and encoding is not UTF-8, you should encode before passing variables into SDK and decode after reading a variable from SDK.
 
@@ -111,7 +111,7 @@ bool BlobExists(const Azure::Storage::Blobs::BlobClient& client) {
 
 A common use scenario is checking if a blob exists before writing to it.
 It is fine if you write from a single thread.
-However, it is problematic if the destination might be modified from multiple threads or processes. A subsequent write operation may get overwritten by the previous one.
+However, it is problematic if the destination might be modified by multiple threads or processes. A subsequent write operation may get overwritten by the previous one.
 In this case, it's more recommended to:
 
 1. Use `CreateIfNotExists()`, `DeleteIfExists()` functions whenever possible. These functions internally use access conditions and can help us catch unexpected exceptions caused by resending PUT/DELETE requests on network errors.
@@ -187,6 +187,8 @@ You can then plug the policy into the pipeline.
 #### Custom headers in HTTP requests
 
 Below is an example of adding a custom header into each HTTP request.
+The header value is static and doesn't change over time, so we make it a per-operation policy.
+If you want to add some time-variant headers like authentication, you should use per-retry policy.
 
 ```C++
 class NewPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
@@ -222,20 +224,20 @@ You want to use this one if you need precise control over SDK behavior at HTTP l
 
 `BlockBlobClient::UploadFrom` takes a memory buffer or file name as parameter, splits the data in the buffer or file into smaller chunks intelligently or according to some parameters if provided,
 then upload the chunks with multiple threads.
-This one suit in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to tansfer large blobs efficiently.
+This one suits in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to tansfer large blobs efficiently.
 
 ### How to efficiently upload large amount of small blobs?
 
 Unfortunately this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
-You have to create multiple threads, upload blob one by one in each thread to speed up the transfer.
-Or you can use tools like AzCopy or Data Movement Library.
+You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer.
+Or you can use tools like [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy) or Data Movement Library.
 
 ### How to ensure data integrity with transactional checksum?
 
 Generally speaking, TLS protocol includes checksum that's strong enough to detect accidental corruption or deliberate tampering.
 Another layer of checksum is usually not necessary if you're using HTTPS.
 
-However, if you really want it for whatever reason, for example, to detect corruptions before the data is written to the socket,
+If you really want it for whatever reason, for example, to detect corruptions before the data is written to the socket,
 you can leverage transactional checksum feature in the SDK.
 With this feature, you provide a pre-calculated MD5 or CRC64 checksum when calling an upload API,
 storage service will calculate checksum after it receives the data and compare with the one you provide,
@@ -243,7 +245,7 @@ and fail the request if they don't match.
 Make sure you calculate the checksum early enough to cover the time when the corruption may happen.
 
 This functionality also works for download operations.
-Below is a code sample to leverage this feature.
+Below is a code sample to use this feature.
 
 ```C++
 // upload data with pre-calculated checksum
@@ -273,7 +275,7 @@ Here are a few things that turn out to be effective in practice to minimize the 
    Exponential backoff allows the load on storage service to decrease over the time. Jitter helps ease out spikes and ensures the retry traffic is well-distributed over a time window.
 1. Increase retry count.
 1. Identify the throttling type and reduce the traffic sent from client side.
-   You can check the exception thrown from storage function calls with below code. The error message can indicate which scalability target was exceeded.
+   You can check the exception thrown from storage function calls with below code. The error message will indicate which scalability target was exceeded.
    ```C++
    try
    {
@@ -333,6 +335,6 @@ If you're using SAS authentication,
    ```
    For example, a common error code is `AuthorizationPermissionMismatch`, which means the SAS token doesn't have permission to perform this operation (like writing to a blob with a SAS token that only permits read).
 
-You shouldn't write your own function to generate signature or sign the requests. It's not a trivial task and there are many edge cases to cover. Use Official tools or SDK instead.
+You shouldn't write your own function to generate signatures or sign the requests. It's not a trivial task and there are many edge cases to cover. Use Official tools or SDK instead.
 
 If you still cannot figure out the problem with above steps, you can open a GitHub issue with request ID or client request ID of the failed request.
