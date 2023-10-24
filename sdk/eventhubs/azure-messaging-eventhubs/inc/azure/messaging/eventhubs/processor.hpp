@@ -3,15 +3,16 @@
 #pragma once
 #include "checkpoint_store.hpp"
 #include "consumer_client.hpp"
+#include "models/processor_load_balancer_models.hpp"
 #include "models/processor_models.hpp"
-#include "processor_load_balancer.hpp"
 #include "processor_partition_client.hpp"
 
 #include <azure/core/context.hpp>
 
 #include <chrono>
+#include <thread>
 
-#ifdef TESTING_BUILD_AMQP
+#ifdef azure_TESTING_BUILD_AMQP
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class ProcessorTest_LoadBalancing_Test;
 }}}} // namespace Azure::Messaging::EventHubs::Test
@@ -26,17 +27,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * ownership of partitions between them.
      * The default strategy is ProcessorStrategyBalanced.
      */
-    Models::ProcessorStrategy LoadBalancingStrategy;
+    Models::ProcessorStrategy LoadBalancingStrategy{
+        Models::ProcessorStrategy::ProcessorStrategyBalanced};
 
     /**@brief UpdateInterval controls how often attempt to claim partitions.
      * The default value is 10 seconds.
      */
-    Azure::DateTime::duration UpdateInterval;
+    Azure::DateTime::duration UpdateInterval{std::chrono::seconds(10)};
 
     /**@brief PartitionExpirationDuration is the amount of time before a partition is
      * considered unowned. The default value is 60 seconds.
      */
-    Azure::DateTime::duration PartitionExpirationDuration;
+    Azure::DateTime::duration PartitionExpirationDuration{std::chrono::seconds(60)};
 
     /**@brief StartPositions are the default start positions (configurable per
      * partition, or with an overall default value) if a checkpoint is not found
@@ -54,30 +56,33 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * Defaults to 300 events.
      * Disabled if Prefetch < 0.
      */
-    int32_t Prefetch = 300;
+    int32_t Prefetch{300};
+
+    /** @brief Specifies the maximum number of partitions to process.
+     *
+     * By default, the processor will process all available partitions. If a client desires limiting
+     * the number of partitions to a restricted set, set the MaximumNumberOfPartitions to the number
+     * of partitions to process.
+     */
+    int32_t MaximumNumberOfPartitions{0};
   };
 
   /**@brief Processor uses a [ConsumerClient] and [CheckpointStore] to provide automatic
    * load balancing between multiple Processor instances, even in separate
    *processes or on separate machines.
    */
+
+  namespace _detail {
+    class ProcessorLoadBalancer;
+  }
+
+  /** @brief Processor uses a ConsumerClient and CheckpointStore to provide automatic load balancing
+   * between multiple Processor instances, even in separate processes or on separate machines.
+   */
   class Processor final {
-#ifdef TESTING_BUILD_AMQP
+#ifdef azure_TESTING_BUILD_AMQP
     friend class Test::ProcessorTest_LoadBalancing_Test;
 #endif
-
-    Azure::DateTime::duration m_ownershipUpdateInterval;
-    Models::StartPositions m_defaultStartPositions;
-    std::shared_ptr<CheckpointStore> m_checkpointStore;
-    int32_t m_prefetch;
-    std::shared_ptr<ConsumerClient> m_consumerClient;
-    std::vector<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
-    uint32_t m_currentPartitionClient;
-    Models::ConsumerClientDetails m_consumerClientDetails;
-    std::shared_ptr<ProcessorLoadBalancer> m_loadBalancer;
-    int64_t m_processorOwnerLevel = 0;
-
-    typedef std::map<std::string, std::shared_ptr<ProcessorPartitionClient>> ConsumersType;
 
   public:
     /** @brief Construct a new Processor object.
@@ -89,64 +94,188 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Processor(
         std::shared_ptr<ConsumerClient> consumerClient,
         std::shared_ptr<CheckpointStore> checkpointStore,
-        ProcessorOptions const& options = {})
-        : m_defaultStartPositions(options.StartPositions), m_checkpointStore(checkpointStore),
-          m_prefetch(options.Prefetch), m_consumerClient(consumerClient)
-    {
-      m_ownershipUpdateInterval = options.UpdateInterval == Azure::DateTime::duration::zero()
-          ? std::chrono::seconds(10)
-          : options.UpdateInterval;
+        ProcessorOptions const& options = {});
 
-      m_consumerClientDetails = m_consumerClient->GetDetails();
-      m_loadBalancer = std::make_shared<ProcessorLoadBalancer>(
-          m_checkpointStore,
-          m_consumerClientDetails,
-          options.LoadBalancingStrategy,
-          options.PartitionExpirationDuration == Azure::DateTime::duration::zero()
-              ? std::chrono::minutes(1)
-              : std::chrono::duration_cast<std::chrono::minutes>(
-                  options.PartitionExpirationDuration));
-    }
+    ~Processor();
 
     /** Construct a Processor from another Processor. */
-    Processor(Processor const& other) = default;
+    Processor(Processor const& other) = delete;
 
     /** Assign a Processor to another Processor. */
-    Processor& operator=(Processor const& other) = default;
+    Processor& operator=(Processor const& other) = delete;
 
-    /** Move to the next partition client */
-    std::shared_ptr<ProcessorPartitionClient> NextPartitionClient()
-    {
-      uint32_t currentPartition = m_currentPartitionClient;
-      if (currentPartition > m_nextPartitionClients.size() - 1)
-      {
-        currentPartition = 0;
-      }
-      m_currentPartitionClient = currentPartition + 1;
-      return m_nextPartitionClients[currentPartition];
-    }
+    /** Move to the next partition client
+     *
+     * @param context The context to control whether this function is canceled or not.
+     *
+     * @return A shared pointer to the next partition client.
+     *
+     * NextPartitionClient will retrieve the next ProcessorPartitionClient if one is acquired or
+     * will block until a new one arrives, or the processor is stopped.
+     */
+    std::shared_ptr<ProcessorPartitionClient> NextPartitionClient(
+        Azure::Core::Context const& context = {});
+
+    /** @brief Executes the processor.
+     *
+     * @param context The context to control the request lifetime.
+     *
+     * @remark This function will block until Stop() is called. It is intended for customers who
+     * would prefer to manage the call to Run from their own threads.
+     *
+     */
+    void Run(Core::Context const& context);
 
     /** @brief Starts the processor.
      *
-     * @param context The context to control the request lifetime.
+     * @param context The context to control the request lifetime of the processor. Cancelling this
+     * context will stop the processor from running.
+     *
+     * @remark This function starts the processor running in a new thread.
      */
-    void Run(Core::Context const& context)
-    {
-      Models::EventHubProperties eventHubProperties
-          = m_consumerClient->GetEventHubProperties(context);
-      ConsumersType consumers;
-      Dispatch(eventHubProperties, consumers, context);
-      //      time_t timeNowSeconds
-      //        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-      // const auto current = std::chrono::system_clock::from_time_t(timeNowSeconds);
+    void Start(Azure::Core::Context const& context = {});
 
-      //// TODO : this is where we re load balance on the update interval
-      // while (!context.IsCancelled())
-      //{
-      //  std::this_thread::sleep_for(m_ownershipUpdateInterval);
-      //  Dispatch(eventHubProperties, consumers, context);
-      //}
+    /** @brief Stops a running processor.
+     *
+     * @remark This function stops the processor. If the Start method has been called, it will wait
+     * for the thread to complete.
+     */
+    void Stop();
+
+    /** @brief Closes the processor and cancels any current operations.
+     *
+     */
+    void Close(Core::Context const& context = {})
+    {
+      if (m_isRunning)
+      {
+        throw std::runtime_error("cannot close a processor that is running");
+      }
+
+      // Drain the partition clients queue.
+      for (;;)
+      {
+        auto client = m_nextPartitionClients.TryRemove();
+        if (client)
+        {
+          client->Close();
+        }
+        else
+        {
+          break;
+        }
+      }
+      (void)context;
     }
+
+  private:
+    /** Representation of Go channel construct.
+     *
+     * A channel represents a size limited queue, where items can be inserted and removed. If there
+     * are no items in the queue, the caller will block until an item is inserted into the queue.
+     *
+     * @tparam T The type of the items in the queue.
+     *
+     */
+    template <class T> class Channel {
+    public:
+      Channel() : m_maximumDepth{0} {}
+
+      ~Channel()
+      {
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Verbose)
+            << "~Channel. Currently depth is " << m_channelDepth << " and maximum depth is "
+            << m_maximumDepth;
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Verbose)
+            << "Clear channel queue.";
+        while (m_channelDepth > 0)
+        {
+          auto value = m_channelQueue.TryWaitForResult();
+          if (value)
+          {
+            m_channelDepth -= 1;
+          }
+        }
+      }
+
+      // Insert an item into the channel, returning true if successful, false if the channel is
+      // full.
+      bool Insert(T item)
+      {
+        std::lock_guard<std::mutex> lock{m_channelLock};
+        if ((m_maximumDepth != 0) && (m_channelDepth >= m_maximumDepth))
+        {
+          return false;
+        }
+        m_channelQueue.CompleteOperation(item);
+        m_channelDepth += 1;
+        return true;
+      }
+
+      // Remove an item from the channel.
+      T Remove(Azure::Core::Context const& context)
+      {
+        auto value = m_channelQueue.WaitForResult(context);
+        if (!value)
+        {
+          throw Azure::Core::OperationCancelledException("Operation was cancelled.");
+        }
+        std::lock_guard<std::mutex> lock{m_channelLock};
+        m_channelDepth -= 1;
+        return std::get<0>(*value);
+      }
+
+      /** Try to remove an item from the channel, returning an item from the channel or a default
+       * constructed object.
+       *
+       * @return An item from the channel or a default constructed object.
+       *
+       * @remark The T type should have semantics that can distinguish between a default constructed
+       * item and a valid item. So for example, if T is a pointer, then a nullptr should be returned
+       * if the channel is empty. But if T is a value such as a string, it will not be possible to
+       * distinguish between an empty string inserted into the channel and an empty channel.
+       */
+      T TryRemove()
+      {
+        std::lock_guard<std::mutex> lock{m_channelLock};
+        auto value = m_channelQueue.TryWaitForResult();
+        if (value)
+        {
+          m_channelDepth -= 1;
+          return std::get<0>(*value);
+        }
+        return T{};
+      }
+
+      void SetMaximumDepth(size_t maximumDepth)
+      {
+        std::lock_guard<std::mutex> lock{m_channelLock};
+        m_maximumDepth = maximumDepth;
+      }
+
+    private:
+      std::mutex m_channelLock;
+      size_t m_channelDepth{};
+      size_t m_maximumDepth{};
+      Core::Amqp::Common::_internal::AsyncOperationQueue<T> m_channelQueue;
+    };
+
+    Azure::DateTime::duration m_ownershipUpdateInterval;
+    Models::StartPositions m_defaultStartPositions;
+    int32_t m_maximumNumberOfPartitions;
+    std::shared_ptr<CheckpointStore> m_checkpointStore;
+    std::shared_ptr<ConsumerClient> m_consumerClient;
+    int32_t m_prefetch;
+    Channel<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
+    Models::ConsumerClientDetails m_consumerClientDetails;
+    std::shared_ptr<_detail::ProcessorLoadBalancer> m_loadBalancer;
+    int64_t m_processorOwnerLevel{0};
+    bool m_isRunning{false};
+    std::thread m_processorThread;
+
+    typedef std::map<std::string, std::shared_ptr<ProcessorPartitionClient>> ConsumersType;
 
     /** @brief Dispatches events to the appropriate partition clients.
      *
@@ -156,60 +285,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     void Dispatch(
         Models::EventHubProperties const& eventHubProperties,
-        ConsumersType& consumers,
-        Core::Context const& context)
-    {
-      std::vector<Models::Ownership> ownerships
-          = m_loadBalancer->LoadBalance(eventHubProperties.PartitionIds, context);
+        std::shared_ptr<ConsumersType> consumers,
+        Core::Context const& context);
 
-      std::map<std::string, Models::Checkpoint> checkpoints = GetCheckpointsMap(context);
-
-      for (auto const& ownership : ownerships)
-      {
-        AddPartitionClient(ownership, checkpoints, consumers);
-      }
-    }
-
-    /** @brief Closes the processor and cancels any current operations.
-     *
-     *
-     */
-    void Close()
-    {
-      for (auto& consumer : m_nextPartitionClients)
-      {
-        consumer->Close();
-      }
-    }
-
-  private:
     void AddPartitionClient(
         Models::Ownership const& ownership,
         std::map<std::string, Models::Checkpoint>& checkpoints,
-        ConsumersType& consumers)
-    {
-      Models::StartPosition startPosition = GetStartPosition(ownership, checkpoints);
+        std::weak_ptr<ConsumersType> consumers);
 
-      // The consumers parameter is not stabilized across the lifetime of the partition client. Leak
-      // the partition for now.
-      std::shared_ptr<ProcessorPartitionClient> processorPartitionClient
-          = std::make_shared<ProcessorPartitionClient>(
-              ownership.PartitionId,
-              m_consumerClient->CreatePartitionClient(
-                  ownership.PartitionId, {startPosition, m_processorOwnerLevel, m_prefetch}),
-              m_checkpointStore,
-              m_consumerClientDetails,
-              []() { /*
-                      consumers.erase(ownership.PartitionId);*/
-              });
-
-      if (consumers.find(ownership.PartitionId) == consumers.end())
-      {
-        consumers.emplace(ownership.PartitionId, processorPartitionClient);
-      }
-
-      m_nextPartitionClients.push_back(processorPartitionClient);
-    }
+    void RunInternal(Core::Context const& context, bool manualRun);
 
     Models::StartPosition GetStartPosition(
         Models::Ownership const& ownership,
@@ -244,21 +328,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return startPosition;
     }
 
-    std::map<std::string, Models::Checkpoint> GetCheckpointsMap(Core::Context const& context)
-    {
-      std::vector<Models::Checkpoint> checkpoints = m_checkpointStore->ListCheckpoints(
-          m_consumerClientDetails.FullyQualifiedNamespace,
-          m_consumerClientDetails.EventHubName,
-          m_consumerClientDetails.ConsumerGroup,
-          context);
-
-      std::map<std::string, Models::Checkpoint> checkpointsMap;
-      for (auto& checkpoint : checkpoints)
-      {
-        checkpointsMap.emplace(checkpoint.PartitionId, checkpoint);
-      }
-
-      return checkpointsMap;
-    }
+    std::map<std::string, Models::Checkpoint> GetCheckpointsMap(Core::Context const& context);
   };
 }}} // namespace Azure::Messaging::EventHubs

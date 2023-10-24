@@ -47,11 +47,19 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class ConsumerClient final {
   public:
-    /** Create a new ConsumerClient from an existing one. */
-    ConsumerClient(ConsumerClient const& other) = default;
+    /** Copy a new ConsumerClient from an existing one. */
+    ConsumerClient(ConsumerClient const& other) = delete;
+
+    /** Move a consumer client */
+    ConsumerClient(ConsumerClient&& other) = delete;
 
     /** Assign a ConsumerClient to an existing one. */
-    ConsumerClient& operator=(ConsumerClient const& other) = default;
+    ConsumerClient& operator=(ConsumerClient const& other) = delete;
+
+    /** Move a consumer client */
+    ConsumerClient& operator=(ConsumerClient&& other) = delete;
+
+    ~ConsumerClient();
 
     /** @brief Getter for event hub name
      *
@@ -99,7 +107,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *  parameter cannot be empty and should contain the name of your event hub.
      *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>
      *  When the connection string DOES have an entity path, as shown below, the eventHub parameter
-     *  will be ignored.
+     *  must match the entity path.
      *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;
      *  SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>;EntityPath=\<entitypath\>;
      */
@@ -155,9 +163,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
-    void EnsureSession(std::string const& partitionId = {});
-    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId = {});
-
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;
 
@@ -177,11 +182,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_hostUrl;
 
     /// @brief The message receivers used to receive messages for a given partition.
+    std::mutex m_receiversLock;
     std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers;
+
     /// @brief The AMQP Sessions used to receive messages for a given partition.
+    std::mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions;
+    std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections;
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
+
+    void EnsureConnection(std::string const& partitionId);
+    void EnsureSession(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
   };
 }}} // namespace Azure::Messaging::EventHubs

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/package_version.hpp"
 
@@ -23,7 +24,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_consumerClientOptions(options)
   {
     auto sasCredential
-        = std::make_shared<ServiceBusSasConnectionStringCredential>(m_connectionString);
+        = std::make_shared<ServiceBusSasConnectionStringCredential>(m_connectionString, eventHub);
 
     m_credential = sasCredential;
     if (!sasCredential->GetEntityPath().empty())
@@ -31,8 +32,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_eventHub = sasCredential->GetEntityPath();
     }
     m_fullyQualifiedNamespace = sasCredential->GetHostName();
-    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/"
-        + m_consumerGroup;
+    m_hostUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
+        + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
   }
 
   ConsumerClient::ConsumerClient(
@@ -44,36 +45,79 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
         m_consumerGroup{consumerGroup}, m_credential{credential}, m_consumerClientOptions(options)
   {
-    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/"
-        + m_consumerGroup;
+    m_hostUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
+        + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
+  }
+
+  ConsumerClient::~ConsumerClient()
+  {
+    Log::Stream(Logger::Level::Informational) << "Destroy consumer client.";
+    // Tear down the sessions and then the connections, in that order.
+    for (auto& sender : m_receivers)
+    {
+      sender.second.Close();
+    }
+    while (!m_sessions.empty())
+    {
+      m_sessions.erase(m_sessions.begin());
+    }
+    while (!m_connections.empty())
+    {
+      m_connections.erase(m_connections.begin());
+    };
+  }
+
+  Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection(
+      std::string const& partitionId)
+  {
+    ConnectionOptions connectOptions;
+    connectOptions.ContainerId
+        = "Consumer for " + m_consumerClientOptions.ApplicationID + " on " + partitionId;
+    connectOptions.EnableTrace = _detail::EnableAmqpTrace;
+    connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
+
+    // Set the user agent related properties in the connectOptions based on the package
+    // information and application ID.
+    _detail::EventHubsUtilities::SetUserAgent(
+        connectOptions, m_consumerClientOptions.ApplicationID);
+
+    return Azure::Core::Amqp::_internal::Connection{
+        m_fullyQualifiedNamespace, m_credential, connectOptions};
+  }
+
+  void ConsumerClient::EnsureConnection(std::string const& partitionId)
+  {
+    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    if (m_connections.find(partitionId) == m_connections.end())
+    {
+      m_connections.emplace(partitionId, CreateConnection(partitionId));
+    }
+  }
+
+  Azure::Core::Amqp::_internal::Session ConsumerClient::CreateSession(
+      std::string const& partitionId)
+  {
+    SessionOptions sessionOptions;
+    sessionOptions.InitialIncomingWindowSize
+        = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+
+    return m_connections.at(partitionId).CreateSession(sessionOptions);
   }
 
   void ConsumerClient::EnsureSession(std::string const& partitionId)
   {
+    EnsureConnection(partitionId);
+    std::unique_lock<std::mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      ConnectionOptions connectOptions;
-      connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
-      connectOptions.EnableTrace = true;
-      connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
-
-      // Set the user agent related properties in the connectOptions based on the package
-      // information and application ID.
-      _detail::EventHubsUtilities::SetUserAgent(
-          connectOptions, m_consumerClientOptions.ApplicationID);
-
-      Connection connection(m_fullyQualifiedNamespace, m_credential, connectOptions);
-      SessionOptions sessionOptions;
-      sessionOptions.InitialIncomingWindowSize
-          = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
-
-      Session session{connection.CreateSession(sessionOptions)};
-      m_sessions.emplace(partitionId, session);
+      m_sessions.emplace(partitionId, CreateSession(partitionId));
     }
   }
 
-  Azure::Core::Amqp::_internal::Session ConsumerClient::GetSession(std::string const& partitionId)
+  Azure::Core::Amqp::_internal::Session ConsumerClient::GetSession(
+      std::string const& partitionId = {})
   {
+    std::unique_lock<std::mutex> lock(m_sessionsLock);
     return m_sessions.at(partitionId);
   }
 
@@ -99,7 +143,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)
   {
     // Since EventHub properties are not tied to a partition, we don't specify a partition ID.
-    EnsureSession();
+    EnsureSession({});
 
     return _detail::EventHubsUtilities::GetEventHubsProperties(GetSession(), m_eventHub, context);
   }
@@ -108,9 +152,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& partitionId,
       Core::Context const& context)
   {
-    EnsureSession(partitionId);
+    EnsureSession({});
 
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        GetSession(partitionId), m_eventHub, partitionId, context);
+        GetSession({}), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

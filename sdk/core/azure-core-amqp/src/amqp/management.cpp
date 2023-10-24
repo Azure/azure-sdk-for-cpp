@@ -84,8 +84,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      */
     if (m_options.ManagementNodeName == "$management")
     {
-      m_session->AuthenticateIfNeeded(
-          m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
+      m_accessToken = m_session->GetConnection()->AuthenticateAudience(
+          m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
     }
     {
       _internal::MessageSenderOptions messageSenderOptions;
@@ -152,10 +152,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage messageToSend,
       Context const& context)
   {
-    auto token = m_session->GetConnection()->GetSecurityToken(m_managementNodeName, context);
-    if (!token.empty())
+    // If the connection is authenticated, include the token in the message.
+    if (!m_accessToken.Token.empty())
     {
-      messageToSend.ApplicationProperties["security_token"] = Models::AmqpValue{token};
+      messageToSend.ApplicationProperties["security_token"]
+          = Models::AmqpValue{m_accessToken.Token};
     }
     messageToSend.ApplicationProperties.emplace("operation", operationToPerform);
     messageToSend.ApplicationProperties.emplace("type", typeOfOperation);
@@ -202,10 +203,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (m_messageSender && m_messageSenderOpen)
     {
       m_messageSender->Close();
+      m_messageSenderOpen = false;
     }
     if (m_messageReceiver && m_messageReceiverOpen)
     {
       m_messageReceiver->Close();
+      m_messageReceiverOpen = false;
     }
     m_isOpen = false;
   }
@@ -252,9 +255,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Idle:
           case _internal::MessageSenderState::Closing:
           case _internal::MessageSenderState::Error:
-            Log::Stream(Logger::Level::Error)
-                << "Message Sender Changed State to " << static_cast<int>(newState)
-                << " while management client is opening";
+            Log::Stream(Logger::Level::Error) << "Message Sender Changed State to " << newState
+                                              << " while management client is opening";
             SetState(ManagementState::Closing);
             m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
             break;
@@ -269,9 +271,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Idle:
           case _internal::MessageSenderState::Closing:
           case _internal::MessageSenderState::Error:
-            Log::Stream(Logger::Level::Error)
-                << "Message Sender Changed State to " << static_cast<int>(newState)
-                << " while management client is open";
+            Log::Stream(Logger::Level::Error) << "Message Sender Changed State to " << newState
+                                              << " while management client is open";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
             {
@@ -293,9 +294,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Opening:
           case _internal::MessageSenderState::Error:
             // LCOV_EXCL_START
-            Log::Stream(Logger::Level::Error)
-                << "Message Sender Changed State to " << static_cast<int>(newState)
-                << " while management client is closing";
+            Log::Stream(Logger::Level::Error) << "Message Sender Changed State to " << newState
+                                              << " while management client is closing";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
             {
@@ -313,7 +313,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       case ManagementState::Idle:
       case ManagementState::Error:
         Log::Stream(Logger::Level::Error)
-            << "Message sender state changed to " << static_cast<int>(newState)
+            << "Message sender state changed to " << newState
             << " when management client is in the error state, ignoring.";
         break;
         // LCOV_EXCL_STOP
@@ -378,7 +378,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageReceiverState::Closing:
           case _internal::MessageReceiverState::Error:
             Log::Stream(Logger::Level::Error)
-                << "Message Receiver Changed State to " << static_cast<int>(newState)
+                << "Message Receiver Changed State to "
+                << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
                 << " while management client is opening";
             SetState(ManagementState::Closing);
             m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
@@ -396,7 +397,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageReceiverState::Closing:
           case _internal::MessageReceiverState::Error:
             Log::Stream(Logger::Level::Error)
-                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << "Message Sender Changed State to "
+                << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
                 << " while management client is open";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
@@ -419,7 +421,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageReceiverState::Opening:
           case _internal::MessageReceiverState::Error:
             Log::Stream(Logger::Level::Error)
-                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << "Message Sender Changed State to "
+                << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
                 << " while management client is closing";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
@@ -437,7 +440,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       case ManagementState::Idle:
       case ManagementState::Error:
         Log::Stream(Logger::Level::Error)
-            << "Message sender state changed to " << static_cast<int>(newState)
+            << "Message sender state changed to "
+            << static_cast<std::underlying_type<decltype(newState)>::type>(newState)
             << " when management client is in the error state, ignoring.";
         break;
         // LCOV_EXCL_STOP
@@ -531,7 +535,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (!m_sendCompleted)
     {
-      Log::Stream(Logger::Level::Error) << "Received message before send completed.";
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Informational) << "Received message before send completed.";
+      }
     }
 
     Models::_internal::AmqpError messageError;

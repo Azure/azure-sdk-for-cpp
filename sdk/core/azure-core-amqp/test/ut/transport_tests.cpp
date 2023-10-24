@@ -65,12 +65,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
     {
       class TestTransportEvents : public TransportEvents {
-        AsyncOperationQueue<size_t, std::unique_ptr<uint8_t>> receiveBytesQueue;
+        AsyncOperationQueue<size_t, std::unique_ptr<uint8_t[]>> receiveBytesQueue;
         AsyncOperationQueue<bool> errorQueue;
         void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
         {
           GTEST_LOG_(INFO) << "On bytes received: " << size;
-          std::unique_ptr<uint8_t> val(new uint8_t[size]);
+          std::unique_ptr<uint8_t[]> val(new uint8_t[size]);
           memcpy(val.get(), bytes, size);
           receiveBytesQueue.CompleteOperation(size, std::move(val));
         }
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
 
       public:
-        std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
+        std::tuple<size_t, std::unique_ptr<uint8_t[]>> WaitForReceive(
             Transport const& transport,
             Azure::Core::Context const& context)
         {
@@ -176,12 +176,12 @@ Accept: */*
   {
     {
       class TestTransportEvents : public TransportEvents {
-        AsyncOperationQueue<size_t, std::unique_ptr<uint8_t>> receiveBytesQueue;
+        AsyncOperationQueue<size_t, std::unique_ptr<uint8_t[]>> receiveBytesQueue;
         AsyncOperationQueue<bool> errorQueue;
         void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
         {
           GTEST_LOG_(INFO) << "On bytes received: " << size;
-          std::unique_ptr<uint8_t> val(new uint8_t[size]);
+          std::unique_ptr<uint8_t[]> val(new uint8_t[size]);
           memcpy(val.get(), bytes, size);
           receiveBytesQueue.CompleteOperation(size, std::move(val));
         }
@@ -192,7 +192,7 @@ Accept: */*
         }
 
       public:
-        std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
+        std::tuple<size_t, std::unique_ptr<uint8_t[]>> WaitForReceive(
             Transport const& transport,
             Azure::Core::Context const& context)
         {

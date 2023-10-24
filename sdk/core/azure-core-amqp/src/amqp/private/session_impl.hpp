@@ -67,16 +67,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
 
-    void AuthenticateIfNeeded(std::string const& audience, Context const& context);
-
   private:
     SessionImpl();
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
     UniqueAmqpSession m_session;
     _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
-
-    void Authenticate(std::string const& audience, Context const& context);
 
     static bool OnLinkAttachedFn(
         void* context,

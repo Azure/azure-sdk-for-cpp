@@ -106,4 +106,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     }
     return isTransient;
   }
+
 }}}} // namespace Azure::Messaging::EventHubs::_detail

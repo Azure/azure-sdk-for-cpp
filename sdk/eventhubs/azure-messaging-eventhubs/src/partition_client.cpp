@@ -34,7 +34,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string GetStartExpression(Models::StartPosition const& startPosition)
     {
       Log::Stream(Logger::Level::Verbose)
-          << "Get Start Expression, startPosition: " << startPosition;
+          << "Get Start Expression for StartPosition: " << startPosition;
       std::string greaterThan = ">";
 
       if (startPosition.Inclusive)
@@ -94,7 +94,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // If we don't have a filter value, then default to the start.
       if (returnValue.empty())
       {
-        Log::Stream(Logger::Level::Verbose) << "No return value, use default.";
+        Log::Stream(Logger::Level::Verbose) << "No start position set, use default.";
         return "amqp.annotation.x-opt-offset > '@latest'";
       }
       else
@@ -123,7 +123,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Amqp::Models::_internal::MessageSource messageSource(sourceOptions);
       Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
 
-      receiverOptions.EnableTrace = true;
+      receiverOptions.EnableTrace = _detail::EnableAmqpTrace;
       // Set the link credit to the prefetch count. If the user has not set a prefetch count, then
       // we will use the default value.
       if (options.Prefetch >= 0)
@@ -163,7 +163,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
-  PartitionClient::~PartitionClient() { m_receiver.Close(); }
+  PartitionClient::~PartitionClient()
+  {
+    Log::Stream(Logger::Level::Verbose) << "~PartitionClient() "
+                                        << "Close Receiver.";
+    m_receiver.Close();
+  }
 
   /** Receive events from the partition.
    *
@@ -190,8 +195,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       if (result.first.HasValue())
       {
         messages.push_back(Models::ReceivedEventData{result.first.Value()});
-        Log::Stream(Logger::Level::Verbose)
-            << "Peeked message. Message count now " << messages.size();
       }
       else if (result.second)
       {

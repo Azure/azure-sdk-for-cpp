@@ -46,6 +46,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       ClaimsBasedSecurity cbs1(session);
       ClaimsBasedSecurity cbs2(session);
     }
+
+    {
+      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Error;
+      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Invalid;
+      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Failed;
+      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::InstanceClosed;
+      GTEST_LOG_(INFO) << "CbsOperations" << static_cast<CbsOperationResult>(32768);
+    }
+    {
+      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Cancelled;
+      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Error;
+      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Ok;
+      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Invalid;
+      GTEST_LOG_(INFO) << "CbsOpens" << static_cast<CbsOpenResult>(32768);
+    }
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 
