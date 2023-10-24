@@ -129,7 +129,7 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   endif()
   message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_DEBUG at end: " ${CMAKE_C_FLAGS_DEBUG})
 
-  # ensure that after the substitutions made above, we have configured the library version of MSVCRT.
+  # ensure that after the substitutions made above, we have configured the library version of Microsoft C++ runtime.
 #  if (NOT ${CMAKE_C_FLAGS} MATCHES ".*/MT.*")
 #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
 #  endif()
