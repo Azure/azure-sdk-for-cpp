@@ -94,62 +94,30 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   endif()
 
   # Now make the same adjustments for .C files as was done for .CPP files.
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS at start: " ${CMAKE_C_FLAGS})
   if(${CMAKE_C_FLAGS} MATCHES ".*/MD.*")
     string(REGEX REPLACE "/MD" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
   endif()
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS at end: " ${CMAKE_C_FLAGS})
   
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_RELEASE at end: " ${CMAKE_C_FLAGS_RELEASE})
   if(${CMAKE_C_FLAGS_RELEASE} MATCHES ".*/MD.*")
     string(REGEX REPLACE "/MD" "" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
   endif()
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_RELEASE at start: " ${CMAKE_C_FLAGS_RELEASE})
 
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_RELWITHDEBINFO at end: " ${CMAKE_C_FLAGS_RELWITHDEBINFO})
   if(${CMAKE_C_FLAGS_RELWITHDEBINFO} MATCHES ".*/MD.*")
     string(REGEX REPLACE "/MD" "" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
     set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT")
   endif()
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_RELWITHDEBINFO at end: " ${CMAKE_C_FLAGS_RELWITHDEBINFO})
 
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_MINSIZEREL at start: " ${CMAKE_C_FLAGS_MINSIZEREL})
   if(${CMAKE_C_FLAGS_MINSIZEREL} MATCHES ".*/MD.*")
     string(REGEX REPLACE "/MD" "" CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
     set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT")
   endif()
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_MINSIZEREL at end: " ${CMAKE_C_FLAGS_MINSIZEREL})
   
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_DEBUG at start: " ${CMAKE_C_FLAGS_DEBUG})
   if(${CMAKE_C_FLAGS_DEBUG} MATCHES ".*/MD.*")
     string(REGEX REPLACE "/MDd" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
   endif()
-  message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_DEBUG at end: " ${CMAKE_C_FLAGS_DEBUG})
-
-  # ensure that after the substitutions made above, we have configured the library version of Microsoft C++ runtime.
-  if (NOT ${CMAKE_C_FLAGS_RELEASE} MATCHES ".*/MT.*")
-  message(STATUS "CMAKE_C_FLAGS_RELEASE does not contain /MT, fixing.")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-  endif()
-
-  if (NOT ${CMAKE_C_FLAGS_RELWITHDEBINFO} MATCHES ".*/MT.*")
-  message(STATUS "CMAKE_C_FLAGS_RELWITHDEBINFO does not contain /MT, fixing.")
-    set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT")
-  endif()
-
-  if (NOT ${CMAKE_C_FLAGS_MINSIZEREL} MATCHES ".*/MT.*")
-  message(STATUS "CMAKE_C_FLAGS_MINSIZEREL does not contain /MT, fixing.")
-    set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT")
-  endif()
-
-  if (NOT ${CMAKE_C_FLAGS_DEBUG} MATCHES ".*/MTd.*")
-  message(STATUS "CMAKE_C_FLAGS_DEBUG does not contain /MTd, fixing.")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
-  endif()
-
 endif()
 
 if(BUILD_TESTING)
