@@ -72,8 +72,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           return CbsOpenResult::Error;
         case ManagementOpenStatus::Cancelled: // LCOV_EXCL_LINE
           return CbsOpenResult::Cancelled; // LCOV_EXCL_LINE
-        default:
-          throw std::runtime_error("Unknown return value from Management::Open()");
+        default: // LCOV_EXCL_LINE
+          throw std::runtime_error("Unknown return value from Management::Open()");// LCOV_EXCL_LINE
       }
     }
     else
@@ -115,19 +115,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         case ManagementOperationStatus::Invalid: // LCOV_EXCL_LINE
           cbsResult = CbsOperationResult::Invalid; // LCOV_EXCL_LINE
-          break;
+          break; // LCOV_EXCL_LINE
         case ManagementOperationStatus::Ok:
           cbsResult = CbsOperationResult::Ok;
-          break;
+          break; // LCOV_EXCL_LINE
         case ManagementOperationStatus::Error: // LCOV_EXCL_LINE
           cbsResult = CbsOperationResult::Error; // LCOV_EXCL_LINE
-          break;
+          break; // LCOV_EXCL_LINE
         case ManagementOperationStatus::FailedBadStatus: // LCOV_EXCL_LINE
           cbsResult = CbsOperationResult::Failed; // LCOV_EXCL_LINE
-          break;
+          break; // LCOV_EXCL_LINE
         case ManagementOperationStatus::InstanceClosed: // LCOV_EXCL_LINE
           cbsResult = CbsOperationResult::InstanceClosed; // LCOV_EXCL_LINE
-          break;
+          break; // LCOV_EXCL_LINE
         default:
           throw std::runtime_error("Unknown management operation status."); // LCOV_EXCL_LINE
       }
@@ -186,9 +186,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return os;
   }
 
+  // LCOV_EXCL_START
   void ClaimsBasedSecurityImpl::OnError(Models::_internal::AmqpError const& error)
   {
     Log::Stream(Logger::Level::Error) << "AMQP Error processing ClaimsBasedSecurity: " << error;
   }
+  // LCOV_EXCL_STOP
 
 }}}} // namespace Azure::Core::Amqp::_detail

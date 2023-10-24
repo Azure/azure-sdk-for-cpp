@@ -213,13 +213,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::unique_lock<LockType> lock(m_amqpMutex);
     if (m_openCount.load() != 0)
     {
+      // LCOV_EXCL_START
       AZURE_ASSERT_MSG(m_openCount.load() == 0, "Connection is being destroyed while polling.");
       Azure::Core::_internal::AzureNoReturnPath("Connection is being destroyed while polling.");
+      // LCOV_EXCL_STOP
     }
     if (m_connectionOpened)
     {
+      // LCOV_EXCL_START
       AZURE_ASSERT_MSG(!m_connectionOpened, "Connection being destroyed while open.");
       Azure::Core::_internal::AzureNoReturnPath("Connection is being destroyed while open.");
+      // LCOV_EXCL_STOP
     }
     m_isClosing = true;
 
@@ -259,21 +263,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (connection_set_idle_timeout(
             m_connection.get(), static_cast<milliseconds>(m_options.IdleTimeout.count())))
     {
-      throw std::runtime_error("Failed to set idle timeout.");
+      throw std::runtime_error("Failed to set idle timeout."); // LCOV_EXCL_LINE
     }
     if (connection_set_channel_max(m_connection.get(), m_options.MaxChannelCount))
     {
-      throw std::runtime_error("Failed to set max channel count.");
+      throw std::runtime_error("Failed to set max channel count."); // LCOV_EXCL_LINE
     }
     if (connection_set_max_frame_size(m_connection.get(), m_options.MaxFrameSize))
     {
-      throw std::runtime_error("Failed to set max frame size.");
+      throw std::runtime_error("Failed to set max frame size."); // LCOV_EXCL_LINE
     }
     if (connection_set_properties(
             m_connection.get(),
             static_cast<Models::_detail::UniqueAmqpValueHandle>(m_options.Properties).get()))
     {
-      throw std::runtime_error("Failed to set connection properties.");
+      throw std::runtime_error("Failed to set connection properties."); // LCOV_EXCL_LINE
     }
   }
 
