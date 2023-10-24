@@ -121,21 +121,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       if (session_set_handle_max(m_session.get(), options.MaximumLinkCount.Value()))
       {
-        throw std::runtime_error("Could not set handle max."); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set handle max."); 
       }
     }
     if (options.InitialIncomingWindowSize.HasValue())
     {
       if (session_set_incoming_window(m_session.get(), options.InitialIncomingWindowSize.Value()))
       {
-        throw std::runtime_error("Could not set incoming window"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set incoming window"); 
       }
     }
     if (options.InitialOutgoingWindowSize.HasValue())
     {
       if (session_set_outgoing_window(m_session.get(), options.InitialOutgoingWindowSize.Value()))
       {
-        throw std::runtime_error("Could not set outgoing window"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set outgoing window"); 
       }
     }
   }
@@ -153,21 +153,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       if (session_set_handle_max(m_session.get(), options.MaximumLinkCount.Value()))
       {
-        throw std::runtime_error("Could not set handle max."); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set handle max."); 
       }
     }
     if (options.InitialIncomingWindowSize.HasValue())
     {
       if (session_set_incoming_window(m_session.get(), options.InitialIncomingWindowSize.Value()))
       {
-        throw std::runtime_error("Could not set incoming window"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set incoming window"); 
       }
     }
     if (options.InitialOutgoingWindowSize.HasValue())
     {
       if (session_set_outgoing_window(m_session.get(), options.InitialOutgoingWindowSize.Value()))
       {
-        throw std::runtime_error("Could not set outgoing window"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set outgoing window"); 
       }
     }
   }
@@ -177,7 +177,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t window;
     if (session_get_incoming_window(m_session.get(), &window))
     {
-      throw std::runtime_error("Could not get incoming window"); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not get incoming window"); 
     }
     return window;
   }
@@ -187,7 +187,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t window;
     if (session_get_outgoing_window(m_session.get(), &window))
     {
-      throw std::runtime_error("Could not get outgoing window"); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not get outgoing window"); 
     }
     return window;
   }
@@ -197,7 +197,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t max;
     if (session_get_handle_max(m_session.get(), &max))
     {
-      throw std::runtime_error("Could not get handle max."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not get handle max."); 
     }
     return max;
   }
@@ -206,7 +206,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (session_begin(m_session.get()))
     {
-      throw std::runtime_error("Could not begin session"); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not begin session"); 
     }
   }
   void SessionImpl::End(const std::string& condition, const std::string& description)
@@ -218,7 +218,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             condition.empty() ? nullptr : condition.c_str(),
             description.empty() ? nullptr : description.c_str()))
     {
-      throw std::runtime_error("Could not begin session"); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not begin session"); 
     }
   }
 

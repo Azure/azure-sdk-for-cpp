@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         Network::_internal::TransportOpenStatus::Error};
     switch (ioOpenResult)
     {
-        // LCOV_EXCL_START
+        
       case IO_OPEN_RESULT_INVALID:
         openResult = Network::_internal::TransportOpenStatus::Invalid;
         break;
@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       case IO_OPEN_ERROR:
         openResult = Network::_internal::TransportOpenStatus::Error;
         break;
-        // LCOV_EXCL_STOP
+        
       case IO_OPEN_OK:
         openResult = Network::_internal::TransportOpenStatus::Ok;
         break;
@@ -130,7 +130,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     }
   }
 
-  // LCOV_EXCL_START
+  
   void TransportImpl::OnIOErrorFn(void* context)
   {
     TransportImpl* transport = reinterpret_cast<TransportImpl*>(context);
@@ -140,7 +140,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       transport->m_eventHandler->OnIOError();
     }
   }
-  // LCOV_EXCL_STOP
+  
 
   _internal::TransportOpenStatus TransportImpl::Open(Context const& context)
   {
@@ -175,7 +175,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       Network::_internal::TransportSendStatus result{Network::_internal::TransportSendStatus::Ok};
       switch (sendResult)
       {
-          // LCOV_EXCL_START
+          
         case IO_SEND_RESULT_INVALID:
           result = Network::_internal::TransportSendStatus::Invalid;
           break;
@@ -185,7 +185,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         case IO_SEND_ERROR:
           result = Network::_internal::TransportSendStatus::Error;
           break;
-          // LCOV_EXCL_STOP
+          
         case IO_SEND_OK:
           result = Network::_internal::TransportSendStatus::Ok;
           break;

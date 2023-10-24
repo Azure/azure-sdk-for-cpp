@@ -170,7 +170,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       if (X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey)
           != 1)
       {
-        throw OpenSSLException("X509_PUBKEY_get0_param"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_PUBKEY_get0_param");
       }
 
       int nid = OBJ_obj2nid(asn1Algorithm);
@@ -182,12 +182,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      // LCOV_EXCL_START
       std::stringstream ss;
       ss << "Unknown Certificate Key Algorithm: " << std::to_string(nid) << " for certificate "
          << GetSubjectName() << " " << GetIssuerName() << GetThumbprint();
       throw std::invalid_argument(ss.str());
-      // LCOV_EXCL_STOP
     }
 
     std::string GetKeyType() const override
@@ -212,12 +210,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      // LCOV_EXCL_START
       std::stringstream ss;
       ss << "Unknown Certificate Key Type: " << std::to_string(nid) << " for certificate "
          << GetSubjectName() << " " << GetIssuerName() << GetThumbprint();
       throw std::invalid_argument(ss.str());
-      // LCOV_EXCL_STOP
     }
 
     static std::unique_ptr<X509Certificate> Import(std::string const& pemEncodedKey);

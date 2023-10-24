@@ -45,14 +45,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       case AZ_LOG_ERROR:
         logLevel = Logger::Level::Error;
         break;
-      case AZ_LOG_INFO: // LCOV_EXCL_LINE
-        logLevel = Logger::Level::Informational; // LCOV_EXCL_LINE
-        break; // LCOV_EXCL_LINE
+      case AZ_LOG_INFO: 
+        logLevel = Logger::Level::Informational; 
+        break; 
       case AZ_LOG_TRACE:
         logLevel = Logger::Level::Verbose;
         break;
-      default: // LCOV_EXCL_LINE
-        logLevel = Logger::Level::Verbose; // LCOV_EXCL_LINE
+      default: 
+        logLevel = Logger::Level::Verbose; 
     }
     std::stringstream ss;
     // We don't want to log header information for outgoing and incoming frames, the header
@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
   {
     if (platform_init())
     {
-      throw std::runtime_error("Could not initialize platform."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not initialize platform."); 
     }
 
     // Integrate AMQP logging with Azure Core logging.
