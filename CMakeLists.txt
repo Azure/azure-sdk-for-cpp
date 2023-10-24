@@ -66,13 +66,6 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   #
   # 5. We "replace with empty string" (i.e. remove) first, then add, so that '/MT'
   # will be present (and present once) even if '/MD' was not.
-  #if (${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.15)
-  #message(STATUS "Configuring Static Runtime Library. using CMAKE_MSVC_RUNTIME_LIBRARY")
-  #if (POLICY CMP0091)
-  #  cmake_policy(SET CMP0091 NEW)
-  #endif()
-  #set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-  #else()
 
   message(STATUS "Configuring Static Runtime Library.")
   if(${CMAKE_CXX_FLAGS} MATCHES ".*/MD.*")
@@ -135,7 +128,31 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
   endif()
   message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_DEBUG at end: " ${CMAKE_C_FLAGS_DEBUG})
-#endif()
+
+  # ensure that after the substitutions made above, we have configured the library version of MSVCRT.
+#  if (NOT ${CMAKE_C_FLAGS} MATCHES ".*/MT.*")
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
+#  endif()
+
+  if (NOT ${CMAKE_C_FLAGS_RELEASE} MATCHES ".*/MT.*")
+  message(STATUS "CMAKE_C_FLAGS_RELEASE does not contain /MT, fixing.")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
+  endif()
+
+  if (NOT ${CMAKE_C_FLAGS_RELWITHDEBINFO} MATCHES ".*/MT.*")
+  message(STATUS "CMAKE_C_FLAGS_RELWITHDEBINFO does not contain /MT, fixing.")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT")
+  endif()
+
+  if (NOT ${CMAKE_C_FLAGS_MINSIZEREL} MATCHES ".*/MT.*")
+  message(STATUS "CMAKE_C_FLAGS_MINSIZEREL does not contain /MT, fixing.")
+    set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT")
+  endif()
+
+  if (NOT ${CMAKE_C_FLAGS_DEBUG} MATCHES ".*/MTd.*")
+  message(STATUS "CMAKE_C_FLAGS_DEBUG does not contain /MTd, fixing.")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
+  endif()
 
 endif()
 
