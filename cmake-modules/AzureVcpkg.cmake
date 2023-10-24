@@ -44,6 +44,7 @@ macro(az_vcpkg_integrate)
   if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
     set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
   endif()
+  message("Vcpkg integrate step - DONE.")
 endmacro()
 
 macro(az_vcpkg_portfile_prep targetName fileName contentToRemove)

@@ -23,7 +23,7 @@ include(AzureBuildTargetForCI)
 az_vcpkg_integrate()
 
 # Project definition
-project(azure-sdk LANGUAGES CXX)
+project(azure-sdk LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -130,10 +130,6 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   message(STATUS "Configuring Static Runtime Library. CMAKE_C_FLAGS_DEBUG at end: " ${CMAKE_C_FLAGS_DEBUG})
 
   # ensure that after the substitutions made above, we have configured the library version of Microsoft C++ runtime.
-#  if (NOT ${CMAKE_C_FLAGS} MATCHES ".*/MT.*")
-#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
-#  endif()
-
   if (NOT ${CMAKE_C_FLAGS_RELEASE} MATCHES ".*/MT.*")
   message(STATUS "CMAKE_C_FLAGS_RELEASE does not contain /MT, fixing.")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
