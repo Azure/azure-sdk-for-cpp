@@ -70,10 +70,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           return CbsOpenResult::Ok;
         case ManagementOpenStatus::Error:
           return CbsOpenResult::Error;
-        case ManagementOpenStatus::Cancelled: // LCOV_EXCL_LINE
-          return CbsOpenResult::Cancelled; // LCOV_EXCL_LINE
-        default: // LCOV_EXCL_LINE
-          throw std::runtime_error("Unknown return value from Management::Open()");// LCOV_EXCL_LINE
+          // LCOV_EXCL_START
+        case ManagementOpenStatus::Cancelled:
+          return CbsOpenResult::Cancelled;
+        default:
+          throw std::runtime_error("Unknown return value from Management::Open()");
+          // LCOV_EXCL_STOP
       }
     }
     else
