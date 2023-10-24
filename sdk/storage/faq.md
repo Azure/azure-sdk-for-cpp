@@ -58,7 +58,7 @@ Furthermore, this scenario is not covered by testing, although most of the APIs 
 
 ## How can I set a custom UserAgent string?
 
-We recommend you set an application ID with code below.
+We recommend you set an application ID with code below, so that it can be identified from which application, SDK, platform the request was sent. The information could be useful for troubleshooting and telemetry purposes.
 
 ```C++
 BlobClientOptions clientOptions;
@@ -116,11 +116,11 @@ In this case, it's more recommended to:
 
 1. Use `CreateIfNotExists()`, `DeleteIfExists()` functions whenever possible. These functions internally use access conditions and can help us catch unexpected exceptions caused by resending PUT/DELETE requests on network errors.
 1. Use access conditions for other operations. Code below only sends one HTTP request, check-and-write is performed atomically. It only succeeds if the blob doesn't exist.
-```C++
-UploadBlockBlobOptions options;
-options.AccessConditions.IfNoneMatch = Azure::ETag::Any();
-blobClient.Upload(stream, options);
-```
+   ```C++
+   UploadBlockBlobOptions options;
+   options.AccessConditions.IfNoneMatch = Azure::ETag::Any();
+   blobClient.Upload(stream, options);
+   ```
 1. Use lease for more complex scenarios that invole multiple operations on the same resource.
 
 ## Thread safety guarantees
@@ -148,8 +148,8 @@ options.Retry.MaxRetries = 3;
 
 An HTTP pipeline consists of a sequence of steps executed for each HTTP request-response roundtrip.
 Each policy has a dedicated purpose and acts on a request or a response or sometimes both.
-When you send a request, the policies execute in the order that they're added to the pipeline.
-When you receive a response from the service, the policies execute in the reverse order.
+When you send a request, the policies are executed in the order that they're added to the pipeline.
+When you receive a response from the service, the policies are executed in reverse order.
 All policies added to the pipeline execute before you send the request and after you receive a response.
 The policy has to decide whether to act on the request, the response, or both.
 For example, a logging policy logs the request and response but the authentication policy is only interested in modifying the request.
@@ -212,3 +212,127 @@ BlobClientOptions options;
 options.PerOperationPolicies.push_back(std::make_unique<NewPolicy>());
 options.PerRetryPolicies.push_back(std::make_unique<NewPolicy>());
 ```
+
+### What is the difference between `BlockBlobClient::Upload()` and `BlockBlobClient::UploadFrom()`? When should I use one vs the other?
+
+`BlockBlobClient::Upload()` takes a stream as parameter and uploads the stream as a block blob with exact one HTTP request.
+The blob created with this method doesn't have any blocks, which means functions like `StageBlock()`, `CommitBlockList()` or `GetBlockList()` don't apply here.
+You cannot append blocks to such blobs (You'll have to overwrite it with a new one).
+You want to use this one if you need precise control over SDK behavior at HTTP level.
+
+`BlockBlobClient::UploadFrom` takes a memory buffer or file name as parameter, splits the data in the buffer or file into smaller chunks intelligently or according to some parameters if provided,
+then upload the chunks with multiple threads.
+This one suit in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to tansfer large blobs efficiently.
+
+### How to efficiently upload large amount of small blobs?
+
+Unfortunately this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
+You have to create multiple threads, upload blob one by one in each thread to speed up the transfer.
+Or you can use tools like AzCopy or Data Movement Library.
+
+### How to ensure data integrity with transactional checksum?
+
+Generally speaking, TLS protocol includes checksum that's strong enough to detect accidental corruption or deliberate tampering.
+Another layer of checksum is usually not necessary if you're using HTTPS.
+
+However, if you really want it for whatever reason, for example, to detect corruptions before the data is written to the socket,
+you can leverage transactional checksum feature in the SDK.
+With this feature, you provide a pre-calculated MD5 or CRC64 checksum when calling an upload API,
+storage service will calculate checksum after it receives the data and compare with the one you provide,
+and fail the request if they don't match.
+Make sure you calculate the checksum early enough to cover the time when the corruption may happen.
+
+This functionality also works for download operations.
+Below is a code sample to leverage this feature.
+
+```C++
+// upload data with pre-calculated checksum
+Blobs::UploadBlockBlobOptions options;
+options.TransactionalContentHash = ContentHash();
+options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+options.TransactionalContentHash.Value().Value = crc64;  // CRC64 checksum of the data in Base64 encoding
+blobClient.Upload(stream, options);
+
+// download and verify checksum
+Blobs::DownloadBlobOptions options;
+options.RangeHashAlgorithm = HashAlgorithm::Crc64;
+auto response = blobClient.Download(options);
+auto crc64 = response.Value.TransactionalContentHash.Value();
+// Now you can verify checksum of the downloaded data
+```
+
+### Why do I see 503 Server Busy errors? What should I do in this case?
+
+Azure storage service has scalability and performance target, which varies for different types of accounts.
+When your application accesses storage too aggressively and reaches the limit, storage starts returning 503 Server Busy errors.
+You may refer to [this page](https://learn.microsoft.com/azure/storage/common/scalability-targets-standard-account) for the limits for different types of storage accounts in different regions.
+
+Here are a few things that turn out to be effective in practice to minimize the impact of this kind of error.
+
+1. Use exponential backoff policy and jitter for retries.
+   Exponential backoff allows the load on storage service to decrease over the time. Jitter helps ease out spikes and ensures the retry traffic is well-distributed over a time window.
+1. Increase retry count.
+1. Identify the throttling type and reduce the traffic sent from client side.
+   You can check the exception thrown from storage function calls with below code. The error message can indicate which scalability target was exceeded.
+   ```C++
+   try
+   {
+     // storage function goes here
+   }
+   catch (Azure::Storage::StorageException& e)
+   {
+     if (e.StatusCode == Azure::Core::Http::HttpStatusCode::ServiceUnavailable)
+     {
+       std::cout << e.Message << std::endl;
+     }
+   }
+   ```
+1. Store your data in multiple storage accounts for load balancing.
+1. Use CDN for static resources.
+
+Throttling error could also happen at subscription level or tenant level. You can still try above approaches or contact Azure Support in such cases.
+
+### How to troubleshoot 403 errors?
+
+403 error means your request to access Azure Storage is not correctly authorized.
+
+If you're using shared key authentication, you should
+
+1. Check the storage account name and account key match the resource you're trying to access, and the key is not rotated.
+1. If you need to add extra HTTP request headers or overwrite existing headers, do it with a HTTP pipeline policy, so that the new values can be signed with shared key.
+1. If you use a customized HTTP client, do not make any changes to HTTP request in the client.
+
+If you're using SAS authentication,
+
+1. Check the values of query parameter `st` and `se`, which specify a time range the SAS token is valid. Make sure the token is not expired.
+   If it's a user delegation SAS, also check `ske` which indicates the expiry of user delegation key.
+1. Make sure the shared key used to generate the SAS token is not rotated.
+1. If the SAS token is created with a stored access policy, make sure the access policy is still valid.
+1. SAS token has its own scope, for example it may be scoped to a storage account, a container or a blob/file. Make sure you don't access a resource out of the SAS token's scope.
+1. Check the message in exception.
+   You could print the information in exception with code below.
+   ```C++
+   try
+   {
+     // storage function goes here
+   }
+   catch (Azure::Storage::StorageException& e)
+   {
+     if (e.StatusCode == Azure::Core::Http::HttpStatusCode::Forbidden)
+     {
+       std::cout << e.RequestId << std::endl;
+       std::cout << e.ClientRequestId << std::endl;
+       std::cout << e.ErrorCode << std::endl;
+       std::cout << e.Message << std::endl;
+       for (const auto& i : e.AdditionalInformation)
+       {
+         std::cout << i.first << ":" << i.second << std::endl;
+       }
+     }
+   }
+   ```
+   For example, a common error code is `AuthorizationPermissionMismatch`, which means the SAS token doesn't have permission to perform this operation (like writing to a blob with a SAS token that only permits read).
+
+You shouldn't write your own function to generate signature or sign the requests. It's not a trivial task and there are many edge cases to cover. Use Official tools or SDK instead.
+
+If you still cannot figure out the problem with above steps, you can open a GitHub issue with request ID or client request ID of the failed request.
