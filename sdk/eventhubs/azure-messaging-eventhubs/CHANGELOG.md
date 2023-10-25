@@ -4,11 +4,21 @@
 
 ### Features Added
 
+- Fully functional eventhubs Processor.
+- Allow `ProducerClient` and `ConsumerClient` to be created with a connection string without an EntityPath element.
+
 ### Breaking Changes
+
+- Removed the `LoadBalancer` type from the public API surface.
+- `ConsumerClient` and `ProducerClient` objects can no longer be moved or copied.
+- If the connection string provided to `ConsumerClient` or `ProducerClient` contains an EntityPath, then the `EntityPath` 
+parameter to the constructor must match the value provided in the connection string.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Several `ostream` insertion operators were added for eventhubs types.
 
 ## 1.0.0-beta.3 (2023-10-10)
 

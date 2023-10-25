@@ -4,9 +4,14 @@
 
 ### Features Added
 
+- Added TLS 1.3 support to WinHTTP transport.
+- Environment Log Level Listener now logs the ThreadID for the thread originating the trace.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Some versions of GCC no longer include stdint.h in cstdint.
 
 ### Other Changes
 
