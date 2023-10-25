@@ -379,7 +379,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {
             // If the message sender goes to a non-open state, it's an error.
           default:
-
           case _internal::MessageReceiverState::Idle:
           case _internal::MessageReceiverState::Closing:
           case _internal::MessageReceiverState::Error:
