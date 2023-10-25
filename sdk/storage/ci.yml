@@ -75,6 +75,8 @@ stages:
           Value: "rg-fake"
         - Name: TABLES_STORAGE_ACCOUNT_NAME
           Value: "account-name"
+        - Name: LOGGING__LOGLEVEL__DEFAULT
+          Value: "debug"
       CMakeTestOptions:
         - Name: Default
           Value: ''
