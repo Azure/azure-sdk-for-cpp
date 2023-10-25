@@ -304,7 +304,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             break;
         }
         break;
-
       case ManagementState::Idle:
       case ManagementState::Error:
         Log::Stream(Logger::Level::Error)
