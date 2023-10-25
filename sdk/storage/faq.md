@@ -1,5 +1,39 @@
 # Frequently-asked Questions, Common Mistakes and Best Practices
 
+API Usage
+
+[How to use list-operations? Why doesn't list-operations return all blobs in a container?](#how-to-use-list-operations-why-doesnt-list-operations-return-all-blobs-in-a-container)
+
+[Can I specify an API-version other than the default one?](#can-i-specify-an-api-version-other-than-the-default-one)
+
+[How can I set a custom UserAgent string?](#how-can-i-set-a-custom-useragent-string)
+
+[What encoding is used for input and output?](#what-encoding-is-used-for-input-and-output)
+
+[How can I check if a blob exists? Is there a function `Exists()` like in legacy SDK?](#how-can-i-check-if-a-blob-exists-is-there-a-function-exists-like-in-legacy-sdk)
+
+[What is the difference between `BlockBlobClient::Upload()` and `BlockBlobClient::UploadFrom()`? When should I use one vs the other?](#what-is-the-difference-between-blockblobclientupload-and-blockblobclientuploadfrom-when-should-i-use-one-vs-the-other)
+
+[How to efficiently upload large amount of small blobs?](#how-to-efficiently-upload-large-amount-of-small-blobs)
+
+[How to ensure data integrity with transactional checksum?](#how-to-ensure-data-integrity-with-transactional-checksum)
+
+
+Design and Concepts
+
+[Thread safety guarantees](#thread-safety-guarantees)
+
+[Http pipeline and policies](#http-pipeline-and-policies)
+
+[Will the SDK retry failed requests? What is the default retry logic? How can I customize retry behavior?](#will-the-sdk-retry-failed-requests-what-is-the-default-retry-logic-how-can-i-customize-retry-behavior)
+
+
+Troubleshooting
+
+[Why do I see 503 Server Busy errors? What should I do in this case?](#why-do-i-see-503-server-busy-errors-what-should-i-do-in-this-case)
+
+[How to troubleshoot 403 errors?](#how-to-troubleshoot-403-errors)
+
 ## How to use list-operations? Why doesn't list-operations return all blobs in a container?
 
 C++ SDK applied a different design for pageable operations from other languages.
@@ -123,6 +157,54 @@ In this case, it's more recommended to:
    ```
 1. Use lease for more complex scenarios that invole multiple operations on the same resource.
 
+## What is the difference between `BlockBlobClient::Upload()` and `BlockBlobClient::UploadFrom()`? When should I use one vs the other?
+
+`BlockBlobClient::Upload()` takes a stream as parameter and uploads the stream as a block blob with exact one HTTP request.
+The blob created with this method doesn't have any blocks, which means functions like `StageBlock()`, `CommitBlockList()` or `GetBlockList()` don't apply here.
+You cannot append blocks to such blobs (You'll have to overwrite it with a new one).
+You want to use this one if you need precise control over SDK behavior at HTTP level.
+
+`BlockBlobClient::UploadFrom` takes a memory buffer or file name as parameter, splits the data in the buffer or file into smaller chunks intelligently or according to some parameters if provided,
+then upload the chunks with multiple threads.
+This one suits in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to tansfer large blobs efficiently.
+
+## How to efficiently upload large amount of small blobs?
+
+Unfortunately this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
+You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer.
+Or you can use tools like [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy) or Data Movement Library.
+
+## How to ensure data integrity with transactional checksum?
+
+Generally speaking, TLS protocol includes checksum that's strong enough to detect accidental corruption or deliberate tampering.
+Another layer of checksum is usually not necessary if you're using HTTPS.
+
+If you really want it for whatever reason, for example, to detect corruptions before the data is written to the socket,
+you can leverage transactional checksum feature in the SDK.
+With this feature, you provide a pre-calculated MD5 or CRC64 checksum when calling an upload API,
+storage service will calculate checksum after it receives the data and compare with the one you provide,
+and fail the request if they don't match.
+Make sure you calculate the checksum early enough to cover the time when the corruption may happen.
+
+This functionality also works for download operations.
+Below is a code sample to use this feature.
+
+```C++
+// upload data with pre-calculated checksum
+Blobs::UploadBlockBlobOptions options;
+options.TransactionalContentHash = ContentHash();
+options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+options.TransactionalContentHash.Value().Value = crc64;  // CRC64 checksum of the data in Base64 encoding
+blobClient.Upload(stream, options);
+
+// download and verify checksum
+Blobs::DownloadBlobOptions options;
+options.RangeHashAlgorithm = HashAlgorithm::Crc64;
+auto response = blobClient.Download(options);
+auto crc64 = response.Value.TransactionalContentHash.Value();
+// Now you can verify checksum of the downloaded data
+```
+
 ## Thread safety guarantees
 
 All storage client APIs are thread-safe.
@@ -131,18 +213,6 @@ It's guaranteed to either return a successful response or throw an exception.
 
 However, this doesn't mean access to underlying storage service has no race condition.
 It is still possible that you'll get a 409 error if you read a file that's being written by antoher party. (For example, one thread reading an append blob while another thread appending data to it.)
-
-## Will the SDK retry failed requests? What is the default retry logic? How can I customize retry behavior?
-
-Requests faield due to network errors or HTTP status code 408, 500, 502, 503, 504 will be retried at most 3 times (4 attemps in total) using exponential backup with jitter.
-These parameters can be customized with `RetryOptions`. Below is an example.
-
-```C++
-BlobClientOptions options;
-options.Retry.RetryDelay = std::chrono::milliseconds(800);
-options.Retry.MaxRetryDelay = std::chrono::seconds(60);
-options.Retry.MaxRetries = 3;
-```
 
 ## Http pipeline and policies
 
@@ -215,52 +285,16 @@ options.PerOperationPolicies.push_back(std::make_unique<NewPolicy>());
 options.PerRetryPolicies.push_back(std::make_unique<NewPolicy>());
 ```
 
-## What is the difference between `BlockBlobClient::Upload()` and `BlockBlobClient::UploadFrom()`? When should I use one vs the other?
+## Will the SDK retry failed requests? What is the default retry logic? How can I customize retry behavior?
 
-`BlockBlobClient::Upload()` takes a stream as parameter and uploads the stream as a block blob with exact one HTTP request.
-The blob created with this method doesn't have any blocks, which means functions like `StageBlock()`, `CommitBlockList()` or `GetBlockList()` don't apply here.
-You cannot append blocks to such blobs (You'll have to overwrite it with a new one).
-You want to use this one if you need precise control over SDK behavior at HTTP level.
-
-`BlockBlobClient::UploadFrom` takes a memory buffer or file name as parameter, splits the data in the buffer or file into smaller chunks intelligently or according to some parameters if provided,
-then upload the chunks with multiple threads.
-This one suits in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to tansfer large blobs efficiently.
-
-## How to efficiently upload large amount of small blobs?
-
-Unfortunately this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
-You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer.
-Or you can use tools like [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy) or Data Movement Library.
-
-## How to ensure data integrity with transactional checksum?
-
-Generally speaking, TLS protocol includes checksum that's strong enough to detect accidental corruption or deliberate tampering.
-Another layer of checksum is usually not necessary if you're using HTTPS.
-
-If you really want it for whatever reason, for example, to detect corruptions before the data is written to the socket,
-you can leverage transactional checksum feature in the SDK.
-With this feature, you provide a pre-calculated MD5 or CRC64 checksum when calling an upload API,
-storage service will calculate checksum after it receives the data and compare with the one you provide,
-and fail the request if they don't match.
-Make sure you calculate the checksum early enough to cover the time when the corruption may happen.
-
-This functionality also works for download operations.
-Below is a code sample to use this feature.
+Requests faield due to network errors or HTTP status code 408, 500, 502, 503, 504 will be retried at most 3 times (4 attemps in total) using exponential backup with jitter.
+These parameters can be customized with `RetryOptions`. Below is an example.
 
 ```C++
-// upload data with pre-calculated checksum
-Blobs::UploadBlockBlobOptions options;
-options.TransactionalContentHash = ContentHash();
-options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
-options.TransactionalContentHash.Value().Value = crc64;  // CRC64 checksum of the data in Base64 encoding
-blobClient.Upload(stream, options);
-
-// download and verify checksum
-Blobs::DownloadBlobOptions options;
-options.RangeHashAlgorithm = HashAlgorithm::Crc64;
-auto response = blobClient.Download(options);
-auto crc64 = response.Value.TransactionalContentHash.Value();
-// Now you can verify checksum of the downloaded data
+BlobClientOptions options;
+options.Retry.RetryDelay = std::chrono::milliseconds(800);
+options.Retry.MaxRetryDelay = std::chrono::seconds(60);
+options.Retry.MaxRetries = 3;
 ```
 
 ## Why do I see 503 Server Busy errors? What should I do in this case?
