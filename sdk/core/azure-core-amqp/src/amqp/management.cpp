@@ -290,7 +290,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Open:
           case _internal::MessageSenderState::Opening:
           case _internal::MessageSenderState::Error:
-
             Log::Stream(Logger::Level::Error) << "Message Sender Changed State to " << newState
                                               << " while management client is closing";
             SetState(ManagementState::Closing);
