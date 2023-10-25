@@ -119,14 +119,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_message_id(returnValue.get(), properties.MessageId.Value()))
       {
-        throw std::runtime_error("Could not set message id"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set message id");
       }
     }
     if (properties.CorrelationId.HasValue())
     {
       if (properties_set_correlation_id(returnValue.get(), properties.CorrelationId.Value()))
       {
-        throw std::runtime_error("Could not set correlation id"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set correlation id");
       }
     }
 
@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           static_cast<uint32_t>(properties.UserId.Value().size())};
       if (properties_set_user_id(returnValue.get(), value))
       {
-        throw std::runtime_error("Could not set user id"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set user id");
       }
     }
 
@@ -145,7 +145,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_to(returnValue.get(), properties.To.Value()))
       {
-        throw std::runtime_error("Could not set to"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set to");
       }
     }
 
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_reply_to(returnValue.get(), properties.ReplyTo.Value()))
       {
-        throw std::runtime_error("Could not set reply to"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set reply to");
       }
     }
 
@@ -169,7 +169,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_content_type(returnValue.get(), properties.ContentType.Value().data()))
       {
-        throw std::runtime_error("Could not set content type"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set content type");
       }
     }
 
@@ -189,7 +189,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
       if (properties_set_absolute_expiry_time(returnValue.get(), timeStamp.count()))
       {
-        throw std::runtime_error("Could not set absolute expiry time"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set absolute expiry time");
       }
     }
 
@@ -200,7 +200,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
       if (properties_set_creation_time(returnValue.get(), timeStamp.count()))
       {
-        throw std::runtime_error("Could not set absolute expiry time"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set absolute expiry time");
       }
     }
 
@@ -208,7 +208,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_group_id(returnValue.get(), properties.GroupId.Value().data()))
       {
-        throw std::runtime_error("Could not set group id"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set group id");
       }
     }
 
@@ -216,7 +216,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_group_sequence(returnValue.get(), properties.GroupSequence.Value()))
       {
-        throw std::runtime_error("Could not set group sequence"); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set group sequence");
       }
     }
 

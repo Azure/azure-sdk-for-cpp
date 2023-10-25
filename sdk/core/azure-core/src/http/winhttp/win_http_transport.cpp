@@ -724,15 +724,24 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
 #endif
 
   // Enforce TLS version 1.2 or 1.3 (if available).
-#if defined(WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3)
-  auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2 | WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3;
-#else
   auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+#if defined(WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3)
+  tlsOption |= WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3;
 #endif
   if (!WinHttpSetOption(
           sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
-    GetErrorAndThrow("Error while enforcing TLS version for connection request.");
+#if defined(WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3)
+    // If TLS 1.3 is not available, try to set TLS 1.2 only.
+    tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+    if (!WinHttpSetOption(
+            sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
+    {
+#endif
+      GetErrorAndThrow("Error while enforcing TLS version for connection request.");
+#if defined(WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3)
+    }
+#endif
   }
 
   return sessionHandle;

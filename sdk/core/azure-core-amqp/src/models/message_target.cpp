@@ -44,22 +44,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
     if (m_target == nullptr)
     {
-      throw std::runtime_error("Could not create source."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not create source.");
     }
     if (target_set_address(m_target.get(), AmqpValue{address}))
     {
-      throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not set address.");
     }
   }
   MessageTarget::MessageTarget(char const* address) : m_target{target_create()}
   {
     if (m_target == nullptr)
     {
-      throw std::runtime_error("Could not create source."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not create source.");
     }
     if (target_set_address(m_target.get(), AmqpValue{address}))
     {
-      throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not set address.");
     }
   }
 
@@ -96,8 +96,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         case TerminusDurability::UnsettledState:
           durability = terminus_durability_unsettled_state;
           break;
-        default: // LCOV_EXCL_LINE
-          throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
+        default:
+          throw std::logic_error("Unknown terminus durability.");
       }
       if (target_set_durable(m_target.get(), durability))
       {
@@ -121,8 +121,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         case TerminusExpiryPolicy::Never:
           policy = terminus_expiry_policy_never;
           break;
-        default: // LCOV_EXCL_LINE
-          throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
+        default:
+          throw std::logic_error("Unknown terminus durability.");
       }
       if (target_set_expiry_policy(m_target.get(), policy))
       {
@@ -210,7 +210,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     terminus_expiry_policy value;
     if (target_get_expiry_policy(m_target.get(), &value))
     {
-      throw std::runtime_error("Could not get expiry policy from target."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not get expiry policy from target.");
     }
     if (std::strcmp(value, terminus_expiry_policy_connection_close) == 0)
     {
@@ -228,8 +228,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       return TerminusExpiryPolicy::SessionEnd;
     }
-    throw std::logic_error(
-        std::string("Unknown terminus expiry policy: ") + value); // LCOV_EXCL_LINE
+    throw std::logic_error(std::string("Unknown terminus expiry policy: ") + value);
   }
 
   std::chrono::system_clock::time_point MessageTarget::GetTimeout() const

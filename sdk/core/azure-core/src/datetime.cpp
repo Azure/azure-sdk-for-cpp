@@ -299,7 +299,7 @@ int8_t SubstringEqualsAny(
   return -1;
 }
 
-void ThrowParseError(char const* description)
+[[noreturn]] void ThrowParseError(char const* description)
 {
   throw std::invalid_argument(std::string("Error parsing DateTime: ") + description + ".");
 }
@@ -343,10 +343,6 @@ T ParseNumber(
   }
 
   ThrowParseError(description);
-
-  // ThrowParseError() will always throw, but there's no way to tell that to compiler, so a return
-  // statement is required. It is not possible to cover the return line with tests.
-  return T(); // LCOV_EXCL_LINE
 }
 
 template <typename T>
