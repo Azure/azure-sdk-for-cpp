@@ -460,6 +460,24 @@
       }
     },
     {
+      "name": "linux-basic-clang-13",
+      "displayName": "Linux clang-13",
+      "description": "Using compilers: C = /usr/bin/clang-13, CXX = /usr/bin/clang++-13",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang-13",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-13"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "linux-basic-g++",
       "displayName": "Linux G++",
       "description": "Using compilers: C = /usr/bin/cc, CXX = /usr/bin/c++",
