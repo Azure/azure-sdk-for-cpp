@@ -11,7 +11,7 @@
 
 ### Bugs Fixed
 
-- Some versions of GCC no longer include stdint.h in cstdint.
+- [[#5007]](https://github.com/Azure/azure-sdk-for-cpp/issues/5007) Some versions of GCC no longer include stdint.h in cstdint.
 
 ### Other Changes
 
