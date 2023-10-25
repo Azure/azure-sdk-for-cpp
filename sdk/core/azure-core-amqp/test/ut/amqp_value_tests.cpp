@@ -445,6 +445,12 @@ TEST_F(TestValues, TestCompositeValue)
     EXPECT_EQ(25.0f, static_cast<float>(val.at(1)));
   }
 
+  {
+    AmqpComposite composite1{123, {"StringValue"}};
+    AmqpComposite composite2{456, {"StringValue"}};
+    EXPECT_NE(composite1, composite2);
+  }
+
   // Put some things in the map.
   {
     AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
@@ -494,6 +500,12 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(937, static_cast<uint64_t>(described2.GetDescriptor()));
     EXPECT_EQ(AmqpValue(described2.GetValue()), AmqpValue(value.GetValue()));
     EXPECT_EQ(AmqpValue(described2.GetDescriptor()), AmqpValue(value.GetDescriptor()));
+  }
+
+  {
+    AmqpDescribed described1{123, {"StringValue"}};
+    AmqpDescribed described2{456, {"StringValue"}};
+    EXPECT_NE(described1, described2);
   }
 }
 

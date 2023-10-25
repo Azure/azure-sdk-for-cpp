@@ -43,6 +43,14 @@ TEST_F(TestAsyncQueue, CanceledContext)
     item = queue.WaitForResult(context);
     EXPECT_FALSE(item);
   }
+  {
+    AsyncOperationQueue<int> queue;
+    std::unique_ptr<std::tuple<int>> item;
+    Azure::Core::Context context;
+    context.Cancel();
+    item = queue.WaitForPolledResult(context);
+    EXPECT_FALSE(item);
+  }
 }
 
 TEST_F(TestAsyncQueue, TryReadFromQueue)

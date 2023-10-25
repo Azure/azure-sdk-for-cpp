@@ -1,0 +1,32 @@
+Source: azure-uamqp-c
+Priority: optional
+Maintainer: AzureIoT User <aziotsdklinux@outlook.com>
+Build-Depends: debhelper (>= 9), cmake (>= 2.8), libssl-dev, libcurl4-openssl-dev, curl, azure-c-shared-util-dev
+Standards-Version: 3.9.6
+Section: libs
+Homepage: https://github.com/Azure/azure-uamqp-c.git
+#Vcs-Git: git://anonscm.debian.org/collab-maint/azure-uamqp-c.git
+#Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/azure-uamqp-c.git;a=summary
+
+Package: azure-uamqp-c-dev
+Section: libdevel
+Architecture: any
+Depends: azure-uamqp-c-lib (= ${binary:Version}), ${misc:Depends}, azure-c-shared-util-dev
+Description: uAMQP is a general purpose C library for AMQP.
+ The goal is to be as compliant with the standard as possible while 
+ optimizing for low RAM footprint and also being portable.  It is 
+ currently a client side implementation only. Although much of the 
+ standardis symmetrical, there are parts that are asymmetrical,
+ like the SASL handshake. Currently uAMQP does not provide the
+ server side for these asymmetrical protions of the ISO.
+
+Package: azure-uamqp-c-lib
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, curl, azure-c-shared-util-dev
+Description: uAMQP is a general purpose C library for AMQP.
+ The goal is to be as compliant with the standard as possible while
+ optimizing for low RAM footprint and also being portable.  It is 
+ currently a client side implementation only. Although much of the
+ standardis symmetrical, there are parts that are asymmetrical,
+ like the SASL handshake. Currently uAMQP does not provide the server
+ side for these asymmetrical protions of the ISO.

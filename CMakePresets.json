@@ -425,6 +425,23 @@
       }
     },
     {
+      "name": "linux-basic-gcc11",
+      "displayName": "Linux GCC 11",
+      "description": "Using compilers: C = /usr/bin/gcc-11, CXX = /usr/bin/g++-11",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/gcc-11",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++-11"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "linux-basic-clang-11",
       "displayName": "Linux clang-11",
       "description": "Using compilers: C = /usr/bin/clang-11, CXX = /usr/bin/clang++-11",
@@ -514,6 +531,16 @@
       "displayName": "Linux GCC 9 Debug+Tests"
     },
     {
+      "name": "linux-gcc11-debug",
+      "displayName": "Linux GCC 11 Debug",
+      "inherits": [ "linux-basic-gcc11", "debug-build" ]
+    },
+    {
+      "name": "linux-gcc11-debug-tests",
+      "inherits": [ "linux-basic-gcc11", "debug-build", "enable-tests" ],
+      "displayName": "Linux GCC 11 Debug+Tests"
+    },
+    {
       "name": "linux-clang-11-debug",
       "displayName": "Linux clang 11 Debug",
       "inherits": [ "linux-basic-clang-11", "debug-build" ]
@@ -526,7 +553,7 @@
     {
       "name": "linux-clang-13-debug",
       "inherits": [ "linux-basic-clang-13", "debug-build" ],
-      "displayName": "Linux clang 13 Debug+Tests"
+      "displayName": "Linux clang 13 Debug"
     },
     {
       "name": "linux-clang-13-debug-tests",

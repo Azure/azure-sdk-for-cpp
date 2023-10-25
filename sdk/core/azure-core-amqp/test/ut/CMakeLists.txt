@@ -49,6 +49,8 @@ if (MSVC)
 endif()
 
 target_include_directories(azure-core-amqp-tests PRIVATE Azure::azure-core-amqp)
+# Disable the localtime is unsafe warning.
+target_compile_definitions(azure-core-amqp-tests PRIVATE _CRT_SECURE_NO_WARNINGS)
 
 # Link test executable against gtest & gtest_main
 target_link_libraries(azure-core-amqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp)

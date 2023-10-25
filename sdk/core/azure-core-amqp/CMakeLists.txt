@@ -30,10 +30,30 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-find_package(uamqp CONFIG REQUIRED)
+set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
+if (VENDOR_UAMQP)
+  message(STATUS "Using vendored uamqp")
+  set(use_installed_dependencies ON CACHE BOOL "Use vcpkg dependencies." FORCE)
+  set(skip_samples ON CACHE BOOL "Skip building samples" FORCE)
+
+  add_subdirectory(vendor/azure-uamqp-c SYSTEM)
+
+  # uAMQP specific compiler settings. Primarily used to disable warnings in the uAMQP codebase.
+  if (MSVC)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(uamqp PUBLIC -Wno-extra-semi -Wno-gnu-zero-variadic-macro-arguments -Wno-cast-qual -Wno-format-pedantic)
+  else()
+    target_compile_options(uamqp PUBLIC -Wno-pedantic -Wno-implicit-fallthrough -Wno-strict-aliasing)
+  endif()
+else()
+  message(STATUS "Using vcpkg uamqp")
+  find_package(uamqp CONFIG REQUIRED)
+endif()
+
 find_package(umock_c CONFIG REQUIRED)
 find_package(azure_macro_utils_c CONFIG REQUIRED)
 find_package(azure_c_shared_utility CONFIG REQUIRED)
+
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/cancellable.hpp
@@ -88,12 +108,18 @@ set(AZURE_CORE_AMQP_SOURCE
 
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
 
+if (VENDOR_UAMQP)
+target_compile_definitions(azure-core-amqp PRIVATE _CRT_SECURE_NO_WARNINGS)
+target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
+endif()
+
 target_include_directories(
   azure-core-amqp
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
 )
+
 		
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
@@ -104,22 +130,27 @@ create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tes
 
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
-target_link_libraries(azure-core-amqp PRIVATE uamqp umock_c azure_macro_utils_c aziotsharedutil PUBLIC Azure::azure-core)
+target_link_libraries(azure-core-amqp PRIVATE
+    uamqp
+    umock_c
+    azure_macro_utils_c
+    aziotsharedutil
+    PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
 
-  az_vcpkg_export(
-    azure-core-amqp
-    CORE_AMQP
-    azure/core/amqp/dll_import_export.hpp
-  )
+az_vcpkg_export(
+  azure-core-amqp
+  CORE_AMQP
+  azure/core/amqp/dll_import_export.hpp
+)
 
-  az_rtti_setup(
-    azure-core-amqp
-    CORE_AMQP
-    azure/core/amqp/rtti.hpp
-  )
+az_rtti_setup(
+  azure-core-amqp
+  CORE_AMQP
+  azure/core/amqp/rtti.hpp
+)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
