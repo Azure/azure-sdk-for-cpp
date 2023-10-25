@@ -178,9 +178,7 @@ void PrintCredentialCreationLogMessage(
 
   auto const envVarsToParamsSize = envVarsToParams.size();
 
-  // LCOV_EXCL_START
   AZURE_ASSERT(envVarsToParamsSize > 1);
-  // LCOV_EXCL_STOP
 
   constexpr auto Tick = "'";
   constexpr auto Comma = ", ";

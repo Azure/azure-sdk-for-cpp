@@ -64,21 +64,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto rv{m_management->Open(context)};
       switch (rv)
       {
-        case ManagementOpenStatus::Invalid: // LCOV_EXCL_LINE
-          return CbsOpenResult::Invalid; // LCOV_EXCL_LINE
+        case ManagementOpenStatus::Invalid:
+          return CbsOpenResult::Invalid;
         case ManagementOpenStatus::Ok:
           return CbsOpenResult::Ok;
         case ManagementOpenStatus::Error:
           return CbsOpenResult::Error;
-        case ManagementOpenStatus::Cancelled: // LCOV_EXCL_LINE
-          return CbsOpenResult::Cancelled; // LCOV_EXCL_LINE
+        case ManagementOpenStatus::Cancelled:
+          return CbsOpenResult::Cancelled;
         default:
           throw std::runtime_error("Unknown return value from Management::Open()");
       }
     }
     else
     {
-      return CbsOpenResult::Error; // LCOV_EXCL_LINE
+      return CbsOpenResult::Error;
     }
   }
 
@@ -113,23 +113,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       CbsOperationResult cbsResult;
       switch (result.Status)
       {
-        case ManagementOperationStatus::Invalid: // LCOV_EXCL_LINE
-          cbsResult = CbsOperationResult::Invalid; // LCOV_EXCL_LINE
+        case ManagementOperationStatus::Invalid:
+          cbsResult = CbsOperationResult::Invalid;
           break;
         case ManagementOperationStatus::Ok:
           cbsResult = CbsOperationResult::Ok;
           break;
-        case ManagementOperationStatus::Error: // LCOV_EXCL_LINE
-          cbsResult = CbsOperationResult::Error; // LCOV_EXCL_LINE
+        case ManagementOperationStatus::Error:
+          cbsResult = CbsOperationResult::Error;
           break;
-        case ManagementOperationStatus::FailedBadStatus: // LCOV_EXCL_LINE
-          cbsResult = CbsOperationResult::Failed; // LCOV_EXCL_LINE
+        case ManagementOperationStatus::FailedBadStatus:
+          cbsResult = CbsOperationResult::Failed;
           break;
-        case ManagementOperationStatus::InstanceClosed: // LCOV_EXCL_LINE
-          cbsResult = CbsOperationResult::InstanceClosed; // LCOV_EXCL_LINE
+        case ManagementOperationStatus::InstanceClosed:
+          cbsResult = CbsOperationResult::InstanceClosed;
           break;
         default:
-          throw std::runtime_error("Unknown management operation status."); // LCOV_EXCL_LINE
+          throw std::runtime_error("Unknown management operation status.");
       }
       Log::Stream(Logger::Level::Error)
           << "CBS PutToken result: " << cbsResult << " status code: " << result.StatusCode

@@ -27,7 +27,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
 
   // IMDS ManagedIdentity, which comes last in the list, will never return nullptr from Create().
   // For that reason, it is not possible to cover that execution branch in tests.
-  for (auto create : managedIdentitySourceCreate) // LCOV_EXCL_LINE
+  for (auto create : managedIdentitySourceCreate)
   {
     if (auto source = create(credentialName, clientId, options))
     {
@@ -35,10 +35,8 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
     }
   }
 
-  // LCOV_EXCL_START
   throw AuthenticationException(
       credentialName + " authentication unavailable. No Managed Identity endpoint found.");
-  // LCOV_EXCL_STOP
 }
 } // namespace
 
