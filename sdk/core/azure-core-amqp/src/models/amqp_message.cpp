@@ -296,7 +296,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    if (message.DeliveryTag)
+    if (!message.DeliveryTag.IsNull())
     {
       if (message_set_delivery_tag(rv.get(), static_cast<UniqueAmqpValueHandle>(message.DeliveryTag).get()))
       {
@@ -767,6 +767,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         os << "{" << val.first << ", " << val.second << "}";
       }
+    }
+    if (!message.DeliveryTag.IsNull())
+    {
+      os << ", deliveryTag=" << message.DeliveryTag;
     }
     if (!message.Footer.empty())
     {
