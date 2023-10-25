@@ -70,12 +70,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           return CbsOpenResult::Ok;
         case ManagementOpenStatus::Error:
           return CbsOpenResult::Error;
-          // LCOV_EXCL_START
         case ManagementOpenStatus::Cancelled:
           return CbsOpenResult::Cancelled;
         default:
           throw std::runtime_error("Unknown return value from Management::Open()");
-          // LCOV_EXCL_STOP
       }
     }
     else
@@ -117,19 +115,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         case ManagementOperationStatus::Invalid:
           cbsResult = CbsOperationResult::Invalid;
-          break; // LCOV_EXCL_LINE
+          break;
         case ManagementOperationStatus::Ok:
           cbsResult = CbsOperationResult::Ok;
           break;
         case ManagementOperationStatus::Error:
           cbsResult = CbsOperationResult::Error;
-          break; // LCOV_EXCL_LINE
+          break;
         case ManagementOperationStatus::FailedBadStatus:
           cbsResult = CbsOperationResult::Failed;
-          break; // LCOV_EXCL_LINE
+          break;
         case ManagementOperationStatus::InstanceClosed:
           cbsResult = CbsOperationResult::InstanceClosed;
-          break; // LCOV_EXCL_LINE
+          break;
         default:
           throw std::runtime_error("Unknown management operation status.");
       }
@@ -188,11 +186,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return os;
   }
 
-  // LCOV_EXCL_START
   void ClaimsBasedSecurityImpl::OnError(Models::_internal::AmqpError const& error)
   {
     Log::Stream(Logger::Level::Error) << "AMQP Error processing ClaimsBasedSecurity: " << error;
   }
-  // LCOV_EXCL_STOP
 
 }}}} // namespace Azure::Core::Amqp::_detail
