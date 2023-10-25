@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-// cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE
+// cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE lpsz REFERER
 
 #include "azure/core/base64.hpp"
 #include "azure/core/diagnostics/logger.hpp"
@@ -723,12 +723,25 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
       sizeof(tls_false_start));
 #endif
 
-  // Enforce TLS version 1.2
+  // Enforce TLS version 1.2 or 1.3 (if available).
   auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+#if defined(WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3)
+  tlsOption |= WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3;
+#endif
   if (!WinHttpSetOption(
           sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
-    GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
+#if defined(WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3)
+    // If TLS 1.3 is not available, try to set TLS 1.2 only.
+    tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+    if (!WinHttpSetOption(
+            sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
+    {
+#endif
+      GetErrorAndThrow("Error while enforcing TLS version for connection request.");
+#if defined(WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3)
+    }
+#endif
   }
 
   return sessionHandle;

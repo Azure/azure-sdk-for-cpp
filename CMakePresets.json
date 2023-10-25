@@ -18,7 +18,9 @@
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "hostOS": [ "Windows" ]
+          "hostOS": [
+            "Windows"
+          ]
         }
       },
       "condition": {
@@ -39,7 +41,9 @@
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "hostOS": [ "Windows" ]
+          "hostOS": [
+            "Windows"
+          ]
         }
       },
       "condition": {
@@ -105,7 +109,6 @@
         "strategy": "external"
       }
     },
-
     {
       "name": "x64",
       "displayName": "Windows x64",
@@ -211,27 +214,29 @@
       "description": "Enable Address Sanitizer (Hidden). Note: ASAN can be extremely disruptive, when enabling ASAN, make sure you run your application under the debugger.",
       "hidden": true,
       "environment": {
-        "CFLAGS": "/fsanitize=address",
-        "CXXFLAGS": "/fsanitize=address"
-      },
-      "cacheVariables": { "DISABLE_AZURE_CORE_OPENTELEMETRY": true },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
+        "CXXFLAGS": "-fsanitize=address",
+        "CFLAGS": "-fsanitize=address"
       }
     },
     {
       "name": "x86-static-debug-tests",
       "displayName": "x86 Debug With Tests, static",
       "description": "Windows x86 Debug build with Tests configured",
-      "inherits": [ "x86-static", "debug-build", "enable-tests" ]
+      "inherits": [
+        "x86-static",
+        "debug-build",
+        "enable-tests"
+      ]
     },
     {
       "name": "x86-static-release-tests",
       "displayName": "x86 Release With Tests, static, libcurl",
       "description": "Windows x86 Release build with Tests configured",
-      "inherits": [ "x86-static", "release-build", "enable-tests" ],
+      "inherits": [
+        "x86-static",
+        "release-build",
+        "enable-tests"
+      ],
       "cacheVariables": {
         "RUN_LONG_UNIT_TESTS": true
       }
@@ -240,38 +245,63 @@
       "name": "x64-debug-tests",
       "displayName": "x64 Debug With Tests",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64", "debug-build", "enable-tests" ]
+      "inherits": [
+        "x64",
+        "debug-build",
+        "enable-tests"
+      ]
     },
     {
       "name": "x86-msvc-static-debug-tests",
       "displayName": "x86 MSVC Debug With Tests, static",
       "description": "Windows x86 MSVC Debug build with Tests configured",
-      "inherits": [ "x86-msvc-static", "debug-build", "enable-tests" ]
+      "inherits": [
+        "x86-msvc-static",
+        "debug-build",
+        "enable-tests"
+      ]
     },
     {
       "name": "x64-static-debug-tests",
       "displayName": "x64 Debug With Tests, static",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64-static", "debug-build", "enable-tests" ]
-
+      "inherits": [
+        "x64-static",
+        "debug-build",
+        "enable-tests"
+      ]
     },
     {
       "name": "x64-static-debug-tests-curl",
       "displayName": "x64 Debug With Tests, static, libcurl",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64-static", "debug-build", "enable-tests", "curl-transport" ]
+      "inherits": [
+        "x64-static",
+        "debug-build",
+        "enable-tests",
+        "curl-transport"
+      ]
     },
     {
       "name": "x64-static-debug-tests-winhttp",
       "displayName": "x64 Debug With Tests, static, winhttp",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64-static", "debug-build", "enable-tests", "winhttp-transport" ]
+      "inherits": [
+        "x64-static",
+        "debug-build",
+        "enable-tests",
+        "winhttp-transport"
+      ]
     },
     {
       "name": "x64-static-debug-tests-OpenSSL111",
       "displayName": "x64 Debug With Tests, static, OpenSSL 1.1.1, libcurl",
       "description": "Windows x64 Debug build with Tests configured on OpenSSL 1.1.1",
-      "inherits": [ "x64-static", "debug-build", "enable-tests" ],
+      "inherits": [
+        "x64-static",
+        "debug-build",
+        "enable-tests"
+      ],
       "cacheVariables": {
         "VCPKG_OVERLAY_PORTS": "${sourceDir}\\vcpkg-custom-ports"
       }
@@ -290,7 +320,13 @@
     {
       "name": "x86-release-tests",
       "displayName": "x86 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": [ "x86", "release-build", "enable-tests", "curl-transport", "winhttp-transport" ],
+      "inherits": [
+        "x86",
+        "release-build",
+        "enable-tests",
+        "curl-transport",
+        "winhttp-transport"
+      ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CUSTOM": true
       }
@@ -298,7 +334,13 @@
     {
       "name": "x64-release-tests",
       "displayName": "x64 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": [ "x64", "release-build", "enable-tests", "curl-transport", "winhttp-transport" ],
+      "inherits": [
+        "x64",
+        "release-build",
+        "enable-tests",
+        "curl-transport",
+        "winhttp-transport"
+      ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CUSTOM": true
       }
@@ -319,22 +361,50 @@
     {
       "name": "x86-msvc-static-debug-perftests",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
-      "inherits": [ "x86-msvc-static", "debug-build", "enable-tests", "enable-perf", "enable-samples", "curl-transport", "winhttp-transport" ]
+      "inherits": [
+        "x86-msvc-static",
+        "debug-build",
+        "enable-tests",
+        "enable-perf",
+        "enable-samples",
+        "curl-transport",
+        "winhttp-transport"
+      ]
     },
     {
       "name": "x64-msvc-static-debug-perftests",
       "displayName": "x64 MSVC Debug static With Perf Tests and samples",
-      "inherits": [ "x64-msvc-static", "debug-build", "enable-tests", "enable-perf", "enable-samples", "curl-transport", "winhttp-transport" ]
+      "inherits": [
+        "x64-msvc-static",
+        "debug-build",
+        "enable-tests",
+        "enable-perf",
+        "enable-samples",
+        "curl-transport",
+        "winhttp-transport"
+      ]
     },
     {
       "name": "x64-msvc-static-release-perftests",
       "displayName": "x64 MSVC Release static With Perf Tests and samples",
-      "inherits": [ "x64-msvc-static", "release-build", "enable-tests", "enable-perf", "enable-samples", "curl-transport", "winhttp-transport" ]
+      "inherits": [
+        "x64-msvc-static",
+        "release-build",
+        "enable-tests",
+        "enable-perf",
+        "enable-samples",
+        "curl-transport",
+        "winhttp-transport"
+      ]
     },
     {
       "name": "x64-static-release-perftests",
       "displayName": "x64 Release With Perf Tests, static",
-      "inherits": [ "x64-static", "release-build", "enable-perf" ]
+      "inherits": [
+        "x64-static",
+        "release-build",
+        "enable-perf"
+      ]
     },
     {
       "name": "linux-basic-gcc9",
@@ -342,10 +412,28 @@
       "description": "Using compilers: C = /usr/bin/gcc-9, CXX = /usr/bin/g++-9",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "generator": "Ninja",
+      "hidden": true,
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "CMAKE_C_COMPILER": "/usr/bin/gcc-9",
         "CMAKE_CXX_COMPILER": "/usr/bin/g++-9"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-basic-gcc11",
+      "displayName": "Linux GCC 11",
+      "description": "Using compilers: C = /usr/bin/gcc-11, CXX = /usr/bin/g++-11",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/gcc-11",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++-11"
       },
       "condition": {
         "type": "equals",
@@ -359,6 +447,7 @@
       "description": "Using compilers: C = /usr/bin/clang-11, CXX = /usr/bin/clang++-11",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "generator": "Ninja",
+      "hidden": true,
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "CMAKE_C_COMPILER": "/usr/bin/clang-11",
@@ -376,6 +465,7 @@
       "description": "Using compilers: C = /usr/bin/cc, CXX = /usr/bin/c++",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "generator": "Ninja",
+      "hidden": true,
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "CMAKE_C_COMPILER": "/usr/bin/cc",
@@ -388,14 +478,49 @@
       }
     },
     {
+      "name": "linux-basic-g++-11",
+      "displayName": "Linux G++ 11",
+      "description": "Using compilers: C = /usr/bin/gcc-11, CXX = /usr/bin/g++-11",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/gcc-11",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++-11"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "linux-gcc9-debug",
       "displayName": "Linux GCC 9 Debug",
-      "inherits": [ "linux-basic-gcc9", "debug-build" ]
+      "inherits": [
+        "linux-basic-gcc9",
+        "debug-build"
+      ]
     },
     {
       "name": "linux-gcc9-debug-tests",
-      "inherits": [ "linux-basic-gcc9", "debug-build", "enable-tests" ],
+      "inherits": [
+        "linux-basic-gcc9",
+        "debug-build",
+        "enable-tests"
+      ],
       "displayName": "Linux GCC 9 Debug+Tests"
+    },
+    {
+      "name": "linux-gcc11-debug",
+      "displayName": "Linux GCC 11 Debug",
+      "inherits": [ "linux-basic-gcc11", "debug-build" ]
+    },
+    {
+      "name": "linux-gcc11-debug-tests",
+      "inherits": [ "linux-basic-gcc11", "debug-build", "enable-tests" ],
+      "displayName": "Linux GCC 11 Debug+Tests"
     },
     {
       "name": "linux-clang-11-debug",
@@ -407,20 +532,80 @@
       "displayName": "Linux clang 11 Debug+tests",
       "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ]
     },
-   
+    {
+      "name": "linux-clang-13-debug",
+      "inherits": [ "linux-basic-clang-13", "debug-build" ],
+      "displayName": "Linux clang 13 Debug"
+    },
+    {
+      "name": "linux-clang-13-debug-tests",
+      "inherits": [
+        "linux-basic-clang-13",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux clang 13 Debug+Tests"
+    },
     {
       "name": "linux-g++-debug",
       "displayName": "Linux c++ Debug",
-      "inherits": [ "linux-basic-g++", "debug-build" ]
+      "inherits": [
+        "linux-basic-g++",
+        "debug-build"
+      ]
     },
     {
       "name": "linux-g++-debug-tests",
-      "inherits": [ "linux-basic-g++", "debug-build", "enable-tests" ],
-      "displayName": "Linux c++ Debug+Tests"
+      "inherits": [
+        "linux-basic-g++",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux g++, Debug+Tests"
+    },
+    {
+      "name": "g++-debug-asan-tests",
+      "inherits": [
+        "linux-g++-debug-tests",
+        "enable-address-sanitizer"
+      ],
+      "displayName": "Linux g++, ASAN+Debug+Tests"
     },
     {
       "name": "linux-g++-debug-tests-samples",
-      "inherits": [ "linux-basic-g++", "debug-build", "enable-tests", "enable-samples" ],
+      "inherits": [
+        "linux-basic-g++",
+        "debug-build",
+        "enable-tests",
+        "enable-samples"
+      ],
+      "displayName": "Linux c++ Debug+Tests, samples"
+    },
+    {
+      "name": "linux-g++-11-debug",
+      "displayName": "Linux g++-11 Debug",
+      "inherits": [
+        "linux-basic-g++-11",
+        "debug-build"
+      ]
+    },
+    {
+      "name": "linux-g++-11-debug-tests",
+      "inherits": [
+        "linux-basic-g++-11",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux g++-11 Debug+Tests"
+    },
+    {
+      "name": "linux-g++-11-debug-tests-samples",
+      "inherits": [
+        "linux-basic-g++-11",
+        "debug-build",
+        "enable-tests",
+        "enable-samples"
+      ],
       "displayName": "Linux c++ Debug+Tests, samples"
     },
     {

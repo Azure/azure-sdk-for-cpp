@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (header_set_ttl(rv.get(), static_cast<milliseconds>(header.TimeToLive.Value().count())))
       {
-        throw std::runtime_error("Could not set header TTL."); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not set header TTL.");
       }
     }
 

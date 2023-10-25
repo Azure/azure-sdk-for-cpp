@@ -211,7 +211,7 @@ public:
       raw_x509 = PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr);
       if (raw_x509 == nullptr)
       {
-        throw ::_detail::OpenSSLException("PEM_read_bio_X509"); // LCOV_EXCL_LINE
+        throw ::_detail::OpenSSLException("PEM_read_bio_X509");
       }
       ::_detail::openssl_unique_ptr<X509> x509(raw_x509);
       raw_x509 = nullptr;

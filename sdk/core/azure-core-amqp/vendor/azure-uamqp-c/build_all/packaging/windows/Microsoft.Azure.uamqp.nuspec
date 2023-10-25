@@ -1,0 +1,43 @@
+<?xml version="1.0"?><package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>Microsoft.Azure.uamqp</id>
+        <version>1.2.4</version>
+        <title>Microsoft Azure uAMQP</title>
+        <authors>Microsoft Corp</authors>
+        <owners>Azure-IoT</owners>
+        <licenseUrl>https://github.com/Azure/azure-uamqp-c/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/Azure/azure-uamqp-c</projectUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>Microsoft Azure uAMQP library</description>
+        <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</iconUrl>
+        <summary>This nuget package can be used for developing amqp applications and libraries</summary>
+        <releaseNotes>Updated reference to shared utility nuget</releaseNotes>
+        <copyright>Copyright 2016</copyright>
+        <tags>Microsoft Azure C Native x86 x64 arm native uamqp package</tags>
+        <dependencies>
+            <dependency id="Microsoft.Azure.C.SharedUtility" version="1.1.4"/>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="Microsoft.Azure.uamqp_thirdpartynotice.txt" target="thirdpartynotice.txt"/>
+
+        <!-- these are files for x86 plaform -->
+        <file src="..\..\..\cmake\azure_amqp_output\win32\debug\uamqp.lib" target="build\native\Win32\Debug"/>
+        <file src="..\..\..\cmake\azure_amqp_output\win32\debug\uamqp.pdb" target="build\native\Win32\Debug"/>
+        <file src="..\..\..\cmake\azure_amqp_output\win32\release\uamqp.lib" target="build\native\Win32\Release"/>
+
+        <!-- these are files for x64 plaform -->
+        <file src="..\..\..\cmake\azure_amqp_output\x64\debug\uamqp.lib" target="build\native\x64\Debug"/>
+        <file src="..\..\..\cmake\azure_amqp_output\x64\debug\uamqp.pdb" target="build\native\x64\Debug"/>
+        <file src="..\..\..\cmake\azure_amqp_output\x64\release\uamqp.lib" target="build\native\x64\Release"/>
+
+        <!-- these are files for x64 plaform -->
+        <file src="..\..\..\cmake\azure_amqp_output\arm\debug\uamqp.lib" target="build\native\arm\Debug"/>
+        <file src="..\..\..\cmake\azure_amqp_output\arm\debug\uamqp.pdb" target="build\native\arm\Debug"/>
+        <file src="..\..\..\cmake\azure_amqp_output\arm\release\uamqp.lib" target="build\native\arm\Release"/>
+		
+        <file src="Microsoft.Azure.uamqp.targets" target="build\native"/>
+
+        <file src="..\..\..\inc\azure_uamqp_c\*.h" target="build\native\include\azure_uamqp_c"/>
+    </files>
+</package>

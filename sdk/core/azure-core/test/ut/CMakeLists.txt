@@ -46,6 +46,7 @@ endif()
 
 add_executable (
   azure-core-test
+    assert_test.cpp
     authorization_challenge_parser_test.cpp
     azure_core_test.cpp
     base64_test.cpp
@@ -94,7 +95,7 @@ add_executable (
     transport_policy_options.cpp
     url_test.cpp
     uuid_test.cpp
-  )
+)
 
 if (MSVC)
   # Disable warnings:

@@ -37,9 +37,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
     for (auto const& marshalledMessage : m_marshalledMessages)
     {
-      std::stringstream ss;
-      _detail::EventHubsUtilities::LogRawBuffer(ss, marshalledMessage);
-      Log::Stream(Logger::Level::Informational) << "Add marshalled AMQP message:" << ss.str();
       Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
       messageList.push_back(data);
     }
@@ -64,7 +61,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
     }
 
-    Log::Stream(Logger::Level::Informational) << "Insert AMQP message: " << message;
     auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);
 
     if (m_marshalledMessages.size() == 0)

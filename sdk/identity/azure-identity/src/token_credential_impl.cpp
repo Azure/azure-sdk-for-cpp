@@ -70,7 +70,7 @@ std::string TokenCredentialImpl::FormatScopes(
     auto scopesIter = scopes.begin();
     auto const scopesEnd = scopes.end();
 
-    if (scopesIter != scopesEnd) // LCOV_EXCL_LINE
+    if (scopesIter != scopesEnd)
     {
       auto const scope = *scopesIter;
       scopesStr += OptionalUrlEncode(scope, urlEncode);
@@ -426,7 +426,7 @@ std::string PrintSanitizedJsonObject(json const& jsonObject, bool printString, i
     }
   }
 
-  return "?"; // LCOV_EXCL_LINE
+  return "?";
 }
 
 std::string TokenAsDiagnosticString(

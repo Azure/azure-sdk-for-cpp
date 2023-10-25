@@ -46,7 +46,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     raw_x509 = PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr);
     if (raw_x509 == nullptr)
     {
-      throw OpenSSLException("PEM_read_bio_X509"); // LCOV_EXCL_LINE
+      throw OpenSSLException("PEM_read_bio_X509");
     }
     openssl_x509 x509(raw_x509);
     raw_x509 = nullptr;
@@ -58,7 +58,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
     if (PEM_write_bio_X509(bio.get(), m_certificate.get()) != 1)
     {
-      throw OpenSSLException("PEM_write_bio_X509"); // LCOV_EXCL_LINE
+      throw OpenSSLException("PEM_write_bio_X509");
     }
 
     // Now extract the data from the BIO and return it as a string.
@@ -85,11 +85,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     // Serialize the certificate as a Base64 encoded DER encoded blob into the bio.
     if (i2d_X509_bio(base64bio.get(), m_certificate.get()) != 1)
     {
-      throw OpenSSLException("i2d_X509_bio"); // LCOV_EXCL_LINE
+      throw OpenSSLException("i2d_X509_bio");
     }
     if (BIO_flush(base64bio.get()) != 1)
     {
-      throw OpenSSLException("BIO_flush"); // LCOV_EXCL_LINE
+      throw OpenSSLException("BIO_flush");
     }
 
     // Now that we've written to the underlying bio, pop it back
@@ -204,7 +204,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
               0)
           != 1)
       {
-        throw OpenSSLException("X509_NAME_add_entry_by_NID"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_NAME_add_entry_by_NID");
       }
     }
     return returnValue;
@@ -253,21 +253,21 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     if (X509_set_subject_name(certificate.get(), subjectName.get()) != 1)
     {
-      throw OpenSSLException("X509_set_subject_name"); // LCOV_EXCL_LINE
+      throw OpenSSLException("X509_set_subject_name");
     }
 
     if (issuer)
     {
       if (X509_set_issuer_name(certificate.get(), X509_get_subject_name(issuer.get())) != 1)
       {
-        throw OpenSSLException("X509_set_issuer_name"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_set_issuer_name");
       }
     }
     else
     {
       if (X509_set_issuer_name(certificate.get(), subjectName.get()) != 1)
       {
-        throw OpenSSLException("X509_set_issuer_name"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_set_issuer_name");
       }
     }
 
@@ -280,13 +280,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       OpenSSLAsymmetricKey* key = static_cast<OpenSSLAsymmetricKey*>(publicKey.get());
       if (X509_set_pubkey(certificate.get(), key->GetKey().get()) != 1)
       {
-        throw OpenSSLException("X509_set_pubkey"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_set_pubkey");
       }
     }
 
     if (X509_set_version(certificate.get(), 2) != 1) // Version 3 certificate
     {
-      throw OpenSSLException("X509_set_version"); // LCOV_EXCL_LINE
+      throw OpenSSLException("X509_set_version");
     }
 
     // Transfer the serial number from the current certificate to the child if this is a
@@ -295,7 +295,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       if (X509_set_serialNumber(certificate.get(), X509_get_serialNumber(issuer.get())) != 1)
       {
-        throw OpenSSLException("X509_set_serialNumber"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_set_serialNumber");
       }
     }
     else
@@ -303,11 +303,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       auto serialNumber(make_openssl_unique(ASN1_INTEGER_new));
       if (ASN1_INTEGER_set(serialNumber.get(), 1) != 1)
       {
-        throw OpenSSLException("ASN1_INTEGER_set"); // LCOV_EXCL_LINE
+        throw OpenSSLException("ASN1_INTEGER_set");
       }
       if (X509_set_serialNumber(certificate.get(), serialNumber.get()) != 1)
       {
-        throw OpenSSLException("X509_set_serialNumber"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_set_serialNumber");
       }
     }
 
@@ -319,7 +319,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           (isLeafCertificate ? "CA:FALSE" : "CA:TRUE, pathlen:0"));
       if (X509_add_ext(certificate.get(), extension.get(), -1) != 1)
       {
-        throw OpenSSLException("X509_add_ext"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_add_ext");
       }
     }
 
@@ -329,7 +329,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       if (X509_set1_notBefore(certificate.get(), notBeforeTime.get()) != 1)
       {
-        throw OpenSSLException("X509_set1_notBefore"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_set1_notBefore");
       }
     }
 
@@ -340,7 +340,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       if (X509_set1_notAfter(certificate.get(), notAfterTime.get()) != 1)
       {
-        throw OpenSSLException("X509_set1_notAfter"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_set1_notAfter");
       }
     }
 
@@ -350,7 +350,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           certificate, certificate, NID_subject_key_identifier, "hash");
       if (X509_add_ext(certificate.get(), extension.get(), -1) != 1)
       {
-        throw OpenSSLException("X509_add_ext"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_add_ext");
       }
     } // namespace _internal
 
@@ -370,7 +370,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
       if (X509_add_ext(certificate.get(), extension.get(), -1) != 1)
       {
-        throw OpenSSLException("X509_add_ext"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_add_ext");
       }
     }
 
@@ -398,7 +398,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       OpenSSLAsymmetricKey* key = static_cast<OpenSSLAsymmetricKey*>(privateKey.get());
       if (X509_sign(certificate.get(), key->GetKey().get(), EVP_sha256()) == 1)
       {
-        throw OpenSSLException("X509_sign"); // LCOV_EXCL_LINE
+        throw OpenSSLException("X509_sign");
       }
     }
 
@@ -449,7 +449,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     openssl_evp_pkey pkey(X509_get0_pubkey(m_certificate.get()));
     if (EVP_PKEY_up_ref(pkey.get()) != 1)
     {
-      throw OpenSSLException("EVP_PKEY_up_ref"); // LCOV_EXCL_LINE
+      throw OpenSSLException("EVP_PKEY_up_ref");
     }
     return std::unique_ptr<OpenSSLAsymmetricKey>(new OpenSSLAsymmetricKey(std::move(pkey)));
   }

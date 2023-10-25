@@ -15,10 +15,6 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-namespace Azure { namespace Core { namespace _internal {
-  void UniqueHandleHelper<CBS_INSTANCE_TAG>::FreeAmqpCbs(CBS_HANDLE value) { cbs_destroy(value); }
-}}} // namespace Azure::Core::_internal
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using namespace Azure::Core::Amqp::_internal;
 
@@ -98,6 +94,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     message.SetBody(static_cast<Models::AmqpValue>(token));
 
     message.ApplicationProperties["name"] = static_cast<Models::AmqpValue>(audience);
+
     auto result = m_management->ExecuteOperation(
         "put-token",
         (tokenType == CbsTokenType::Jwt ? "jwt" : "servicebus.windows.net:sastoken"),
@@ -134,8 +131,59 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         default:
           throw std::runtime_error("Unknown management operation status.");
       }
+      Log::Stream(Logger::Level::Error)
+          << "CBS PutToken result: " << cbsResult << " status code: " << result.StatusCode
+          << " Error: " << result.Error.Description << ".";
       return std::make_tuple(cbsResult, result.StatusCode, result.Error.Description);
     }
+  }
+  std::ostream& operator<<(std::ostream& os, CbsOperationResult const& operationResult)
+  {
+    switch (operationResult)
+    {
+      case CbsOperationResult::Invalid:
+        os << "Invalid";
+        break;
+      case CbsOperationResult::Ok:
+        os << "Ok";
+        break;
+      case CbsOperationResult::Error:
+        os << "Error";
+        break;
+      case CbsOperationResult::Failed:
+        os << "Failed";
+        break;
+      case CbsOperationResult::InstanceClosed:
+        os << "InstanceClosed";
+        break;
+      default:
+        os << "Unknown CbsOperationResult."
+           << static_cast<std::underlying_type<CbsOperationResult>::type>(operationResult);
+    }
+    return os;
+  }
+
+  std::ostream& operator<<(std::ostream& os, CbsOpenResult const& openResult)
+  {
+    switch (openResult)
+    {
+      case CbsOpenResult::Invalid:
+        os << "Invalid";
+        break;
+      case CbsOpenResult::Ok:
+        os << "Ok";
+        break;
+      case CbsOpenResult::Error:
+        os << "Error";
+        break;
+      case CbsOpenResult::Cancelled:
+        os << "Cancelled";
+        break;
+      default:
+        os << "Unknown CbsOpenResult."
+           << static_cast<std::underlying_type<CbsOpenResult>::type>(openResult);
+    }
+    return os;
   }
 
   void ClaimsBasedSecurityImpl::OnError(Models::_internal::AmqpError const& error)

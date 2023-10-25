@@ -99,12 +99,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& errorCondition,
         std::string const& errorDescription);
 
-    std::string m_managementNodeName;
     _internal::ManagementClientOptions m_options;
     std::string m_source;
     std::shared_ptr<SessionImpl> m_session;
     _internal::ManagementClientEvents* m_eventHandler{};
     std::string m_managementEntityPath;
+    Azure::Core::Credentials::AccessToken m_accessToken;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         _internal::ManagementOperationStatus,

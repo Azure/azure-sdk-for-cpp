@@ -340,28 +340,41 @@ TEST_F(TestValues, TestMap)
 
 TEST_F(TestValues, TestArray)
 {
-  {
-    AmqpArray array1{1, 3, 5, 4, 553991123};
+  AmqpArray array1{1, 3, 5, 4, 553991123};
 
-    EXPECT_EQ(5, array1.size());
+  EXPECT_EQ(5, array1.size());
 
-    AmqpValue value = static_cast<AmqpValue>(array1);
-    EXPECT_EQ(AmqpValueType::Array, value.GetType());
+  AmqpValue value = static_cast<AmqpValue>(array1);
+  EXPECT_EQ(AmqpValueType::Array, value.GetType());
 
-    const AmqpArray array2 = value.AsArray();
-    EXPECT_EQ(5, array2.size());
-    EXPECT_EQ(1, static_cast<std::int32_t>(array2.at(0)));
-    EXPECT_EQ(3, static_cast<std::int32_t>(array2.at(1)));
-    EXPECT_EQ(5, static_cast<std::int32_t>(array2.at(2)));
-    EXPECT_FALSE(array1 < array2);
-    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(array2).get()));
-  }
-  {
-    // Because EXPECT_ANY_THROW is a macro, the commas in the lambda below confuse the
-    // preprocessor. So explicitly capture the lambda and then execute it in the EXPECT_ANY_THROW.
-    auto v = []() { AmqpArray testArray{3.1, 2.9, 14}; };
-    EXPECT_ANY_THROW(v());
-  }
+  const AmqpArray array2 = value.AsArray();
+  EXPECT_EQ(5, array2.size());
+  EXPECT_EQ(1, static_cast<std::int32_t>(array2.at(0)));
+  EXPECT_EQ(3, static_cast<std::int32_t>(array2.at(1)));
+  EXPECT_EQ(5, static_cast<std::int32_t>(array2.at(2)));
+  EXPECT_FALSE(array1 < array2);
+  EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(array2).get()));
+}
+
+TEST_F(TestValues, TestArray1)
+{
+  AmqpArray array1{1};
+
+  EXPECT_EQ(1, array1.size());
+
+  AmqpValue value = static_cast<AmqpValue>(array1);
+  EXPECT_EQ(AmqpValueType::Array, value.GetType());
+
+  GTEST_LOG_(INFO) << "Copy AMQP value as array to a new value";
+  const AmqpArray array2 = value.AsArray();
+}
+
+TEST_F(TestValues, TestArrayDifferentTypes)
+{
+  // Because EXPECT_ANY_THROW is a macro, the commas in the lambda below confuse the
+  // preprocessor. So explicitly capture the lambda and then execute it in the EXPECT_ANY_THROW.
+  auto v = []() { AmqpArray testArray{3.1, 2.9, 14}; };
+  EXPECT_ANY_THROW(v());
 }
 
 TEST_F(TestValues, TestChar)
@@ -432,6 +445,12 @@ TEST_F(TestValues, TestCompositeValue)
     EXPECT_EQ(25.0f, static_cast<float>(val.at(1)));
   }
 
+  {
+    AmqpComposite composite1{123, {"StringValue"}};
+    AmqpComposite composite2{456, {"StringValue"}};
+    EXPECT_NE(composite1, composite2);
+  }
+
   // Put some things in the map.
   {
     AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
@@ -481,6 +500,12 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(937, static_cast<uint64_t>(described2.GetDescriptor()));
     EXPECT_EQ(AmqpValue(described2.GetValue()), AmqpValue(value.GetValue()));
     EXPECT_EQ(AmqpValue(described2.GetDescriptor()), AmqpValue(value.GetDescriptor()));
+  }
+
+  {
+    AmqpDescribed described1{123, {"StringValue"}};
+    AmqpDescribed described2{456, {"StringValue"}};
+    EXPECT_NE(described1, described2);
   }
 }
 

@@ -333,6 +333,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {CONNECTION_STATE_ERROR, "CONNECTION_STATE_ERROR"},
 
     };
+    std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state)
+    {
+      auto val{UamqpConnectionStateToStringMap.find(state)};
+      if (val == UamqpConnectionStateToStringMap.end())
+      {
+        os << "Unknown connection state: "
+           << static_cast<std::underlying_type<decltype(state)>::type>(state);
+      }
+      else
+      {
+        os << val->second << "(" << static_cast<std::underlying_type<CONNECTION_STATE>::type>(state)
+           << ")";
+      }
+      return os;
+    }
   } // namespace
 
   _internal::ConnectionState ConnectionStateFromCONNECTION_STATE(CONNECTION_STATE state)
@@ -352,6 +367,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     ConnectionImpl* connection = static_cast<ConnectionImpl*>(context);
 
+    if (connection->m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Verbose)
+          << "Connection " << connection->m_containerId << " state changed from " << oldState
+          << " to " << newState;
+    }
     if (connection->m_eventHandler)
     {
       if (!connection->m_isClosing)
@@ -366,9 +387,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // When the connection transitions into the error or end state, it is no longer pollable.
       Log::Stream(Logger::Level::Verbose)
-          << "Connection " << connection->m_containerId << " state changed to "
-          << UamqpConnectionStateToStringMap.at(newState) << " : " << static_cast<int>(newState)
-          << std::endl;
+          << "Connection " << connection->m_containerId << " state changed to " << newState;
     }
     connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
   }
@@ -382,10 +401,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return cn->m_eventHandler->OnNewEndpoint(
           ConnectionFactory::CreateFromInternal(cn->shared_from_this()), endpoint);
     }
-    return false; // LCOV_EXCL_LINE
+    return false;
   }
 
-  // LCOV_EXCL_START
   void ConnectionImpl::OnIOErrorFn(void* context)
   {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
@@ -398,33 +416,44 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
   }
-  // LCOV_EXCL_STOP
 
   void ConnectionImpl::EnableAsyncOperation(bool enable)
   {
     m_enableAsyncOperation = enable;
     if (enable)
     {
-      Log::Stream(Logger::Level::Verbose)
-          << "Try to enable async operation on connection: " << this << " ID: " << m_containerId
-          << " count: " << m_openCount.load();
-      if (m_openCount++ == 0)
+      if (m_options.EnableTrace)
       {
         Log::Stream(Logger::Level::Verbose)
-            << "Enabled async operation on connection: " << this << " ID: " << m_containerId;
+            << "Try to enable async operation on connection: " << this << " ID: " << m_containerId
+            << " count: " << m_openCount.load();
+      }
+      if (m_openCount++ == 0)
+      {
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Enabled async operation on connection: " << this << " ID: " << m_containerId;
+        }
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(shared_from_this());
       }
     }
     else
     {
       AZURE_ASSERT_MSG(m_openCount.load() > 0, "Closing async without opening it first.");
-      Log::Stream(Logger::Level::Verbose)
-          << "Try to disable async operation on connection: " << this << " ID: " << m_containerId
-          << " count: " << m_openCount.load();
-      if (--m_openCount == 0)
+      if (m_options.EnableTrace)
       {
         Log::Stream(Logger::Level::Verbose)
-            << "Disabled async operation on connection: " << this << " ID: " << m_containerId;
+            << "Try to disable async operation on connection: " << this << " ID: " << m_containerId
+            << " count: " << m_openCount.load();
+      }
+      if (--m_openCount == 0)
+      {
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Disabled async operation on connection: " << this << " ID: " << m_containerId;
+        }
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
             shared_from_this());
       }
@@ -433,11 +462,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ConnectionImpl::Open()
   {
-    Log::Stream(Logger::Level::Verbose)
-        << "ConnectionImpl::Open: " << this << " ID: " << m_containerId;
+    if (m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Verbose)
+          << "ConnectionImpl::Open: " << this << " ID: " << m_containerId;
+    }
     if (connection_open(m_connection.get()))
     {
-      throw std::runtime_error("Could not open connection."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not open connection.");
     }
     m_connectionOpened = true;
     EnableAsyncOperation(true);
@@ -449,7 +481,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         << "ConnectionImpl::Listen: " << this << " ID: " << m_containerId;
     if (connection_listen(m_connection.get()))
     {
-      throw std::runtime_error("Could not listen on connection."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not listen on connection.");
     }
     m_connectionOpened = true;
 
@@ -465,7 +497,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
     if (!m_connection)
     {
-      throw std::logic_error("Connection already closed."); // LCOV_EXCL_LINE
+      throw std::logic_error("Connection already closed.");
     }
 
     std::unique_lock<LockType> lock(m_amqpMutex);
@@ -492,7 +524,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t maxSize;
     if (connection_get_max_frame_size(m_connection.get(), &maxSize))
     {
-      throw std::runtime_error("COuld not get max frame size."); // LCOV_EXCL_LINE
+      throw std::runtime_error("COuld not get max frame size.");
     }
     return maxSize;
   }
@@ -502,7 +534,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint16_t maxChannel;
     if (connection_get_channel_max(m_connection.get(), &maxChannel))
     {
-      throw std::runtime_error("COuld not get channel max."); // LCOV_EXCL_LINE
+      throw std::runtime_error("COuld not get channel max.");
     }
     return maxChannel;
   }
@@ -512,7 +544,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     milliseconds ms;
     if (connection_get_idle_timeout(m_connection.get(), &ms))
     {
-      throw std::runtime_error("Could not set max frame size."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not set max frame size.");
     }
     return std::chrono::milliseconds(ms);
   }
@@ -522,7 +554,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     AMQP_VALUE value;
     if (connection_get_properties(m_connection.get(), &value))
     {
-      throw std::runtime_error("COuld not get properties."); // LCOV_EXCL_LINE
+      throw std::runtime_error("COuld not get properties.");
     }
     return Models::AmqpValue{value}.AsMap();
   }
@@ -532,7 +564,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t maxFrameSize;
     if (connection_get_remote_max_frame_size(m_connection.get(), &maxFrameSize))
     {
-      throw std::runtime_error("Could not get remote max frame size."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not get remote max frame size.");
     }
     return maxFrameSize;
   }
@@ -542,8 +574,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::unique_lock<LockType> lock(m_amqpMutex);
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection.get(), ratio))
     {
-      throw std::runtime_error(
-          "Could not set remote idle timeout send frame ratio."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not set remote idle timeout send frame ratio.");
     }
   }
 
@@ -556,13 +587,74 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return false;
   }
 
-  std::string ConnectionImpl::GetSecurityToken(
+  // Ensure that we have a token for the provided audience.
+  // If we don't, authenticate the audience with the service using the provided session.
+  // Note that the granularity of
+  Credentials::AccessToken ConnectionImpl::AuthenticateAudience(
+      std::shared_ptr<SessionImpl> session,
       std::string const& audience,
-      Azure::Core::Context const& context) const
+      Azure::Core::Context const& context)
   {
     if (GetCredential())
     {
-      if (m_tokenStore.find(audience) == m_tokenStore.end())
+      std::string audienceUrl = audience;
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose) << "Authenticate connection for audience " << audience;
+      }
+      // If the audience looks like a URL for AMQP, AMQPS, or SB, we can use the URL as provided.
+      if ((audience.find("amqps://") != 0) && (audience.find("amqp://") != 0)
+          && (audience.find("sb://") != 0))
+      {
+        audienceUrl = "amqps://" + GetHost();
+        // The provided audience may begin with a /, if not, we need to add the separator.
+        if (audience.front() != '/')
+        {
+          audienceUrl += "/";
+        }
+        audienceUrl += audience;
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Initial audience is not URL, using " << audienceUrl;
+        }
+      }
+
+      std::unique_lock<std::mutex> lock(m_tokenMutex);
+      // If we have authenticated this audience, we're done and can return success.
+      auto token = m_tokenStore.find(audienceUrl);
+      if (token != m_tokenStore.end())
+      {
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose) << "Using cached token for " << audienceUrl;
+        }
+        return token->second;
+      }
+      // We've not authenticated this audience.
+      // Authenticate it with the server
+
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "No cached token for " << audienceUrl << ", Authenticating.";
+      }
+      // Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+      // sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
+      // sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+
+      // auto authenticationSession{std::make_shared<SessionImpl>(
+      //     shared_from_this(), sessionOptions, nullptr)};
+
+      auto claimsBasedSecurity
+          = std::make_shared<ClaimsBasedSecurityImpl>(session /*authenticationSession*/);
+      auto cbsOpenStatus = claimsBasedSecurity->Open(context);
+      if (cbsOpenStatus != CbsOpenResult::Ok)
+      {
+        throw std::runtime_error("Could not open Claims Based Security object.");
+      }
+
+      try
       {
         Credentials::TokenRequestContext requestContext;
         bool isSasToken = IsSasCredential();
@@ -571,11 +663,39 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           requestContext.MinimumExpiration = std::chrono::minutes(60);
         }
         requestContext.Scopes = m_options.AuthenticationScopes;
-        return GetCredential()->GetToken(requestContext, context).Token;
-      }
-      return m_tokenStore.at(audience).Token;
-    }
-    return "";
-  }
+        auto accessToken{GetCredential()->GetToken(requestContext, context)};
 
+        auto result = claimsBasedSecurity->PutToken(
+            (IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
+            audienceUrl,
+            accessToken.Token,
+            context);
+        if (std::get<0>(result) != CbsOperationResult::Ok)
+        {
+          throw std::runtime_error("Could not put Claims Based Security token.");
+        }
+        claimsBasedSecurity->Close();
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Authenticated connection for audience " << audienceUrl << " successfully.";
+        }
+
+        m_tokenStore.emplace(audienceUrl, accessToken);
+        return accessToken;
+      }
+      catch (std::runtime_error const&)
+      {
+        // Ensure that the claims based security object is closed before we leave this scope.
+        claimsBasedSecurity->Close();
+        throw;
+      }
+    }
+    else
+    {
+      Log::Stream(Logger::Level::Verbose) << "No credential, returning empty token.";
+      // If the connection is unauthenticated, then just return an empty access token.
+      return {};
+    }
+  }
 }}}} // namespace Azure::Core::Amqp::_detail

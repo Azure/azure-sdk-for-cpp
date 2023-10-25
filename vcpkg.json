@@ -23,7 +23,15 @@
       "platform": "windows"
     },
     {
-      "name": "azure-uamqp-c",
+      "name": "azure-c-shared-utility",
+      "platform": "!uwp"
+    },
+    {
+      "name": "azure-macro-utils-c",
+      "platform": "!uwp"
+    },
+    {
+      "name": "umock-c",
       "platform": "!uwp"
     }
   ],

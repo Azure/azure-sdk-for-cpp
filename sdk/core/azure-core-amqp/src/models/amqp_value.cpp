@@ -7,6 +7,8 @@
 #include "azure/core/amqp/models/amqp_properties.hpp"
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 
+#include <azure/core/internal/diagnostics/log.hpp>
+
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
@@ -20,6 +22,8 @@
 #include <sstream>
 
 using namespace Azure::Core::Amqp::Models::_detail;
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace _internal {
   void UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(AMQP_VALUE value)
@@ -511,7 +515,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (initializer.size())
     {
       AmqpValueType expectedType = initializer.begin()->GetType();
-      for (auto v : initializer)
+      for (auto const& v : initializer)
       {
         if (v.GetType() != expectedType)
         {
