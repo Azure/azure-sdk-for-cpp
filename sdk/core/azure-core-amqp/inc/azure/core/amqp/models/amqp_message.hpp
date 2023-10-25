@@ -139,6 +139,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     std::map<std::string, AmqpValue> ApplicationProperties;
 
+    /** @brief Delivery Tag for the message.
+     *
+     * For more information, see [AMQP Application
+     * Properties](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties).
+     */
+    AmqpValue DeliveryTag;
+
     /** @brief Footer for the message.
      *
      * For more information, see [AMQP

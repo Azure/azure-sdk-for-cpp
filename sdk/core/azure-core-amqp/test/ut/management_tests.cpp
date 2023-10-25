@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unexpected node name.";
           auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
-              "test:Rejected", "Unknown message source.");
+              "test:Rejected", "Unknown message source.", {});
           GTEST_LOG_(INFO) << "RV=" << rv;
           return rv;
         }
@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unknown operation.";
           auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
-              "amqp:status:rejected", "Unknown Request operation");
+              "amqp:status:rejected", "Unknown Request operation", {});
           GTEST_LOG_(INFO) << "RV=" << rv;
           return rv;
         }

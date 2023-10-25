@@ -85,7 +85,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
             LogError("Could not retrieve application properties");
             amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
             /* Codes_SRS_AMQP_MANAGEMENT_01_136: [ When `on_message_received` fails due to errors in parsing the response message `on_message_received` shall call `messaging_delivery_rejected` and return the created delivery AMQP value. ]*/
-            result = messaging_delivery_rejected("amqp:internal-error", "Could not get application properties on AMQP management response.");
+            result = messaging_delivery_rejected("amqp:internal-error", "Could not get application properties on AMQP management response.", NULL);
         }
         else
         {
@@ -98,7 +98,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                 LogError("Could not retrieve message properties");
                 amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
                 /* Codes_SRS_AMQP_MANAGEMENT_01_136: [ When `on_message_received` fails due to errors in parsing the response message `on_message_received` shall call `messaging_delivery_rejected` and return the created delivery AMQP value. ]*/
-                result = messaging_delivery_rejected("amqp:internal-error", "Could not get message properties on AMQP management response.");
+                result = messaging_delivery_rejected("amqp:internal-error", "Could not get message properties on AMQP management response.", NULL);
             }
             else
             {
@@ -117,7 +117,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                     LogError("Could not retrieve correlation Id");
                     amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
                     /* Codes_SRS_AMQP_MANAGEMENT_01_136: [ When `on_message_received` fails due to errors in parsing the response message `on_message_received` shall call `messaging_delivery_rejected` and return the created delivery AMQP value. ]*/
-                    result = messaging_delivery_rejected("amqp:internal-error", "Could not get correlation Id from AMQP management response.");
+                    result = messaging_delivery_rejected("amqp:internal-error", "Could not get correlation Id from AMQP management response.", NULL);
                 }
                 else
                 {
@@ -127,7 +127,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                         LogError("Could not retrieve correlation Id ulong value");
                         amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
                         /* Codes_SRS_AMQP_MANAGEMENT_01_136: [ When `on_message_received` fails due to errors in parsing the response message `on_message_received` shall call `messaging_delivery_rejected` and return the created delivery AMQP value. ]*/
-                        result = messaging_delivery_rejected("amqp:internal-error", "Could not get correlation Id from AMQP management response.");
+                        result = messaging_delivery_rejected("amqp:internal-error", "Could not get correlation Id from AMQP management response.", NULL);
                     }
                     else
                     {
@@ -140,7 +140,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                             LogError("Could not retrieve application property map");
                             amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
                             /* Codes_SRS_AMQP_MANAGEMENT_01_136: [ When `on_message_received` fails due to errors in parsing the response message `on_message_received` shall call `messaging_delivery_rejected` and return the created delivery AMQP value. ]*/
-                            result = messaging_delivery_rejected("amqp:internal-error", "Could not get application property map from the application properties in the AMQP management response.");
+                            result = messaging_delivery_rejected("amqp:internal-error", "Could not get application property map from the application properties in the AMQP management response.", NULL);
                         }
                         else
                         {
@@ -165,7 +165,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                                     LogError("Could not retrieve status code from application properties");
                                     amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
                                     /* Codes_SRS_AMQP_MANAGEMENT_01_136: [ When `on_message_received` fails due to errors in parsing the response message `on_message_received` shall call `messaging_delivery_rejected` and return the created delivery AMQP value. ]*/
-                                    result = messaging_delivery_rejected("amqp:internal-error", "Could not retrieve status code from the application properties in the AMQP management response.");
+                                    result = messaging_delivery_rejected("amqp:internal-error", "Could not retrieve status code from the application properties in the AMQP management response.", NULL);
                                 }
                                 else
                                 {
@@ -177,7 +177,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                                         LogError("Could not retrieve status code int value");
                                         amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
                                         /* Codes_SRS_AMQP_MANAGEMENT_01_136: [ When `on_message_received` fails due to errors in parsing the response message `on_message_received` shall call `messaging_delivery_rejected` and return the created delivery AMQP value. ]*/
-                                        result = messaging_delivery_rejected("amqp:internal-error", "Could not retrieve status code value from the application properties in the AMQP management response.");
+                                        result = messaging_delivery_rejected("amqp:internal-error", "Could not retrieve status code value from the application properties in the AMQP management response.", NULL);
                                     }
                                     else
                                     {
@@ -203,8 +203,17 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                                             desc_value = amqpvalue_get_map_value(map, desc_key);
                                             if (desc_value != NULL)
                                             {
-                                                /* Codes_SRS_AMQP_MANAGEMENT_01_134: [ The status description value shall be extracted from the value found in the map by using `amqpvalue_get_string`. ]*/
-                                                if (amqpvalue_get_string(desc_value, &status_description) != 0)
+                                                AMQP_TYPE amqp_type = amqpvalue_get_type(desc_value);
+                                                if (amqp_type == AMQP_TYPE_STRING)
+                                                {
+                                                    /* Codes_SRS_AMQP_MANAGEMENT_01_134: [ The status description value shall be extracted from the value found in the map by using `amqpvalue_get_string`. ]*/
+                                                    if (amqpvalue_get_string(desc_value, &status_description) != 0)
+                                                    {
+                                                        /* Codes_SRS_AMQP_MANAGEMENT_01_125: [ If status description is not found, NULL shall be passed to the user callback as `status_description` argument. ]*/
+                                                        status_description = NULL;
+                                                    }
+                                                }
+                                                else
                                                 {
                                                     /* Codes_SRS_AMQP_MANAGEMENT_01_125: [ If status description is not found, NULL shall be passed to the user callback as `status_description` argument. ]*/
                                                     status_description = NULL;
@@ -308,7 +317,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
                                                     LogError("Could not match AMQP management response to request");
                                                     amqp_management->on_amqp_management_error(amqp_management->on_amqp_management_error_context);
                                                     /* Codes_SRS_AMQP_MANAGEMENT_01_135: [ When an error occurs in creating AMQP values (for status code, etc.) `on_message_received` shall call `messaging_delivery_released` and return the created delivery AMQP value. ]*/
-                                                    result = messaging_delivery_rejected("amqp:internal-error", "Could not match AMQP management response to request");
+                                                    result = messaging_delivery_rejected("amqp:internal-error", "Could not match AMQP management response to request", NULL);
                                                 }
                                                 else
                                                 {

@@ -20,7 +20,7 @@ extern "C" {
 
     MOCKABLE_FUNCTION(, AMQP_VALUE, messaging_delivery_received, uint32_t, section_number, uint64_t, section_offset);
     MOCKABLE_FUNCTION(, AMQP_VALUE, messaging_delivery_accepted);
-    MOCKABLE_FUNCTION(, AMQP_VALUE, messaging_delivery_rejected, const char*, error_condition, const char*, error_description);
+    MOCKABLE_FUNCTION(, AMQP_VALUE, messaging_delivery_rejected, const char*, error_condition, const char*, error_description, fields, error_info);
     MOCKABLE_FUNCTION(, AMQP_VALUE, messaging_delivery_released);
     MOCKABLE_FUNCTION(, AMQP_VALUE, messaging_delivery_modified, bool, delivery_failed, bool, undeliverable_here, fields, message_annotations);
 

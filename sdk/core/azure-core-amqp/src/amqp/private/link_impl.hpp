@@ -61,6 +61,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SetAttachProperties(Models::AmqpValue attachProperties);
     void SetMaxLinkCredit(uint32_t maxLinkCredit);
 
+    void SetDesiredCapabilities(Models::AmqpValue desiredCapabilities);
+    Models::AmqpValue GetDesiredCapabilities() const;
+
     /** @brief Subscribe to link detach events. */
     void SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetachEvent);
     void UnsubscribeFromDetachEvent();
@@ -73,6 +76,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t GetReceivedMessageId() const;
 
     std::shared_ptr<_detail::SessionImpl> const& GetSession() const { return m_session; }
+
+    void ResetLinkCredit(std::uint32_t linkCredit, bool drain);
 
     void Attach();
 
