@@ -362,7 +362,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             // If the message receiver is transitioning to an error or state other than open,
             // it's an error.
           default:
-
           case _internal::MessageReceiverState::Idle:
           case _internal::MessageReceiverState::Closing:
           case _internal::MessageReceiverState::Error:
