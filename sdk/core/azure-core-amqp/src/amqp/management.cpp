@@ -299,7 +299,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               m_eventHandler->OnError(Models::_internal::AmqpError{});
             }
             break;
-
           // Ignore message sender closing or idle state changes if we're closing.
           case _internal::MessageSenderState::Idle:
           case _internal::MessageSenderState::Closing:
