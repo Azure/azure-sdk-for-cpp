@@ -190,7 +190,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks Note that this function should only be overriden if the application is listening
      * on the connection.
      */
-
     virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint)
     {
       (void)connection;
