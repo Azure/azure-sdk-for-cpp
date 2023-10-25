@@ -282,7 +282,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             break;
         }
         break;
-
       case ManagementState::Closing:
         switch (newState)
         {
