@@ -215,7 +215,7 @@ options.PerOperationPolicies.push_back(std::make_unique<NewPolicy>());
 options.PerRetryPolicies.push_back(std::make_unique<NewPolicy>());
 ```
 
-### What is the difference between `BlockBlobClient::Upload()` and `BlockBlobClient::UploadFrom()`? When should I use one vs the other?
+## What is the difference between `BlockBlobClient::Upload()` and `BlockBlobClient::UploadFrom()`? When should I use one vs the other?
 
 `BlockBlobClient::Upload()` takes a stream as parameter and uploads the stream as a block blob with exact one HTTP request.
 The blob created with this method doesn't have any blocks, which means functions like `StageBlock()`, `CommitBlockList()` or `GetBlockList()` don't apply here.
@@ -226,13 +226,13 @@ You want to use this one if you need precise control over SDK behavior at HTTP l
 then upload the chunks with multiple threads.
 This one suits in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to tansfer large blobs efficiently.
 
-### How to efficiently upload large amount of small blobs?
+## How to efficiently upload large amount of small blobs?
 
 Unfortunately this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
 You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer.
 Or you can use tools like [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy) or Data Movement Library.
 
-### How to ensure data integrity with transactional checksum?
+## How to ensure data integrity with transactional checksum?
 
 Generally speaking, TLS protocol includes checksum that's strong enough to detect accidental corruption or deliberate tampering.
 Another layer of checksum is usually not necessary if you're using HTTPS.
@@ -263,7 +263,7 @@ auto crc64 = response.Value.TransactionalContentHash.Value();
 // Now you can verify checksum of the downloaded data
 ```
 
-### Why do I see 503 Server Busy errors? What should I do in this case?
+## Why do I see 503 Server Busy errors? What should I do in this case?
 
 Azure storage service has scalability and performance target, which varies for different types of accounts.
 When your application accesses storage too aggressively and reaches the limit, storage starts returning 503 Server Busy errors.
@@ -294,7 +294,7 @@ Here are a few things that turn out to be effective in practice to minimize the 
 
 Throttling error could also happen at subscription level or tenant level. You can still try above approaches or contact Azure Support in such cases.
 
-### How to troubleshoot 403 errors?
+## How to troubleshoot 403 errors?
 
 403 error means your request to access Azure Storage is not correctly authorized.
 
