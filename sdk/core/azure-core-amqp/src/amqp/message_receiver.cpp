@@ -414,7 +414,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
       }
 
-#if RECEIVER_SYNCHRONOUS_CLOSE
+#if _azure_RECEIVER_SYNCHRONOUS_CLOSE
       // When we transition from the closing to idle state, we can return from the close
       // operation.
       if (oldState == MESSAGE_RECEIVER_STATE_CLOSING && newState == MESSAGE_RECEIVER_STATE_IDLE)
@@ -507,7 +507,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 // Release the lock so that the polling thread can make forward progress delivering the
 // detach notification.
-#if RECEIVER_SYNCHRONOUS_CLOSE
+#if _azure_RECEIVER_SYNCHRONOUS_CLOSE
           if (m_options.EnableTrace)
           {
             Log::Stream(Logger::Level::Verbose)

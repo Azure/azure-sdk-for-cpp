@@ -12,7 +12,7 @@
 #include <chrono>
 #include <thread>
 
-#ifdef azure_TESTING_BUILD_AMQP
+#ifdef _azure_TESTING_BUILD_AMQP
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class ProcessorTest_LoadBalancing_Test;
 }}}} // namespace Azure::Messaging::EventHubs::Test
@@ -80,7 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * between multiple Processor instances, even in separate processes or on separate machines.
    */
   class Processor final {
-#ifdef azure_TESTING_BUILD_AMQP
+#ifdef _azure_TESTING_BUILD_AMQP
     friend class Test::ProcessorTest_LoadBalancing_Test;
 #endif
 
