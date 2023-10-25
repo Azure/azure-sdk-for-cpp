@@ -1516,13 +1516,15 @@ int message_set_delivery_tag(MESSAGE_HANDLE message, AMQP_VALUE delivery_tag_val
     return result;
 }
 
-int message_get_delivery_tag(MESSAGE_HANDLE message, AMQP_VALUE* delivery_tag_value)
+int message_get_delivery_tag(MESSAGE_HANDLE message, AMQP_VALUE *delivery_tag_value)
 {
     int result;
 
-    if ((message == NULL) || (delivery_tag_value == NULL))
+    if ((message == NULL) ||
+        (delivery_tag_value == NULL))
     {
-        LogError("Bad arguments: message = %p, delivery_tag = %p", message, delivery_tag_value);
+        LogError("Bad arguments: message = %p, delivery_tag = %p",
+            message, delivery_tag_value);
         result = MU_FAILURE;
     }
     else

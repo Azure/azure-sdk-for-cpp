@@ -188,19 +188,19 @@ AMQP_VALUE messaging_delivery_rejected(const char* error_condition, const char* 
                 }
                 else
                 {
-                    if ((error_info != NULL) &&
-                        (error_set_info(error_handle, error_info) != 0))
+                    if((error_info != NULL) &&
+                    (error_set_info(error_handle, error_info) != 0))
                     {
-                      LogError("Cannot set error info on error AMQP value for REJECTED state");
-                      error_constructing = true;
+                        LogError("Cannot set error info on error AMQP value for REJECTED state");
+                        error_constructing = true;
                     }
                     else
                     {
-                      if (rejected_set_error(rejected, error_handle) != 0)
-                      {
-                        LogError("Cannot set error on REJECTED state handle");
-                        error_constructing = true;
-                      }
+                        if (rejected_set_error(rejected, error_handle) != 0)
+                        {
+                            LogError("Cannot set error on REJECTED state handle");
+                            error_constructing = true;
+                        }
                     }
                 }
 

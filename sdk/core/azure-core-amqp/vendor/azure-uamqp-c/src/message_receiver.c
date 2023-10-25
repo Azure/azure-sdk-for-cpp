@@ -307,7 +307,7 @@ static AMQP_VALUE on_transfer_received(void* context, TRANSFER_HANDLE transfer, 
             {
                 delivery_tag_value = NULL;
             }
-            
+
             amqpvalue_decoder = amqpvalue_decoder_create(decode_message_value_callback, message_receiver);
             if (amqpvalue_decoder == NULL)
             {
@@ -338,8 +338,7 @@ static AMQP_VALUE on_transfer_received(void* context, TRANSFER_HANDLE transfer, 
 
                 amqpvalue_decoder_destroy(amqpvalue_decoder);
             }
-            if (delivery_tag_value != NULL)
-            {
+            if ( delivery_tag_value != NULL ) {
                 amqpvalue_destroy(delivery_tag_value);
             }
             message_destroy(message);

@@ -333,6 +333,7 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
                 }
             }
         }
+
         // footer
         if ((!is_error) &&
             (message_get_footer(message, &footer) == 0) &&
@@ -472,6 +473,7 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
                 }
                 break;
             }
+
             case MESSAGE_BODY_TYPE_SEQUENCE:
             {
                 AMQP_VALUE message_body_amqp_sequence;
@@ -580,6 +582,7 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
 
                     log_message_chunk(message_sender, "Application properties:", application_properties_value);
                 }
+
                 if ((result == SEND_ONE_MESSAGE_OK) && (footer != NULL))
                 {
                     if (amqpvalue_encode(footer, encode_bytes, &payload) != 0)
@@ -656,6 +659,42 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
                                     }
 
                                     amqpvalue_destroy(body_amqp_data);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case MESSAGE_BODY_TYPE_SEQUENCE:
+                    {
+                        AMQP_VALUE message_body_amqp_sequence;
+                        size_t i;
+
+                        for (i = 0; i < body_sequence_count; i++)
+                        {
+                            if (message_get_body_amqp_sequence_in_place(message, i, &message_body_amqp_sequence) != 0)
+                            {
+                                LogError("Cannot get AMQP data %u", (unsigned int)i);
+                                result = SEND_ONE_MESSAGE_ERROR;
+                            }
+                            else
+                            {
+                                AMQP_VALUE body_amqp_sequence;
+                                body_amqp_sequence = amqpvalue_create_amqp_sequence(message_body_amqp_sequence);
+                                if (body_amqp_sequence == NULL)
+                                {
+                                    LogError("Cannot create body AMQP sequence");
+                                    result = SEND_ONE_MESSAGE_ERROR;
+                                }
+                                else
+                                {
+                                    if (amqpvalue_encode(body_amqp_sequence, encode_bytes, &payload) != 0)
+                                    {
+                                        LogError("Cannot encode body AMQP sequence %u", (unsigned int)i);
+                                        result = SEND_ONE_MESSAGE_ERROR;
+                                        break;
+                                    }
+
+                                    amqpvalue_destroy(body_amqp_sequence);
                                 }
                             }
                         }
@@ -742,7 +781,7 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
         {
             properties_destroy(properties);
         }
-        
+
         if (footer != NULL)
         {
             annotations_destroy(footer);
