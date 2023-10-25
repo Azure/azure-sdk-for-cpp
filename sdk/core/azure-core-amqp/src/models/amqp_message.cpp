@@ -298,10 +298,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!message.DeliveryTag.IsNull())
     {
-      if (message_set_delivery_tag(rv.get(), static_cast<UniqueAmqpValueHandle>(message.DeliveryTag).get()))
+      if (message_set_delivery_tag(
+              rv.get(), static_cast<UniqueAmqpValueHandle>(message.DeliveryTag).get()))
       {
-		throw std::runtime_error("Could not set delivery tag.");
-	  }
+        throw std::runtime_error("Could not set delivery tag.");
+      }
     }
 
     if (!message.Footer.empty())
