@@ -330,7 +330,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (newState == oldState)
     {
-
       Log::Stream(Logger::Level::Error)
           << "OnMessageReceiverStateChanged: newState == oldState" << std::endl;
       return;
