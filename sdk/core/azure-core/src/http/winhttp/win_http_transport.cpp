@@ -213,7 +213,6 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
     requestHeaderString += header.second; // string's value
     requestHeaderString += "\r\n";
   }
-  requestHeaderString += "\r\n";
 
 #if defined(TESTING_BUILD)
   // The test recording infrastructure requires that a Patch verb have a Content-Length header,
@@ -223,10 +222,15 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
   {
     if (requestHeaders.find("Content-Length") == requestHeaders.end())
     {
-      requestHeaderString += "Content-Length: 0\r\n";
+      if (request.GetBodyStream() == nullptr || request.GetBodyStream()->Length() == 0)
+      {
+        requestHeaderString += "Content-Length: 0\r\n";
+      }
     }
   }
 #endif
+
+  requestHeaderString += "\r\n";
 
   return requestHeaderString;
 }

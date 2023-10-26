@@ -309,7 +309,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get HTTP body as #Azure::Core::IO::BodyStream.
      *
      */
-    Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
+    Azure::Core::IO::BodyStream* GetBodyStream() const { return this->m_bodyStream; }
 
     /**
      * @brief A value indicating whether the returned raw response for this request will be buffered
