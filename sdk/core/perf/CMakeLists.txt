@@ -21,9 +21,9 @@ set(
   inc/azure/perf/options.hpp
   inc/azure/perf/program.hpp
   inc/azure/perf/random_stream.hpp
+  inc/azure/perf/test.hpp
   inc/azure/perf/test_metadata.hpp
   inc/azure/perf/test_options.hpp
-  inc/azure/perf/test.hpp
 )
 
 set(
