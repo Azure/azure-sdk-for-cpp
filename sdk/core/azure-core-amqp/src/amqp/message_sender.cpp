@@ -258,7 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
              "Message Sender unexpectedly entered the Error State.",
              {}});
       }
-#if _azure_SENDER_SYNCHRONOUS_CLOSE
+#if SENDER_SYNCHRONOUS_CLOSE
 
       if (oldState == MESSAGE_SENDER_STATE_CLOSING && newState == MESSAGE_SENDER_STATE_IDLE)
       {
@@ -333,7 +333,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
       }
       m_link->UnsubscribeFromDetachEvent();
-#if _azure_SENDER_SYNCHRONOUS_CLOSE
+#if SENDER_SYNCHRONOUS_CLOSE
       bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
           || m_currentState == _internal::MessageSenderState::Open;
 #endif
@@ -345,7 +345,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         throw std::runtime_error("Could not close message sender");
       }
 
-#if _azure_SENDER_SYNCHRONOUS_CLOSE
+#if SENDER_SYNCHRONOUS_CLOSE
       if (m_options.EnableTrace)
       {
         Log::Stream(Logger::Level::Verbose)
