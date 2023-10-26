@@ -1,6 +1,6 @@
 # Frequently-asked Questions, Common Mistakes and Best Practices
 
-API Usage
+**API Usage**
 
 [How to use list-operations? Why doesn't list-operations return all blobs in a container?](#how-to-use-list-operations-why-doesnt-list-operations-return-all-blobs-in-a-container)
 
@@ -19,7 +19,7 @@ API Usage
 [How to ensure data integrity with transactional checksum?](#how-to-ensure-data-integrity-with-transactional-checksum)
 
 
-Design and Concepts
+**Design and Concepts**
 
 [Thread safety guarantees](#thread-safety-guarantees)
 
@@ -28,7 +28,7 @@ Design and Concepts
 [Will the SDK retry failed requests? What is the default retry logic? How can I customize retry behavior?](#will-the-sdk-retry-failed-requests-what-is-the-default-retry-logic-how-can-i-customize-retry-behavior)
 
 
-Troubleshooting
+**Troubleshooting**
 
 [Why do I see 503 Server Busy errors? What should I do in this case?](#why-do-i-see-503-server-busy-errors-what-should-i-do-in-this-case)
 
@@ -166,7 +166,7 @@ You want to use this one if you need precise control over SDK behavior at HTTP l
 
 `BlockBlobClient::UploadFrom` takes a memory buffer or file name as parameter, splits the data in the buffer or file into smaller chunks intelligently or according to some parameters if provided,
 then upload the chunks with multiple threads.
-This one suits in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to tansfer large blobs efficiently.
+This one suits in most cases. You can expect higher throughput because the chunks are transferred concurrently. It's especially recommended if you need to transfer large blobs efficiently.
 
 ## How to efficiently upload large amount of small blobs?
 
@@ -287,7 +287,7 @@ options.PerRetryPolicies.push_back(std::make_unique<NewPolicy>());
 
 ## Will the SDK retry failed requests? What is the default retry logic? How can I customize retry behavior?
 
-Requests failed due to network errors or HTTP status code 408, 500, 502, 503, 504 will be retried at most 3 times (4 attemps in total) using exponential backup with jitter.
+Requests failed due to network errors or HTTP status code 408, 500, 502, 503, 504 will be retried at most 3 times (4 attempts in total) using exponential backup with jitter.
 These parameters can be customized with `RetryOptions`. Below is an example.
 
 ```C++
