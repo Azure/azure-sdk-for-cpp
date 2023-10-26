@@ -2,7 +2,7 @@
 
 **API Usage**
 
-[How to use list-operations? Why doesn't list-operations return all blobs in a container?](#how-to-use-list-operations-why-doesnt-list-operations-return-all-blobs-in-a-container)
+[How to use list-operations? Why doesn't list-operations return all blobs in a container?](#how-to-use-list-operations-why-doesnt-list-operation-return-all-blobs-in-a-container)
 
 [Can I specify an API-version other than the default one?](#can-i-specify-an-api-version-other-than-the-default-one)
 
@@ -34,7 +34,7 @@
 
 [How to troubleshoot 403 errors?](#how-to-troubleshoot-403-errors)
 
-## How to use list-operations? Why doesn't list-operations return all blobs in a container?
+## How to use list-operations? Why doesn't list-operation return all blobs in a container?
 
 C++ SDK applied a different design for pageable operations from other languages.
 It involves a nested-loop to iterate over all items in a container.
