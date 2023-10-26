@@ -36,7 +36,7 @@
 
 ## How to use list-operations? Why doesn't list-operation return all blobs in a container?
 
-C++ SDK applied a different design for pageable operations from other languages.
+C++ SDK applies a different design for pageable operations from other languages.
 It involves a nested-loop to iterate over all items in a container.
 The outer loop does network I/O operations.
 The inner loop gets called for every paged result and doesn't do I/O.
