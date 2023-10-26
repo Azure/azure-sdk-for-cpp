@@ -86,7 +86,7 @@ auto containerClient = serviceClient.GetBlobContainerClient(containerName);
 
 Please note that multiple-version is not supported yet by Storage C++ SDK (This may change in the future).
 Which means, the code above only changes the `x-ms-version` request header and doesn't change SDK behavior.
-SDK will still set headers and query parameters that are added between the cutomized API version (which is usually older) and latest API version,
+SDK will still set headers and query parameters that are added between the customized API version (which is usually older) and latest API version,
 and still expect some headers or fields in HTTP response.
 Furthermore, this scenario is not covered by testing, although most of the APIs should be able to work. You should do thorough testing before your code goes to production.
 
@@ -212,7 +212,7 @@ You can call the same API or different APIs on the same client instance from mul
 It's guaranteed to either return a successful response or throw an exception.
 
 However, this doesn't mean access to underlying storage service has no race condition.
-It is still possible that you'll get a 409 error if you read a file that's being written by antoher party. (For example, one thread reading an append blob while another thread appending data to it.)
+It is still possible that you'll get a 409 error if you read a file that's being written by another party. (For example, one thread reading an append blob while another thread appending data to it.)
 
 ## Http pipeline and policies
 
@@ -287,7 +287,7 @@ options.PerRetryPolicies.push_back(std::make_unique<NewPolicy>());
 
 ## Will the SDK retry failed requests? What is the default retry logic? How can I customize retry behavior?
 
-Requests faield due to network errors or HTTP status code 408, 500, 502, 503, 504 will be retried at most 3 times (4 attemps in total) using exponential backup with jitter.
+Requests failed due to network errors or HTTP status code 408, 500, 502, 503, 504 will be retried at most 3 times (4 attemps in total) using exponential backup with jitter.
 These parameters can be customized with `RetryOptions`. Below is an example.
 
 ```C++
