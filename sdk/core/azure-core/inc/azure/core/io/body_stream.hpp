@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace IO {
      * it properly.
      */
     virtual void Rewind()
-    { 
+    {
       AZURE_ASSERT_MSG(
           false,
           "The specified BodyStream doesn't support Rewind which is required to guarantee fault "
