@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+/** @file global_state.hpp
+ *
+ * @note This file has no customer visible types, it should never be included in a customer
+ * facing project.
+ */
+
 #pragma once
 
 #include <azure/core/azure_assert.hpp>
@@ -19,9 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    * The GlobalState class maintains a singleton static local variable using [static local
    * variables](https://en.cppreference.com/w/cpp/language/storage_duration#Static_local_variables),
    * also known as "Magic Statics". This ensures that we initialize only once.
-   *
    */
-
   class Pollable {
   public:
     virtual void Poll() = 0;
@@ -53,6 +57,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       m_pollables.remove(pollable);
     }
 
+    // Assert that the global state is idle. Used at the end of test collateral to ensure that all
+    // pollables have been disposed.
     void AssertIdle()
     {
       std::lock_guard<std::mutex> lock(m_pollablesMutex);

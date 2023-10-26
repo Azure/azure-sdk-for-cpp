@@ -6,6 +6,7 @@
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
+#include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/connection_string_credential.hpp"
 #include "azure/core/amqp/dll_import_export.hpp"

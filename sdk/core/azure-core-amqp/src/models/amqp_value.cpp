@@ -3,7 +3,7 @@
 
 #include "azure/core/amqp/models/amqp_value.hpp"
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
+#include "../private/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_properties.hpp"
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 
