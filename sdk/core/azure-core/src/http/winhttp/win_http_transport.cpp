@@ -214,7 +214,6 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
     requestHeaderString += "\r\n";
   }
 
-#if defined(TESTING_BUILD)
   // The test recording infrastructure requires that a Patch verb have a Content-Length header,
   // because it does not distinguish between requests with and without a body if there's no
   // Content-Length header.
@@ -228,7 +227,6 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
       }
     }
   }
-#endif
 
   requestHeaderString += "\r\n";
 
