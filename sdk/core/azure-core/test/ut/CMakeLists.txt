@@ -28,7 +28,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TRANSPORT_CURL)
-  SET(CURL_AZURE_CORE_MAIN_TEST azure_libcurl_core_main_test.cpp)
   SET(CURL_OPTIONS_TESTS curl_options_test.cpp)
   SET(CURL_SESSION_TESTS curl_session_test_test.cpp curl_session_test.hpp)
   SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool_test.cpp)
@@ -47,7 +46,6 @@ endif()
 
 add_executable (
   azure-core-test
-    ${CURL_AZURE_CORE_MAIN_TEST}
     ${CURL_CONNECTION_POOL_TESTS}
     ${CURL_OPTIONS_TESTS}
     ${CURL_SESSION_TESTS}

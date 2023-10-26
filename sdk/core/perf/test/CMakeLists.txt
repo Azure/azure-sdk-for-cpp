@@ -22,7 +22,6 @@ set(
 set(
   AZURE_PERF_TEST_SOURCE
     src/perf_test.cpp
-    src/random_stream_test.cpp
 )
 
 # Name the binary to be created.
