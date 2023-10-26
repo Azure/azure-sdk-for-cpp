@@ -24,16 +24,17 @@ include(GoogleTest)
 
 add_executable (
      azure-security-attestation-test
-     macro_guard.cpp
-     crypto_test.cpp
-     attestation_test.cpp
-     token_test.cpp 
-     policygetset_test.cpp
-     attestation_collateral.cpp 
+     attestation_collateral.cpp
      attestation_metadata.cpp
-     policycertmgmt_test.cpp
-     tpmattestation_test.cpp 
+     attestation_test.cpp
      crypto_test_collateral.cpp
+     crypto_test_collateral.hpp
+     crypto_test.cpp
+     macro_guard.cpp
+     policycertmgmt_test.cpp
+     policygetset_test.cpp
+     token_test.cpp
+     tpmattestation_test.cpp
 )
 
 create_per_service_target_build(attestation azure-security-attestation-test)

@@ -28,6 +28,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TRANSPORT_CURL)
+  SET(CURL_AZURE_CORE_MAIN_TEST azure_libcurl_core_main_test.cpp)
   SET(CURL_OPTIONS_TESTS curl_options_test.cpp)
   SET(CURL_SESSION_TESTS curl_session_test_test.cpp curl_session_test.hpp)
   SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool_test.cpp)
@@ -46,6 +47,10 @@ endif()
 
 add_executable (
   azure-core-test
+    ${CURL_AZURE_CORE_MAIN_TEST}
+    ${CURL_CONNECTION_POOL_TESTS}
+    ${CURL_OPTIONS_TESTS}
+    ${CURL_SESSION_TESTS}
     assert_test.cpp
     authorization_challenge_parser_test.cpp
     azure_core_test.cpp
@@ -55,17 +60,15 @@ add_executable (
     case_insensitive_containers_test.cpp
     client_options_test.cpp
     context_test.cpp
-    ${CURL_CONNECTION_POOL_TESTS}
-    ${CURL_OPTIONS_TESTS}
-    ${CURL_SESSION_TESTS}
     datetime_test.cpp
     environment_log_level_listener_test.cpp
-    extendable_enumeration_test.cpp
     etag_test.cpp
     exception_test.cpp
+    extendable_enumeration_test.cpp
+    global_context_test.cpp
+    http_method_test.cpp
     http_test.cpp
     http_test.hpp
-    http_method_test.cpp
     json_test.cpp
     log_policy_test.cpp
     logging_test.cpp
@@ -74,9 +77,9 @@ add_executable (
     md5_test.cpp
     modified_conditions_test.cpp
     nullable_test.cpp
+    operation_status_test.cpp
     operation_test.cpp
     operation_test.hpp
-    operation_status_test.cpp
     pipeline_test.cpp
     policy_test.cpp
     request_activity_policy_test.cpp

@@ -41,6 +41,7 @@ endif()
 
 set(
   AZURE_STORAGE_BLOBS_HEADER
+    inc/azure/storage/blobs.hpp
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob_batch.hpp
     inc/azure/storage/blobs/blob_client.hpp
@@ -56,9 +57,6 @@ set(
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/rest_client.hpp
     inc/azure/storage/blobs/rtti.hpp
-    inc/azure/storage/blobs.hpp
-    src/private/avro_parser.hpp
-    src/private/package_version.hpp
 )
 
 set(
@@ -74,8 +72,10 @@ set(
     src/blob_service_client.cpp
     src/block_blob_client.cpp
     src/page_blob_client.cpp
-    src/private/avro_parser.cpp
     src/rest_client.cpp
+    src/private/avro_parser.cpp
+    src/private/avro_parser.hpp
+    src/private/package_version.hpp
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOBS_HEADER} ${AZURE_STORAGE_BLOBS_SOURCE})

@@ -59,6 +59,11 @@ set(
     inc/azure/messaging/eventhubs/dll_import_export.hpp
     inc/azure/messaging/eventhubs/event_data_batch.hpp
     inc/azure/messaging/eventhubs/eventhubs_exception.hpp
+    inc/azure/messaging/eventhubs/partition_client.hpp
+    inc/azure/messaging/eventhubs/processor_partition_client.hpp
+    inc/azure/messaging/eventhubs/processor.hpp
+    inc/azure/messaging/eventhubs/producer_client.hpp
+    inc/azure/messaging/eventhubs/rtti.hpp
     inc/azure/messaging/eventhubs/models/checkpoint_store_models.hpp
     inc/azure/messaging/eventhubs/models/consumer_client_models.hpp
     inc/azure/messaging/eventhubs/models/event_data.hpp
@@ -66,30 +71,27 @@ set(
     inc/azure/messaging/eventhubs/models/partition_client_models.hpp
     inc/azure/messaging/eventhubs/models/processor_load_balancer_models.hpp
     inc/azure/messaging/eventhubs/models/processor_models.hpp
-    inc/azure/messaging/eventhubs/partition_client.hpp
-    inc/azure/messaging/eventhubs/processor.hpp
-    inc/azure/messaging/eventhubs/processor_partition_client.hpp
-    inc/azure/messaging/eventhubs/producer_client.hpp
-    inc/azure/messaging/eventhubs/rtti.hpp
 )
 
 set(
   AZURE_MESSAGING_EVENTHUBS_SOURCE
     src/checkpoint_store.cpp
     src/consumer_client.cpp
-    src/event_data.cpp 
     src/event_data_batch.cpp
-    src/partition_client.cpp
+    src/event_data.cpp
+    src/eventhubs_utilities.cpp
     src/partition_client_models.cpp
-    src/private/package_version.hpp
-    src/private/eventhubs_constants.hpp
-    src/private/eventhubs_utilities.hpp
-    src/processor.cpp
+    src/partition_client.cpp
     src/processor_load_balancer.cpp
     src/processor_partition_client.cpp
+    src/processor.cpp
     src/producer_client.cpp
     src/retry_operation.cpp
-    src/eventhubs_utilities.cpp
+    src/private/eventhubs_constants.hpp
+    src/private/eventhubs_utilities.hpp
+    src/private/package_version.hpp
+    src/private/processor_load_balancer.hpp
+    src/private/retry_operation.hpp
 )
 
 add_library(

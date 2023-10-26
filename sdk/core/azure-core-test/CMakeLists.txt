@@ -14,14 +14,15 @@ set(
   inc/azure/core/test/test_base.hpp
   inc/azure/core/test/test_context_manager.hpp
   inc/azure/core/test/test_proxy_manager.hpp
+  inc/azure/core/test/test_proxy_policy.hpp
 )
 
 set(
   AZURE_CORE_TEST_SOURCE
-  src/private/package_version.hpp
-  src/test_proxy_policy.cpp
   src/test_base.cpp
   src/test_proxy_manager.cpp
+  src/test_proxy_policy.cpp
+  src/private/package_version.hpp
 )
 
 add_library (

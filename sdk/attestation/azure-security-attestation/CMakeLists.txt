@@ -31,24 +31,20 @@ find_package(OpenSSL REQUIRED)
 
 set(
   AZURE_ATTESTATION_HEADER
+    inc/azure/attestation.hpp
     inc/azure/attestation/attestation_administration_client.hpp
-    inc/azure/attestation/attestation_client.hpp
     inc/azure/attestation/attestation_client_models.hpp
     inc/azure/attestation/attestation_client_options.hpp
+    inc/azure/attestation/attestation_client.hpp
     inc/azure/attestation/dll_import_export.hpp
     inc/azure/attestation/rtti.hpp
-    inc/azure/attestation.hpp
 )
 
 set(
   AZURE_ATTESTATION_SOURCE
-    src/private/crypto/inc/crypto.hpp
-    src/private/crypto/openssl/openssl_helpers.hpp
-    src/private/crypto/openssl/opensslcert.cpp
-    src/private/crypto/openssl/opensslcert.hpp
-    src/private/crypto/openssl/opensslcrypto.cpp
-    src/private/crypto/openssl/opensslkeys.cpp
-    src/private/crypto/openssl/opensslkeys.hpp
+    src/attestation_administration_client.cpp
+    src/attestation_client_options.cpp
+    src/attestation_client.cpp
     src/private/attestation_client_models_private.hpp
     src/private/attestation_client_private.cpp
     src/private/attestation_client_private.hpp
@@ -56,12 +52,16 @@ set(
     src/private/attestation_common_request.hpp
     src/private/attestation_deserializers_private.cpp
     src/private/attestation_deserializers_private.hpp
-    src/private/jsonhelpers.cpp
     src/private/jsonhelpers_private.hpp
+    src/private/jsonhelpers.cpp
     src/private/package_version.hpp
-    src/attestation_administration_client.cpp
-    src/attestation_client.cpp
-    src/attestation_client_options.cpp
+    src/private/crypto/inc/crypto.hpp
+    src/private/crypto/openssl/openssl_helpers.hpp
+    src/private/crypto/openssl/opensslcert.cpp
+    src/private/crypto/openssl/opensslcert.hpp
+    src/private/crypto/openssl/opensslcrypto.cpp
+    src/private/crypto/openssl/opensslkeys.cpp
+    src/private/crypto/openssl/opensslkeys.hpp
 )
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})

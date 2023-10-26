@@ -40,14 +40,17 @@ if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
 
     set(
       AZURE_CORE_OPENTELEMETRY_HEADER
-        inc/azure/core/tracing/opentelemetry/internal/apiview.hpp
+        inc/azure/core/tracing/opentelemetry/dll_import_export.hpp
         inc/azure/core/tracing/opentelemetry/opentelemetry.hpp
-        src/opentelemetry_private.hpp
+        inc/azure/core/tracing/opentelemetry/rtti.hpp
+        inc/azure/core/tracing/opentelemetry/internal/apiview.hpp
     )
 
     set(
       AZURE_CORE_OPENTELEMETRY_SOURCE
-      src/opentelemetry.cpp
+        src/opentelemetry_private.hpp
+        src/opentelemetry.cpp
+        src/private/package_version.hpp
     )
 
     add_library(azure-core-tracing-opentelemetry ${AZURE_CORE_OPENTELEMETRY_HEADER} ${AZURE_CORE_OPENTELEMETRY_SOURCE})

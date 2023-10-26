@@ -41,6 +41,7 @@ endif()
 
 set(
   AZURE_STORAGE_FILES_SHARES_HEADER
+    inc/azure/storage/files/shares.hpp
     inc/azure/storage/files/shares/dll_import_export.hpp
     inc/azure/storage/files/shares/rest_client.hpp
     inc/azure/storage/files/shares/rtti.hpp
@@ -53,12 +54,10 @@ set(
     inc/azure/storage/files/shares/share_responses.hpp
     inc/azure/storage/files/shares/share_sas_builder.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
-    inc/azure/storage/files/shares.hpp
 )
 
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
-    src/private/package_version.hpp
     src/rest_client.cpp
     src/share_client.cpp
     src/share_directory_client.cpp
@@ -68,6 +67,7 @@ set(
     src/share_responses.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp
+    src/private/package_version.hpp
 )
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})

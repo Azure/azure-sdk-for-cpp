@@ -17,9 +17,10 @@ SetUpTestProxy("sdk/keyvault")
 
 add_executable (
   azure-security-keyvault-certificates-test
-    macro_guard.cpp
+    certificate_client_base_test.hpp
     certificate_client_test.cpp
-    certificate_client_base_test.hpp)
+    macro_guard.cpp
+)
 
 create_per_service_target_build(keyvault azure-security-keyvault-certificates-test)
 

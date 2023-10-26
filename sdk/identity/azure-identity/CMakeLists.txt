@@ -46,8 +46,7 @@ endif()
 
 set(
   AZURE_IDENTITY_HEADER
-    inc/azure/identity/detail/client_credential_core.hpp
-    inc/azure/identity/detail/token_cache.hpp
+    inc/azure/identity.hpp
     inc/azure/identity/azure_cli_credential.hpp
     inc/azure/identity/chained_token_credential.hpp
     inc/azure/identity/client_certificate_credential.hpp
@@ -58,17 +57,12 @@ set(
     inc/azure/identity/managed_identity_credential.hpp
     inc/azure/identity/rtti.hpp
     inc/azure/identity/workload_identity_credential.hpp
-    inc/azure/identity.hpp
+    inc/azure/identity/detail/client_credential_core.hpp
+    inc/azure/identity/detail/token_cache.hpp
 )
 
 set(
   AZURE_IDENTITY_SOURCE
-    src/private/chained_token_credential_impl.hpp
-    src/private/identity_log.hpp
-    src/private/managed_identity_source.hpp
-    src/private/package_version.hpp
-    src/private/tenant_id_resolver.hpp
-    src/private/token_credential_impl.hpp
     src/azure_cli_credential.cpp
     src/chained_token_credential.cpp
     src/client_certificate_credential.cpp
@@ -82,6 +76,12 @@ set(
     src/token_cache.cpp
     src/token_credential_impl.cpp
     src/workload_identity_credential.cpp
+    src/private/chained_token_credential_impl.hpp
+    src/private/identity_log.hpp
+    src/private/managed_identity_source.hpp
+    src/private/package_version.hpp
+    src/private/tenant_id_resolver.hpp
+    src/private/token_credential_impl.hpp
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})

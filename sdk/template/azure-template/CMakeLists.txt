@@ -41,15 +41,16 @@ endif()
 
 set(
   AZURE_TEMPLATE_HEADER
-    inc/azure/template/dll_import_export.hpp
-    inc/azure/template/template_client.hpp
     inc/azure/template.hpp
+    inc/azure/template/dll_import_export.hpp
+    inc/azure/template/rtti.hpp
+    inc/azure/template/template_client.hpp
 )
 
 set(
   AZURE_TEMPLATE_SOURCE
-    src/private/package_version.hpp
     src/template_client.cpp
+    src/private/package_version.hpp
 )
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
