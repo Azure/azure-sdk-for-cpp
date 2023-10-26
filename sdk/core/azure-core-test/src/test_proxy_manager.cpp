@@ -268,6 +268,7 @@ void TestProxyManager::SetProxySanitizer()
     const std::vector<std::string> excludedHeaders = {
         "Expect",
         "Connection",
+        "Cookie",
     };
     jsonRoot["excludedHeaders"] = std::accumulate(
         excludedHeaders.begin(),
