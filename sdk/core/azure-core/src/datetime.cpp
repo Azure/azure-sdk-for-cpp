@@ -720,6 +720,30 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
                   * ParseNumber<decltype(localDiffMinutes)>(
                                      &cursor, dateTime, DateTimeLength, parsingArea, 2, 2);
             }
+          } else {
+            // if no time zone information is given, assume local time and convert to UTC since DateTime only
+            // represents UTC times.
+            const std::time_t raw_time = std::time(nullptr);
+            std::tm local_tm = *std::localtime(&raw_time);
+            const std::time_t local_time = std::mktime(&local_tm);
+            std::tm utc_tm = *std::gmtime(&raw_time);
+            const std::time_t utc_time = std::mktime(&utc_tm);
+
+            const time_t offset = local_time - utc_time + (local_tm.tm_isdst ? 3600 : 0);
+
+            int32_t offset_minutes = static_cast<int>(offset) / 60;
+
+            while (offset_minutes < 0) {
+              localDiffHours -= 1;
+              offset_minutes += 60;
+            }
+
+            while (offset_minutes >= 60) {
+              localDiffHours +=  1;
+              offset_minutes -= 60;
+            }
+
+            localDiffMinutes = offset_minutes;
           }
         }
       }
