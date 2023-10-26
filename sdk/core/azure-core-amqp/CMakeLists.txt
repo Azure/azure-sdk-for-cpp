@@ -93,13 +93,12 @@ set (AZURE_CORE_AMQP_HEADER
 set(AZURE_CORE_AMQP_SOURCE
     src/amqp/cancellable.cpp
     src/amqp/claim_based_security.cpp
-    src/amqp/connection_string_credential.cpp
     src/amqp/connection.cpp
+    src/amqp/connection_string_credential.cpp
     src/amqp/link.cpp
     src/amqp/management.cpp
     src/amqp/message_receiver.cpp
     src/amqp/message_sender.cpp
-    src/amqp/session.cpp
     src/amqp/private/claims_based_security_impl.hpp
     src/amqp/private/connection_impl.hpp
     src/amqp/private/link_impl.hpp
@@ -107,6 +106,7 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/private/message_receiver_impl.hpp
     src/amqp/private/message_sender_impl.hpp
     src/amqp/private/session_impl.hpp
+    src/amqp/session.cpp
     src/common/global_state.cpp
     src/models/amqp_error.cpp
     src/models/amqp_header.cpp
@@ -117,12 +117,12 @@ set(AZURE_CORE_AMQP_SOURCE
     src/models/message_target.cpp
     src/models/messaging_values.cpp
     src/network/amqp_header_transport.cpp
+    src/network/private/transport_impl.hpp
     src/network/sasl_transport.cpp
     src/network/socket_listener.cpp
     src/network/socket_transport.cpp
     src/network/tls_transport.cpp
     src/network/transport.cpp
-    src/network/private/transport_impl.hpp
     src/private/package_version.hpp
 )
 

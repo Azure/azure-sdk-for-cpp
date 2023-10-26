@@ -49,19 +49,19 @@ endif()
 set(
   AZURE_KEYVAULT_CERTIFICATES_HEADER
     inc/azure/keyvault/certificates.hpp
+    inc/azure/keyvault/certificates/certificate_client.hpp
     inc/azure/keyvault/certificates/certificate_client_models.hpp
     inc/azure/keyvault/certificates/certificate_client_operations.hpp
     inc/azure/keyvault/certificates/certificate_client_options.hpp
-    inc/azure/keyvault/certificates/certificate_client.hpp
     inc/azure/keyvault/certificates/dll_import_export.hpp
     inc/azure/keyvault/certificates/rtti.hpp
 )
 
 set(
   AZURE_KEYVAULT_CERTIFICATES_SOURCE
+    src/certificate_client.cpp
     src/certificate_client_operations.cpp
     src/certificate_client_paged_response.cpp
-    src/certificate_client.cpp
     src/certificate_serializers.cpp
     src/keyvault_certificates_common_request.cpp
     src/private/certificate_constants.hpp

@@ -27,9 +27,9 @@ add_executable (
      attestation_collateral.cpp
      attestation_metadata.cpp
      attestation_test.cpp
+     crypto_test.cpp
      crypto_test_collateral.cpp
      crypto_test_collateral.hpp
-     crypto_test.cpp
      macro_guard.cpp
      policycertmgmt_test.cpp
      policygetset_test.cpp

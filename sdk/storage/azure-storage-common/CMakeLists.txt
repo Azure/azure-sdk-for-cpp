@@ -47,10 +47,6 @@ set(
     inc/azure/storage/common/account_sas_builder.hpp
     inc/azure/storage/common/crypt.hpp
     inc/azure/storage/common/dll_import_export.hpp
-    inc/azure/storage/common/rtti.hpp
-    inc/azure/storage/common/storage_common.hpp
-    inc/azure/storage/common/storage_credential.hpp
-    inc/azure/storage/common/storage_exception.hpp
     inc/azure/storage/common/internal/concurrent_transfer.hpp
     inc/azure/storage/common/internal/constants.hpp
     inc/azure/storage/common/internal/file_io.hpp
@@ -62,6 +58,10 @@ set(
     inc/azure/storage/common/internal/storage_service_version_policy.hpp
     inc/azure/storage/common/internal/storage_switch_to_secondary_policy.hpp
     inc/azure/storage/common/internal/xml_wrapper.hpp
+    inc/azure/storage/common/rtti.hpp
+    inc/azure/storage/common/storage_common.hpp
+    inc/azure/storage/common/storage_credential.hpp
+    inc/azure/storage/common/storage_exception.hpp
 )
 
 set(
@@ -69,6 +69,7 @@ set(
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
+    src/private/package_version.hpp
     src/reliable_stream.cpp
     src/shared_key_policy.cpp
     src/storage_bearer_token_authentication_policy.cpp
@@ -77,7 +78,6 @@ set(
     src/storage_per_retry_policy.cpp
     src/storage_switch_to_secondary_policy.cpp
     src/xml_wrapper.cpp
-    src/private/package_version.hpp
 )
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})

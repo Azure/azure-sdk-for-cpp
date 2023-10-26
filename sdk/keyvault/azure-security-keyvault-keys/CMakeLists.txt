@@ -48,38 +48,19 @@ endif()
 set(
   AZURE_KEYVAULT_KEYS_HEADER
     inc/azure/keyvault/keys.hpp
-    inc/azure/keyvault/keyvault_keys.hpp
-    inc/azure/keyvault/keys/dll_import_export.hpp
-    inc/azure/keyvault/keys/key_client_models.hpp
-    inc/azure/keyvault/keys/key_client_options.hpp
-    inc/azure/keyvault/keys/key_client.hpp
-    inc/azure/keyvault/keys/rtti.hpp
+    inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client_models.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client_options.hpp
-    inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
+    inc/azure/keyvault/keys/dll_import_export.hpp
+    inc/azure/keyvault/keys/key_client.hpp
+    inc/azure/keyvault/keys/key_client_models.hpp
+    inc/azure/keyvault/keys/key_client_options.hpp
+    inc/azure/keyvault/keys/rtti.hpp
+    inc/azure/keyvault/keyvault_keys.hpp
 )
 
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
-    src/delete_key_operation.cpp
-    src/deleted_key.cpp
-    src/import_key_options.cpp
-    src/json_web_key.cpp
-    src/key_backup.cpp
-    src/key_client_paged_responses.cpp
-    src/key_client.cpp
-    src/key_curve_name.cpp
-    src/key_encryption_algorithm.cpp
-    src/key_get_random_bytes.cpp
-    src/key_operation.cpp
-    src/key_release_options.cpp
-    src/key_release_policy.cpp
-    src/key_request_parameters.cpp
-    src/key_rotation_policy.cpp
-    src/key_type.cpp
-    src/keyvault_key.cpp
-    src/keyvault_protocol.cpp
-    src/recover_deleted_key_operation.cpp
     src/cryptography/cryptography_client.cpp
     src/cryptography/decrypt_parameters.cpp
     src/cryptography/decrypt_result.cpp
@@ -95,6 +76,24 @@ set(
     src/cryptography/unwrap_result.cpp
     src/cryptography/verify_result.cpp
     src/cryptography/wrap_result.cpp
+    src/delete_key_operation.cpp
+    src/deleted_key.cpp
+    src/import_key_options.cpp
+    src/json_web_key.cpp
+    src/key_backup.cpp
+    src/key_client.cpp
+    src/key_client_paged_responses.cpp
+    src/key_curve_name.cpp
+    src/key_encryption_algorithm.cpp
+    src/key_get_random_bytes.cpp
+    src/key_operation.cpp
+    src/key_release_options.cpp
+    src/key_release_policy.cpp
+    src/key_request_parameters.cpp
+    src/key_rotation_policy.cpp
+    src/key_type.cpp
+    src/keyvault_key.cpp
+    src/keyvault_protocol.cpp
     src/private/cryptography_internal_access.hpp
     src/private/cryptography_serializers.hpp
     src/private/key_backup.hpp
@@ -107,6 +106,7 @@ set(
     src/private/keyvault_constants.hpp
     src/private/keyvault_protocol.hpp
     src/private/package_version.hpp
+    src/recover_deleted_key_operation.cpp
 )
 
 add_library(azure-security-keyvault-keys

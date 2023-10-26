@@ -54,13 +54,13 @@ set(
 
 set(
   AZURE_STORAGE_QUEUES_SOURCE
+    src/private/package_version.hpp
     src/queue_client.cpp
     src/queue_options.cpp
     src/queue_responses.cpp
     src/queue_sas_builder.cpp
     src/queue_service_client.cpp
     src/rest_client.cpp
-    src/private/package_version.hpp
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUES_HEADER} ${AZURE_STORAGE_QUEUES_SOURCE})

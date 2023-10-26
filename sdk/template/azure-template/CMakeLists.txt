@@ -49,8 +49,8 @@ set(
 
 set(
   AZURE_TEMPLATE_SOURCE
-    src/template_client.cpp
     src/private/package_version.hpp
+    src/template_client.cpp
 )
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})

@@ -19,10 +19,10 @@ set(
 
 set(
   AZURE_CORE_TEST_SOURCE
+  src/private/package_version.hpp
   src/test_base.cpp
   src/test_proxy_manager.cpp
   src/test_proxy_policy.cpp
-  src/private/package_version.hpp
 )
 
 add_library (

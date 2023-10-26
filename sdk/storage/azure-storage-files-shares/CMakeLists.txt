@@ -58,6 +58,7 @@ set(
 
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
+    src/private/package_version.hpp
     src/rest_client.cpp
     src/share_client.cpp
     src/share_directory_client.cpp
@@ -67,7 +68,6 @@ set(
     src/share_responses.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp
-    src/private/package_version.hpp
 )
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})

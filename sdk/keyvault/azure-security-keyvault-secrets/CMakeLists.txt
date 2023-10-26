@@ -53,9 +53,9 @@ set(
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
     inc/azure/keyvault/secrets/keyvault_operations.hpp
     inc/azure/keyvault/secrets/keyvault_options.hpp
+    inc/azure/keyvault/secrets/keyvault_secret.hpp
     inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
     inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
-    inc/azure/keyvault/secrets/keyvault_secret.hpp
     inc/azure/keyvault/secrets/rtti.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
 )
@@ -67,13 +67,13 @@ set(
     src/keyvault_secret_paged_response.cpp
     src/keyvault_secret_properties.cpp
     src/keyvault_secrets_common_request.cpp
-    src/secret_client.cpp
-    src/secret_serializers.cpp
     src/private/keyvault_protocol.hpp
     src/private/keyvault_secrets_common_request.hpp
     src/private/package_version.hpp
     src/private/secret_constants.hpp
     src/private/secret_serializers.hpp
+    src/secret_client.cpp
+    src/secret_serializers.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})

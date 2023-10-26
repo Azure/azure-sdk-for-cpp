@@ -68,10 +68,10 @@ set(
     src/datalake_sas_builder.cpp
     src/datalake_service_client.cpp
     src/datalake_utilities.cpp
-    src/rest_client.cpp
     src/private/datalake_constants.hpp
     src/private/datalake_utilities.hpp
     src/private/package_version.hpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})

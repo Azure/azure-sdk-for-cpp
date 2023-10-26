@@ -72,10 +72,10 @@ set(
     src/blob_service_client.cpp
     src/block_blob_client.cpp
     src/page_blob_client.cpp
-    src/rest_client.cpp
     src/private/avro_parser.cpp
     src/private/avro_parser.hpp
     src/private/package_version.hpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOBS_HEADER} ${AZURE_STORAGE_BLOBS_SOURCE})
