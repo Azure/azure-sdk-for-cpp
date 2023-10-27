@@ -18,6 +18,7 @@
 #include "azure/storage/blobs/blob_sas_builder.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
+#include "azure/storage/blobs/deferred_response.hpp"
 #include "azure/storage/blobs/dll_import_export.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
 #include "azure/storage/blobs/rest_client.hpp"
