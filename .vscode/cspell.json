@@ -271,6 +271,12 @@
       ]
     },
     {
+      "filename": "**/sdk/storage/faq.md",
+      "words": [
+        "doesnt"
+      ]
+    },
+    {
       "filename": "**/sdk/storage/azure-storage-common/CHANGELOG.md",
       "words": [
         "johnwheffner",
