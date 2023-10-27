@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/connection.hpp"
+#include "azure/core/amqp/internal/connection.hpp"
 
 #include "../network/private/transport_impl.hpp"
-#include "azure/core/amqp/common/global_state.hpp"
+#include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
-#include "azure/core/amqp/network/socket_transport.hpp"
-#include "azure/core/amqp/network/tls_transport.hpp"
+#include "azure/core/amqp/internal/network/socket_transport.hpp"
+#include "azure/core/amqp/internal/network/tls_transport.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/session_impl.hpp"

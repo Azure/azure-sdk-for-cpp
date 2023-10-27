@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/amqp/models/message_source.hpp>
-#include <azure/core/amqp/models/message_target.hpp>
-#include <azure/core/amqp/models/messaging_values.hpp>
+#include <azure/core/amqp/internal/models/message_source.hpp>
+#include <azure/core/amqp/internal/models/message_target.hpp>
+#include <azure/core/amqp/internal/models/messaging_values.hpp>
 
 #include <gtest/gtest.h>
 

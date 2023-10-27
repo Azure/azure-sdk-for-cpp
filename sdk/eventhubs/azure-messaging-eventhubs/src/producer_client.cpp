@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #include "azure/messaging/eventhubs/producer_client.hpp"
-
+#include <azure/core/amqp/internal/message_sender.hpp>
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "private/eventhubs_constants.hpp"

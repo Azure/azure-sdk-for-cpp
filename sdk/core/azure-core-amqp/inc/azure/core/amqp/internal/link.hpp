@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "models/amqp_value.hpp"
-#include "models/message_source.hpp"
-#include "models/message_target.hpp"
+#include <azure/core/amqp/models/amqp_value.hpp>
+#include <azure/core/amqp/internal/models/message_source.hpp>
+#include <azure/core/amqp/internal/models/message_target.hpp>
 
 #include <chrono>
 #include <memory>

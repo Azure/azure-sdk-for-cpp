@@ -2,19 +2,19 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include <azure/core/amqp/claims_based_security.hpp>
-#include <azure/core/amqp/connection.hpp>
-#include <azure/core/amqp/message_receiver.hpp>
-#include <azure/core/amqp/message_sender.hpp>
-#include <azure/core/amqp/models/amqp_error.hpp>
+#include <azure/core/amqp/internal/claims_based_security.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
+#include <azure/core/amqp/internal/message_receiver.hpp>
+#include <azure/core/amqp/internal/message_sender.hpp>
+#include <azure/core/amqp/internal/models/amqp_error.hpp>
 #include <azure/core/amqp/models/amqp_message.hpp>
-#include <azure/core/amqp/models/amqp_protocol.hpp>
-#include <azure/core/amqp/models/message_source.hpp>
-#include <azure/core/amqp/models/message_target.hpp>
-#include <azure/core/amqp/models/messaging_values.hpp>
-#include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
-#include <azure/core/amqp/network/socket_listener.hpp>
-#include <azure/core/amqp/session.hpp>
+#include <azure/core/amqp/internal/models/amqp_protocol.hpp>
+#include <azure/core/amqp/internal/models/message_source.hpp>
+#include <azure/core/amqp/internal/models/message_target.hpp>
+#include <azure/core/amqp/internal/models/messaging_values.hpp>
+#include <azure/core/amqp/internal/network/amqp_header_detect_transport.hpp>
+#include <azure/core/amqp/internal/network/socket_listener.hpp>
+#include <azure/core/amqp/internal/session.hpp>
 
 #include <memory>
 

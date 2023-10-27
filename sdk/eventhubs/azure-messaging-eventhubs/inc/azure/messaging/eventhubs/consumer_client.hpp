@@ -9,6 +9,7 @@
 #include "partition_client.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>

@@ -4,14 +4,14 @@
 // Enable declaration of strerror_s.
 #define __STDC_WANT_LIB_EXT1__ 1
 
-#include "azure/core/amqp/message_receiver.hpp"
+#include "azure/core/amqp/internal/message_receiver.hpp"
 
-#include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/connection_string_credential.hpp"
-#include "azure/core/amqp/link.hpp"
+#include "azure/core/amqp/internal/connection.hpp"
+#include "azure/core/amqp/internal/connection_string_credential.hpp"
+#include "azure/core/amqp/internal/link.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
-#include "azure/core/amqp/models/messaging_values.hpp"
-#include "azure/core/amqp/session.hpp"
+#include "azure/core/amqp/internal/models/messaging_values.hpp"
+#include "azure/core/amqp/internal/session.hpp"
 #include "private/message_receiver_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>

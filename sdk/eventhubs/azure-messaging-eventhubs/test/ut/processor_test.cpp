@@ -4,7 +4,7 @@
 #include "./test_checkpoint_store.hpp"
 #include "eventhubs_test_base.hpp"
 
-#include <azure/core/amqp/common/global_state.hpp>
+#include <azure/core/amqp/internal/common/global_state.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/test/test_base.hpp>
@@ -597,14 +597,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 // The processor balanced and greedy tests fail when run on Linux or Mac. The tests run fine on
 // Windows. For now, disable the tests on Linux and Mac.
 #if !defined(AZ_PLATFORM_LINUX) && !defined(AZ_PLATFORM_MAC)
-      TEST_F(ProcessorTest, Processor_Balanced_LIVEONLY_)
-      {
-        TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
-      }
-      TEST_F(ProcessorTest, Processor_Greedy_LIVEONLY_)
-      {
-        TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyGreedy);
-      }
+  TEST_F(ProcessorTest, Processor_Balanced_LIVEONLY_)
+  {
+    TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
+  }
+  TEST_F(ProcessorTest, Processor_Greedy_LIVEONLY_)
+  {
+    TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyGreedy);
+  }
 #endif
 #if 0
   TEST_F(ProcessorTest, Processor_Balanced_AcquisitionOnly_LIVEONLY_)

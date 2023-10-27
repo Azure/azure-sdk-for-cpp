@@ -3,10 +3,10 @@
 
 #include "mock_amqp_server.hpp"
 
-#include <azure/core/amqp/connection.hpp>
-#include <azure/core/amqp/management.hpp>
-#include <azure/core/amqp/models/messaging_values.hpp>
-#include <azure/core/amqp/session.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
+#include <azure/core/amqp/internal/management.hpp>
+#include <azure/core/amqp/internal/models/messaging_values.hpp>
+#include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/platform.hpp>
 
 #include <gtest/gtest.h>

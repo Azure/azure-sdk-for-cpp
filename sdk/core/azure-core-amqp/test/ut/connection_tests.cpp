@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/common/async_operation_queue.hpp"
-#include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/message_receiver.hpp"
-#include "azure/core/amqp/models/amqp_protocol.hpp"
-#include "azure/core/amqp/models/messaging_values.hpp"
-#include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
-#include "azure/core/amqp/network/socket_listener.hpp"
-#include "azure/core/amqp/network/socket_transport.hpp"
-#include "azure/core/amqp/session.hpp"
+#include "azure/core/amqp/internal/common/async_operation_queue.hpp"
+#include "azure/core/amqp/internal/connection.hpp"
+#include "azure/core/amqp/internal/message_receiver.hpp"
+#include "azure/core/amqp/internal/models/amqp_protocol.hpp"
+#include "azure/core/amqp/internal/models/messaging_values.hpp"
+#include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
+#include "azure/core/amqp/internal/network/socket_listener.hpp"
+#include "azure/core/amqp/internal/network/socket_transport.hpp"
+#include "azure/core/amqp/internal/session.hpp"
 #include "mock_amqp_server.hpp"
 
 #include <azure/core/context.hpp>

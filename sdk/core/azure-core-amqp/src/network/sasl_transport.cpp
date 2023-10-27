@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/network/sasl_transport.hpp"
+#include "azure/core/amqp/internal/network/sasl_transport.hpp"
 
-#include "azure/core/amqp/network/tls_transport.hpp"
+#include "azure/core/amqp/internal/network/tls_transport.hpp"
 #include "private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>

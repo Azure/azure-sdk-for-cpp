@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 #pragma once
 #include <azure/core/amqp.hpp>
+#include <azure/core/datetime.hpp>
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /** @brief Represents an event sent to the Azure Event Hubs service.

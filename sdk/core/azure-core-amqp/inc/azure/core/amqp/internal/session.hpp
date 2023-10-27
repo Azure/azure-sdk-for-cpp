@@ -6,9 +6,10 @@
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
 #include "endpoint.hpp"
-#include "models/amqp_value.hpp"
 #include "models/message_source.hpp"
 #include "models/message_target.hpp"
+
+#include <azure/core/amqp/models/amqp_value.hpp>
 
 #include <chrono>
 #include <memory>

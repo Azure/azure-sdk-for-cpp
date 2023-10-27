@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
+
+#include <azure/core/amqp/internal/common/async_operation_queue.hpp>
+
 #include "checkpoint_store.hpp"
 #include "consumer_client.hpp"
 #include "models/processor_load_balancer_models.hpp"
