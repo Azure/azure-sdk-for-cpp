@@ -89,6 +89,10 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       services += "f";
     }
+    if ((Services & AccountSasServices::Table) == AccountSasServices::Table)
+    {
+      services += "t";
+    }
 
     std::string resourceTypes;
     if ((ResourceTypes & AccountSasResource::Service) == AccountSasResource::Service)
@@ -103,7 +107,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       resourceTypes += "o";
     }
-
+   
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
             Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)

@@ -5,8 +5,8 @@
   "name": "azure-storage-tables-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
-    "Microsoft Azure Storage Queues SDK for C++",
-    "This library provides Azure Storage Queues SDK."
+    "Microsoft Azure Storage Tables SDK for C++",
+    "This library provides Azure Storage Tables SDK."
   ],
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-tables",
   "license": "MIT",

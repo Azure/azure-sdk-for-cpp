@@ -83,6 +83,13 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     connectionStringParts.QueueServiceUrl = Azure::Core::Url(std::move(endpoint));
 
+    endpoint = getWithDefault(connectionStringMap, "TableEndpoint");
+    if (endpoint.empty() && !accountName.empty())
+    {
+      endpoint = defaultEndpointsProtocol + "://" + accountName + ".table." + EndpointSuffix;
+    }
+    connectionStringParts.TableServiceUrl = Azure::Core::Url(std::move(endpoint));
+
     std::string accountKey = getWithDefault(connectionStringMap, "AccountKey");
     connectionStringParts.AccountKey = accountKey;
     if (!accountKey.empty())
@@ -110,6 +117,8 @@ namespace Azure { namespace Storage { namespace _internal {
           = Azure::Core::Url(connectionStringParts.FileServiceUrl.GetAbsoluteUrl() + sas);
       connectionStringParts.QueueServiceUrl
           = Azure::Core::Url(connectionStringParts.QueueServiceUrl.GetAbsoluteUrl() + sas);
+      connectionStringParts.TableServiceUrl
+          = Azure::Core::Url(connectionStringParts.TableServiceUrl.GetAbsoluteUrl() + sas);
     }
 
     return connectionStringParts;

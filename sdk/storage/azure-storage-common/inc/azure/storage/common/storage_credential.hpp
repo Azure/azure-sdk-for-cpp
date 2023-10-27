@@ -17,10 +17,12 @@ namespace Azure { namespace Storage {
     struct ShareSasBuilder;
     struct DataLakeSasBuilder;
     struct QueueSasBuilder;
+    struct TableSasBuilder;
   } // namespace Sas
 
   namespace _internal {
     class SharedKeyPolicy;
+    class SharedKeyPolicyLite;
   }
 
   /**
@@ -60,11 +62,13 @@ namespace Azure { namespace Storage {
 
   private:
     friend class _internal::SharedKeyPolicy;
+    friend class _internal::SharedKeyPolicyLite;
     friend struct Sas::BlobSasBuilder;
     friend struct Sas::ShareSasBuilder;
     friend struct Sas::DataLakeSasBuilder;
     friend struct Sas::QueueSasBuilder;
     friend struct Sas::AccountSasBuilder;
+    friend struct Sas::TableSasBuilder;
     std::string GetAccountKey() const
     {
       std::lock_guard<std::mutex> guard(m_mutex);
@@ -85,6 +89,7 @@ namespace Azure { namespace Storage {
       Azure::Core::Url FileServiceUrl;
       Azure::Core::Url QueueServiceUrl;
       Azure::Core::Url DataLakeServiceUrl;
+      Azure::Core::Url TableServiceUrl;
       std::shared_ptr<StorageSharedKeyCredential> KeyCredential;
     };
 

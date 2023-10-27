@@ -62,6 +62,12 @@ namespace Azure { namespace Storage { namespace Sas {
      */
     Object = 4,
 
+    
+    /**
+     * @brief Indicates whether object-level APIs for blobs, queue messages, and files are
+     * accessible from this shared access signature.
+     */
+    Table = 8,
     /**
      * @brief Indicates all service-level APIs are accessible from this shared access
      * signature.
@@ -104,6 +110,7 @@ namespace Azure { namespace Storage { namespace Sas {
      */
     Files = 4,
 
+    Table = 8,
     /**
      * @brief Indicates all services are accessible from the shared
      * access signature.

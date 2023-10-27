@@ -44,12 +44,15 @@ set(
     inc/azure/storage/tables/dll_import_export.hpp
     inc/azure/storage/tables/rest_client.hpp
     inc/azure/storage/tables/rtti.hpp
+    inc/azure/storage/tables/table_sas_builder.hpp
+    inc/azure/storage/tables/models.hpp
 )
 
 set(
   AZURE_STORAGE_TABLES_SOURCE
     src/private/package_version.hpp
     src/rest_client.cpp
+    src/table_sas_builder.cpp
 )
 
 add_library(azure-storage-tables ${AZURE_STORAGE_TABLES_HEADER} ${AZURE_STORAGE_TABLES_SOURCE})
@@ -72,13 +75,13 @@ generate_documentation(azure-storage-tables ${AZ_LIBRARY_VERSION})
 az_vcpkg_export(
     azure-storage-tables
     STORAGE_TABLES
-    "azure/storage/tables/dll_import_export.hpp"
+    azure/storage/tables/dll_import_export.hpp
   )
   
 az_rtti_setup(
   azure-storage-tables
   STORAGE_TABLES
-  "azure/storage/tables/rtti.hpp"
+  azure/storage/tables/rtti.hpp
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF

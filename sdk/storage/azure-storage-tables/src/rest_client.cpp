@@ -11,6 +11,7 @@
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
+#include <azure/storage/common/internal/xml_wrapper.hpp>
 using namespace Azure::Storage::Tables;
 
 AllowedMethodsType const AllowedMethodsType::Delete{"DELETE"};
@@ -41,7 +42,7 @@ Azure::Response<ListTableServices> TableServicesClient::List(
   url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
   url.AppendPath("tableServices");
 
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
+  // url.SetQueryParameters({{"api-version",_detail::ApiVersion/*"2023-01-01"*/}});
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
@@ -120,243 +121,398 @@ Azure::Response<ListTableServices> TableServicesClient::List(
   return Response<ListTableServices>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<TableServiceProperties> TableServicesClient::SetServiceProperties(
-    SetServicePropertiesOptions const& options,
+Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServiceProperties(
+    Models::SetServicePropertiesOptions const& options,
     Core::Context const& context)
 {
-  auto url = m_url;
-  url.AppendPath("subscriptions/");
-
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default");
-
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
-
-  std::string jsonBody;
+  std::string xmlBody;
   {
-    auto jsonRoot = Core::Json::_internal::json::object();
-    jsonRoot["properties"]["cors"]["corsRules"] = Core::Json::_internal::json::array();
-
-    for (std::size_t i = 0; i < options.Parameters.Properties.Cors.CorsRules.size(); ++i)
+    _internal::XmlWriter writer;
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "StorageServiceProperties"});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Logging"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Version",
+        options.TableServiceProperties.Logging.Version});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Delete",
+        options.TableServiceProperties.Logging.Delete ? "true" : "false"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Read",
+        options.TableServiceProperties.Logging.Read ? "true" : "false"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Write",
+        options.TableServiceProperties.Logging.Write ? "true" : "false"});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Enabled",
+        options.TableServiceProperties.Logging.RetentionPolicy.IsEnabled ? "true" : "false"});
+    if (options.TableServiceProperties.Logging.RetentionPolicy.Days.HasValue())
     {
-      jsonRoot["properties"]["cors"]["corsRules"][i]["allowedOrigins"]
-          = Core::Json::_internal::json::array();
-
-      for (std::size_t j = 0;
-           j < options.Parameters.Properties.Cors.CorsRules[i].AllowedOrigins.size();
-           j++)
-      {
-        jsonRoot["properties"]["cors"]["corsRules"][i]["allowedOrigins"][j]
-            = options.Parameters.Properties.Cors.CorsRules[i].AllowedOrigins[j];
-      }
-
-      jsonRoot["properties"]["cors"]["corsRules"][i]["allowedMethods"]
-          = Core::Json::_internal::json::array();
-
-      for (std::size_t k = 0;
-           k < options.Parameters.Properties.Cors.CorsRules[i].AllowedMethods.size();
-           k++)
-      {
-        jsonRoot["properties"]["cors"]["corsRules"][i]["allowedMethods"][k]
-            = options.Parameters.Properties.Cors.CorsRules[i].AllowedMethods[k].ToString();
-      }
-
-      jsonRoot["properties"]["cors"]["corsRules"][i]["maxAgeInSeconds"]
-          = std::to_string(options.Parameters.Properties.Cors.CorsRules[i].MaxAgeInSeconds);
-      jsonRoot["properties"]["cors"]["corsRules"][i]["exposedHeaders"]
-          = Core::Json::_internal::json::array();
-
-      for (std::size_t l = 0;
-           l < options.Parameters.Properties.Cors.CorsRules[i].ExposedHeaders.size();
-           l++)
-      {
-        jsonRoot["properties"]["cors"]["corsRules"][i]["exposedHeaders"][l]
-            = options.Parameters.Properties.Cors.CorsRules[i].ExposedHeaders[l];
-      }
-
-      jsonRoot["properties"]["cors"]["corsRules"][i]["allowedHeaders"]
-          = Core::Json::_internal::json::array();
-
-      for (std::size_t m = 0;
-           m < options.Parameters.Properties.Cors.CorsRules[i].AllowedHeaders.size();
-           m++)
-      {
-        jsonRoot["properties"]["cors"]["corsRules"][i]["allowedHeaders"][m]
-            = options.Parameters.Properties.Cors.CorsRules[i].AllowedHeaders[m];
-      }
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag,
+          "Days",
+          std::to_string(options.TableServiceProperties.Logging.RetentionPolicy.Days.Value())});
     }
-
-    jsonBody = jsonRoot.dump();
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "HourMetrics"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Version",
+        options.TableServiceProperties.HourMetrics.Version});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Enabled",
+        options.TableServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
+    if (options.TableServiceProperties.HourMetrics.IncludeApis.HasValue())
+    {
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag,
+          "IncludeAPIs",
+          options.TableServiceProperties.HourMetrics.IncludeApis.Value() ? "true" : "false"});
+    }
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Enabled",
+        options.TableServiceProperties.HourMetrics.RetentionPolicy.IsEnabled ? "true" : "false"});
+    if (options.TableServiceProperties.HourMetrics.RetentionPolicy.Days.HasValue())
+    {
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag,
+          "Days",
+          std::to_string(options.TableServiceProperties.HourMetrics.RetentionPolicy.Days.Value())});
+    }
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MinuteMetrics"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Version",
+        options.TableServiceProperties.MinuteMetrics.Version});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Enabled",
+        options.TableServiceProperties.MinuteMetrics.IsEnabled ? "true" : "false"});
+    if (options.TableServiceProperties.MinuteMetrics.IncludeApis.HasValue())
+    {
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag,
+          "IncludeAPIs",
+          options.TableServiceProperties.MinuteMetrics.IncludeApis.Value() ? "true" : "false"});
+    }
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
+    writer.Write(_internal::XmlNode{
+        _internal::XmlNodeType::StartTag,
+        "Enabled",
+        options.TableServiceProperties.MinuteMetrics.RetentionPolicy.IsEnabled ? "true" : "false"});
+    if (options.TableServiceProperties.MinuteMetrics.RetentionPolicy.Days.HasValue())
+    {
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag,
+          "Days",
+          std::to_string(
+              options.TableServiceProperties.MinuteMetrics.RetentionPolicy.Days.Value())});
+    }
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Cors"});
+    for (const auto& i1 : options.TableServiceProperties.Cors)
+    {
+      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "CorsRule"});
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag, "AllowedOrigins", i1.AllowedOrigins});
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag, "AllowedMethods", i1.AllowedMethods});
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag, "AllowedHeaders", i1.AllowedHeaders});
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag, "ExposedHeaders", i1.ExposedHeaders});
+      writer.Write(_internal::XmlNode{
+          _internal::XmlNodeType::StartTag, "MaxAgeInSeconds", std::to_string(i1.MaxAgeInSeconds)});
+      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    }
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+    xmlBody = writer.GetDocument();
   }
+  auto url = m_url;
 
+  url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
   Core::IO::MemoryBodyStream requestBody(
-      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
+      reinterpret_cast<std::uint8_t const*>(xmlBody.data()), xmlBody.length());
 
   Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/json");
+  request.SetHeader("Content-Type", "application/xml");
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
   {
     throw Core::RequestFailedException(rawResponse);
   }
 
-  TableServiceProperties response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    std::string responseString(responseBody.begin(), responseBody.end());
-    if (responseBody.size() > 0)
-    {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+  Models::SetServicePropertiesResult response;
 
-      for (auto const& jsonItem : jsonRoot["properties"]["cors"]["corsRules"])
-      {
-        CorsRule vectorItem{};
-
-        for (auto const& jsonSubItem : jsonItem["allowedOrigins"])
-        {
-          std::string origins{};
-
-          origins = jsonSubItem.get<std::string>();
-
-          vectorItem.AllowedOrigins.emplace_back(std::move(origins));
-        }
-
-        for (auto const& jsonSubItem : jsonItem["allowedMethods"])
-        {
-          AllowedMethodsType methods{};
-
-          methods = AllowedMethodsType(jsonSubItem.get<std::string>());
-
-          vectorItem.AllowedMethods.emplace_back(std::move(methods));
-        }
-
-        vectorItem.MaxAgeInSeconds = jsonItem["maxAgeInSeconds"].is_string()
-            ? std::stoi(jsonItem["maxAgeInSeconds"].get<std::string>())
-            : jsonItem["maxAgeInSeconds"].get<std::int32_t>();
-
-        for (auto const& jsonSubItem : jsonItem["exposedHeaders"])
-        {
-          std::string headers{};
-
-          headers = jsonSubItem.get<std::string>();
-
-          vectorItem.ExposedHeaders.emplace_back(std::move(headers));
-        }
-
-        for (auto const& jsonSubItem : jsonItem["allowedHeaders"])
-        {
-          std::string allowedHeaders{};
-
-          allowedHeaders = jsonSubItem.get<std::string>();
-
-          vectorItem.AllowedHeaders.emplace_back(std::move(allowedHeaders));
-        }
-
-        response.Properties.Cors.CorsRules.emplace_back(std::move(vectorItem));
-      }
-    }
-  }
-
-  return Response<TableServiceProperties>(std::move(response), std::move(rawResponse));
+  return Response<Models::SetServicePropertiesResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<TableServiceProperties> TableServicesClient::GetServiceProperties(
-    GetServicePropertiesOptions const& options,
+Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceProperties(
+    Models::GetServicePropertiesOptions const& options,
     Core::Context const& context)
 {
   (void)options;
   auto url = m_url;
-  url.AppendPath("subscriptions/");
+  /* url.AppendPath("subscriptions/");
   url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath(
       !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
   url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
   url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default");
-
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
+  url.AppendPath("tableServices/");
+  */
+  // url.SetQueryParameters({{"api-version", "2023-01-01"}});
+  url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
-
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  request.SetHeader("Content-Type", "application/json");
+  request.SetHeader("Accept", "application/json;odata=minimalmetadata");
+  auto pRawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = pRawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
-    throw Core::RequestFailedException(rawResponse);
+    throw Core::RequestFailedException(pRawResponse);
   }
 
-  TableServiceProperties response{};
+  Models::TableServiceProperties response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
-
-    if (responseBody.size() > 0)
+    const auto& responseBody = pRawResponse->GetBody();
+    _internal::XmlReader reader(
+        reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
+    enum class XmlTagEnum
     {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-
-      for (auto const& jsonItem : jsonRoot["properties"]["cors"]["corsRules"])
+      kUnknown,
+      kStorageServiceProperties,
+      kLogging,
+      kVersion,
+      kDelete,
+      kRead,
+      kWrite,
+      kRetentionPolicy,
+      kEnabled,
+      kDays,
+      kHourMetrics,
+      kIncludeAPIs,
+      kMinuteMetrics,
+      kCors,
+      kCorsRule,
+      kAllowedOrigins,
+      kAllowedMethods,
+      kAllowedHeaders,
+      kExposedHeaders,
+      kMaxAgeInSeconds,
+    };
+    const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
+        {"StorageServiceProperties", XmlTagEnum::kStorageServiceProperties},
+        {"Logging", XmlTagEnum::kLogging},
+        {"Version", XmlTagEnum::kVersion},
+        {"Delete", XmlTagEnum::kDelete},
+        {"Read", XmlTagEnum::kRead},
+        {"Write", XmlTagEnum::kWrite},
+        {"RetentionPolicy", XmlTagEnum::kRetentionPolicy},
+        {"Enabled", XmlTagEnum::kEnabled},
+        {"Days", XmlTagEnum::kDays},
+        {"HourMetrics", XmlTagEnum::kHourMetrics},
+        {"IncludeAPIs", XmlTagEnum::kIncludeAPIs},
+        {"MinuteMetrics", XmlTagEnum::kMinuteMetrics},
+        {"Cors", XmlTagEnum::kCors},
+        {"CorsRule", XmlTagEnum::kCorsRule},
+        {"AllowedOrigins", XmlTagEnum::kAllowedOrigins},
+        {"AllowedMethods", XmlTagEnum::kAllowedMethods},
+        {"AllowedHeaders", XmlTagEnum::kAllowedHeaders},
+        {"ExposedHeaders", XmlTagEnum::kExposedHeaders},
+        {"MaxAgeInSeconds", XmlTagEnum::kMaxAgeInSeconds},
+    };
+    std::vector<XmlTagEnum> xmlPath;
+    Models::CorsRule vectorElement1;
+    while (true)
+    {
+      auto node = reader.Read();
+      if (node.Type == _internal::XmlNodeType::End)
       {
-        CorsRule vectorItem{};
-
-        for (auto const& jsonSubItem : jsonItem["allowedOrigins"])
+        break;
+      }
+      else if (node.Type == _internal::XmlNodeType::StartTag)
+      {
+        auto ite = XmlTagEnumMap.find(node.Name);
+        xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
+      }
+      else if (node.Type == _internal::XmlNodeType::Text)
+      {
+        if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kVersion)
         {
-          std::string allowedOrigins{};
-
-          allowedOrigins = jsonSubItem.get<std::string>();
-
-          vectorItem.AllowedOrigins.emplace_back(std::move(allowedOrigins));
+          response.Logging.Version = node.Value;
         }
-
-        for (auto const& jsonSubItem : jsonItem["allowedMethods"])
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kDelete)
         {
-          AllowedMethodsType allowedMethods{};
-
-          allowedMethods = AllowedMethodsType(jsonSubItem.get<std::string>());
-
-          vectorItem.AllowedMethods.emplace_back(std::move(allowedMethods));
+          response.Logging.Delete = node.Value == std::string("true");
         }
-
-        vectorItem.MaxAgeInSeconds = jsonItem["maxAgeInSeconds"].is_string()
-            ? std::stoi(jsonItem["maxAgeInSeconds"].get<std::string>())
-            : jsonItem["maxAgeInSeconds"].get<std::int32_t>();
-
-        for (auto const& jsonSubItem : jsonItem["exposedHeaders"])
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kRead)
         {
-          std::string exposedHeaders{};
-
-          exposedHeaders = jsonSubItem.get<std::string>();
-
-          vectorItem.ExposedHeaders.emplace_back(std::move(exposedHeaders));
+          response.Logging.Read = node.Value == std::string("true");
         }
-
-        for (auto const& jsonSubItem : jsonItem["allowedHeaders"])
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kWrite)
         {
-          std::string allowedHeaders{};
-
-          allowedHeaders = jsonSubItem.get<std::string>();
-
-          vectorItem.AllowedHeaders.emplace_back(std::move(allowedHeaders));
+          response.Logging.Write = node.Value == std::string("true");
         }
-
-        response.Properties.Cors.CorsRules.emplace_back(std::move(vectorItem));
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kRetentionPolicy
+            && xmlPath[3] == XmlTagEnum::kEnabled)
+        {
+          response.Logging.RetentionPolicy.IsEnabled = node.Value == std::string("true");
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kRetentionPolicy
+            && xmlPath[3] == XmlTagEnum::kDays)
+        {
+          response.Logging.RetentionPolicy.Days = std::stoi(node.Value);
+        }
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kVersion)
+        {
+          response.HourMetrics.Version = node.Value;
+        }
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kEnabled)
+        {
+          response.HourMetrics.IsEnabled = node.Value == std::string("true");
+        }
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kIncludeAPIs)
+        {
+          response.HourMetrics.IncludeApis = node.Value == std::string("true");
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kRetentionPolicy
+            && xmlPath[3] == XmlTagEnum::kEnabled)
+        {
+          response.HourMetrics.RetentionPolicy.IsEnabled = node.Value == std::string("true");
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kRetentionPolicy
+            && xmlPath[3] == XmlTagEnum::kDays)
+        {
+          response.HourMetrics.RetentionPolicy.Days = std::stoi(node.Value);
+        }
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kMinuteMetrics && xmlPath[2] == XmlTagEnum::kVersion)
+        {
+          response.MinuteMetrics.Version = node.Value;
+        }
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kMinuteMetrics && xmlPath[2] == XmlTagEnum::kEnabled)
+        {
+          response.MinuteMetrics.IsEnabled = node.Value == std::string("true");
+        }
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kMinuteMetrics && xmlPath[2] == XmlTagEnum::kIncludeAPIs)
+        {
+          response.MinuteMetrics.IncludeApis = node.Value == std::string("true");
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kMinuteMetrics
+            && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kEnabled)
+        {
+          response.MinuteMetrics.RetentionPolicy.IsEnabled = node.Value == std::string("true");
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kMinuteMetrics
+            && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kDays)
+        {
+          response.MinuteMetrics.RetentionPolicy.Days = std::stoi(node.Value);
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kCors && xmlPath[2] == XmlTagEnum::kCorsRule
+            && xmlPath[3] == XmlTagEnum::kAllowedOrigins)
+        {
+          vectorElement1.AllowedOrigins = node.Value;
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kCors && xmlPath[2] == XmlTagEnum::kCorsRule
+            && xmlPath[3] == XmlTagEnum::kAllowedMethods)
+        {
+          vectorElement1.AllowedMethods = node.Value;
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kCors && xmlPath[2] == XmlTagEnum::kCorsRule
+            && xmlPath[3] == XmlTagEnum::kAllowedHeaders)
+        {
+          vectorElement1.AllowedHeaders = node.Value;
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kCors && xmlPath[2] == XmlTagEnum::kCorsRule
+            && xmlPath[3] == XmlTagEnum::kExposedHeaders)
+        {
+          vectorElement1.ExposedHeaders = node.Value;
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kCors && xmlPath[2] == XmlTagEnum::kCorsRule
+            && xmlPath[3] == XmlTagEnum::kMaxAgeInSeconds)
+        {
+          vectorElement1.MaxAgeInSeconds = std::stoi(node.Value);
+        }
+      }
+      else if (node.Type == _internal::XmlNodeType::Attribute)
+      {
+      }
+      else if (node.Type == _internal::XmlNodeType::EndTag)
+      {
+        if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+            && xmlPath[1] == XmlTagEnum::kCors && xmlPath[2] == XmlTagEnum::kCorsRule)
+        {
+          response.Cors.push_back(std::move(vectorElement1));
+          vectorElement1 = Models::CorsRule();
+        }
+        xmlPath.pop_back();
       }
     }
   }
-
-  return Response<TableServiceProperties>(std::move(response), std::move(rawResponse));
+  return Response<Models::TableServiceProperties>(std::move(response), std::move(pRawResponse));
 }
 
 TableClient::TableClient(std::string subscriptionId)
