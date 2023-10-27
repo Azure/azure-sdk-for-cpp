@@ -58,9 +58,6 @@ set(
 
 set(
   AZURE_STORAGE_FILES_DATALAKE_SOURCE
-    src/private/datalake_constants.hpp
-    src/private/datalake_utilities.hpp
-    src/private/package_version.hpp
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp
@@ -71,6 +68,9 @@ set(
     src/datalake_sas_builder.cpp
     src/datalake_service_client.cpp
     src/datalake_utilities.cpp
+    src/private/datalake_constants.hpp
+    src/private/datalake_utilities.hpp
+    src/private/package_version.hpp
     src/rest_client.cpp
 )
 

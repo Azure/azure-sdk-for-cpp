@@ -53,13 +53,14 @@ set(
     inc/azure/keyvault/administration/rtti.hpp
     inc/azure/keyvault/administration/settings_client.hpp
     inc/azure/keyvault/administration/settings_client_options.hpp
-    src/private/keyvault_settings_common_request.hpp
-    src/private/administration_constants.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_SOURCE
     src/keyvault_settings_common_request.cpp
+    src/private/administration_constants.hpp
+    src/private/keyvault_settings_common_request.hpp
+    src/private/package_version.hpp
     src/settings_client.cpp
 )
 

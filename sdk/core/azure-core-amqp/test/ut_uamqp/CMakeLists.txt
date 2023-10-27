@@ -27,7 +27,9 @@ find_package(azure_c_shared_utility CONFIG REQUIRED)
 # Unit Tests
 add_executable(azure-core-amqp-uamqp-tests
   amqp_error_tests.cpp
- "amqp_insertion_tests.cpp")
+  amqp_insertion_tests.cpp
+)
+
 add_dependencies(azure-core-amqp-uamqp-tests Azure::azure-core-amqp uamqp)
 
 # UAMQP Definitions and headers.

@@ -56,27 +56,38 @@ find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 
 set (AZURE_CORE_AMQP_HEADER
+    inc/azure/core/amqp.hpp
     inc/azure/core/amqp/cancellable.hpp
     inc/azure/core/amqp/claims_based_security.hpp
+    inc/azure/core/amqp/connection_string_credential.hpp
+    inc/azure/core/amqp/connection.hpp
+    inc/azure/core/amqp/dll_import_export.hpp
+    inc/azure/core/amqp/doxygen_pragma.hpp
+    inc/azure/core/amqp/endpoint.hpp
+    inc/azure/core/amqp/link.hpp
+    inc/azure/core/amqp/management.hpp
+    inc/azure/core/amqp/message_receiver.hpp
+    inc/azure/core/amqp/message_sender.hpp
+    inc/azure/core/amqp/rtti.hpp
+    inc/azure/core/amqp/session.hpp
     inc/azure/core/amqp/common/async_operation_queue.hpp
     inc/azure/core/amqp/common/completion_operation.hpp
     inc/azure/core/amqp/common/global_state.hpp
-    inc/azure/core/amqp/connection.hpp
-    inc/azure/core/amqp/connection_string_credential.hpp
-    inc/azure/core/amqp/endpoint.hpp
-    inc/azure/core/amqp/link.hpp
-    inc/azure/core/amqp/message_receiver.hpp
-    inc/azure/core/amqp/message_sender.hpp
     inc/azure/core/amqp/models/amqp_error.hpp
     inc/azure/core/amqp/models/amqp_header.hpp
     inc/azure/core/amqp/models/amqp_message.hpp
     inc/azure/core/amqp/models/amqp_properties.hpp
-    inc/azure/core/amqp/models/amqp_value.hpp
     inc/azure/core/amqp/models/amqp_protocol.hpp
+    inc/azure/core/amqp/models/amqp_value.hpp
     inc/azure/core/amqp/models/message_source.hpp
     inc/azure/core/amqp/models/message_target.hpp
     inc/azure/core/amqp/models/messaging_values.hpp
-    inc/azure/core/amqp/session.hpp
+    inc/azure/core/amqp/network/amqp_header_detect_transport.hpp
+    inc/azure/core/amqp/network/sasl_transport.hpp
+    inc/azure/core/amqp/network/socket_listener.hpp
+    inc/azure/core/amqp/network/socket_transport.hpp
+    inc/azure/core/amqp/network/tls_transport.hpp
+    inc/azure/core/amqp/network/transport.hpp
 )
 
 set(AZURE_CORE_AMQP_SOURCE
@@ -88,6 +99,13 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/management.cpp
     src/amqp/message_receiver.cpp
     src/amqp/message_sender.cpp
+    src/amqp/private/claims_based_security_impl.hpp
+    src/amqp/private/connection_impl.hpp
+    src/amqp/private/link_impl.hpp
+    src/amqp/private/management_impl.hpp
+    src/amqp/private/message_receiver_impl.hpp
+    src/amqp/private/message_sender_impl.hpp
+    src/amqp/private/session_impl.hpp
     src/amqp/session.cpp
     src/common/global_state.cpp
     src/models/amqp_error.cpp
@@ -99,11 +117,13 @@ set(AZURE_CORE_AMQP_SOURCE
     src/models/message_target.cpp
     src/models/messaging_values.cpp
     src/network/amqp_header_transport.cpp
+    src/network/private/transport_impl.hpp
     src/network/sasl_transport.cpp
     src/network/socket_listener.cpp
     src/network/socket_transport.cpp
     src/network/tls_transport.cpp
-    src/network/transport.cpp 
+    src/network/transport.cpp
+    src/private/package_version.hpp
 )
 
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})

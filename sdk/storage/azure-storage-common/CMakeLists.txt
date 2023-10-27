@@ -66,10 +66,10 @@ set(
 
 set(
   AZURE_STORAGE_COMMON_SOURCE
-    src/private/package_version.hpp
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
+    src/private/package_version.hpp
     src/reliable_stream.cpp
     src/shared_key_policy.cpp
     src/storage_bearer_token_authentication_policy.cpp

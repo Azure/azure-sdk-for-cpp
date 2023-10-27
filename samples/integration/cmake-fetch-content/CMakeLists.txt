@@ -23,7 +23,7 @@ endif()
 
 add_executable (
      application
-     src/main
+     src/main.cpp
 )
 
 # Link to Azure SDK

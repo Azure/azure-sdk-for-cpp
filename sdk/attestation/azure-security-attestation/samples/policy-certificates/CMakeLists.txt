@@ -10,7 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 macro (define_sample samplename)
 add_executable (
   attestation-${samplename}
-  ${samplename}.cpp)
+  ${samplename}.cpp
+  cryptohelpers.hpp
+)
 
 CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(attestation-${samplename} attestation)
 

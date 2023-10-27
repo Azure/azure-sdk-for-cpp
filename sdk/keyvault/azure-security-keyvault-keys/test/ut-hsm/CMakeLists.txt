@@ -17,10 +17,9 @@ SetUpTestProxy("sdk/keyvault")
 ################## Unit Tests ##########################
 add_executable (
   azure-security-keyvault-keys-hsm-test
-
     key_client_test_hsm_live.hpp
     key_client_test_hsm_live.cpp
-   )
+)
 
 create_per_service_target_build(keyvault azure-security-keyvault-keys-hsm-test)
 create_map_file(azure-security-keyvault-keys-hsm-test azure-security-keyvault-keys-hsm-test.map)

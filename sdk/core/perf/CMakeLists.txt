@@ -14,14 +14,15 @@ include(AzureTransportAdapters)
 
 set(
   AZURE_PERFORMANCE_HEADER
+  inc/azure/perf.hpp
   inc/azure/perf/argagg.hpp
   inc/azure/perf/base_test.hpp
   inc/azure/perf/dynamic_test_options.hpp
   inc/azure/perf/options.hpp
   inc/azure/perf/program.hpp
   inc/azure/perf/random_stream.hpp
-  inc/azure/perf/test_metadata.hpp
   inc/azure/perf/test.hpp
+  inc/azure/perf/test_metadata.hpp
   inc/azure/perf/test_options.hpp
 )
 
