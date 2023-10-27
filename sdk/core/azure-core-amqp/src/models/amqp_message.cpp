@@ -3,8 +3,8 @@
 
 #include "azure/core/amqp/models/amqp_message.hpp"
 
-#include "azure/core/amqp/models/amqp_header.hpp"
 #include "azure/core/amqp/internal/models/amqp_protocol.hpp"
+#include "azure/core/amqp/models/amqp_header.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_annotations.h>

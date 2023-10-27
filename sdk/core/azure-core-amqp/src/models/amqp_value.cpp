@@ -4,8 +4,8 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include "azure/core/amqp/internal/doxygen_pragma.hpp"
-#include "azure/core/amqp/models/amqp_properties.hpp"
 #include "azure/core/amqp/internal/models/amqp_protocol.hpp"
+#include "azure/core/amqp/models/amqp_properties.hpp"
 
 #include <azure/core/internal/diagnostics/log.hpp>
 

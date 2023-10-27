@@ -9,9 +9,9 @@
 #include "connection.hpp"
 #include "link.hpp"
 #include "models/amqp_error.hpp"
+
 #include <azure/core/amqp/models/amqp_message.hpp>
 #include <azure/core/amqp/models/amqp_value.hpp>
-
 #include <azure/core/nullable.hpp>
 
 #include <tuple>

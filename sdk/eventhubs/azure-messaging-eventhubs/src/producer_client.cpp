@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #include "azure/messaging/eventhubs/producer_client.hpp"
-#include <azure/core/amqp/internal/message_sender.hpp>
+
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "private/eventhubs_constants.hpp"
@@ -10,6 +10,7 @@
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/message_sender.hpp>
 
 namespace {
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";

@@ -6,9 +6,9 @@
 
 #include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/common/completion_operation.hpp"
-#include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "azure/core/amqp/models/amqp_message.hpp"
 #include "private/connection_impl.hpp"
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"

@@ -4,9 +4,9 @@
 #pragma once
 
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
-#include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/link.h>
 

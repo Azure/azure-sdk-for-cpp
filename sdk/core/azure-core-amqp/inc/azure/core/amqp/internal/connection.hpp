@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <azure/core/amqp/internal/models/amqp_protocol.hpp>
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
-#include <azure/core/amqp/models/amqp_value.hpp>
 #include "session.hpp"
 
+#include <azure/core/amqp/internal/models/amqp_protocol.hpp>
+#include <azure/core/amqp/models/amqp_value.hpp>
 #include <azure/core/credentials/credentials.hpp>
 
 #include <chrono>

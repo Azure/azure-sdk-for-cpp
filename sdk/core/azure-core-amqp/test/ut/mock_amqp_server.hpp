@@ -7,7 +7,6 @@
 #include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/amqp/internal/models/amqp_error.hpp>
-#include <azure/core/amqp/models/amqp_message.hpp>
 #include <azure/core/amqp/internal/models/amqp_protocol.hpp>
 #include <azure/core/amqp/internal/models/message_source.hpp>
 #include <azure/core/amqp/internal/models/message_target.hpp>
@@ -15,6 +14,7 @@
 #include <azure/core/amqp/internal/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 #include <azure/core/amqp/internal/session.hpp>
+#include <azure/core/amqp/models/amqp_message.hpp>
 
 #include <memory>
 
