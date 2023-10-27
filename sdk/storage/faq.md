@@ -172,7 +172,7 @@ This one suits in most cases. You can expect higher throughput because the chunk
 
 Unfortunately this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
 You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer.
-Or you can use tools like [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy) or Data Movement Library.
+Or you can use tools like [AzCopy](https://learn.microsoft.com/azure/storage/common/storage-ref-azcopy) or Data Movement Library.
 
 ## How to ensure data integrity with transactional checksum?
 
