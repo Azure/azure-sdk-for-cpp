@@ -226,6 +226,16 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
   }
 
+  TEST_F(TablesClientTest, ServiceClientStatistics)
+  {
+    Azure::Storage::Tables::Models::GetServiceStatisticsOptions statsOptions;
+
+    auto response = m_tableServiceClient->GetStatistics(statsOptions);
+
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+    EXPECT_EQ(response.Value.GeoReplication.Status.ToString(), "live");
+  }
+
   TEST_F(TablesClientTest, ServiceClientSetAndSet)
   {
     /* Azure::Storage::Tables::SetServicePropertiesOptions setOptions;

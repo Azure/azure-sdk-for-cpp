@@ -170,4 +170,62 @@ namespace Azure { namespace Storage { namespace Tables { namespace Models {
     struct SetServicePropertiesResult final
     {
     };
+    /**
+     * @brief The status of the secondary location.
+     */
+    class GeoReplicationStatus final {
+    public:
+      /** Constructs a new GeoReplicationStatus instance */
+      GeoReplicationStatus() = default;
+      /** Constructs a new GeoReplicationStatus from a string. */
+      explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      /** Compares with another GeoReplicationStatus. */
+      bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
+      /** Compares with another GeoReplicationStatus. */
+      bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
+      /** Converts the value to a string. */
+      const std::string& ToString() const { return m_value; }
+      /** Constant value of type GeoReplicationStatus: Live */
+      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Live;
+      /** Constant value of type GeoReplicationStatus: Bootstrap */
+      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      /** Constant value of type GeoReplicationStatus: Unavailable */
+      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus
+          Unavailable;
+
+    private:
+      std::string m_value;
+    };
+     /**
+     * @brief Geo-Replication information for the Secondary Storage Service.
+     */
+    struct GeoReplication final
+    {
+      /**
+       * The status of the secondary location.
+       */
+      GeoReplicationStatus Status;
+      /**
+       * A GMT date/time value, to the second. All primary writes preceding this value are
+       * guaranteed to be available for read operations at the secondary. Primary writes after this
+       * point in time may or may not be available for reads.
+       */
+      Nullable<DateTime> LastSyncedOn;
+    };
+    /**
+     * @brief Stats for the storage service.
+     */
+    struct ServiceStatistics final
+    {
+      /**
+       * Geo-Replication information for the Secondary Storage Service.
+       */
+      Models::GeoReplication GeoReplication;
+    };
+
+    struct GetServiceStatisticsOptions final
+    {
+    };
+
+
 }}}} // namespace Azure::Storage::Tables::Models

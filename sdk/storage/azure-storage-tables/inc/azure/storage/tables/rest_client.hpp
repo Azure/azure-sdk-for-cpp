@@ -402,6 +402,10 @@ namespace Azure { namespace Storage { namespace Tables {
         Models::GetServicePropertiesOptions const& options = {},
         Core::Context const& context = {});
 
+    Response<Models::ServiceStatistics> GetStatistics(
+        Models::GetServiceStatisticsOptions const& options = {},
+        const Core::Context& context = {});
+
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;

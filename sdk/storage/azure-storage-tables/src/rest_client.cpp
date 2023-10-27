@@ -285,8 +285,7 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
   url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Accept", "application/json;odata=minimalmetadata");
+
   auto pRawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = pRawResponse->GetStatusCode();
 
@@ -513,6 +512,87 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
     }
   }
   return Response<Models::TableServiceProperties>(std::move(response), std::move(pRawResponse));
+}
+
+
+Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
+    Models::GetServiceStatisticsOptions const& options,
+    const Core::Context& context)
+{
+  (void)options;
+  auto url = m_url;
+  std::string host = url.GetHost();
+  std::string accountName = host.substr(0, host.find('.'));
+  accountName += "-secondary";
+  url.SetHost(accountName + "." + host.substr(host.find('.') + 1));
+  url.SetQueryParameters({{"restype", "service"}, {"comp", "stats"}});
+  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+
+  auto pRawResponse = m_pipeline->Send(request, context);
+  auto httpStatusCode = pRawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  {
+    throw Core::RequestFailedException(pRawResponse);
+  }
+  Models::ServiceStatistics response;
+  {
+    const auto& responseBody = pRawResponse->GetBody();
+    _internal::XmlReader reader(
+        reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
+    enum class XmlTagEnum
+    {
+      kUnknown,
+      kStorageServiceStats,
+      kGeoReplication,
+      kStatus,
+      kLastSyncTime,
+    };
+    const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
+        {"StorageServiceStats", XmlTagEnum::kStorageServiceStats},
+        {"GeoReplication", XmlTagEnum::kGeoReplication},
+        {"Status", XmlTagEnum::kStatus},
+        {"LastSyncTime", XmlTagEnum::kLastSyncTime},
+    };
+    std::vector<XmlTagEnum> xmlPath;
+
+    while (true)
+    {
+      auto node = reader.Read();
+      if (node.Type == _internal::XmlNodeType::End)
+      {
+        break;
+      }
+      else if (node.Type == _internal::XmlNodeType::StartTag)
+      {
+        auto ite = XmlTagEnumMap.find(node.Name);
+        xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
+      }
+      else if (node.Type == _internal::XmlNodeType::Text)
+      {
+        if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceStats
+            && xmlPath[1] == XmlTagEnum::kGeoReplication && xmlPath[2] == XmlTagEnum::kStatus)
+        {
+          response.GeoReplication.Status = Models::GeoReplicationStatus(node.Value);
+        }
+        else if (
+            xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceStats
+            && xmlPath[1] == XmlTagEnum::kGeoReplication && xmlPath[2] == XmlTagEnum::kLastSyncTime)
+        {
+          response.GeoReplication.LastSyncedOn
+              = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+        }
+      }
+      else if (node.Type == _internal::XmlNodeType::Attribute)
+      {
+      }
+      else if (node.Type == _internal::XmlNodeType::EndTag)
+      {
+
+        xmlPath.pop_back();
+      }
+    }
+  }
+  return Response<Models::ServiceStatistics>(std::move(response), std::move(pRawResponse));
 }
 
 TableClient::TableClient(std::string subscriptionId)
