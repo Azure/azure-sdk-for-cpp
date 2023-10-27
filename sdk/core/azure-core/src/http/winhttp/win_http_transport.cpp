@@ -202,13 +202,32 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 {
   std::string requestHeaderString;
 
-  for (auto const& header : request.GetHeaders())
+  // request.GetHeaders() aggregates the pre- and post-retry headers into a single map. Capture it
+  // so we don't recalculate the merge multiple times.
+  auto requestHeaders = request.GetHeaders();
+
+  for (auto const& header : requestHeaders)
   {
     requestHeaderString += header.first; // string (key)
     requestHeaderString += ": ";
     requestHeaderString += header.second; // string's value
     requestHeaderString += "\r\n";
   }
+
+  // The test recording infrastructure requires that a Patch verb have a Content-Length header,
+  // because it does not distinguish between requests with and without a body if there's no
+  // Content-Length header.
+  if (request.GetMethod() == HttpMethod::Patch)
+  {
+    if (requestHeaders.find("Content-Length") == requestHeaders.end())
+    {
+      if (request.GetBodyStream() == nullptr || request.GetBodyStream()->Length() == 0)
+      {
+        requestHeaderString += "Content-Length: 0\r\n";
+      }
+    }
+  }
+
   requestHeaderString += "\r\n";
 
   return requestHeaderString;

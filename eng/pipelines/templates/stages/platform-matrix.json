@@ -85,8 +85,13 @@
         }
       },
       "TargetPlatform": {
-        "Win32Api_debug_tests": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON -DMSVC_USE_STATIC_CRT=ON",
+        "Win32Api_debug_tests_curl": {
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON",
+          "BuildArgs": "--parallel 8 --config Debug",
+          "PublishMapFiles": "true"
+        },
+        "Win32Api_debug_tests_winhttp": {
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DMSVC_USE_STATIC_CRT=ON",
           "BuildArgs": "--parallel 8 --config Debug",
           "PublishMapFiles": "true"
         }
