@@ -312,6 +312,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
+  void LinkImpl::SetDesiredCapabilities(Models::AmqpValue desiredCapabilities)
+  {
+
+    if (link_set_desired_capabilities(m_link, desiredCapabilities))
+    {
+      throw std::runtime_error("Could not set desired capabilities.");
+    }
+  }
+
+  Models::AmqpValue LinkImpl::GetDesiredCapabilities() const
+  {
+    AMQP_VALUE desiredCapabilitiesVal;
+    if (link_get_desired_capabilities(m_link, &desiredCapabilitiesVal))
+    {
+      throw std::runtime_error("Could not convert field to header.");
+    }
+    return Models::AmqpValue{desiredCapabilitiesVal};
+  }
+
   void LinkImpl::SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetach)
   {
     m_onLinkDetachEvent = std::move(onLinkDetach);
@@ -333,6 +352,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (link->m_onLinkDetachEvent)
     {
       link->m_onLinkDetachEvent(Models::_internal::AmqpErrorFactory::FromUamqp(error));
+    }
+  }
+
+  void LinkImpl::ResetLinkCredit(std::uint32_t linkCredit, bool drain)
+  {
+    if (link_reset_link_credit(m_link, linkCredit, drain))
+    {
+      throw std::runtime_error("Could not reset link credit.");
     }
   }
 
@@ -359,5 +386,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Could not set attach properties.");
     }
   }
-
 }}}} // namespace Azure::Core::Amqp::_detail

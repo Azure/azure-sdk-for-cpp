@@ -11,7 +11,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     static Models::AmqpValue DeliveryAccepted();
     static Models::AmqpValue DeliveryRejected(
         std::string const& errorCondition,
-        std::string const& errorDescription);
+        std::string const& errorDescription,
+        Models::AmqpValue const& errorInformation);
     static Models::AmqpValue DeliveryReleased();
     static Models::AmqpValue DeliveryModified(
         bool deliveryFailed,

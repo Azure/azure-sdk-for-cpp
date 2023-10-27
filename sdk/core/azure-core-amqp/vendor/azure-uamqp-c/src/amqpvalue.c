@@ -1506,6 +1506,35 @@ AMQP_VALUE amqpvalue_get_list_item(AMQP_VALUE value, size_t index)
     return result;
 }
 
+int amqpvalue_get_list(AMQP_VALUE value, AMQP_VALUE* list_value)
+{
+    int result;
+
+    if ((value == NULL) ||
+        (list_value == NULL))
+    {
+        LogError("Bad arguments: value = %p, list_value = %p",
+            value, list_value);
+        result = MU_FAILURE;
+    }
+    else
+    {
+        AMQP_VALUE_DATA* value_data = (AMQP_VALUE_DATA*)value;
+        if (value_data->type != AMQP_TYPE_LIST)
+        {
+            LogError("Value is not of type LIST");
+            result = MU_FAILURE;
+        }
+        else
+        {
+            *list_value = value;
+            result = 0;
+        }
+    }
+
+    return result;
+}
+
 /* Codes_SRS_AMQPVALUE_01_178: [amqpvalue_create_map shall create an AMQP value that holds a map and return a handle to it.] */
 /* Codes_SRS_AMQPVALUE_01_031: [1.6.23 map A polymorphic mapping from distinct keys to values.] */
 AMQP_VALUE amqpvalue_create_map(void)

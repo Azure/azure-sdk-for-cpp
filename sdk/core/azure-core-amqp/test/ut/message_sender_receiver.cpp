@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
       auto accepted{Models::_internal::Messaging::DeliveryAccepted()};
       auto released{Models::_internal::Messaging::DeliveryReleased()};
-      auto rejected{Models::_internal::Messaging::DeliveryRejected("error", "description")};
+      auto rejected{Models::_internal::Messaging::DeliveryRejected("error", "description", {})};
       auto modified{Models::_internal::Messaging::DeliveryModified(true, false, "Annotations")};
       auto received{Models::_internal::Messaging::DeliveryReceived(3, 24)};
     }

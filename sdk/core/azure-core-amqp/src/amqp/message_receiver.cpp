@@ -239,7 +239,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     return Models::_internal::Messaging::DeliveryRejected(
         Models::_internal::AmqpErrorCondition::ConnectionForced.ToString(),
-        "Message Receiver is closed.");
+        "Message Receiver is closed.",
+        {});
   }
 
   Models::AmqpValue MessageReceiverImpl::OnMessageReceived(Models::AmqpMessage message)
