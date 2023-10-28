@@ -6,7 +6,6 @@
 include(CMakeFindDependencyMacro)
 find_dependency(azure-core-cpp)
 
-find_dependency(uamqp)
 find_dependency(umock_c)
 find_dependency(azure_macro_utils_c)
 find_dependency(azure_c_shared_utility)
