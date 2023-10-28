@@ -18,7 +18,7 @@ parameter to the constructor must match the value provided in the connection str
 
 ### Other Changes
 
-- Several `ostream` insertion operators were added for eventhubs types.
+- Added `ostream` insertion operators to eventhubs model types `Ownership` and `Checkpoint`.
 
 ## 1.0.0-beta.3 (2023-10-10)
 
