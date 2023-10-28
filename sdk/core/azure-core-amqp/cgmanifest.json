@@ -5,8 +5,8 @@
       "Component": {
         "Type": "git",
         "git": {
-          "RepositoryUrl": "https://github.com/Azure/azure-uamqp-c",
-          "CommitHash": "52942afb1a4b48a1d8af7a3ac37d3211661e3423"
+          "RepositoryUrl": "https://github.com/Azure/azure-c-shared-utility/",
+          "CommitHash": "8ee0e5d88d1771d33e36d38d392ec9d9ae13ea55"
         }
       }
     },
@@ -19,6 +19,24 @@
         }
       },
       "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/Azure/macro-utils-c/",
+          "CommitHash": "5926caf4e42e98e730e6d03395788205649a3ada"
+        }
+      }
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/Azure/umock-c/",
+          "CommitHash": "504193e65d1c2f6eb50c15357167600a296df7ff"
+        }
+      }
     }
   ]
 }
