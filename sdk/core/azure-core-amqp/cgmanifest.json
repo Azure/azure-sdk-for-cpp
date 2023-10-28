@@ -6,7 +6,7 @@
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/Azure/azure-uamqp-c",
-          "CommitHash": "b7bdf307a0db8840156d9f6e40f704c1d5924306"
+          "CommitHash": "52942afb1a4b48a1d8af7a3ac37d3211661e3423"
         }
       }
     },
