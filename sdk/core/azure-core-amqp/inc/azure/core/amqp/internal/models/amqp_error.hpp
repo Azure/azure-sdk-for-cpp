@@ -4,10 +4,10 @@
 #pragma once
 
 #include "azure/core/amqp/dll_import_export.hpp"
+#include "azure/core/amqp/models/amqp_header.hpp"
+#include "azure/core/amqp/models/amqp_properties.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
 
-#include <azure/core/amqp/models/amqp_header.hpp>
-#include <azure/core/amqp/models/amqp_properties.hpp>
-#include <azure/core/amqp/models/amqp_value.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 
 struct ERROR_INSTANCE_TAG;

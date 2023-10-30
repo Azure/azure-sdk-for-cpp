@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <azure/core/amqp/models/amqp_value.hpp>
+#include "azure/core/amqp/models/amqp_value.hpp"
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   class Messaging final {

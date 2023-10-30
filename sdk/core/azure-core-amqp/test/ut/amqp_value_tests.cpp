@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "azure/core/amqp/internal/models/amqp_error.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
+
 #include <azure/core/amqp/internal/common/global_state.hpp>
-#include <azure/core/amqp/internal/models/amqp_error.hpp>
-#include <azure/core/amqp/models/amqp_value.hpp>
 
 #include <algorithm>
 #include <random>

@@ -1,18 +1,18 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "azure/core/amqp/internal/session.hpp"
+
+#include "azure/core/amqp/internal/connection.hpp"
+#include "azure/core/amqp/internal/link.hpp"
+#include "azure/core/diagnostics/logger.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/management_impl.hpp"
 #include "private/message_receiver_impl.hpp"
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
-
-#include <azure/core/amqp/internal/connection.hpp>
-#include <azure/core/amqp/internal/link.hpp>
-#include <azure/core/amqp/internal/session.hpp>
-#include <azure/core/diagnostics/logger.hpp>
-#include <azure/core/internal/diagnostics/log.hpp>
 
 #include <azure_uamqp_c/session.h>
 

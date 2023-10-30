@@ -3,9 +3,8 @@
 
 #pragma once
 
+#include "azure/core/amqp/internal/session.hpp"
 #include "connection_impl.hpp"
-
-#include <azure/core/amqp/internal/session.hpp>
 
 #include <azure_uamqp_c/session.h>
 

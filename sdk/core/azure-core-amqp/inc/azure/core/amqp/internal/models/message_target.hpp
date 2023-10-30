@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <azure/core/amqp/models/amqp_header.hpp>
-#include <azure/core/amqp/models/amqp_properties.hpp>
-#include <azure/core/amqp/models/amqp_value.hpp>
+#include "azure/core/amqp/models/amqp_header.hpp"
+#include "azure/core/amqp/models/amqp_properties.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
 
 struct TARGET_INSTANCE_TAG;
 
