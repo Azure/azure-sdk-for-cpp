@@ -109,11 +109,12 @@ This applies to both input variables and output.
 If your code runs in an environment where the default locale and encoding is not UTF-8, you should encode before passing variables into the SDK and decode variables returned from the SDK.
 
 ```C++
-// For example, we'd like to create a blob client named `allô`
+// cspell:disable-next-line
+// For example, we'd like to create a blob client named `olá`
 // If the blob client is created from a container client, the blob name should be UTF-8 encoded.
-auto blobClient = containerClient.GetBlobClinet("all\xC3\xB4");
+auto blobClient = containerClient.GetBlobClinet("ol\xC3\xA1");
 // If the blob client is built from URL, it should be URL-encoded
-blobClient = Azure::Storage::Blobs::BlobClient("https://account.blob.windows.core.net/container/all%C3%B4");
+blobClient = Azure::Storage::Blobs::BlobClient("https://account.blob.windows.core.net/container/ol%C3%A1");
 
 // The return value is URL-encoded
 auto blobUrl = blobClient.GetUrl();
