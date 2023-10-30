@@ -2,7 +2,7 @@
 
 **Frequently Asked Questions**
 
-[How to use list-operations? Why don't list-operations return all blobs in a container?](#how-to-use-list-operations-why-doesnt-list-operation-return-all-blobs-in-a-container)
+[How to use list-operations? Why don't list-operations return all blobs in a container?](#how-to-use-list-operations-why-dont-list-operations-return-all-blobs-in-a-container)
 
 [Can I specify an API-version other than the default one?](#can-i-specify-an-api-version-other-than-the-default-one)
 
