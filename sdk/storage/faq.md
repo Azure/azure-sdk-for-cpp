@@ -109,12 +109,14 @@ This applies to both input variables and output.
 If your code runs in an environment where the default locale and encoding is not UTF-8, you should encode before passing variables into the SDK and decode variables returned from the SDK.
 
 ```C++
-// containerUrl should be URL-encoded
-auto containerClient = BlobContainerClient(containerUrl);
+// For example, we'd like to create a blob client named `allô`
+// If the blob client is created from a container client, the blob name should be UTF-8 encoded.
+auto blobClient = containerClient.GetBlobClinet("all\xC3\xB4");
+// If the blob client is built from URL, it should be URL-encoded
+blobClient = Azure::Storage::Blobs::BlobClient("https://account.blob.windows.core.net/container/all%C3%B4");
+
 // The return value is URL-encoded
-auto url = containerClient.Geturl();
-// blobName should be UTF-8 encoded
-auto blobClient = containerClient.GetBlobClinet(blobName);
+auto blobUrl = blobClient.GetUrl();
 
 for (auto page = blobContainerClient.ListBlobs(); page.HasPage(); page.MoveToNextPage()) {
   for (auto& blob : page.Blobs) {
@@ -171,7 +173,40 @@ This one is suitable in most cases. You can expect higher throughput because the
 ## How to efficiently upload large amount of small blobs?
 
 Unfortunately, this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
-You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer.
+You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer. Below is a skeleton example.
+```C++
+const std::vector<std::string> paths; // Files to be uploaded
+std::atomic<size_t> curr{0};
+auto upload_func = [&]() {
+  while (true)
+  {
+    auto id = curr.fetch_add(1);
+    if (id >= paths.size())
+    {
+      break;
+    }
+    const std::string path = paths[id];
+    try
+    {
+      blobClient.UploadFrom(path);
+    }
+    catch (Azure::Storage::StorageException& e)
+    {
+      // exception handling
+    }
+  }
+};
+
+std::vector<std::thread> thread_handles;
+for (size_t i = 0; i < num_threads; ++i)
+{
+  thread_handles.push_back(std::thread(upload_func));
+}
+for (auto& i : thread_handles)
+{
+  i.join();
+}
+```
 Or you can use tools like [AzCopy](https://learn.microsoft.com/azure/storage/common/storage-ref-azcopy) or [Data Movement Library](https://learn.microsoft.com/azure/storage/common/storage-use-data-movement-library).
 
 ## How to ensure data integrity with transactional checksum?
@@ -192,9 +227,10 @@ Below is a code sample to use this feature.
 ```C++
 // upload data with pre-calculated checksum
 Blobs::UploadBlockBlobOptions options;
-options.TransactionalContentHash = ContentHash();
-options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
-options.TransactionalContentHash.Value().Value = crc64;  // CRC64 checksum of the data in Base64 encoding
+auto checksum = ContentHash();
+checksum.Algorithm = HashAlgorithm::Crc64;
+checksum.Value = crc64;  // CRC64 checksum of the data in Base64 encoding
+options.TransactionalContentHash = checksum;
 blobClient.Upload(stream, options);
 
 // download and verify checksum
