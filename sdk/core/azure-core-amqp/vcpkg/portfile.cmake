@@ -26,16 +26,8 @@ vcpkg_cmake_configure(
 )
 
 vcpkg_cmake_install()
-
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/cmake/uamqpConfig.cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/cmake/uamqpConfigVersion.cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/cmake/uamqpTargets-release.cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/cmake/uamqpTargets.cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/cmake/uamqpConfig.cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/cmake/uamqpConfigVersion.cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/cmake/uamqpTargets-debug.cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/cmake/uamqpTargets.cmake")
-
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/cmake")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/cmake")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 vcpkg_cmake_config_fixup()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
