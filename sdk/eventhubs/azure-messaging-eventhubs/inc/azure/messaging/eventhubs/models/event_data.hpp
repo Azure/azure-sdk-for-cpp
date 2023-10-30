@@ -1,8 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
-#include <azure/core/amqp.hpp>
+
+#include <azure/core/amqp/models/amqp_message.hpp>
+#include <azure/core/amqp/models/amqp_value.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/nullable.hpp>
+
+#include <initializer_list>
+#include <iostream>
+#include <map>
+#include <vector>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
