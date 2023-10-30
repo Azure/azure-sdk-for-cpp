@@ -3,7 +3,7 @@
 
 #include "azure/identity/chained_token_credential.hpp"
 
-#include <azure/core/internal/diagnostics/log.hpp>
+#include "azure/core/internal/diagnostics/log.hpp"
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
