@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include "azure/core/amqp/internal/models/amqp_error.hpp"
+#include "azure/core/amqp/models/amqp_message.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
 #include "claims_based_security.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
 #include "link.hpp"
-#include "models/amqp_error.hpp"
-#include "models/amqp_message.hpp"
-#include "models/amqp_value.hpp"
 #include "session.hpp"
 
 #include <azure/core/credentials/credentials.hpp>

@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/amqp/connection.hpp>
-#include <azure/core/amqp/connection_string_credential.hpp>
-#include <azure/core/amqp/management.hpp>
-#include <azure/core/amqp/message_sender.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
+#include <azure/core/amqp/internal/connection_string_credential.hpp>
+#include <azure/core/amqp/internal/management.hpp>
+#include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <chrono>

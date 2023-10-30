@@ -6,6 +6,7 @@
 #include "models/partition_client_models.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>

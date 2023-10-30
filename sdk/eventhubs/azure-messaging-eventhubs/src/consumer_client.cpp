@@ -5,7 +5,7 @@
 #include "private/eventhubs_utilities.hpp"
 #include "private/package_version.hpp"
 
-#include <azure/core/amqp/message_receiver.hpp>
+#include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/messaging/eventhubs.hpp>
 

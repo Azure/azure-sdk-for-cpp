@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/common/async_operation_queue.hpp"
+#include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 
 #include <gtest/gtest.h>
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/network/socket_transport.hpp"
+#include "azure/core/amqp/internal/network/socket_transport.hpp"
 
 #include "private/transport_impl.hpp"
 

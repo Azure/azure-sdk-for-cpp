@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/connection_string_credential.hpp"
+#include "azure/core/amqp/internal/connection_string_credential.hpp"
 
 #include <azure/core/platform.hpp>
 

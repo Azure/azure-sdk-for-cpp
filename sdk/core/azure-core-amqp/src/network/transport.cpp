@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/network/transport.hpp"
+#include "azure/core/amqp/internal/network/transport.hpp"
 
-#include "azure/core/amqp/common/completion_operation.hpp"
-#include "azure/core/amqp/common/global_state.hpp"
+#include "azure/core/amqp/internal/common/completion_operation.hpp"
+#include "azure/core/amqp/internal/common/global_state.hpp"
 #include "private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>

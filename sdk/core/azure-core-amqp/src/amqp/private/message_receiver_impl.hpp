@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/core/amqp/message_receiver.hpp"
+#include "azure/core/amqp/internal/message_receiver.hpp"
 #include "claims_based_security_impl.hpp"
 #include "connection_impl.hpp"
 #include "link_impl.hpp"

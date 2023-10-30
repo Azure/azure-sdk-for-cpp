@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "azure/core/amqp/claims_based_security.hpp"
-#include "azure/core/amqp/management.hpp"
+#include "azure/core/amqp/internal/claims_based_security.hpp"
+#include "azure/core/amqp/internal/management.hpp"
 
 #include <azure_uamqp_c/cbs.h>
 

@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "azure/core/amqp/models/amqp_value.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
-#include "models/amqp_value.hpp"
 
 #include <chrono>
 #include <memory>

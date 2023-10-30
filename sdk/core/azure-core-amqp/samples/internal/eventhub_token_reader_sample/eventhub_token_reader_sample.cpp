@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/amqp/connection.hpp>
-#include <azure/core/amqp/message_receiver.hpp>
-#include <azure/core/amqp/network/sasl_transport.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
+#include <azure/core/amqp/internal/message_receiver.hpp>
+#include <azure/core/amqp/internal/network/sasl_transport.hpp>
 
 #include <chrono>
 #include <iostream>
