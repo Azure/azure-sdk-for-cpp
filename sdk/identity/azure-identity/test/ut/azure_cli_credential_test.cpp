@@ -357,6 +357,15 @@ TEST(AzureCliCredential, UnsafeCharsScopeAndTenantId)
     TokenRequestContext trc;
     trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
   }
 
   {
@@ -368,8 +377,14 @@ TEST(AzureCliCredential, UnsafeCharsScopeAndTenantId)
     trc.Scopes.push_back(
         std::string("https://storage.azure.com/.default") + ValidScopeButNotTenantId);
 
-    auto const token = azCliCred.GetToken(trc, {});
-    EXPECT_EQ("", token.Token);
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") == std::string::npos) << e.what();
+    }
   }
 }
 
