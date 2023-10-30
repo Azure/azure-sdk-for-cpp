@@ -74,7 +74,10 @@ namespace Azure { namespace Identity {
         DateTime::duration cliProcessTimeout,
         std::vector<std::string> additionallyAllowedTenants);
 
-    void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& description) const;
+    void ThrowIfNotSafeCmdLineInput(
+        std::string const& input,
+        std::string const& allowedChars,
+        std::string const& description) const;
 
   public:
     /**

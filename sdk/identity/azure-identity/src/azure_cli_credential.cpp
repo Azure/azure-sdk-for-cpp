@@ -57,27 +57,20 @@ using Azure::Identity::_detail::TokenCredentialImpl;
 
 void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     std::string const& input,
+    std::string const& allowedChars,
     std::string const& description) const
 {
   for (auto const c : input)
   {
-    switch (c)
+    if (allowedChars.find(c) != std::string::npos)
     {
-      case ':':
-      case '/':
-      case '.':
-      case '-':
-      case '_':
-      case ' ':
-        break;
-
-      default:
-        if (!StringExtensions::IsAlphaNumeric(c))
-        {
-          throw AuthenticationException(
-              GetCredentialName() + ": Unsafe command line input found in " + description + ": "
-              + input);
-        }
+      continue;
+    }
+    if (!StringExtensions::IsAlphaNumeric(c))
+    {
+      throw AuthenticationException(
+          GetCredentialName() + ": Unsafe command line input found in " + description + ": "
+          + input);
     }
   }
 }
@@ -120,8 +113,12 @@ AzureCliCredential::AzureCliCredential(const Core::Credentials::TokenCredentialO
 std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::string const& tenantId)
     const
 {
-  ThrowIfNotSafeCmdLineInput(scopes, "Scopes");
-  ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
+  // The OAuth 2.0 RFC (https://datatracker.ietf.org/doc/html/rfc6749#section-3.3) allows space as
+  // well for a list of scopes, but that isn't currently required.
+  ThrowIfNotSafeCmdLineInput(
+      scopes, ".-:/_", "Scopes"); // Characters allowed in the scope are [0-9a-zA-Z-.:/_].
+  ThrowIfNotSafeCmdLineInput(
+      m_tenantId, ".-", "TenantID"); // Characters allowed in the tenant id are [0-9a-zA-Z-.].
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
