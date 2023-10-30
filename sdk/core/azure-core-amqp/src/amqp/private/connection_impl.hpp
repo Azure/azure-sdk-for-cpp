@@ -6,9 +6,9 @@
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/network/transport.hpp"
-#include "azure/core/platform.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/platform.hpp>
 
 #include <azure_uamqp_c/connection.h>
 

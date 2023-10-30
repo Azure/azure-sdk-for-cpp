@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 #include "private/retry_operation.hpp"
 
-#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
+
+#include <azure/core/internal/diagnostics/log.hpp>
 
 #include <thread>
 
