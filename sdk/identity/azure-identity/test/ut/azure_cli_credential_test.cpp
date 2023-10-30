@@ -320,27 +320,31 @@ TEST(AzureCliCredential, CmdLine)
 TEST(AzureCliCredential, UnsafeChars)
 {
   std::string const Exploit = std::string("\" | echo OWNED | ") + InfiniteCommand + " | echo \"";
+  std::vector<std::string> exploits{Exploit, "space character"};
 
+  for (std::string exploit : exploits)
   {
-    AzureCliCredentialOptions options;
-    options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
-    options.TenantId += Exploit;
-    AzureCliCredential azCliCred(options);
+    {
+      AzureCliCredentialOptions options;
+      options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
+      options.TenantId += exploit;
+      AzureCliCredential azCliCred(options);
 
-    TokenRequestContext trc;
-    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
-    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
-  }
+      TokenRequestContext trc;
+      trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+      EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+    }
 
-  {
-    AzureCliCredentialOptions options;
-    options.CliProcessTimeout = std::chrono::hours(24);
-    AzureCliCredential azCliCred(options);
+    {
+      AzureCliCredentialOptions options;
+      options.CliProcessTimeout = std::chrono::hours(24);
+      AzureCliCredential azCliCred(options);
 
-    TokenRequestContext trc;
-    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + Exploit);
+      TokenRequestContext trc;
+      trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + exploit);
 
-    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+      EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+    }
   }
 }
 

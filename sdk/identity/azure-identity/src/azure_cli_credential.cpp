@@ -68,7 +68,6 @@ void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
       case '.':
       case '-':
       case '_':
-      case ' ':
         break;
 
       default:
