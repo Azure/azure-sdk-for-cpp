@@ -41,6 +41,7 @@ if (VENDOR_UAMQP)
 
   # uAMQP specific compiler settings. Primarily used to disable warnings in the uAMQP codebase.
   if (MSVC)
+    target_compile_definitions(uamqp PRIVATE _CRT_SECURE_NO_WARNINGS)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(uamqp PUBLIC -Wno-extra-semi -Wno-gnu-zero-variadic-macro-arguments -Wno-cast-qual -Wno-format-pedantic)
   else()
@@ -130,7 +131,6 @@ set(AZURE_CORE_AMQP_SOURCE
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
 
 if (VENDOR_UAMQP)
-target_compile_definitions(uamqp PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
 endif()
 
