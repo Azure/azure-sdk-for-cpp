@@ -126,10 +126,10 @@ set(AZURE_CORE_AMQP_SOURCE
     src/private/package_version.hpp
 )
 
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
 
 if (VENDOR_UAMQP)
-target_compile_definitions(azure-core-amqp PRIVATE _CRT_SECURE_NO_WARNINGS)
+target_compile_definitions(uamqp PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
 endif()
 
@@ -151,7 +151,6 @@ create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tes
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
 target_link_libraries(azure-core-amqp PRIVATE
-    uamqp
     umock_c
     azure_macro_utils_c
     aziotsharedutil
