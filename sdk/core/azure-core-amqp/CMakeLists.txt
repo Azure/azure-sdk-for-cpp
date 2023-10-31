@@ -35,6 +35,7 @@ if (VENDOR_UAMQP)
   message(STATUS "Using vendored uamqp")
   set(use_installed_dependencies ON CACHE BOOL "Use vcpkg dependencies." FORCE)
   set(skip_samples ON CACHE BOOL "Skip building samples" FORCE)
+  set(build_as_object_library ON CACHE BOOL "Produce object library" FORCE)
 
   add_subdirectory(vendor/azure-uamqp-c SYSTEM)
 
