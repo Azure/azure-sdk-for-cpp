@@ -25,9 +25,10 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 #include <azure/storage/tables/dll_import_export.hpp>
+#include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/rtti.hpp>
-#include <azure/storage/tables/models.hpp>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -134,98 +135,120 @@ namespace Azure { namespace Storage { namespace Tables { namespace Models {
      */
     int32_t MaxAgeInSeconds = int32_t();
   };
-	/**
-     * @brief Storage Service Properties.
-     */
-    struct TableServiceProperties final
-    {
-      /**
-       * Azure Analytics Logging settings.
-       */
-      AnalyticsLogging Logging;
-      /**
-       * A summary of request statistics grouped by API in hourly aggregates for queues.
-       */
-      Metrics HourMetrics;
-      /**
-       * A summary of request statistics grouped by API in minute aggregates for queues.
-       */
-      Metrics MinuteMetrics;
-      /**
-       * The set of CORS rules.
-       */
-      std::vector<CorsRule> Cors;
-    };
-    struct GetServicePropertiesOptions final
-    {
-    };
-    struct SetServicePropertiesOptions final
-    {
-      TableServiceProperties TableServiceProperties;
-    };
-
+  /**
+   * @brief Storage Service Properties.
+   */
+  struct TableServiceProperties final
+  {
     /**
-     * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::SetProperties.
+     * Azure Analytics Logging settings.
      */
-    struct SetServicePropertiesResult final
-    {
-    };
+    AnalyticsLogging Logging;
     /**
-     * @brief The status of the secondary location.
+     * A summary of request statistics grouped by API in hourly aggregates for queues.
      */
-    class GeoReplicationStatus final {
-    public:
-      /** Constructs a new GeoReplicationStatus instance */
-      GeoReplicationStatus() = default;
-      /** Constructs a new GeoReplicationStatus from a string. */
-      explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another GeoReplicationStatus. */
-      bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another GeoReplicationStatus. */
-      bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
-      /** Constant value of type GeoReplicationStatus: Live */
-      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Live;
-      /** Constant value of type GeoReplicationStatus: Bootstrap */
-      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
-      /** Constant value of type GeoReplicationStatus: Unavailable */
-      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus
-          Unavailable;
-
-    private:
-      std::string m_value;
-    };
-     /**
-     * @brief Geo-Replication information for the Secondary Storage Service.
-     */
-    struct GeoReplication final
-    {
-      /**
-       * The status of the secondary location.
-       */
-      GeoReplicationStatus Status;
-      /**
-       * A GMT date/time value, to the second. All primary writes preceding this value are
-       * guaranteed to be available for read operations at the secondary. Primary writes after this
-       * point in time may or may not be available for reads.
-       */
-      Nullable<DateTime> LastSyncedOn;
-    };
+    Metrics HourMetrics;
     /**
-     * @brief Stats for the storage service.
+     * A summary of request statistics grouped by API in minute aggregates for queues.
      */
-    struct ServiceStatistics final
-    {
-      /**
-       * Geo-Replication information for the Secondary Storage Service.
-       */
-      Models::GeoReplication GeoReplication;
-    };
+    Metrics MinuteMetrics;
+    /**
+     * The set of CORS rules.
+     */
+    std::vector<CorsRule> Cors;
+  };
+  struct GetServicePropertiesOptions final
+  {
+  };
 
-    struct GetServiceStatisticsOptions final
-    {
-    };
+  struct SetServicePropertiesOptions final
+  {
+    TableServiceProperties TableServiceProperties;
+  };
+
+  /**
+   * @brief Response type for #Azure::Storage::Tables::TablesServiceClient::SetProperties.
+   */
+  struct SetServicePropertiesResult final
+  {
+  };
+
+  /**
+   * @brief Response type for #Azure::Storage::Tables::TablesServiceClient::PreflightCheck.
+   */
+  struct PreflightCheckResult final
+  {
+  };
+
+  struct PreflightCheckOptions final
+  {
+    std::string Origin;
+    std::string TableName;
+  };
+  /**
+   * @brief The status of the secondary location.
+   */
+  class GeoReplicationStatus final {
+  public:
+    /** Constructs a new GeoReplicationStatus instance */
+    GeoReplicationStatus() = default;
+    /** Constructs a new GeoReplicationStatus from a string. */
+    explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
+    /** Compares with another GeoReplicationStatus. */
+    bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
+    /** Compares with another GeoReplicationStatus. */
+    bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
+    /** Converts the value to a string. */
+    const std::string& ToString() const { return m_value; }
+    /** Constant value of type GeoReplicationStatus: Live */
+    AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Live;
+    /** Constant value of type GeoReplicationStatus: Bootstrap */
+    AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+    /** Constant value of type GeoReplicationStatus: Unavailable */
+    AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Unavailable;
+
+  private:
+    std::string m_value;
+  };
+  /**
+   * @brief Geo-Replication information for the Secondary Storage Service.
+   */
+  struct GeoReplication final
+  {
+    /**
+     * The status of the secondary location.
+     */
+    GeoReplicationStatus Status;
+    /**
+     * A GMT date/time value, to the second. All primary writes preceding this value are
+     * guaranteed to be available for read operations at the secondary. Primary writes after this
+     * point in time may or may not be available for reads.
+     */
+    Nullable<DateTime> LastSyncedOn;
+  };
+  /**
+   * @brief Stats for the storage service.
+   */
+  struct ServiceStatistics final
+  {
+    /**
+     * Geo-Replication information for the Secondary Storage Service.
+     */
+    Models::GeoReplication GeoReplication;
+  };
+
+  struct GetServiceStatisticsOptions final
+  {
+  };
 
 
+  
+  struct Table final
+  {
+    std::string TableName;
+    std::string Metadata;
+    std::string EditLink;
+    std::string Type;
+    std::string Id;
+  };
 }}}} // namespace Azure::Storage::Tables::Models

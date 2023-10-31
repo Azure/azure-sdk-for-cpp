@@ -159,6 +159,12 @@ namespace Azure { namespace Core { namespace Http {
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Patch;
 
+    /**
+     * @brief The representation of a `OPTIONS` HTTP method based on [RFC 2616]
+     * (https://datatracker.ietf.org/doc/html/rfc5789).
+     */
+    AZ_CORE_DLLEXPORT const static HttpMethod Options;
+
   private:
     std::string m_value;
   }; // extensible enum HttpMethod

@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
     auto tableClient
-        = Tables::TableClient(GetEnv("STORAGE_SUBSCRIPTION_ID"), m_credential, clientOptions);
+        = Tables::TableClient::CreateFromConnectionString(GetEnv("STANDARD_STORAGE_CONNECTION_STRING"),m_tableName,clientOptions);
     return tableClient;
   }
 
@@ -54,24 +54,22 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(TablesClientTest, CreateTable)
   {
-    Tables::CreateOptions createOptions;
-    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    createOptions.TableName = m_tableName;
-
-    auto createResponse = m_tableClient->Create(createOptions);
-    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+    auto createResponse = m_tableClient->Create();
+    EXPECT_EQ(createResponse.Value.TableName, m_tableName);
+    EXPECT_EQ(createResponse.Value.EditLink,"Tables('"+m_tableName+"')");
+    EXPECT_TRUE(createResponse.Value.Type.find(".Tables") != std::string::npos);
+    EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
   }
 
   TEST_F(TablesClientTest, GetTable)
   {
-    Tables::CreateOptions createOptions;
-    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    createOptions.TableName = m_tableName;
+    //Tables::CreateOptions createOptions;
+    //createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    //createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    //createOptions.TableName = m_tableName;
 
-    auto createResponse = m_tableClient->Create(createOptions);
-    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+    auto createResponse = m_tableClient->Create();
+    //EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
     Tables::GetOptions getOptions;
     getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
@@ -84,13 +82,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(TablesClientTest, UpdateTable)
   {
-    Tables::CreateOptions createOptions;
-    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    createOptions.TableName = m_tableName;
-
-    auto createResponse = m_tableClient->Create(createOptions);
-    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+    auto createResponse = m_tableClient->Create();
+   // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
     Tables::GetOptions getOptions;
     getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
@@ -111,13 +104,13 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(TablesClientTest, ListTables)
   {
-    Tables::CreateOptions createOptions;
-    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    createOptions.TableName = m_tableName;
+    //Tables::CreateOptions createOptions;
+    //createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    //createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    //createOptions.TableName = m_tableName;
 
-    auto createResponse = m_tableClient->Create(createOptions);
-    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+    auto createResponse = m_tableClient->Create();
+   // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
     Tables::ListOptions listOptions;
     listOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
@@ -139,13 +132,13 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(TablesClientTest, DeleteTable)
   {
-    Tables::CreateOptions createOptions;
+    /*Tables::CreateOptions createOptions;
     createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
     createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    createOptions.TableName = m_tableName;
+    createOptions.TableName = m_tableName;*/
 
-    auto createResponse = m_tableClient->Create(createOptions);
-    EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+    auto createResponse = m_tableClient->Create();
+    //EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
     Tables::ListOptions listOptions;
     listOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
@@ -219,7 +212,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
 
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
-    
+
     Azure::Storage::Tables::Models::SetServicePropertiesOptions setOptions;
     setOptions.TableServiceProperties = std::move(response.Value);
     auto response2 = m_tableServiceClient->SetServiceProperties(setOptions);
@@ -257,7 +250,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0], "x-ms-meta-data*");
+    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
+    "x-ms-meta-data*");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
@@ -290,7 +284,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0], "x-ms-meta-data*");
+    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
+    "x-ms-meta-data*");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
@@ -306,18 +301,19 @@ namespace Azure { namespace Storage { namespace Test {
     getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
     auto getResponse = m_tableServiceClient->GetServiceProperties(getOptions);
     */
-   /* EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules.size(), 1);
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0], "x-ms-meta-data*");
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
-    EXPECT_EQ(
-        getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethodsType::Get);
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
-    EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);*/
+    /* EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules.size(), 1);
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
+     "x-ms-meta-data*");
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
+     EXPECT_EQ(
+         getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
+         Tables::AllowedMethodsType::Get);
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
+     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);*/
   }
 
   TEST_F(TablesClientTest, ServiceClientSetAndList)
@@ -341,7 +337,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 1);
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0], "x-ms-meta-data*");
+    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
+    "x-ms-meta-data*");
     EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
     EXPECT_EQ(
         setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
@@ -371,7 +368,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
     EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
     EXPECT_EQ(
-        listResponse.Value.Value[0].Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
+        listResponse.Value.Value[0].Properties.Cors.CorsRules[0].ExposedHeaders[0],
+    "x-ms-meta-*");
     EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);*/
   }
 }}} // namespace Azure::Storage::Test

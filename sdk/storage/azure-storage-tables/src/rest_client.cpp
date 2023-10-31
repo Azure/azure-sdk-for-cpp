@@ -121,6 +121,27 @@ Azure::Response<ListTableServices> TableServicesClient::List(
   return Response<ListTableServices>(std::move(response), std::move(rawResponse));
 }
 
+Azure::Response<Models::PreflightCheckResult> TableServicesClient::PreflightCheck(
+    Models::PreflightCheckOptions const& options,
+    Core::Context const& context)
+{
+  auto url = m_url;
+  url.AppendPath(options.TableName);
+  Core::Http::Request request(Core::Http::HttpMethod::Options, url);
+  request.SetHeader("Origin", options.Origin);
+  request.SetHeader("Access-Control-Request-Method", Core::Http::HttpMethod::Options.ToString());
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+
+  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::PreflightCheckResult response;
+
+  return Response<Models::PreflightCheckResult>(std::move(response), std::move(rawResponse));
+}
 Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServiceProperties(
     Models::SetServicePropertiesOptions const& options,
     Core::Context const& context)
@@ -601,12 +622,12 @@ TableClient::TableClient(std::string subscriptionId)
 {
 }
 
-Azure::Response<Table> TableClient::Create(
-    CreateOptions const& options,
+Azure::Response<Models::Table> TableClient::Create(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("subscriptions/");
+  url.AppendPath("Tables");
+  /* url.AppendPath("subscriptions/");
   url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
   url.AppendPath("resourceGroups/");
   url.AppendPath(
@@ -617,59 +638,32 @@ Azure::Response<Table> TableClient::Create(
   url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
 
   url.SetQueryParameters({{"api-version", "2023-01-01"}});
-
+  */
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
 
-    jsonRoot["properties"]["tableName"] = options.Parameters.Properties.TableName;
-    jsonRoot["properties"]["signedIdentifiers"] = Core::Json::_internal::json::array();
-
-    for (std::size_t i = 0; i < options.Parameters.Properties.SignedIdentifiers.size(); ++i)
-    {
-      jsonRoot["properties"]["signedIdentifiers"][i]["id"]
-          = options.Parameters.Properties.SignedIdentifiers[i].Id;
-
-      if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.StartTime.HasValue())
-      {
-        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["startTime"]
-            = options.Parameters.Properties.SignedIdentifiers[i]
-                  .AccessPolicy.StartTime.Value()
-                  .ToString();
-      }
-
-      if (options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.ExpiryTime.HasValue())
-      {
-        jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["expiryTime"]
-            = options.Parameters.Properties.SignedIdentifiers[i]
-                  .AccessPolicy.ExpiryTime.Value()
-                  .ToString();
-      }
-
-      jsonRoot["properties"]["signedIdentifiers"][i]["accessPolicy"]["permission"]
-          = options.Parameters.Properties.SignedIdentifiers[i].AccessPolicy.Permission;
-    }
-
+    jsonRoot["TableName"] = m_tableName;
     jsonBody = jsonRoot.dump();
   }
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
 
-  Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
+  Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
   request.SetHeader("Content-Type", "application/json");
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  if (httpStatusCode != Core::Http::HttpStatusCode::Created)
   {
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Table response{};
+  Models::Table response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
@@ -678,34 +672,15 @@ Azure::Response<Table> TableClient::Create(
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-      response.Properties.TableName = jsonRoot["properties"]["tableName"].get<std::string>();
-
-      for (auto const& jsonItem : jsonRoot["properties"]["signedIdentifiers"])
-      {
-        TableSignedIdentifier vectorItem{};
-
-        vectorItem.Id = jsonItem["id"].get<std::string>();
-
-        if (jsonItem.contains("startTime"))
-        {
-          vectorItem.AccessPolicy.StartTime = DateTime::Parse(
-              jsonItem["startTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
-        }
-
-        if (jsonItem.contains("expiryTime"))
-        {
-          vectorItem.AccessPolicy.ExpiryTime = DateTime::Parse(
-              jsonItem["expiryTime"].get<std::string>(), DateTime::DateFormat::Rfc3339);
-        }
-
-        vectorItem.AccessPolicy.Permission = jsonItem["permission"].get<std::string>();
-
-        response.Properties.SignedIdentifiers.emplace_back(std::move(vectorItem));
-      }
+      response.TableName = jsonRoot["TableName"].get<std::string>();
+      response.EditLink = jsonRoot["odata.editLink"].get<std::string>();
+      response.Id = jsonRoot["odata.id"].get<std::string>();
+      response.Metadata = jsonRoot["odata.metadata"].get<std::string>();
+      response.Type = jsonRoot["odata.type"].get<std::string>();
     }
   }
 
-  return Response<Table>(std::move(response), std::move(rawResponse));
+  return Response<Models::Table>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<Table> TableClient::Update(

@@ -67,7 +67,8 @@ namespace Azure { namespace Storage { namespace _internal {
     Azure::Core::Url url("https://goqu.table.core.windows.net");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
     request.SetHeader("x-ms-date", "Thu, 23 Apr 2020 09:43:37 GMT");
-    EXPECT_THROW(policy.GetSignature(request), std::exception);
+    auto result = policy.GetSignature(request);
+    EXPECT_EQ(result, "p5FCqEmJLSpbljP2SBDHn7BbTyEsS+LJ76hd/axtUnc=");
   }
 
 }}}}// namespace Azure::Storage::_internal

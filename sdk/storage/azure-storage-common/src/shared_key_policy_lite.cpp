@@ -27,13 +27,15 @@ namespace Azure { namespace Storage { namespace _internal {
     // example, ?comp=metadata). No other parameters should be included on the query string.
     // https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key#shared-key-lite-and-table-service-format-for-2009-09-19-and-later
     // canonicalized resource
-    string_to_sign += "/" + m_credential->AccountName + "/" + request.GetUrl().GetPath() + "?";
-    const std::string keyValue = Azure::Core::Url::Encode("comp");
+    string_to_sign += "/" + m_credential->AccountName + "/" + request.GetUrl().GetPath();
     auto queryParameters = request.GetUrl().GetQueryParameters();
-    auto compValue = queryParameters.at(keyValue);
-
-    string_to_sign += "comp=" + Azure::Core::Url::Decode(compValue) + "\n";
-
+    if (queryParameters.count("comp") > 0)
+    {
+      const std::string keyValue = Azure::Core::Url::Encode("comp");
+      auto compValue = queryParameters.at(keyValue);
+      string_to_sign += "?comp=" + Azure::Core::Url::Decode(compValue) ;
+    }
+    string_to_sign += "\n";
     // remove last linebreak
     string_to_sign.pop_back();
 
