@@ -108,10 +108,8 @@ All URLs should be URL-encoded and other resource names should be UTF-8 encoded.
 This applies to both input variables and output.
 If your code runs in an environment where the default locale and encoding is not UTF-8, you should encode before passing variables into the SDK and decode variables returned from the SDK.
 
-[//]: # (// cSpell:ignore olá)
-
+In the blow code snippet, we'd like to create a blob named <code>ol&#225;</code>.
 ```C++
-// For example, we'd like to create a blob client named `olá`
 // If the blob client is created from a container client, the blob name should be UTF-8 encoded.
 auto blobClient = containerClient.GetBlobClient("ol\xC3\xA1");
 // If the blob client is built from URL, it should be URL-encoded
