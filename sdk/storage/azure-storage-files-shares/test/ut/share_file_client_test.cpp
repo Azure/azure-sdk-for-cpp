@@ -1741,14 +1741,15 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(allAccessRights, fileHandles[0].AccessRights.Value());
   }
 
-  // cspell:ignore myshare myfile
   TEST_F(FileShareFileClientTest, ListHandlesWithClientName_PLAYBACKONLY_)
   {
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        "myshare",
+        "testing",
         InitStorageClientOptions<Files::Shares::ShareClientOptions>());
-    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient("myfile");
+    auto fileClient
+        = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("dir1").GetFileClient(
+            "test.txt");
     auto fileHandles = fileClient.ListHandles().FileHandles;
     EXPECT_EQ(fileHandles.size(), 1L);
     EXPECT_FALSE(fileHandles[0].ClientName.empty());
