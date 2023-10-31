@@ -219,7 +219,7 @@ you can leverage the transactional checksum feature in the SDK.
 With this feature, you provide a pre-calculated MD5 or CRC64 checksum when calling an upload API
 and the storage service will calculate checksum after it receives the data. It will then compare that with the one you provide
 and fail the request if they don't match.
-Make sure you calculate the checksum early enough to cover the time when the corruption may happen.
+Make sure you calculate the checksum as early as possible so that potential corruptions that occur on storage medium, computer memory or during data transfer can be detected.
 
 This functionality also works for download operations.
 Below is a code sample to use this feature.
