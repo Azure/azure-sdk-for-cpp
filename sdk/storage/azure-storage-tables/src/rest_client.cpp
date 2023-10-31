@@ -857,25 +857,17 @@ Azure::Response<Table> TableClient::Get(GetOptions const& options, Core::Context
   return Response<Table>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<DeleteResult> TableClient::Delete(
-    DeleteOptions const& options,
+Azure::Response<Models::DeleteResult> TableClient::Delete(
+
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default/tables/");
-  url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
-
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
-
+  url.AppendPath("Tables('" + m_tableName + "')");
+ 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
+  request.SetHeader("Content-Type", "application/json");
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
@@ -884,9 +876,9 @@ Azure::Response<DeleteResult> TableClient::Delete(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  DeleteResult response{};
-
-  return Response<DeleteResult>(std::move(response), std::move(rawResponse));
+  Models::DeleteResult response{};
+ 
+  return Response<Models::DeleteResult>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<ListTableResource> TableClient::List(

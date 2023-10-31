@@ -255,9 +255,7 @@ namespace Azure { namespace Storage { namespace Tables {
     std::string TableName;
   };
 
-  struct DeleteResult final
-  {
-  };
+
 
   struct DeleteOptions final
   {
@@ -395,8 +393,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     Response<Table> Get(GetOptions const& options = {}, Core::Context const& context = {});
 
-    Response<DeleteResult> Delete(
-        DeleteOptions const& options = {},
+    Response<Models::DeleteResult> Delete(
         Core::Context const& context = {});
 
     Response<ListTableResource> List(

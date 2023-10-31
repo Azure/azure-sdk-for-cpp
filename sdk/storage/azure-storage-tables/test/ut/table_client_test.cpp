@@ -132,48 +132,12 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(TablesClientTest, DeleteTable)
   {
-    /*Tables::CreateOptions createOptions;
-    createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    createOptions.TableName = m_tableName;*/
-
     auto createResponse = m_tableClient->Create();
-    //EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
-
-    Tables::ListOptions listOptions;
-    listOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    listOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-
-    auto listResponse = m_tableClient->List(listOptions);
-    bool found = false;
-    for (auto table : listResponse.Value.Value)
-    {
-      if (table.Properties.TableName == m_tableName)
-      {
-        found = true;
-        break;
-      }
-    }
 
     Tables::DeleteOptions deleteOptions;
-    deleteOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    deleteOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    deleteOptions.TableName = m_tableName;
-
-    m_tableClient->Delete(deleteOptions);
-    EXPECT_TRUE(found);
-
-    listResponse = m_tableClient->List(listOptions);
-    found = false;
-    for (auto table : listResponse.Value.Value)
-    {
-      if (table.Properties.TableName == m_tableName)
-      {
-        found = true;
-        break;
-      }
-    }
-    EXPECT_FALSE(found);
+    
+    auto response = m_tableClient->Delete();
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
   TEST_F(TablesClientTest, ServiceClientConstructors)

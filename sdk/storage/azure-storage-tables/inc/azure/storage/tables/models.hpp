@@ -241,8 +241,10 @@ namespace Azure { namespace Storage { namespace Tables { namespace Models {
   {
   };
 
+  struct DeleteResult final
+  {
+  };
 
-  
   struct Table final
   {
     std::string TableName;
