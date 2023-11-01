@@ -344,6 +344,73 @@ TEST(AzureCliCredential, UnsafeChars)
   }
 }
 
+TEST(AzureCliCredential, UnsupportedCharsInTenantId)
+{
+  std::string const invalid = "abc|invalid";
+
+  {
+    AzureCliCredentialOptions options;
+    options.TenantId = invalid;
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    options.AdditionallyAllowedTenants.push_back("*");
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    trc.TenantId = invalid;
+
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+    {
+    AzureCliCredentialOptions options;
+    options.AdditionallyAllowedTenants.push_back(invalid);
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    trc.TenantId = invalid;
+
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+}
+
 TEST(AzureCliCredential, StrictIso8601TimeFormat)
 {
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","

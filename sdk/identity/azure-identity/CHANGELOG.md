@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Harden checks for the tenant ID.
+
 ### Other Changes
 
 ## 1.6.0-beta.3 (2023-10-12)
