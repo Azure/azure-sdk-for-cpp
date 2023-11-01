@@ -1,14 +1,27 @@
 # Release History
 
-## 1.6.0-beta.4 (Unreleased)
+## 1.6.0 (2023-11-07)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for `WorkloadIdentityCredential`.
 
 ### Bugs Fixed
 
-### Other Changes
+- Change the default value for the authority host option to be read from the environment variable first.
+- Do not throw an exception during `AzureCliCredential` construction, but rather delay it to the `GetToken()` call.
+- [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
+
+### Breaking Changes
+
+- Modify the order of the credentials used within the `DefaultAzureCredential` to be consistent with other languages.
+- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
+
+- Theodore Tsirpanis _([GitHub](https://github.com/teo-tsirpanis))_
 
 ## 1.6.0-beta.3 (2023-10-12)
 
