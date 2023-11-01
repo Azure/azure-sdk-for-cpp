@@ -535,7 +535,6 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
   return Response<Models::TableServiceProperties>(std::move(response), std::move(pRawResponse));
 }
 
-
 Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
     Models::GetServiceStatisticsOptions const& options,
     const Core::Context& context)
@@ -622,8 +621,7 @@ TableClient::TableClient(std::string subscriptionId)
 {
 }
 
-Azure::Response<Models::Table> TableClient::Create(
-    Core::Context const& context)
+Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("Tables");
@@ -856,6 +854,175 @@ Azure::Response<Table> TableClient::Get(GetOptions const& options, Core::Context
 
   return Response<Table>(std::move(response), std::move(rawResponse));
 }
+Azure::Response<Models::SetTableAccessPolicyResult> TableClient::SetAccessPolicy(
+    Models::TableAccessPolicy const& tableAccessPolicy,
+    Models::SetTableAccessPolicyOptions const& options,
+    Core::Context const& context)
+
+{
+  auto url = m_url;
+  url.AppendPath(m_tableName);
+  url.AppendQueryParameter("comp", "acl");
+  (void)options;
+  std::string xmlBody;
+  {
+    _internal::XmlWriter writer;
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifiers"});
+    for (const auto& i1 : tableAccessPolicy.SignedIdentifiers)
+    {
+      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifier"});
+      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Id", i1.Id});
+      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
+      if (i1.StartsOn.HasValue())
+      {
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Start",
+            i1.StartsOn.Value().ToString(
+                Azure::DateTime::DateFormat::Rfc3339,
+                Azure::DateTime::TimeFractionFormat::AllDigits)});
+      }
+      if (i1.ExpiresOn.HasValue())
+      {
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Expiry",
+            i1.ExpiresOn.Value().ToString(
+                Azure::DateTime::DateFormat::Rfc3339,
+                Azure::DateTime::TimeFractionFormat::AllDigits)});
+      }
+      writer.Write(
+          _internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission", i1.Permissions});
+      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    }
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+    writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+    xmlBody = writer.GetDocument();
+  }
+  Core::IO::MemoryBodyStream requestBody(
+      reinterpret_cast<const uint8_t*>(xmlBody.data()), xmlBody.length());
+
+  auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url, &requestBody);
+  request.SetHeader("Content-Type", "application/xml; charset=UTF-8");
+  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+  request.GetUrl().AppendQueryParameter("comp", "acl");
+  request.SetHeader("x-ms-version", "2019-12-12");
+  auto pRawResponse = m_pipeline->Send(request, context);
+  auto httpStatusCode = pRawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
+  {
+    throw Core::RequestFailedException(pRawResponse);
+  }
+  Models::SetTableAccessPolicyResult response;
+  return Response<Models::SetTableAccessPolicyResult>(std::move(response), std::move(pRawResponse));
+}
+
+Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
+    Models::GetTableAccessPolicyOptions const& options,
+    Core::Context const& context)
+{
+  (void)options;
+  auto url = m_url;
+  url.AppendPath(m_tableName);
+  url.AppendQueryParameter("comp", "acl");
+  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+
+  auto pRawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = pRawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  {
+    throw Core::RequestFailedException(pRawResponse);
+  }
+
+  Models::TableAccessPolicy response{};
+  {
+    const auto& responseBody = pRawResponse->GetBody();
+    _internal::XmlReader reader(
+        reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
+    enum class XmlTagEnum
+    {
+      kUnknown,
+      kSignedIdentifiers,
+      kSignedIdentifier,
+      kId,
+      kAccessPolicy,
+      kStart,
+      kExpiry,
+      kPermission,
+    };
+    const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
+        {"SignedIdentifiers", XmlTagEnum::kSignedIdentifiers},
+        {"SignedIdentifier", XmlTagEnum::kSignedIdentifier},
+        {"Id", XmlTagEnum::kId},
+        {"AccessPolicy", XmlTagEnum::kAccessPolicy},
+        {"Start", XmlTagEnum::kStart},
+        {"Expiry", XmlTagEnum::kExpiry},
+        {"Permission", XmlTagEnum::kPermission},
+    };
+    std::vector<XmlTagEnum> xmlPath;
+    Models::SignedIdentifier vectorElement1;
+    while (true)
+    {
+      auto node = reader.Read();
+      if (node.Type == _internal::XmlNodeType::End)
+      {
+        break;
+      }
+      else if (node.Type == _internal::XmlNodeType::StartTag)
+      {
+        auto ite = XmlTagEnumMap.find(node.Name);
+        xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
+      }
+      else if (node.Type == _internal::XmlNodeType::Text)
+      {
+        if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kSignedIdentifiers
+            && xmlPath[1] == XmlTagEnum::kSignedIdentifier && xmlPath[2] == XmlTagEnum::kId)
+        {
+          vectorElement1.Id = node.Value;
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kSignedIdentifiers
+            && xmlPath[1] == XmlTagEnum::kSignedIdentifier
+            && xmlPath[2] == XmlTagEnum::kAccessPolicy && xmlPath[3] == XmlTagEnum::kStart)
+        {
+          vectorElement1.StartsOn
+              = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kSignedIdentifiers
+            && xmlPath[1] == XmlTagEnum::kSignedIdentifier
+            && xmlPath[2] == XmlTagEnum::kAccessPolicy && xmlPath[3] == XmlTagEnum::kExpiry)
+        {
+          vectorElement1.ExpiresOn
+              = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+        }
+        else if (
+            xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kSignedIdentifiers
+            && xmlPath[1] == XmlTagEnum::kSignedIdentifier
+            && xmlPath[2] == XmlTagEnum::kAccessPolicy && xmlPath[3] == XmlTagEnum::kPermission)
+        {
+          vectorElement1.Permissions = node.Value;
+        }
+      }
+      else if (node.Type == _internal::XmlNodeType::Attribute)
+      {
+      }
+      else if (node.Type == _internal::XmlNodeType::EndTag)
+      {
+        if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kSignedIdentifiers
+            && xmlPath[1] == XmlTagEnum::kSignedIdentifier)
+        {
+          response.SignedIdentifiers.push_back(std::move(vectorElement1));
+          vectorElement1 = Models::SignedIdentifier();
+        }
+        xmlPath.pop_back();
+      }
+    }
+  }
+
+  return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
+}
 
 Azure::Response<Models::DeleteResult> TableClient::Delete(
 
@@ -863,7 +1030,7 @@ Azure::Response<Models::DeleteResult> TableClient::Delete(
 {
   auto url = m_url;
   url.AppendPath("Tables('" + m_tableName + "')");
- 
+
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
   request.SetHeader("Content-Type", "application/json");
@@ -877,7 +1044,7 @@ Azure::Response<Models::DeleteResult> TableClient::Delete(
   }
 
   Models::DeleteResult response{};
- 
+
   return Response<Models::DeleteResult>(std::move(response), std::move(rawResponse));
 }
 

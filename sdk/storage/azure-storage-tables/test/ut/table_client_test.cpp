@@ -45,8 +45,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
 
     m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
-    auto tableClient
-        = Tables::TableClient::CreateFromConnectionString(GetEnv("STANDARD_STORAGE_CONNECTION_STRING"),m_tableName,clientOptions);
+    auto tableClient = Tables::TableClient::CreateFromConnectionString(
+        GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, clientOptions);
     return tableClient;
   }
 
@@ -56,34 +56,58 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto createResponse = m_tableClient->Create();
     EXPECT_EQ(createResponse.Value.TableName, m_tableName);
-    EXPECT_EQ(createResponse.Value.EditLink,"Tables('"+m_tableName+"')");
+    EXPECT_EQ(createResponse.Value.EditLink, "Tables('" + m_tableName + "')");
     EXPECT_TRUE(createResponse.Value.Type.find(".Tables") != std::string::npos);
     EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
   }
 
-  TEST_F(TablesClientTest, GetTable)
+  TEST_F(TablesClientTest, GetAccessPolicy)
   {
-    //Tables::CreateOptions createOptions;
-    //createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    //createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    //createOptions.TableName = m_tableName;
-
     auto createResponse = m_tableClient->Create();
-    //EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
-    Tables::GetOptions getOptions;
-    getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    getOptions.TableName = m_tableName;
+    auto getResponse = m_tableClient->GetAccessPolicy();
+    EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 0);
+  }
 
-    auto getResponse = m_tableClient->Get(getOptions);
-    EXPECT_EQ(getResponse.Value.Properties.TableName, m_tableName);
+  TEST_F(TablesClientTest, SetAccessPolicy)
+  {
+    auto createResponse = m_tableClient->Create();
+    Azure::Storage::Tables::Models::TableAccessPolicy newPolicy{};
+    Azure::Storage::Tables::Models::SignedIdentifier newIdentifier{};
+    newIdentifier.Id = "testid";
+    newIdentifier.Permissions = "r";
+    newIdentifier.StartsOn = Azure::DateTime::Parse(
+        Azure::DateTime(std::chrono::system_clock::now())
+            .ToString(Azure::DateTime::DateFormat::Rfc1123),
+        Azure::DateTime::DateFormat::Rfc1123);
+    newIdentifier.ExpiresOn = Azure::DateTime::Parse(
+        Azure::DateTime(std::chrono::system_clock::now() + std::chrono::seconds(60))
+            .ToString(Azure::DateTime::DateFormat::Rfc1123),
+        Azure::DateTime::DateFormat::Rfc1123);
+    newPolicy.SignedIdentifiers.emplace_back(newIdentifier);
+
+    m_tableClient->SetAccessPolicy(newPolicy);
+    // setting policy takes up to 30 seconds to take effect
+    std::this_thread::sleep_for(std::chrono::milliseconds(30001));
+    auto getResponse = m_tableClient->GetAccessPolicy();
+
+    EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 1);
+    EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Id, newIdentifier.Id);
+    EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Permissions, newIdentifier.Permissions);
+    EXPECT_EQ(
+        getResponse.Value.SignedIdentifiers[0].StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc1123),
+        newIdentifier.StartsOn.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+    EXPECT_EQ(
+        getResponse.Value.SignedIdentifiers[0].ExpiresOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc1123),
+        newIdentifier.ExpiresOn.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
   }
 
   TEST_F(TablesClientTest, UpdateTable)
   {
     auto createResponse = m_tableClient->Create();
-   // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+    // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
     Tables::GetOptions getOptions;
     getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
@@ -104,13 +128,13 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(TablesClientTest, ListTables)
   {
-    //Tables::CreateOptions createOptions;
-    //createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    //createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    //createOptions.TableName = m_tableName;
+    // Tables::CreateOptions createOptions;
+    // createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
+    // createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    // createOptions.TableName = m_tableName;
 
     auto createResponse = m_tableClient->Create();
-   // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
+    // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
     Tables::ListOptions listOptions;
     listOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
@@ -135,7 +159,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto createResponse = m_tableClient->Create();
 
     Tables::DeleteOptions deleteOptions;
-    
+
     auto response = m_tableClient->Delete();
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }

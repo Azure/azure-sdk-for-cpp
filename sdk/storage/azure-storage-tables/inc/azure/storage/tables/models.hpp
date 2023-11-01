@@ -253,4 +253,42 @@ namespace Azure { namespace Storage { namespace Tables { namespace Models {
     std::string Type;
     std::string Id;
   };
+  struct SignedIdentifier final
+  {
+    /**
+     * A unique id.
+     */
+    std::string Id;
+    /**
+     * The date-time the policy is active.
+     */
+    Nullable<DateTime> StartsOn;
+    /**
+     * The date-time the policy expires.
+     */
+    Nullable<DateTime> ExpiresOn;
+    /**
+     * The permissions for the acl policy.
+     */
+    std::string Permissions;
+  };
+  struct TableAccessPolicy final
+  {
+    /**
+     * A collection of signed identifiers.
+     */
+    std::vector<SignedIdentifier> SignedIdentifiers;
+  };
+
+  struct GetTableAccessPolicyOptions final
+  {
+  };
+
+  struct SetTableAccessPolicyOptions final
+  {
+  };
+
+  struct SetTableAccessPolicyResult final
+  {
+  };
 }}}} // namespace Azure::Storage::Tables::Models

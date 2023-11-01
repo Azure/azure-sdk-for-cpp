@@ -396,6 +396,15 @@ namespace Azure { namespace Storage { namespace Tables {
     Response<Models::DeleteResult> Delete(
         Core::Context const& context = {});
 
+    Response<Models::TableAccessPolicy> GetAccessPolicy(
+        Models::GetTableAccessPolicyOptions const& options = {},
+		Core::Context const& context = {});
+
+    Response<Models::SetTableAccessPolicyResult> SetAccessPolicy(
+        Models::TableAccessPolicy const& tableAccessPolicy,
+        Models::SetTableAccessPolicyOptions const& options = {},
+        Core::Context const& context = {});
+
     Response<ListTableResource> List(
         ListOptions const& options = {},
         Core::Context const& context = {});
