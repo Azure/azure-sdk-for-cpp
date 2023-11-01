@@ -14,7 +14,7 @@ urlFragment: azure-core-amqp
 These code samples show common scenario operations for the Azure SDK for C++ AMQP support.
 
 The AMQP client library is a C++ library for communicating with entities that use the AMQP 
-protocol. It is a wrapper around the [Azure uAMQP Library](https://github.com/Azure/azure-uamqp-c/).
+protocol.
 
 These samples are intended to demonstrate common AMQP use scenarios for Azure Service authors and are 
 not intended to be a comprehensive collection of all possible uses for the library. The samples are
