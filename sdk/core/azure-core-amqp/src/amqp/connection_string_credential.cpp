@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/connection_string_credential.hpp"
+#include "azure/core/amqp/internal/connection_string_credential.hpp"
 
-#include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/models/amqp_protocol.hpp"
-#include "azure/core/amqp/network/socket_transport.hpp"
+#include "azure/core/amqp/internal/connection.hpp"
+#include "azure/core/amqp/internal/models/amqp_protocol.hpp"
+#include "azure/core/amqp/internal/network/socket_transport.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/url.hpp>

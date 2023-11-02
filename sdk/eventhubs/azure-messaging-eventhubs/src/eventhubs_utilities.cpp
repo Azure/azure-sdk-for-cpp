@@ -3,7 +3,7 @@
 
 #include "private/eventhubs_utilities.hpp"
 
-#include <azure/core/amqp/models/amqp_error.hpp>
+#include <azure/core/amqp/internal/models/amqp_error.hpp>
 
 #include <iomanip>
 #include <iostream>

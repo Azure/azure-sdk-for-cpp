@@ -10,6 +10,7 @@
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/message_sender.hpp>
 
 namespace {
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";

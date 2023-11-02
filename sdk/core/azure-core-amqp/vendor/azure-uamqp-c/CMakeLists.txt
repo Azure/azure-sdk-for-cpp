@@ -12,6 +12,7 @@ option(skip_samples "set skip_samples to ON to skip building samples (default is
 option(use_installed_dependencies "set use_installed_dependencies to ON to use installed packages instead of building dependencies from submodules" OFF)
 option(memory_trace "set memory_trace to ON if memory usage is to be used, set to OFF to not use it" OFF)
 option(use_custom_heap "use externally defined heap functions instead of the malloc family" OFF)
+option(build_as_object_library "produce cmake object library and skip install steps" OFF)
 
 if(${use_custom_heap})
     add_definitions(-DGB_USE_CUSTOM_HEAP)
@@ -238,11 +239,19 @@ else()
     )
 endif()
 
-add_library(uamqp
-    ${uamqp_c_files}
-    ${uamqp_h_files}
-    ${socketlistener_c_files}
-    )
+if (build_as_object_library)
+    add_library(uamqp OBJECT
+        ${uamqp_c_files}
+        ${uamqp_h_files}
+        ${socketlistener_c_files}
+        )
+else()
+    add_library(uamqp
+        ${uamqp_c_files}
+        ${uamqp_h_files}
+        ${socketlistener_c_files}
+        )
+endif()
 setTargetBuildProperties(uamqp)
 
 target_link_libraries(uamqp aziotsharedutil)
@@ -260,50 +269,52 @@ endif()
 set(UAMQP_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/inc CACHE INTERNAL "This is the include folder for UAMQP" FORCE)
 set(UAMQP_SRC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/src CACHE INTERNAL "This is the lib folder for UAMQP" FORCE)
 
-# Set CMAKE_INSTALL_LIBDIR if not defined
-include(GNUInstallDirs)
+if (NOT build_as_object_library)
+    # Set CMAKE_INSTALL_LIBDIR if not defined
+    include(GNUInstallDirs)
 
-# Install uamqp
-set(package_location "cmake")
+    # Install uamqp
+    set(package_location "cmake")
 
-if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
-    set(CMAKE_INSTALL_LIBDIR "lib")
-endif()
+    if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+        set(CMAKE_INSTALL_LIBDIR "lib")
+    endif()
 
-install(TARGETS uamqp EXPORT uamqpTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/../bin
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/azureiot
-)
-install(FILES ${uamqp_h_files} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/azureiot/azure_uamqp_c)
+    install(TARGETS uamqp EXPORT uamqpTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/../bin
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/azureiot
+    )
+    install(FILES ${uamqp_h_files} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/azureiot/azure_uamqp_c)
 
-include(CMakePackageConfigHelpers)
+    include(CMakePackageConfigHelpers)
 
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}ConfigVersion.cmake"
-    VERSION ${UAMQP_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
-
-configure_file("configs/${PROJECT_NAME}Config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}Config.cmake"
-    COPYONLY
-)
-
-install(EXPORT uamqpTargets
-    FILE
-        "${PROJECT_NAME}Targets.cmake"
-    DESTINATION
-        ${package_location}
-)
-
-install(
-    FILES
-        "configs/${PROJECT_NAME}Config.cmake"
+    write_basic_package_version_file(
         "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}ConfigVersion.cmake"
-    DESTINATION
-        ${package_location}
-)
+        VERSION ${UAMQP_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
+
+    configure_file("configs/${PROJECT_NAME}Config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}Config.cmake"
+        COPYONLY
+    )
+
+    install(EXPORT uamqpTargets
+        FILE
+            "${PROJECT_NAME}Targets.cmake"
+        DESTINATION
+            ${package_location}
+    )
+
+    install(
+        FILES
+            "configs/${PROJECT_NAME}Config.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}ConfigVersion.cmake"
+        DESTINATION
+            ${package_location}
+    )
+endif()
 
 compileTargetAsC99(uamqp)

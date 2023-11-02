@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "azure/core/amqp/common/async_operation_queue.hpp"
+#include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 
 #include <azure/core/internal/unique_handle.hpp>
 

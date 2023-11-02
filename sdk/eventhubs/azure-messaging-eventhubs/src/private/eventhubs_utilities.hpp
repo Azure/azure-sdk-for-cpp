@@ -10,8 +10,8 @@
 #include "azure/messaging/eventhubs/partition_client.hpp"
 #include "package_version.hpp"
 
-#include <azure/core/amqp/management.hpp>
-#include <azure/core/amqp/session.hpp>
+#include <azure/core/amqp/internal/management.hpp>
+#include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/http/user_agent.hpp>

@@ -4,7 +4,7 @@
 #include "./test_checkpoint_store.hpp"
 #include "eventhubs_test_base.hpp"
 
-#include <azure/core/amqp/common/global_state.hpp>
+#include <azure/core/amqp/internal/common/global_state.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/test/test_base.hpp>

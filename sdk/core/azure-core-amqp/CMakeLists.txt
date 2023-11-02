@@ -35,11 +35,13 @@ if (VENDOR_UAMQP)
   message(STATUS "Using vendored uamqp")
   set(use_installed_dependencies ON CACHE BOOL "Use vcpkg dependencies." FORCE)
   set(skip_samples ON CACHE BOOL "Skip building samples" FORCE)
+  set(build_as_object_library ON CACHE BOOL "Produce object library" FORCE)
 
   add_subdirectory(vendor/azure-uamqp-c SYSTEM)
 
   # uAMQP specific compiler settings. Primarily used to disable warnings in the uAMQP codebase.
   if (MSVC)
+    target_compile_definitions(uamqp PRIVATE _CRT_SECURE_NO_WARNINGS)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(uamqp PUBLIC -Wno-extra-semi -Wno-gnu-zero-variadic-macro-arguments -Wno-cast-qual -Wno-format-pedantic)
   else()
@@ -57,37 +59,37 @@ find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp.hpp
-    inc/azure/core/amqp/cancellable.hpp
-    inc/azure/core/amqp/claims_based_security.hpp
-    inc/azure/core/amqp/connection_string_credential.hpp
-    inc/azure/core/amqp/connection.hpp
     inc/azure/core/amqp/dll_import_export.hpp
-    inc/azure/core/amqp/doxygen_pragma.hpp
-    inc/azure/core/amqp/endpoint.hpp
-    inc/azure/core/amqp/link.hpp
-    inc/azure/core/amqp/management.hpp
-    inc/azure/core/amqp/message_receiver.hpp
-    inc/azure/core/amqp/message_sender.hpp
-    inc/azure/core/amqp/rtti.hpp
-    inc/azure/core/amqp/session.hpp
-    inc/azure/core/amqp/common/async_operation_queue.hpp
-    inc/azure/core/amqp/common/completion_operation.hpp
-    inc/azure/core/amqp/common/global_state.hpp
-    inc/azure/core/amqp/models/amqp_error.hpp
+    inc/azure/core/amqp/internal/cancellable.hpp
+    inc/azure/core/amqp/internal/claims_based_security.hpp
+    inc/azure/core/amqp/internal/common/async_operation_queue.hpp
+    inc/azure/core/amqp/internal/common/completion_operation.hpp
+    inc/azure/core/amqp/internal/common/global_state.hpp
+    inc/azure/core/amqp/internal/connection.hpp
+    inc/azure/core/amqp/internal/connection_string_credential.hpp
+    inc/azure/core/amqp/internal/doxygen_pragma.hpp
+    inc/azure/core/amqp/internal/endpoint.hpp
+    inc/azure/core/amqp/internal/link.hpp
+    inc/azure/core/amqp/internal/management.hpp
+    inc/azure/core/amqp/internal/message_receiver.hpp
+    inc/azure/core/amqp/internal/message_sender.hpp
+    inc/azure/core/amqp/internal/models/amqp_error.hpp
+    inc/azure/core/amqp/internal/models/amqp_protocol.hpp
+    inc/azure/core/amqp/internal/models/message_source.hpp
+    inc/azure/core/amqp/internal/models/message_target.hpp
+    inc/azure/core/amqp/internal/models/messaging_values.hpp
+    inc/azure/core/amqp/internal/network/amqp_header_detect_transport.hpp
+    inc/azure/core/amqp/internal/network/sasl_transport.hpp
+    inc/azure/core/amqp/internal/network/socket_listener.hpp
+    inc/azure/core/amqp/internal/network/socket_transport.hpp
+    inc/azure/core/amqp/internal/network/tls_transport.hpp
+    inc/azure/core/amqp/internal/network/transport.hpp
+    inc/azure/core/amqp/internal/session.hpp
     inc/azure/core/amqp/models/amqp_header.hpp
     inc/azure/core/amqp/models/amqp_message.hpp
     inc/azure/core/amqp/models/amqp_properties.hpp
-    inc/azure/core/amqp/models/amqp_protocol.hpp
     inc/azure/core/amqp/models/amqp_value.hpp
-    inc/azure/core/amqp/models/message_source.hpp
-    inc/azure/core/amqp/models/message_target.hpp
-    inc/azure/core/amqp/models/messaging_values.hpp
-    inc/azure/core/amqp/network/amqp_header_detect_transport.hpp
-    inc/azure/core/amqp/network/sasl_transport.hpp
-    inc/azure/core/amqp/network/socket_listener.hpp
-    inc/azure/core/amqp/network/socket_transport.hpp
-    inc/azure/core/amqp/network/tls_transport.hpp
-    inc/azure/core/amqp/network/transport.hpp
+    inc/azure/core/amqp/rtti.hpp
 )
 
 set(AZURE_CORE_AMQP_SOURCE
@@ -126,10 +128,9 @@ set(AZURE_CORE_AMQP_SOURCE
     src/private/package_version.hpp
 )
 
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
 
 if (VENDOR_UAMQP)
-target_compile_definitions(azure-core-amqp PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
 endif()
 
@@ -151,7 +152,6 @@ create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tes
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
 target_link_libraries(azure-core-amqp PRIVATE
-    uamqp
     umock_c
     azure_macro_utils_c
     aziotsharedutil

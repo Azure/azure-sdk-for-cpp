@@ -3,7 +3,7 @@
 
 // cspell: words xlogging
 
-#include "azure/core/amqp/common/global_state.hpp"
+#include "azure/core/amqp/internal/common/global_state.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>

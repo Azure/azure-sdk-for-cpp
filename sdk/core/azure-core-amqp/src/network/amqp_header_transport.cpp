@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
+#include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
 #include "private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>

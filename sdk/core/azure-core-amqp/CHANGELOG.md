@@ -6,11 +6,12 @@
 
 ### Breaking Changes
 
+- Refactored AMQP headers to isolate internal-only types to "internal" subdirectory in headers.
+
 ### Bugs Fixed
 
 ### Other Changes
 
-- Added several `ostream` insertion operators for AMQP types.
 - Removed public dependency on azure-uamqp-c to enable local bug fixes.
 
 ## 1.0.0-beta.4 (2023-10-05)

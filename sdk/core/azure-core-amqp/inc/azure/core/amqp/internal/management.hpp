@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "models/amqp_error.hpp"
-#include "models/amqp_message.hpp"
+#include "azure/core/amqp/internal/models/amqp_error.hpp"
+#include "azure/core/amqp/models/amqp_message.hpp"
 #include "session.hpp"
 
 #include <azure/core/context.hpp>

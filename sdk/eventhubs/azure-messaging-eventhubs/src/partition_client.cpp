@@ -9,6 +9,7 @@
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/models/messaging_values.hpp>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
