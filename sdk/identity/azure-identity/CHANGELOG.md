@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
+
 ## 1.6.0-beta.3 (2023-10-12)
 
 ### Bugs Fixed
