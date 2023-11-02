@@ -115,10 +115,8 @@ std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::str
 {
   // The OAuth 2.0 RFC (https://datatracker.ietf.org/doc/html/rfc6749#section-3.3) allows space as
   // well for a list of scopes, but that isn't currently required.
-  ThrowIfNotSafeCmdLineInput(
-      scopes, ".-:/_", "Scopes"); // Characters allowed in the scope are [0-9a-zA-Z-.:/_].
-  ThrowIfNotSafeCmdLineInput(
-      m_tenantId, ".-", "TenantID"); // Characters allowed in the tenant id are [0-9a-zA-Z-.].
+  ThrowIfNotSafeCmdLineInput(scopes, ".-:/_", "Scopes");
+  ThrowIfNotSafeCmdLineInput(m_tenantId, ".-", "TenantID");
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
