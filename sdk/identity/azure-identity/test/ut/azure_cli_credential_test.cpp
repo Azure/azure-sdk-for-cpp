@@ -344,6 +344,33 @@ TEST(AzureCliCredential, UnsafeChars)
   }
 }
 
+TEST(AzureCliCredential, SpaceNotAllowed)
+{
+  std::string const invalid = "space character";
+
+  {
+    AzureCliCredentialOptions options;
+    options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
+    options.TenantId += invalid;
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+  }
+
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + invalid);
+
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+  }
+}
+
 TEST(AzureCliCredential, StrictIso8601TimeFormat)
 {
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
