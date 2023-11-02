@@ -1,19 +1,15 @@
 # Release History
 
-## 1.11.0-beta.2 (Unreleased)
+## 1.11.0-beta.2 (2023-11-02)
 
 ### Features Added
 
 - Added TLS 1.3 support to WinHTTP transport.
 - Environment Log Level Listener now logs the ThreadID for the thread originating the trace.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - [[#5007]](https://github.com/Azure/azure-sdk-for-cpp/issues/5007) Some versions of GCC no longer include stdint.h in cstdint.
-
-### Other Changes
 
 ## 1.11.0-beta.1 (2023-10-05)
 
