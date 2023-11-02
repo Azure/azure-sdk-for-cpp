@@ -389,7 +389,7 @@ TEST(AzureCliCredential, UnsupportedCharsInTenantId)
     }
   }
 
-    {
+  {
     AzureCliCredentialOptions options;
     options.AdditionallyAllowedTenants.push_back(invalid);
     AzureCliCredential azCliCred(options);
