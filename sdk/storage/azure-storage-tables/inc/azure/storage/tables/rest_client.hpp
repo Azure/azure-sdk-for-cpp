@@ -534,9 +534,9 @@ namespace Azure { namespace Storage { namespace Tables {
 	  }
     }
 
-    Response<ListTableServices> List(
-        ListOptions const& options = {},
-        Core::Context const& context = {});
+    Models::ListTablesPagedResponse ListTables(
+        const Models::ListTablesOptions& options={},
+        const Azure::Core::Context& context={}) const;
 
     Response<Models::SetServicePropertiesResult> SetServiceProperties(
         Models::SetServicePropertiesOptions const& options = {},

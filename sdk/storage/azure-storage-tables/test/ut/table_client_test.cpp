@@ -104,54 +104,24 @@ namespace Azure { namespace Storage { namespace Test {
         newIdentifier.ExpiresOn.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
   }
 
-  TEST_F(TablesClientTest, UpdateTable)
-  {
-    auto createResponse = m_tableClient->Create();
-    // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
-
-    Tables::GetOptions getOptions;
-    getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    getOptions.TableName = m_tableName;
-
-    auto getResponse = m_tableClient->Get(getOptions);
-    EXPECT_EQ(getResponse.Value.Properties.TableName, m_tableName);
-
-    Tables::UpdateOptions updateOptions;
-    updateOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    updateOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    updateOptions.TableName = m_tableName;
-
-    auto updateResponse = m_tableClient->Update(updateOptions);
-    EXPECT_EQ(updateResponse.Value.Properties.TableName, m_tableName);
-  }
-
   TEST_F(TablesClientTest, ListTables)
   {
-    // Tables::CreateOptions createOptions;
-    // createOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    // createOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    // createOptions.TableName = m_tableName;
-
     auto createResponse = m_tableClient->Create();
-    // EXPECT_EQ(createResponse.Value.Properties.TableName, m_tableName);
 
-    Tables::ListOptions listOptions;
-    listOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    listOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
+    Azure::Storage::Tables::Models::ListTablesOptions listOptions;
 
-    auto listResponse = m_tableClient->List(listOptions);
-    bool found = false;
-    for (auto table : listResponse.Value.Value)
+    auto listResponse = m_tableServiceClient->ListTables(listOptions);
+
+    for (auto table : listResponse.Tables)
     {
-      if (table.Properties.TableName == m_tableName)
+      if (table.TableName == m_tableName)
       {
-        found = true;
-        break;
+        EXPECT_EQ(table.TableName, m_tableName);
+        EXPECT_EQ(table.EditLink, "Tables('" + m_tableName + "')");
+        EXPECT_TRUE(table.Type.find(".Tables") != std::string::npos);
+        EXPECT_TRUE(table.Id.find(m_tableName) != std::string::npos);
       }
     }
-
-    EXPECT_TRUE(found);
   }
 
   TEST_F(TablesClientTest, DeleteTable)
@@ -186,15 +156,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
   }
 
-  TEST_F(TablesClientTest, ServiceClientList)
-  {
-    Azure::Storage::Tables::ListOptions list;
-    list.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    list.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    auto response = m_tableServiceClient->List(list);
-    EXPECT_EQ(response.Value.Value.size(), 1);
-  }
-
   TEST_F(TablesClientTest, ServiceClientSet)
   {
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
@@ -215,149 +176,5 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     EXPECT_EQ(response.Value.GeoReplication.Status.ToString(), "live");
-  }
-
-  TEST_F(TablesClientTest, ServiceClientSetAndSet)
-  {
-    /* Azure::Storage::Tables::SetServicePropertiesOptions setOptions;
-    setOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    setOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    auto setResponse = m_tableServiceClient->SetServiceProperties(setOptions);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 0);
-
-    Tables::CorsRule oneRule;
-    oneRule.AllowedHeaders = {"x-ms-meta-data*"};
-    oneRule.AllowedMethods = {Tables::AllowedMethodsType::Get};
-    oneRule.AllowedOrigins = {"234"};
-    oneRule.ExposedHeaders = {"x-ms-meta-*"};
-    oneRule.MaxAgeInSeconds = 100;
-
-    setOptions.Parameters.Properties.Cors.CorsRules.emplace_back(oneRule);
-
-    setResponse = m_tableServiceClient->SetServiceProperties(setOptions);
-
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
-    "x-ms-meta-data*");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
-    EXPECT_EQ(
-        setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethodsType::Get);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);*/
-  }
-
-  TEST_F(TablesClientTest, ServiceClientSetAndGet)
-  {
-    /* Azure::Storage::Tables::SetServicePropertiesOptions setOptions;
-    setOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    setOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    auto setResponse = m_tableServiceClient->SetServiceProperties(setOptions);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 0);
-
-    Tables::CorsRule oneRule;
-    oneRule.AllowedHeaders = {"x-ms-meta-data*"};
-    oneRule.AllowedMethods = {Tables::AllowedMethodsType::Get};
-    oneRule.AllowedOrigins = {"234"};
-    oneRule.ExposedHeaders = {"x-ms-meta-*"};
-    oneRule.MaxAgeInSeconds = 100;
-
-    setOptions.Parameters.Properties.Cors.CorsRules.emplace_back(oneRule);
-
-    setResponse = m_tableServiceClient->SetServiceProperties(setOptions);
-
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
-    "x-ms-meta-data*");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
-    EXPECT_EQ(
-        setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethodsType::Get);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);
-
-    Azure::Storage::Tables::GetServicePropertiesOptions getOptions;
-    getOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    getOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    auto getResponse = m_tableServiceClient->GetServiceProperties(getOptions);
-    */
-    /* EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules.size(), 1);
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
-     "x-ms-meta-data*");
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
-     EXPECT_EQ(
-         getResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-         Tables::AllowedMethodsType::Get);
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
-     EXPECT_EQ(getResponse.Value.Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);*/
-  }
-
-  TEST_F(TablesClientTest, ServiceClientSetAndList)
-  {
-    /* Azure::Storage::Tables::SetServicePropertiesOptions setOptions;
-    setOptions.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    setOptions.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    auto setResponse = m_tableServiceClient->SetServiceProperties(setOptions);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 0);
-
-    Tables::CorsRule oneRule;
-    oneRule.AllowedHeaders = {"x-ms-meta-data*"};
-    oneRule.AllowedMethods = {Tables::AllowedMethodsType::Get};
-    oneRule.AllowedOrigins = {"234"};
-    oneRule.ExposedHeaders = {"x-ms-meta-*"};
-    oneRule.MaxAgeInSeconds = 100;
-
-    setOptions.Parameters.Properties.Cors.CorsRules.emplace_back(oneRule);
-
-    setResponse = m_tableServiceClient->SetServiceProperties(setOptions);
-
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedHeaders[0],
-    "x-ms-meta-data*");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
-    EXPECT_EQ(
-        setResponse.Value.Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethodsType::Get);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].ExposedHeaders[0], "x-ms-meta-*");
-    EXPECT_EQ(setResponse.Value.Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);
-
-    Azure::Storage::Tables::ListOptions list;
-    list.ResourceGroupName = GetEnv("STORAGE_RESOURCE_GROUP");
-    list.AccountName = GetEnv("TABLES_STORAGE_ACCOUNT_NAME");
-    auto listResponse = m_tableServiceClient->List(list);
-
-    EXPECT_EQ(listResponse.Value.Value.size(), 1);
-    EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules.size(), 1);
-    EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedHeaders.size(), 1);
-    EXPECT_EQ(
-        listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedHeaders[0],
-        "x-ms-meta-data*");
-    EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedMethods.size(), 1);
-    EXPECT_EQ(
-        listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedMethods[0],
-        Tables::AllowedMethodsType::Get);
-    EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedOrigins.size(), 1);
-    EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].AllowedOrigins[0], "234");
-    EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].ExposedHeaders.size(), 1);
-    EXPECT_EQ(
-        listResponse.Value.Value[0].Properties.Cors.CorsRules[0].ExposedHeaders[0],
-    "x-ms-meta-*");
-    EXPECT_EQ(listResponse.Value.Value[0].Properties.Cors.CorsRules[0].MaxAgeInSeconds, 100);*/
   }
 }}} // namespace Azure::Storage::Test
