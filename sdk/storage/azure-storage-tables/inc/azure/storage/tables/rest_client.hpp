@@ -63,18 +63,7 @@ namespace Azure { namespace Storage { namespace Tables {
     static AllowedMethodsType const Connect;
     static AllowedMethodsType const Trace;
   };
-  struct CorsRule final
-  {
-    std::vector<std::string> AllowedOrigins;
-    std::vector<AllowedMethodsType> AllowedMethods;
-    std::int32_t MaxAgeInSeconds = 0;
-    std::vector<std::string> ExposedHeaders;
-    std::vector<std::string> AllowedHeaders;
-  };
-  struct CorsRulesType final
-  {
-    std::vector<CorsRule> CorsRules;
-  };
+
   /**
    * @brief API version for Storage Tables service.
    */
@@ -179,96 +168,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     std::string SubscriptionId;
   };
-
-  struct TableServicePropertiesProperties final
-  {
-    CorsRulesType Cors;
-  };
-  struct TableServiceProperties final
-  {
-    TableServicePropertiesProperties Properties;
-  };
-  struct ListTableServices final
-  {
-    std::vector<TableServiceProperties> Value;
-  };
-
-  struct ListOptions final
-  {
-    std::string ResourceGroupName;
-    std::string AccountName;
-  };
-
-  struct SetServicePropertiesOptions final
-  {
-    std::string ResourceGroupName;
-    std::string AccountName;
-    TableServiceProperties Parameters;
-  };
-
-  struct GetServicePropertiesOptions final
-  {
-    std::string ResourceGroupName;
-    std::string AccountName;
-  };
-  struct TableAccessPolicy final
-  {
-    Nullable<DateTime> StartTime;
-    Nullable<DateTime> ExpiryTime;
-    std::string Permission;
-  };
-  struct TableSignedIdentifier final
-  {
-    std::string Id;
-    TableAccessPolicy AccessPolicy;
-  };
-  struct TableProperties final
-  {
-    std::string TableName;
-    std::vector<TableSignedIdentifier> SignedIdentifiers;
-  };
-  struct Table final
-  {
-    TableProperties Properties;
-  };
-
-  struct CreateOptions final
-  {
-    std::string ResourceGroupName;
-    std::string AccountName;
-    std::string TableName;
-    Table Parameters;
-  };
-
-  struct UpdateOptions final
-  {
-    std::string ResourceGroupName;
-    std::string AccountName;
-    std::string TableName;
-    Table Parameters;
-  };
-
-  struct GetOptions final
-  {
-    std::string ResourceGroupName;
-    std::string AccountName;
-    std::string TableName;
-  };
-
-
-
-  struct DeleteOptions final
-  {
-    std::string ResourceGroupName;
-    std::string AccountName;
-    std::string TableName;
-  };
-
-  struct ListTableResource final
-  {
-    std::vector<Table> Value;
-    std::string NextLink;
-  };
+  
   class TableClient final {
   public:
     explicit TableClient(std::string subscriptionId);
@@ -389,10 +289,6 @@ namespace Azure { namespace Storage { namespace Tables {
 
     Response<Models::Table> Create(Core::Context const& context = {});
 
-    Response<Table> Update(UpdateOptions const& options = {}, Core::Context const& context = {});
-
-    Response<Table> Get(GetOptions const& options = {}, Core::Context const& context = {});
-
     Response<Models::DeleteResult> Delete(
         Core::Context const& context = {});
 
@@ -403,10 +299,6 @@ namespace Azure { namespace Storage { namespace Tables {
     Response<Models::SetTableAccessPolicyResult> SetAccessPolicy(
         Models::TableAccessPolicy const& tableAccessPolicy,
         Models::SetTableAccessPolicyOptions const& options = {},
-        Core::Context const& context = {});
-
-    Response<ListTableResource> List(
-        ListOptions const& options = {},
         Core::Context const& context = {});
 
   private:
@@ -560,6 +452,4 @@ namespace Azure { namespace Storage { namespace Tables {
     Core::Url m_url;
     std::string m_subscriptionId;
   };
-
-
 }}} // namespace Azure::Storage::Tables

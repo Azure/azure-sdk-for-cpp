@@ -128,8 +128,6 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto createResponse = m_tableClient->Create();
 
-    Tables::DeleteOptions deleteOptions;
-
     auto response = m_tableClient->Delete();
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
