@@ -10,7 +10,7 @@
 
 [What encoding is used for input and output?](#what-encoding-is-used-for-input-and-output)
 
-[How can I check if a blob exists? Is there a function `Exists()` like in legacy SDK?](#how-can-i-check-if-a-blob-exists)
+[How can I check if a blob exists?](#how-can-i-check-if-a-blob-exists)
 
 [What is the difference between `BlockBlobClient::Upload()` and `BlockBlobClient::UploadFrom()`? When should I use one vs the other?](#what-is-the-difference-between-blockblobclientupload-and-blockblobclientuploadfrom-when-should-i-use-one-vs-the-other)
 
