@@ -353,7 +353,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
 {
   std::string const InvalidValue = GetParam();
 
-  // Tenant ID test via options directly
+  // Tenant ID test via AzureCliCredentialOptions directly.
   {
     AzureCliCredentialOptions options;
     options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
@@ -417,6 +417,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     }
   }
 
+  // Scopes test via TokenReqeustContext.
   {
     AzureCliCredentialOptions options;
     options.CliProcessTimeout = std::chrono::hours(24);
