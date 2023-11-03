@@ -353,6 +353,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
 {
   std::string const InvalidValue = GetParam();
 
+  // Tenant ID test via options directly
   {
     AzureCliCredentialOptions options;
     options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
@@ -361,6 +362,49 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
 
     TokenRequestContext trc;
     trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+  // Tenant ID test via TokenReqeustContext, using a wildcard for AdditionallyAllowedTenants.
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    options.AdditionallyAllowedTenants.push_back("*");
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    trc.TenantId = InvalidValue;
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+  // Tenant ID test via TokenReqeustContext, using a specific AdditionallyAllowedTenants value.
+  {
+    AzureCliCredentialOptions options;
+    options.AdditionallyAllowedTenants.push_back(InvalidValue);
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    trc.TenantId = InvalidValue;
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 
     try
