@@ -5,32 +5,14 @@
 
 #pragma once
 
-#include <azure/core/context.hpp>
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/datetime.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
-#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
-#include <azure/core/response.hpp>
-#include <azure/core/url.hpp>
-#include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/internal/constants.hpp>
-#include <azure/storage/common/internal/shared_key_policy_lite.hpp>
-#include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
-#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
-#include <azure/storage/common/internal/storage_service_version_policy.hpp>
-#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
-#include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_credential.hpp>
-#include <azure/storage/tables/dll_import_export.hpp>
-#include <azure/storage/tables/models.hpp>
-#include <azure/storage/tables/rest_client.hpp>
-#include <azure/storage/tables/rtti.hpp>
+#include <azure/core/nullable.hpp>
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -139,7 +121,7 @@ namespace Azure { namespace Storage { namespace Tables {
       friend class Azure::Core::PagedResponse<ListTablesPagedResponse>;
 
       void OnNextPage(const Azure::Core::Context& context);
-      };
+    };
     /**
      * @brief The retention policy.
      */
@@ -385,6 +367,48 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     struct SetTableAccessPolicyResult final
+    {
+    };
+
+    struct TableEntity final
+    {
+      std::string PartitionKey;
+      std::string RowKey;
+      std::map<std::string, std::string> Properties;
+      Azure::Nullable<std::string> ETag;
+    };
+
+    struct CreateEntityOptions final
+    {
+    };
+
+    struct CreateEntityResult final
+    {
+      std::string ETag;
+    };
+
+    struct UpdateEntityOptions final
+    {
+    };
+
+    struct UpdateEntityResult final
+    {
+      std::string ETag;
+    };
+
+    struct MergeEntityOptions final
+    {
+    };
+
+    struct MergeEntityResult final
+    {
+      std::string ETag;
+    };
+    struct DeleteEntityOptions final
+    {
+    };
+
+    struct DeleteEntityResult final
     {
     };
 

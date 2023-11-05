@@ -7,12 +7,9 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
-#include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -301,6 +298,25 @@ namespace Azure { namespace Storage { namespace Tables {
         Models::SetTableAccessPolicyOptions const& options = {},
         Core::Context const& context = {});
 
+    Response<Models::CreateEntityResult> CreateEntity(
+		Models::TableEntity const& tableEntity,
+		Models::CreateEntityOptions const& options = {},
+		Core::Context const& context = {});
+
+    Response<Models::UpdateEntityResult> UpdateEntity(
+        Models::TableEntity const& tableEntity,
+        Models::UpdateEntityOptions const& options = {},
+        Core::Context const& context = {});
+
+    Response<Models::MergeEntityResult> MergeEntity(
+        Models::TableEntity const& tableEntity,
+        Models::MergeEntityOptions const& options = {},
+        Core::Context const& context = {});
+
+        Response<Models::DeleteEntityResult> DeleteEntity(
+        Models::TableEntity const& tableEntity,
+        Models::DeleteEntityOptions const& options = {},
+        Core::Context const& context = {});
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;

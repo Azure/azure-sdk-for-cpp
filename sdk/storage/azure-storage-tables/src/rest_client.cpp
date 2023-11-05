@@ -200,16 +200,6 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
 {
   (void)options;
   auto url = m_url;
-  /* url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/");
-  */
-  // url.SetQueryParameters({{"api-version", "2023-01-01"}});
   url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -532,18 +522,7 @@ Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("Tables");
-  /* url.AppendPath("subscriptions/");
-  url.AppendPath(!m_subscriptionId.empty() ? Core::Url::Encode(m_subscriptionId) : "null");
-  url.AppendPath("resourceGroups/");
-  url.AppendPath(
-      !options.ResourceGroupName.empty() ? Core::Url::Encode(options.ResourceGroupName) : "null");
-  url.AppendPath("providers/Microsoft.Storage/storageAccounts/");
-  url.AppendPath(!options.AccountName.empty() ? Core::Url::Encode(options.AccountName) : "null");
-  url.AppendPath("tableServices/default/tables/");
-  url.AppendPath(!options.TableName.empty() ? Core::Url::Encode(options.TableName) : "null");
 
-  url.SetQueryParameters({{"api-version", "2023-01-01"}});
-  */
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
@@ -625,15 +604,14 @@ Models::ListTablesPagedResponse TableServicesClient::ListTables(
       std::string metadataLink = jsonRoot["odata.metadata"].get<std::string>();
       for (auto value : jsonRoot["value"])
       {
-		Models::Table table;
-		table.TableName = value["TableName"].get<std::string>();
-		table.EditLink = value["odata.editLink"].get<std::string>();
-		table.Id = value["odata.id"].get<std::string>();
-		table.Type = value["odata.type"].get<std::string>();
+        Models::Table table;
+        table.TableName = value["TableName"].get<std::string>();
+        table.EditLink = value["odata.editLink"].get<std::string>();
+        table.Id = value["odata.id"].get<std::string>();
+        table.Type = value["odata.type"].get<std::string>();
         table.Metadata = metadataLink;
-		response.Tables.emplace_back(std::move(table));
-	  }
-
+        response.Tables.emplace_back(std::move(table));
+      }
     }
 
     response.ServiceEndpoint = url.GetAbsoluteUrl();
@@ -646,8 +624,8 @@ Models::ListTablesPagedResponse TableServicesClient::ListTables(
 
     if (headers.find("x-ms-continuation-NextTableName") != headers.end())
     {
-	  response.NextPageToken = headers.at("x-ms-continuation-NextTableName");
-	}
+      response.NextPageToken = headers.at("x-ms-continuation-NextTableName");
+    }
   }
 
   return response;
@@ -845,4 +823,197 @@ Azure::Response<Models::DeleteResult> TableClient::Delete(
   Models::DeleteResult response{};
 
   return Response<Models::DeleteResult>(std::move(response), std::move(rawResponse));
+}
+
+Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
+    Models::TableEntity const& tableEntity,
+    Models::CreateEntityOptions const& options,
+    Core::Context const& context)
+{
+  (void)options;
+  auto url = m_url;
+  url.AppendPath(m_tableName);
+
+  std::string jsonBody;
+  {
+    auto jsonRoot = Core::Json::_internal::json::object();
+
+    jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
+    jsonRoot["RowKey"] = tableEntity.RowKey;
+    for (auto entry : tableEntity.Properties)
+    {
+      jsonRoot[entry.first] = entry.second;
+    }
+
+    jsonBody = jsonRoot.dump();
+  }
+
+  Core::IO::MemoryBodyStream requestBody(
+      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
+
+  Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
+
+  request.SetHeader("Content-Type", "application/json");
+  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader("Prefer", "return-no-content");
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::CreateEntityResult response{};
+  response.ETag = rawResponse->GetHeaders().at("ETag");
+  return Response<Models::CreateEntityResult>(std::move(response), std::move(rawResponse));
+}
+
+Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
+    Models::TableEntity const& tableEntity,
+    Models::UpdateEntityOptions const& options,
+    Core::Context const& context)
+{
+  (void)options;
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + 
+      "(PartitionKey='" + 
+      tableEntity.PartitionKey + 
+      "',RowKey='" + 
+      tableEntity.RowKey + 
+      "')");
+
+  std::string jsonBody;
+  {
+    auto jsonRoot = Core::Json::_internal::json::object();
+
+    jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
+    jsonRoot["RowKey"] = tableEntity.RowKey;
+    for (auto entry : tableEntity.Properties)
+    {
+      jsonRoot[entry.first] = entry.second;
+    }
+
+    jsonBody = jsonRoot.dump();
+  }
+
+  Core::IO::MemoryBodyStream requestBody(
+      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
+
+  Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
+
+  request.SetHeader("Content-Type", "application/json");
+  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader("Prefer", "return-no-content");
+  if (tableEntity.ETag.HasValue())
+  {
+    request.SetHeader("If-Match", tableEntity.ETag.Value());
+  }
+  else
+  {
+    request.SetHeader("If-Match", "*");
+  }
+
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::UpdateEntityResult response{};
+
+  response.ETag = rawResponse->GetHeaders().at("ETag");
+  return Response<Models::UpdateEntityResult>(std::move(response), std::move(rawResponse));
+}
+
+Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
+    Models::TableEntity const& tableEntity,
+    Models::MergeEntityOptions const& options,
+    Core::Context const& context)
+{
+  (void)options;
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
+      + "')");
+
+  std::string jsonBody;
+  {
+    auto jsonRoot = Core::Json::_internal::json::object();
+
+    jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
+    jsonRoot["RowKey"] = tableEntity.RowKey;
+    for (auto entry : tableEntity.Properties)
+    {
+      jsonRoot[entry.first] = entry.second;
+    }
+
+    jsonBody = jsonRoot.dump();
+  }
+
+  Core::IO::MemoryBodyStream requestBody(
+      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
+
+  Core::Http::Request request(Core::Http::HttpMethod::Patch, url, &requestBody);
+
+  request.SetHeader("Content-Type", "application/json");
+  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader("Prefer", "return-no-content");
+  if (tableEntity.ETag.HasValue())
+  {
+    request.SetHeader("If-Match", tableEntity.ETag.Value());
+  }
+  else
+  {
+    request.SetHeader("If-Match", "*");
+  }
+
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::MergeEntityResult response{};
+
+  response.ETag = rawResponse->GetHeaders().at("ETag");
+  return Response<Models::MergeEntityResult>(std::move(response), std::move(rawResponse));
+}
+
+Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
+    Models::TableEntity const& tableEntity,
+    Models::DeleteEntityOptions const& options,
+    Core::Context const& context)
+{
+  (void)options;
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
+      + "')");
+
+    Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
+
+  if (tableEntity.ETag.HasValue())
+  {
+    request.SetHeader("If-Match", tableEntity.ETag.Value());
+  }
+  else
+  {
+    request.SetHeader("If-Match", "*");
+  }
+  request.SetHeader("Accept", "application/json;odata=nometadata");
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::DeleteEntityResult response{};
+  return Response<Models::DeleteEntityResult>(std::move(response), std::move(rawResponse));
 }

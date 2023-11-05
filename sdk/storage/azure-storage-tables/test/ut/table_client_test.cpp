@@ -175,4 +175,107 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     EXPECT_EQ(response.Value.GeoReplication.Status.ToString(), "live");
   }
+
+  TEST_F(TablesClientTest, EntityCreate)
+  {
+    Azure::Storage::Tables::Models::TableEntity entity;
+
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    auto createResponse = m_tableClient->Create();
+    auto response = m_tableClient->CreateEntity(entity);
+
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+  }
+
+    TEST_F(TablesClientTest, EntityUpdate)
+  {
+    Azure::Storage::Tables::Models::TableEntity entity;
+
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    auto createResponse = m_tableClient->Create();
+    auto response = m_tableClient->CreateEntity(entity);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+
+    entity.Properties["Product"] = "Tables2";
+    auto updateResponse = m_tableClient->UpdateEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(updateResponse.Value.ETag.empty());
+
+    entity.Properties["Product"] = "Tables3";
+    entity.ETag = updateResponse.Value.ETag;
+    auto updateResponse2 = m_tableClient->UpdateEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(updateResponse2.Value.ETag.empty());
+  }
+
+      TEST_F(TablesClientTest, EntityMerge)
+  {
+    Azure::Storage::Tables::Models::TableEntity entity;
+
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    auto createResponse = m_tableClient->Create();
+    auto response = m_tableClient->CreateEntity(entity);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+
+    entity.Properties["Product2"] = "Tables2";
+    auto updateResponse = m_tableClient->MergeEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(updateResponse.Value.ETag.empty());
+
+    entity.Properties["Product3"] = "Tables3";
+    entity.ETag = updateResponse.Value.ETag;
+    auto updateResponse2 = m_tableClient->MergeEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(updateResponse2.Value.ETag.empty());
+  }
+
+          TEST_F(TablesClientTest, EntityDelete)
+  {
+    Azure::Storage::Tables::Models::TableEntity entity;
+
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    auto createResponse = m_tableClient->Create();
+    auto response = m_tableClient->CreateEntity(entity);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+
+    entity.Properties["Product2"] = "Tables2";
+    auto updateResponse = m_tableClient->DeleteEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+   
+    response = m_tableClient->CreateEntity(entity);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+    entity.Properties["Product3"] = "Tables3";
+    entity.ETag = response.Value.ETag;
+    auto updateResponse2 = m_tableClient->DeleteEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+  }
 }}} // namespace Azure::Storage::Test
