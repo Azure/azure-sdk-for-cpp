@@ -877,12 +877,8 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + 
-      "(PartitionKey='" + 
-      tableEntity.PartitionKey + 
-      "',RowKey='" + 
-      tableEntity.RowKey + 
-      "')");
+      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
+      + "')");
 
   std::string jsonBody;
   {
@@ -996,7 +992,7 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
       m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
       + "')");
 
-    Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
+  Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
   if (tableEntity.ETag.HasValue())
   {
@@ -1017,3 +1013,35 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
   Models::DeleteEntityResult response{};
   return Response<Models::DeleteEntityResult>(std::move(response), std::move(rawResponse));
 }
+
+Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
+    Models::TableEntity const& tableEntity,
+    Models::UpsertEntityOptions const& options,
+    Core::Context const& context)
+{
+  (void)options;
+  try
+  {
+    switch (options.UpsertType)
+    {
+      case Models::UpsertType::Merge: {
+        auto response = MergeEntity(tableEntity, Models::MergeEntityOptions(options), context);
+        return Azure::Response<Models::UpsertEntityResult>(
+            Models::UpsertEntityResult(response.Value),
+            std::move(response.RawResponse));
+      }
+      default: {
+        auto response = UpdateEntity(tableEntity, Models::UpdateEntityOptions(options), context);
+        return Azure::Response<Models::UpsertEntityResult>(
+            Models::UpsertEntityResult(response.Value),
+            std::move(response.RawResponse));
+      }
+    }
+  }
+  catch (const Azure::Core::RequestFailedException&)
+  {
+    auto response = CreateEntity(tableEntity, Models::CreateEntityOptions(options), context);
+    return Azure::Response<Models::UpsertEntityResult>(
+        Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
+  }
+};

@@ -377,30 +377,45 @@ namespace Azure { namespace Storage { namespace Tables {
       std::map<std::string, std::string> Properties;
       Azure::Nullable<std::string> ETag;
     };
-
-    struct CreateEntityOptions final
+    enum UpsertType
     {
+      Update,
+      Merge,
     };
+    struct UpsertEntityOptions 
+    {
+      UpsertType UpsertType = UpsertType::Update;
+    };
+    struct CreateEntityOptions :public UpsertEntityOptions
+    {
+	  CreateEntityOptions() = default;
+      CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
+	};
 
-    struct CreateEntityResult final
+
+    struct CreateEntityResult
     {
       std::string ETag;
     };
 
     struct UpdateEntityOptions final
     {
+      UpdateEntityOptions() = default;
+      UpdateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
-    struct UpdateEntityResult final
+    struct UpdateEntityResult
     {
       std::string ETag;
     };
 
     struct MergeEntityOptions final
     {
+	  MergeEntityOptions() = default;
+      MergeEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
-    struct MergeEntityResult final
+    struct MergeEntityResult
     {
       std::string ETag;
     };
@@ -412,5 +427,48 @@ namespace Azure { namespace Storage { namespace Tables {
     {
     };
 
+
+
+    struct UpsertEntityResult final : public MergeEntityResult,
+                                      UpdateEntityResult,
+                                      CreateEntityResult
+    {
+      std::string ETag;
+
+      UpsertEntityResult() = default;
+      UpsertEntityResult(MergeEntityResult const& other)
+          : MergeEntityResult(other), ETag(std::move(other.ETag))
+      {
+      }
+      UpsertEntityResult(UpdateEntityResult const& other)
+          : UpdateEntityResult(other), ETag(std::move(other.ETag))
+      {
+      }
+      UpsertEntityResult(CreateEntityResult const& other)
+          : CreateEntityResult(other), ETag(std::move(other.ETag))
+      {
+      }
+
+      operator MergeEntityResult() const
+      {
+        MergeEntityResult result;
+        result.ETag = ETag;
+        return result;
+      }
+
+      operator UpdateEntityResult() const
+      {
+        UpdateEntityResult result;
+        result.ETag = ETag;
+        return result;
+      }
+
+      operator CreateEntityResult() const
+      {
+        CreateEntityResult result;
+        result.ETag = ETag;
+        return result;
+      }
+    };
   } // namespace Models
 }}} // namespace Azure::Storage::Tables

@@ -22,9 +22,10 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 #include <azure/storage/tables/dll_import_export.hpp>
+#include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/rtti.hpp>
-#include <azure/storage/tables/models.hpp>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -165,7 +166,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     std::string SubscriptionId;
   };
-  
+
   class TableClient final {
   public:
     explicit TableClient(std::string subscriptionId);
@@ -225,7 +226,7 @@ namespace Azure { namespace Storage { namespace Tables {
         std::string url,
         const TableClientOptions& options)
         : m_url(std::move(url)), m_tableName(tableName)
-        
+
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -286,12 +287,11 @@ namespace Azure { namespace Storage { namespace Tables {
 
     Response<Models::Table> Create(Core::Context const& context = {});
 
-    Response<Models::DeleteResult> Delete(
-        Core::Context const& context = {});
+    Response<Models::DeleteResult> Delete(Core::Context const& context = {});
 
     Response<Models::TableAccessPolicy> GetAccessPolicy(
         Models::GetTableAccessPolicyOptions const& options = {},
-		Core::Context const& context = {});
+        Core::Context const& context = {});
 
     Response<Models::SetTableAccessPolicyResult> SetAccessPolicy(
         Models::TableAccessPolicy const& tableAccessPolicy,
@@ -299,9 +299,9 @@ namespace Azure { namespace Storage { namespace Tables {
         Core::Context const& context = {});
 
     Response<Models::CreateEntityResult> CreateEntity(
-		Models::TableEntity const& tableEntity,
-		Models::CreateEntityOptions const& options = {},
-		Core::Context const& context = {});
+        Models::TableEntity const& tableEntity,
+        Models::CreateEntityOptions const& options = {},
+        Core::Context const& context = {});
 
     Response<Models::UpdateEntityResult> UpdateEntity(
         Models::TableEntity const& tableEntity,
@@ -313,16 +313,22 @@ namespace Azure { namespace Storage { namespace Tables {
         Models::MergeEntityOptions const& options = {},
         Core::Context const& context = {});
 
-        Response<Models::DeleteEntityResult> DeleteEntity(
+    Response<Models::DeleteEntityResult> DeleteEntity(
         Models::TableEntity const& tableEntity,
         Models::DeleteEntityOptions const& options = {},
         Core::Context const& context = {});
+
+    Response<Models::UpsertEntityResult> UpsertEntity(
+        Models::TableEntity const& tableEntity,
+        Models::UpsertEntityOptions const& options = {},
+        Core::Context const& context = {});
+
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_subscriptionId;
     std::string m_tableName;
-  };  
+  };
 
   class TableServicesClient final {
   public:
@@ -429,22 +435,23 @@ namespace Azure { namespace Storage { namespace Tables {
 
       if (parsedConnectionString.KeyCredential)
       {
-        return TableServicesClient(subscriptionId, 
+        return TableServicesClient(
+            subscriptionId,
             std::move(parsedConnectionString.KeyCredential),
             tablesUrl.GetAbsoluteUrl().empty()
                 ? Azure::Storage::_internal::TablesManagementPublicEndpoint
                 : tablesUrl.GetAbsoluteUrl(),
             options);
       }
-	  else
-	  {
-		return TableServicesClient(subscriptionId, options);
-	  }
+      else
+      {
+        return TableServicesClient(subscriptionId, options);
+      }
     }
 
     Models::ListTablesPagedResponse ListTables(
-        const Models::ListTablesOptions& options={},
-        const Azure::Core::Context& context={}) const;
+        const Models::ListTablesOptions& options = {},
+        const Azure::Core::Context& context = {}) const;
 
     Response<Models::SetServicePropertiesResult> SetServiceProperties(
         Models::SetServicePropertiesOptions const& options = {},
@@ -463,6 +470,7 @@ namespace Azure { namespace Storage { namespace Tables {
         Core::Context const& context = {});
 
     TableClient GetTableClient(std::string tableName) const {};
+
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
