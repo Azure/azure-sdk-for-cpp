@@ -14,8 +14,6 @@
 - If the connection string provided to `ConsumerClient` or `ProducerClient` contains an EntityPath, then the `EntityPath` 
 parameter to the constructor must match the value provided in the connection string.
 
-### Bugs Fixed
-
 ### Other Changes
 
 - Several `ostream` insertion operators were added for eventhubs types.
