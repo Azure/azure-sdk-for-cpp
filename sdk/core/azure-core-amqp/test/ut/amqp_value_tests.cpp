@@ -214,9 +214,9 @@ TEST_F(TestValues, TestBinary)
     AmqpBinaryData binaryData;
     binaryData.push_back('a');
     binaryData.push_back(3);
-    AmqpValue value(static_cast<_detail::UniqueAmqpValueHandle>(binaryData).get());
+    AmqpValue value{binaryData.AsAmqpValue()};
 
-    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(binaryData).get()));
+    EXPECT_FALSE(value < binaryData.AsAmqpValue());
 
     AmqpBinaryData data2(value);
     EXPECT_EQ(2, data2.size());
@@ -250,10 +250,10 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValueType::Byte, list1[3].GetType());
     EXPECT_EQ(AmqpValue('a'), list1[3]);
 
-    AmqpValue value(static_cast<_detail::UniqueAmqpValueHandle>(list1).get());
+    AmqpValue value{list1.AsAmqpValue()};
     const AmqpList list2(value);
 
-    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(list1).get()));
+    EXPECT_FALSE(value < list1.AsAmqpValue());
 
     EXPECT_EQ(4, list2.size());
 
@@ -268,8 +268,8 @@ TEST_F(TestValues, TestList)
     AmqpList test;
     AmqpDescribed desc{
         static_cast<uint64_t>(29),
-        static_cast<AmqpValue>(AmqpList{AmqpValue{"test:error"}, AmqpValue{"test description"}})};
-    test.push_back(AmqpValue{desc});
+        AmqpList{AmqpValue{"test:error"}, AmqpValue{"test description"}}.AsAmqpValue()};
+    test.push_back(desc.AsAmqpValue());
     EXPECT_EQ(1, test.size());
     EXPECT_EQ(AmqpValueType::Described, test[0].GetType());
 
@@ -291,7 +291,7 @@ TEST_F(TestValues, TestList)
     AmqpComposite testAsComposite{test[0].AsComposite()};
     EXPECT_EQ(testAsComposite.GetDescriptor(), AmqpValue{static_cast<uint64_t>(29ll)});
     {
-      AmqpValue testAsValue{test};
+      AmqpValue testAsValue{test.AsAmqpValue()};
       EXPECT_EQ(AmqpValueType::List, testAsValue.GetType());
 
       auto testAsList{testAsValue.AsList()};
@@ -329,9 +329,9 @@ TEST_F(TestValues, TestMap)
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
 
     // Now round-trip the map through an AMQP value and confirm that the values persist.
-    AmqpValue valueOfMap = static_cast<_detail::UniqueAmqpValueHandle>(map1).get();
+    AmqpValue valueOfMap = map1.AsAmqpValue();
     AmqpMap map2(valueOfMap);
-    EXPECT_FALSE(valueOfMap < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(map1).get()));
+    EXPECT_FALSE(valueOfMap < map1.AsAmqpValue());
 
     EXPECT_EQ(5, static_cast<int32_t>(map2["ABC"]));
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map2[AmqpValue(3)]));
@@ -345,7 +345,7 @@ TEST_F(TestValues, TestArray)
 
   EXPECT_EQ(5, array1.size());
 
-  AmqpValue value = static_cast<AmqpValue>(array1);
+  AmqpValue value = array1.AsAmqpValue();
   EXPECT_EQ(AmqpValueType::Array, value.GetType());
 
   const AmqpArray array2 = value.AsArray();
@@ -354,20 +354,9 @@ TEST_F(TestValues, TestArray)
   EXPECT_EQ(3, static_cast<std::int32_t>(array2.at(1)));
   EXPECT_EQ(5, static_cast<std::int32_t>(array2.at(2)));
   EXPECT_FALSE(array1 < array2);
-  EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(array2).get()));
-}
-
-TEST_F(TestValues, TestArray1)
-{
-  AmqpArray array1{1};
-
-  EXPECT_EQ(1, array1.size());
-
-  AmqpValue value = static_cast<AmqpValue>(array1);
-  EXPECT_EQ(AmqpValueType::Array, value.GetType());
-
-  GTEST_LOG_(INFO) << "Copy AMQP value as array to a new value";
-  const AmqpArray array2 = value.AsArray();
+  {
+    EXPECT_FALSE(value < array2.AsAmqpValue());
+  }
 }
 
 TEST_F(TestValues, TestArrayDifferentTypes)
@@ -399,7 +388,7 @@ TEST_F(TestValues, TestTimestamp)
         std::chrono::system_clock::now().time_since_epoch())};
     AmqpTimestamp value{timeNow};
     EXPECT_EQ(static_cast<std::chrono::milliseconds>(value), timeNow);
-    AmqpValue av{value};
+    AmqpValue av{value.AsAmqpValue()};
 
     AmqpTimestamp ts2{av.AsTimestamp()};
     EXPECT_EQ(timeNow, static_cast<std::chrono::milliseconds>(ts2));
@@ -429,7 +418,7 @@ TEST_F(TestValues, TestCompositeValue)
 {
   {
     AmqpComposite value("My Composite Type", {1, 2, 5.5, "ABC", 5});
-    EXPECT_EQ(AmqpValueType::Composite, AmqpValue(value).GetType());
+    EXPECT_EQ(AmqpValueType::Composite, value.AsAmqpValue().GetType());
 
     EXPECT_EQ(5, value.size());
   }
@@ -455,7 +444,7 @@ TEST_F(TestValues, TestCompositeValue)
   // Put some things in the map.
   {
     AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
-    AmqpValue value = static_cast<AmqpValue>(compositeVal);
+    AmqpValue value = compositeVal.AsAmqpValue();
     AmqpComposite testVal(value.AsComposite());
 
     EXPECT_EQ(compositeVal.size(), testVal.size());
@@ -476,7 +465,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(AmqpSymbol("My Composite Type"), described1.GetDescriptor().AsSymbol());
     EXPECT_EQ(5, static_cast<int32_t>(described1.GetValue()));
 
-    AmqpValue value = static_cast<AmqpValue>(described1);
+    AmqpValue value = described1.AsAmqpValue();
     EXPECT_EQ(AmqpValueType::Described, value.GetType());
 
     AmqpDescribed described2 = value.AsDescribed();
@@ -493,7 +482,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(937, static_cast<uint64_t>(value.GetDescriptor()));
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
-    AmqpValue value2 = static_cast<AmqpValue>(value);
+    AmqpValue value2 = value.AsAmqpValue();
 
     AmqpDescribed described2 = value2.AsDescribed();
     EXPECT_EQ(AmqpValueType::Described, value2.GetType());
@@ -1272,7 +1261,7 @@ TEST_F(TestValueSerialization, SerializeList)
   // First form, serialized as first form.
   {
     AmqpList emptyList;
-    AmqpValue value{emptyList};
+    AmqpValue value{emptyList.AsAmqpValue()};
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
     EXPECT_EQ(val.size(), 1);
     EXPECT_EQ(0x45, val[0]);

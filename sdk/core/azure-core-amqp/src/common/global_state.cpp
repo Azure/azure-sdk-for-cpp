@@ -8,6 +8,7 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <azure_c_shared_utility/gballoc.h>
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xlogging.h>
 
@@ -87,6 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   GlobalStateHolder::GlobalStateHolder()
   {
+    gballoc_init();
     if (platform_init())
     {
       throw std::runtime_error("Could not initialize platform.");
@@ -98,21 +100,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     m_pollingThread = std::thread([this]() {
       do
       {
-        std::list<std::shared_ptr<Pollable>> capturedList;
         {
-          std::unique_lock<std::mutex> lock{m_pollablesMutex};
-          // If there are no pollables, there's no point in doing any work.
-          if (m_pollables.empty())
+          std::list<std::shared_ptr<Pollable>> capturedList;
           {
-            continue;
+            std::unique_lock<std::mutex> lock{m_pollablesMutex};
+            // If there are no pollables, there's no point in doing any work.
+            if (m_pollables.empty())
+            {
+              continue;
+            }
+            capturedList = m_pollables;
+            m_activelyPolling = true;
           }
-          capturedList = m_pollables;
-        }
 
-        for (auto const& pollable : capturedList)
-        {
-          pollable->Poll();
+          for (auto const& pollable : capturedList)
+          {
+            pollable->Poll();
+          }
         }
+        m_activelyPolling = false;
         //        std::this_thread::yield();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       } while (!m_stopped);
@@ -127,6 +133,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       m_pollingThread.join();
     }
     platform_deinit();
+    gballoc_deinit();
   }
 
   void GlobalStateHolder::AddPollable(std::shared_ptr<Pollable> pollable)
@@ -136,6 +143,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
       m_pollables.push_back(pollable);
     }
+  }
+
+  void GlobalStateHolder::RemovePollable(std::shared_ptr<Pollable> pollable)
+  {
+    // There is a bit of a complicated lock-free dance happening here.
+    // The m_pollables list is accessed by the polling thread, and the list is modified by the user
+    // thread. To ensure integrity of the list, the polling thread takes the lock, copies the
+    // pollable from the list, releases the lock and then iterates over the pollables at the
+    // snapshot.
+    //
+    // Because the pollable is a shared_ptr, the user thread can remove a pollable while the
+    // background thread is polling.
+    //
+    // But we want to make sure that the thread has finished polling (and thus has removed the copy
+    // of the pollables list). For that, we have the m_activelyPolling variable. It is set under the
+    // pollables lock, and cleared after the polling thread has finished polling (outside the lock).
+    //
+    // This means that we can spin on the m_activelyPolling variable *under* the pollables lock safe
+    // in the knowledge that IF the variable is set to true, it means that we acquired the
+    // pollablesMutex during the interval when the captured list is being interated over. And that
+    // the m_activelyPolling variable will only be cleared AFTER the captured list is freed.
+    //
+
+    std::lock_guard<std::mutex> lock(m_pollablesMutex);
+    m_pollables.remove(pollable);
+    // Spin until m_activelyPolling is false, this ensures that the polling thread is not using the
+    // capturedList copy of m_pollables.
+    while (m_activelyPolling.load())
+      ;
   }
 
   GlobalStateHolder* GlobalStateHolder::GlobalStateInstance()

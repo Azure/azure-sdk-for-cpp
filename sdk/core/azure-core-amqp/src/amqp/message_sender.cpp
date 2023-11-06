@@ -314,6 +314,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
     }
     m_session->GetConnection()->EnableAsyncOperation(true);
+
+    // Enable async on the link as well.
+    Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
+
     m_senderOpen = true;
   }
 
@@ -325,7 +329,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
       }
-      auto lock{m_session->GetConnection()->Lock()};
 
       if (m_options.EnableTrace)
       {
@@ -333,12 +336,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
       }
       m_link->UnsubscribeFromDetachEvent();
+
+      Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+          m_link); // This will ensure that the link is cleaned up on the next poll()
+
 #if SENDER_SYNCHRONOUS_CLOSE
       bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
           || m_currentState == _internal::MessageSenderState::Open;
 #endif
 
       m_session->GetConnection()->EnableAsyncOperation(false);
+
+      auto lock{m_session->GetConnection()->Lock()};
 
       if (messagesender_close(m_messageSender.get()))
       {
@@ -401,7 +410,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           result = _internal::MessageSendStatus::Timeout;
           break;
       }
-      onComplete(result, disposition);
+      // Reference disposition so that we don't over-release when the AmqpValue passed to OnComplete
+      // is destroyed.
+      onComplete(result, Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(disposition)});
     }
   };
 

@@ -157,9 +157,9 @@ TEST_F(EventDataTest, ReceivedEventData)
 {
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::PartitionKeyAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::PartitionKeyAnnotation}
+                                   .AsAmqpValue()]
         = "PartitionKey";
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.PartitionKey);
@@ -176,12 +176,13 @@ TEST_F(EventDataTest, ReceivedEventData)
 
     GTEST_LOG_(INFO) << "timeNow: " << timeNow.ToString();
 
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::EnqueuedTimeAnnotation})]
-        = static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-            Azure::Core::Amqp::Models::AmqpTimestamp{
-                std::chrono::duration_cast<std::chrono::milliseconds>(timeNow.time_since_epoch())});
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::EnqueuedTimeAnnotation}
+                                   .AsAmqpValue()]
+        = Azure::Core::Amqp::Models::AmqpTimestamp{std::chrono::duration_cast<
+                                                       std::chrono::milliseconds>(
+                                                       timeNow.time_since_epoch())}
+              .AsAmqpValue();
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.EnqueuedTime.HasValue());
     GTEST_LOG_(INFO) << "EnqueuedTime: " << receivedEventData.EnqueuedTime.Value().ToString();
@@ -193,9 +194,9 @@ TEST_F(EventDataTest, ReceivedEventData)
 
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::SequenceNumberAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::SequenceNumberAnnotation}
+                                   .AsAmqpValue()]
         = static_cast<int64_t>(235);
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.SequenceNumber);
@@ -206,9 +207,9 @@ TEST_F(EventDataTest, ReceivedEventData)
   }
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+                                   .AsAmqpValue()]
         = 54644;
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.Offset);
@@ -219,9 +220,9 @@ TEST_F(EventDataTest, ReceivedEventData)
   }
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+                                   .AsAmqpValue()]
         = "54644";
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.Offset);
@@ -232,9 +233,9 @@ TEST_F(EventDataTest, ReceivedEventData)
   }
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+                                   .AsAmqpValue()]
         = static_cast<uint32_t>(53);
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.Offset);
@@ -245,9 +246,9 @@ TEST_F(EventDataTest, ReceivedEventData)
   }
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+                                   .AsAmqpValue()]
         = static_cast<int32_t>(57);
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     EXPECT_TRUE(receivedEventData.Offset);
@@ -258,9 +259,9 @@ TEST_F(EventDataTest, ReceivedEventData)
   }
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+                                   .AsAmqpValue()]
         = static_cast<uint64_t>(661011);
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     EXPECT_TRUE(receivedEventData.Offset);
@@ -271,9 +272,9 @@ TEST_F(EventDataTest, ReceivedEventData)
   }
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
-    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-        Azure::Core::Amqp::Models::AmqpSymbol{
-            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+    message.MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+                                   .AsAmqpValue()]
         = static_cast<int64_t>(1412612);
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     EXPECT_TRUE(receivedEventData.Offset);

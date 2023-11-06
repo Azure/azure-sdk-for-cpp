@@ -130,14 +130,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   size_t MessageHeader::GetSerializedSize(MessageHeader const& properties)
   {
     auto handle = _internal::MessageHeaderFactory::ToUamqp(properties);
-    AmqpValue propertiesAsValue{amqpvalue_create_header(handle.get())};
+    AmqpValue propertiesAsValue{
+        Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())}};
     return AmqpValue::GetSerializedSize(propertiesAsValue);
   }
 
   std::vector<uint8_t> MessageHeader::Serialize(MessageHeader const& header)
   {
     auto handle = _internal::MessageHeaderFactory::ToUamqp(header);
-    AmqpValue headerAsValue{amqpvalue_create_header(handle.get())};
+    AmqpValue headerAsValue{
+        Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())}};
     return Models::AmqpValue::Serialize(headerAsValue);
   }
 

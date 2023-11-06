@@ -1731,7 +1731,8 @@ void link_dowork(LINK_HANDLE link)
     {
         LogError("NULL link");
     }
-    else
+    // The caller of link_dowork has no way of determining the state of the link, so skip doing work if the link is not attached.
+    else if (link->link_state == LINK_STATE_ATTACHED)
     {
         tickcounter_ms_t current_tick;
 

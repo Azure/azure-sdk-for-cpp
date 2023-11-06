@@ -23,7 +23,7 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   extern uint16_t FindAvailableSocket();
 
-  class TestMessages : public testing::Test {
+  class TestMessageSendReceive : public testing::Test {
   protected:
     void SetUp() override {}
     void TearDown() override {}
@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp;
 
 #if !defined(AZ_PLATFORM_MAC)
-  TEST_F(TestMessages, SimpleReceiver)
+  TEST_F(TestMessageSendReceive, SimpleReceiver)
   {
 
     // Create a connection
@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageReceiver receiver2(session.CreateMessageReceiver("MySource", {}, nullptr));
     }
   }
-  TEST_F(TestMessages, ReceiverProperties)
+  TEST_F(TestMessageSendReceive, ReceiverProperties)
   { // Create a connection
     Connection connection("localhost", nullptr, {});
     Session session{connection.CreateSession()};
@@ -70,7 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   }
 
-  TEST_F(TestMessages, SimpleSender)
+  TEST_F(TestMessageSendReceive, SimpleSender)
   {
 
     // Create a connection
@@ -86,7 +86,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSender sender2(session.CreateMessageSender("MySource", {}, nullptr));
     }
   }
-  TEST_F(TestMessages, SenderProperties)
+  TEST_F(TestMessageSendReceive, SenderProperties)
   { // Create a connection
     Connection connection("localhost", nullptr, {});
     Session session{connection.CreateSession()};
@@ -98,7 +98,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   }
 
-  TEST_F(TestMessages, ReceiverOpenClose)
+  TEST_F(TestMessageSendReceive, ReceiverOpenClose)
   {
     MessageTests::AmqpServerMock mockServer;
 
@@ -156,7 +156,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     context.Cancel();
   }
 
-  TEST_F(TestMessages, SenderOpenClose)
+  TEST_F(TestMessageSendReceive, SenderOpenClose)
   {
     uint16_t testPort = FindAvailableSocket();
     GTEST_LOG_(INFO) << "Test port: " << testPort;
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     listener.Stop();
   }
 
-  TEST_F(TestMessages, TestLocalhostVsTls)
+  TEST_F(TestMessageSendReceive, TestLocalhostVsTls)
   {
     MessageTests::AmqpServerMock mockServer(5671);
 
@@ -249,7 +249,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
   }
 
-  TEST_F(TestMessages, SenderSendAsync)
+  TEST_F(TestMessageSendReceive, SenderSendAsync)
   {
     MessageTests::AmqpServerMock mockServer{};
 
@@ -309,7 +309,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
   }
 
-  TEST_F(TestMessages, SenderSendSync)
+  TEST_F(TestMessageSendReceive, SenderSendSync)
   {
     MessageTests::AmqpServerMock mockServer{};
     ConnectionOptions connectionOptions;
@@ -352,7 +352,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
   }
 
-  TEST_F(TestMessages, AuthenticatedSender)
+  TEST_F(TestMessageSendReceive, AuthenticatedSender)
   {
     MessageTests::AmqpServerMock server;
 
@@ -388,7 +388,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     server.StopListening();
   }
 
-  TEST_F(TestMessages, AuthenticatedSenderAzureToken)
+  TEST_F(TestMessageSendReceive, AuthenticatedSenderAzureToken)
   {
     class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
       Azure::Core::Credentials::AccessToken GetToken(
@@ -441,7 +441,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     server.StopListening();
   }
 
-  TEST_F(TestMessages, AuthenticatedReceiver)
+  TEST_F(TestMessageSendReceive, AuthenticatedReceiver)
   {
     class ReceiverMock : public MessageTests::AmqpServerMock {
     public:
@@ -523,7 +523,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     server.StopListening();
   }
 
-  TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
+  TEST_F(TestMessageSendReceive, AuthenticatedReceiverAzureToken)
   {
     class ReceiverMock : public MessageTests::AmqpServerMock {
     public:

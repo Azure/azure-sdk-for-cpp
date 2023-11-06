@@ -161,9 +161,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (!options.DynamicNodeProperties.empty())
     {
-      if (source_set_dynamic_node_properties(
-              m_source.get(),
-              static_cast<_detail::UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
+      AmqpValue dynamicNodeProperties(options.DynamicNodeProperties.AsAmqpValue());
+      if (source_set_dynamic_node_properties(m_source.get(), dynamicNodeProperties))
       {
         throw std::runtime_error("Could not set dynamic node properties.");
       }
@@ -177,8 +176,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (!options.Filter.empty())
     {
-      if (source_set_filter(
-              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Filter).get()))
+      if (source_set_filter(m_source.get(), options.Filter.AsAmqpValue()))
       {
         throw std::runtime_error("Could not set filter set.");
       }
@@ -192,17 +190,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (!options.Outcomes.empty())
     {
-      if (source_set_outcomes(
-              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Outcomes).get()))
+      if (source_set_outcomes(m_source.get(), options.Outcomes.AsAmqpValue()))
       {
         throw std::runtime_error("Could not set outcomes.");
       }
     }
     if (!options.Capabilities.empty())
     {
-      if (source_set_capabilities(
-              m_source.get(),
-              static_cast<_detail::UniqueAmqpValueHandle>(options.Capabilities).get()))
+      if (source_set_capabilities(m_source.get(), options.Capabilities.AsAmqpValue()))
       {
         throw std::runtime_error("Could not set capabilities.");
       }
@@ -212,7 +207,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   // Convert the MessageSource into a Value.
   Models::AmqpValue MessageSource::AsAmqpValue() const
   {
-    return amqpvalue_create_source(m_source.get());
+    Models::_detail::UniqueAmqpValueHandle sourceValue{amqpvalue_create_source(m_source.get())};
+    return sourceValue;
   }
 
   Models::AmqpValue MessageSource::GetAddress() const
@@ -222,7 +218,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not retrieve address from source.");
     }
-    return address;
+    // source_get_address does not reference its value, so we need to reference it before creating
+    // an AmqpValueHandle.
+    return Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(address)};
   }
 
   TerminusDurability MessageSource::GetTerminusDurability() const
@@ -326,7 +324,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get default outcome.");
     }
-    return value;
+    // source_get_default_outcome does not reference the value returned, we reference it so it can
+    // be put into a UniqueAmqpValueHandle.
+    return Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(value)};
   }
 
   Models::AmqpArray MessageSource::GetOutcomes() const
@@ -432,14 +432,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       AMQP_VALUE outcome;
       if (!source_get_default_outcome(source, &outcome))
       {
-        os << ", Default Outcome: " << AmqpValue{outcome};
+        // source_get_default_outcome does not reference the value returned, we reference it so it
+        // can be put into a UniqueAmqpValueHandle.
+        os << ", Default Outcome: "
+           << AmqpValue{Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcome)}};
       }
     }
     {
       AMQP_VALUE outcomes;
       if (!source_get_outcomes(source, &outcomes))
       {
-        os << ", Outcomes: " << AmqpValue{outcomes};
+        // Most of the time, source_get_outcomes does not reference its input. However, if the
+        // composite value at location 9 is a symbol, it does reference it. As a consequence, this
+        // will leak an AMQPSymbol if the value at location 9 is a symbol (as opposed to being an
+        // array).
+        os << ", Outcomes: "
+           << AmqpValue{Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcomes)}};
       }
     }
     os << "}";
