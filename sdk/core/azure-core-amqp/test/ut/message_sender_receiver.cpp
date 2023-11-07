@@ -48,6 +48,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageReceiver receiver1(session.CreateMessageReceiver("MySource", {}, nullptr));
       MessageReceiver receiver2(session.CreateMessageReceiver("MySource", {}, nullptr));
     }
+
+    GTEST_LOG_(INFO) << _internal::MessageReceiverState::Invalid
+                     << _internal::MessageReceiverState::Closing
+                     << _internal::MessageReceiverState::Idle
+                     << _internal::MessageReceiverState::Opening
+                     << _internal::MessageReceiverState::Open
+                     << _internal::MessageReceiverState::Error
+                     << static_cast<_internal::MessageReceiverState>(5993);
   }
   TEST_F(TestMessageSendReceive, ReceiverProperties)
   { // Create a connection
@@ -85,6 +93,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSender sender1(session.CreateMessageSender("MySource", {}, nullptr));
       MessageSender sender2(session.CreateMessageSender("MySource", {}, nullptr));
     }
+    GTEST_LOG_(INFO) << _internal::MessageSenderState::Invalid
+                     << _internal::MessageSenderState::Closing
+                     << _internal::MessageSenderState::Idle
+                     << _internal::MessageSenderState::Opening
+                     << _internal::MessageSenderState::Open << _internal::MessageSenderState::Error
+                     << static_cast<_internal::MessageSenderState>(5993);
   }
   TEST_F(TestMessageSendReceive, SenderProperties)
   { // Create a connection
@@ -221,6 +235,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSender sender(
           session.CreateMessageSender("localhost/ingress", options, &senderEvents));
       EXPECT_NO_THROW(sender.Open());
+
+      EXPECT_EQ(65536, sender.GetMaxMessageSize());
 
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
