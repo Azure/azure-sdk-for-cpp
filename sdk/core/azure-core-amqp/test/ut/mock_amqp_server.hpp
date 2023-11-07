@@ -104,6 +104,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             = m_linkMessageQueues[nodeName].MessageSenderPresentQueue.WaitForResult(context);
         return result != nullptr;
       }
+
+      std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage> TryWaitForMessage(
+          std::string const& nodeName)
+      {
+        // Poll for completion on both the mock server and the connection, that ensures that
+        // we can implement unsolicited sends from the Poll function.
+        auto result
+            = m_linkMessageQueues[nodeName].MessageQueue.TryWaitForResult();
+        if (result)
+        {
+          return std::move(std::get<0>(*result));
+        }
+        else
+        {
+          Poll();
+          return nullptr;
+        }
+      }
+
+
       std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage> WaitForMessage(
           std::string const& nodeName)
       {
@@ -133,13 +153,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           std::string const& nodeName,
           MessageLinkComponents const& linkComponents)
       {
-        GTEST_LOG_(INFO) << "Wait for incoming message.";
-        auto message = WaitForMessage(nodeName);
-        if (!message)
-        {
-          GTEST_LOG_(INFO) << "No message, canceling thread";
-        }
-        else
+        auto message = TryWaitForMessage(nodeName);
+        if (message)
         {
           GTEST_LOG_(INFO) << "Received message: " << *message;
           if (nodeName == "$cbs" && IsCbsMessage(*message))
@@ -151,6 +166,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             MessageReceived(nodeName, linkComponents, *message);
           }
         }
+        std::this_thread::yield();
       };
 
     public:
