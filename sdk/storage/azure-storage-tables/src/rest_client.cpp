@@ -1027,14 +1027,12 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
       case Models::UpsertType::Merge: {
         auto response = MergeEntity(tableEntity, Models::MergeEntityOptions(options), context);
         return Azure::Response<Models::UpsertEntityResult>(
-            Models::UpsertEntityResult(response.Value),
-            std::move(response.RawResponse));
+            Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }
       default: {
         auto response = UpdateEntity(tableEntity, Models::UpdateEntityOptions(options), context);
         return Azure::Response<Models::UpsertEntityResult>(
-            Models::UpsertEntityResult(response.Value),
-            std::move(response.RawResponse));
+            Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }
     }
   }
@@ -1045,3 +1043,107 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
         Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
   }
 };
+
+void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+{
+  m_operationOptions.PartitionKey = NextPartitionKey;
+  m_operationOptions.RowKey = NextRowKey;
+  *this = m_tableClient->QueryEntities(m_operationOptions, context);
+}
+
+Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
+    Models::QueryEntitiesOptions const& options,
+    Core::Context const& context)
+{
+  auto url = m_url;
+  std::string appendPath = m_tableName + "(";
+  if (!options.PartitionKey.empty())
+  {
+    appendPath += "PartitionKey='" + options.PartitionKey + "'";
+  }
+  if (!options.RowKey.empty())
+  {
+    appendPath += ",RowKey='" + options.RowKey + "'";
+  }
+  appendPath += ")";
+
+  url.AppendPath(appendPath);
+
+  if (options.Filter.HasValue())
+  {
+    url.AppendQueryParameter("$filter", options.Filter.Value());
+  }
+  if (!options.SelectColumns.empty())
+  {
+    url.AppendQueryParameter("$select", options.SelectColumns);
+  }
+
+  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::QueryEntitiesPagedResponse response{};
+  {
+    const auto& responseBody = rawResponse->GetBody();
+    std::string responseString = std::string(responseBody.begin(), responseBody.end());
+
+    auto headers = rawResponse->GetHeaders();
+    if (headers.find("x-ms-continuation-NextPartitionKey") != headers.end())
+    {
+      response.NextPartitionKey = headers.at("x-ms-continuation-NextPartitionKey");
+    }
+
+    if (headers.find("x-ms-continuation-NextRowKey") != headers.end())
+    {
+      response.NextRowKey = headers.at("x-ms-continuation-NextRowKey");
+    }
+
+    auto const jsonRoot
+        = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+
+    if (!jsonRoot.contains("value"))
+    {
+      response.TableEntities.emplace_back(std::move(DeserializeEntity(jsonRoot)));
+    }
+    else
+    {
+      for (auto value : jsonRoot["value"])
+      {
+        response.TableEntities.emplace_back(std::move(DeserializeEntity(value)));
+      }
+    }
+  }
+  return response;
+}
+
+Models::TableEntity TableClient::DeserializeEntity(Azure::Core::Json::_internal::json json)
+{
+  Models::TableEntity tableEntity{};
+  if (json.contains("PartitionKey"))
+  {
+    tableEntity.PartitionKey = json["PartitionKey"].get<std::string>();
+  }
+  if (json.contains("PartitionKey"))
+  {
+    tableEntity.RowKey = json["RowKey"].get<std::string>();
+  }
+  if (json.contains("PartitionKey"))
+  {
+    tableEntity.ETag = json["odata.etag"].get<std::string>();
+  }
+  for (auto properties : json.get<std::map<std::string, std::string>>())
+  {
+    if (properties.first != "odata.metadata" && properties.first != "PartitionKey"
+        && properties.first != "RowKey" && properties.first != "odata.etag")
+    {
+      tableEntity.Properties[properties.first] = properties.second;
+    }
+  }
+  return tableEntity;
+}

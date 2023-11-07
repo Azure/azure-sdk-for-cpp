@@ -312,4 +312,40 @@ namespace Azure { namespace Storage { namespace Test {
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(updateResponse2.Value.ETag.empty());
   }
-}}} // namespace Azure::Storage::Test
+
+  TEST_F(TablesClientTest, EntityQuery)
+  {
+    Azure::Storage::Tables::Models::TableEntity entity;
+
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    auto createResponse = m_tableClient->Create();
+    auto response = m_tableClient->CreateEntity(entity);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+
+    entity.Properties["Product"] = "Tables2";
+    entity.RowKey = "R2";
+    m_tableClient->CreateEntity(entity);
+
+    entity.Properties["Product"] = "Tables3";
+    entity.RowKey = "R3";
+    m_tableClient->CreateEntity(entity);
+
+    Azure::Storage::Tables::Models::QueryEntitiesOptions options;
+    
+    auto responseQuery = m_tableClient->QueryEntities(options);
+    EXPECT_EQ(responseQuery.TableEntities.size(), 3);
+
+     options.PartitionKey = "P1";
+     options.RowKey = "R1";
+     responseQuery = m_tableClient->QueryEntities(options);
+     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
+
+     options.SelectColumns = "Name,Product";
+     responseQuery = m_tableClient->QueryEntities(options);
+     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
+  }
+  }}} // namespace Azure::Storage::Test

@@ -25,7 +25,7 @@
 #include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/rtti.hpp>
-
+#include <azure/core/internal/json/json.hpp>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -323,11 +323,16 @@ namespace Azure { namespace Storage { namespace Tables {
         Models::UpsertEntityOptions const& options = {},
         Core::Context const& context = {});
 
+    Models::QueryEntitiesPagedResponse QueryEntities(
+        Models::QueryEntitiesOptions const& options = {},
+        Core::Context const& context = {});
+
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_subscriptionId;
     std::string m_tableName;
+    Models::TableEntity DeserializeEntity(Azure::Core::Json::_internal::json json);
   };
 
   class TableServicesClient final {

@@ -9,7 +9,6 @@
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
-#include <azure/core/nullable.hpp>
 
 #include <cstdint>
 #include <map>
@@ -20,6 +19,8 @@
 
 namespace Azure { namespace Storage { namespace Tables {
   class TableServicesClient;
+  class TableClient;
+
   namespace Models {
 
     struct Table final
@@ -382,16 +383,15 @@ namespace Azure { namespace Storage { namespace Tables {
       Update,
       Merge,
     };
-    struct UpsertEntityOptions 
+    struct UpsertEntityOptions
     {
       UpsertType UpsertType = UpsertType::Update;
     };
-    struct CreateEntityOptions :public UpsertEntityOptions
+    struct CreateEntityOptions : public UpsertEntityOptions
     {
-	  CreateEntityOptions() = default;
+      CreateEntityOptions() = default;
       CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
-	};
-
+    };
 
     struct CreateEntityResult
     {
@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     struct MergeEntityOptions final
     {
-	  MergeEntityOptions() = default;
+      MergeEntityOptions() = default;
       MergeEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
@@ -426,8 +426,6 @@ namespace Azure { namespace Storage { namespace Tables {
     struct DeleteEntityResult final
     {
     };
-
-
 
     struct UpsertEntityResult final : public MergeEntityResult,
                                       UpdateEntityResult,
@@ -469,6 +467,30 @@ namespace Azure { namespace Storage { namespace Tables {
         result.ETag = ETag;
         return result;
       }
+    };
+
+    struct QueryEntitiesOptions final
+    {
+      std::string PartitionKey;
+      std::string RowKey;
+      std::string SelectColumns;
+      Azure::Nullable<std::string> Filter;
+    };
+
+    class QueryEntitiesPagedResponse final
+        : public Azure::Core::PagedResponse<QueryEntitiesPagedResponse> {
+    public:
+      std::string NextPartitionKey;
+      std::string NextRowKey;
+      std::vector<Models::TableEntity> TableEntities;
+
+    private:
+      std::shared_ptr<TableClient> m_tableClient;
+      QueryEntitiesOptions m_operationOptions;
+      friend class TableServicesClient;
+      friend class Azure::Core::PagedResponse<QueryEntitiesPagedResponse>;
+
+      void OnNextPage(const Azure::Core::Context& context);
     };
   } // namespace Models
 }}} // namespace Azure::Storage::Tables
