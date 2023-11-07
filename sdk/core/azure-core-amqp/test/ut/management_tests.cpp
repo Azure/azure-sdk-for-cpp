@@ -213,7 +213,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       ConnectionOptions connectionOptions;
       connectionOptions.Port = mockServer.GetPort();
 
-    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+      auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
           "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
           + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
       Connection connection("localhost", sasCredential, connectionOptions);

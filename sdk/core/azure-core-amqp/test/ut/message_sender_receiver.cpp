@@ -648,7 +648,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     server.StopListening();
   }
 
-    TEST_F(TestMessageSendReceive, AuthenticatedReceiverTryReceive)
+  TEST_F(TestMessageSendReceive, AuthenticatedReceiverTryReceive)
   {
     class ReceiverMock : public MessageTests::AmqpServerMock {
     public:
@@ -730,7 +730,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     receiver.Close();
     server.StopListening();
   }
-
 
 #endif // !defined(AZ_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests

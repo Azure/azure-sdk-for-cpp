@@ -1185,9 +1185,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     operator _detail::UniqueAmqpValueHandle() const;
 
     /** @brief Convert this AmqpDescribed to an AmqpValue.
-	 *
-	 * @return An AmqpValue containing this AmqpDescribed.
-	 */
+     *
+     * @return An AmqpValue containing this AmqpDescribed.
+     */
     AmqpValue AsAmqpValue() const;
 
     /**

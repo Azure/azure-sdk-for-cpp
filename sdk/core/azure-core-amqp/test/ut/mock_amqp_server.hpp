@@ -110,8 +110,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       {
         // Poll for completion on both the mock server and the connection, that ensures that
         // we can implement unsolicited sends from the Poll function.
-        auto result
-            = m_linkMessageQueues[nodeName].MessageQueue.TryWaitForResult();
+        auto result = m_linkMessageQueues[nodeName].MessageQueue.TryWaitForResult();
         if (result)
         {
           return std::move(std::get<0>(*result));
@@ -122,7 +121,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           return nullptr;
         }
       }
-
 
       std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage> WaitForMessage(
           std::string const& nodeName)
