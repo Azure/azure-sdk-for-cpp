@@ -24,6 +24,7 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
+// cspell: words gballoc
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
   // Logging callback for uAMQP and azure-c-shared-utility.

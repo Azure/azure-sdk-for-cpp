@@ -47,6 +47,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto openResult = management.Open();
     EXPECT_EQ(openResult, ManagementOpenStatus::Error);
   }
+
   TEST_F(TestManagement, ManagementOpenClose)
   {
     MessageTests::AmqpServerMock mockServer;
@@ -68,6 +69,58 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+  }
+
+    TEST_F(TestManagement, ManagementOpenCloseAuthenticated)
+  {
+    MessageTests::AmqpServerMock mockServer;
+
+    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+        "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
+        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+
+
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", sasCredential, connectionOptions);
+
+    Session session{connection.CreateSession({})};
+    ManagementClientOptions options;
+    options.EnableTrace = 1;
+    ManagementClient management(session.CreateManagementClient("Test", options));
+
+    mockServer.StartListening();
+
+    auto openResult = management.Open();
+    EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
+
+    management.Close();
+
+    mockServer.StopListening();
+  }
+
+  TEST_F(TestManagement, ManagementOpenCloseError)
+  {
+    MessageTests::AmqpServerMock mockServer;
+
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
+
+    Session session{connection.CreateSession({})};
+    ManagementClientOptions options;
+    options.EnableTrace = 1;
+    ManagementClient management(session.CreateManagementClient("Test", options));
+
+    mockServer.StartListening();
+    Azure::Core::Context context;
+    context.Cancel();
+    EXPECT_EQ(management.Open(context), ManagementOpenStatus::Cancelled);
+
+    management.Close();
+
+    mockServer.StopListening();
+
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 #if !defined(AZ_PLATFORM_MAC)
