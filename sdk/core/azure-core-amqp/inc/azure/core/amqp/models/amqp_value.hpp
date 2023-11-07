@@ -1026,7 +1026,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     /** @brief Move constructor.
      * @param other composite value to move.
-     * @returns reference to this composite value.
      */
     AmqpComposite(AmqpComposite&& other) noexcept = default;
 
@@ -1185,6 +1184,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     operator _detail::UniqueAmqpValueHandle() const;
 
+    /** @brief Convert this AmqpDescribed to an AmqpValue.
+	 *
+	 * @return An AmqpValue containing this AmqpDescribed.
+	 */
     AmqpValue AsAmqpValue() const;
 
     /**
