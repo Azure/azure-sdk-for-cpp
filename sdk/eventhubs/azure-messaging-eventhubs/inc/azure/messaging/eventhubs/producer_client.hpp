@@ -8,7 +8,8 @@
 #include "models/management_models.hpp"
 
 #include <azure/core/amqp.hpp>
-#include <azure/core/amqp/management.hpp>
+#include <azure/core/amqp/internal/management.hpp>
+#include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>

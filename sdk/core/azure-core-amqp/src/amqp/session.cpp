@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/session.hpp"
+#include "azure/core/amqp/internal/session.hpp"
 
-#include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/link.hpp"
+#include "azure/core/amqp/internal/connection.hpp"
+#include "azure/core/amqp/internal/link.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/management_impl.hpp"

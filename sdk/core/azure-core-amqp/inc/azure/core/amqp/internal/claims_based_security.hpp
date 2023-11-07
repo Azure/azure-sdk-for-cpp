@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/core/amqp/session.hpp"
+#include "azure/core/amqp/internal/session.hpp"
 
 #include <azure/core/context.hpp>
 

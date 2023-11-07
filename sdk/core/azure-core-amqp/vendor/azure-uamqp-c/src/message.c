@@ -31,6 +31,7 @@ typedef struct MESSAGE_INSTANCE_TAG
     application_properties application_properties;
     annotations footer;
     uint32_t message_format;
+    AMQP_VALUE delivery_tag;
 } MESSAGE_INSTANCE;
 
 MESSAGE_BODY_TYPE internal_get_body_type(MESSAGE_HANDLE message)
@@ -120,6 +121,7 @@ MESSAGE_HANDLE message_create(void)
         result->body_amqp_value = NULL;
         result->body_amqp_sequence_items = NULL;
         result->body_amqp_sequence_count = 0;
+        result->delivery_tag = NULL;
 
         /* Codes_SRS_MESSAGE_01_135: [ By default a message on which `message_set_message_format` was not called shall have message format set to 0. ]*/
         result->message_format = 0;
@@ -225,6 +227,17 @@ MESSAGE_HANDLE message_clone(MESSAGE_HANDLE source_message)
                 {
                     /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the source message fails, then `message_clone` shall fail and return NULL. ]*/
                     LogError("Cannot clone message footer");
+                    message_destroy(result);
+                    result = NULL;
+                }
+            }
+
+            if ((result != NULL) && (source_message->delivery_tag != NULL))
+            {
+                result->delivery_tag = amqpvalue_clone(source_message->delivery_tag);
+                if (result->delivery_tag == NULL)
+                {
+                    LogError("Cannot clone message delivery tag");
                     message_destroy(result);
                     result = NULL;
                 }
@@ -374,6 +387,11 @@ void message_destroy(MESSAGE_HANDLE message)
         {
             /* Codes_SRS_MESSAGE_01_021: [ If the message body is made of an AMQP value, the value shall be freed by calling `amqpvalue_destroy`. ]*/
             amqpvalue_destroy(message->body_amqp_value);
+        }
+
+        if (message->delivery_tag != NULL)
+        {
+            amqpvalue_destroy(message->delivery_tag);
         }
 
         /* Codes_SRS_MESSAGE_01_136: [ If the message body is made of several AMQP data items, they shall all be freed. ]*/
@@ -1444,6 +1462,92 @@ int message_get_message_format(MESSAGE_HANDLE message, uint32_t *message_format)
 
         /* Codes_SRS_MESSAGE_01_133: [ On success, `message_get_message_format` shall return 0. ]*/
         result = 0;
+    }
+
+    return result;
+}
+
+int message_set_delivery_tag(MESSAGE_HANDLE message, AMQP_VALUE delivery_tag_value)
+{
+    int result;
+
+    if (message == NULL)
+    {
+        LogError("NULL message");
+        result = MU_FAILURE;
+    }
+    else
+    {
+        if (delivery_tag_value == NULL)
+        {
+            if (message->delivery_tag != NULL)
+            {
+                amqpvalue_destroy(message->delivery_tag);
+                message->delivery_tag = NULL;
+            }
+
+            /* Codes_SRS_MESSAGE_01_053: [ On success it shall return 0. ]*/
+            result = 0;
+        }
+        else
+        {
+
+            AMQP_VALUE new_delivery_tag = amqpvalue_clone(delivery_tag_value);
+            if (new_delivery_tag == NULL)
+            {
+                LogError("Cannot clone delivery tag");
+                result = MU_FAILURE;
+            }
+            else
+            {
+                if (message->delivery_tag != NULL)
+                {
+                    amqpvalue_destroy(message->delivery_tag);
+                }
+
+                message->delivery_tag = new_delivery_tag;
+
+                /* Codes_SRS_MESSAGE_01_102: [ On success it shall return 0. ]*/
+                result = 0;
+            }
+        }
+    }
+
+    return result;
+}
+
+int message_get_delivery_tag(MESSAGE_HANDLE message, AMQP_VALUE *delivery_tag_value)
+{
+    int result;
+
+    if ((message == NULL) ||
+        (delivery_tag_value == NULL))
+    {
+        LogError("Bad arguments: message = %p, delivery_tag = %p",
+            message, delivery_tag_value);
+        result = MU_FAILURE;
+    }
+    else
+    {
+        if (message->delivery_tag == NULL)
+        {
+            *delivery_tag_value = NULL;
+            result = 0;
+        }
+        else
+        {
+            AMQP_VALUE new_delivery_tag = amqpvalue_clone(message->delivery_tag);
+            if (new_delivery_tag == NULL)
+            {
+                LogError("Cannot clone delivery tag");
+                result = MU_FAILURE;
+            }
+            else
+            {
+                *delivery_tag_value = new_delivery_tag;
+                result = 0;
+            }
+        }
     }
 
     return result;

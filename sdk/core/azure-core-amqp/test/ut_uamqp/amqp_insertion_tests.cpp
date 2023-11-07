@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/amqp/connection.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 

@@ -58,11 +58,14 @@ endif()
 set(
   AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_HEADER
     inc/azure/messaging/eventhubs/checkpointstore_blob/blob_checkpoint_store.hpp
+    inc/azure/messaging/eventhubs/checkpointstore_blob/dll_import_export.hpp
+    inc/azure/messaging/eventhubs/checkpointstore_blob/rtti.hpp
 )
 
 set(
   AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_SOURCE
     src/blob_checkpoint_store.cpp
+    src/private/package_version.hpp
 )
 
 add_library(

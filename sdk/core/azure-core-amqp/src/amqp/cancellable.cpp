@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/cancellable.hpp"
+#include "azure/core/amqp/internal/cancellable.hpp"
 
 #include <azure_uamqp_c/async_operation.h>
 

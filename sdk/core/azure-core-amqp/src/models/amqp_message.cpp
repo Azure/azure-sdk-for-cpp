@@ -3,8 +3,8 @@
 
 #include "azure/core/amqp/models/amqp_message.hpp"
 
+#include "azure/core/amqp/internal/models/amqp_protocol.hpp"
 #include "azure/core/amqp/models/amqp_header.hpp"
-#include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_annotations.h>
@@ -155,6 +155,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
     {
+      AMQP_VALUE deliveryTagVal;
+      if (!message_get_delivery_tag(message, &deliveryTagVal))
+      {
+        UniqueAmqpValueHandle deliveryTag(deliveryTagVal);
+        rv.DeliveryTag = AmqpValue{deliveryTag.get()};
+      }
+    }
+    {
       annotations footerVal;
       if (!message_get_footer(message, &footerVal) && footerVal)
       {
@@ -256,6 +264,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         throw std::runtime_error("Could not set delivery annotations.");
       }
     }
+
     if (!message.MessageAnnotations.empty())
     {
       if (message_set_message_annotations(
@@ -264,6 +273,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         throw std::runtime_error("Could not set message annotations.");
       }
     }
+
     if (!message.ApplicationProperties.empty())
     {
       AmqpMap appProperties;
@@ -285,6 +295,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         throw std::runtime_error("Could not set application properties.");
       }
     }
+
+    if (!message.DeliveryTag.IsNull())
+    {
+      if (message_set_delivery_tag(
+              rv.get(), static_cast<UniqueAmqpValueHandle>(message.DeliveryTag).get()))
+      {
+        throw std::runtime_error("Could not set delivery tag.");
+      }
+    }
+
     if (!message.Footer.empty())
     {
       if (message_set_footer(rv.get(), static_cast<UniqueAmqpValueHandle>(message.Footer).get()))
@@ -748,6 +768,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         os << "{" << val.first << ", " << val.second << "}";
       }
+    }
+    if (!message.DeliveryTag.IsNull())
+    {
+      os << ", deliveryTag=" << message.DeliveryTag;
     }
     if (!message.Footer.empty())
     {

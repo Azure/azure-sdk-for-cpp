@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/models/messaging_values.hpp"
+#include "azure/core/amqp/internal/models/messaging_values.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
@@ -37,11 +37,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   Models::AmqpValue Messaging::DeliveryRejected(
       std::string const& errorCondition,
-      std::string const& errorDescription)
+      std::string const& errorDescription,
+      AmqpValue const& errorInfo)
   {
     auto rv = messaging_delivery_rejected(
         errorCondition.empty() ? nullptr : errorCondition.c_str(),
-        errorDescription.empty() ? nullptr : errorDescription.c_str());
+        errorDescription.empty() ? nullptr : errorDescription.c_str(),
+        errorInfo);
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery rejected described value.");

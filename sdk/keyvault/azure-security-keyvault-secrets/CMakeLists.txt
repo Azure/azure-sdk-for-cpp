@@ -47,6 +47,7 @@ endif()
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
+    inc/azure/keyvault/secrets.hpp
     inc/azure/keyvault/secrets/dll_import_export.hpp
     inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
@@ -57,21 +58,20 @@ set(
     inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
     inc/azure/keyvault/secrets/rtti.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
-    inc/azure/keyvault/secrets.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
-    src/private/keyvault_protocol.hpp
-    src/private/keyvault_secrets_common_request.hpp
-    src/private/package_version.hpp
-    src/private/secret_constants.hpp
-    src/private/secret_serializers.hpp
     src/keyvault_operations.cpp
     src/keyvault_protocol.cpp
     src/keyvault_secret_paged_response.cpp
     src/keyvault_secret_properties.cpp
     src/keyvault_secrets_common_request.cpp
+    src/private/keyvault_protocol.hpp
+    src/private/keyvault_secrets_common_request.hpp
+    src/private/package_version.hpp
+    src/private/secret_constants.hpp
+    src/private/secret_serializers.hpp
     src/secret_client.cpp
     src/secret_serializers.cpp
 )

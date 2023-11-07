@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 {
+  "$comment": "NOTE: All changes made to this file will get overwritten by the next port release. Please contribute your changes to https://github.com/Azure/azure-sdk-for-cpp.",
   "name": "azure-core-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
@@ -67,7 +68,7 @@
     },
     "winhttp": {
       "description": "WinHTTP HTTP transport implementation",
-      "supports": "windows",
+      "supports": "windows & !uwp",
       "dependencies": [
         {
           "name": "azure-core-cpp",

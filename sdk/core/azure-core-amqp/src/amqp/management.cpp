@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/management.hpp"
+#include "azure/core/amqp/internal/management.hpp"
 
-#include "azure/core/amqp/connection.hpp"
+#include "azure/core/amqp/internal/connection.hpp"
+#include "azure/core/amqp/internal/models/messaging_values.hpp"
+#include "azure/core/amqp/internal/session.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
-#include "azure/core/amqp/models/messaging_values.hpp"
-#include "azure/core/amqp/session.hpp"
 #include "private/connection_impl.hpp"
 #include "private/management_impl.hpp"
 
@@ -451,7 +451,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_messageQueue.CompleteOperation(
         _internal::ManagementOperationStatus::Error, 500, error, Models::AmqpMessage());
 
-    return Models::_internal::Messaging::DeliveryRejected(condition, description);
+    return Models::_internal::Messaging::DeliveryRejected(condition, description, {});
   }
 
   Models::AmqpValue ManagementClientImpl::OnMessageReceived(

@@ -22,7 +22,7 @@ endif()
 
 add_executable (
   vcpkg-all-smoke
-    src/main
+    src/main.cpp
 )
 
 # Link to Azure SDK

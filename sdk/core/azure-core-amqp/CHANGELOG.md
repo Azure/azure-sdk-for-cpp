@@ -1,14 +1,14 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
-
-### Features Added
+## 1.0.0-beta.5 (2023-11-07)
 
 ### Breaking Changes
 
-### Bugs Fixed
+- Refactored AMQP headers to isolate internal-only types to "internal" subdirectory in headers.
 
 ### Other Changes
+
+- Removed public dependency on azure-uamqp-c to enable local bug fixes.
 
 ## 1.0.0-beta.4 (2023-10-05)
 

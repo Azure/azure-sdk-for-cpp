@@ -3,16 +3,11 @@
 
 #include "mock_amqp_server.hpp"
 
-#include <azure/core/amqp/claims_based_security.hpp>
-#include <azure/core/amqp/connection.hpp>
-#include <azure/core/amqp/message_receiver.hpp>
-#include <azure/core/amqp/message_sender.hpp>
-#include <azure/core/amqp/models/message_source.hpp>
-#include <azure/core/amqp/models/message_target.hpp>
-#include <azure/core/amqp/models/messaging_values.hpp>
-#include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
-#include <azure/core/amqp/network/socket_listener.hpp>
-#include <azure/core/amqp/session.hpp>
+#include <azure/core/amqp/internal/claims_based_security.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
+#include <azure/core/amqp/internal/message_receiver.hpp>
+#include <azure/core/amqp/internal/message_sender.hpp>
+#include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/platform.hpp>
 
 #include <gtest/gtest.h>

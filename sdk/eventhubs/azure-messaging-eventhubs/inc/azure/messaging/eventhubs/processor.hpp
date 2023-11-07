@@ -1,18 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
+
 #include "checkpoint_store.hpp"
 #include "consumer_client.hpp"
 #include "models/processor_load_balancer_models.hpp"
 #include "models/processor_models.hpp"
 #include "processor_partition_client.hpp"
 
+#include <azure/core/amqp/internal/common/async_operation_queue.hpp>
 #include <azure/core/context.hpp>
 
 #include <chrono>
 #include <thread>
 
-#ifdef azure_TESTING_BUILD_AMQP
+#ifdef _azure_TESTING_BUILD_AMQP
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class ProcessorTest_LoadBalancing_Test;
 }}}} // namespace Azure::Messaging::EventHubs::Test
@@ -80,7 +82,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * between multiple Processor instances, even in separate processes or on separate machines.
    */
   class Processor final {
-#ifdef azure_TESTING_BUILD_AMQP
+#ifdef _azure_TESTING_BUILD_AMQP
     friend class Test::ProcessorTest_LoadBalancing_Test;
 #endif
 

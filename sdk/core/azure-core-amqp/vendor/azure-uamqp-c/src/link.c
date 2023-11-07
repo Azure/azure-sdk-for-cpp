@@ -57,10 +57,11 @@ typedef struct LINK_INSTANCE_TAG
     sequence_no initial_delivery_count;
     uint64_t max_message_size;
     uint64_t peer_max_message_size;
-    uint32_t current_link_credit;
+    int32_t current_link_credit;
     uint32_t max_link_credit;
     uint32_t available;
     fields attach_properties;
+    AMQP_VALUE desired_capabilities;
     bool is_underlying_session_begun;
     bool is_closed;
     unsigned char* received_payload;
@@ -279,6 +280,15 @@ static int send_attach(LINK_INSTANCE* link, const char* name, handle handle, rol
             (void)attach_set_properties(attach, link->attach_properties);
         }
 
+        if (link->desired_capabilities != NULL)
+        {
+            if(attach_set_desired_capabilities(attach, link->desired_capabilities) != 0)
+            {
+                LogError("Cannot set attach desired capabilities");
+                result = MU_FAILURE;
+            }
+        }
+
         if (role == role_sender)
         {
             if (attach_set_initial_delivery_count(attach, link->delivery_count) != 0)
@@ -421,12 +431,6 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                 AMQP_VALUE delivery_state;
                 bool more;
                 bool is_error;
-
-                if (link_instance->current_link_credit == 0)
-                {
-                    link_instance->current_link_credit = link_instance->max_link_credit;
-                    send_flow(link_instance);
-                }
 
                 more = false;
                 /* Attempt to get more flag, default to false */
@@ -749,6 +753,7 @@ LINK_HANDLE link_create(SESSION_HANDLE session, const char* name, role role, AMQ
         result->is_underlying_session_begun = false;
         result->is_closed = false;
         result->attach_properties = NULL;
+        result->desired_capabilities = NULL;
         result->received_payload = NULL;
         result->received_payload_size = 0;
         result->received_delivery_id = 0;
@@ -838,6 +843,7 @@ LINK_HANDLE link_create_from_endpoint(SESSION_HANDLE session, LINK_ENDPOINT_HAND
         result->is_underlying_session_begun = false;
         result->is_closed = false;
         result->attach_properties = NULL;
+        result->desired_capabilities = NULL;
         result->received_payload = NULL;
         result->received_payload_size = 0;
         result->received_delivery_id = 0;
@@ -1116,6 +1122,59 @@ int link_get_peer_max_message_size(LINK_HANDLE link, uint64_t* peer_max_message_
     return result;
 }
 
+int link_get_desired_capabilities(LINK_HANDLE link, AMQP_VALUE* desired_capabilities)
+{
+    int result;
+    if((link == NULL) ||
+        (desired_capabilities == NULL))
+    {
+        LogError("Bad arguments: link = %p, desired_capabilities = %p",
+            link, desired_capabilities);
+        result = MU_FAILURE;
+    }
+    else
+    {
+        AMQP_VALUE link_desired_capabilties = amqpvalue_clone(link->desired_capabilities);
+        if(link_desired_capabilties == NULL)
+        {
+            LogError("Failed to clone link desired capabilities");
+            result = MU_FAILURE;
+        }
+        else
+        {
+            *desired_capabilities = link_desired_capabilties;
+            result = 0;
+        }
+    }
+    return result;
+}
+
+int link_set_desired_capabilities(LINK_HANDLE link, AMQP_VALUE desired_capabilities)
+{
+    int result;
+
+    if (link == NULL)
+    {
+        LogError("NULL link");
+        result = MU_FAILURE;
+    }
+    else
+    {
+        link->desired_capabilities = amqpvalue_clone(desired_capabilities);
+        if (link->desired_capabilities == NULL)
+        {
+            LogError("Failed cloning desired capabilities");
+            result = MU_FAILURE;
+        }
+        else
+        {
+            result = 0;
+        }
+    }
+
+    return result;
+}
+
 int link_set_attach_properties(LINK_HANDLE link, fields attach_properties)
 {
     int result;
@@ -1156,6 +1215,74 @@ int link_set_max_link_credit(LINK_HANDLE link, uint32_t max_link_credit)
         result = 0;
     }
 
+    return result;
+}
+
+int link_reset_link_credit(LINK_HANDLE link, uint32_t link_credit, bool drain)
+{
+    int result;
+    FLOW_HANDLE flow;
+    LINK_INSTANCE* link_instance = (LINK_INSTANCE*)link;
+
+    if (link == NULL)
+    {
+        result = MU_FAILURE;
+    }
+    else
+    {
+        if(link_instance->role == role_sender)
+        {
+            LogError("Sender is not allowed to reset link credit");
+            result = MU_FAILURE;
+        }
+        else
+        {
+            link->current_link_credit = link_credit;
+
+            flow = flow_create(0, 0, 0);
+            if (flow == NULL)
+            {
+                LogError("NULL flow performative");
+                result = MU_FAILURE;
+            }
+            else
+            {
+                if (flow_set_link_credit(flow, link->current_link_credit) != 0)
+                {
+                    LogError("Cannot set link credit on flow performative");
+                    result = MU_FAILURE;
+                }
+                else if (flow_set_handle(flow, link->handle) != 0)
+                {
+                    LogError("Cannot set handle on flow performative");
+                    result = MU_FAILURE;
+                }
+                else if (flow_set_delivery_count(flow, link->delivery_count) != 0)
+                {
+                    LogError("Cannot set delivery count on flow performative");
+                    result = MU_FAILURE;
+                }
+                else if (drain && flow_set_drain(flow, drain) != 0)
+                {
+                    LogError("Cannot set drain on flow performative");
+                    result = MU_FAILURE;
+                }
+                else
+                {
+                    if (session_send_flow(link->link_endpoint, flow) != 0)
+                    {
+                        LogError("Sending flow frame failed in session send");
+                        result = MU_FAILURE;
+                    }
+                    else
+                    {
+                        result = 0;
+                    }
+                }
+                flow_destroy(flow);
+            }
+        }
+    }
     return result;
 }
 
@@ -1607,6 +1734,12 @@ void link_dowork(LINK_HANDLE link)
     else
     {
         tickcounter_ms_t current_tick;
+
+        if (link->current_link_credit <= 0)
+        {
+            link->current_link_credit = link->max_link_credit;
+            send_flow(link);
+        }
 
         if (tickcounter_get_current_ms(link->tick_counter, &current_tick) != 0)
         {

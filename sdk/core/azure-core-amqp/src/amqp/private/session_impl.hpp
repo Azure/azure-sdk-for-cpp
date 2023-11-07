@@ -3,7 +3,8 @@
 
 #pragma once
 
-#include "azure/core/amqp/session.hpp"
+#include "azure/core/amqp/internal/session.hpp"
+#include "connection_impl.hpp"
 
 #include <azure_uamqp_c/session.h>
 
@@ -58,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     SessionImpl& operator=(SessionImpl&&) noexcept = delete;
     operator SESSION_HANDLE() const { return m_session.get(); }
 
-    std::shared_ptr<ConnectionImpl> GetConnection() const { return m_connectionToPoll; }
+    std::shared_ptr<_detail::ConnectionImpl> GetConnection() const { return m_connectionToPoll; }
 
     uint32_t GetIncomingWindow();
     uint32_t GetOutgoingWindow();

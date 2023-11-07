@@ -3,10 +3,10 @@
 
 #include "mock_amqp_server.hpp"
 
-#include <azure/core/amqp/connection.hpp>
-#include <azure/core/amqp/management.hpp>
-#include <azure/core/amqp/models/messaging_values.hpp>
-#include <azure/core/amqp/session.hpp>
+#include <azure/core/amqp/internal/connection.hpp>
+#include <azure/core/amqp/internal/management.hpp>
+#include <azure/core/amqp/internal/models/messaging_values.hpp>
+#include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/platform.hpp>
 
 #include <gtest/gtest.h>
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unexpected node name.";
           auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
-              "test:Rejected", "Unknown message source.");
+              "test:Rejected", "Unknown message source.", {});
           GTEST_LOG_(INFO) << "RV=" << rv;
           return rv;
         }
@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unknown operation.";
           auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
-              "amqp:status:rejected", "Unknown Request operation");
+              "amqp:status:rejected", "Unknown Request operation", {});
           GTEST_LOG_(INFO) << "RV=" << rv;
           return rv;
         }

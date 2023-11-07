@@ -18,8 +18,9 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 add_executable (
   azure-security-keyvault-administration-test
     macro_guard.cpp
+    settings_client_base_test.hpp
     settings_client_test.cpp
-    settings_client_base_test.hpp)
+)
 
 create_per_service_target_build(keyvault azure-security-keyvault-administration-test)
 

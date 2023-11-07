@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(
   AZURE_CORE_PERF_TEST_HEADER
   inc/azure/core/test/nullable_test.hpp
+  inc/azure/core/test/uuid_test.hpp
 )
 
 set(

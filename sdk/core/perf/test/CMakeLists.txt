@@ -14,6 +14,7 @@ set(
   inc/azure/perf/test/exception_test.hpp
   inc/azure/perf/test/extended_options_test.hpp
   inc/azure/perf/test/http_client_get_test.hpp
+  inc/azure/perf/test/http_pipeline_get_test.hpp
   inc/azure/perf/test/no_op_test.hpp
   inc/azure/perf/test/win_http_client_get_test.hpp
 )

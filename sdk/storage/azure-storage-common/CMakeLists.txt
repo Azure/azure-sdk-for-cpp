@@ -67,10 +67,10 @@ set(
 
 set(
   AZURE_STORAGE_COMMON_SOURCE
-    src/private/package_version.hpp
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
+    src/private/package_version.hpp
     src/reliable_stream.cpp
     src/shared_key_policy.cpp
     src/shared_key_policy_lite.cpp
@@ -99,8 +99,6 @@ target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
 
 if(WIN32)
     target_link_libraries(azure-storage-common PRIVATE bcrypt webservices)
-    # C28020 and C28204 are introduced by nlohmann/json
-    target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)
 else()
     find_package(LibXml2 REQUIRED)
     target_include_directories(azure-storage-common SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIRS})
