@@ -89,7 +89,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   GlobalStateHolder::GlobalStateHolder()
   {
+#if defined(GB_DEBUG_ALLOC)
     gballoc_init();
+#endif
     if (platform_init())
     {
       throw std::runtime_error("Could not initialize platform.");
@@ -134,7 +136,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       m_pollingThread.join();
     }
     platform_deinit();
+#if defined(GB_DEBUG_ALLOC)
     gballoc_deinit();
+#endif
   }
 
   void GlobalStateHolder::AddPollable(std::shared_ptr<Pollable> pollable)
