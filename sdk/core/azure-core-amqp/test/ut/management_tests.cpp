@@ -71,14 +71,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
   }
 
-    TEST_F(TestManagement, ManagementOpenCloseAuthenticated)
+  TEST_F(TestManagement, ManagementOpenCloseAuthenticated)
   {
     MessageTests::AmqpServerMock mockServer;
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
         "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
         + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
-
 
     ConnectionOptions connectionOptions;
     connectionOptions.Port = mockServer.GetPort();
@@ -120,7 +119,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
-
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 #if !defined(AZ_PLATFORM_MAC)

@@ -38,20 +38,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    */
   struct MessageHeader final
   {
-
+    /** @brief Default constructor. */
     MessageHeader() = default;
+    /** @brief Destructor. */
     ~MessageHeader() = default;
 
-    // Move Constructor
+    /** @brief Move constructor.*/
     MessageHeader(MessageHeader&& other) = default;
 
-    // Move Assignment operator
+    /** @brief Move assignment operator.*/
     MessageHeader& operator=(MessageHeader&& other) = default;
 
-    // Copy Constructor
+    /** @brief Copy constructor.*/
     MessageHeader(MessageHeader const& other) = default;
 
-    // Copy Assignment operator
+    /** @brief Copy assignment operator.*/
     MessageHeader& operator=(MessageHeader const& other) = default;
 
     /** @brief Compare two AMQP Message Headers for equality.

@@ -37,19 +37,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    */
   struct MessageProperties final
   {
+    /** @brief Default constructor.
+     *
+     * Creates an empty MessageProperties object.
+     */
     MessageProperties() = default;
+
+    /** @brief Destructor.
+     *
+     * Destroys the MessageProperties object.
+     */
     ~MessageProperties() = default;
 
-    // Move Constructor
+    /** @brief Move Constructor. */
     MessageProperties(MessageProperties&& other) = default;
 
-    // Move Assignment operator
+    /** @brief Move Assignment operator. */
     MessageProperties& operator=(MessageProperties&& other) = default;
 
-    // Copy Constructor
+    /** @brief Copy Constructor. */
     MessageProperties(MessageProperties const& other) = default;
 
-    // Copy Assignment operator
+    /** @brief Copy Assignment operator. */
     MessageProperties& operator=(MessageProperties const& other) = default;
 
     /** @brief The message-id, if set, uniquely identifies a message within the message system.
