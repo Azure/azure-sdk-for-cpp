@@ -155,6 +155,26 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     ReceivedEventData(Azure::Core::Amqp::Models::AmqpMessage const& message);
 
+    // Destructor
+    ~ReceivedEventData() = default;
+
+    /** @brief Copy an ReceivedEventData to another.
+     */
+    ReceivedEventData(ReceivedEventData const&) = default;
+
+    /** @brief Assign an ReceivedEventData to another.
+     * /
+     */
+    ReceivedEventData& operator=(ReceivedEventData const&) = default;
+
+    /** @brief Create an ReceivedEventData moving from another.
+     */
+    ReceivedEventData(ReceivedEventData&&) = default;
+
+    /** @brief Move an ReceivedEventData to another.
+     */
+    ReceivedEventData& operator=(ReceivedEventData&&) = default;
+
     /** @brief Get the raw AMQP message.
      *
      * Returns the underlying AMQP message that was received from the Event Hubs service.

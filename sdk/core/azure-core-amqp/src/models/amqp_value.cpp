@@ -177,10 +177,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       : m_value{amqpvalue_clone(that.m_value.get())}
   {
   }
+
   AmqpValue::AmqpValue(AmqpValue&& that) noexcept : m_value{that.m_value.release()}
   {
     that.m_value = nullptr;
   }
+
   ///@cond
 
   AmqpValue::AmqpValue(UniqueAmqpValueHandle const& value)
@@ -209,7 +211,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
   AmqpValue& AmqpValue::operator=(AmqpValue&& that) noexcept
   {
-    m_value.reset(that.m_value.release());
+    m_value = std::move(that.m_value);
     return *this;
   }
 
@@ -776,8 +778,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     UniqueAmqpValueHandle symbol{amqpvalue_create_timestamp(m_value.count())};
     return symbol;
   }
-
-  AmqpTimestamp::operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this); }
 
   namespace {
     std::chrono::milliseconds GetMillisecondsFromAmqp(AMQP_VALUE value)

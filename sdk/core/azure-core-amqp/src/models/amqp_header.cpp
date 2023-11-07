@@ -29,7 +29,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                                         : true);
   }
 
-  MessageHeader _internal::MessageHeaderFactory::FromUamqp(UniqueMessageHeaderHandle const& handle)
+  MessageHeader _internal::MessageHeaderFactory::FromUamqp(
+      _detail::UniqueMessageHeaderHandle const& handle)
   {
     MessageHeader rv;
     bool boolValue;
@@ -63,9 +64,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  UniqueMessageHeaderHandle _internal::MessageHeaderFactory::ToUamqp(MessageHeader const& header)
+  _detail::UniqueMessageHeaderHandle _internal::MessageHeaderFactory::ToUamqp(
+      MessageHeader const& header)
   {
-    UniqueMessageHeaderHandle rv{header_create()};
+    _detail::UniqueMessageHeaderHandle rv{header_create()};
     if (header.Durable)
     {
       if (header_set_durable(rv.get(), header.Durable))
@@ -151,7 +153,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not convert value to AMQP Header.");
     }
-    UniqueMessageHeaderHandle uniqueHandle{handle};
+    _detail::UniqueMessageHeaderHandle uniqueHandle{handle};
     handle = nullptr;
     return _internal::MessageHeaderFactory::FromUamqp(uniqueHandle);
   }

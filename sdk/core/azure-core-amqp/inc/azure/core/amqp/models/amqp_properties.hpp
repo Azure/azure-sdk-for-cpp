@@ -40,6 +40,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     MessageProperties() = default;
     ~MessageProperties() = default;
 
+    // Move Constructor
+    MessageProperties(MessageProperties&& other) = default;
+
+    // Move Assignment operator
+    MessageProperties& operator=(MessageProperties&& other) = default;
+
+    // Copy Constructor
+    MessageProperties(MessageProperties const& other) = default;
+
+    // Copy Assignment operator
+    MessageProperties& operator=(MessageProperties const& other) = default;
+
     /** @brief The message-id, if set, uniquely identifies a message within the message system.
      * The message producer is usually responsible for setting the message-id in such a way that
      * it is assured to be globally unique. A broker MAY discard a message as a duplicate if the

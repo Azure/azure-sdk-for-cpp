@@ -236,7 +236,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (session->m_eventHandler)
     {
       // The input source, target, and properties are owned by the caller, so we need to clone
-      // them before putting them in a UniqueAmqpValueHandle.
+      // them before putting them in a UniqueAmqpValueHandle so we can construct an AmqpValue.
       return session->m_eventHandler->OnLinkAttached(
           _detail::SessionFactory::CreateFromInternal(session->shared_from_this()),
           linkEndpoint,
