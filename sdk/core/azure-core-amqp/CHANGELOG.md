@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
-
-### Features Added
+## 1.0.0-beta.5 (2023-11-07)
 
 ### Breaking Changes
 
 - Refactored AMQP headers to isolate internal-only types to "internal" subdirectory in headers.
-
-### Bugs Fixed
 
 ### Other Changes
 
