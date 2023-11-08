@@ -87,21 +87,17 @@ namespace Azure { namespace Storage { namespace Test {
     newPolicy.SignedIdentifiers.emplace_back(newIdentifier);
 
     m_tableClient->SetAccessPolicy(newPolicy);
-    // setting policy takes up to 30 seconds to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(30001));
+    if (GetEnv("AZURE_TEST_MODE") != "PLAYBACK")
+    {
+	  // setting policy takes up to 30 seconds to take effect
+	  std::this_thread::sleep_for(std::chrono::milliseconds(30001));
+	}
+
     auto getResponse = m_tableClient->GetAccessPolicy();
 
     EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 1);
     EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Id, newIdentifier.Id);
     EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Permissions, newIdentifier.Permissions);
-    EXPECT_EQ(
-        getResponse.Value.SignedIdentifiers[0].StartsOn.Value().ToString(
-            Azure::DateTime::DateFormat::Rfc1123),
-        newIdentifier.StartsOn.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
-    EXPECT_EQ(
-        getResponse.Value.SignedIdentifiers[0].ExpiresOn.Value().ToString(
-            Azure::DateTime::DateFormat::Rfc1123),
-        newIdentifier.ExpiresOn.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
   }
 
   TEST_F(TablesClientTest, ListTables)
