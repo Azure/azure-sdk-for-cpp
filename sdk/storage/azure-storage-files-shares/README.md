@@ -73,7 +73,7 @@ Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for
 
 ### Create a share and upload a file
 
-```C++
+```cpp
 const std::string shareName = "sample-share";
 const std::string directoryName = "sample-directory";
 const std::string fileName = "sample-file";
@@ -97,7 +97,7 @@ fileClient.UploadFrom(bufferPtr, bufferLength);
 
 ### Download a file
 
-```C++
+```cpp
 // download to local file
 fileClient.DownloadTo(localFilePath);
 // or download to memory buffer
@@ -106,7 +106,7 @@ fileClient.DownloadTo(bufferPtr, bufferLength);
 
 ### Traverse a share
 
-```C++
+```cpp
 std::vector<ShareDirectoryClient> remaining;
 remaining.push_back(shareClient.GetRootDirectoryClient());
 while (remaining.size() > 0)
@@ -135,7 +135,7 @@ All Azure Storage File Shares service operations will throw a [StorageException]
 on failure with helpful [ErrorCode](https://learn.microsoft.com/rest/api/storageservices/file-service-error-codes)s.
 Many of these errors are recoverable.
 
-```C++
+```cpp
 try
 {
   shareClient.Delete();

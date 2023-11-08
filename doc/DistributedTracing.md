@@ -48,7 +48,7 @@ Following the examples from opentelemetry-cpp, the following can be used
 to establish an OpenTelemetry exporter which logs to the console or to an
 in-memory logger.
 
-```c++
+```cpp
 opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>
 CreateOpenTelemetryProvider()
 {
@@ -77,7 +77,7 @@ Other exporters exist to export to [Jaeger](https://github.com/open-telemetry/op
 Once the `opentelemetry::trace::TracerProvider` has been created, The client needs to create a new `Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider` which
 functions as an abstract class integration between OpenTelemetry and Azure Core:
 
-```c++
+```cpp
 std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
       = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(CreateOpenTelemetryProvider());
 ```
@@ -92,7 +92,7 @@ While using the ApplicationContext is the simplest mechanism for integration Ope
 To enable customers to further customize how tracing works, the application can set the `Telemetry.TracingProvider` field in the service client options, which will establish the tracer provider used by
 the service client.
 
-```c++
+```cpp
 auto tracerProvider(CreateOpenTelemetryProvider());
 auto provider(Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
@@ -116,13 +116,13 @@ There are two steps needed to integrate Distributed Tracing with a Service Clien
 
 To add a new `DiagnosticTracingFactory` to the client, simply add the class as a member:
 
-```c++
+```cpp
   Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 ```
 
 And construct the new tracing factory in the service constructor:
 
-```c++
+```cpp
   explicit ServiceClient(ServiceClientOptions const& clientOptions = ServiceClientOptions{})
       : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service",
       "azure-core-opentelemetry-test-service-cpp", PackageVersion::ToString())
@@ -139,7 +139,7 @@ And construct the new tracing factory in the service constructor:
  1. `Span::AddEvent(std::exception&)` - This registers the exception with the distributed tracing infrastructure.
  1. `Span::SetStatus` - This sets the status of the operation in the trace.
 
- ```c++
+ ```cpp
  Azure::Response<std::string> ServiceMethod(
       std::string const&,
       Azure::Core::Context const& context = Azure::Core::Context{})
