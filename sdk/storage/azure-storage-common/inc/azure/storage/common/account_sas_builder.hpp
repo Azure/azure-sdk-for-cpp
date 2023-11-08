@@ -62,7 +62,6 @@ namespace Azure { namespace Storage { namespace Sas {
      */
     Object = 4,
 
-    
     /**
      * @brief Indicates whether object-level APIs for blobs, queue messages, and files are
      * accessible from this shared access signature.

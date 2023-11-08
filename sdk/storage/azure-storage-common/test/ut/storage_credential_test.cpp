@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
             .BlobServiceUrl.GetHost(),
         "testaccount.blob.core.windows.net");
 
-        EXPECT_EQ(
+    EXPECT_EQ(
         Azure::Storage::_internal::ParseConnectionString(
             "DefaultEndpointsProtocol=https;AccountName=testaccount;AccountKey=testkey")
             .AccountKey,
@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace Test {
             .QueueServiceUrl.GetHost(),
         "testaccount.queue.core.windows.net");
 
-        EXPECT_EQ(
+    EXPECT_EQ(
         Azure::Storage::_internal::ParseConnectionString(
             "DefaultEndpointsProtocol=https;AccountName=testaccount;AccountKey=testkey")
             .AccountKey,
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Test {
             .DataLakeServiceUrl.GetHost(),
         "testaccount.dfs.core.windows.net");
 
-        EXPECT_EQ(
+    EXPECT_EQ(
         Azure::Storage::_internal::ParseConnectionString(
             "DefaultEndpointsProtocol=https;AccountName=testaccount;AccountKey=testkey")
             .AccountKey,

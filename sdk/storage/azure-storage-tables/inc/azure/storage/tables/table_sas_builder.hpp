@@ -23,17 +23,9 @@ namespace Azure { namespace Storage { namespace Sas {
   enum class TableSasPermissions
   {
     Read = 1,
-
-    
     Add = 2,
-
-    
     Update = 4,
-
-    
     Process = 8,
-
-    
     All = ~0,
   };
 
@@ -93,7 +85,7 @@ namespace Azure { namespace Storage { namespace Sas {
     /**
      * @brief The name of the queue being made accessible.
      */
-    //std::string QueueName;
+    // std::string QueueName;
 
     /**
      * @brief Sets the permissions for the table SAS.

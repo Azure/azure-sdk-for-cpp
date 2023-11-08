@@ -89,9 +89,9 @@ namespace Azure { namespace Storage { namespace Test {
     m_tableClient->SetAccessPolicy(newPolicy);
     if (GetEnv("AZURE_TEST_MODE") != "PLAYBACK")
     {
-	  // setting policy takes up to 30 seconds to take effect
-	  std::this_thread::sleep_for(std::chrono::milliseconds(30001));
-	}
+      // setting policy takes up to 30 seconds to take effect
+      std::this_thread::sleep_for(std::chrono::milliseconds(30001));
+    }
 
     auto getResponse = m_tableClient->GetAccessPolicy();
 
@@ -292,7 +292,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.UpsertType = Azure::Storage::Tables::Models::UpsertType::Update;
 
     entity.Properties["Product"] = "Tables2";
-    auto updateResponse = m_tableClient->MergeEntity(entity,options);
+    auto updateResponse = m_tableClient->MergeEntity(entity, options);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -331,17 +331,17 @@ namespace Azure { namespace Storage { namespace Test {
     m_tableClient->CreateEntity(entity);
 
     Azure::Storage::Tables::Models::QueryEntitiesOptions options;
-    
+
     auto responseQuery = m_tableClient->QueryEntities(options);
     EXPECT_EQ(responseQuery.TableEntities.size(), 3);
 
-     options.PartitionKey = "P1";
-     options.RowKey = "R1";
-     responseQuery = m_tableClient->QueryEntities(options);
-     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
+    options.PartitionKey = "P1";
+    options.RowKey = "R1";
+    responseQuery = m_tableClient->QueryEntities(options);
+    EXPECT_EQ(responseQuery.TableEntities.size(), 1);
 
-     options.SelectColumns = "Name,Product";
-     responseQuery = m_tableClient->QueryEntities(options);
-     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
+    options.SelectColumns = "Name,Product";
+    responseQuery = m_tableClient->QueryEntities(options);
+    EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
-  }}} // namespace Azure::Storage::Test
+}}} // namespace Azure::Storage::Test

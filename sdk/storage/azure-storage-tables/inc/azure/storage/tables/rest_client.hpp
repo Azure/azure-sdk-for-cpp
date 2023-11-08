@@ -10,6 +10,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -25,7 +26,7 @@
 #include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/rtti.hpp>
-#include <azure/core/internal/json/json.hpp>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -473,8 +474,6 @@ namespace Azure { namespace Storage { namespace Tables {
     Response<Models::PreflightCheckResult> PreflightCheck(
         Models::PreflightCheckOptions const& options,
         Core::Context const& context = {});
-
-    TableClient GetTableClient(std::string tableName) const {};
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;

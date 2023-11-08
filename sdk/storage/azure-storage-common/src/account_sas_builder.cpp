@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       resourceTypes += "o";
     }
-   
+
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
             Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)

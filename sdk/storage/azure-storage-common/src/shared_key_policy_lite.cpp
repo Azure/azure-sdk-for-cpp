@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       const std::string keyValue = Azure::Core::Url::Encode("comp");
       auto compValue = queryParameters.at(keyValue);
-      string_to_sign += "?comp=" + Azure::Core::Url::Decode(compValue) ;
+      string_to_sign += "?comp=" + Azure::Core::Url::Decode(compValue);
     }
     string_to_sign += "\n";
     // remove last linebreak

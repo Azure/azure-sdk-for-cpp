@@ -15,12 +15,13 @@ namespace Azure { namespace Storage { namespace _internal {
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
-  }
+  } // namespace Test
 
   class SharedKeyPolicyLite final : public Core::Http::Policies::HttpPolicy {
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
+
   public:
     explicit SharedKeyPolicyLite(std::shared_ptr<StorageSharedKeyCredential> credential)
         : m_credential(std::move(credential))
@@ -40,7 +41,8 @@ namespace Azure { namespace Storage { namespace _internal {
         Core::Context const& context) const override
     {
       request.SetHeader(
-          "Authorization", "SharedKeyLite " + m_credential->AccountName + ":" + GetSignature(request));
+          "Authorization",
+          "SharedKeyLite " + m_credential->AccountName + ":" + GetSignature(request));
       return nextPolicy.Send(request, context);
     }
 
