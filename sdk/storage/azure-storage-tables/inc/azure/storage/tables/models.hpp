@@ -119,10 +119,11 @@ namespace Azure { namespace Storage { namespace Tables {
        */
       std::vector<Models::Table> Tables;
 
-    private:
+    protected:
       std::shared_ptr<TableServicesClient> m_tableServiceClient;
       ListTablesOptions m_operationOptions;
 
+    private:
       void OnNextPage(const Azure::Core::Context& context);
     };
     /**
@@ -447,27 +448,6 @@ namespace Azure { namespace Storage { namespace Tables {
       UpsertEntityResult(CreateEntityResult const& other)
           : CreateEntityResult(other), ETag(std::move(other.ETag))
       {
-      }
-
-      operator MergeEntityResult() const
-      {
-        MergeEntityResult result;
-        result.ETag = ETag;
-        return result;
-      }
-
-      operator UpdateEntityResult() const
-      {
-        UpdateEntityResult result;
-        result.ETag = ETag;
-        return result;
-      }
-
-      operator CreateEntityResult() const
-      {
-        CreateEntityResult result;
-        result.ETag = ETag;
-        return result;
       }
     };
 

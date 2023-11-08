@@ -396,7 +396,7 @@ namespace Azure { namespace Storage { namespace Tables {
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const std::string& serviceUrl = Azure::Storage::_internal::TablesManagementPublicEndpoint,
         const TableClientOptions& options = TableClientOptions())
-        : m_subscriptionId(std::move(subscriptionId)), m_url(Azure::Core::Url(serviceUrl))
+        : m_url(Azure::Core::Url(serviceUrl)) , m_subscriptionId(std::move(subscriptionId))
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
