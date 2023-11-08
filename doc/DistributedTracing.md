@@ -71,7 +71,7 @@ CreateOpenTelemetryProvider()
 }
 ```
 
-Other exporters exist to export to [Jaeger](https://github.com/open-telemetry/opentelemetry-cpp/tree/main/exporters/jaeger),
+Other exporters exist to export to [Elasticsearch](https://github.com/open-telemetry/opentelemetry-cpp/tree/main/exporters/elasticsearch),
 [Windows ETW](https://github.com/open-telemetry/opentelemetry-cpp/tree/main/exporters/etw) and others.
 
 Once the `opentelemetry::trace::TracerProvider` has been created, The client needs to create a new `Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider` which
