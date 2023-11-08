@@ -7,7 +7,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST(StorageCredentialTest, DefaulBlobtHostCorrect)
+  TEST(StorageCredentialTest, DefaultBlobHostCorrect)
   {
     EXPECT_EQ(
         Azure::Storage::_internal::ParseConnectionString(
