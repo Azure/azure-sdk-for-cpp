@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 - Fixed several memory leaks.
+- AMQP Link Credits now work as expected.
+
 
 ### Other Changes
 
