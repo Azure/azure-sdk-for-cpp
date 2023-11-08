@@ -11,6 +11,7 @@
 ### Other Changes
 
 - Fixed GCC 13 compilation error. (A community contribution, courtesy of _[adamdebreceni](https://github.com/adamdebreceni)_)
+- Use well-formed URL for the HTTP request made in `KeyClient::GetRandomBytes()`.
 
 ### Acknowledgments
 
