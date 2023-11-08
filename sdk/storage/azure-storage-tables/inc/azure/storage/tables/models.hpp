@@ -99,6 +99,10 @@ namespace Azure { namespace Storage { namespace Tables {
      */
     class ListTablesPagedResponse final
         : public Azure::Core::PagedResponse<ListTablesPagedResponse> {
+
+      friend class TableServicesClient;
+      friend class Azure::Core::PagedResponse<ListTablesPagedResponse>;
+
     public:
       /**
        * Service endpoint.
@@ -118,8 +122,6 @@ namespace Azure { namespace Storage { namespace Tables {
     private:
       std::shared_ptr<TableServicesClient> m_tableServiceClient;
       ListTablesOptions m_operationOptions;
-      friend class TableServicesClient;
-      friend class Azure::Core::PagedResponse<ListTablesPagedResponse>;
 
       void OnNextPage(const Azure::Core::Context& context);
     };

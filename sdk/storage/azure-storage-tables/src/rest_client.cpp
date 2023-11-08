@@ -1109,13 +1109,13 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
     if (!jsonRoot.contains("value"))
     {
-      response.TableEntities.emplace_back(std::move(DeserializeEntity(jsonRoot)));
+      response.TableEntities.emplace_back(DeserializeEntity(jsonRoot));
     }
     else
     {
       for (auto value : jsonRoot["value"])
       {
-        response.TableEntities.emplace_back(std::move(DeserializeEntity(value)));
+        response.TableEntities.emplace_back(DeserializeEntity(value));
       }
     }
   }
