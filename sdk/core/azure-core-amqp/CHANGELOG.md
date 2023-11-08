@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed several memory leaks.
+
 ### Other Changes
 
 ## 1.0.0-beta.5 (2023-11-07)
