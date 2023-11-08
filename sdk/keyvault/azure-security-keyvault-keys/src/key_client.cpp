@@ -462,7 +462,7 @@ Azure::Response<GetRandomBytesResult> KeyClient::GetRandomBytes(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
   // Request and settings
-  auto request = CreateRequest(HttpMethod::Post, {"/rng"}, &payloadStream);
+  auto request = CreateRequest(HttpMethod::Post, {"rng"}, &payloadStream);
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
 
   // Send and parse response
