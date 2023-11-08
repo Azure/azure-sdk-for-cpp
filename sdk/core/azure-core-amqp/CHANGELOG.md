@@ -11,7 +11,6 @@
 - Fixed several memory leaks.
 - AMQP Link Credits now work as expected.
 
-
 ### Other Changes
 
 ## 1.0.0-beta.5 (2023-11-07)
