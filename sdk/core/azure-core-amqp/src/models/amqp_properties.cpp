@@ -32,12 +32,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     // properties_get_message_id returns the value in-place.
     if (!properties_get_message_id(properties.get(), &value))
     {
-      rv.MessageId = value;
+      rv.MessageId = _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)};
     }
 
     if (!properties_get_correlation_id(properties.get(), &value))
     {
-      rv.CorrelationId = value;
+      rv.CorrelationId = _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)};
     }
 
     {
@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!properties_get_to(properties.get(), &value))
     {
-      rv.To = value;
+      rv.To = _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)};
     }
 
     const char* stringValue;
@@ -66,7 +66,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!properties_get_reply_to(properties.get(), &value))
     {
-      rv.ReplyTo = value;
+      rv.ReplyTo = _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)};
     }
 
     if (!properties_get_content_type(properties.get(), &stringValue))
@@ -114,7 +114,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   UniquePropertiesHandle _internal::MessagePropertiesFactory::ToUamqp(
       MessageProperties const& properties)
   {
-    Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG> returnValue(properties_create());
+    UniquePropertiesHandle returnValue(properties_create());
     if (properties.MessageId.HasValue())
     {
       if (properties_set_message_id(returnValue.get(), properties.MessageId.Value()))
@@ -276,7 +276,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::vector<uint8_t> MessageProperties::Serialize(MessageProperties const& properties)
   {
     auto handle = _internal::MessagePropertiesFactory::ToUamqp(properties);
-    AmqpValue propertiesAsValue{amqpvalue_create_properties(handle.get())};
+    Models::_detail::UniqueAmqpValueHandle propertiesAsuAMQPValue{
+        amqpvalue_create_properties(handle.get())};
+    AmqpValue propertiesAsValue{propertiesAsuAMQPValue};
     return Models::AmqpValue::Serialize(propertiesAsValue);
   }
 

@@ -6,9 +6,15 @@
 #include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
+
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
@@ -86,7 +92,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       {
         // The Key in MessageAnnotations is normally an AmqpSymbol, cast it to a string Key when
         // placing in SystemProperties.
-        SystemProperties.emplace(static_cast<std::string>(key), item.second);
+        std::string keyName = static_cast<std::string>(key);
+        auto result{SystemProperties.emplace(keyName, item.second)};
+        if (!result.second)
+        {
+          // If the key already exists, log a warning.
+          Log::Stream(Logger::Level::Warning)
+              << "Duplicate key in MessageAnnotations: " << key << std::endl;
+        }
       }
     }
   }

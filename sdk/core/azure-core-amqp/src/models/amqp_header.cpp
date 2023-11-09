@@ -29,7 +29,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                                         : true);
   }
 
-  MessageHeader _internal::MessageHeaderFactory::FromUamqp(UniqueMessageHeaderHandle const& handle)
+  MessageHeader _internal::MessageHeaderFactory::FromUamqp(
+      _detail::UniqueMessageHeaderHandle const& handle)
   {
     MessageHeader rv;
     bool boolValue;
@@ -63,9 +64,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  UniqueMessageHeaderHandle _internal::MessageHeaderFactory::ToUamqp(MessageHeader const& header)
+  _detail::UniqueMessageHeaderHandle _internal::MessageHeaderFactory::ToUamqp(
+      MessageHeader const& header)
   {
-    UniqueMessageHeaderHandle rv{header_create()};
+    _detail::UniqueMessageHeaderHandle rv{header_create()};
     if (header.Durable)
     {
       if (header_set_durable(rv.get(), header.Durable))
@@ -130,14 +132,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   size_t MessageHeader::GetSerializedSize(MessageHeader const& properties)
   {
     auto handle = _internal::MessageHeaderFactory::ToUamqp(properties);
-    AmqpValue propertiesAsValue{amqpvalue_create_header(handle.get())};
+    AmqpValue propertiesAsValue{
+        Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())}};
     return AmqpValue::GetSerializedSize(propertiesAsValue);
   }
 
   std::vector<uint8_t> MessageHeader::Serialize(MessageHeader const& header)
   {
     auto handle = _internal::MessageHeaderFactory::ToUamqp(header);
-    AmqpValue headerAsValue{amqpvalue_create_header(handle.get())};
+    AmqpValue headerAsValue{
+        Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())}};
     return Models::AmqpValue::Serialize(headerAsValue);
   }
 
@@ -149,7 +153,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not convert value to AMQP Header.");
     }
-    UniqueMessageHeaderHandle uniqueHandle{handle};
+    _detail::UniqueMessageHeaderHandle uniqueHandle{handle};
     handle = nullptr;
     return _internal::MessageHeaderFactory::FromUamqp(uniqueHandle);
   }

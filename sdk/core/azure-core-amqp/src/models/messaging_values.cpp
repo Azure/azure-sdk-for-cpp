@@ -10,7 +10,7 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   Models::AmqpValue Messaging::DeliveryAccepted()
   {
-    auto rv = messaging_delivery_accepted();
+    Models::_detail::UniqueAmqpValueHandle rv{messaging_delivery_accepted()};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery accepted described value.");
@@ -19,7 +19,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   Models::AmqpValue Messaging::DeliveryReleased()
   {
-    auto rv = messaging_delivery_released();
+    Models::_detail::UniqueAmqpValueHandle rv{messaging_delivery_released()};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery released described value.");
@@ -28,7 +28,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   Models::AmqpValue Messaging::DeliveryReceived(uint32_t sectionNumber, uint64_t sectionOffset)
   {
-    auto rv = messaging_delivery_received(sectionNumber, sectionOffset);
+    Models::_detail::UniqueAmqpValueHandle rv{
+        messaging_delivery_received(sectionNumber, sectionOffset)};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery received described value.");
@@ -40,10 +41,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       std::string const& errorDescription,
       AmqpValue const& errorInfo)
   {
-    auto rv = messaging_delivery_rejected(
+    Models::_detail::UniqueAmqpValueHandle rv{messaging_delivery_rejected(
         errorCondition.empty() ? nullptr : errorCondition.c_str(),
         errorDescription.empty() ? nullptr : errorDescription.c_str(),
-        errorInfo);
+        errorInfo)};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery rejected described value.");
@@ -55,7 +56,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       bool undeliverableHere,
       Models::AmqpValue annotations)
   {
-    auto rv = messaging_delivery_modified(deliveryFailed, undeliverableHere, annotations);
+    Models::_detail::UniqueAmqpValueHandle rv{
+        messaging_delivery_modified(deliveryFailed, undeliverableHere, annotations)};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery modified described value.");

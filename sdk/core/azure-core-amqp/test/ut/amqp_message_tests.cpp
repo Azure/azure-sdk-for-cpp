@@ -133,7 +133,7 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
   {
     AmqpMessage message;
 
-    message.SetBody({"Test", 95, static_cast<AmqpValue>(AmqpMap{{3, 5}, {4, 9}})});
+    message.SetBody({"Test", 95, AmqpMap{{3, 5}, {4, 9}}.AsAmqpValue()});
 
     EXPECT_EQ(1, message.GetBodyAsAmqpList().size());
     EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList()[0].at(0)));
@@ -152,8 +152,7 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
   }
   {
     AmqpMessage message;
-    message.SetBody(
-        {{1}, {"Test", 3}, {"Test", 95, static_cast<AmqpValue>(AmqpMap{{3, 5}, {4, 9}})}});
+    message.SetBody({{1}, {"Test", 3}, {"Test", 95, AmqpMap{{3, 5}, {4, 9}}.AsAmqpValue()}});
     EXPECT_EQ(3, message.GetBodyAsAmqpList().size());
     EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList()[1].at(0)));
     EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList()[2].at(1)));
@@ -231,7 +230,7 @@ TEST_F(MessageSerialization, SerializeMessageBodyBinary)
     std::vector<uint8_t> buffer;
     AmqpMessage message;
     message.Properties.MessageId = "12345";
-    message.SetBody(static_cast<AmqpValue>(AmqpMap{{"key1", "value1"}, {"key2", "value2"}}));
+    message.SetBody(AmqpMap{{"key1", "value1"}, {"key2", "value2"}}.AsAmqpValue());
     buffer = AmqpMessage::Serialize(message);
     AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(message, deserialized);

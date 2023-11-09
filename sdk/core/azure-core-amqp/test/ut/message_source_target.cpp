@@ -33,12 +33,12 @@ TEST_F(TestSourceTarget, SimpleSourceTarget)
 
   {
     EXPECT_ANY_THROW(MessageSource source(AmqpValue{}));
-    AmqpValue val = static_cast<AmqpValue>(AmqpArray());
+    AmqpValue val = AmqpArray().AsAmqpValue();
     EXPECT_ANY_THROW(MessageSource source{val});
   }
   {
     EXPECT_ANY_THROW(MessageTarget target(AmqpValue{}));
-    AmqpValue val = static_cast<AmqpValue>(AmqpArray());
+    AmqpValue val = AmqpArray().AsAmqpValue();
     EXPECT_ANY_THROW(MessageTarget target(val));
   }
 }
@@ -79,7 +79,7 @@ TEST_F(TestSourceTarget, TargetProperties)
 
   {
     MessageTargetOptions options;
-    options.Capabilities.push_back(static_cast<AmqpValue>(AmqpSymbol{"Test"}));
+    options.Capabilities.push_back(AmqpSymbol{"Test"}.AsAmqpValue());
     MessageTarget target(options);
     EXPECT_EQ(1, target.GetCapabilities().size());
     EXPECT_EQ(AmqpValueType::Symbol, target.GetCapabilities()[0].GetType());
@@ -201,6 +201,19 @@ TEST_F(TestSourceTarget, TargetProperties)
   }
 }
 
+TEST_F(TestSourceTarget, TargetCreateCopy)
+{
+  {
+    MessageTarget target("address1");
+    const AmqpValue v = target.AsAmqpValue();
+    //    AmqpValue value(v);
+
+    //    MessageTarget target2(value);
+    MessageTarget target2(v);
+    EXPECT_EQ(target.GetAddress(), target2.GetAddress());
+  }
+}
+
 TEST_F(TestSourceTarget, TargetThroughValue)
 {
   MessageTarget target("address1");
@@ -238,7 +251,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSourceOptions options;
-    options.Capabilities.push_back(static_cast<AmqpValue>(AmqpSymbol{"Test"}));
+    options.Capabilities.push_back(AmqpSymbol{"Test"}.AsAmqpValue());
     MessageSource source(options);
     EXPECT_EQ(1, source.GetCapabilities().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities()[0].GetType());
@@ -374,7 +387,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSourceOptions options;
-    options.Outcomes.push_back(static_cast<AmqpValue>(AmqpSymbol("Test")));
+    options.Outcomes.push_back(AmqpSymbol("Test").AsAmqpValue());
     MessageSource source(options);
     EXPECT_EQ(1, source.GetOutcomes().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());
