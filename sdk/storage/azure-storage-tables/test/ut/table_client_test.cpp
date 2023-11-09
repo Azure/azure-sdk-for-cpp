@@ -344,4 +344,19 @@ namespace Azure { namespace Storage { namespace Test {
     responseQuery = m_tableClient->QueryEntities(options);
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
+
+  TEST_F(TablesClientTest, TransactionCreate) {
+    Azure::Storage::Tables::Models::TableEntity entity;
+    
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    auto createResponse = m_tableClient->Create();
+    auto transaction = m_tableClient->CreateTransaction("P1");
+
+    transaction.CreateEntity(entity);
+
+    auto response = m_tableClient->SubmitTransaction(transaction);
+  }
 }}} // namespace Azure::Storage::Test

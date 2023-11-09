@@ -26,6 +26,7 @@
 #include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/rtti.hpp>
+#include <azure/storage/tables/transactions.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -328,6 +329,8 @@ namespace Azure { namespace Storage { namespace Tables {
         Models::QueryEntitiesOptions const& options = {},
         Core::Context const& context = {});
 
+    Transaction CreateTransaction(std::string const& partitionKey);
+    Response<Models::SubmitTransactionResult> SubmitTransaction(Transaction& transaction, Core::Context const& context = {});
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
@@ -396,7 +399,7 @@ namespace Azure { namespace Storage { namespace Tables {
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const std::string& serviceUrl = Azure::Storage::_internal::TablesManagementPublicEndpoint,
         const TableClientOptions& options = TableClientOptions())
-        : m_url(Azure::Core::Url(serviceUrl)) , m_subscriptionId(std::move(subscriptionId))
+        : m_url(Azure::Core::Url(serviceUrl)), m_subscriptionId(std::move(subscriptionId))
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;

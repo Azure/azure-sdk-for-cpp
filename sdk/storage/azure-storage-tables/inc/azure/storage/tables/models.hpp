@@ -474,5 +474,24 @@ namespace Azure { namespace Storage { namespace Tables {
 
       void OnNextPage(const Azure::Core::Context& context);
     };
+
+    enum TransactionAction
+    {
+      InsertEntity,
+      DeleteEntity,
+      MergeEntity,
+      UpdateEntity,
+      UpsertEntity,
+    };
+
+    struct TransactionStep final
+    {
+      TransactionAction Action;
+      Models::TableEntity Entity;
+    };
+
+    struct SubmitTransactionResult final
+    {
+    };
   } // namespace Models
 }}} // namespace Azure::Storage::Tables

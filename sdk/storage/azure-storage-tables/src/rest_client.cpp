@@ -12,6 +12,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/internal/xml_wrapper.hpp>
+#include <azure/storage/tables/serializers.hpp>
 using namespace Azure::Storage::Tables;
 
 AllowedMethodsType const AllowedMethodsType::Delete{"DELETE"};
@@ -1146,4 +1147,39 @@ Models::TableEntity TableClient::DeserializeEntity(Azure::Core::Json::_internal:
     }
   }
   return tableEntity;
+}
+
+Transaction TableClient::CreateTransaction(std::string const& partitionKey)
+{
+  return Transaction(m_url.GetAbsoluteUrl(), m_tableName, partitionKey);
+}
+
+Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
+    Transaction & transaction,
+    Core::Context const& context )
+{
+  auto url = m_url;
+  url.AppendPath( "$batch");
+  
+  std::string body = transaction.PreparePayload();
+  Core::IO::MemoryBodyStream requestBody(
+      reinterpret_cast<std::uint8_t const*>(body.data()), body.length());
+
+  Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
+
+  request.SetHeader("Content-Type", "multipart/mixed; boundary="+transaction.GetBatchId());
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+  request.SetHeader("Connection", "Keep-Alive");
+  request.SetHeader("DataServiceVersion", "3.0");
+  request.SetHeader("Accept-Charset", "UTF-8");
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::SubmitTransactionResult response{};
+  return Response<Models::SubmitTransactionResult>(std::move(response), std::move(rawResponse));
 }
