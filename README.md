@@ -162,7 +162,7 @@ Azure C++ SDK headers needed are located within the `<azure>` folder, with sub-f
 
 Here's an example application to help you get started:
 
-```C++
+```cpp
 #include <iostream>
 
 // Include the necessary SDK headers
@@ -231,7 +231,7 @@ The main shared concepts of `Azure Core` include:
 
 Many client library operations **return** the templated `Azure::Core::Response<T>` type from the API calls. This type let's you get the raw HTTP response from the service request call the Azure service APIs make, along with the result of the operation to get more API specific details. This is the templated `T` operation result which can be extracted from the response, using the `Value` field.
 
-```C++
+```cpp
   // Azure service operations return a Response<T> templated type.
   Azure::Response<Models::BlobProperties> propertiesResponse = blockBlobClient.GetProperties();
 
@@ -249,7 +249,7 @@ Some operations take a long time to complete and require polling for their statu
 
 You can intermittently poll whether the operation has finished by using the `Poll()` method inside a loop on the returned `Operation<T>` and track progress of the operation using `Value()`, while the operation is not done (using `IsDone()`). Your per-polling custom logic can go in that loop, such as logging progress. Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
 
-```C++
+```cpp
   std::string sourceUri = "<a uri to the source blob to copy>";
 
   // Typically, long running operation APIs have names that begin with Start.

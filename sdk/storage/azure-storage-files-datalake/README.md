@@ -97,7 +97,7 @@ Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for
 
 ### Appending Data to a DataLake File
 
-```C++
+```cpp
 const std::string connectionString = "<connection_string>";
 const std::string fileSystemName = "sample-filesystem";
 const std::string directoryName = "sample-directory";
@@ -125,12 +125,12 @@ fileClient.Append(fileStream, 0);
 fileClient.Flush(fileStream.Length());
 ```
 ### Reading Data from a DataLake File
-```C++
+```cpp
 Response<DownloadFileResult> fileContents = fileClient.Download();
 ```
 
 ### Enumerating DataLake Paths
-```C++
+```cpp
 for (auto pathPage = client.ListPaths(false); pathPage.HasPage(); pathPage.MoveToNextPage())
 {
   for (auto& path : pathPage.Paths)
@@ -147,7 +147,7 @@ All File DataLake service operations will throw a [StorageException](https://git
 on failure with helpful [ErrorCode](https://learn.microsoft.com/rest/api/storageservices/blob-service-error-codes)s.
 Many of these errors are recoverable.
 
-```C++
+```cpp
 try
 {
   fileSystemClient.Delete();
