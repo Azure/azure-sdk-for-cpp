@@ -299,8 +299,6 @@ If you want to add some time-variant headers like authentication, you should use
 ```cpp
 class NewPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
 public:
-  ~NewPolicy() override {}
-
   std::unique_ptr<HttpPolicy> Clone() const override
   {
     return std::make_unique<NewPolicy>(*this);
