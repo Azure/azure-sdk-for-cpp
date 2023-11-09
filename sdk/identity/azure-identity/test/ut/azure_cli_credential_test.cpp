@@ -374,7 +374,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     }
   }
 
-  // Tenant ID test via TokenReqeustContext, using a wildcard for AdditionallyAllowedTenants.
+  // Tenant ID test via TokenRequestContext, using a wildcard for AdditionallyAllowedTenants.
   {
     AzureCliCredentialOptions options;
     options.CliProcessTimeout = std::chrono::hours(24);
@@ -396,7 +396,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     }
   }
 
-  // Tenant ID test via TokenReqeustContext, using a specific AdditionallyAllowedTenants value.
+  // Tenant ID test via TokenRequestContext, using a specific AdditionallyAllowedTenants value.
   {
     AzureCliCredentialOptions options;
     options.AdditionallyAllowedTenants.push_back(InvalidValue);
@@ -417,7 +417,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     }
   }
 
-  // Scopes test via TokenReqeustContext.
+  // Scopes test via TokenRequestContext.
   {
     AzureCliCredentialOptions options;
     options.CliProcessTimeout = std::chrono::hours(24);
