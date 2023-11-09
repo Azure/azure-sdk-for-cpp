@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 
+- Harden checks for the tenant ID.
 - Disallow space character when validating tenant id and scopes as input for `AzureCliCredential`.
 
 ### Other Changes
