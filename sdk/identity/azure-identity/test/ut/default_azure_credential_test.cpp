@@ -110,6 +110,32 @@ TEST(DefaultAzureCredential, CachingCredential)
 
   EXPECT_TRUE(c1->WasInvoked);
   EXPECT_FALSE(c2->WasInvoked);
+
+  // Caching is per instance of the DefaultAzureCredential and not global.
+  c1->WasInvoked = false;
+  c2->WasInvoked = false;
+
+  DefaultAzureCredential cred1;
+  cred1.m_impl = std::make_unique<Azure::Identity::_detail::ChainedTokenCredentialImpl>(
+      "Test DAC", Azure::Identity::ChainedTokenCredential::Sources{c1, c2}, true);
+
+  DefaultAzureCredential cred2;
+  cred2.m_impl = std::make_unique<Azure::Identity::_detail::ChainedTokenCredentialImpl>(
+      "Test DAC", Azure::Identity::ChainedTokenCredential::Sources{c2, c1}, true);
+
+  // The first credential in the list, c2, got called and cached on cred2.
+  token = cred2.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_FALSE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
+
+  // cred1 is unaffected by cred2 and both c1 and c2 are called, in order.
+  token = cred1.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_TRUE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
 }
 
 TEST(DefaultAzureCredential, LogMessages)
