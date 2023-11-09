@@ -7,6 +7,8 @@
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
+#include <limits>
+#include <mutex>
 #include <utility>
 
 using namespace Azure::Identity;
@@ -32,8 +34,9 @@ AccessToken ChainedTokenCredential::GetToken(
 
 ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
     std::string const& credentialName,
-    ChainedTokenCredential::Sources&& sources)
-    : m_sources(std::move(sources))
+    ChainedTokenCredential::Sources&& sources,
+    bool cacheSelectedCredential)
+    : m_sources(std::move(sources)), m_cacheSelectedCredential(cacheSelectedCredential)
 {
   auto const logLevel
       = m_sources.empty() ? IdentityLog::Level::Warning : IdentityLog::Level::Informational;
@@ -66,10 +69,33 @@ ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
 AccessToken ChainedTokenCredentialImpl::GetToken(
     std::string const& credentialName,
     TokenRequestContext const& tokenRequestContext,
-    Context const& context) const
+    Context const& context)
 {
-  for (auto const& source : m_sources)
+  std::unique_lock<std::mutex> lock(m_cachingMutex, std::defer_lock);
+
+  constexpr size_t maxSentinel = std::numeric_limits<std::size_t>::max();
+
+  if (m_cacheSelectedCredential && m_SelectedCredentialIndex == maxSentinel)
   {
+    lock.lock();
+    // Check again in case another thread already set the index, and unlock the mutex.
+    if (m_SelectedCredentialIndex != maxSentinel)
+    {
+      lock.unlock();
+    }
+  }
+
+  size_t i = 0;
+  size_t end_index = m_sources.size();
+  if (m_SelectedCredentialIndex != maxSentinel)
+  {
+    i = m_SelectedCredentialIndex;
+    end_index = m_SelectedCredentialIndex + 1;
+  }
+
+  for (; i < end_index; ++i)
+  {
+    auto& source = m_sources[i];
     try
     {
       auto token = source->GetToken(tokenRequestContext, context);
@@ -78,6 +104,15 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
           IdentityLog::Level::Informational,
           credentialName + ": Successfully got token from " + source->GetCredentialName() + '.');
 
+      // Log first before unlocking the mutex, so that the log message is not interleaved with
+      // other.
+      if (m_cacheSelectedCredential && m_SelectedCredentialIndex == maxSentinel)
+      {
+        // We never re-update the selected credential index, after the first successful credential
+        // is found.
+        m_SelectedCredentialIndex = i;
+        lock.unlock();
+      }
       return token;
     }
     catch (AuthenticationException const& e)

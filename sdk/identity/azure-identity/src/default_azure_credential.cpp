@@ -43,9 +43,12 @@ DefaultAzureCredential::DefaultAzureCredential(
   auto const managedIdentityCred = std::make_shared<ManagedIdentityCredential>(options);
   auto const azCliCred = std::make_shared<AzureCliCredential>(options);
 
+  // DefaultAzureCredential caches the selected credential, so that it can be reused on subsequent
+  // calls.
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
       GetCredentialName(),
-      ChainedTokenCredential::Sources{envCred, wiCred, managedIdentityCred, azCliCred});
+      ChainedTokenCredential::Sources{envCred, wiCred, managedIdentityCred, azCliCred},
+      true);
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;

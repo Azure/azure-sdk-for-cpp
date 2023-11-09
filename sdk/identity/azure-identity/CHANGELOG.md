@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Re-use the selected credential that works for each subsequent request in `DefaultAzureCredential`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
