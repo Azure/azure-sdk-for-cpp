@@ -16,6 +16,7 @@
 ### Other Changes
 
 - Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
+- Add logging to `WorkloadIdentityCredential` to help with debugging.
 
 ## 1.6.0-beta.3 (2023-10-12)
 

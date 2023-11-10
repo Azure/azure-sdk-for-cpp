@@ -3,6 +3,7 @@
 
 #include "azure/identity/workload_identity_credential.hpp"
 
+#include "private/identity_log.hpp"
 #include "private/tenant_id_resolver.hpp"
 #include "private/token_credential_impl.hpp"
 
@@ -20,6 +21,7 @@ using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
+using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
@@ -70,6 +72,17 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
               "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
               "&client_id=")
         + Url::Encode(clientId);
+
+    IdentityLog::Write(
+        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+  }
+  else
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Warning,
+        GetCredentialName()
+            + " was not initialized with underlying credential. Environment variables are not "
+              "fully configured by Kubernetes.");
   }
 }
 
@@ -96,6 +109,17 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
               "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
               "&client_id=")
         + Url::Encode(clientId);
+
+    IdentityLog::Write(
+        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+  }
+  else
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Warning,
+        GetCredentialName()
+            + " was not initialized with underlying credential. Environment variables are not "
+              "fully configured by Kubernetes.");
   }
 }
 
@@ -109,8 +133,12 @@ AccessToken WorkloadIdentityCredential::GetToken(
   {
     auto const AuthUnavailable = GetCredentialName() + " authentication unavailable. ";
 
+    IdentityLog::Write(
+        IdentityLog::Level::Warning,
+        AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
+
     throw AuthenticationException(
-        AuthUnavailable + "Environment variables are not fully configured.");
+        AuthUnavailable + "Environment variables are not fully configured by Kubernetes.");
   }
 
   auto const tenantId = TenantIdResolver::Resolve(
