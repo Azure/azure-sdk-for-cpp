@@ -112,7 +112,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     try
     {
       m_messageSender->Open(context);
+      m_messageSenderOpen = true;
       m_messageReceiver->Open(context);
+      m_messageReceiverOpen = true;
     }
     catch (std::runtime_error const& e)
     {

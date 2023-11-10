@@ -43,7 +43,7 @@ The inner loop gets called for every paged result and doesn't do I/O.
 
 Below is an example of listing all blobs in a blob container.
 
-```C++
+```cpp
 for (auto page = blobContainerClient.ListBlobs(); page.HasPage(); page.MoveToNextPage()) {
   for (auto& blob : page.Blobs) {
     std::cout << blob.Name << std::endl;
@@ -53,7 +53,7 @@ for (auto page = blobContainerClient.ListBlobs(); page.HasPage(); page.MoveToNex
 
 Sometimes a paged result may contain multiple collections and you may want to iterate over all of them.
 
-```C++
+```cpp
 for (auto page = directoryClient.ListFilesAndDirectories(); page.HasPage(); page.MoveToNextPage())
 {
   for (const auto& d : page.Directories)
@@ -72,7 +72,7 @@ for (auto page = directoryClient.ListFilesAndDirectories(); page.HasPage(); page
 Yes, each client options takes an `ApiVersion` as an optional parameter, with which you can specify an API-version used for all the HTTP requests from this client.
 Clients spawned from another client instance will inherit the settings.
 
-```C++
+```cpp
 // serviceClient sends HTTP requests with default API-version, which will change as version evolves.
 auto serviceClient = BlobServiceClient::CreateFromConnectionString(GetConnectionString());
 
@@ -94,7 +94,7 @@ Furthermore, this scenario is not covered by testing, although most of the APIs 
 
 We recommend you set an application ID with the code below, so that it can be identified from which application, SDK, and platform the request was sent. The information could be useful for troubleshooting and telemetry purposes.
 
-```C++
+```cpp
 BlobClientOptions clientOptions;
 clientOptions.Telemetry.ApplicationId = "SomeApplication v1.2.3";
 
@@ -109,7 +109,7 @@ This applies to both input variables and output.
 If your code runs in an environment where the default locale and encoding is not UTF-8, you should encode before passing variables into the SDK and decode variables returned from the SDK.
 
 In the code snippet below, we'd like to create a blob named <code>ol&#225;</code>.
-```C++
+```cpp
 // If the blob client is created from a container client, the blob name should be UTF-8 encoded.
 auto blobClient = containerClient.GetBlobClient("ol\xC3\xA1");
 // If the blob client is built from URL, it should be URL-encoded
@@ -130,7 +130,7 @@ for (auto page = blobContainerClient.ListBlobs(); page.HasPage(); page.MoveToNex
 
 You can check whether a blob exists or not by writing a convenience method on top of getting blob properties, as follows:
 
-```C++
+```cpp
 bool BlobExists(const Azure::Storage::Blobs::BlobClient& client) {
   try {
     client.GetProperties();
@@ -152,7 +152,7 @@ In this case, it's more recommended to:
 
 1. Use `CreateIfNotExists()`, `DeleteIfExists()` functions whenever possible. These functions internally use access conditions and can help you catch unexpected exceptions caused by resending PUT/DELETE requests on network errors.
 1. Use access conditions for other operations. The code below only sends one HTTP request, check-and-write is performed atomically. It only succeeds if the blob doesn't exist.
-   ```C++
+   ```cpp
    UploadBlockBlobOptions options;
    options.AccessConditions.IfNoneMatch = Azure::ETag::Any();
    blobClient.Upload(stream, options);
@@ -174,7 +174,7 @@ This one is suitable in most cases. You can expect higher throughput because the
 
 Unfortunately, this SDK doesn't provide a convenient way to upload many blobs or directory contents (files and sub-directories) with just one function call.
 You have to create multiple threads, traverse the directories by yourself and upload blobs one by one in each thread to speed up the transfer. Below is a skeleton example.
-```C++
+```cpp
 const std::vector<std::string> paths; // Files to be uploaded
 std::atomic<size_t> curr{0};
 auto upload_func = [&]() {
@@ -224,7 +224,7 @@ Make sure you calculate the checksum as early as possible so that potential corr
 This functionality also works for download operations.
 Below is a code sample to use this feature.
 
-```C++
+```cpp
 // upload data with pre-calculated checksum
 Blobs::UploadBlockBlobOptions options;
 auto checksum = ContentHash();
@@ -296,11 +296,9 @@ Below is an example of adding a custom header into each HTTP request.
 The header value is static and doesn't change over time, so we make it a per-operation policy.
 If you want to add some time-variant headers like authentication, you should use a per-retry policy.
 
-```C++
+```cpp
 class NewPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
 public:
-  ~NewPolicy() override {}
-
   std::unique_ptr<HttpPolicy> Clone() const override
   {
     return std::make_unique<NewPolicy>(*this);
@@ -326,7 +324,7 @@ options.PerRetryPolicies.push_back(std::make_unique<NewPolicy>());
 Requests failed due to network errors or HTTP status code 408, 500, 502, 503, 504 will be retried at most 3 times (4 attempts in total) using exponential backoff with jitter.
 These parameters can be customized with `RetryOptions`. Below is an example.
 
-```C++
+```cpp
 BlobClientOptions options;
 options.Retry.RetryDelay = std::chrono::milliseconds(800);
 options.Retry.MaxRetryDelay = std::chrono::seconds(60);
@@ -346,7 +344,7 @@ Here are a few things you can do to minimize the impact of this kind of error.
 1. Increase the retry count.
 1. Identify the throttling type and reduce the traffic sent from client side.
    You can check the exception thrown from storage function calls with the below code. The error message will indicate which scalability target was exceeded.
-   ```C++
+   ```cpp
    try
    {
      // storage function goes here
@@ -383,7 +381,7 @@ If you're using SAS authentication, you should:
 1. SAS token has its own scope, for example it may be scoped to a storage account, a container or a blob/file. Make sure you don't access a resource out of the SAS token's scope.
 1. Check the message in the exception.
    You could print the information in the exception with the code below.
-   ```C++
+   ```cpp
    try
    {
      // storage function goes here

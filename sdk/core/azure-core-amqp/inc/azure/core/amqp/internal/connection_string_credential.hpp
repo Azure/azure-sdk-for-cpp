@@ -24,6 +24,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     {
       ParseConnectionString(connectionString);
     }
+    ConnectionStringParser(const ConnectionStringParser&) = default;
+    ConnectionStringParser& operator=(const ConnectionStringParser&) = default;
+    ConnectionStringParser(ConnectionStringParser&&) = default;
+    ConnectionStringParser& operator=(ConnectionStringParser&&) = default;
     ~ConnectionStringParser() = default;
 
     std::string const& GetEndpoint() const { return m_endpoint; }
@@ -40,7 +44,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::string m_sharedAccessKey;
     std::string m_uri;
     std::string m_hostName;
-    uint16_t m_port;
+    uint16_t m_port{};
     std::string m_entityPath;
   };
 

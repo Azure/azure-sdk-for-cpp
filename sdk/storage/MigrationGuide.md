@@ -64,7 +64,7 @@ v12
 
 A `TokenCredential` abstract class (different API surface than v7.5) exists in the [Azure Core](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core) package that all libraries of the new Azure SDK family depend on, and can be used to construct Storage clients. Implementations of this class can be found separately in the [Azure Identity](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity) package.
 
-```C++
+```cpp
 BlobServiceClient serviceClient(serviceUrl, std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret));
 ```
 
@@ -76,11 +76,11 @@ v7.5
 
 In general, SAS tokens can be provided on their own to be applied as needed, or as a complete, self-authenticating URL. The legacy library allowed providing a SAS through `storage_credentials` as well as constructing with a complete URL.
 
-```C++
+```cpp
 cloud_blob_client blob_client(storage_uri(blob_url), storage_credentials(sas_token));
 ```
 
-```C++
+```cpp
 cloud_blob_client blob_client(storage_uri(blob_url_with_sas));
 ```
 
@@ -88,7 +88,7 @@ v12
 
 The new library only supports constructing a client with a fully constructed SAS URI. Note that since client URIs are immutable once created, a new client instance with a new SAS must be created in order to rotate a SAS.
 
-```C++
+```cpp
 BlobClient blobClient(blobUrlWithSas);
 ```
 
@@ -98,19 +98,19 @@ The following code assumes you have acquired your connection string (you can do 
 
 v7.5
 
-```C++
+```cpp
 cloud_storage_account storage_account = cloud_storage_account::parse(storage_connection_string);
 cloud_blob_client service_client = storage_account.create_cloud_blob_client();
 ```
 
 v12
-```C++
+```cpp
 BlobServiceClient serviceClient = BlobServiceClient::CreateFromConnectionString(connectionString);
 ```
 
 You can also directly get a blob client with your connection string, instead of going through a service and container client to get to your desired blob. You just need to provide the container and blob names alongside the connection string.
 
-```C++
+```cpp
 BlobClient blobClient = BlobClient::CreateFromConnectionString(connectionString, containerName, blobName);
 ```
 
@@ -121,12 +121,12 @@ Shared key authentication requires the URI to the storage endpoint, the storage 
 Note that the URI to your storage account can generally be derived from the account name (though some exceptions exist), and so you can track only the account name and key. These examples will assume that is the case, though you can substitute your specific account URI if you do not follow this pattern.
 
 v7.5
-```C++
+```cpp
 cloud_blob_client blob_client(storage_uri(blob_service_url), storage_credentials(account_name, account_key));
 ```
 
 v12
-```C++
+```cpp
 auto credential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
 BlobServiceClient serviceClient(blobServiceUrl, credential);
 ```
@@ -169,20 +169,20 @@ The following table lists v7.5 classes and their v12 equivalents for quick refer
 ### Creating a Container
 
 v7.5
-```C++
+```cpp
 auto container_client = service_client.get_container_reference(container_name);
 container_client.create();
 ```
 
 v12
-```C++
+```cpp
 auto containerClient = serviceClient.GetBlobContainerClient(containerName);
 containerClient.Create();
 ```
 
 Or you can use the `BlobServiceClient.CreateBlobContainer()` method.
 
-```C++
+```cpp
 serviceClient.CreateBlobContainer(containerName);
 ```
 
@@ -191,13 +191,13 @@ serviceClient.CreateBlobContainer(containerName);
 #### Uploading from a file
 
 v7.5
-```C++
+```cpp
 cloud_block_blob block_blob_client = container_client.get_block_blob_reference(blob_name);
 block_blob_client.upload_from_file(local_file_path);
 ```
 
 v12
-```C++
+```cpp
 BlockBlobClient blockBlobClient = containerClient.GetBlockBlobClient(blobName);
 blockBlobClient.UploadFrom(localFilePath);
 ```
@@ -205,24 +205,24 @@ blockBlobClient.UploadFrom(localFilePath);
 #### Uploading from a stream
 
 v7.5
-```C++
+```cpp
 block_blob_client.upload_from_stream(stream);
 ```
 
 v12
-```C++
+```cpp
 blockBlobClient.Upload(stream);
 ```
 
 #### Uploading text
 
 v7.5
-```C++
+```cpp
 block_blob_client.upload_text("Hello Azure!");
 ```
 
 v12
-```C++
+```cpp
 uint8_t text[] = "Hello Azure!";
 blockBlobClient.UploadFrom(text, sizeof(text) - 1);
 ```
@@ -232,13 +232,13 @@ blockBlobClient.UploadFrom(text, sizeof(text) - 1);
 #### Downloading to a file
 
 v7.5
-```C++
+```cpp
 auto blob_client = container_client.get_blob_reference(blob_name);
 blob_client.download_to_file(local_file_path);
 ```
 
 v12
-```C++
+```cpp
 auto blobClient = containerClient.GetBlobClient(blobName);
 blobClient.DownloadTo(localFilePath);
 ```
@@ -246,12 +246,12 @@ blobClient.DownloadTo(localFilePath);
 #### Downloading to a stream
 
 v7.5
-```C++
+```cpp
 blob_client.download_to_stream(stream);
 ```
 
 v12
-```C++
+```cpp
 auto response = blobClient.Download();
 BodyStream& stream = *response.Value.BodyStream;
 ```
@@ -259,12 +259,12 @@ BodyStream& stream = *response.Value.BodyStream;
 #### Downloading text
 
 v7.5
-```C++
+```cpp
 auto text = blob_client.download_text();
 ```
 
 v12
-```C++
+```cpp
 auto response = blobClient.Download();
 std::vector<uint8_t> blobContent = response.Value.BodyStream->ReadToEnd();
 std::string text(blobContent.begin(), blobContent.end());
@@ -275,7 +275,7 @@ std::string text(blobContent.begin(), blobContent.end());
 #### Flat Listing
 
 v7.5
-```C++
+```cpp
 for (auto iter = container_client.list_blobs(); iter != list_blob_item_iterator(); ++iter) {
     if (iter->is_blob()) {
         auto blob_client = iter->as_blob();
@@ -284,7 +284,7 @@ for (auto iter = container_client.list_blobs(); iter != list_blob_item_iterator(
 ```
 
 v12
-```C++
+```cpp
 for (auto blobPage = containerClient.ListBlobs(); blobPage.HasPage(); blobPage.MoveToNextPage()) {
     for (auto& blob : blobPage.Blobs) {
 
@@ -300,7 +300,7 @@ v7.5
 
 `list_blobs()` and `list_blobs_segmented()` that were used in a flat listing contain overloads with a boolean parameter `use_flat_blob_listing`, which results in a flat listing when `true`. Provide `false` to perform a hierarchical listing.
 
-```C++
+```cpp
 for (auto iter = container_client.list_blobs(prefix, false, blob_listing_details::none, 0, blob_request_options, operation_context)) {
     if (iter->is_blob()) {
         auto blob_client = iter->as_blob();
@@ -315,7 +315,7 @@ v12
 
 v12 has explicit methods for listing by hierarchy.
 
-```C++
+```cpp
 for (auto blobPage = containerClient.ListBlobsByHierarchy("/"); blobPage.HasPage(); blobPage.MoveToNextPage()) {
     for (auto& blob : blobPage.Blobs) {
 
@@ -336,7 +336,7 @@ v7.5 samples:
 
 The legacy SDK maintained a metadata cache, allowing you to modify metadata on the `cloud_blob` and invoke `upload_metadata()`. Calling `download_attributes()` beforehand refreshed the metadata cache to avoid undoing recent changes.
 
-```C++
+```cpp
 blob_client.download_attributes();
 blob_client.metadata()["foo"] = "bar";
 blob_client.upload_metadata();
@@ -344,7 +344,7 @@ blob_client.upload_metadata();
 
 The legacy SDK maintained internal state for blob content uploads. Calling `download_attributes()` beforehand refreshed the metadata cache to avoid undoing recent changes.
 
-```C++
+```cpp
 // download blob content. blob metadata is fetched and cached on download
 blob_client.download_to_file(local_file_path);
 
@@ -358,7 +358,7 @@ v12 samples:
 
 The modern SDK requires you to hold onto metadata and update it appropriately before sending off. You cannot just add a new key-value pair, you must update the collection and send the collection.
 
-```C++
+```cpp
 auto metadata = blobClient.GetProperties().Value.Metadata;
 metadata["foo"] = "bar";
 blobClient.SetMetadata(metadata);
@@ -366,7 +366,7 @@ blobClient.SetMetadata(metadata);
 
 Additionally with blob content edits, if your blobs have metadata you need to get the metadata and re-upload with that metadata, telling the service what metadata goes with this new blob state.
 
-```C++
+```cpp
 // download blob content and metadata
 auto response = blobClient.DownloadTo(localFilePath);
 auto metadata = response.Value.Metadata;
@@ -387,7 +387,7 @@ blobClient.UploadFrom(localFilePath, uploadOptions);
 v7.5 calculated blob content MD5 for validation on download by default, assuming there was a stored MD5 in the blob properties. Calculation and storage on upload was opt-in. Note that this value is not generated or validated by the service, and is only retained for the client to validate against.
 
 v7.5
-```C++
+```cpp
 blob_request_options options;
 options.set_store_blob_content_md5(false);  // true to calculate content MD5 on upload and store property
 options.set_disable_content_md5_validation(false);  // true to disable download content validation
@@ -396,7 +396,7 @@ options.set_disable_content_md5_validation(false);  // true to disable download 
 v12 does not have an automated mechanism for blob content validation. It must be done per-request by the user.
 
 v12
-```C++
+```cpp
 // upload with blob content hash property
 UploadBlockBlobOptions uploadOptions;
 uploadOptions.HttpHeaders.ContentHash.Algorithm = HashAlgorithm::Md5;
@@ -419,7 +419,7 @@ v7.5 provided transactional hashing on uploads and downloads through opt-in requ
 
 v7.5
 
-```C++
+```cpp
 blob_request_options options;
 options.set_use_transactional_md5(false);  // true to use MD5 on all blob content transactions.
 options.set_use_transactional_crc64(false);  // true to use CRC64 on all blob content transactions.
@@ -427,7 +427,7 @@ options.set_use_transactional_crc64(false);  // true to use CRC64 on all blob co
 
 v12 does not currently provide this functionality. Users who manage their own individual upload and download HTTP requests can provide a precalculated MD5 on upload and access the MD5 in the response object. v12 currently offers no API to request a transactional CRC64.
 
-```C++
+```cpp
 // upload a block with transactional hash calculated by user
 StageBlockOptions stageBlockOptions;
 stageBlockOptions.TransactionalContentHash = ContentHash();
@@ -454,13 +454,13 @@ auto hashValue = response.Value.Details.HttpHeaders.ContentHash.Value;
 #### Retry policy
 
 v7.5
-```C++
+```cpp
 blob_request_options options;
 options.set_retry_policy(exponential_retry_policy(delta_backoff, max_attempts));
 ```
 
 v12
-```C++
+```cpp
 Blobs::BlobClientOptions options;
 // The only supported mode is exponential.
 options.Retry.RetryDelay = std::chrono::milliseconds(delta_backoff);
@@ -472,7 +472,7 @@ options.Retry.MaxRetries = maxAttempts;
 Unfortunately, we don't support asynchronous interface in v12 SDK. You could wrap synchronous functions into asynchronous with some async framework like `std::async`. But note that I/O operations are still performed synchronously under the hood. There's no performance gain with this method.
 
 v7.5
-```C++
+```cpp
 auto task = blob_client.download_text_async().then([](utility::string_t blob_content) {
   std::wcout << "blob content:" << blob_content << std::endl;
 });
@@ -481,7 +481,7 @@ task.wait();
 ```
 
 v12
-```C++
+```cpp
 auto task = std::async([blobClient]() {
   auto response = blobClient.Download();
   std::vector<uint8_t> blobContent = response.Value.BodyStream->ReadToEnd();

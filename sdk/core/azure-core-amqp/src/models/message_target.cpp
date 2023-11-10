@@ -3,6 +3,8 @@
 
 #include "azure/core/amqp/internal/models/message_target.hpp"
 
+#include <azure/core/internal/diagnostics/log.hpp>
+
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
@@ -15,6 +17,9 @@
 
 #include <iostream>
 
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
+
 namespace Azure { namespace Core { namespace _internal {
   void UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(TARGET_HANDLE value)
   {
@@ -23,19 +28,18 @@ namespace Azure { namespace Core { namespace _internal {
 }}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+  extern const char* StringFromTerminusDurability(TerminusDurability);
 
-  //  MessageTarget::MessageTarget(TARGET_HANDLE handle) : m_target{handle} {}
-
-  MessageTarget::MessageTarget(Models::AmqpValue const& source)
+  MessageTarget::MessageTarget(Models::AmqpValue const& target)
   {
-    if (source.IsNull())
+    if (target.IsNull())
     {
-      throw std::invalid_argument("source cannot be null");
+      throw std::invalid_argument("target cannot be null");
     }
     TARGET_HANDLE targetHandle;
-    if (amqpvalue_get_target(source, &targetHandle))
+    if (amqpvalue_get_target(target, &targetHandle))
     {
-      throw std::runtime_error("Could not retrieve source from value.");
+      throw std::runtime_error("Could not retrieve target from value.");
     }
     m_target.reset(targetHandle);
   }
@@ -69,7 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTarget& MessageTarget::operator=(MessageTarget const& that)
   {
-    m_target.reset(target_clone(that.m_target.get()));
+    m_target.reset(target_clone(that));
     return *this;
   }
 
@@ -151,8 +155,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.DynamicNodeProperties.empty())
     {
       if (target_set_dynamic_node_properties(
-              m_target.get(),
-              static_cast<_detail::UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
+              m_target.get(), options.DynamicNodeProperties.AsAmqpValue()))
       {
         throw std::runtime_error("Could not set dynamic node properties.");
       }
@@ -160,9 +163,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     if (!options.Capabilities.empty())
     {
-      if (target_set_capabilities(
-              m_target.get(),
-              static_cast<_detail::UniqueAmqpValueHandle>(options.Capabilities).get()))
+      if (target_set_capabilities(m_target.get(), options.Capabilities.AsAmqpValue()))
       {
         throw std::runtime_error("Could not set capabilities.");
       }
@@ -172,7 +173,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   // Convert the MessageSource into a Value.
   Models::AmqpValue MessageTarget::AsAmqpValue() const
   {
-    return amqpvalue_create_target(m_target.get());
+    Models::_detail::UniqueAmqpValueHandle targetValue{amqpvalue_create_target(m_target.get())};
+    return targetValue;
   }
 
   Models::AmqpValue MessageTarget::GetAddress() const
@@ -182,7 +184,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not retrieve address from source.");
     }
-    return address;
+    // target_get_address does not reference the underlying address so we need to addref it here so
+    // it gets freed properly.
+    return Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(address)};
   }
 
   TerminusDurability MessageTarget::GetTerminusDurability() const
@@ -254,11 +258,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Models::AmqpMap MessageTarget::GetDynamicNodeProperties() const
   {
     AMQP_VALUE value;
+    // Note: target_get_dynamic_node_properties does NOT reference the value.
     if (target_get_dynamic_node_properties(m_target.get(), &value))
     {
       throw std::runtime_error("Could not get dynamic.");
     }
-    return AmqpValue{value}.AsMap();
+    // We clone the value before converting it to a UniqueAmqpValueHandle because the destructor for
+    // UniqueAmqpValueHandle will remove the reference.
+    return AmqpValue{Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(value)}}.AsMap();
   }
 
   Models::AmqpArray MessageTarget::GetCapabilities() const
@@ -270,8 +277,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-
-  extern const char* StringFromTerminusDurability(TerminusDurability);
 
   std::ostream& operator<<(std::ostream& os, MessageTarget const& target)
   {

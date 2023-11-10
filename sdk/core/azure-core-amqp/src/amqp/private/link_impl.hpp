@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
@@ -17,7 +18,8 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  class LinkImpl final : public std::enable_shared_from_this<LinkImpl> {
+  class LinkImpl final : public std::enable_shared_from_this<LinkImpl>,
+                         public Common::_detail::Pollable {
 
     using OnLinkDetachEvent = std::function<void(Models::_internal::AmqpError)>;
 
@@ -96,5 +98,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE m_linkSubscriptionHandle{};
 
     static void OnLinkDetachEventFn(void* context, ERROR_HANDLE error);
+
+    // Inherited via Pollable
+    void Poll() override;
   };
 }}}} // namespace Azure::Core::Amqp::_detail

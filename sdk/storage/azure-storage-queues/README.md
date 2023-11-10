@@ -72,7 +72,7 @@ Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for
 
 ### Send messages
 
-```C++
+```cpp
 const std::string connectionString = "<connection_string>";
 const std::string queueName = "sample-queue";
 
@@ -86,7 +86,7 @@ queueClient.EnqueueMessage("Hello, Azure2!");
 queueClient.EnqueueMessage("Hello, Azure3!");
 ```
 ### Receive messages
-```C++
+```cpp
 ReceiveMessagesOptions receiveOptions;
 receiveOptions.MaxMessages = 3;
 auto receiveMessagesResult = queueClient.ReceiveMessages(receiveOptions).Value;
@@ -103,7 +103,7 @@ All Azure Storage Queue  service operations will throw a [StorageException](http
 on failure with helpful [ErrorCode](https://learn.microsoft.com/rest/api/storageservices/queue-service-error-codes)s.
 Many of these errors are recoverable.
 
-```C++
+```cpp
 try
 {
   queueClient.Delete();

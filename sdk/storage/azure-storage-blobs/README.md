@@ -82,7 +82,7 @@ Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for
 
 ### Uploading a blob
 
-```C++
+```cpp
 const std::string connectionString = "<connection_string>";
 const std::string containerName = "sample-container";
 const std::string blobName = "sample-blob";
@@ -99,7 +99,7 @@ blobClinet.UploadFrom(bufferPtr, bufferLength);
 
 ### Downloading a blob
 
-```C++
+```cpp
 // download to local file
 blobClient.DownloadTo(localFilePath);
 // or download to memory buffer
@@ -108,7 +108,7 @@ blobClinet.DownloadTo(bufferPtr, bufferLength);
 
 ### Enumerating blobs
 
-```C++
+```cpp
 for (auto blobPage = containerClient.ListBlobs(); blobPage.HasPage(); blobPage.MoveToNextPage()) {
   for (auto& blob : blobPage.Blobs) {
     // Below is what you want to do with each blob
@@ -123,7 +123,7 @@ All Blob service operations will throw a [StorageException](https://github.com/A
 on failure with helpful [ErrorCode](https://learn.microsoft.com/rest/api/storageservices/blob-service-error-codes)s.
 Many of these errors are recoverable.
 
-```C++
+```cpp
 try
 {
   containerClient.Delete();

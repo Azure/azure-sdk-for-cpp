@@ -111,7 +111,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       ProcessorOptions processorOptions;
       processorOptions.LoadBalancingStrategy = processorStrategy;
       processorOptions.UpdateInterval = std::chrono::milliseconds(1000);
-      processorOptions.Prefetch = 1500; // Set the initial link credits to 1500.
 
       Processor processor{consumerClient, checkpointStore, processorOptions};
 
@@ -594,17 +593,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processor.Stop();
   }
 
-// The processor balanced and greedy tests fail when run on Linux or Mac. The tests run fine on
-// Windows. For now, disable the tests on Linux and Mac.
+  // The processor balanced and greedy tests fail when run on Linux or Mac. The tests run fine on
+  // Windows. For now, disable the tests on Linux and Mac.
 #if !defined(AZ_PLATFORM_LINUX) && !defined(AZ_PLATFORM_MAC)
-      TEST_F(ProcessorTest, Processor_Balanced_LIVEONLY_)
-      {
-        TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
-      }
-      TEST_F(ProcessorTest, Processor_Greedy_LIVEONLY_)
-      {
-        TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyGreedy);
-      }
+  TEST_F(ProcessorTest, Processor_Balanced_LIVEONLY_)
+  {
+    TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
+  }
+  TEST_F(ProcessorTest, Processor_Greedy_LIVEONLY_)
+  {
+    TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyGreedy);
+  }
 #endif
 #if 0
   TEST_F(ProcessorTest, Processor_Balanced_AcquisitionOnly_LIVEONLY_)

@@ -22,10 +22,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    * the AsyncOperationQueue. WaitForResult will block until a result is available.
    */
   template <typename... T> class AsyncOperationQueue final {
-
   public:
     AsyncOperationQueue() = default;
     ~AsyncOperationQueue() = default;
+
+    AsyncOperationQueue(const AsyncOperationQueue&) = delete;
+    AsyncOperationQueue& operator=(const AsyncOperationQueue&) = delete;
+
+    AsyncOperationQueue(AsyncOperationQueue&&) = default;
+    AsyncOperationQueue& operator=(AsyncOperationQueue&&) = default;
 
     void CompleteOperation(T... operationParameters)
     {

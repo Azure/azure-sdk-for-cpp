@@ -4,10 +4,13 @@
 
 ### Features Added
 
+- When one of the credentials within `DefaultAzureCredential` is successful, it gets re-used during all subsequent attempts to get the token.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Harden checks for the tenant ID.
 - Disallow space character when validating tenant id and scopes as input for `AzureCliCredential`.
 
 ### Other Changes
