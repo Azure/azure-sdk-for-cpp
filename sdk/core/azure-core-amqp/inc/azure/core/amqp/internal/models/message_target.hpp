@@ -18,8 +18,11 @@ namespace Azure { namespace Core { namespace _internal {
   };
 }}} // namespace Azure::Core::_internal
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   struct MessageTargetOptions final
   {
@@ -148,7 +151,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-    UniqueMessageTargetHandle m_target;
+    _detail::UniqueMessageTargetHandle m_target;
 
     operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
 

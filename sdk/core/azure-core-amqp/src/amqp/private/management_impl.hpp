@@ -110,7 +110,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ManagementOperationStatus,
         std::uint32_t,
         Models::_internal::AmqpError,
-        Models::AmqpMessage>
+        std::shared_ptr<Models::AmqpMessage>>
         m_messageQueue;
 
     // Inherited via MessageSenderEvents
@@ -127,7 +127,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::MessageReceiverState oldState) override;
     virtual Models::AmqpValue OnMessageReceived(
         _internal::MessageReceiver const& receiver,
-        Models::AmqpMessage const& message) override;
+        std::shared_ptr<Models::AmqpMessage> const& message) override;
     virtual void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) override;
   };
 }}}} // namespace Azure::Core::Amqp::_detail

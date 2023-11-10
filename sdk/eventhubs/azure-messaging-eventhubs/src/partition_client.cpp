@@ -187,15 +187,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     while (messages.size() < maxMessages && !context.IsCancelled())
     {
       std::pair<
-          Azure::Nullable<Azure::Core::Amqp::Models::AmqpMessage>,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>,
           Azure::Core::Amqp::Models::_internal::AmqpError>
           result;
 
       // TryPeekForIncomingMessage will return two empty values if there is no data available.
       result = m_receiver.TryWaitForIncomingMessage();
-      if (result.first.HasValue())
+      if (result.first)
       {
-        messages.push_back(Models::ReceivedEventData{result.first.Value()});
+        messages.push_back(Models::ReceivedEventData{result.first});
       }
       else if (result.second)
       {
@@ -209,11 +209,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       else
       {
         result = m_receiver.WaitForIncomingMessage(context);
-        if (result.first.HasValue())
+        if (result.first)
         {
           Log::Stream(Logger::Level::Verbose)
               << "Received message. Message count now " << messages.size();
-          messages.push_back(Models::ReceivedEventData{result.first.Value()});
+          messages.push_back(Models::ReceivedEventData{result.first});
         }
         else
         {
@@ -237,7 +237,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
   Azure::Core::Amqp::Models::AmqpValue PartitionClient::OnMessageReceived(
       Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-      Azure::Core::Amqp::Models::AmqpMessage const& message)
+      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message)
   {
     (void)receiver;
     (void)message;

@@ -269,7 +269,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Failed to set max frame size.");
     }
-    if (connection_set_properties(m_connection.get(), m_options.Properties.AsAmqpValue()))
+    if (connection_set_properties(
+            m_connection.get(),
+            Models::_detail::AmqpValueFactory::ToUamqp(m_options.Properties.AsAmqpValue())))
     {
       throw std::runtime_error("Failed to set connection properties.");
     }
@@ -509,7 +511,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               m_connection.get(),
               (condition.empty() ? nullptr : condition.c_str()),
               (description.empty() ? nullptr : description.c_str()),
-              info))
+              Models::_detail::AmqpValueFactory::ToUamqp(info)))
       {
         throw std::runtime_error("Could not close connection.");
       }
@@ -522,7 +524,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t maxSize;
     if (connection_get_max_frame_size(m_connection.get(), &maxSize))
     {
-      throw std::runtime_error("COuld not get max frame size.");
+      throw std::runtime_error("Could not get max frame size.");
     }
     return maxSize;
   }
@@ -532,7 +534,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint16_t maxChannel;
     if (connection_get_channel_max(m_connection.get(), &maxChannel))
     {
-      throw std::runtime_error("COuld not get channel max.");
+      throw std::runtime_error("Could not get channel max.");
     }
     return maxChannel;
   }
@@ -552,9 +554,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     AMQP_VALUE value;
     if (connection_get_properties(m_connection.get(), &value))
     {
-      throw std::runtime_error("COuld not get properties.");
+      throw std::runtime_error("Could not get properties.");
     }
-    return Models::AmqpValue{Models::_detail::UniqueAmqpValueHandle{value}}.AsMap();
+    return Models::_detail::AmqpValueFactory::FromUamqp(
+               Models::_detail::UniqueAmqpValueHandle{value})
+        .AsMap();
   }
 
   uint32_t ConnectionImpl::GetRemoteMaxFrameSize() const

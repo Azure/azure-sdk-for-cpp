@@ -143,7 +143,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         Models::AmqpValue OnMessageReceived(
             Azure::Core::Amqp::_internal::MessageReceiver const&,
-            Models::AmqpMessage const&) override
+            std::shared_ptr<Models::AmqpMessage> const&) override
         {
           return Models::AmqpValue();
         }
@@ -528,11 +528,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       server.ShouldSendMessage(true);
       auto message = receiver.WaitForIncomingMessage();
       GTEST_LOG_(INFO) << "Received message.";
-      ASSERT_TRUE(message.first.HasValue());
+      ASSERT_TRUE(message.first);
       ASSERT_FALSE(message.second);
       EXPECT_EQ(
-          static_cast<std::string>(message.first.Value().GetBodyAsAmqpValue()),
-          "This is a message body.");
+          static_cast<std::string>(message.first->GetBodyAsAmqpValue()), "This is a message body.");
     }
 
     {
@@ -545,7 +544,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     {
       auto result = receiver.TryWaitForIncomingMessage();
-      EXPECT_FALSE(result.first.HasValue());
+      EXPECT_FALSE(result.first);
     }
 
     {
@@ -554,7 +553,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::this_thread::sleep_for(std::chrono::milliseconds(5000));
       GTEST_LOG_(INFO) << "Message should have been sent and processed.";
       auto result = receiver.TryWaitForIncomingMessage();
-      EXPECT_TRUE(result.first.HasValue());
+      EXPECT_TRUE(result.first);
     }
     receiver.Close();
     server.StopListening();
@@ -644,12 +643,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       // Tell the server it should send a message in the polling loop.
       server.ShouldSendMessage(true);
       GTEST_LOG_(INFO) << "Waiting for message to be received.";
-      std::pair<Azure::Nullable<Azure::Core::Amqp::Models::AmqpMessage>, bool> response;
+      std::pair<std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>, bool> response;
       ASSERT_NO_THROW(response = receiver.WaitForIncomingMessage(receiveContext));
-      ASSERT_TRUE(response.first.HasValue());
+      ASSERT_TRUE(response.first);
       ASSERT_FALSE(response.second);
       EXPECT_EQ(
-          static_cast<std::string>(response.first.Value().GetBodyAsAmqpValue()),
+          static_cast<std::string>(response.first->GetBodyAsAmqpValue()),
           "This is a message body.");
     }
 
@@ -732,7 +731,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     {
       auto result = receiver.TryWaitForIncomingMessage();
-      EXPECT_FALSE(result.first.HasValue());
+      EXPECT_FALSE(result.first);
     }
 
     {
@@ -741,7 +740,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
       GTEST_LOG_(INFO) << "Message should have been sent and processed.";
       auto result = receiver.TryWaitForIncomingMessage();
-      EXPECT_TRUE(result.first.HasValue());
+      EXPECT_TRUE(result.first);
     }
     receiver.Close();
     server.StopListening();

@@ -177,7 +177,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       rv.Status = _internal::ManagementOperationStatus::Error;
       rv.StatusCode = 500;
       rv.Error = std::get<1>(sendResult);
-      rv.Message = Models::AmqpMessage{};
+      rv.Message = nullptr;
       return rv;
     }
     auto result = m_messageQueue.WaitForResult(context);
@@ -451,37 +451,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // Complete any outstanding receives with an error.
     m_messageQueue.CompleteOperation(
-        _internal::ManagementOperationStatus::Error, 500, error, Models::AmqpMessage());
+        _internal::ManagementOperationStatus::Error, 500, error, nullptr);
 
     return Models::_internal::Messaging::DeliveryRejected(condition, description, {});
   }
 
   Models::AmqpValue ManagementClientImpl::OnMessageReceived(
       _internal::MessageReceiver const&,
-      Models::AmqpMessage const& message)
+      std::shared_ptr<Models::AmqpMessage> const& message)
   {
-    if (message.ApplicationProperties.empty())
+    if (message->ApplicationProperties.empty())
     {
       return IndicateError(
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message does not have application properties.");
     }
-    if (!message.Properties.CorrelationId.HasValue())
+    if (!message->Properties.CorrelationId.HasValue())
     {
       return IndicateError(
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID not found.");
     }
-    else if (message.Properties.CorrelationId.Value().GetType() != Models::AmqpValueType::Ulong)
+    else if (message->Properties.CorrelationId.Value().GetType() != Models::AmqpValueType::Ulong)
     {
       return IndicateError(
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID is not a ulong.");
     }
-    uint64_t correlationId = message.Properties.CorrelationId.Value();
+    uint64_t correlationId = message->Properties.CorrelationId.Value();
 
-    auto statusCodeMap = message.ApplicationProperties.find(m_options.ExpectedStatusCodeKeyName);
-    if (statusCodeMap == message.ApplicationProperties.end())
+    auto statusCodeMap = message->ApplicationProperties.find(m_options.ExpectedStatusCodeKeyName);
+    if (statusCodeMap == message->ApplicationProperties.end())
     {
       return IndicateError(
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
@@ -498,9 +498,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // If the message has a status description, remember it.
     auto statusDescription
-        = message.ApplicationProperties.find(m_options.ExpectedStatusDescriptionKeyName);
+        = message->ApplicationProperties.find(m_options.ExpectedStatusDescriptionKeyName);
     std::string description;
-    if (statusDescription != message.ApplicationProperties.end())
+    if (statusDescription != message->ApplicationProperties.end())
     {
       if (statusDescription->second.GetType() != Models::AmqpValueType::String)
       {

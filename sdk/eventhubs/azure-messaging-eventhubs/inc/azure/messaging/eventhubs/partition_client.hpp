@@ -113,18 +113,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     PartitionClient(
         Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
         PartitionClientOptions options,
-        Azure::Core::Http::Policies::RetryOptions retryOptions);
+        Core::Http::Policies::RetryOptions retryOptions);
 
     std::string GetStartExpression(Models::StartPosition const& startPosition);
 
     virtual void OnMessageReceiverStateChanged(
-        Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-        Azure::Core::Amqp::_internal::MessageReceiverState newState,
-        Azure::Core::Amqp::_internal::MessageReceiverState oldState);
-    virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-        Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-        Azure::Core::Amqp::Models::AmqpMessage const& message);
+        Core::Amqp::_internal::MessageReceiver const& receiver,
+        Core::Amqp::_internal::MessageReceiverState newState,
+        Core::Amqp::_internal::MessageReceiverState oldState);
+    virtual Core::Amqp::Models::AmqpValue OnMessageReceived(
+        Core::Amqp::_internal::MessageReceiver const& receiver,
+        std::shared_ptr<Core::Amqp::Models::AmqpMessage> const& message);
     virtual void OnMessageReceiverDisconnected(
-        Azure::Core::Amqp::Models::_internal::AmqpError const& error);
+        Core::Amqp::Models::_internal::AmqpError const& error);
   };
 }}} // namespace Azure::Messaging::EventHubs

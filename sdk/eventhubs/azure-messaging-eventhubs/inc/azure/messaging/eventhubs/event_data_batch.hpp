@@ -116,7 +116,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @returns true if the message was added to the batch, false otherwise.
      */
-    bool TryAddMessage(Azure::Core::Amqp::Models::AmqpMessage const& message)
+    bool TryAddMessage(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
     {
       return TryAddAmqpMessage(message);
     }
@@ -146,7 +146,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const;
 
   private:
-    bool TryAddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message);
+    bool TryAddAmqpMessage(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const&message);
 
     size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {
@@ -161,11 +161,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     Azure::Core::Amqp::Models::AmqpMessage CreateBatchEnvelope(
-        Azure::Core::Amqp::Models::AmqpMessage const& message)
+        std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
     {
       // Create the batch envelope from the prototype message. This copies all the attributes
       // *except* the body attribute to the batch envelope.
-      Azure::Core::Amqp::Models::AmqpMessage batchEnvelope{message};
+      Azure::Core::Amqp::Models::AmqpMessage batchEnvelope{*message};
       batchEnvelope.BodyType = Azure::Core::Amqp::Models::MessageBodyType::None;
       batchEnvelope.MessageFormat = BatchedMessageFormat;
       return batchEnvelope;

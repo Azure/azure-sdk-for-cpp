@@ -20,9 +20,11 @@ namespace Azure { namespace Core { namespace _internal {
   };
 }}} // namespace Azure::Core::_internal
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueAmqpErrorHandle = Azure::Core::_internal::UniqueHandle<ERROR_INSTANCE_TAG>;
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   class AmqpErrorCondition final
       : public Azure::Core::_internal::ExtendableEnumeration<AmqpErrorCondition> {

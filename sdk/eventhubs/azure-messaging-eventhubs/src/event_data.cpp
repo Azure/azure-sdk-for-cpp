@@ -18,18 +18,18 @@ using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  EventData::EventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
+  EventData::EventData(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
       : // Promote the specific message properties into ReceivedEventData.
-        ContentType{message.Properties.ContentType},
-        CorrelationId{message.Properties.CorrelationId}, MessageId{message.Properties.MessageId},
-        Properties{message.ApplicationProperties}, m_message{message}
+        ContentType{message->Properties.ContentType},
+        CorrelationId{message->Properties.CorrelationId}, MessageId{message->Properties.MessageId},
+        Properties{message->ApplicationProperties}, m_message{message}
   {
     // If the message's body type is a single binary value, capture it in the
     // EventData.Body. Otherwise we can't express the message body as a single value, so
     // we'll leave EventData.Body as null.
-    if (message.BodyType == Azure::Core::Amqp::Models::MessageBodyType::Data)
+    if (message->BodyType == Azure::Core::Amqp::Models::MessageBodyType::Data)
     {
-      auto& binaryData = message.GetBodyAsBinary();
+      auto& binaryData = message->GetBodyAsBinary();
       if (binaryData.size() == 1)
       {
         Body = std::vector<uint8_t>(binaryData[0]);
@@ -37,13 +37,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     }
   }
 
-  ReceivedEventData::ReceivedEventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
+  ReceivedEventData::ReceivedEventData(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
       : EventData(message)
   {
     // Copy the message annotations into the ReceivedEventData.SystemProperties. There are 3
     // eventhubs specific annotations which are promoted in the ReceivedEventData, so promote them
     // as well.
-    for (auto const& item : message.MessageAnnotations)
+    for (auto const& item : message->MessageAnnotations)
     {
       // Ignore any annotations where the key isn't an Amqp Symbols.
       if ((item.first.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Symbol))
@@ -104,7 +104,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     }
   }
 
-  Azure::Core::Amqp::Models::AmqpMessage const EventData::GetRawAmqpMessage() const
+  std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> EventData::GetRawAmqpMessage() const
   {
     // If the underlying message is already populated, return it. This will typically happen when a
     // client attempts to send a raw AMQP message.
@@ -112,15 +112,15 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     {
       return m_message;
     }
-    Azure::Core::Amqp::Models::AmqpMessage rv;
-    rv.Properties.ContentType = ContentType;
-    rv.Properties.CorrelationId = CorrelationId;
-    rv.Properties.MessageId = MessageId;
+    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> rv;
+    rv->Properties.ContentType = ContentType;
+    rv->Properties.CorrelationId = CorrelationId;
+    rv->Properties.MessageId = MessageId;
 
-    rv.ApplicationProperties = Properties;
+    rv->ApplicationProperties = Properties;
     if (!Body.empty())
     {
-      rv.SetBody(Body);
+      rv->SetBody(Body);
     }
     return rv;
   }

@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /**
      * @brief The response message from the operation, if Status is ManagementOperationStatus::Ok.
      */
-    Models::AmqpMessage Message;
+    std::shared_ptr<Models::AmqpMessage> Message;
 
     /**
      * @brief The error code associated with the message, if Status is

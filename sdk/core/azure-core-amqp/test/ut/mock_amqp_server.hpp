@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> LinkSender;
         std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> LinkReceiver;
         Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-            std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage>>
+            std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>>
             MessageQueue;
         Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> MessageReceiverPresentQueue;
         Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> MessageSenderPresentQueue;
@@ -105,7 +105,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         return result != nullptr;
       }
 
-      std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage> TryWaitForMessage(
+      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> TryWaitForMessage(
           std::string const& nodeName)
       {
         // Poll for completion on both the mock server and the connection, that ensures that
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
       }
 
-      std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage> WaitForMessage(
+      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> WaitForMessage(
           std::string const& nodeName)
       {
         // Poll for completion on both the mock server and the connection, that ensures that
@@ -145,7 +145,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       virtual void MessageReceived(
           std::string const&,
           MessageLinkComponents const&,
-          Azure::Core::Amqp::Models::AmqpMessage const&) const {};
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const&) const {};
 
       virtual void MessageLoop(
           std::string const& nodeName,
@@ -155,13 +155,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         if (message)
         {
           GTEST_LOG_(INFO) << "Received message: " << *message;
-          if (nodeName == "$cbs" && IsCbsMessage(*message))
+          if (nodeName == "$cbs" && IsCbsMessage(message))
           {
-            ProcessCbsMessage(linkComponents, *message);
+            ProcessCbsMessage(linkComponents, message);
           }
           else
           {
-            MessageReceived(nodeName, linkComponents, *message);
+            MessageReceived(nodeName, linkComponents, message);
           }
         }
         std::this_thread::yield();
@@ -278,13 +278,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::map<std::string, MessageLinkComponents> m_linkMessageQueues;
       Azure::Core::Context m_listenerContext; // Used to cancel the listener if necessary.
 
-      bool IsCbsMessage(Azure::Core::Amqp::Models::AmqpMessage const& message)
+      bool IsCbsMessage(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message)
       {
-        if (!message.ApplicationProperties.empty())
+        if (!message->ApplicationProperties.empty())
         {
           Azure::Core::Amqp::Models::AmqpValue operation
-              = message.ApplicationProperties.at("operation");
-          Azure::Core::Amqp::Models::AmqpValue type = message.ApplicationProperties.at("type");
+              = message->ApplicationProperties.at("operation");
+          Azure::Core::Amqp::Models::AmqpValue type = message->ApplicationProperties.at("type");
 
           // If we're processing a put-token message, then we should get a "type" and "name"
           // value.
@@ -303,12 +303,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       void ProcessCbsMessage(
           MessageLinkComponents const& linkComponents,
-          Azure::Core::Amqp::Models::AmqpMessage const& message)
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message)
       {
         Azure::Core::Amqp::Models::AmqpValue operation
-            = message.ApplicationProperties.at("operation");
-        Azure::Core::Amqp::Models::AmqpValue type = message.ApplicationProperties.at("type");
-        Azure::Core::Amqp::Models::AmqpValue name = message.ApplicationProperties.at("name");
+            = message->ApplicationProperties.at("operation");
+        Azure::Core::Amqp::Models::AmqpValue type = message->ApplicationProperties.at("type");
+        Azure::Core::Amqp::Models::AmqpValue name = message->ApplicationProperties.at("name");
         // If we're processing a put-token message, then we should get a "type" and "name"
         // value.
         EXPECT_EQ(operation.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
@@ -317,7 +317,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           EXPECT_EQ(type.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
           EXPECT_EQ(name.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
           // The body of a put-token operation MUST be an AMQP AmqpValue.
-          EXPECT_EQ(message.BodyType, Azure::Core::Amqp::Models::MessageBodyType::Value);
+          EXPECT_EQ(message->BodyType, Azure::Core::Amqp::Models::MessageBodyType::Value);
 
           // Respond to the operation.
           Azure::Core::Amqp::Models::AmqpMessage response;
@@ -327,10 +327,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
           Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> requestCorrelationId
-              = message.Properties.CorrelationId;
-          if (!message.Properties.CorrelationId.HasValue())
+              = message->Properties.CorrelationId;
+          if (!message->Properties.CorrelationId.HasValue())
           {
-            requestCorrelationId = message.Properties.MessageId.Value();
+            requestCorrelationId = message->Properties.MessageId.Value();
           }
           response.Properties.CorrelationId = requestCorrelationId;
 
@@ -378,10 +378,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
           Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> requestCorrelationId
-              = message.Properties.CorrelationId;
-          if (!message.Properties.CorrelationId.HasValue())
+              = message->Properties.CorrelationId;
+          if (!message->Properties.CorrelationId.HasValue())
           {
-            requestCorrelationId = message.Properties.MessageId;
+            requestCorrelationId = message->Properties.MessageId;
           }
           response.Properties.CorrelationId = requestCorrelationId;
           response.ApplicationProperties["status-code"] = 200;
@@ -413,6 +413,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                 transport, nullptr)};
         Azure::Core::Amqp::_internal::ConnectionOptions options;
         options.ContainerId = m_connectionId;
+        options.IdleTimeout = std::chrono::minutes(2);
         options.EnableTrace = true;
         m_connection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
             amqpTransport, options, this);
@@ -531,11 +532,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
           Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-          Azure::Core::Amqp::Models::AmqpMessage const& message) override
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
         GTEST_LOG_(INFO) << "Received a message " << message;
-        m_linkMessageQueues[receiver.GetSourceName()].MessageQueue.CompleteOperation(
-            std::make_unique<Azure::Core::Amqp::Models::AmqpMessage>(message));
+        m_linkMessageQueues[receiver.GetSourceName()].MessageQueue.CompleteOperation(message);
         return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
       }
 
