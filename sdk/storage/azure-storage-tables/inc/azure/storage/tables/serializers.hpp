@@ -54,5 +54,41 @@ namespace Azure { namespace Storage { namespace Tables {
       }
       return jsonBody;
     }
+
+    static std::string const MergeEntity(Models::TableEntity const& tableEntity)
+    {
+      std::string jsonBody;
+      {
+        auto jsonRoot = Core::Json::_internal::json::object();
+
+        jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
+        jsonRoot["RowKey"] = tableEntity.RowKey;
+        for (auto entry : tableEntity.Properties)
+        {
+          jsonRoot[entry.first] = entry.second;
+        }
+
+        jsonBody = jsonRoot.dump();
+      }
+      return jsonBody;
+    }
+
+    static std::string const UpdateEntity(Models::TableEntity const& tableEntity)
+    {
+      std::string jsonBody;
+      {
+        auto jsonRoot = Core::Json::_internal::json::object();
+
+        jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
+        jsonRoot["RowKey"] = tableEntity.RowKey;
+        for (auto entry : tableEntity.Properties)
+        {
+          jsonRoot[entry.first] = entry.second;
+        }
+
+        jsonBody = jsonRoot.dump();
+      }
+	  return jsonBody;
+	}
   };
 }}} // namespace Azure::Storage::Tables

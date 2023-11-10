@@ -481,7 +481,8 @@ namespace Azure { namespace Storage { namespace Tables {
       DeleteEntity,
       MergeEntity,
       UpdateEntity,
-      UpsertEntity,
+      InsertMergeEntity,
+      InsertReplaceEntity
     };
 
     struct TransactionStep final

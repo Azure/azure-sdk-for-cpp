@@ -881,19 +881,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
       m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
       + "')");
 
-  std::string jsonBody;
-  {
-    auto jsonRoot = Core::Json::_internal::json::object();
-
-    jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
-    jsonRoot["RowKey"] = tableEntity.RowKey;
-    for (auto entry : tableEntity.Properties)
-    {
-      jsonRoot[entry.first] = entry.second;
-    }
-
-    jsonBody = jsonRoot.dump();
-  }
+  std::string jsonBody = Serializers::UpdateEntity(tableEntity);
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
@@ -937,19 +925,7 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
       m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
       + "')");
 
-  std::string jsonBody;
-  {
-    auto jsonRoot = Core::Json::_internal::json::object();
-
-    jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
-    jsonRoot["RowKey"] = tableEntity.RowKey;
-    for (auto entry : tableEntity.Properties)
-    {
-      jsonRoot[entry.first] = entry.second;
-    }
-
-    jsonBody = jsonRoot.dump();
-  }
+  std::string jsonBody = Serializers::MergeEntity(tableEntity);
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());

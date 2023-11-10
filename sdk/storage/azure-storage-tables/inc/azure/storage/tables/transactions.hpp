@@ -57,6 +57,9 @@ namespace Azure { namespace Storage { namespace Tables {
 
   private:
     std::string PrepCreateEntity(Models::TableEntity entity);
+    std::string PrepDeleteEntity(Models::TableEntity entity);
+    std::string PrepMergeEntity(Models::TableEntity entity);
+    std::string PrepUpdateEntity(Models::TableEntity entity);
     std::string m_partitionKey;
     std::string m_url;
     std::string m_tableName;
