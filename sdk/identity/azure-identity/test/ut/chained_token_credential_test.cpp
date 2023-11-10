@@ -87,6 +87,17 @@ TEST(ChainedTokenCredential, ErrorThenSuccess)
 
   EXPECT_TRUE(c1->WasInvoked);
   EXPECT_TRUE(c2->WasInvoked);
+
+  // We expect chained token credential will NOT cache the selected credential which was successful
+  // and retry each one from the start.
+  c1->WasInvoked = false;
+  c1->WasInvoked = false;
+
+  token = cred.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_TRUE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
 }
 
 TEST(ChainedTokenCredential, AllErrors)

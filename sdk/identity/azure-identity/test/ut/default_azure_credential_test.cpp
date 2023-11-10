@@ -6,15 +6,44 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 
+#include <../src/private/chained_token_credential_impl.hpp>
 #include <gtest/gtest.h>
 
 using Azure::Identity::DefaultAzureCredential;
 
+using Azure::Core::Context;
+using Azure::Core::Credentials::AccessToken;
+using Azure::Core::Credentials::AuthenticationException;
+using Azure::Core::Credentials::TokenCredential;
 using Azure::Core::Credentials::TokenCredentialOptions;
+using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 namespace {
+class TestCredential : public TokenCredential {
+private:
+  std::string m_token;
+
+public:
+  TestCredential(std::string token = "") : TokenCredential("TestCredential"), m_token(token) {}
+
+  mutable bool WasInvoked = false;
+
+  AccessToken GetToken(TokenRequestContext const&, Context const&) const override
+  {
+    WasInvoked = true;
+
+    if (m_token.empty())
+    {
+      throw AuthenticationException("Test Error");
+    }
+
+    AccessToken token;
+    token.Token = m_token;
+    return token;
+  }
+};
 } // namespace
 
 TEST(DefaultAzureCredential, GetCredentialName)
@@ -38,6 +67,75 @@ TEST(DefaultAzureCredential, GetCredentialName)
 
   DefaultAzureCredential const cred;
   EXPECT_EQ(cred.GetCredentialName(), "DefaultAzureCredential");
+}
+
+TEST(DefaultAzureCredential, CachingCredential)
+{
+  auto c1 = std::make_shared<TestCredential>();
+  auto c2 = std::make_shared<TestCredential>("Token2");
+  DefaultAzureCredential cred;
+
+  cred.m_impl = std::make_unique<Azure::Identity::_detail::ChainedTokenCredentialImpl>(
+      "Test DAC", Azure::Identity::ChainedTokenCredential::Sources{c1, c2}, true);
+
+  EXPECT_FALSE(c1->WasInvoked);
+  EXPECT_FALSE(c2->WasInvoked);
+
+  auto token = cred.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_TRUE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
+
+  // We expect default azure credential to cache the selected credential which was successful
+  // and only try that one, rather than going through the entire list again.
+  c1->WasInvoked = false;
+  c1->WasInvoked = false;
+
+  token = cred.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_FALSE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
+
+  // Only the 2nd credential in the list should get invoked, which is c1, since that's the cached
+  // index.
+  c1->WasInvoked = false;
+  c2->WasInvoked = false;
+
+  cred.m_impl->m_sources = Azure::Identity::ChainedTokenCredential::Sources{c2, c1, c2};
+
+  // We don't expect c2 to ever be used here.
+  EXPECT_THROW(static_cast<void>(cred.GetToken({}, {})), AuthenticationException);
+
+  EXPECT_TRUE(c1->WasInvoked);
+  EXPECT_FALSE(c2->WasInvoked);
+
+  // Caching is per instance of the DefaultAzureCredential and not global.
+  c1->WasInvoked = false;
+  c2->WasInvoked = false;
+
+  DefaultAzureCredential cred1;
+  cred1.m_impl = std::make_unique<Azure::Identity::_detail::ChainedTokenCredentialImpl>(
+      "Test DAC", Azure::Identity::ChainedTokenCredential::Sources{c1, c2}, true);
+
+  DefaultAzureCredential cred2;
+  cred2.m_impl = std::make_unique<Azure::Identity::_detail::ChainedTokenCredentialImpl>(
+      "Test DAC", Azure::Identity::ChainedTokenCredential::Sources{c2, c1}, true);
+
+  // The first credential in the list, c2, got called and cached on cred2.
+  token = cred2.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_FALSE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
+
+  // cred1 is unaffected by cred2 and both c1 and c2 are called, in order.
+  token = cred1.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_TRUE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
 }
 
 TEST(DefaultAzureCredential, LogMessages)
@@ -150,12 +248,18 @@ TEST(DefaultAzureCredential, LogMessages)
 
   EXPECT_EQ(
       log.size(),
-      LogMsgVec::size_type(4)); // Request and retry policies will get their messages here as well.
+      LogMsgVec::size_type(5)); // Request and retry policies will get their messages here as well.
 
   EXPECT_EQ(log[3].first, Logger::Level::Informational);
   EXPECT_EQ(
       log[3].second,
-      "Identity: DefaultAzureCredential: Successfully got token from EnvironmentCredential.");
+      "Identity: DefaultAzureCredential: Successfully got token from EnvironmentCredential. Reuse "
+      "this credential for subsequent calls.");
+
+  EXPECT_EQ(log[4].first, Logger::Level::Verbose);
+  EXPECT_EQ(
+      log[4].second,
+      "Identity: DefaultAzureCredential: Save this credential at index 0 for subsequent calls.");
 
   Logger::SetListener(nullptr);
 }

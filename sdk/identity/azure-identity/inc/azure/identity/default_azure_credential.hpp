@@ -13,6 +13,10 @@
 
 #include <memory>
 
+#if defined(TESTING_BUILD)
+class DefaultAzureCredential_CachingCredential_Test;
+#endif
+
 namespace Azure { namespace Identity {
   namespace _detail {
     class ChainedTokenCredentialImpl;
@@ -37,6 +41,12 @@ namespace Azure { namespace Identity {
    *
    */
   class DefaultAzureCredential final : public Core::Credentials::TokenCredential {
+
+#if defined(TESTING_BUILD)
+    //  make tests classes friends to validate caching
+    friend class ::DefaultAzureCredential_CachingCredential_Test;
+#endif
+
   public:
     /**
      * @brief Constructs `%DefaultAzureCredential`.
