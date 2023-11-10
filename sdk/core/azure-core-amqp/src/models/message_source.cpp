@@ -306,7 +306,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get dynamic.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(_detail::UniqueAmqpValueHandle{value}).AsMap();
+    return _detail::AmqpValueFactory::FromUamqp(
+               _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
+        .AsMap();
   }
   std::string MessageSource::GetDistributionMode() const
   {
@@ -325,7 +327,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get filter set.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(_detail::UniqueAmqpValueHandle{value}).AsMap();
+    return _detail::AmqpValueFactory::FromUamqp(
+               _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
+        .AsMap();
   }
 
   AmqpValue MessageSource::GetDefaultOutcome() const
@@ -348,7 +352,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get outcomes.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(_detail::UniqueAmqpValueHandle{value}).AsArray();
+    return _detail::AmqpValueFactory::FromUamqp(
+               _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
+        .AsArray();
   }
 
   AmqpArray MessageSource::GetCapabilities() const
@@ -358,7 +364,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get capabilities.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(_detail::UniqueAmqpValueHandle{value}).AsArray();
+    return _detail::AmqpValueFactory::FromUamqp(
+               _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
+        .AsArray();
   }
 
   const char* StringFromTerminusDurability(TerminusDurability durability)

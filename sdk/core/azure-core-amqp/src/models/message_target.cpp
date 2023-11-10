@@ -284,7 +284,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get capabilities.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(_detail::UniqueAmqpValueHandle(value)).AsArray();
+    return _detail::AmqpValueFactory::FromUamqp(
+               _detail::UniqueAmqpValueHandle(amqpvalue_clone(value)))
+        .AsArray();
   }
 
   std::ostream& operator<<(std::ostream& os, MessageTarget const& target)

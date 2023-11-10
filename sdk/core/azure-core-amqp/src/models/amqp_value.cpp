@@ -600,7 +600,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
   AmqpValue _detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle&& value)
   {
-    return AmqpValue(value);
+    return AmqpValue(std::move(value));
   }
 
   AMQP_VALUE _detail::AmqpValueFactory::ToUamqp(AmqpValue const& value)
