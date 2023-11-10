@@ -120,6 +120,12 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   endif()
 endif()
 
+# If the cmake presets enable Address Sanitizer, enable it for the project.
+if (ENABLE_ADDRESS_SANITIZER)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+endif()
+
 if(BUILD_TESTING)
   include(AddGoogleTest)
   enable_testing ()  

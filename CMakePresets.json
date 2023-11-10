@@ -213,9 +213,8 @@
       "displayName": "Enable Address Sanitizer",
       "description": "Enable Address Sanitizer (Hidden). Note: ASAN can be extremely disruptive, when enabling ASAN, make sure you run your application under the debugger.",
       "hidden": true,
-      "environment": {
-        "CXXFLAGS": "-fsanitize=address",
-        "CFLAGS": "-fsanitize=address"
+      "cacheVariables": {
+        "ENABLE_ADDRESS_SANITIZER": true
       }
     },
     {
