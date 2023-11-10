@@ -9,18 +9,18 @@
 #include <limits>
 #include <mutex>
 
-#if defined(TESTING_BUILD)
+// #if defined(TESTING_BUILD)
 class DefaultAzureCredential_CachingCredential_Test;
-#endif
+// #endif
 
 namespace Azure { namespace Identity { namespace _detail {
 
   class ChainedTokenCredentialImpl final {
 
-#if defined(TESTING_BUILD)
-    // make tests classes friends to validate caching
+    // #if defined(TESTING_BUILD)
+    //  make tests classes friends to validate caching
     friend class DefaultAzureCredential_CachingCredential_Test;
-#endif
+    // #endif
 
   public:
     ChainedTokenCredentialImpl(

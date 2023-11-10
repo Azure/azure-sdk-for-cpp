@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- When one of the credential within `DefaultAzureCredential` is successful, it gets re-used during all subsequent attempts to get the token.
+- When one of the credentials within `DefaultAzureCredential` is successful, it gets re-used during all subsequent attempts to get the token.
 
 ### Breaking Changes
 
