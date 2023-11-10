@@ -5,6 +5,10 @@
 
 #include "azure/identity/chained_token_credential.hpp"
 
+#include <atomic>
+#include <limits>
+#include <mutex>
+
 #if defined(TESTING_BUILD)
 class DefaultAzureCredential_CachingCredential_Test;
 #endif
@@ -22,19 +26,22 @@ namespace Azure { namespace Identity { namespace _detail {
     ChainedTokenCredentialImpl(
         std::string const& credentialName,
         ChainedTokenCredential::Sources&& sources,
-        bool cacheSelectedCredential = false);
+        bool reuseSuccessfulSource = false);
 
     Core::Credentials::AccessToken GetToken(
         std::string const& credentialName,
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context);
+        Core::Context const& context) const;
 
   private:
-    std::vector<std::shared_ptr<Core::Credentials::TokenCredential>> m_sources;
-    bool m_cacheSelectedCredential;
+    ChainedTokenCredential::Sources m_sources;
+    mutable std::mutex m_sourcesMutex;
+    // Used as a sentinel value to indicate that the index of the source being used for future calls
+    // hasn't been found yet.
+    constexpr static std::size_t SuccessfulSourceNotSet = std::numeric_limits<std::size_t>::max();
     // This needs to be atomic so that sentinel comparison is thread safe.
-    std::atomic<std::size_t> m_SelectedCredentialIndex = std::numeric_limits<std::size_t>::max();
-    std::mutex m_cachingMutex;
+    mutable std::atomic<std::size_t> m_successfulSourceIndex = {SuccessfulSourceNotSet};
+    bool m_reuseSuccessfulSource;
   };
 
 }}} // namespace Azure::Identity::_detail

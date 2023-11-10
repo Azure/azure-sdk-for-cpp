@@ -14,7 +14,7 @@
 #include <memory>
 
 #if defined(TESTING_BUILD)
-  class DefaultAzureCredential_CachingCredential_Test;
+class DefaultAzureCredential_CachingCredential_Test;
 #endif
 
 namespace Azure { namespace Identity {

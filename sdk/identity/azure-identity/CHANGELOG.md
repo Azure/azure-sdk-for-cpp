@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Re-use the selected credential that works for each subsequent request in `DefaultAzureCredential`.
+- When one of the credential within `DefaultAzureCredential` is successful, it gets re-used during all subsequent attempts to get the token.
 
 ### Breaking Changes
 

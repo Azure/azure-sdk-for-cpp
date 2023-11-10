@@ -7,8 +7,6 @@
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
-#include <limits>
-#include <mutex>
 #include <utility>
 
 using namespace Azure::Identity;
@@ -35,8 +33,8 @@ AccessToken ChainedTokenCredential::GetToken(
 ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
     std::string const& credentialName,
     ChainedTokenCredential::Sources&& sources,
-    bool cacheSelectedCredential)
-    : m_sources(std::move(sources)), m_cacheSelectedCredential(cacheSelectedCredential)
+    bool reuseSuccessfulSource)
+    : m_sources(std::move(sources)), m_reuseSuccessfulSource(reuseSuccessfulSource)
 {
   auto const logLevel
       = m_sources.empty() ? IdentityLog::Level::Warning : IdentityLog::Level::Informational;
@@ -69,31 +67,29 @@ ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
 AccessToken ChainedTokenCredentialImpl::GetToken(
     std::string const& credentialName,
     TokenRequestContext const& tokenRequestContext,
-    Context const& context)
+    Context const& context) const
 {
-  std::unique_lock<std::mutex> lock(m_cachingMutex, std::defer_lock);
+  std::unique_lock<std::mutex> lock(m_sourcesMutex, std::defer_lock);
 
-  constexpr size_t maxSentinel = std::numeric_limits<std::size_t>::max();
-
-  if (m_cacheSelectedCredential && m_SelectedCredentialIndex == maxSentinel)
+  if (m_reuseSuccessfulSource && m_successfulSourceIndex == SuccessfulSourceNotSet)
   {
     lock.lock();
     // Check again in case another thread already set the index, and unlock the mutex.
-    if (m_SelectedCredentialIndex != maxSentinel)
+    if (m_successfulSourceIndex != SuccessfulSourceNotSet)
     {
       lock.unlock();
     }
   }
 
-  size_t i = 0;
-  size_t end_index = m_sources.size();
-  if (m_SelectedCredentialIndex != maxSentinel)
+  std::size_t i = 0;
+  std::size_t end = m_sources.size();
+  if (m_successfulSourceIndex != SuccessfulSourceNotSet)
   {
-    i = m_SelectedCredentialIndex;
-    end_index = m_SelectedCredentialIndex + 1;
+    i = m_successfulSourceIndex;
+    end = m_successfulSourceIndex + 1;
   }
 
-  for (; i < end_index; ++i)
+  for (; i < end; ++i)
   {
     auto& source = m_sources[i];
     try
@@ -102,15 +98,21 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
 
       IdentityLog::Write(
           IdentityLog::Level::Informational,
-          credentialName + ": Successfully got token from " + source->GetCredentialName() + '.');
+          credentialName + ": Successfully got token from " + source->GetCredentialName()
+              + (m_reuseSuccessfulSource ? ". Reuse this credential for subsequent calls." : "."));
 
       // Log first before unlocking the mutex, so that the log message is not interleaved with
       // other.
-      if (m_cacheSelectedCredential && m_SelectedCredentialIndex == maxSentinel)
+      if (m_reuseSuccessfulSource && m_successfulSourceIndex == SuccessfulSourceNotSet)
       {
+        IdentityLog::Write(
+            IdentityLog::Level::Verbose,
+            credentialName + ": Save this credential at index " + std::to_string(i)
+                + " for subsequent calls.");
+
         // We never re-update the selected credential index, after the first successful credential
         // is found.
-        m_SelectedCredentialIndex = i;
+        m_successfulSourceIndex = i;
         lock.unlock();
       }
       return token;
