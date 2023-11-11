@@ -23,12 +23,6 @@ using Azure::Core::Http::HttpMethod;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
-namespace {
-constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
-constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
-constexpr auto AzureFederatedTokenFileEnvVarName = "AZURE_FEDERATED_TOKEN_FILE";
-} // namespace
-
 WorkloadIdentityCredential::WorkloadIdentityCredential(
     WorkloadIdentityCredentialOptions const& options)
     : TokenCredential("WorkloadIdentityCredential"), m_clientCredentialCore(
@@ -40,23 +34,6 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
   std::string clientId = options.ClientId;
   std::string authorityHost = options.AuthorityHost;
   m_tokenFilePath = options.TokenFilePath;
-
-  if (tenantId.empty())
-  {
-    tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
-  }
-  if (clientId.empty())
-  {
-    clientId = Environment::GetVariable(AzureClientIdEnvVarName);
-  }
-  if (authorityHost.empty())
-  {
-    authorityHost = Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
-  }
-  if (m_tokenFilePath.empty())
-  {
-    m_tokenFilePath = Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
-  }
 
   if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
   {
@@ -78,13 +55,13 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
     : TokenCredential("WorkloadIdentityCredential"),
       m_clientCredentialCore("", "", std::vector<std::string>())
 {
-  std::string tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
-  std::string clientId = Environment::GetVariable(AzureClientIdEnvVarName);
-  m_tokenFilePath = Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
+  std::string tenantId = _detail::DefaultOptionValues::GetTenantId();
+  std::string clientId = _detail::DefaultOptionValues::GetClientId();
+  m_tokenFilePath = _detail::DefaultOptionValues::GetFederatedTokenFile();
 
   if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
   {
-    std::string authorityHost = Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
+    std::string authorityHost = _detail::DefaultOptionValues::GetAuthorityHost();
 
     m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
         tenantId, authorityHost, std::vector<std::string>());

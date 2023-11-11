@@ -6,6 +6,7 @@
 #include "azure/identity/dll_import_export.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/core/url.hpp>
 
 #include <string>
@@ -13,6 +14,39 @@
 
 namespace Azure { namespace Identity { namespace _detail {
   constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
+  constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
+  constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
+  constexpr auto AzureFederatedTokenFileEnvVarName = "AZURE_FEDERATED_TOKEN_FILE";
+  const std::string AadGlobalAuthority = "https://login.microsoftonline.com/";
+
+  class DefaultOptionValues final {
+    DefaultOptionValues() = delete;
+    ~DefaultOptionValues() = delete;
+
+  public:
+    static std::string GetAuthorityHost()
+    {
+      const std::string envAuthHost
+          = Core::_internal::Environment::GetVariable(AzureAuthorityHostEnvVarName);
+
+      return envAuthHost.empty() ? AadGlobalAuthority : envAuthHost;
+    }
+
+    static std::string GetTenantId()
+    {
+      return Core::_internal::Environment::GetVariable(AzureTenantIdEnvVarName);
+    }
+
+    static std::string GetClientId()
+    {
+      return Core::_internal::Environment::GetVariable(AzureClientIdEnvVarName);
+    }
+
+    static std::string GetFederatedTokenFile()
+    {
+      return Core::_internal::Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
+    }
+  };
 
   class ClientCredentialCore final {
     std::vector<std::string> m_additionallyAllowedTenants;

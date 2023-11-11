@@ -40,36 +40,90 @@ TEST(WorkloadIdentityCredential, GetCredentialName)
 
 TEST(WorkloadIdentityCredential, GetOptionsFromEnvironment)
 {
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
-       {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
-       {"AZURE_AUTHORITY_HOST", ""},
-       {"AZURE_FEDERATED_TOKEN_FILE", TempCertFile::Path}});
+  {
+    CredentialTestHelper::EnvironmentOverride const env(
+        {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+         {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+         {"AZURE_AUTHORITY_HOST", ""},
+         {"AZURE_FEDERATED_TOKEN_FILE", TempCertFile::Path}});
 
-  WorkloadIdentityCredential const credDefault;
-  EXPECT_EQ(credDefault.GetCredentialName(), "WorkloadIdentityCredential");
+    WorkloadIdentityCredential const credDefault;
+    EXPECT_EQ(credDefault.GetCredentialName(), "WorkloadIdentityCredential");
 
-  WorkloadIdentityCredentialOptions options;
-  WorkloadIdentityCredential const cred(options);
-  EXPECT_EQ(cred.GetCredentialName(), "WorkloadIdentityCredential");
+    WorkloadIdentityCredentialOptions options;
+    WorkloadIdentityCredential const cred(options);
+    EXPECT_EQ(cred.GetCredentialName(), "WorkloadIdentityCredential");
+
+    EXPECT_EQ(options.TenantId, "01234567-89ab-cdef-fedc-ba8976543210");
+    EXPECT_EQ(options.ClientId, "fedcba98-7654-3210-0123-456789abcdef");
+    EXPECT_EQ(options.AuthorityHost, "https://login.microsoftonline.com/");
+    EXPECT_EQ(options.TokenFilePath, TempCertFile::Path);
+  }
+
+  {
+    std::map<std::string, std::string> envVars = {{"AZURE_AUTHORITY_HOST", "foo"}};
+    CredentialTestHelper::EnvironmentOverride const env(envVars);
+
+    WorkloadIdentityCredentialOptions options;
+    options.AuthorityHost = "bar";
+    EXPECT_EQ(options.AuthorityHost, "bar");
+  }
+
+  {
+    std::map<std::string, std::string> envVars
+        = {{"AZURE_AUTHORITY_HOST", "https://microsoft.com/"}};
+    CredentialTestHelper::EnvironmentOverride const env(envVars);
+
+    WorkloadIdentityCredentialOptions options;
+    EXPECT_EQ(options.AuthorityHost, "https://microsoft.com/");
+  }
 }
 
 TEST(WorkloadIdentityCredential, GetOptionsFromEnvironmentInvalid)
 {
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"AZURE_TENANT_ID", ""},
-       {"AZURE_CLIENT_ID", ""},
-       {"AZURE_AUTHORITY_HOST", ""},
-       {"AZURE_FEDERATED_TOKEN_FILE", ""}});
+  {
+    CredentialTestHelper::EnvironmentOverride const env(
+        {{"AZURE_TENANT_ID", ""},
+         {"AZURE_CLIENT_ID", ""},
+         {"AZURE_AUTHORITY_HOST", ""},
+         {"AZURE_FEDERATED_TOKEN_FILE", ""}});
 
-  TokenRequestContext trc;
-  trc.Scopes.push_back("https://storage.azure.com/.default");
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
 
-  WorkloadIdentityCredential const credDefault;
-  EXPECT_THROW(credDefault.GetToken(trc, {}), AuthenticationException);
-  WorkloadIdentityCredentialOptions options;
-  WorkloadIdentityCredential const cred(options);
-  EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
+    WorkloadIdentityCredential const credDefault;
+    EXPECT_THROW(credDefault.GetToken(trc, {}), AuthenticationException);
+    WorkloadIdentityCredentialOptions options;
+    WorkloadIdentityCredential const cred(options);
+    EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
+  }
+
+  // The http scheme is not supported.
+  {
+    CredentialTestHelper::EnvironmentOverride const env(
+        {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+         {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+         {"AZURE_AUTHORITY_HOST", "http://microsoft.com/"},
+         {"AZURE_FEDERATED_TOKEN_FILE", TempCertFile::Path}});
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
+
+    WorkloadIdentityCredential const credDefault;
+    EXPECT_THROW(credDefault.GetToken(trc, {}), AuthenticationException);
+    WorkloadIdentityCredentialOptions options;
+    WorkloadIdentityCredential const cred(options);
+    EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
+
+    try
+    {
+      auto const token = cred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("https") != std::string::npos) << e.what();
+    }
+  }
 }
 
 TEST(WorkloadIdentityCredential, Regular)
