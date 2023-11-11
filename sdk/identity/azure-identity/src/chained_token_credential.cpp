@@ -99,7 +99,8 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
       IdentityLog::Write(
           IdentityLog::Level::Informational,
           credentialName + ": Successfully got token from " + source->GetCredentialName()
-              + (m_reuseSuccessfulSource ? ". Reuse this credential for subsequent calls." : "."));
+              + (m_reuseSuccessfulSource ? ". This credential will be reused for subsequent calls."
+                                         : "."));
 
       // Log first before unlocking the mutex, so that the log message is not interleaved with
       // other.
@@ -107,7 +108,7 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
       {
         IdentityLog::Write(
             IdentityLog::Level::Verbose,
-            credentialName + ": Save this credential at index " + std::to_string(i)
+            credentialName + ": Saved this credential at index " + std::to_string(i)
                 + " for subsequent calls.");
 
         // We never re-update the selected credential index, after the first successful credential

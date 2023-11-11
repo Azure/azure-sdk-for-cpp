@@ -256,13 +256,13 @@ TEST(DefaultAzureCredential, LogMessages)
   EXPECT_EQ(log[3].first, Logger::Level::Informational);
   EXPECT_EQ(
       log[3].second,
-      "Identity: DefaultAzureCredential: Successfully got token from EnvironmentCredential. Reuse "
-      "this credential for subsequent calls.");
+      "Identity: DefaultAzureCredential: Successfully got token from EnvironmentCredential. This "
+      "credential will be reused for subsequent calls.");
 
   EXPECT_EQ(log[4].first, Logger::Level::Verbose);
   EXPECT_EQ(
       log[4].second,
-      "Identity: DefaultAzureCredential: Save this credential at index 0 for subsequent calls.");
+      "Identity: DefaultAzureCredential: Saved this credential at index 0 for subsequent calls.");
 
   Logger::SetListener(nullptr);
 }

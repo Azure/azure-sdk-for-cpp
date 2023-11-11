@@ -80,9 +80,8 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        GetCredentialName()
-            + " was not initialized with underlying credential. Environment variables are not "
-              "fully configured by Kubernetes.");
+        "Azure Kubernetes environment is not set up for the " + GetCredentialName()
+            + " credential to work.");
   }
 }
 
@@ -117,9 +116,8 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        GetCredentialName()
-            + " was not initialized with underlying credential. Environment variables are not "
-              "fully configured by Kubernetes.");
+        "Azure Kubernetes environment is not set up for the " + GetCredentialName()
+            + " credential to work.");
   }
 }
 
@@ -138,7 +136,7 @@ AccessToken WorkloadIdentityCredential::GetToken(
         AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
 
     throw AuthenticationException(
-        AuthUnavailable + "Environment variables are not fully configured by Kubernetes.");
+        AuthUnavailable + "Azure Kubernetes environment is not set up correctly.");
   }
 
   auto const tenantId = TenantIdResolver::Resolve(
