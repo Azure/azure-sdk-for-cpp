@@ -12,10 +12,12 @@
 
 - Harden checks for the tenant ID.
 - Disallow space character when validating tenant id and scopes as input for `AzureCliCredential`.
+- Add authority host url validation to reject non-HTTPS schemes.
 
 ### Other Changes
 
 - Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
+- Add default values to some `WorkloadIdentityCredentialOptions` fields such as authority host by reading them from the environment.
 - Add logging to `WorkloadIdentityCredential` to help with debugging.
 
 ## 1.6.0-beta.3 (2023-10-12)
