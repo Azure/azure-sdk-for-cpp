@@ -6,6 +6,7 @@
 
 - Added `WorkloadIdentityCredential`.
 - When one of the credentials within `DefaultAzureCredential` is successful, it gets re-used during all subsequent attempts to get the token.
+- Updated `ClientSecretCredentialOptions` and `ClientCertificateCredentialOptions` to read the default value for the authority host option from the environment variable first.
 
 ### Breaking Changes
 
@@ -13,7 +14,6 @@
 
 ### Bugs Fixed
 
-- Change the default value for the authority host option to be read from the environment variable first.
 - Do not throw an exception during `AzureCliCredential` construction, but rather delay it to the `GetToken()` call.
 - Harden checks for the tenant ID.
 - Disallow space character when validating tenant id and scopes as input for `AzureCliCredential`.
@@ -22,9 +22,9 @@
 
 ### Other Changes
 
-- Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
 - Add default values to some `WorkloadIdentityCredentialOptions` fields such as authority host by reading them from the environment.
 - Add logging to `WorkloadIdentityCredential` to help with debugging.
+- Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
 
 ### Acknowledgments
 
