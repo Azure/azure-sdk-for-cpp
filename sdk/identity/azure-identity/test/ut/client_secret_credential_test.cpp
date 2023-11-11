@@ -32,15 +32,6 @@ TEST(ClientSecretCredential, GetOptionsFromEnvironment)
   }
 
   {
-    std::map<std::string, std::string> envVars = {{"AZURE_AUTHORITY_HOST", "foo"}};
-    CredentialTestHelper::EnvironmentOverride const env(envVars);
-
-    ClientSecretCredentialOptions options;
-    options.AuthorityHost = "bar";
-    EXPECT_EQ(options.AuthorityHost, "bar");
-  }
-
-  {
     std::map<std::string, std::string> envVars
         = {{"AZURE_AUTHORITY_HOST", "https://microsoft.com/"}};
     CredentialTestHelper::EnvironmentOverride const env(envVars);

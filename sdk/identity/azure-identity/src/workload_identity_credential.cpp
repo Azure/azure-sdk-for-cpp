@@ -67,13 +67,13 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
     : TokenCredential("WorkloadIdentityCredential"),
       m_clientCredentialCore("", "", std::vector<std::string>())
 {
-  std::string tenantId = _detail::DefaultOptionValues::GetTenantId();
-  std::string clientId = _detail::DefaultOptionValues::GetClientId();
+  std::string const tenantId = _detail::DefaultOptionValues::GetTenantId();
+  std::string const clientId = _detail::DefaultOptionValues::GetClientId();
   m_tokenFilePath = _detail::DefaultOptionValues::GetFederatedTokenFile();
 
   if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
   {
-    std::string authorityHost = _detail::DefaultOptionValues::GetAuthorityHost();
+    std::string const authorityHost = _detail::DefaultOptionValues::GetAuthorityHost();
 
     m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
         tenantId, authorityHost, std::vector<std::string>());
