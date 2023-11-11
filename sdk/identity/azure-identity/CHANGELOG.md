@@ -1,24 +1,36 @@
 # Release History
 
-## 1.6.0-beta.4 (Unreleased)
+## 1.6.0 (2023-11-10)
 
 ### Features Added
 
+- Added `WorkloadIdentityCredential`.
 - When one of the credentials within `DefaultAzureCredential` is successful, it gets re-used during all subsequent attempts to get the token.
+- Updated `ClientSecretCredentialOptions` and `ClientCertificateCredentialOptions` to read the default value for the authority host option from the environment variable first.
 
 ### Breaking Changes
 
+- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
+
 ### Bugs Fixed
 
+- Do not throw an exception during `AzureCliCredential` construction, but rather delay it to the `GetToken()` call.
 - Harden checks for the tenant ID.
 - Disallow space character when validating tenant id and scopes as input for `AzureCliCredential`.
 - Add authority host url validation to reject non-HTTPS schemes.
+- [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
 
 ### Other Changes
 
-- Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
 - Add default values to some `WorkloadIdentityCredentialOptions` fields such as authority host by reading them from the environment.
 - Add logging to `WorkloadIdentityCredential` to help with debugging.
+- Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
+
+- Theodore Tsirpanis _([GitHub](https://github.com/teo-tsirpanis))_
 
 ## 1.6.0-beta.3 (2023-10-12)
 
