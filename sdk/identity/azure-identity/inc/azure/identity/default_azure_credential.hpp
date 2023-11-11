@@ -30,7 +30,7 @@ namespace Azure { namespace Identity {
    *
    * @details This credential is using several credentials in the following order:
    * #Azure::Identity::EnvironmentCredential, #Azure::Identity::WorkloadIdentityCredential,
-   * #Azure::Identity::ManagedIdentityCredential, and #Azure::Identity::AzureCliCredential. Even
+   * #Azure::Identity::AzureCliCredential, and #Azure::Identity::ManagedIdentityCredential. Even
    * though the credentials being used and their order is documented, it may be changed in the
    * future versions of the SDK, potentially introducing breaking changes in its behavior.
    *
