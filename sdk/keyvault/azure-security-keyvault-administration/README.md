@@ -96,7 +96,7 @@ For detailed samples please review the code provided.
 ### GetSettings 
 
 To get all the available settings present on the Keyvault instance we will first create a client : 
-```CPP
+```cpp
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
@@ -110,7 +110,7 @@ Please note that we are using the HSM URL, not the keyvault URL.
 
 To get the settings we will call the GetSettings API 
 
-```CPP
+```cpp
   // Get all settings
   SettingsListResult settingsList = settingsClient.GetSettings().Value;
 ```
@@ -119,14 +119,14 @@ To get the settings we will call the GetSettings API
 
 To get a specific setting we will call the GetSetting API bassing the setting name as a string parameter. 
 
-```CPP
+```cpp
   Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
 ```
 
 ### UpdateSetting
 
 To update the value of any of the the available settings, we will call the UpdateSettings API as follows:
-```CPP
+```cpp
  UpdateSettingOptions options;
  options.Value = <setting value>;
 

@@ -344,6 +344,214 @@ TEST(AzureCliCredential, UnsafeChars)
   }
 }
 
+class ParameterizedTestForDisallowedChars : public ::testing::TestWithParam<std::string> {
+protected:
+  std::string value;
+};
+
+TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
+{
+  std::string const InvalidValue = GetParam();
+
+  // Tenant ID test via AzureCliCredentialOptions directly.
+  {
+    AzureCliCredentialOptions options;
+    options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
+    options.TenantId += InvalidValue;
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+  // Tenant ID test via TokenRequestContext, using a wildcard for AdditionallyAllowedTenants.
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    options.AdditionallyAllowedTenants.push_back("*");
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    trc.TenantId = InvalidValue;
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+  // Tenant ID test via TokenRequestContext, using a specific AdditionallyAllowedTenants value.
+  {
+    AzureCliCredentialOptions options;
+    options.AdditionallyAllowedTenants.push_back(InvalidValue);
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    trc.TenantId = InvalidValue;
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+  // Scopes test via TokenRequestContext.
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + InvalidValue);
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    AzureCliCredential,
+    ParameterizedTestForDisallowedChars,
+    ::testing::Values(" ", "|", "`", "\"", "'", ";", "&"));
+
+class ParameterizedTestForCharDifferences : public ::testing::TestWithParam<std::string> {
+protected:
+  std::string value;
+};
+
+TEST_P(ParameterizedTestForCharDifferences, ValidCharsForScopeButNotTenantId)
+{
+  std::string const ValidScopeButNotTenantId = GetParam();
+
+  {
+    AzureCliCredentialOptions options;
+    options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
+    options.TenantId += ValidScopeButNotTenantId;
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+    }
+  }
+
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(
+        std::string("https://storage.azure.com/.default") + ValidScopeButNotTenantId);
+
+    // We expect the GetToken to fail, but not because of the unsafe chars.
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") == std::string::npos) << e.what();
+    }
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    AzureCliCredential,
+    ParameterizedTestForCharDifferences,
+    ::testing::Values(":", "/", "_"));
+
+class ParameterizedTestForAllowedChars : public ::testing::TestWithParam<std::string> {
+protected:
+  std::string value;
+};
+
+TEST_P(ParameterizedTestForAllowedChars, ValidCharsForScopeAndTenantId)
+{
+  std::string const ValidChars = GetParam();
+
+  {
+    AzureCliCredentialOptions options;
+    options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
+    options.TenantId += ValidChars;
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+
+    // We expect the GetToken to fail, but not because of the unsafe chars.
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") == std::string::npos) << e.what();
+    }
+  }
+
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + ValidChars);
+
+    // We expect the GetToken to fail, but not because of the unsafe chars.
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_TRUE(std::string(e.what()).find("Unsafe") == std::string::npos) << e.what();
+    }
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    AzureCliCredential,
+    ParameterizedTestForAllowedChars,
+    ::testing::Values(".", "-", "A", "9"));
+
 TEST(AzureCliCredential, StrictIso8601TimeFormat)
 {
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","

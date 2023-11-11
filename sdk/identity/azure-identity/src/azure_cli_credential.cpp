@@ -57,27 +57,20 @@ using Azure::Identity::_detail::TokenCredentialImpl;
 
 void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     std::string const& input,
+    std::string const& allowedChars,
     std::string const& description) const
 {
   for (auto const c : input)
   {
-    switch (c)
+    if (allowedChars.find(c) != std::string::npos)
     {
-      case ':':
-      case '/':
-      case '.':
-      case '-':
-      case '_':
-      case ' ':
-        break;
-
-      default:
-        if (!StringExtensions::IsAlphaNumeric(c))
-        {
-          throw AuthenticationException(
-              GetCredentialName() + ": Unsafe command line input found in " + description + ": "
-              + input);
-        }
+      continue;
+    }
+    if (!StringExtensions::IsAlphaNumeric(c))
+    {
+      throw AuthenticationException(
+          GetCredentialName() + ": Unsafe command line input found in " + description + ": "
+          + input);
     }
   }
 }
@@ -120,8 +113,10 @@ AzureCliCredential::AzureCliCredential(const Core::Credentials::TokenCredentialO
 std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::string const& tenantId)
     const
 {
-  ThrowIfNotSafeCmdLineInput(scopes, "Scopes");
-  ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
+  // The OAuth 2.0 RFC (https://datatracker.ietf.org/doc/html/rfc6749#section-3.3) allows space as
+  // well for a list of scopes, but that isn't currently required.
+  ThrowIfNotSafeCmdLineInput(scopes, ".-:/_", "Scopes");
+  ThrowIfNotSafeCmdLineInput(tenantId, ".-", "TenantID");
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
@@ -146,6 +141,7 @@ AccessToken AzureCliCredential::GetToken(
   auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, false, false);
   auto const tenantId
       = TenantIdResolver::Resolve(m_tenantId, tokenRequestContext, m_additionallyAllowedTenants);
+  auto const command = GetAzCommand(scopes, tenantId);
 
   // TokenCache::GetToken() can only use the lambda argument when they are being executed. They
   // are not supposed to keep a reference to lambda argument to call it later. Therefore, any
@@ -153,8 +149,7 @@ AccessToken AzureCliCredential::GetToken(
   return m_tokenCache.GetToken(scopes, tenantId, tokenRequestContext.MinimumExpiration, [&]() {
     try
     {
-      auto const azCliResult
-          = RunShellCommand(GetAzCommand(scopes, tenantId), m_cliProcessTimeout, context);
+      auto const azCliResult = RunShellCommand(command, m_cliProcessTimeout, context);
 
       try
       {

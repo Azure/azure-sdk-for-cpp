@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 {
+  "$comment": "NOTE: All changes made to this file will get overwritten by the next port release. Please contribute your changes to https://github.com/Azure/azure-sdk-for-cpp.",
   "name": "azure-storage-queues-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
@@ -14,7 +15,7 @@
     {
       "name": "azure-storage-common-cpp",
       "default-features": false,
-      "version>=": "12.4.0"
+      "version>=": "12.5.0"
     },
     {
       "name": "vcpkg-cmake",

@@ -101,13 +101,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * By default, AMQP uses 0, however services can override this to
      * express additional semantics about the message payload.
+     *
+     * For more information, see [AMQP Message
+     * Format](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format).
      */
     uint32_t MessageFormat = AmqpDefaultMessageFormatValue;
 
     /** @brief The header for the message.
      *
      * For more information, see [AMQP Message
-     * Format](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format).
+     * Header](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header)
+     *
      */
     MessageHeader Header;
 
@@ -141,8 +145,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     /** @brief Delivery Tag for the message.
      *
-     * For more information, see [AMQP Application
-     * Properties](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties).
+     * For more information, see [AMQP Transport
+     * Transfer](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-delivery-tag).
      */
     AmqpValue DeliveryTag;
 

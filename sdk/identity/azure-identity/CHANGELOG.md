@@ -1,21 +1,30 @@
 # Release History
 
-## 1.6.0 (2023-11-07)
+## 1.6.0 (2023-11-10)
 
 ### Features Added
 
-- Added support for `WorkloadIdentityCredential`.
+- Added `WorkloadIdentityCredential`.
+- When one of the credentials within `DefaultAzureCredential` is successful, it gets re-used during all subsequent attempts to get the token.
+
+### Breaking Changes
+
+- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
 
 ### Bugs Fixed
 
 - Change the default value for the authority host option to be read from the environment variable first.
 - Do not throw an exception during `AzureCliCredential` construction, but rather delay it to the `GetToken()` call.
+- Harden checks for the tenant ID.
+- Disallow space character when validating tenant id and scopes as input for `AzureCliCredential`.
+- Add authority host url validation to reject non-HTTPS schemes.
 - [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
 
-### Breaking Changes
+### Other Changes
 
-- Modify the order of the credentials used within the `DefaultAzureCredential` to be consistent with other languages.
-- Add `WorkloadIdentityCredential` to the `DefaultAzureCredential`.
+- Create separate lists of characters that are allowed within tenant ids and scopes in `AzureCliCredential`.
+- Add default values to some `WorkloadIdentityCredentialOptions` fields such as authority host by reading them from the environment.
+- Add logging to `WorkloadIdentityCredential` to help with debugging.
 
 ### Acknowledgments
 

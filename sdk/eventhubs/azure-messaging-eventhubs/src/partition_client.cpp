@@ -27,7 +27,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Amqp::Models::AmqpValue const& filterValue)
     {
       Azure::Core::Amqp::Models::AmqpDescribed value{description.Code, filterValue};
-      sourceOptions.Filter.emplace(description.Name, value);
+      sourceOptions.Filter.emplace(description.Name, value.AsAmqpValue());
     }
 
     FilterDescription SelectorFilter{"apache.org:selector-filter:string", 0x0000468c00000004};

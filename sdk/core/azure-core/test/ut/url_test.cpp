@@ -293,6 +293,9 @@ namespace Azure { namespace Core { namespace Test {
   {
     Core::Url url;
     EXPECT_EQ(url.GetAbsoluteUrl(), std::string());
+
+    Core::Url empty("");
+    EXPECT_EQ(empty.GetAbsoluteUrl(), std::string());
   }
 
   TEST(URL, AppendPathSlash)

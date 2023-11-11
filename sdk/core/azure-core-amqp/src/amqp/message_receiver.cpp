@@ -211,7 +211,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_link->SetMaxLinkCredit(m_options.MaxLinkCredit);
     }
-    m_link->SetAttachProperties(static_cast<Models::AmqpValue>(m_options.Properties));
+    m_link->SetAttachProperties(m_options.Properties.AsAmqpValue());
   }
 
   AMQP_VALUE MessageReceiverImpl::OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message)
@@ -234,7 +234,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         rv = receiver->OnMessageReceived(incomingMessage);
       }
-      return amqpvalue_clone(rv);
+      return rv.Release();
     }
 
     return Models::_internal::Messaging::DeliveryRejected(
@@ -474,6 +474,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     // Mark the connection as async so that we can use the async APIs.
     m_session->GetConnection()->EnableAsyncOperation(true);
+
+    // And add the link to the list of pollable items.
+    Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
   }
 
   void MessageReceiverImpl::Close()
@@ -485,7 +488,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         Log::Stream(Logger::Level::Verbose) << "Lock for Closing message receiver.";
       }
-      auto lock{m_session->GetConnection()->Lock()};
 
       AZURE_ASSERT(m_link);
       if (m_options.EnableTrace)
@@ -497,7 +499,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
       }
+
+      Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+          m_link); // This will ensure that the link is cleaned up on the next poll()
+
       m_session->GetConnection()->EnableAsyncOperation(false);
+
+      auto lock{m_session->GetConnection()->Lock()};
 
       // Clear messages from the queue.
       m_messageQueue.Clear();

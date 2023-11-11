@@ -235,15 +235,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::LinkEndpoint linkEndpoint(LinkEndpointFactory::CreateLinkEndpoint(newLinkEndpoint));
     if (session->m_eventHandler)
     {
+      // The input source, target, and properties are owned by the caller, so we need to clone
+      // them before putting them in a UniqueAmqpValueHandle so we can construct an AmqpValue.
       return session->m_eventHandler->OnLinkAttached(
           _detail::SessionFactory::CreateFromInternal(session->shared_from_this()),
           linkEndpoint,
           name,
           role == role_receiver ? Azure::Core::Amqp::_internal::SessionRole::Receiver
                                 : Azure::Core::Amqp::_internal::SessionRole::Sender,
-          source,
-          target,
-          properties);
+          Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(source)},
+          Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(target)},
+          Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(properties)});
     }
     else
     {

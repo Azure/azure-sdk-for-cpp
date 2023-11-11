@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0-beta.4 (Unreleased)
+## 1.0.0-beta.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0-beta.4 (2023-11-07)
 
 ### Features Added
 
@@ -13,8 +23,6 @@
 - `ConsumerClient` and `ProducerClient` objects can no longer be moved or copied.
 - If the connection string provided to `ConsumerClient` or `ProducerClient` contains an EntityPath, then the `EntityPath` 
 parameter to the constructor must match the value provided in the connection string.
-
-### Bugs Fixed
 
 ### Other Changes
 

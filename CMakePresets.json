@@ -359,6 +359,21 @@
       ]
     },
     {
+      "name": "x64-static-release-perftests-asan",
+      "displayName": "x64 Release static With Perf Tests and samples, plus ASAN",
+      "inherits": [
+        "x64-static",
+        "release-build",
+        "enable-tests",
+        "enable-samples",
+        "enable-perf",
+        "enable-address-sanitizer"
+      ],
+      "cacheVariables": {
+        "DISABLE_AZURE_CORE_OPENTELEMETRY":  true
+      }
+    },
+    {
       "name": "x86-msvc-static-debug-perftests",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
       "inherits": [
@@ -480,14 +495,14 @@
     {
       "name": "linux-basic-g++",
       "displayName": "Linux G++",
-      "description": "Using compilers: C = /usr/bin/cc, CXX = /usr/bin/c++",
+      "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "generator": "Ninja",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_C_COMPILER": "/usr/bin/cc",
-        "CMAKE_CXX_COMPILER": "/usr/bin/c++"
+        "CMAKE_C_COMPILER": "/usr/bin/gcc",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++"
       },
       "condition": {
         "type": "equals",
@@ -585,6 +600,7 @@
       "name": "g++-debug-asan-tests",
       "inherits": [
         "linux-g++-debug-tests",
+        "enable-tests",
         "enable-address-sanitizer"
       ],
       "displayName": "Linux g++, ASAN+Debug+Tests"

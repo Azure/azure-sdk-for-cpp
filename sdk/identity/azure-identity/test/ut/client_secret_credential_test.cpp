@@ -28,7 +28,7 @@ TEST(ClientSecretCredential, GetOptionsFromEnvironment)
     CredentialTestHelper::EnvironmentOverride const env(envVars);
 
     ClientSecretCredentialOptions options;
-    EXPECT_EQ(options.AuthorityHost, "");
+    EXPECT_EQ(options.AuthorityHost, "https://login.microsoftonline.com/");
   }
 
   {

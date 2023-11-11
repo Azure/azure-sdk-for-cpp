@@ -32,8 +32,9 @@ AccessToken ChainedTokenCredential::GetToken(
 
 ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
     std::string const& credentialName,
-    ChainedTokenCredential::Sources&& sources)
-    : m_sources(std::move(sources))
+    ChainedTokenCredential::Sources&& sources,
+    bool reuseSuccessfulSource)
+    : m_sources(std::move(sources)), m_reuseSuccessfulSource(reuseSuccessfulSource)
 {
   auto const logLevel
       = m_sources.empty() ? IdentityLog::Level::Warning : IdentityLog::Level::Informational;
@@ -68,16 +69,53 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  for (auto const& source : m_sources)
+  std::unique_lock<std::mutex> lock(m_sourcesMutex, std::defer_lock);
+
+  if (m_reuseSuccessfulSource && m_successfulSourceIndex == SuccessfulSourceNotSet)
   {
+    lock.lock();
+    // Check again in case another thread already set the index, and unlock the mutex.
+    if (m_successfulSourceIndex != SuccessfulSourceNotSet)
+    {
+      lock.unlock();
+    }
+  }
+
+  std::size_t i = 0;
+  std::size_t end = m_sources.size();
+  if (m_successfulSourceIndex != SuccessfulSourceNotSet)
+  {
+    i = m_successfulSourceIndex;
+    end = m_successfulSourceIndex + 1;
+  }
+
+  for (; i < end; ++i)
+  {
+    auto& source = m_sources[i];
     try
     {
       auto token = source->GetToken(tokenRequestContext, context);
 
       IdentityLog::Write(
           IdentityLog::Level::Informational,
-          credentialName + ": Successfully got token from " + source->GetCredentialName() + '.');
+          credentialName + ": Successfully got token from " + source->GetCredentialName()
+              + (m_reuseSuccessfulSource ? ". This credential will be reused for subsequent calls."
+                                         : "."));
 
+      // Log first before unlocking the mutex, so that the log message is not interleaved with
+      // other.
+      if (m_reuseSuccessfulSource && m_successfulSourceIndex == SuccessfulSourceNotSet)
+      {
+        IdentityLog::Write(
+            IdentityLog::Level::Verbose,
+            credentialName + ": Saved this credential at index " + std::to_string(i)
+                + " for subsequent calls.");
+
+        // We never re-update the selected credential index, after the first successful credential
+        // is found.
+        m_successfulSourceIndex = i;
+        lock.unlock();
+      }
       return token;
     }
     catch (AuthenticationException const& e)

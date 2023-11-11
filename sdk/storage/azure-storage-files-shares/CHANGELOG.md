@@ -1,6 +1,6 @@
 # Release History
 
-## 12.8.0-beta.2 (Unreleased)
+## 12.9.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.8.0 (2023-11-07)
+
+### Features Added
+
+- Features in `12.8.0-beta.1` are now generally available.
+- Fixed a bug where the x-ms-file-request-intent request header was not being sent for `ShareFileClient::UploadRangeFromUri`.
 
 ## 12.8.0-beta.1 (2023-10-17)
 
