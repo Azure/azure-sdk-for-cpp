@@ -345,7 +345,29 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
 
-  TEST_F(TablesClientTest, TransactionCreate)
+  TEST_F(TablesClientTest, TransactionCreateFail)
+  {
+    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Storage::Tables::Models::TableEntity entity2;
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    entity2.PartitionKey = "P1";
+    entity2.RowKey = "R1";
+    entity2.Properties["Name"] = "Azure";
+    entity2.Properties["Product"] = "Tables";
+    auto createResponse = m_tableClient->Create();
+    auto transaction = m_tableClient->CreateTransaction("P1");
+
+    transaction.CreateEntity(entity);
+    transaction.CreateEntity(entity2);
+
+    auto response = m_tableClient->SubmitTransaction(transaction);
+    EXPECT_TRUE(response.Value.Error.HasValue());
+  }
+
+   TEST_F(TablesClientTest, TransactionCreateOK)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -364,6 +386,7 @@ namespace Azure { namespace Storage { namespace Test {
     transaction.CreateEntity(entity2);
 
     auto response = m_tableClient->SubmitTransaction(transaction);
+    EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
   TEST_F(TablesClientTest, TransactionDelete)

@@ -491,8 +491,16 @@ namespace Azure { namespace Storage { namespace Tables {
       Models::TableEntity Entity;
     };
 
+    struct TransactionError final
+    {
+      std::string Message;
+      std::string Code;
+    };
+
     struct SubmitTransactionResult final
     {
+      std::string StatusCode;
+      Azure::Nullable<TransactionError> Error;
     };
   } // namespace Models
 }}} // namespace Azure::Storage::Tables

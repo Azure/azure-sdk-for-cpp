@@ -13,6 +13,8 @@
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/internal/xml_wrapper.hpp>
 #include <azure/storage/tables/serializers.hpp>
+#include <string>
+#include <sstream>
 using namespace Azure::Storage::Tables;
 
 AllowedMethodsType const AllowedMethodsType::Delete{"DELETE"};
@@ -54,123 +56,7 @@ Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServ
     Models::SetServicePropertiesOptions const& options,
     Core::Context const& context)
 {
-  std::string xmlBody;
-  {
-    _internal::XmlWriter writer;
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "StorageServiceProperties"});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Logging"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Version",
-        options.TableServiceProperties.Logging.Version});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Delete",
-        options.TableServiceProperties.Logging.Delete ? "true" : "false"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Read",
-        options.TableServiceProperties.Logging.Read ? "true" : "false"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Write",
-        options.TableServiceProperties.Logging.Write ? "true" : "false"});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Enabled",
-        options.TableServiceProperties.Logging.RetentionPolicy.IsEnabled ? "true" : "false"});
-    if (options.TableServiceProperties.Logging.RetentionPolicy.Days.HasValue())
-    {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
-          "Days",
-          std::to_string(options.TableServiceProperties.Logging.RetentionPolicy.Days.Value())});
-    }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "HourMetrics"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Version",
-        options.TableServiceProperties.HourMetrics.Version});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Enabled",
-        options.TableServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
-    if (options.TableServiceProperties.HourMetrics.IncludeApis.HasValue())
-    {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
-          "IncludeAPIs",
-          options.TableServiceProperties.HourMetrics.IncludeApis.Value() ? "true" : "false"});
-    }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Enabled",
-        options.TableServiceProperties.HourMetrics.RetentionPolicy.IsEnabled ? "true" : "false"});
-    if (options.TableServiceProperties.HourMetrics.RetentionPolicy.Days.HasValue())
-    {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
-          "Days",
-          std::to_string(options.TableServiceProperties.HourMetrics.RetentionPolicy.Days.Value())});
-    }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MinuteMetrics"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Version",
-        options.TableServiceProperties.MinuteMetrics.Version});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Enabled",
-        options.TableServiceProperties.MinuteMetrics.IsEnabled ? "true" : "false"});
-    if (options.TableServiceProperties.MinuteMetrics.IncludeApis.HasValue())
-    {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
-          "IncludeAPIs",
-          options.TableServiceProperties.MinuteMetrics.IncludeApis.Value() ? "true" : "false"});
-    }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
-        "Enabled",
-        options.TableServiceProperties.MinuteMetrics.RetentionPolicy.IsEnabled ? "true" : "false"});
-    if (options.TableServiceProperties.MinuteMetrics.RetentionPolicy.Days.HasValue())
-    {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
-          "Days",
-          std::to_string(
-              options.TableServiceProperties.MinuteMetrics.RetentionPolicy.Days.Value())});
-    }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Cors"});
-    for (const auto& i1 : options.TableServiceProperties.Cors)
-    {
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "CorsRule"});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "AllowedOrigins", i1.AllowedOrigins});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "AllowedMethods", i1.AllowedMethods});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "AllowedHeaders", i1.AllowedHeaders});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "ExposedHeaders", i1.ExposedHeaders});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "MaxAgeInSeconds", std::to_string(i1.MaxAgeInSeconds)});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
-    xmlBody = writer.GetDocument();
-  }
+  std::string xmlBody = Serializers::SetServiceProperties(options);
   auto url = m_url;
 
   url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
@@ -524,13 +410,7 @@ Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
   auto url = m_url;
   url.AppendPath("Tables");
 
-  std::string jsonBody;
-  {
-    auto jsonRoot = Core::Json::_internal::json::object();
-
-    jsonRoot["TableName"] = m_tableName;
-    jsonBody = jsonRoot.dump();
-  }
+  std::string jsonBody = Serializers::Create(m_tableName);
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
@@ -642,42 +522,7 @@ Azure::Response<Models::SetTableAccessPolicyResult> TableClient::SetAccessPolicy
   url.AppendPath(m_tableName);
   url.AppendQueryParameter("comp", "acl");
   (void)options;
-  std::string xmlBody;
-  {
-    _internal::XmlWriter writer;
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifiers"});
-    for (const auto& i1 : tableAccessPolicy.SignedIdentifiers)
-    {
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifier"});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Id", i1.Id});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
-      if (i1.StartsOn.HasValue())
-      {
-        writer.Write(_internal::XmlNode{
-            _internal::XmlNodeType::StartTag,
-            "Start",
-            i1.StartsOn.Value().ToString(
-                Azure::DateTime::DateFormat::Rfc3339,
-                Azure::DateTime::TimeFractionFormat::AllDigits)});
-      }
-      if (i1.ExpiresOn.HasValue())
-      {
-        writer.Write(_internal::XmlNode{
-            _internal::XmlNodeType::StartTag,
-            "Expiry",
-            i1.ExpiresOn.Value().ToString(
-                Azure::DateTime::DateFormat::Rfc3339,
-                Azure::DateTime::TimeFractionFormat::AllDigits)});
-      }
-      writer.Write(
-          _internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission", i1.Permissions});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
-    xmlBody = writer.GetDocument();
-  }
+  std::string xmlBody = Serializers::SetAccessPolicy(tableAccessPolicy);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<const uint8_t*>(xmlBody.data()), xmlBody.length());
 
@@ -802,9 +647,7 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
   return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::DeleteResult> TableClient::Delete(
-
-    Core::Context const& context)
+Azure::Response<Models::DeleteResult> TableClient::Delete(Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("Tables('" + m_tableName + "')");
@@ -1131,19 +974,19 @@ Transaction TableClient::CreateTransaction(std::string const& partitionKey)
 }
 
 Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
-    Transaction & transaction,
-    Core::Context const& context )
+    Transaction& transaction,
+    Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath( "$batch");
-  
+  url.AppendPath("$batch");
+
   std::string body = transaction.PreparePayload();
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(body.data()), body.length());
 
   Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
-  request.SetHeader("Content-Type", "multipart/mixed; boundary="+transaction.GetBatchId());
+  request.SetHeader("Content-Type", "multipart/mixed; boundary=" + transaction.GetBatchId());
   request.SetHeader("Accept", "application/json;odata=fullmetadata");
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
   request.SetHeader("Connection", "Keep-Alive");
@@ -1157,5 +1000,42 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
   }
 
   Models::SubmitTransactionResult response{};
+  {
+    const auto& responseBody = rawResponse->GetBody();
+    std::string responseString = std::string(responseBody.begin(), responseBody.end());
+    std::stringstream ss(responseString);
+
+    std::string line;
+    std::getline(ss, line, '\n');
+    Models::TransactionError error;
+    while (line.size() != 0)
+    {
+      std::getline(ss, line, '\n');
+      if (line.find("HTTP") != std::string::npos)
+      {
+        std::string status
+            = line.substr(line.find(" ") + 1, 3); 
+        response.StatusCode = status;
+      }
+
+      if (line.find("odata.error") != std::string::npos)
+      {
+        auto const jsonRoot = Core::Json::_internal::json::parse(line.begin(), line.end());
+        if (jsonRoot["odata.error"].contains("code"))
+        {
+            error.Code = jsonRoot["odata.error"]["code"].get<std::string>();
+            }
+        if (jsonRoot["odata.error"].contains("message")
+            && jsonRoot["odata.error"]["message"].contains("value"))
+        {
+            error.Message = jsonRoot["odata.error"]["message"]["value"].get<std::string>();
+        }
+      }
+    }
+    if (error.Message.size() != 0)
+    {
+      response.Error = error;
+	}
+  }
   return Response<Models::SubmitTransactionResult>(std::move(response), std::move(rawResponse));
 }
