@@ -108,6 +108,7 @@
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": true,
                 "encryption": {
                     "services": {
                         "file": {
@@ -243,6 +244,7 @@
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": true,
                 "encryption": {
                     "services": {
                         "file": {
