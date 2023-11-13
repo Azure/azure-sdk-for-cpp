@@ -80,6 +80,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return *this;
   }
 
+  MessageTarget::MessageTarget(MessageTarget&& that) noexcept : m_target{std::move(that.m_target)}
+  {
+  }
+
+  MessageTarget& MessageTarget::operator=(MessageTarget&& that) noexcept
+  {
+    m_target = std::move(that.m_target);
+    return *this;
+  }
+
   MessageTarget::MessageTarget(MessageTargetOptions const& options) : m_target{target_create()}
   {
     if (!options.Address.IsNull())

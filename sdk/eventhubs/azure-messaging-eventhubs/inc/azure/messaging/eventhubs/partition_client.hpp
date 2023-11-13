@@ -55,7 +55,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * This type is instantiated from the [ConsumerClient] type, using
    * [ConsumerClient.CreatePartitionClient].
    */
-  class PartitionClient final : private Azure::Core::Amqp::_internal::MessageReceiverEvents {
+  class PartitionClient final {
 
   public:
     /// Create a PartitionClient from another PartitionClient
@@ -79,7 +79,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @return A vector of received events.
      *
      */
-    std::vector<Models::ReceivedEventData> ReceiveEvents(
+    std::vector<std::shared_ptr<Models::ReceivedEventData>> ReceiveEvents(
         uint32_t maxMessages,
         Core::Context const& context = {});
 
@@ -116,15 +116,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Http::Policies::RetryOptions retryOptions);
 
     std::string GetStartExpression(Models::StartPosition const& startPosition);
-
-    virtual void OnMessageReceiverStateChanged(
-        Core::Amqp::_internal::MessageReceiver const& receiver,
-        Core::Amqp::_internal::MessageReceiverState newState,
-        Core::Amqp::_internal::MessageReceiverState oldState);
-    virtual Core::Amqp::Models::AmqpValue OnMessageReceived(
-        Core::Amqp::_internal::MessageReceiver const& receiver,
-        std::shared_ptr<Core::Amqp::Models::AmqpMessage> const& message);
-    virtual void OnMessageReceiverDisconnected(
-        Core::Amqp::Models::_internal::AmqpError const& error);
   };
 }}} // namespace Azure::Messaging::EventHubs

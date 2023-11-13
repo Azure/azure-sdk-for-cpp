@@ -86,6 +86,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return *this;
   }
 
+  MessageSource::MessageSource(MessageSource&& that) noexcept : m_source(std::move(that.m_source))
+  {
+  }
+
+  MessageSource& MessageSource::operator=(MessageSource&& that) noexcept
+  {
+    m_source = std::move(that.m_source);
+    return *this;
+  }
+
   MessageSource::MessageSource() : m_source(source_create()) {}
 
   MessageSource::MessageSource(MessageSourceOptions const& options) : m_source(source_create())

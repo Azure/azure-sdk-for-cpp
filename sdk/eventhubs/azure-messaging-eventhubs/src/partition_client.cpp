@@ -178,11 +178,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * @return A vector of received events.
    *
    */
-  std::vector<Models::ReceivedEventData> PartitionClient::ReceiveEvents(
+  std::vector<std::shared_ptr<Models::ReceivedEventData>> PartitionClient::ReceiveEvents(
       uint32_t maxMessages,
       Core::Context const& context)
   {
-    std::vector<Models::ReceivedEventData> messages;
+    std::vector<std::shared_ptr<Models::ReceivedEventData>> messages;
 
     while (messages.size() < maxMessages && !context.IsCancelled())
     {
@@ -195,7 +195,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       result = m_receiver.TryWaitForIncomingMessage();
       if (result.first)
       {
-        messages.push_back(Models::ReceivedEventData{result.first});
+        messages.push_back(std::make_shared<Models::ReceivedEventData>(result.first));
       }
       else if (result.second)
       {
@@ -213,7 +213,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           Log::Stream(Logger::Level::Verbose)
               << "Received message. Message count now " << messages.size();
-          messages.push_back(Models::ReceivedEventData{result.first});
+          messages.push_back(std::make_shared<Models::ReceivedEventData>(result.first));
         }
         else
         {
@@ -225,27 +225,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         << "Receive Events. Return " << messages.size() << " messages.";
 
     return messages;
-  }
-  void PartitionClient::OnMessageReceiverStateChanged(
-      Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-      Azure::Core::Amqp::_internal::MessageReceiverState newState,
-      Azure::Core::Amqp::_internal::MessageReceiverState oldState)
-  {
-    (void)receiver;
-    (void)newState;
-    (void)oldState;
-  }
-  Azure::Core::Amqp::Models::AmqpValue PartitionClient::OnMessageReceived(
-      Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message)
-  {
-    (void)receiver;
-    (void)message;
-    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
-  }
-  void PartitionClient::OnMessageReceiverDisconnected(
-      Azure::Core::Amqp::Models::_internal::AmqpError const& error)
-  {
-    (void)error;
   }
 }}} // namespace Azure::Messaging::EventHubs

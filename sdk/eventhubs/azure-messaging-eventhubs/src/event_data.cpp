@@ -112,7 +112,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     {
       return m_message;
     }
-    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> rv;
+    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> rv{
+        std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
     rv->Properties.ContentType = ContentType;
     rv->Properties.CorrelationId = CorrelationId;
     rv->Properties.MessageId = MessageId;

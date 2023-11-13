@@ -131,7 +131,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         default:
           throw std::runtime_error("Unknown management operation status.");
       }
-      Log::Stream(Logger::Level::Error)
+      Log::Stream(Logger::Level::Informational)
           << "CBS PutToken result: " << cbsResult << " status code: " << result.StatusCode
           << " Error: " << result.Error.Description << ".";
       return std::make_tuple(cbsResult, result.StatusCode, result.Error.Description);
@@ -188,7 +188,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ClaimsBasedSecurityImpl::OnError(Models::_internal::AmqpError const& error)
   {
-    Log::Stream(Logger::Level::Error) << "AMQP Error processing ClaimsBasedSecurity: " << error;
+    Log::Stream(Logger::Level::Warning) << "AMQP Error processing ClaimsBasedSecurity: " << error;
   }
 
 }}}} // namespace Azure::Core::Amqp::_detail

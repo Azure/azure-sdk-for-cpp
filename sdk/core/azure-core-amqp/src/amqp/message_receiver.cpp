@@ -182,7 +182,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           m_eventHandler->OnMessageReceiverDisconnected(error);
         }
         // Log that an error occurred.
-        Log::Stream(Logger::Level::Error)
+        Log::Stream(Logger::Level::Warning)
             << "Message receiver link detached: " + error.Condition.ToString() << ": "
             << error.Description;
 

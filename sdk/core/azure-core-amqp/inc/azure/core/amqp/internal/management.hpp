@@ -137,7 +137,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    */
   class ManagementClient final {
   public:
+    /**
+     * @brief Represents a client used to manage AMQP entities.
+     */
+    ManagementClient() = default;
+
+    /**
+     * @brief Destructor for the ManagementClient class.
+     */
     ~ManagementClient() noexcept = default;
+
+    /**
+     * @brief Copy constructor.
+     */
+    ManagementClient(ManagementClient const&) = default;
+
+    /**
+     * @brief Assignment operator.
+     */
+    ManagementClient& operator=(ManagementClient const&) = default;
+
+    /**
+     * @brief Move constructor.
+     */
+    ManagementClient(ManagementClient&&) = default;
+
+    /**
+     * @brief Move assignment operator.
+     */
+    ManagementClient& operator=(ManagementClient&&) = default;
 
     /**
      * @brief Open the management instance.
@@ -178,7 +206,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   private:
     friend class Azure::Core::Amqp::_detail::ManagementClientFactory;
     ManagementClient(std::shared_ptr<_detail::ManagementClientImpl> impl) : m_impl{impl} {}
-
     std::shared_ptr<_detail::ManagementClientImpl> m_impl;
   };
 

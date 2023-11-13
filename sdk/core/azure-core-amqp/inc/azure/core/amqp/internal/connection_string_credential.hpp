@@ -86,6 +86,41 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       }
     }
 
+    /** @brief Copy constructor
+     *
+     * @remarks Note that TokenCredential derived objects are expected to be passed via
+     * std::shared_ptr and thus should never be directly constructed.
+     */
+    ServiceBusSasConnectionStringCredential(const ServiceBusSasConnectionStringCredential& other)
+        = delete;
+
+    /** @brief Copy assignment operator
+     *
+     *       * @remarks Note that TokenCredential derived objects are expected to be passed via
+     std::shared_ptr and thus
+     * should never be directly constructed.
+
+    */
+    ServiceBusSasConnectionStringCredential& operator=(
+        const ServiceBusSasConnectionStringCredential& other)
+        = delete;
+
+    /** @brief Move constructor
+     *
+     * @remarks Note that TokenCredential derived objects are expected to be passed via
+     * std::shared_ptr and thus should never be directly constructed.
+     */
+    ServiceBusSasConnectionStringCredential(
+        ServiceBusSasConnectionStringCredential&& other) noexcept = delete;
+
+    /** @brief Move assignment operator
+     *
+     * @remarks Note that TokenCredential derived objects are expected to be passed via
+     * std::shared_ptr and thus should never be directly constructed.
+     */
+    ServiceBusSasConnectionStringCredential& operator=(
+        ServiceBusSasConnectionStringCredential&& other) noexcept = delete;
+
     /** @brief Destroy a SAS connection string credential. */
     ~ServiceBusSasConnectionStringCredential() override = default;
 
@@ -123,7 +158,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @throw Credentials::AuthenticationException Authentication error occurred.
      */
-    virtual Credentials::AccessToken GetToken(
+    Credentials::AccessToken GetToken(
         Credentials::TokenRequestContext const& tokenRequestContext,
         Context const& context) const override;
 

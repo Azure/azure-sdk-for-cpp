@@ -35,6 +35,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray Capabilities;
   };
 
+  /**
+   * @brief Represents an AMQP message target.
+   *
+   * The MessageTarget class provides methods to create and manipulate an AMQP message target.
+   * A message target is the intended destination of an AMQP message.
+   *
+   * @remarks See
+   * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+   * for more information about the fields in a message target.
+   */
   class MessageTarget final {
   public:
     /** @brief Creates a default message target.
@@ -45,6 +55,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     /** @brief Copies a MessageTarget */
     MessageTarget(MessageTarget const& that);
+
+    /** @brief Copy assignment operator */
+    MessageTarget& operator=(MessageTarget const& that);
+
+    /** @brief Moves a MessageTarget */
+    MessageTarget(MessageTarget&&) noexcept;
+
+    /** @brief Moves assignment operator */
+    MessageTarget& operator=(MessageTarget&&) noexcept;
 
     /** @brief Creates a message target with the given address.
      *
@@ -71,8 +90,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * @remarks Normally used in the OnLinkAttached callback.
      */
     MessageTarget(Models::AmqpValue const& value);
-
-    MessageTarget& operator=(MessageTarget const& that);
 
     /** @brief Creates an AMQP value from a message target.
      *

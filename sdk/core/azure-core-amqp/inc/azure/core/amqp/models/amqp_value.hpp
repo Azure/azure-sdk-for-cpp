@@ -628,7 +628,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       return m_value.operator[](pos);
     }
-    void push_back(typename T::value_type&& val) { m_value.push_back(val); }
+    void push_back(typename T::value_type&& val) { m_value.push_back(std::move(val)); }
     typename T::const_iterator begin() const noexcept { return m_value.begin(); }
     typename T::const_iterator end() const noexcept { return m_value.end(); }
     size_t find(T const& val) noexcept { return m_value.find(val); }
@@ -746,7 +746,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     decltype(m_value)::mapped_type& operator[](decltype(m_value)::key_type&& keyVal)
     {
-      return m_value.operator[](keyVal);
+      return m_value.operator[](std::move(keyVal));
     }
 
     /** @brief Insert a new key/value pair into the map.
@@ -758,7 +758,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     template <class... ValueTypes>
     std::pair<decltype(m_value)::iterator, bool> emplace(ValueTypes&&... values)
     {
-      return m_value.emplace(values...);
+      return m_value.emplace(std::forward<ValueTypes>(values)...);
     }
   };
   std::ostream& operator<<(std::ostream& os, AmqpMap const& value);
@@ -1081,7 +1081,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
      * by the caller.
      */
-    operator _detail::UniqueAmqpValueHandle() const;
+    operator _detail::UniqueAmqpValueHandle() const override;
 
   private:
     AmqpValue m_descriptor;
@@ -1107,6 +1107,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      */
     AmqpDescribed(AmqpSymbol const& descriptor, AmqpValue const& value);
+
+    /** @brief Construct a new AmqpDescribed object by moving the contents of another AmqpDescribed
+     * object.
+     *
+     * @param other - the AmqpDescribed object to move.
+     */
+    AmqpDescribed(AmqpDescribed&& other) noexcept = default;
+
+    /** @brief Copy constructor for AmqpDescribed.
+     *
+     * @param other - the AmqpDescribed object to copy.
+     */
+    AmqpDescribed(const AmqpDescribed& other) = default;
+
+    /** @brief Move assignment operator for AmqpDescribed.
+     *
+     * @param other - the AmqpDescribed object to move.
+     * @returns reference to this AmqpDescribed object.
+     */
+    AmqpDescribed& operator=(AmqpDescribed&& other) noexcept = default;
+
+    /** @brief Copy assignment operator for AmqpDescribed.
+     *
+     * @param other - the AmqpDescribed object to copy.
+     * @returns reference to this AmqpDescribed object.
+     */
+    AmqpDescribed& operator=(const AmqpDescribed& other) = default;
 
     ~AmqpDescribed() = default;
 

@@ -58,7 +58,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       catch (std::exception& ex)
       {
-        Log::Stream(Logger::Level::Error) << "Exception caught running processor: " << ex.what();
+        Log::Stream(Logger::Level::Warning) << "Exception caught running processor: " << ex.what();
       }
     });
     m_isRunning = true;
@@ -111,7 +111,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     catch (std::exception& ex)
     {
-      Log::Stream(Logger::Level::Error) << "Exception caught running processor: " << ex.what();
+      Log::Stream(Logger::Level::Warning) << "Exception caught running processor: " << ex.what();
     }
   }
 

@@ -137,7 +137,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
         Azure::Core::Diagnostics::_internal::Log::Stream(
-            Azure::Core::Diagnostics::Logger::Level::Error)
+            Azure::Core::Diagnostics::Logger::Level::Warning)
             << "Management operation failed. StatusCode: " << result.StatusCode
             << " Error: " << result.Error;
         throw _detail::EventHubsExceptionFactory::CreateEventHubsException(

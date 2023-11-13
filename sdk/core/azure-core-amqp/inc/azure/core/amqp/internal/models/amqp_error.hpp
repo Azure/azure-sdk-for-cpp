@@ -319,8 +319,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   struct AmqpError final
   {
+    /** @brief Construct an AmqpError. */
     AmqpError() = default;
+
+    /** @brief Destroy an AmqpError. */
     ~AmqpError() = default;
+
+    /** @brief Copy Constructor */
+    AmqpError(AmqpError const&) = default;
+
+    /** @brief Assignment operator */
+    AmqpError& operator=(AmqpError const&) = default;
+
+    /** @brief Move Constructor */
+    AmqpError(AmqpError&&) = default;
+
+    /** @brief Move assignment operator */
+    AmqpError& operator=(AmqpError&&) = default;
 
     /** @brief A symbolic value indicating the error condition.
      *

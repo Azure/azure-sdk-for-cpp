@@ -335,7 +335,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           GTEST_LOG_(FATAL) << "Exception thrown sending messages" << ex.what();
         }
 #endif
-        std::vector<Models::ReceivedEventData> allEvents;
+        std::vector<std::shared_ptr<Models::ReceivedEventData>> allEvents;
         while (!context.IsCancelled())
         {
           auto receiveContext
@@ -595,7 +595,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   // The processor balanced and greedy tests fail when run on Linux or Mac. The tests run fine on
   // Windows. For now, disable the tests on Linux and Mac.
-#if !defined(AZ_PLATFORM_LINUX) && !defined(AZ_PLATFORM_MAC)
+//#if !defined(AZ_PLATFORM_LINUX) && !defined(AZ_PLATFORM_MAC)
   TEST_F(ProcessorTest, Processor_Balanced_LIVEONLY_)
   {
     TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
@@ -604,7 +604,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyGreedy);
   }
-#endif
+//#endif
+
+  // The processor balanced_acquisitiononly tests are multi-threaded and until the half-closed message sender/message receiver bug is fixed, they cannot be run.
 #if 0
   TEST_F(ProcessorTest, Processor_Balanced_AcquisitionOnly_LIVEONLY_)
   {

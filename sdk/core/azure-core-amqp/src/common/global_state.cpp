@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     switch (logCategory)
     {
       case AZ_LOG_ERROR:
-        logLevel = Logger::Level::Error;
+        logLevel = Logger::Level::Warning;
         break;
       case AZ_LOG_INFO:
         logLevel = Logger::Level::Informational;
