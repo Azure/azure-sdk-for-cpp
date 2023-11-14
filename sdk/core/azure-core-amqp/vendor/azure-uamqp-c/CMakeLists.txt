@@ -321,4 +321,8 @@ if (NOT build_as_object_library)
     )
 endif()
 
+if (${atomic_refcount})
+compileTargetAsC11(uamqp)
+else()
 compileTargetAsC99(uamqp)
+endif()
