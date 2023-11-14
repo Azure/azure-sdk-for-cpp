@@ -525,8 +525,8 @@
       ]
     },
     {
-      "name": "x64-clang-static-debug-perftests",
-      "displayName": "x64 clang Debug static With Perf Tests and samples, libcurl+winhttp",
+      "name": "x64-static-debug-perftests-clang",
+      "displayName": "x64 Debug static With Perf Tests and samples+clang, libcurl+winhttp",
       "inherits": [
         "x64-clang-static",
         "debug-build",
