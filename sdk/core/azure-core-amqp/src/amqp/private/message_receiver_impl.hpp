@@ -70,10 +70,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string GetLinkName() const;
     std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
 
-    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+    std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
     WaitForIncomingMessage(Context const& context);
 
-    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+    std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
     TryWaitForIncomingMessage();
 
   private:
@@ -87,7 +87,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::MessageReceiverState m_currentState{};
 
     Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<Models::AmqpMessage, Models::_internal::AmqpError>
+        AsyncOperationQueue<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
             m_messageQueue;
 
 #if RECEIVER_SYNCHRONOUS_CLOSE
@@ -102,7 +102,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     static AMQP_VALUE OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message);
 
-    virtual Models::AmqpValue OnMessageReceived(Models::AmqpMessage message);
+    virtual Models::AmqpValue OnMessageReceived(
+        std::shared_ptr<Models::AmqpMessage> const& message);
 
     static void OnMessageReceiverStateChangedFn(
         const void* context,

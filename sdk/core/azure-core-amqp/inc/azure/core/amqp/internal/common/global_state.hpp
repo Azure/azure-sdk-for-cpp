@@ -25,6 +25,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   class Pollable {
   public:
+    Pollable() = default;
+    Pollable(const Pollable&) = delete;
+    Pollable& operator=(const Pollable&) = delete;
+    Pollable(Pollable&&) = delete;
+    Pollable& operator=(Pollable&&) = delete;
+
     virtual void Poll() = 0;
     virtual ~Pollable() = default;
   };

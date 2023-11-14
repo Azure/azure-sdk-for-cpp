@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::invalid_argument("target cannot be null");
     }
     TARGET_HANDLE targetHandle;
-    if (amqpvalue_get_target(target, &targetHandle))
+    if (amqpvalue_get_target(_detail::AmqpValueFactory::ToUamqp(target), &targetHandle))
     {
       throw std::runtime_error("Could not retrieve target from value.");
     }
@@ -50,7 +50,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not create source.");
     }
-    if (target_set_address(m_target.get(), AmqpValue{address}))
+    if (target_set_address(
+            m_target.get(),
+            _detail::UniqueAmqpValueHandle(amqpvalue_create_string(address.c_str())).get()))
     {
       throw std::runtime_error("Could not set address.");
     }
@@ -61,7 +63,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not create source.");
     }
-    if (target_set_address(m_target.get(), AmqpValue{address}))
+    if (target_set_address(
+            m_target.get(), _detail::UniqueAmqpValueHandle(amqpvalue_create_string(address)).get()))
     {
       throw std::runtime_error("Could not set address.");
     }
@@ -77,11 +80,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return *this;
   }
 
+  MessageTarget::MessageTarget(MessageTarget&& that) noexcept : m_target{std::move(that.m_target)}
+  {
+  }
+
+  MessageTarget& MessageTarget::operator=(MessageTarget&& that) noexcept
+  {
+    m_target = std::move(that.m_target);
+    return *this;
+  }
+
   MessageTarget::MessageTarget(MessageTargetOptions const& options) : m_target{target_create()}
   {
     if (!options.Address.IsNull())
     {
-      if (target_set_address(m_target.get(), options.Address))
+      if (target_set_address(m_target.get(), _detail::AmqpValueFactory::ToUamqp(options.Address)))
       {
         throw std::runtime_error("Could not set source address.");
       }
@@ -155,7 +168,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.DynamicNodeProperties.empty())
     {
       if (target_set_dynamic_node_properties(
-              m_target.get(), options.DynamicNodeProperties.AsAmqpValue()))
+              m_target.get(),
+              _detail::AmqpValueFactory::ToUamqp(options.DynamicNodeProperties.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set dynamic node properties.");
       }
@@ -163,7 +177,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     if (!options.Capabilities.empty())
     {
-      if (target_set_capabilities(m_target.get(), options.Capabilities.AsAmqpValue()))
+      if (target_set_capabilities(
+              m_target.get(),
+              _detail::AmqpValueFactory::ToUamqp(options.Capabilities.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set capabilities.");
       }
@@ -174,7 +190,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Models::AmqpValue MessageTarget::AsAmqpValue() const
   {
     Models::_detail::UniqueAmqpValueHandle targetValue{amqpvalue_create_target(m_target.get())};
-    return targetValue;
+    return _detail::AmqpValueFactory::FromUamqp(targetValue);
   }
 
   Models::AmqpValue MessageTarget::GetAddress() const
@@ -186,7 +202,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     // target_get_address does not reference the underlying address so we need to addref it here so
     // it gets freed properly.
-    return Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(address)};
+    return _detail::AmqpValueFactory::FromUamqp(
+        Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(address)});
   }
 
   TerminusDurability MessageTarget::GetTerminusDurability() const
@@ -265,7 +282,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     // We clone the value before converting it to a UniqueAmqpValueHandle because the destructor for
     // UniqueAmqpValueHandle will remove the reference.
-    return AmqpValue{Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(value)}}.AsMap();
+    return _detail::AmqpValueFactory::FromUamqp(
+               Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
+        .AsMap();
   }
 
   Models::AmqpArray MessageTarget::GetCapabilities() const
@@ -275,7 +294,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get capabilities.");
     }
-    return value;
+    return _detail::AmqpValueFactory::FromUamqp(
+               _detail::UniqueAmqpValueHandle(amqpvalue_clone(value)))
+        .AsArray();
   }
 
   std::ostream& operator<<(std::ostream& os, MessageTarget const& target)

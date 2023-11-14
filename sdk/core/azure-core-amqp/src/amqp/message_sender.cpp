@@ -163,7 +163,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           m_events->OnMessageSenderDisconnected(error);
         }
         // Log that an error occurred.
-        Log::Stream(Logger::Level::Error)
+        Log::Stream(Logger::Level::Warning)
             << "Message sender link detached: " << error.Condition.ToString() << ": "
             << error.Description;
 
@@ -412,7 +412,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       // Reference disposition so that we don't over-release when the AmqpValue passed to OnComplete
       // is destroyed.
-      onComplete(result, Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(disposition)});
+      onComplete(
+          result,
+          Models::_detail::AmqpValueFactory::FromUamqp(
+              Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(disposition)}));
     }
   };
 
@@ -426,7 +429,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                        RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
     auto result = messagesender_send_async(
         m_messageSender.get(),
-        Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
+        Models::_detail::AmqpMessageFactory::ToUamqp(message).get(),
         std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
         operation.release(),
         0 /*timeout*/);
@@ -474,9 +477,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                 }
                 Models::AmqpValue firstState{deliveryStatusAsList[0]};
                 ERROR_HANDLE errorHandle;
-                if (!amqpvalue_get_error(firstState, &errorHandle))
+                if (!amqpvalue_get_error(
+                        Models::_detail::AmqpValueFactory::ToUamqp(firstState), &errorHandle))
                 {
-                  Models::_internal::UniqueAmqpErrorHandle uniqueError{
+                  Models::_detail::UniqueAmqpErrorHandle uniqueError{
                       errorHandle}; // This will free the error handle when it goes out of scope.
                   error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
                 }

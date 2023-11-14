@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                                         : true);
   }
 
-  MessageHeader _internal::MessageHeaderFactory::FromUamqp(
+  MessageHeader _detail::MessageHeaderFactory::FromUamqp(
       _detail::UniqueMessageHeaderHandle const& handle)
   {
     MessageHeader rv;
@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  _detail::UniqueMessageHeaderHandle _internal::MessageHeaderFactory::ToUamqp(
+  _detail::UniqueMessageHeaderHandle _detail::MessageHeaderFactory::ToUamqp(
       MessageHeader const& header)
   {
     _detail::UniqueMessageHeaderHandle rv{header_create()};
@@ -129,19 +129,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         || (DeliveryCount != 0);
   }
 
-  size_t MessageHeader::GetSerializedSize(MessageHeader const& properties)
+  size_t MessageHeader::GetSerializedSize(MessageHeader const& header)
   {
-    auto handle = _internal::MessageHeaderFactory::ToUamqp(properties);
-    AmqpValue propertiesAsValue{
-        Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())}};
+    auto handle = _detail::MessageHeaderFactory::ToUamqp(header);
+    AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromUamqp(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())})};
     return AmqpValue::GetSerializedSize(propertiesAsValue);
   }
 
   std::vector<uint8_t> MessageHeader::Serialize(MessageHeader const& header)
   {
-    auto handle = _internal::MessageHeaderFactory::ToUamqp(header);
-    AmqpValue headerAsValue{
-        Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())}};
+    auto handle = _detail::MessageHeaderFactory::ToUamqp(header);
+    AmqpValue headerAsValue{_detail::AmqpValueFactory::FromUamqp(
+        Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())})};
     return Models::AmqpValue::Serialize(headerAsValue);
   }
 
@@ -149,13 +149,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     HEADER_HANDLE handle;
-    if (amqpvalue_get_header(value, &handle))
+    if (amqpvalue_get_header(_detail::AmqpValueFactory::ToUamqp(value), &handle))
     {
       throw std::runtime_error("Could not convert value to AMQP Header.");
     }
     _detail::UniqueMessageHeaderHandle uniqueHandle{handle};
     handle = nullptr;
-    return _internal::MessageHeaderFactory::FromUamqp(uniqueHandle);
+    return _detail::MessageHeaderFactory::FromUamqp(uniqueHandle);
   }
 
 }}}} // namespace Azure::Core::Amqp::Models

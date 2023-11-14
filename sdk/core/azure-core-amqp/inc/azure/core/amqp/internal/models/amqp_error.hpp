@@ -20,9 +20,11 @@ namespace Azure { namespace Core { namespace _internal {
   };
 }}} // namespace Azure::Core::_internal
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueAmqpErrorHandle = Azure::Core::_internal::UniqueHandle<ERROR_INSTANCE_TAG>;
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   class AmqpErrorCondition final
       : public Azure::Core::_internal::ExtendableEnumeration<AmqpErrorCondition> {
@@ -317,8 +319,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   struct AmqpError final
   {
+    /** @brief Construct an AmqpError. */
     AmqpError() = default;
+
+    /** @brief Destroy an AmqpError. */
     ~AmqpError() = default;
+
+    /** @brief Copy Constructor */
+    AmqpError(AmqpError const&) = default;
+
+    /** @brief Assignment operator */
+    AmqpError& operator=(AmqpError const&) = default;
+
+    /** @brief Move Constructor */
+    AmqpError(AmqpError&&) = default;
+
+    /** @brief Move assignment operator */
+    AmqpError& operator=(AmqpError&&) = default;
 
     /** @brief A symbolic value indicating the error condition.
      *

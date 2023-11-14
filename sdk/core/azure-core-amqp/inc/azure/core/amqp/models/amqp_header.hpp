@@ -24,7 +24,6 @@ namespace Azure { namespace Core { namespace _internal {
   };
 }}} // namespace Azure::Core::_internal
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-
   using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
@@ -130,7 +129,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
 }}}} // namespace Azure::Core::Amqp::Models
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   /**
    * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE
    * and back.
@@ -144,4 +143,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     static _detail::UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
   };
 
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}} // namespace Azure::Core::Amqp::Models::_detail

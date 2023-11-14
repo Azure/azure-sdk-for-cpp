@@ -36,7 +36,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param maxBatchSize The maximum number of events to receive in a single call to the service.
      * @param context The context to pass to the update checkpoint operation.
      */
-    std::vector<Models::ReceivedEventData> ReceiveEvents(
+    std::vector<std::shared_ptr<const Models::ReceivedEventData>> ReceiveEvents(
         uint32_t maxBatchSize,
         Core::Context const& context = {})
     {
@@ -52,7 +52,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param context The context to pass to the update checkpoint operation.
      */
     void UpdateCheckpoint(
-        Models::ReceivedEventData const& eventData,
+        std::shared_ptr<const Models::ReceivedEventData> const& eventData,
         Core::Context const& context = {});
 
     /// Returns the partition ID associated with this ProcessorPartitionClient.

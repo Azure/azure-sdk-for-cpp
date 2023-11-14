@@ -38,7 +38,7 @@ TEST_F(TestError, SimpleCreate)
     AmqpValue value{AmqpErrorFactory::ToAmqp(error)};
     GTEST_LOG_(INFO) << value;
 
-    AMQP_VALUE amqpValue = static_cast<AMQP_VALUE>(value);
+    AMQP_VALUE amqpValue = _detail::AmqpValueFactory::ToUamqp(value);
     ERROR_HANDLE errorHandle{};
     ASSERT_EQ(0, amqpvalue_get_error(amqpValue, &errorHandle));
     AmqpError error2 = AmqpErrorFactory::FromUamqp(errorHandle);

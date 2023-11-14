@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     Endpoint(Endpoint const&) = delete;
     Endpoint& operator=(Endpoint const&) = delete;
-    Endpoint& operator=(Endpoint&& other);
+    Endpoint& operator=(Endpoint&& other) noexcept;
     ENDPOINT_INSTANCE_TAG* Release()
     {
       ENDPOINT_INSTANCE_TAG* rv = m_endpoint;

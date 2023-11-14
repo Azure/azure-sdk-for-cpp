@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not allocate delivery accepted described value.");
     }
-    return rv;
+    return _detail::AmqpValueFactory::FromUamqp(rv);
   }
   Models::AmqpValue Messaging::DeliveryReleased()
   {
@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not allocate delivery released described value.");
     }
-    return rv;
+    return _detail::AmqpValueFactory::FromUamqp(rv);
   }
   Models::AmqpValue Messaging::DeliveryReceived(uint32_t sectionNumber, uint64_t sectionOffset)
   {
@@ -34,35 +34,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not allocate delivery received described value.");
     }
-    return rv;
+    return _detail::AmqpValueFactory::FromUamqp(rv);
   }
-  Models::AmqpValue Messaging::DeliveryRejected(
+  AmqpValue Messaging::DeliveryRejected(
       std::string const& errorCondition,
       std::string const& errorDescription,
       AmqpValue const& errorInfo)
   {
-    Models::_detail::UniqueAmqpValueHandle rv{messaging_delivery_rejected(
+    _detail::UniqueAmqpValueHandle rv{messaging_delivery_rejected(
         errorCondition.empty() ? nullptr : errorCondition.c_str(),
         errorDescription.empty() ? nullptr : errorDescription.c_str(),
-        errorInfo)};
+        _detail::AmqpValueFactory::ToUamqp(errorInfo))};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery rejected described value.");
     }
-    return rv;
+    return _detail::AmqpValueFactory::FromUamqp(rv);
   }
-  Models::AmqpValue Messaging::DeliveryModified(
+  AmqpValue Messaging::DeliveryModified(
       bool deliveryFailed,
       bool undeliverableHere,
-      Models::AmqpValue annotations)
+      AmqpValue annotations)
   {
-    Models::_detail::UniqueAmqpValueHandle rv{
-        messaging_delivery_modified(deliveryFailed, undeliverableHere, annotations)};
+    Models::_detail::UniqueAmqpValueHandle rv{messaging_delivery_modified(
+        deliveryFailed, undeliverableHere, _detail::AmqpValueFactory::ToUamqp(annotations))};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery modified described value.");
     }
-    return rv;
+    return _detail::AmqpValueFactory::FromUamqp(rv);
   }
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

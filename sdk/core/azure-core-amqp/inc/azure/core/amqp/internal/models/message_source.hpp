@@ -35,6 +35,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray Capabilities;
   };
 
+  /**
+   * @brief Represents an AMQP message source.
+   *
+   * An AMQP message source is a node that originates messages. It is the source of messages for a
+   * link. The message source is identified by its address, which is a string that uniquely
+   * identifies the node within the scope of the AMQP container.
+   *
+   * @remarks See
+   * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+   * for more information about the fields in a message source.
+   */
   class MessageSource final {
   public:
     /** @brief Creates a default message target.
@@ -52,6 +63,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** Assigns a message source from another.
      */
     MessageSource& operator=(MessageSource const& that);
+
+    /** @brief Move constructor */
+    MessageSource(MessageSource&& other) noexcept;
+
+    /** @brief Move assignment operator */
+    MessageSource& operator=(MessageSource&& other) noexcept;
 
     /** @brief Creates a message source with detailed options.
      *

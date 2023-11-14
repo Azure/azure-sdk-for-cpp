@@ -59,9 +59,9 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 
   Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName, producerOptions};
 
-  Azure::Core::Amqp::Models::AmqpMessage message2;
+  auto message2{std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
   Azure::Messaging::EventHubs::Models::EventData message1;
-  message2.SetBody(Azure::Core::Amqp::Models::AmqpValue("Hello7"));
+  message2->SetBody(Azure::Core::Amqp::Models::AmqpValue("Hello7"));
 
   message1.Body = {'H', 'e', 'l', 'l', 'o', '2'};
 

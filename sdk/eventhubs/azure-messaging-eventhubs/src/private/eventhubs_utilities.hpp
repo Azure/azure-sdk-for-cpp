@@ -137,7 +137,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
         Azure::Core::Diagnostics::_internal::Log::Stream(
-            Azure::Core::Diagnostics::Logger::Level::Error)
+            Azure::Core::Diagnostics::Logger::Level::Warning)
             << "Management operation failed. StatusCode: " << result.StatusCode
             << " Error: " << result.Error;
         throw _detail::EventHubsExceptionFactory::CreateEventHubsException(
@@ -145,12 +145,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       }
       else
       {
-        if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+        if (result.Message->BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
         {
           throw std::runtime_error("Unexpected body type");
         }
 
-        auto const& body = result.Message.GetBodyAsAmqpValue();
+        auto const& body = result.Message->GetBodyAsAmqpValue();
         if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
         {
           throw std::runtime_error("Unexpected body type");
@@ -214,12 +214,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       }
       else
       {
-        if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+        if (result.Message->BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
         {
           throw std::runtime_error("Unexpected body type");
         }
 
-        auto const& body = result.Message.GetBodyAsAmqpValue();
+        auto const& body = result.Message->GetBodyAsAmqpValue();
         if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
         {
           throw std::runtime_error("Unexpected body type");

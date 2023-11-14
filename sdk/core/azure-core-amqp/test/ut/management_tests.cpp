@@ -146,7 +146,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     private:
       AmqpValue OnMessageReceived(
           MessageReceiver const& receiver,
-          AmqpMessage const& incomingMessage) override
+          std::shared_ptr<AmqpMessage> const& incomingMessage) override
       {
         // We can only listen on the management or cbs nodes.
         if (receiver.GetSourceName() != "$management" && receiver.GetSourceName() != "$cbs")
@@ -159,7 +159,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         // If this is coming on the management node, we only support the Test operation.
         if (receiver.GetSourceName() == "$management"
-            && incomingMessage.ApplicationProperties.at("operation") != "Test")
+            && incomingMessage->ApplicationProperties.at("operation") != "Test")
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unknown operation.";
           auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
@@ -172,9 +172,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       void MessageReceived(
           std::string const&,
           AmqpServerMock::MessageLinkComponents const& linkComponents,
-          AmqpMessage const& incomingMessage) const override
+          std::shared_ptr<AmqpMessage> const& incomingMessage) const override
       {
-        if (incomingMessage.ApplicationProperties.at("operation") == "Test")
+        if (incomingMessage->ApplicationProperties.at("operation") == "Test")
         {
           AmqpMessage responseMessage;
           responseMessage.ApplicationProperties[m_expectedStatusCodeName] = m_expectedStatusCode;
@@ -185,10 +185,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // Management specification section 3.2: The correlation-id of the response message
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
-          auto requestCorrelationId = incomingMessage.Properties.CorrelationId;
-          if (!incomingMessage.Properties.CorrelationId.HasValue())
+          auto requestCorrelationId = incomingMessage->Properties.CorrelationId;
+          if (!incomingMessage->Properties.CorrelationId.HasValue())
           {
-            requestCorrelationId = incomingMessage.Properties.MessageId.Value();
+            requestCorrelationId = incomingMessage->Properties.MessageId.Value();
           }
           responseMessage.Properties.CorrelationId = requestCorrelationId;
 

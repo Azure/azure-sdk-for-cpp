@@ -243,9 +243,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           name,
           role == role_receiver ? Azure::Core::Amqp::_internal::SessionRole::Receiver
                                 : Azure::Core::Amqp::_internal::SessionRole::Sender,
-          Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(source)},
-          Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(target)},
-          Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(properties)});
+          Models::_detail::AmqpValueFactory::FromUamqp(
+              Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(source)}),
+          Models::_detail::AmqpValueFactory::FromUamqp(
+              Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(target)}),
+          Models::_detail::AmqpValueFactory::FromUamqp(
+              Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(properties)}));
     }
     else
     {

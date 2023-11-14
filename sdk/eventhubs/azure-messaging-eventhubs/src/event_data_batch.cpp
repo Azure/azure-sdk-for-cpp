@@ -45,23 +45,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return returnValue;
   }
 
-  bool EventDataBatch::TryAddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message)
+  bool EventDataBatch::TryAddAmqpMessage(
+      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
   {
-    std::lock_guard<std::mutex> lock(m_rwMutex);
+    Azure::Core::Amqp::Models::AmqpMessage messageToSend{*message};
 
-    if (!message.Properties.MessageId.HasValue())
+    // Fix up some properties in the message to send if they have not been already set.
+    if (!message->Properties.MessageId.HasValue())
     {
-      message.Properties.MessageId
+      messageToSend.Properties.MessageId
           = Azure::Core::Amqp::Models::AmqpValue(Azure::Core::Uuid::CreateUuid().ToString());
     }
 
     if (!m_partitionKey.empty())
     {
-      message.MessageAnnotations.emplace(
+      messageToSend.MessageAnnotations.emplace(
           _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
     }
 
-    auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);
+    auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(messageToSend);
+
+    std::lock_guard<std::mutex> lock(m_rwMutex);
 
     if (m_marshalledMessages.size() == 0)
     {

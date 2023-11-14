@@ -156,10 +156,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return PartitionClient(std::move(messageReceiver), std::move(options), std::move(retryOptions));
   }
 
+  /** Creates a new PartitionClient
+   *
+   * @param messageReceiver Message Receiver for the partition client.
+   * @param options options used to create the PartitionClient.
+   * @param retryOptions controls how many times we should retry an operation in response to being
+   * throttled or encountering a transient error.
+   */
   PartitionClient::PartitionClient(
       Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
       PartitionClientOptions options,
-      Azure::Core::Http::Policies::RetryOptions retryOptions)
+      Core::Http::Policies::RetryOptions retryOptions)
       : m_receiver{messageReceiver}, m_partitionOptions{options}, m_retryOptions{retryOptions}
   {
   }
@@ -178,24 +185,24 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * @return A vector of received events.
    *
    */
-  std::vector<Models::ReceivedEventData> PartitionClient::ReceiveEvents(
+  std::vector<std::shared_ptr<const Models::ReceivedEventData>> PartitionClient::ReceiveEvents(
       uint32_t maxMessages,
       Core::Context const& context)
   {
-    std::vector<Models::ReceivedEventData> messages;
+    std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
 
     while (messages.size() < maxMessages && !context.IsCancelled())
     {
       std::pair<
-          Azure::Nullable<Azure::Core::Amqp::Models::AmqpMessage>,
+          std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>,
           Azure::Core::Amqp::Models::_internal::AmqpError>
           result;
 
       // TryPeekForIncomingMessage will return two empty values if there is no data available.
       result = m_receiver.TryWaitForIncomingMessage();
-      if (result.first.HasValue())
+      if (result.first)
       {
-        messages.push_back(Models::ReceivedEventData{result.first.Value()});
+        messages.push_back(std::make_shared<Models::ReceivedEventData>(result.first));
       }
       else if (result.second)
       {
@@ -209,11 +216,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       else
       {
         result = m_receiver.WaitForIncomingMessage(context);
-        if (result.first.HasValue())
+        if (result.first)
         {
           Log::Stream(Logger::Level::Verbose)
               << "Received message. Message count now " << messages.size();
-          messages.push_back(Models::ReceivedEventData{result.first.Value()});
+          messages.push_back(std::make_shared<const Models::ReceivedEventData>(result.first));
         }
         else
         {
@@ -225,27 +232,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         << "Receive Events. Return " << messages.size() << " messages.";
 
     return messages;
-  }
-  void PartitionClient::OnMessageReceiverStateChanged(
-      Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-      Azure::Core::Amqp::_internal::MessageReceiverState newState,
-      Azure::Core::Amqp::_internal::MessageReceiverState oldState)
-  {
-    (void)receiver;
-    (void)newState;
-    (void)oldState;
-  }
-  Azure::Core::Amqp::Models::AmqpValue PartitionClient::OnMessageReceived(
-      Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-      Azure::Core::Amqp::Models::AmqpMessage const& message)
-  {
-    (void)receiver;
-    (void)message;
-    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
-  }
-  void PartitionClient::OnMessageReceiverDisconnected(
-      Azure::Core::Amqp::Models::_internal::AmqpError const& error)
-  {
-    (void)error;
   }
 }}} // namespace Azure::Messaging::EventHubs

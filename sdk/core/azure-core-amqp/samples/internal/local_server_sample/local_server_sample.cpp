@@ -11,6 +11,7 @@
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 using namespace Azure::Core::Amqp::_internal;
@@ -47,7 +48,7 @@ public:
   // Wait for incoming messages. This method is somewhat more complicated because it
   // needs to wait on multiple waiters (both the connection and the transport).
   template <class... Waiters>
-  Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
+  std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> WaitForIncomingMessage(
       Azure::Core::Context const& context,
       Waiters&... waiters)
   {
@@ -60,7 +61,8 @@ private:
   Common::_internal::AsyncOperationQueue<std::unique_ptr<Connection>> m_connectionQueue;
   Common::_internal::AsyncOperationQueue<Session> m_sessionQueue;
   Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
-  Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::AmqpMessage> m_messageQueue;
+  Common::_internal::AsyncOperationQueue<std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>>
+      m_messageQueue;
 
   virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport) override
   {
@@ -142,7 +144,7 @@ private:
   }
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
       Azure::Core::Amqp::_internal::MessageReceiver const&,
-      Azure::Core::Amqp::Models::AmqpMessage const& message) override
+      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
   {
     m_messageQueue.CompleteOperation(message);
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();

@@ -53,7 +53,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *
      * @param message - AMQP message to construct the EventData from.
      */
-    EventData(Azure::Core::Amqp::Models::AmqpMessage const& message);
+    EventData(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message);
 
     /** @brief Construct a new EventData object from an initializer list of bytes
      *
@@ -100,11 +100,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * from the service.
      *
      */
-    virtual Azure::Core::Amqp::Models::AmqpMessage const GetRawAmqpMessage() const;
+    virtual std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> GetRawAmqpMessage() const;
 
   protected:
     /** The incoming AMQP message, if one was received. */
-    Azure::Core::Amqp::Models::AmqpMessage m_message;
+    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> m_message;
   };
   std::ostream& operator<<(std::ostream&, EventData const&);
 
@@ -153,7 +153,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *
      * This constructor is used internally during the receive operation.
      */
-    ReceivedEventData(Azure::Core::Amqp::Models::AmqpMessage const& message);
+    ReceivedEventData(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message);
 
     // Destructor
     ~ReceivedEventData() = default;
@@ -179,7 +179,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *
      * Returns the underlying AMQP message that was received from the Event Hubs service.
      */
-    Azure::Core::Amqp::Models::AmqpMessage const GetRawAmqpMessage() const { return m_message; }
+    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> GetRawAmqpMessage() const override
+    {
+      return m_message;
+    }
   };
   std::ostream& operator<<(std::ostream&, ReceivedEventData const&);
 }}}} // namespace Azure::Messaging::EventHubs::Models

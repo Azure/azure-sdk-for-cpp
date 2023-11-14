@@ -23,9 +23,11 @@ namespace Azure { namespace Core { namespace _internal {
 
 }}} // namespace Azure::Core::_internal
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models {
-
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniquePropertiesHandle = Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>;
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   /** @brief Represents the immutable properties of an AMQP message.
    *
@@ -212,7 +214,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream& stream, MessageProperties const& properties);
 }}}} // namespace Azure::Core::Amqp::Models
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   /**
    * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
    * PROPERTIES_HANDLE and back.
@@ -227,4 +229,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
     static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
   };
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}} // namespace Azure::Core::Amqp::Models::_detail

@@ -56,7 +56,7 @@ int main()
     auto message = receiver.WaitForIncomingMessage();
     if (message.first)
     {
-      std::cout << "Received message: " << message.first.Value() << std::endl;
+      std::cout << "Received message: " << *message.first << std::endl;
     }
     else
     {

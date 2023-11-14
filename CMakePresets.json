@@ -53,6 +53,56 @@
       }
     },
     {
+      "name": "clang-windows-default",
+      "displayName": "Windows",
+      "description": "Sets Ninja generator, and compilers. Configures vcpkg in manifest mode using clang",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_MANIFEST_MODE": true,
+        "CMAKE_CXX_COMPILER": "clang++.exe",
+        "CMAKE_C_COMPILER": "clang.exe"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [
+            "Windows"
+          ]
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "gcc-windows-default",
+      "displayName": "Windows",
+      "description": "Sets Ninja generator, and compilers. Configures vcpkg in manifest mode using gcc",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_MANIFEST_MODE": true,
+        "CMAKE_CXX_COMPILER": "g++.exe",
+        "CMAKE_C_COMPILER": "gcc.exe"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [
+            "Windows"
+          ]
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
       "name": "x64-static",
       "displayName": "Windows x64 Static",
       "description": "Windows Default, x64 architecture, static CRT.",
@@ -99,6 +149,60 @@
       "displayName": "Windows x64 MSVC Static",
       "description": "Windows Default, MSVC, x64 architecture.",
       "inherits": "msvc-windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "MSVC_USE_STATIC_CRT": true
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "x86-clang-static",
+      "displayName": "Windows x86 clang Static",
+      "description": "Windows Default, clang, x86 architecture.",
+      "inherits": "gcc-windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x86-windows-static",
+        "MSVC_USE_STATIC_CRT": true
+      },
+      "architecture": "win32"
+    },
+    {
+      "name": "x64-clang-static",
+      "displayName": "Windows x64 CLANG Static",
+      "description": "Windows Default, clang, x64 architecture.",
+      "inherits": "clang-windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "MSVC_USE_STATIC_CRT": true
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "x86-gcc-static",
+      "displayName": "Windows x86 gccStatic",
+      "description": "Windows Default, gcc, x86 architecture.",
+      "inherits": "gcc-windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x86-windows-static",
+        "MSVC_USE_STATIC_CRT": true
+      },
+      "architecture": "win32"
+    },
+    {
+      "name": "x64-gcc-static",
+      "displayName": "Windows x64 GCC Static",
+      "description": "Windows Default, gcc, x64 architecture.",
+      "inherits": "gcc-windows-default",
       "hidden": true,
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-windows-static",
@@ -213,9 +317,8 @@
       "displayName": "Enable Address Sanitizer",
       "description": "Enable Address Sanitizer (Hidden). Note: ASAN can be extremely disruptive, when enabling ASAN, make sure you run your application under the debugger.",
       "hidden": true,
-      "environment": {
-        "CXXFLAGS": "-fsanitize=address",
-        "CFLAGS": "-fsanitize=address"
+      "cacheVariables": {
+        "ENABLE_ADDRESS_SANITIZER": true
       }
     },
     {
@@ -370,7 +473,7 @@
         "enable-address-sanitizer"
       ],
       "cacheVariables": {
-        "DISABLE_AZURE_CORE_OPENTELEMETRY":  true
+        "DISABLE_AZURE_CORE_OPENTELEMETRY": true
       }
     },
     {
@@ -419,6 +522,19 @@
         "x64-static",
         "release-build",
         "enable-perf"
+      ]
+    },
+    {
+      "name": "x64-static-debug-perftests-clang",
+      "displayName": "x64 Debug static With Perf Tests and samples+clang, libcurl+winhttp",
+      "inherits": [
+        "x64-clang-static",
+        "debug-build",
+        "enable-tests",
+        "enable-samples",
+        "enable-perf",
+        "winhttp-transport",
+        "curl-transport"
       ]
     },
     {
