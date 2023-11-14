@@ -301,6 +301,16 @@
       ]
     },
     {
+      "filename": "**/sdk/storage/*/NOTICE.txt",
+      "words": [
+        "Edel",
+        "Lavigne",
+        "Evgeny",
+        "Guenter",
+        "Knauf"
+      ]
+    },
+    {
       "filename": "**/cmake-modules/**/*",
       "words": [
         "fprofile",
