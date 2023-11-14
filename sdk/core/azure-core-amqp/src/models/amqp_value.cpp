@@ -28,6 +28,23 @@ using namespace Azure::Core::Diagnostics;
 namespace Azure { namespace Core { namespace _internal {
   void UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(AMQP_VALUE value)
   {
+    //    Log::Stream(Logger::Level::Informational) << "Freeing AMQP_VALUE: " << value << std::endl;
+
+    int* iv = reinterpret_cast<int*>(value);
+    --iv; // Skip over 4 bytes of padding.
+    --iv; // iv points to refcount now.
+    if (*iv == 1)
+    {
+      Log::Stream(Logger::Level::Informational) << "Freeing AMQP_VALUE: " << value << std::endl;
+    }
+    const char* symbolVal = nullptr;
+    if (amqpvalue_get_type(value) == AMQP_TYPE_SYMBOL
+        && amqpvalue_get_symbol(value, &symbolVal) == 0
+        && strcmp(symbolVal, "x-opt-sequence-number") == 0)
+    {
+      //      Log::Stream(Logger::Level::Informational)
+      //          << "Freeing AMQP_VALUE: " << value << " Symbol: " << symbolVal << std::endl;
+    }
     amqpvalue_destroy(value);
   }
 
@@ -46,7 +63,7 @@ namespace Azure { namespace Core { namespace _internal {
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   namespace _detail {
 
-    std::ostream& operator<<(std::ostream& os, AMQP_TYPE const& value)
+    std::ostream& operator<<(std::ostream& os, AMQP_TYPE const value)
     {
       switch (value)
       {
@@ -670,17 +687,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     for (std::uint32_t i = 0; i < mapSize; i += 1)
     {
-      UniqueAmqpValueHandle key;
-      UniqueAmqpValueHandle val;
-
-      {
-        AMQP_VALUE kv, vv;
-        amqpvalue_get_map_key_value_pair(_detail::AmqpValueFactory::ToUamqp(value), i, &kv, &vv);
-        key.reset(kv);
-        val.reset(vv);
-      }
+      AMQP_VALUE key{}, val{};
+      amqpvalue_get_map_key_value_pair(_detail::AmqpValueFactory::ToUamqp(value), i, &key, &val);
       m_value.emplace(std::make_pair(
-          _detail::AmqpValueFactory::FromUamqp(key), _detail::AmqpValueFactory::FromUamqp(val)));
+          _detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle{key}),
+          _detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle{val})));
     }
   }
 

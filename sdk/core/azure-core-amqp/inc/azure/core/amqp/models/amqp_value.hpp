@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace _internal {
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
   class AmqpValueFactory;
-  std::ostream& operator<<(std::ostream& os, AMQP_VALUE_DATA_TAG const* value);
+  std::ostream& operator<<(std::ostream& os, AMQP_VALUE_DATA_TAG* const value);
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {

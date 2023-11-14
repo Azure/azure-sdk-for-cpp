@@ -258,7 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Closing:
           case _internal::MessageSenderState::Error:
             Log::Stream(Logger::Level::Warning) << "Message Sender Changed State to " << newState
-                                              << " while management client is opening";
+                                                << " while management client is opening";
             SetState(ManagementState::Closing);
             m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
             break;
@@ -273,7 +273,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Closing:
           case _internal::MessageSenderState::Error:
             Log::Stream(Logger::Level::Warning) << "Message Sender Changed State to " << newState
-                                              << " while management client is open";
+                                                << " while management client is open";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
             {
@@ -294,7 +294,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Opening:
           case _internal::MessageSenderState::Error:
             Log::Stream(Logger::Level::Warning) << "Message Sender Changed State to " << newState
-                                              << " while management client is closing";
+                                                << " while management client is closing";
             SetState(ManagementState::Closing);
             if (m_eventHandler)
             {
