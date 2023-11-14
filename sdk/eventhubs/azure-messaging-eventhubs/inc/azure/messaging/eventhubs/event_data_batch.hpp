@@ -146,7 +146,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const;
 
   private:
-    bool TryAddAmqpMessage(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const&message);
+    bool TryAddAmqpMessage(
+        std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message);
 
     size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {

@@ -179,7 +179,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *
      * Returns the underlying AMQP message that was received from the Event Hubs service.
      */
-    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> GetRawAmqpMessage() const override { return m_message; }
+    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> GetRawAmqpMessage() const override
+    {
+      return m_message;
+    }
   };
   std::ostream& operator<<(std::ostream&, ReceivedEventData const&);
 }}}} // namespace Azure::Messaging::EventHubs::Models

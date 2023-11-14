@@ -45,7 +45,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return returnValue;
   }
 
-  bool EventDataBatch::TryAddAmqpMessage(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
+  bool EventDataBatch::TryAddAmqpMessage(
+      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
   {
     Azure::Core::Amqp::Models::AmqpMessage messageToSend{*message};
 

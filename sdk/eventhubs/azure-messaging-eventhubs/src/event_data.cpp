@@ -37,7 +37,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     }
   }
 
-  ReceivedEventData::ReceivedEventData(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
+  ReceivedEventData::ReceivedEventData(
+      std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
       : EventData(message)
   {
     // Copy the message annotations into the ReceivedEventData.SystemProperties. There are 3
