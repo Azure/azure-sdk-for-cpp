@@ -156,10 +156,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return PartitionClient(std::move(messageReceiver), std::move(options), std::move(retryOptions));
   }
 
+  /** Creates a new PartitionClient
+   *
+   * @param messageReceiver Message Receiver for the partition client.
+   * @param options options used to create the PartitionClient.
+   * @param retryOptions controls how many times we should retry an operation in response to being
+   * throttled or encountering a transient error.
+   */
   PartitionClient::PartitionClient(
       Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
       PartitionClientOptions options,
-      Azure::Core::Http::Policies::RetryOptions retryOptions)
+      Core::Http::Policies::RetryOptions retryOptions)
       : m_receiver{messageReceiver}, m_partitionOptions{options}, m_retryOptions{retryOptions}
   {
   }
@@ -178,16 +185,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * @return A vector of received events.
    *
    */
-  std::vector<std::shared_ptr<Models::ReceivedEventData>> PartitionClient::ReceiveEvents(
+  std::vector<std::shared_ptr<const Models::ReceivedEventData>> PartitionClient::ReceiveEvents(
       uint32_t maxMessages,
       Core::Context const& context)
   {
-    std::vector<std::shared_ptr<Models::ReceivedEventData>> messages;
+    std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
 
     while (messages.size() < maxMessages && !context.IsCancelled())
     {
       std::pair<
-          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>,
+          std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>,
           Azure::Core::Amqp::Models::_internal::AmqpError>
           result;
 
@@ -213,7 +220,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           Log::Stream(Logger::Level::Verbose)
               << "Received message. Message count now " << messages.size();
-          messages.push_back(std::make_shared<Models::ReceivedEventData>(result.first));
+          messages.push_back(std::make_shared<const Models::ReceivedEventData>(result.first));
         }
         else
         {

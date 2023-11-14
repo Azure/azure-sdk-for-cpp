@@ -79,7 +79,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @return A vector of received events.
      *
      */
-    std::vector<std::shared_ptr<Models::ReceivedEventData>> ReceiveEvents(
+    std::vector<std::shared_ptr<const Models::ReceivedEventData>> ReceiveEvents(
         uint32_t maxMessages,
         Core::Context const& context = {});
 

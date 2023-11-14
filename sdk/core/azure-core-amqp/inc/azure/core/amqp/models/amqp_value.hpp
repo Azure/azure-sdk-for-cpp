@@ -621,9 +621,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief Returns the size of the underlying value.*/
     inline typename T::size_type size() const { return m_value.size(); }
 
-    /// @brief Array accessor operator.
-    /// @param pos Position of an element in the container.
-    /// @return element value.
+    /**  @brief Array accessor operator.
+     * @param pos Position of an element in the container.
+     * @return element value.
+     */
     const typename T::value_type& operator[](const typename T::size_type pos) const noexcept
     {
       return m_value.operator[](pos);
@@ -1061,15 +1062,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @returns The descriptor for this composite type.
      */
     AmqpValue const& GetDescriptor() const { return m_descriptor; }
-#if 0
-    /**
-     * @brief Convert an existing AmqpComposite to an AmqpValue.
-     */
-    explicit operator AmqpValue() const
-    {
-      return static_cast<_detail::UniqueAmqpValueHandle>(*this);
-    }
-#endif
 
   protected:
     /**

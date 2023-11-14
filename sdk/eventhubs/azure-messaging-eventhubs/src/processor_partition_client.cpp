@@ -65,7 +65,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
 
   void ProcessorPartitionClient::UpdateCheckpoint(
-      std::shared_ptr<Models::ReceivedEventData> const& eventData,
+      std::shared_ptr<const Models::ReceivedEventData> const& eventData,
       Core::Context const& context)
   {
     uint64_t sequenceNumber{};

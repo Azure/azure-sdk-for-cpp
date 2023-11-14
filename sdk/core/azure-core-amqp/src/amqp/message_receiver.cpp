@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
   std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
-  std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
+  std::pair<std::shared_ptr<const Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiver::WaitForIncomingMessage(Azure::Core::Context const& context)
   {
     if (m_impl)
@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
 
-  std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
+  std::pair<std::shared_ptr<const Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiver::TryWaitForIncomingMessage()
   {
     if (m_impl)

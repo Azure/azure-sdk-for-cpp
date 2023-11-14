@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A pair of the received message and the error if any.
      */
-    std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
+    std::pair<std::shared_ptr<const Models::AmqpMessage>, Models::_internal::AmqpError>
     WaitForIncomingMessage(Context const& context = {});
 
     /** @brief Return if there are messages waiting to be processed.
@@ -175,7 +175,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @return A pair of the received message and the error if any. If both values are empty, then
      * no messages are available and the caller should call WaitForIncomingMessage.
      */
-    std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
+    std::pair<std::shared_ptr<const Models::AmqpMessage>, Models::_internal::AmqpError>
     TryWaitForIncomingMessage();
 
   private:

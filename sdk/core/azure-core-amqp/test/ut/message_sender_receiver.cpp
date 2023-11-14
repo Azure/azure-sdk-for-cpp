@@ -643,7 +643,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       // Tell the server it should send a message in the polling loop.
       server.ShouldSendMessage(true);
       GTEST_LOG_(INFO) << "Waiting for message to be received.";
-      std::pair<std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>, bool> response;
+      std::pair<std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>, bool> response;
       ASSERT_NO_THROW(response = receiver.WaitForIncomingMessage(receiveContext));
       ASSERT_TRUE(response.first);
       ASSERT_FALSE(response.second);
