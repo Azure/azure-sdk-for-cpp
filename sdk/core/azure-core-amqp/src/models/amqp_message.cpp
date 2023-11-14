@@ -83,9 +83,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       AMQP_VALUE messageAnnotations{};
       if (!message_get_message_annotations(message, &messageAnnotations) && messageAnnotations)
       {
-        rv->MessageAnnotations = std::move(
-            Models::_detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle{messageAnnotations})
-                .AsMap());
+        rv->MessageAnnotations = Models::_detail::AmqpValueFactory::FromUamqp(
+                                     UniqueAmqpValueHandle{messageAnnotations})
+                                     .AsMap();
       }
     }
     {
