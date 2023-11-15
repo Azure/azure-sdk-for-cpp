@@ -21,14 +21,14 @@
 
 #define RECEIVER_SYNCHRONOUS_CLOSE 0
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
   {
     static void FreeMessageReceiver(MESSAGE_RECEIVER_HANDLE obj);
 
     using type = BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 

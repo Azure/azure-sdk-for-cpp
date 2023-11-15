@@ -3,7 +3,7 @@
 #pragma once
 #include <memory>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
 
   /**
    * Helpers to provide RAII wrappers for OpenSSL, WinHTTP, CURL, and other types.
@@ -60,8 +60,10 @@ namespace Azure { namespace Core { namespace _internal {
    */
   // *** Given just T, map it to the corresponding FreeFunc
   template <typename T> struct UniqueHandleHelper;
+}}} // namespace Azure::Core::_detail
 
+namespace Azure { namespace Core { namespace _internal {
   // *** Now users can say UniqueHandle<T> if they want:
-  template <typename T, template <typename> class U = UniqueHandleHelper>
+  template <typename T, template <typename> class U = _detail::UniqueHandleHelper>
   using UniqueHandle = typename U<T>::type;
 }}} // namespace Azure::Core::_internal

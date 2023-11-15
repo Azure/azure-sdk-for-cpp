@@ -13,14 +13,14 @@
 #include <stdexcept>
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<XIO_INSTANCE_TAG>
   {
     static void FreeXio(XIO_HANDLE obj);
 
     using type = BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
   using UniqueXioHandle = Azure::Core::_internal::UniqueHandle<XIO_INSTANCE_TAG>;

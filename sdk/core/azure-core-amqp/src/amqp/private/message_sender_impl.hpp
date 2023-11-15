@@ -13,14 +13,14 @@
 
 #define SENDER_SYNCHRONOUS_CLOSE 0
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
   {
     static void FreeMessageSender(MESSAGE_SENDER_HANDLE obj);
 
     using type = BasicUniqueHandle<MESSAGE_SENDER_INSTANCE_TAG, FreeMessageSender>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueMessageSender = Azure::Core::_internal::UniqueHandle<MESSAGE_SENDER_INSTANCE_TAG>;

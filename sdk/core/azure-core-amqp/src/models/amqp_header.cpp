@@ -12,12 +12,12 @@
 #include <chrono>
 #include <iostream>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   void UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(HEADER_HANDLE handle)
   {
     header_destroy(handle);
   }
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   bool MessageHeader::operator==(MessageHeader const& that) const noexcept

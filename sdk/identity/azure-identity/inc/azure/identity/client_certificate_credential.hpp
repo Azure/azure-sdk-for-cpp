@@ -30,7 +30,7 @@ namespace Azure { namespace Identity {
     template <> struct UniquePrivateKeyHelper<void*>
     {
       static void FreePrivateKey(void* pkey) { FreePrivateKeyImpl(pkey); }
-      using type = Azure::Core::_internal::BasicUniqueHandle<void, FreePrivateKey>;
+      using type = Azure::Core::_detail::BasicUniqueHandle<void, FreePrivateKey>;
     };
 
     using UniquePrivateKey = Azure::Core::_internal::UniqueHandle<void*, UniquePrivateKeyHelper>;

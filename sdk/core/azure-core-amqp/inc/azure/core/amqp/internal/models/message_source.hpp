@@ -9,14 +9,14 @@
 
 struct SOURCE_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<SOURCE_INSTANCE_TAG>
   {
     static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
 
     using type = BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

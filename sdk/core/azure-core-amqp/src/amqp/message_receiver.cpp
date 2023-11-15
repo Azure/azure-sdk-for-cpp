@@ -29,13 +29,13 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Amqp::_internal;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   void UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
       MESSAGE_RECEIVER_HANDLE value)
   {
     messagereceiver_destroy(value);
   }
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 

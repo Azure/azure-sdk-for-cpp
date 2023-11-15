@@ -9,7 +9,7 @@
 
 struct CBS_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
 
   template <> struct UniqueHandleHelper<CBS_INSTANCE_TAG>
   {
@@ -17,7 +17,7 @@ namespace Azure { namespace Core { namespace _internal {
 
     using type = BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;

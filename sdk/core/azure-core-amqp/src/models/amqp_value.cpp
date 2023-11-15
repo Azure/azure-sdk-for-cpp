@@ -25,7 +25,7 @@ using namespace Azure::Core::Amqp::Models::_detail;
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   void UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(AMQP_VALUE value)
   {
     amqpvalue_destroy(value);
@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace _internal {
   {
     amqpvalue_decoder_destroy(value);
   }
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   namespace _detail {

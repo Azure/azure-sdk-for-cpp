@@ -31,7 +31,7 @@
 typedef struct x509_store_ctx_st X509_STORE_CTX;
 
 namespace Azure { namespace Core {
-  namespace _internal {
+  namespace _detail {
     /**
      * @brief  Unique handle for WinHTTP HINTERNET handles.
      *

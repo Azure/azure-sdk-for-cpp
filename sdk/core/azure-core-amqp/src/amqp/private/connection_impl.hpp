@@ -22,14 +22,14 @@
 #define _azure_ACQUIRES_LOCK(...)
 #endif
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
   {
     static void FreeAmqpConnection(CONNECTION_HANDLE obj);
 
     using type = BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;

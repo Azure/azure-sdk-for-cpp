@@ -187,7 +187,7 @@ template <typename> struct UniqueHandleHelper;
 template <> struct UniqueHandleHelper<HANDLE>
 {
   static void CloseWin32Handle(HANDLE handle) { static_cast<void>(CloseHandle(handle)); }
-  using type = Azure::Core::_internal::BasicUniqueHandle<void, CloseWin32Handle>;
+  using type = Azure::Core::_detail::BasicUniqueHandle<void, CloseWin32Handle>;
 };
 
 template <typename T>

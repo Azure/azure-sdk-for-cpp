@@ -15,14 +15,14 @@
 
 struct HEADER_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<HEADER_INSTANCE_TAG>
   {
     static void FreeAmqpHeader(HEADER_INSTANCE_TAG* obj);
 
     using type = BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

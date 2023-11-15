@@ -32,7 +32,7 @@
 #include <winhttp.h>
 
 namespace Azure { namespace Core {
-  namespace _internal {
+  namespace _detail {
     /**
      * @brief  Unique handle for WinHTTP HINTERNET handles.
      *

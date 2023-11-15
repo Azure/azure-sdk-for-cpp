@@ -13,14 +13,14 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<SESSION_INSTANCE_TAG>
   {
     static void FreeAmqpSession(SESSION_HANDLE obj);
 
     using type = BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;

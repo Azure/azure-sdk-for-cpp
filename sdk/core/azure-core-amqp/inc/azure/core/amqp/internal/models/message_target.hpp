@@ -9,14 +9,14 @@
 
 struct TARGET_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace _detail {
   template <> struct UniqueHandleHelper<TARGET_INSTANCE_TAG>
   {
     static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
 
     using type = BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
   };
-}}} // namespace Azure::Core::_internal
+}}} // namespace Azure::Core::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
