@@ -36,7 +36,12 @@ namespace Azure { namespace Storage { namespace Tables {
 
   class Transaction final {
   public:
-    Transaction(std::string const& url, std::string const& tableName, std::string const& partitionKey) : m_partitionKey(std::move(partitionKey)), m_url(url), m_tableName(tableName) {
+    Transaction(
+        std::string const& url,
+        std::string const& tableName,
+        std::string const& partitionKey)
+        : m_partitionKey(std::move(partitionKey)), m_url(url), m_tableName(tableName)
+    {
       m_batchId = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
       m_changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
     }

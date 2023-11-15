@@ -330,7 +330,10 @@ namespace Azure { namespace Storage { namespace Tables {
         Core::Context const& context = {});
 
     Transaction CreateTransaction(std::string const& partitionKey);
-    Response<Models::SubmitTransactionResult> SubmitTransaction(Transaction& transaction, Core::Context const& context = {});
+    Response<Models::SubmitTransactionResult> SubmitTransaction(
+        Transaction& transaction,
+        Core::Context const& context = {});
+
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;

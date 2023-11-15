@@ -367,7 +367,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
-   TEST_F(TablesClientTest, TransactionCreateOK)
+  TEST_F(TablesClientTest, TransactionCreateOK)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -414,6 +414,7 @@ namespace Azure { namespace Storage { namespace Test {
     transaction2.DeleteEntity(entity);
 
     response = m_tableClient->SubmitTransaction(transaction2);
+    EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
   TEST_F(TablesClientTest, TransactionMerge)
@@ -440,6 +441,7 @@ namespace Azure { namespace Storage { namespace Test {
     transaction2.MergeEntity(entity2);
 
     response = m_tableClient->SubmitTransaction(transaction2);
+    EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
   TEST_F(TablesClientTest, TransactionUpdate)
@@ -466,5 +468,6 @@ namespace Azure { namespace Storage { namespace Test {
     transaction2.UpdateEntity(entity2);
 
     response = m_tableClient->SubmitTransaction(transaction2);
+    EXPECT_FALSE(response.Value.Error.HasValue());
   }
 }}} // namespace Azure::Storage::Test

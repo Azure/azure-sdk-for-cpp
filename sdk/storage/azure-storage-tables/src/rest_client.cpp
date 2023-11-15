@@ -13,8 +13,9 @@
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/internal/xml_wrapper.hpp>
 #include <azure/storage/tables/serializers.hpp>
-#include <string>
+
 #include <sstream>
+#include <string>
 using namespace Azure::Storage::Tables;
 
 AllowedMethodsType const AllowedMethodsType::Delete{"DELETE"};
@@ -844,12 +845,14 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
   {
     switch (options.UpsertType)
     {
-      case Models::UpsertType::Merge: {
+      case Models::UpsertType::Merge:
+      {
         auto response = MergeEntity(tableEntity, Models::MergeEntityOptions(options), context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }
-      default: {
+      default:
+      {
         auto response = UpdateEntity(tableEntity, Models::UpdateEntityOptions(options), context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
@@ -1013,8 +1016,7 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
       std::getline(ss, line, '\n');
       if (line.find("HTTP") != std::string::npos)
       {
-        std::string status
-            = line.substr(line.find(" ") + 1, 3); 
+        std::string status = line.substr(line.find(" ") + 1, 3);
         response.StatusCode = status;
       }
 
@@ -1023,19 +1025,19 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
         auto const jsonRoot = Core::Json::_internal::json::parse(line.begin(), line.end());
         if (jsonRoot["odata.error"].contains("code"))
         {
-            error.Code = jsonRoot["odata.error"]["code"].get<std::string>();
-            }
+          error.Code = jsonRoot["odata.error"]["code"].get<std::string>();
+        }
         if (jsonRoot["odata.error"].contains("message")
             && jsonRoot["odata.error"]["message"].contains("value"))
         {
-            error.Message = jsonRoot["odata.error"]["message"]["value"].get<std::string>();
+          error.Message = jsonRoot["odata.error"]["message"]["value"].get<std::string>();
         }
       }
     }
     if (error.Message.size() != 0)
     {
       response.Error = error;
-	}
+    }
   }
   return Response<Models::SubmitTransactionResult>(std::move(response), std::move(rawResponse));
 }

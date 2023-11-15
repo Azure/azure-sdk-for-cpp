@@ -85,9 +85,8 @@ std::string Transaction::PrepDeleteEntity(Models::TableEntity entity)
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
 
-  returnValue += "DELETE " + m_url + "/"+ m_tableName + "(PartitionKey='" + entity.PartitionKey
-      + "',RowKey='"
-      + entity.RowKey + "')" + " HTTP/1.1\n";
+  returnValue += "DELETE " + m_url + "/" + m_tableName + "(PartitionKey='" + entity.PartitionKey
+      + "',RowKey='" + entity.RowKey + "')" + " HTTP/1.1\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   // returnValue += "Prefer: return-no-content\n";
   returnValue += "DataServiceVersion: 3.0;\n";
@@ -125,7 +124,7 @@ std::string Transaction::PrepUpdateEntity(Models::TableEntity entity)
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
 
-  returnValue += "PUT " + m_url + "/"+ m_tableName + "(PartitionKey='" + entity.PartitionKey
+  returnValue += "PUT " + m_url + "/" + m_tableName + "(PartitionKey='" + entity.PartitionKey
       + "',RowKey='" + entity.RowKey + "')" + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
