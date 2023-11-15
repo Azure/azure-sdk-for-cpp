@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
     request.SetHeader("x-ms-date", "Thu, 23 Apr 2020 09:43:37 GMT");
     auto result = policy.GetSignature(request);
-    EXPECT_EQ(result.length(), 45);
+    EXPECT_EQ(result.length(), 44);
     auto decodedResult = Azure::Core::Convert::Base64Decode(result);
     EXPECT_EQ(decodedResult.size(), 32);
   }
@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
     request.SetHeader("x-ms-date", "Thu, 23 Apr 2020 09:43:37 GMT");
     auto result = policy.GetSignature(request);
-    EXPECT_EQ(result.length(), 45);
+    EXPECT_EQ(result.length(), 44);
   }
 
 }}}} // namespace Azure::Storage::_internal::Test
