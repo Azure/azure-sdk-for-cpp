@@ -981,7 +981,7 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("$batch");
+  url.AppendPath(Azure::Core::Url::Encode("$batch"));
 
   std::string body = transaction.PreparePayload();
   Core::IO::MemoryBodyStream requestBody(

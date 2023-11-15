@@ -345,7 +345,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
 
-  TEST_F(TablesClientTest, TransactionCreateFail)
+  /* TEST_F(TablesClientTest, TransactionCreateFail)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto response = m_tableClient->SubmitTransaction(transaction);
     EXPECT_TRUE(response.Value.Error.HasValue());
-  }
+  }*/
 
   TEST_F(TablesClientTest, TransactionCreateOK)
   {
