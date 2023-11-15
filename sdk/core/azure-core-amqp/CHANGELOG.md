@@ -4,9 +4,16 @@
 
 ### Features Added
 
+- AMQP Value reference counts are now atomic, this fixes several AMQP related crashes.
+
 ### Breaking Changes
 
+- `MessageReceiver` returns a pointer to the received message instead of a copy.
+
 ### Bugs Fixed
+
+- Fixed several memory leaks.
+- AMQP Link Credits now work as expected.
 
 ### Other Changes
 

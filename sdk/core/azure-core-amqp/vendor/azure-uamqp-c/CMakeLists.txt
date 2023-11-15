@@ -13,6 +13,7 @@ option(use_installed_dependencies "set use_installed_dependencies to ON to use i
 option(memory_trace "set memory_trace to ON if memory usage is to be used, set to OFF to not use it" OFF)
 option(use_custom_heap "use externally defined heap functions instead of the malloc family" OFF)
 option(build_as_object_library "produce cmake object library and skip install steps" OFF)
+option(atomic_refcount "use atomic reference counting" OFF)
 
 if(${use_custom_heap})
     add_definitions(-DGB_USE_CUSTOM_HEAP)
@@ -100,9 +101,12 @@ if(MACOSX AND NOT ${use_openssl})
     set(use_socketio OFF)
 endif()
 
+if (${atomic_refcount})
+add_definitions(-DREFCOUNT_USE_STD_ATOMIC)
+else()
 add_definitions(-DREFCOUNT_ATOMIC_DONTCARE)
 add_definitions(-D__STDC_NO_ATOMICS__=1)
-
+endif()
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/inc)
 

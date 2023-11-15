@@ -46,7 +46,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       ASSERT_EQ(1ul, receivedEvents.size());
       std::vector<uint8_t> expected{'H', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!'};
 
-      EXPECT_EQ(expected, receivedEvents[0].Body);
+      EXPECT_EQ(expected, receivedEvents[0]->Body);
     }
   }
 
@@ -84,14 +84,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       for (auto const& event : receivedEvents)
       {
         GTEST_LOG_(INFO) << "Event: " << event;
-        EXPECT_TRUE(event.EnqueuedTime);
-        EXPECT_TRUE(event.Offset);
-        EXPECT_TRUE(event.SequenceNumber);
+        EXPECT_TRUE(event->EnqueuedTime);
+        EXPECT_TRUE(event->Offset);
+        EXPECT_TRUE(event->SequenceNumber);
       }
 
       std::vector<uint8_t> expected{1, 2, 3, 4, 5};
 
-      EXPECT_EQ(expected, receivedEvents[0].Body);
+      EXPECT_EQ(expected, receivedEvents[0]->Body);
     }
   }
 
@@ -138,17 +138,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       for (auto const& event : receivedEvents)
       {
         GTEST_LOG_(INFO) << "Event: " << event;
-        EXPECT_TRUE(event.EnqueuedTime);
-        EXPECT_TRUE(event.Offset);
-        EXPECT_TRUE(event.SequenceNumber);
+        EXPECT_TRUE(event->EnqueuedTime);
+        EXPECT_TRUE(event->Offset);
+        EXPECT_TRUE(event->SequenceNumber);
       }
       std::vector<uint8_t> expected{1, 2, 3, 4, 5, 6, 7};
 
-      EXPECT_EQ(expected, receivedEvents[0].Body);
-      ASSERT_TRUE(receivedEvents[0].ContentType);
-      EXPECT_EQ("application/binary", receivedEvents[0].ContentType.Value());
-      ASSERT_TRUE(receivedEvents[0].MessageId);
-      EXPECT_EQ("Test Message Id", static_cast<std::string>(receivedEvents[0].MessageId.Value()));
+      EXPECT_EQ(expected, receivedEvents[0]->Body);
+      ASSERT_TRUE(receivedEvents[0]->ContentType);
+      EXPECT_EQ("application/binary", receivedEvents[0]->ContentType.Value());
+      ASSERT_TRUE(receivedEvents[0]->MessageId);
+      EXPECT_EQ("Test Message Id", static_cast<std::string>(receivedEvents[0]->MessageId.Value()));
     }
   }
 

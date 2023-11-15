@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  MessageProperties _internal::MessagePropertiesFactory::FromUamqp(
+  MessageProperties _detail::MessagePropertiesFactory::FromUamqp(
       UniquePropertiesHandle const& properties)
   {
     MessageProperties rv;
@@ -32,12 +32,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     // properties_get_message_id returns the value in-place.
     if (!properties_get_message_id(properties.get(), &value))
     {
-      rv.MessageId = value;
+      rv.MessageId = _detail::AmqpValueFactory::FromUamqp(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
     if (!properties_get_correlation_id(properties.get(), &value))
     {
-      rv.CorrelationId = value;
+      rv.CorrelationId = _detail::AmqpValueFactory::FromUamqp(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
     {
@@ -53,7 +55,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!properties_get_to(properties.get(), &value))
     {
-      rv.To = value;
+      rv.To = _detail::AmqpValueFactory::FromUamqp(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
     const char* stringValue;
@@ -66,7 +69,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!properties_get_reply_to(properties.get(), &value))
     {
-      rv.ReplyTo = value;
+      rv.ReplyTo = _detail::AmqpValueFactory::FromUamqp(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
     if (!properties_get_content_type(properties.get(), &stringValue))
@@ -111,20 +115,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  UniquePropertiesHandle _internal::MessagePropertiesFactory::ToUamqp(
+  _detail::UniquePropertiesHandle _detail::MessagePropertiesFactory::ToUamqp(
       MessageProperties const& properties)
   {
-    Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG> returnValue(properties_create());
+    UniquePropertiesHandle returnValue(properties_create());
     if (properties.MessageId.HasValue())
     {
-      if (properties_set_message_id(returnValue.get(), properties.MessageId.Value()))
+      if (properties_set_message_id(
+              returnValue.get(), _detail::AmqpValueFactory::ToUamqp(properties.MessageId.Value())))
       {
         throw std::runtime_error("Could not set message id");
       }
     }
     if (properties.CorrelationId.HasValue())
     {
-      if (properties_set_correlation_id(returnValue.get(), properties.CorrelationId.Value()))
+      if (properties_set_correlation_id(
+              returnValue.get(),
+              _detail::AmqpValueFactory::ToUamqp(properties.CorrelationId.Value())))
       {
         throw std::runtime_error("Could not set correlation id");
       }
@@ -143,7 +150,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.To.HasValue())
     {
-      if (properties_set_to(returnValue.get(), properties.To.Value()))
+      if (properties_set_to(
+              returnValue.get(), _detail::AmqpValueFactory::ToUamqp(properties.To.Value())))
       {
         throw std::runtime_error("Could not set to");
       }
@@ -159,7 +167,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.ReplyTo.HasValue())
     {
-      if (properties_set_reply_to(returnValue.get(), properties.ReplyTo.Value()))
+      if (properties_set_reply_to(
+              returnValue.get(), _detail::AmqpValueFactory::ToUamqp(properties.ReplyTo.Value())))
       {
         throw std::runtime_error("Could not set reply to");
       }
@@ -275,8 +284,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   std::vector<uint8_t> MessageProperties::Serialize(MessageProperties const& properties)
   {
-    auto handle = _internal::MessagePropertiesFactory::ToUamqp(properties);
-    AmqpValue propertiesAsValue{amqpvalue_create_properties(handle.get())};
+    auto handle = _detail::MessagePropertiesFactory::ToUamqp(properties);
+    Models::_detail::UniqueAmqpValueHandle propertiesAsuAMQPValue{
+        amqpvalue_create_properties(handle.get())};
+    AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromUamqp(propertiesAsuAMQPValue)};
     return Models::AmqpValue::Serialize(propertiesAsValue);
   }
 
@@ -284,13 +295,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     PROPERTIES_HANDLE handle;
-    if (amqpvalue_get_properties(value, &handle))
+    if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToUamqp(value), &handle))
     {
       throw std::runtime_error("Could not convert value to AMQP Properties.");
     }
-    UniquePropertiesHandle uniqueHandle{handle};
+    _detail::UniquePropertiesHandle uniqueHandle{handle};
     handle = nullptr;
-    return _internal::MessagePropertiesFactory::FromUamqp(uniqueHandle);
+    return _detail::MessagePropertiesFactory::FromUamqp(uniqueHandle);
   }
 
   namespace {

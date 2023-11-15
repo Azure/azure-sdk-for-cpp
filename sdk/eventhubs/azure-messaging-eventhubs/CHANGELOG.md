@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- EventHub `ConsumerClient` and `ProcessorClient` objects now return pointers to `EventData` objects instead of `EventData` objects by value.
+
 ### Bugs Fixed
 
 ### Other Changes

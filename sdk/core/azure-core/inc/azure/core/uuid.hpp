@@ -25,7 +25,7 @@ namespace Azure { namespace Core {
   private:
     static constexpr size_t UuidSize = 16;
 
-    std::array<uint8_t, UuidSize> m_uuid;
+    std::array<uint8_t, UuidSize> m_uuid{};
 
   private:
     Uuid(uint8_t const uuid[UuidSize]) { std::memcpy(m_uuid.data(), uuid, UuidSize); }

@@ -64,12 +64,12 @@ int main()
   Azure::Messaging::EventHubs::PartitionClient partitionClient{consumerClient.CreatePartitionClient(
       eventhubProperties.PartitionIds[0], partitionClientOptions)};
 
-  std::vector<Azure::Messaging::EventHubs::Models::ReceivedEventData> events
+  std::vector<std::shared_ptr<const Azure::Messaging::EventHubs::Models::ReceivedEventData>> events
       = partitionClient.ReceiveEvents(4);
 
   // Dump the contents of each event received.
   for (const auto& event : events)
   {
-    std::cout << "Event: " << event << std::endl;
+    std::cout << "Event: " << *event << std::endl;
   }
 }

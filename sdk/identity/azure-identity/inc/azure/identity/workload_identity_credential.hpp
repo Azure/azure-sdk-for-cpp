@@ -31,13 +31,13 @@ namespace Azure { namespace Identity {
      * @brief The TenantID of the service principal. Defaults to the value of the environment
      * variable AZURE_TENANT_ID.
      */
-    std::string TenantId;
+    std::string TenantId = _detail::DefaultOptionValues::GetTenantId();
 
     /**
      * @brief The ClientID of the service principal. Defaults to the value of the environment
      * variable AZURE_CLIENT_ID.
      */
-    std::string ClientId;
+    std::string ClientId = _detail::DefaultOptionValues::GetClientId();
 
     /**
      * @brief Authentication authority URL.
@@ -49,13 +49,13 @@ namespace Azure { namespace Identity {
      * clouds' Microsoft Entra authentication endpoints:
      * https://learn.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost;
+    std::string AuthorityHost = _detail::DefaultOptionValues::GetAuthorityHost();
 
     /**
      * @brief The path of a file containing a Kubernetes service account token. Defaults to the
      * value of the environment variable AZURE_FEDERATED_TOKEN_FILE.
      */
-    std::string TokenFilePath;
+    std::string TokenFilePath = _detail::DefaultOptionValues::GetFederatedTokenFile();
 
     /**
      * @brief For multi-tenant applications, specifies additional tenants for which the credential

@@ -47,6 +47,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto openResult = management.Open();
     EXPECT_EQ(openResult, ManagementOpenStatus::Error);
   }
+
   TEST_F(TestManagement, ManagementOpenClose)
   {
     MessageTests::AmqpServerMock mockServer;
@@ -64,6 +65,56 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     auto openResult = management.Open();
     EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
+
+    management.Close();
+
+    mockServer.StopListening();
+  }
+
+  TEST_F(TestManagement, ManagementOpenCloseAuthenticated)
+  {
+    MessageTests::AmqpServerMock mockServer;
+
+    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+        "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
+        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", sasCredential, connectionOptions);
+
+    Session session{connection.CreateSession({})};
+    ManagementClientOptions options;
+    options.EnableTrace = 1;
+    ManagementClient management(session.CreateManagementClient("Test", options));
+
+    mockServer.StartListening();
+
+    auto openResult = management.Open();
+    EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
+
+    management.Close();
+
+    mockServer.StopListening();
+  }
+
+  TEST_F(TestManagement, ManagementOpenCloseError)
+  {
+    MessageTests::AmqpServerMock mockServer;
+
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
+
+    Session session{connection.CreateSession({})};
+    ManagementClientOptions options;
+    options.EnableTrace = 1;
+    ManagementClient management(session.CreateManagementClient("Test", options));
+
+    mockServer.StartListening();
+    Azure::Core::Context context;
+    context.Cancel();
+    EXPECT_EQ(management.Open(context), ManagementOpenStatus::Cancelled);
 
     management.Close();
 
@@ -95,7 +146,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     private:
       AmqpValue OnMessageReceived(
           MessageReceiver const& receiver,
-          AmqpMessage const& incomingMessage) override
+          std::shared_ptr<AmqpMessage> const& incomingMessage) override
       {
         // We can only listen on the management or cbs nodes.
         if (receiver.GetSourceName() != "$management" && receiver.GetSourceName() != "$cbs")
@@ -108,7 +159,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         // If this is coming on the management node, we only support the Test operation.
         if (receiver.GetSourceName() == "$management"
-            && incomingMessage.ApplicationProperties.at("operation") != "Test")
+            && incomingMessage->ApplicationProperties.at("operation") != "Test")
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unknown operation.";
           auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
@@ -121,9 +172,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       void MessageReceived(
           std::string const&,
           AmqpServerMock::MessageLinkComponents const& linkComponents,
-          AmqpMessage const& incomingMessage) const override
+          std::shared_ptr<AmqpMessage> const& incomingMessage) const override
       {
-        if (incomingMessage.ApplicationProperties.at("operation") == "Test")
+        if (incomingMessage->ApplicationProperties.at("operation") == "Test")
         {
           AmqpMessage responseMessage;
           responseMessage.ApplicationProperties[m_expectedStatusCodeName] = m_expectedStatusCode;
@@ -134,10 +185,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // Management specification section 3.2: The correlation-id of the response message
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
-          auto requestCorrelationId = incomingMessage.Properties.CorrelationId;
-          if (!incomingMessage.Properties.CorrelationId.HasValue())
+          auto requestCorrelationId = incomingMessage->Properties.CorrelationId;
+          if (!incomingMessage->Properties.CorrelationId.HasValue())
           {
-            requestCorrelationId = incomingMessage.Properties.MessageId.Value();
+            requestCorrelationId = incomingMessage->Properties.MessageId.Value();
           }
           responseMessage.Properties.CorrelationId = requestCorrelationId;
 
@@ -162,7 +213,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       ConnectionOptions connectionOptions;
       connectionOptions.Port = mockServer.GetPort();
 
-      Connection connection("localhost", nullptr, connectionOptions);
+      auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+          "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
+          + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+      Connection connection("localhost", sasCredential, connectionOptions);
       Session session{connection.CreateSession({})};
       ManagementClientOptions options;
       options.EnableTrace = 1;

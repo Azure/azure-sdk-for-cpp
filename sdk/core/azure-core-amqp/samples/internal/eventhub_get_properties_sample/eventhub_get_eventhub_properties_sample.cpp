@@ -50,17 +50,17 @@ EventHubProperties GetEventHubProperties(
   EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
+    std::cerr << "Error: " << result.Message->ApplicationProperties["status-description"];
   }
   else
   {
     std::cout << "Management endpoint properties message: " << result.Message;
-    if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+    if (result.Message->BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
     {
       throw std::runtime_error("Unexpected body type");
     }
 
-    Azure::Core::Amqp::Models::AmqpValue body = result.Message.GetBodyAsAmqpValue();
+    Azure::Core::Amqp::Models::AmqpValue body = result.Message->GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");
@@ -128,12 +128,12 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
   else
   {
     std::cout << "Partition properties message: " << result.Message;
-    if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+    if (result.Message->BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
     {
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message.GetBodyAsAmqpValue();
+    auto body = result.Message->GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");

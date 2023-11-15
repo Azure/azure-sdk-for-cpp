@@ -42,7 +42,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AMQP_VALUE info;
     if (!error_get_info(handle, &info) && info)
     {
-      rv.Info = AmqpValue{info}.AsMap();
+      // error_get_info returns the AMQP value in place, so we clone it before passing it to the
+      // UniqueAmqpValueHandle.
+      rv.Info = _detail::AmqpValueFactory::FromUamqp(
+                    _detail::UniqueAmqpValueHandle{amqpvalue_clone(info)})
+                    .AsMap();
     }
 
     return rv;
@@ -50,21 +54,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   AmqpValue AmqpErrorFactory::ToAmqp(AmqpError const& error)
   {
-    UniqueAmqpErrorHandle errorHandle(error_create(error.Condition.ToString().data()));
+    _detail::UniqueAmqpErrorHandle errorHandle(error_create(error.Condition.ToString().data()));
     if (!error.Description.empty())
     {
       error_set_description(errorHandle.get(), error.Description.data());
     }
     if (!error.Info.empty())
     {
-      error_set_info(errorHandle.get(), AmqpValue{error.Info});
+      AmqpValue infoValue(error.Info.AsAmqpValue());
+      error_set_info(errorHandle.get(), _detail::AmqpValueFactory::ToUamqp(infoValue));
     }
     // amqpvalue_create_error clones the error handle, so we remember it separately.
     _detail::UniqueAmqpValueHandle handleAsValue{amqpvalue_create_error(errorHandle.get())};
 
     // The AmqpValue constructor will clone the handle passed into it.
     // The UniqueAmqpValueHandle will take care of freeing the cloned handle.
-    return handleAsValue.get();
+    return _detail::AmqpValueFactory::FromUamqp(handleAsValue);
   }
   std::ostream& operator<<(std::ostream& os, AmqpError const& error)
   {

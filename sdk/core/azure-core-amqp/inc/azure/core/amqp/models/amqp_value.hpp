@@ -5,6 +5,8 @@
 
 #include "amqp_header.hpp"
 
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/uuid.hpp>
 
@@ -32,6 +34,8 @@ namespace Azure { namespace Core { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
+  class AmqpValueFactory;
+  std::ostream& operator<<(std::ostream& os, AMQP_VALUE_DATA_TAG* const value);
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
@@ -105,11 +109,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * Defined in [AMQP Core Types
      * section 1.6.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-null).
-  ).
      *
      */
     AmqpValue() noexcept;
     ~AmqpValue();
+
+    /** @brief Construct an AMQP Value from an existing AMQP Value
+     * @param that - source value to copy.
+     */
+    AmqpValue(AmqpValue const& that) noexcept;
+
+    /** @brief Move an AMQP Value to another existing AMQP Value
+     * @param that - source value to move.
+     */
+    AmqpValue(AmqpValue&& that) noexcept;
+
+    /** @brief Copy an AMQP value to the current AMQP value.
+     *
+     * @param that the other AMQP Value to copy.
+     * @returns "this".
+     */
+    AmqpValue& operator=(AmqpValue const& that);
+    /** @brief Move an AMQP value to the current AMQP value.
+     *
+     * @param that the other AMQP Value to move.
+     * @returns "this".
+     */
+    AmqpValue& operator=(AmqpValue&& that) noexcept;
 
     /** @brief Construct an AMQP boolean value.
      *
@@ -281,51 +307,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      */
     AmqpValue(Azure::Core::Uuid const& value);
-
-    /** @brief Construct an AMQP Value from an existing AMQP Value
-     * @param that - source value to copy.
-     */
-    AmqpValue(AmqpValue const& that) noexcept;
-
-    /** @brief Move an AMQP Value to another existing AMQP Value
-     * @param that - source value to move.
-     */
-    AmqpValue(AmqpValue&& that) noexcept;
-
-    // Interoperability functions for uAMQP
-    /// @cond
-
-    /** @brief Interoperability helper function which converts an AmqpValue to a uAMQP
-     * AMQP_VALUE object.
-     *
-     * @returns uAMQP AMQP_VALUE object.
-     *
-     * @remarks This is an internal operator which should not be called by customers.
-     */
-    operator AMQP_VALUE_DATA_TAG*() const;
-
-    /** @brief Interoperability helper function which creates an AmqpValue from a uAMQP
-     * AMQP_VALUE object.
-     *
-     * @param value source uAMQP AMQP_VALUE object.
-     *
-     * @remarks This is an internal operator which should not be called by customers.
-     */
-    AmqpValue(AMQP_VALUE_DATA_TAG* value);
-    /// @endcond
-
-    /** @brief Copy an AMQP value to the current AMQP value.
-     *
-     * @param that the other AMQP Value to copy.
-     * @returns "this".
-     */
-    AmqpValue& operator=(AmqpValue const& that);
-    /** @brief Move an AMQP value to the current AMQP value.
-     *
-     * @param that the other AMQP Value to move.
-     * @returns "this".
-     */
-    AmqpValue& operator=(AmqpValue&& that) noexcept;
 
     /** @brief Equality comparison operator.
      * @param that - Value to compare to this value.
@@ -565,13 +546,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     static AmqpValue Deserialize(uint8_t const* data, size_t size);
 
   private:
+    AmqpValue(AMQP_VALUE_DATA_TAG*) = delete;
+    /** @brief Interoperability helper function which creates an AmqpValue from a uAMQP
+     * AMQP_VALUE object.
+     *
+     * @param value source uAMQP AMQP_VALUE object.
+     *
+     * @remarks This is an internal operator which should not be called by customers.
+     *
+     * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, instead it clones
+     * the underlying AMQP_VALUE. This is why it takes a UniqueAmqpValueHandle as a parameter
+     * instead of a raw AMQP_VALUE - that ensures that someone will free the underlying AMQP_VALUE
+     * if needed.
+     */
+    AmqpValue(_detail::UniqueAmqpValueHandle const& value);
+    AmqpValue(_detail::UniqueAmqpValueHandle&& value);
     _detail::UniqueAmqpValueHandle m_value;
+    friend class _detail::AmqpValueFactory;
   };
   std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
 
 }}}} // namespace Azure::Core::Amqp::Models
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
+
+  class AmqpValueFactory final {
+  public:
+    static AmqpValue FromUamqp(UniqueAmqpValueHandle const& value);
+    static AmqpValue FromUamqp(UniqueAmqpValueHandle&& value);
+    // Returns the internal AMQP value handle, without referencing it.
+    static AMQP_VALUE_DATA_TAG* ToUamqp(AmqpValue const& value);
+  };
 
   /** @brief Base type for AMQP collection types.
    *
@@ -586,7 +591,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     AmqpCollectionBase(initializer_type const& initializer) : m_value{initializer} {}
     AmqpCollectionBase(T initializer) : m_value{initializer} {}
-    AmqpCollectionBase() {}
+    AmqpCollectionBase(){};
+
+    // Copy constructor
+    AmqpCollectionBase(const AmqpCollectionBase& other) = default;
+
+    // Copy assignment operator
+    AmqpCollectionBase& operator=(const AmqpCollectionBase& other) = default;
+
+    // Move constructor
+    AmqpCollectionBase(AmqpCollectionBase&& other) noexcept = default;
+
+    // Move assignment operator
+    AmqpCollectionBase& operator=(AmqpCollectionBase&& other) = default;
+
+    ~AmqpCollectionBase() = default;
 
   public:
     /** @brief Returns the underlying value.
@@ -594,16 +613,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     explicit operator T const &() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
-    explicit operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
+    AmqpValue AsAmqpValue() const
+    {
+      return _detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle{*this});
+    }
 
     /** @brief Returns the size of the underlying value.*/
     inline typename T::size_type size() const { return m_value.size(); }
 
+    /**  @brief Array accessor operator.
+     * @param pos Position of an element in the container.
+     * @return element value.
+     */
     const typename T::value_type& operator[](const typename T::size_type pos) const noexcept
     {
       return m_value.operator[](pos);
     }
-    void push_back(typename T::value_type&& val) { m_value.push_back(val); }
+    void push_back(typename T::value_type&& val) { m_value.push_back(std::move(val)); }
     typename T::const_iterator begin() const noexcept { return m_value.begin(); }
     typename T::const_iterator end() const noexcept { return m_value.end(); }
     size_t find(T const& val) noexcept { return m_value.find(val); }
@@ -619,6 +645,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief Returns true if the underlying value is empty.*/
     bool empty() const noexcept { return m_value.empty(); }
 
+  protected:
     /**
      * @brief Convert an AmqpCollectionBase instance to a uAMQP AMQP_VALUE.
      *
@@ -626,7 +653,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * implementation.
      *
      */
-    operator UniqueAmqpValueHandle() const;
+    virtual operator UniqueAmqpValueHandle() const;
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
@@ -643,6 +670,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Construct a new AmqpArray object with an initializer list. */
     AmqpArray(initializer_type const& values);
 
+    /** @brief Destroy an array. */
+    virtual ~AmqpArray() = default;
+
+    /** @brief Copy constructor */
+    AmqpArray(const AmqpArray& other) = default;
+
+    /** @brief Copy assignment operator */
+    AmqpArray& operator=(const AmqpArray& other) = default;
+
+    /** @brief Move constructor */
+    AmqpArray(AmqpArray&& other) noexcept = default;
+
+    /** @brief Move assignment operator */
+    AmqpArray& operator=(AmqpArray&& other) noexcept = default;
+
     /** @brief Construct a new AmqpArray object from an existing uAMQP AMQP_VALUE item
      * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
      * responsible for freeing that object.
@@ -652,7 +694,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value - the AMQP array value to capture.
      */
-    AmqpArray(AMQP_VALUE_DATA_TAG* const value);
+    AmqpArray(AmqpValue const& value);
   };
   std::ostream& operator<<(std::ostream& os, AmqpArray const& value);
 
@@ -674,6 +716,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
     }
 
+    /** @brief Move Constructor */
+    AmqpMap(AmqpMap&& other) noexcept = default;
+
+    /** @brief Move assignment operator */
+    AmqpMap& operator=(AmqpMap&& other) noexcept = default;
+
+    /** @brief Copy Constructor */
+    AmqpMap(const AmqpMap& other) = default;
+
+    /** @brief Copy assignment operator */
+    AmqpMap& operator=(const AmqpMap& other) = default;
+
     /** @brief Construct a new AmqpMap object from an existing uAMQP AMQP_VALUE item
      * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
      * responsible for freeing that object.
@@ -683,7 +737,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value - the AMQP array value to capture.
      */
-    AmqpMap(AMQP_VALUE_DATA_TAG* const value);
+    AmqpMap(AmqpValue const& value);
+
+    virtual ~AmqpMap() = default;
 
     /** @brief Access an element in the map.
      *
@@ -691,7 +747,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     decltype(m_value)::mapped_type& operator[](decltype(m_value)::key_type&& keyVal)
     {
-      return m_value.operator[](keyVal);
+      return m_value.operator[](std::move(keyVal));
     }
 
     /** @brief Insert a new key/value pair into the map.
@@ -703,7 +759,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     template <class... ValueTypes>
     std::pair<decltype(m_value)::iterator, bool> emplace(ValueTypes&&... values)
     {
-      return m_value.emplace(values...);
+      return m_value.emplace(std::forward<ValueTypes>(values)...);
     }
   };
   std::ostream& operator<<(std::ostream& os, AmqpMap const& value);
@@ -714,23 +770,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpList final : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList> {
   public:
     AmqpList() : AmqpCollectionBase(){};
+    virtual ~AmqpList() = default;
     /** @brief Construct a new AmqpList object with an initializer list. */
     AmqpList(std::initializer_list<std::vector<AmqpValue>::value_type> const& values)
         : AmqpCollectionBase(values)
     {
     }
 
-    /** @brief Construct a new AmqpList object from an existing uAMQP AMQP_VALUE item
+    /** @brief Copy Constructor */
+    AmqpList(const AmqpList& other) = default;
+
+    /** @brief Copy assignment operator */
+    AmqpList& operator=(const AmqpList& other) = default;
+
+    /** @brief Move Constructor */
+    AmqpList(AmqpList&& other) noexcept = default;
+
+    /** @brief Move assignment operator */
+    AmqpList& operator=(AmqpList&& other) noexcept = default;
+
+    /** @brief Construct a new AmqpList object from an existing AmqpValue item
      *
      * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
      * responsible for freeing that object.
      *
-     * @remarks This is an internal accessor and should never be used by code outside the AMQP
-     * implementation.
-     *
      * @param value - the AMQP array value to capture.
      */
-    AmqpList(AMQP_VALUE_DATA_TAG* const value);
+    AmqpList(AmqpValue const& value);
   };
   std::ostream& operator<<(std::ostream& os, AmqpList const& value);
 
@@ -744,10 +810,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       : public _detail::AmqpCollectionBase<std::vector<std::uint8_t>, AmqpBinaryData> {
   public:
     AmqpBinaryData() : AmqpCollectionBase(){};
+    virtual ~AmqpBinaryData() = default;
     /** @brief Construct a new AmqpBinaryData object with an initializer list. */
     AmqpBinaryData(initializer_type const& values) : AmqpCollectionBase(values){};
     /** @brief Construct a new AmqpBinaryData from a vector of bytes. */
     AmqpBinaryData(std::vector<std::uint8_t> const& values) : AmqpCollectionBase(values){};
+
+    /** @brief Copy constructor */
+    AmqpBinaryData(const AmqpBinaryData& other) = default;
+
+    /** @brief Copy assignment operator */
+    AmqpBinaryData& operator=(const AmqpBinaryData& other) = default;
+
+    /** @brief Move Constructor */
+    AmqpBinaryData(AmqpBinaryData&& other) noexcept = default;
+
+    /** @brief Move assignment operator */
+    AmqpBinaryData& operator=(AmqpBinaryData&& other) noexcept = default;
 
     /** @brief Assign a vector of bytes to the current AmqpBinaryData. */
     AmqpBinaryData& operator=(std::vector<std::uint8_t> const& values)
@@ -766,7 +845,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value - the AMQP "binary" value to capture.
      */
-    AmqpBinaryData(AMQP_VALUE_DATA_TAG* const value);
+    AmqpBinaryData(AmqpValue const& value);
   };
   std::ostream& operator<<(std::ostream& os, AmqpBinaryData const& value);
 
@@ -780,6 +859,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpSymbol final : public _detail::AmqpCollectionBase<std::string, AmqpSymbol> {
   public:
     AmqpSymbol() : AmqpCollectionBase(){};
+    virtual ~AmqpSymbol() = default;
+
     /** @brief Construct a new AmqpSymbol object with an initializer list. */
     AmqpSymbol(std::string const& values) : AmqpCollectionBase(values){};
 
@@ -788,6 +869,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     /** @brief Construct a new AmqpSymbol object from a constant string value. */
     AmqpSymbol(const char* const values) : AmqpCollectionBase(values){};
+
+    /** @brief Copy constructor */
+    AmqpSymbol(const AmqpSymbol& other) = default;
+
+    /** @brief Copy Assignment operator */
+    AmqpSymbol& operator=(const AmqpSymbol& other) = default;
+
+    /** @brief Move constructor */
+    AmqpSymbol(AmqpSymbol&& other) noexcept = default;
+
+    /** @brief Move Assignment operator */
+    AmqpSymbol& operator=(AmqpSymbol&& other) noexcept = default;
 
     /** @brief Construct a new AmqpSymbol object from an existing uAMQP AMQP_VALUE item
      *
@@ -799,7 +892,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value - the AMQP "binary" value to capture.
      */
-    AmqpSymbol(AMQP_VALUE_DATA_TAG* const value);
+    AmqpSymbol(AmqpValue const& value);
 
     /** @brief Compare two AMQP symbols for equality.
      *
@@ -830,6 +923,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   public:
     AmqpTimestamp();
+    ~AmqpTimestamp() = default;
+
     /** @brief Construct a new AmqpTimestamp object . */
     AmqpTimestamp(std::chrono::milliseconds const& values);
 
@@ -843,12 +938,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value - the AMQP "binary" value to capture.
      */
-    AmqpTimestamp(AMQP_VALUE_DATA_TAG* const value);
+    AmqpTimestamp(AmqpValue const& value);
 
-    /**
-     * @brief Convert an existing AmqpSymbol to an AmqpValue.
-     */
-    explicit operator AmqpValue() const;
+    /** @brief Copy constructor */
+    AmqpTimestamp(const AmqpTimestamp& other) = default;
+
+    /** @brief Copy Assignment operator */
+    AmqpTimestamp& operator=(const AmqpTimestamp& other) = default;
+
+    /** @brief Move constructor */
+    AmqpTimestamp(AmqpTimestamp&& other) noexcept = default;
+
+    /** @brief Move Assignment operator */
+    AmqpTimestamp& operator=(AmqpTimestamp&& other) noexcept = default;
 
     /**
      * @brief Convert an AmqpSymbol instance to a uAMQP AMQP_VALUE.
@@ -860,6 +962,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * by the caller.
      */
     operator _detail::UniqueAmqpValueHandle() const;
+
+    /** @brief Convert this AmqpTimestamp to an AmqpValue.
+     *
+     * @return An AmqpValue containing this AmqpTimestamp.
+     */
+    AmqpValue AsAmqpValue() const
+    {
+      return _detail::AmqpValueFactory::FromUamqp(_detail::UniqueAmqpValueHandle{*this});
+    }
 
     /**
      * @brief Convert an AmqpTimestamp instance to a std::chrono::milliseconds.
@@ -885,16 +996,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    * @note The AMQP Composite type representation does NOT include the underlying field names,
    * just the field values.
    *
-   *
    */
   class AmqpComposite final
       : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpComposite> {
   public:
     /** @brief Construct a new AmqpComposite object. */
     AmqpComposite() : AmqpCollectionBase(){};
+    virtual ~AmqpComposite() = default;
 
     /** @brief Construct a new AmqpComposite object with an initializer list. */
     AmqpComposite(AmqpValue const& descriptor, std::initializer_list<AmqpValue> const& values);
+
+    /** @brief Construct a new AmqpComposite object from another */
+    AmqpComposite(const AmqpComposite& other) = default;
+
+    /** @brief Copy assignment operator.
+     * @param other composite value to copy.
+     * @returns reference to this composite value.
+     */
+    AmqpComposite& operator=(const AmqpComposite& other) = default;
+
+    /** @brief Move constructor.
+     * @param other composite value to move.
+     */
+    AmqpComposite(AmqpComposite&& other) noexcept = default;
+
+    /** @brief Move assignment operator.
+     * @param other composite value to move.
+     * @returns reference to this composite value.
+     */
+    AmqpComposite& operator=(AmqpComposite&& other) noexcept = default;
 
     /** @brief Construct a new AmqpComposite object from an existing uAMQP AMQP_VALUE item
      * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
@@ -905,7 +1036,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value - the AMQP array value to capture.
      */
-    AmqpComposite(AMQP_VALUE_DATA_TAG* const value);
+    AmqpComposite(AmqpValue const& value);
 
     /** @brief Compare this AmqpComposite value with another.
      *
@@ -932,6 +1063,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpValue const& GetDescriptor() const { return m_descriptor; }
 
+  protected:
     /**
      * @brief Convert an AmqpComposite instance to a uAMQP AMQP_VALUE.
      *
@@ -941,14 +1073,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
      * by the caller.
      */
-    operator _detail::UniqueAmqpValueHandle() const;
-    /**
-     * @brief Convert an existing AmqpComposite to an AmqpValue.
-     */
-    explicit operator AmqpValue() const
-    {
-      return static_cast<_detail::UniqueAmqpValueHandle>(*this).get();
-    }
+    operator _detail::UniqueAmqpValueHandle() const override;
 
   private:
     AmqpValue m_descriptor;
@@ -975,6 +1100,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpDescribed(AmqpSymbol const& descriptor, AmqpValue const& value);
 
+    /** @brief Construct a new AmqpDescribed object by moving the contents of another AmqpDescribed
+     * object.
+     *
+     * @param other - the AmqpDescribed object to move.
+     */
+    AmqpDescribed(AmqpDescribed&& other) noexcept = default;
+
+    /** @brief Copy constructor for AmqpDescribed.
+     *
+     * @param other - the AmqpDescribed object to copy.
+     */
+    AmqpDescribed(const AmqpDescribed& other) = default;
+
+    /** @brief Move assignment operator for AmqpDescribed.
+     *
+     * @param other - the AmqpDescribed object to move.
+     * @returns reference to this AmqpDescribed object.
+     */
+    AmqpDescribed& operator=(AmqpDescribed&& other) noexcept = default;
+
+    /** @brief Copy assignment operator for AmqpDescribed.
+     *
+     * @param other - the AmqpDescribed object to copy.
+     * @returns reference to this AmqpDescribed object.
+     */
+    AmqpDescribed& operator=(const AmqpDescribed& other) = default;
+
+    ~AmqpDescribed() = default;
+
     /** @brief Construct a new AmqpDescribed object with a 64bit descriptor.
      *
      * @param descriptor - the Descriptor for the described value. The descriptor value SHOULD
@@ -993,7 +1147,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value - the AMQP array value to capture.
      */
-    AmqpDescribed(AMQP_VALUE_DATA_TAG* const value);
+    AmqpDescribed(AmqpValue const& value);
 
     /** @brief Compare this AmqpDescribed value with another.
      *
@@ -1040,6 +1194,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * by the caller.
      */
     operator _detail::UniqueAmqpValueHandle() const;
+
+    /** @brief Convert this AmqpDescribed to an AmqpValue.
+     *
+     * @return An AmqpValue containing this AmqpDescribed.
+     */
+    AmqpValue AsAmqpValue() const;
 
     /**
      * @brief Compare this AmqpDescribed value with another.

@@ -65,22 +65,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
 
   void ProcessorPartitionClient::UpdateCheckpoint(
-      Models::ReceivedEventData const& eventData,
+      std::shared_ptr<const Models::ReceivedEventData> const& eventData,
       Core::Context const& context)
   {
     uint64_t sequenceNumber{};
-    if (!eventData.SequenceNumber.HasValue())
+    if (!eventData->SequenceNumber.HasValue())
     {
       throw std::runtime_error("Event does not have a sequence number.");
     }
-    if (eventData.SequenceNumber.HasValue())
+    if (eventData->SequenceNumber.HasValue())
     {
-      sequenceNumber = eventData.SequenceNumber.Value();
+      sequenceNumber = eventData->SequenceNumber.Value();
     }
     uint64_t offset{};
-    if (!eventData.Offset.HasValue())
+    if (!eventData->Offset.HasValue())
     {
-      offset = eventData.Offset.Value();
+      offset = eventData->Offset.Value();
     }
 
     Models::Checkpoint checkpoint;

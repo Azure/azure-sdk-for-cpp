@@ -13,7 +13,6 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
-#include <azure/core/internal/environment.hpp>
 #include <azure/core/url.hpp>
 
 #include <memory>
@@ -41,8 +40,7 @@ namespace Azure { namespace Identity {
      * clouds' Microsoft Entra authentication endpoints:
      * https://learn.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost
-        = Azure::Core::_internal::Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
+    std::string AuthorityHost = _detail::DefaultOptionValues::GetAuthorityHost();
 
     /**
      * @brief For multi-tenant applications, specifies additional tenants for which the credential

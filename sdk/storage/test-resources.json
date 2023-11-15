@@ -275,6 +275,7 @@
             }
           ]
         },
+
         "networkAcls": {
           "bypass": "AzureServices",
           "virtualNetworkRules": [
@@ -282,6 +283,45 @@
           "ipRules": [
           ],
           "defaultAction": "Allow"
+
+        {
+            "name": "[variables('accountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [
+                    ],
+                    "ipRules": [
+                    ],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot",
+                "minimumTlsVersion": "TLS1_2"
+            },
+            "dependsOn": [],
+            "tags": {}
+
         },
         "supportsHttpsTrafficOnly": true,
         "encryption": {
@@ -323,8 +363,60 @@
             "file": {
               "enabled": true
             },
-            "blob": {
-              "enabled": true
+
+            "kind": "StorageV2",
+            "properties": {
+                "isHnsEnabled": true,
+                "cors": {
+                    "corsRules": [
+                        {
+                            "allowedOrigins": [
+                                "*"
+                            ],
+                            "allowedMethods": [
+                                "DELETE",
+                                "GET",
+                                "HEAD",
+                                "MERGE",
+                                "POST",
+                                "OPTIONS",
+                                "PUT",
+                                "PATCH"
+                            ],
+                            "maxAgeInSeconds": 86400,
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [
+                    ],
+                    "ipRules": [
+                    ],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot",
+                "minimumTlsVersion": "TLS1_2"
+
             }
           },
           "keySource": "Microsoft.Storage"

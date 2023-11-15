@@ -24,12 +24,13 @@ namespace Azure { namespace Core { namespace _internal {
   };
 }}} // namespace Azure::Core::_internal
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   class AmqpMessageFactory;
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+  using UniqueMessageHandle = Azure::Core::_internal::UniqueHandle<MESSAGE_INSTANCE_TAG>;
+
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-
   /**
    * @brief The type of the body of an AMQP Message.
    *
@@ -42,7 +43,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Sequence,
     Value,
   };
-  using UniqueMessageHandle = Azure::Core::_internal::UniqueHandle<MESSAGE_INSTANCE_TAG>;
 
   constexpr int AmqpDefaultMessageFormatValue
       = 0; // Specifies the message format for an AMQP message.
@@ -101,13 +101,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * By default, AMQP uses 0, however services can override this to
      * express additional semantics about the message payload.
+     *
+     * For more information, see [AMQP Message
+     * Format](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format).
      */
     uint32_t MessageFormat = AmqpDefaultMessageFormatValue;
 
     /** @brief The header for the message.
      *
      * For more information, see [AMQP Message
-     * Format](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format).
+     * Header](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header)
+     *
      */
     MessageHeader Header;
 
@@ -141,8 +145,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     /** @brief Delivery Tag for the message.
      *
-     * For more information, see [AMQP Application
-     * Properties](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties).
+     * For more information, see [AMQP Transport
+     * Transfer](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-delivery-tag).
      */
     AmqpValue DeliveryTag;
 
@@ -287,7 +291,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     static AmqpMessage Deserialize(std::uint8_t const* buffer, size_t size);
 
-    friend class _internal::AmqpMessageFactory;
+    friend class _detail::AmqpMessageFactory;
 
   private:
     std::vector<AmqpBinaryData> m_binaryDataBody;
@@ -298,10 +302,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream&, AmqpMessage const&);
 }}}} // namespace Azure::Core::Amqp::Models
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   /**
-   * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
-   * PROPERTIES_HANDLE and back.
+   * @brief uAMQP interoperability functions to convert a Message to a uAMQP
+   * MESSAGE_HANDLE and back.
    *
    * @remarks This class should not be used directly. It is used by the uAMQP interoperability
    * layer.
@@ -310,8 +314,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpMessageFactory() = delete;
 
   public:
-    static AmqpMessage FromUamqp(UniqueMessageHandle const& properties);
-    static AmqpMessage FromUamqp(MESSAGE_INSTANCE_TAG* properties);
+    static std::shared_ptr<AmqpMessage> FromUamqp(MESSAGE_INSTANCE_TAG* properties);
     static UniqueMessageHandle ToUamqp(AmqpMessage const& properties);
   };
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}} // namespace Azure::Core::Amqp::Models::_detail

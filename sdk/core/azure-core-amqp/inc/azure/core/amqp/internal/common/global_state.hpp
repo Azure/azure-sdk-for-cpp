@@ -5,6 +5,7 @@
 
 #include <azure/core/azure_assert.hpp>
 
+#include <atomic>
 #include <list>
 #include <memory>
 #include <mutex>
@@ -24,6 +25,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   class Pollable {
   public:
+    Pollable() = default;
+    Pollable(const Pollable&) = delete;
+    Pollable& operator=(const Pollable&) = delete;
+    Pollable(Pollable&&) = delete;
+    Pollable& operator=(Pollable&&) = delete;
+
     virtual void Poll() = 0;
     virtual ~Pollable() = default;
   };
@@ -34,6 +41,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     std::list<std::shared_ptr<Pollable>> m_pollables;
     std::mutex m_pollablesMutex;
     std::thread m_pollingThread;
+    std::atomic<bool> m_activelyPolling;
     bool m_stopped{false};
 
   public:
@@ -47,11 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     void AddPollable(std::shared_ptr<Pollable> pollable);
 
-    void RemovePollable(std::shared_ptr<Pollable> pollable)
-    {
-      std::lock_guard<std::mutex> lock(m_pollablesMutex);
-      m_pollables.remove(pollable);
-    }
+    void RemovePollable(std::shared_ptr<Pollable> pollable);
 
     void AssertIdle()
     {

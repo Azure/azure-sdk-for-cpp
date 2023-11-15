@@ -3,6 +3,7 @@
 
 #include "azure/identity/workload_identity_credential.hpp"
 
+#include "private/identity_log.hpp"
 #include "private/tenant_id_resolver.hpp"
 #include "private/token_credential_impl.hpp"
 
@@ -20,14 +21,9 @@ using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
+using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
-
-namespace {
-constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
-constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
-constexpr auto AzureFederatedTokenFileEnvVarName = "AZURE_FEDERATED_TOKEN_FILE";
-} // namespace
 
 WorkloadIdentityCredential::WorkloadIdentityCredential(
     WorkloadIdentityCredentialOptions const& options)
@@ -41,23 +37,6 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
   std::string authorityHost = options.AuthorityHost;
   m_tokenFilePath = options.TokenFilePath;
 
-  if (tenantId.empty())
-  {
-    tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
-  }
-  if (clientId.empty())
-  {
-    clientId = Environment::GetVariable(AzureClientIdEnvVarName);
-  }
-  if (authorityHost.empty())
-  {
-    authorityHost = Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
-  }
-  if (m_tokenFilePath.empty())
-  {
-    m_tokenFilePath = Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
-  }
-
   if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
   {
     m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
@@ -70,6 +49,16 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
               "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
               "&client_id=")
         + Url::Encode(clientId);
+
+    IdentityLog::Write(
+        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+  }
+  else
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Warning,
+        "Azure Kubernetes environment is not set up for the " + GetCredentialName()
+            + " credential to work.");
   }
 }
 
@@ -78,13 +67,13 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
     : TokenCredential("WorkloadIdentityCredential"),
       m_clientCredentialCore("", "", std::vector<std::string>())
 {
-  std::string tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
-  std::string clientId = Environment::GetVariable(AzureClientIdEnvVarName);
-  m_tokenFilePath = Environment::GetVariable(AzureFederatedTokenFileEnvVarName);
+  std::string const tenantId = _detail::DefaultOptionValues::GetTenantId();
+  std::string const clientId = _detail::DefaultOptionValues::GetClientId();
+  m_tokenFilePath = _detail::DefaultOptionValues::GetFederatedTokenFile();
 
   if (!tenantId.empty() && !clientId.empty() && !m_tokenFilePath.empty())
   {
-    std::string authorityHost = Environment::GetVariable(_detail::AzureAuthorityHostEnvVarName);
+    std::string const authorityHost = _detail::DefaultOptionValues::GetAuthorityHost();
 
     m_clientCredentialCore = Azure::Identity::_detail::ClientCredentialCore(
         tenantId, authorityHost, std::vector<std::string>());
@@ -96,6 +85,16 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
               "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
               "&client_id=")
         + Url::Encode(clientId);
+
+    IdentityLog::Write(
+        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+  }
+  else
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Warning,
+        "Azure Kubernetes environment is not set up for the " + GetCredentialName()
+            + " credential to work.");
   }
 }
 
@@ -109,8 +108,12 @@ AccessToken WorkloadIdentityCredential::GetToken(
   {
     auto const AuthUnavailable = GetCredentialName() + " authentication unavailable. ";
 
+    IdentityLog::Write(
+        IdentityLog::Level::Warning,
+        AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
+
     throw AuthenticationException(
-        AuthUnavailable + "Environment variables are not fully configured.");
+        AuthUnavailable + "Azure Kubernetes environment is not set up correctly.");
   }
 
   auto const tenantId = TenantIdResolver::Resolve(

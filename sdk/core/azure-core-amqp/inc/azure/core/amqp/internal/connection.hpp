@@ -215,7 +215,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * If no frames are received within the timeout, the connection will be closed.
      */
-    std::chrono::milliseconds IdleTimeout{std::chrono::milliseconds(60000)};
+    std::chrono::milliseconds IdleTimeout{std::chrono::minutes(1)};
 
     /** @brief The maximum frame size for the connection.
      *

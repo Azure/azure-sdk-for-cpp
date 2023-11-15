@@ -110,8 +110,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         *session,
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        sourceValue,
-        targetValue);
+        Models::_detail::AmqpValueFactory::ToUamqp(sourceValue),
+        Models::_detail::AmqpValueFactory::ToUamqp(targetValue));
   }
 
   LinkImpl::LinkImpl(
@@ -130,8 +130,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         LinkEndpointFactory::Release(linkEndpoint),
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        sourceValue,
-        targetValue);
+        Models::_detail::AmqpValueFactory::ToUamqp(sourceValue),
+        Models::_detail::AmqpValueFactory::ToUamqp(targetValue));
   }
 
   LinkImpl::~LinkImpl() noexcept
@@ -299,7 +299,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   void LinkImpl::SetAttachProperties(Models::AmqpValue properties)
   {
-    if (link_set_attach_properties(m_link, properties))
+    if (link_set_attach_properties(m_link, Models::_detail::AmqpValueFactory::ToUamqp(properties)))
     {
       throw std::runtime_error("Could not set attach properties.");
     }
@@ -314,8 +314,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void LinkImpl::SetDesiredCapabilities(Models::AmqpValue desiredCapabilities)
   {
-
-    if (link_set_desired_capabilities(m_link, desiredCapabilities))
+    if (link_set_desired_capabilities(
+            m_link, Models::_detail::AmqpValueFactory::ToUamqp(desiredCapabilities)))
     {
       throw std::runtime_error("Could not set desired capabilities.");
     }
@@ -328,7 +328,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not convert field to header.");
     }
-    return Models::AmqpValue{desiredCapabilitiesVal};
+    return Models::_detail::AmqpValueFactory::FromUamqp(
+        Models::_detail::UniqueAmqpValueHandle{desiredCapabilitiesVal});
   }
 
   void LinkImpl::SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetach)
@@ -353,6 +354,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       link->m_onLinkDetachEvent(Models::_internal::AmqpErrorFactory::FromUamqp(error));
     }
+  }
+
+  void LinkImpl::Poll()
+  {
+    // Ensure that the connection hierarchy's state is not modified while polling on the link.
+    auto lock{m_session->GetConnection()->Lock()};
+    link_dowork(m_link);
   }
 
   void LinkImpl::ResetLinkCredit(std::uint32_t linkCredit, bool drain)
@@ -381,7 +389,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             close,
             (condition.empty() ? nullptr : condition.c_str()),
             (description.empty() ? nullptr : description.c_str()),
-            info))
+            Models::_detail::AmqpValueFactory::ToUamqp(info)))
     {
       throw std::runtime_error("Could not set attach properties.");
     }

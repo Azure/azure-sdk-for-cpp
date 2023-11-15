@@ -23,11 +23,11 @@ namespace Azure { namespace Core { namespace _internal {
     using type = BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
   };
 }}} // namespace Azure::Core::_internal
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
+  using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-
-  using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
-
   /**
    * @brief The message header section carries standard delivery details about the transfer of a
    * message through the AMQP network.
@@ -37,9 +37,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    */
   struct MessageHeader final
   {
-
+    /** @brief Default constructor. */
     MessageHeader() = default;
+    /** @brief Destructor. */
     ~MessageHeader() = default;
+
+    /** @brief Move constructor.*/
+    MessageHeader(MessageHeader&& other) = default;
+
+    /** @brief Move assignment operator.*/
+    MessageHeader& operator=(MessageHeader&& other) = default;
+
+    /** @brief Copy constructor.*/
+    MessageHeader(MessageHeader const& other) = default;
+
+    /** @brief Copy assignment operator.*/
+    MessageHeader& operator=(MessageHeader const& other) = default;
 
     /** @brief Compare two AMQP Message Headers for equality.
      *
@@ -116,7 +129,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
 }}}} // namespace Azure::Core::Amqp::Models
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   /**
    * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE
    * and back.
@@ -126,8 +139,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    */
   struct MessageHeaderFactory
   {
-    static MessageHeader FromUamqp(UniqueMessageHeaderHandle const& properties);
-    static UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
+    static MessageHeader FromUamqp(_detail::UniqueMessageHeaderHandle const& properties);
+    static _detail::UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
   };
 
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}} // namespace Azure::Core::Amqp::Models::_detail

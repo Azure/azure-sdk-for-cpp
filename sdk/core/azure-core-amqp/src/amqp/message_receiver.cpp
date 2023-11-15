@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
   std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
-  std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+  std::pair<std::shared_ptr<const Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiver::WaitForIncomingMessage(Azure::Core::Context const& context)
   {
     if (m_impl)
@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
 
-  std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+  std::pair<std::shared_ptr<const Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiver::TryWaitForIncomingMessage()
   {
     if (m_impl)
@@ -182,7 +182,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           m_eventHandler->OnMessageReceiverDisconnected(error);
         }
         // Log that an error occurred.
-        Log::Stream(Logger::Level::Error)
+        Log::Stream(Logger::Level::Warning)
             << "Message receiver link detached: " + error.Condition.ToString() << ": "
             << error.Description;
 
@@ -211,7 +211,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_link->SetMaxLinkCredit(m_options.MaxLinkCredit);
     }
-    m_link->SetAttachProperties(static_cast<Models::AmqpValue>(m_options.Properties));
+    m_link->SetAttachProperties(m_options.Properties.AsAmqpValue());
   }
 
   AMQP_VALUE MessageReceiverImpl::OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message)
@@ -222,7 +222,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // the message receiver is open before attempting to process the incoming message.
     if (receiver->m_receiverOpen)
     {
-      auto incomingMessage(Models::_internal::AmqpMessageFactory::FromUamqp(message));
+      auto incomingMessage(Models::_detail::AmqpMessageFactory::FromUamqp(message));
       Models::AmqpValue rv;
       if (receiver->m_eventHandler)
       {
@@ -234,22 +234,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         rv = receiver->OnMessageReceived(incomingMessage);
       }
-      return amqpvalue_clone(rv);
+      return amqpvalue_clone(Models::_detail::AmqpValueFactory::ToUamqp(rv));
     }
 
-    return Models::_internal::Messaging::DeliveryRejected(
-        Models::_internal::AmqpErrorCondition::ConnectionForced.ToString(),
-        "Message Receiver is closed.",
-        {});
+    return amqpvalue_clone(
+        Models::_detail::AmqpValueFactory::ToUamqp(Models::_internal::Messaging::DeliveryRejected(
+            Models::_internal::AmqpErrorCondition::ConnectionForced.ToString(),
+            "Message Receiver is closed.",
+            {})));
   }
 
-  Models::AmqpValue MessageReceiverImpl::OnMessageReceived(Models::AmqpMessage message)
+  Models::AmqpValue MessageReceiverImpl::OnMessageReceived(
+      std::shared_ptr<Models::AmqpMessage> const& message)
   {
     m_messageQueue.CompleteOperation(message, Models::_internal::AmqpError{});
     return Models::_internal::Messaging::DeliveryAccepted();
   }
 
-  std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+  std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::WaitForIncomingMessage(Context const& context)
   {
     if (m_eventHandler)
@@ -260,8 +262,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     auto result = m_messageQueue.WaitForResult(context);
     if (result)
     {
-      std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError> rv;
-      Models::AmqpMessage message{std::move(std::get<0>(*result))};
+      std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError> rv;
+      std::shared_ptr<Models::AmqpMessage> message{std::move(std::get<0>(*result))};
       if (message)
       {
         rv.first = std::move(message);
@@ -274,7 +276,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw Azure::Core::OperationCancelledException("Receive Operation was cancelled.");
     }
   }
-  std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+  std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::TryWaitForIncomingMessage()
   {
     if (m_eventHandler)
@@ -285,8 +287,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     auto result = m_messageQueue.TryWaitForResult();
     if (result)
     {
-      std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError> rv;
-      Models::AmqpMessage message{std::move(std::get<0>(*result))};
+      std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError> rv;
+      std::shared_ptr<Models::AmqpMessage> message{std::move(std::get<0>(*result))};
       if (message)
       {
         rv.first = std::move(message);
@@ -474,6 +476,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     // Mark the connection as async so that we can use the async APIs.
     m_session->GetConnection()->EnableAsyncOperation(true);
+
+    // And add the link to the list of pollable items.
+    Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
   }
 
   void MessageReceiverImpl::Close()
@@ -485,7 +490,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         Log::Stream(Logger::Level::Verbose) << "Lock for Closing message receiver.";
       }
-      auto lock{m_session->GetConnection()->Lock()};
 
       AZURE_ASSERT(m_link);
       if (m_options.EnableTrace)
@@ -497,7 +501,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
       }
+
+      Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+          m_link); // This will ensure that the link is cleaned up on the next poll()
+
       m_session->GetConnection()->EnableAsyncOperation(false);
+
+      auto lock{m_session->GetConnection()->Lock()};
 
       // Clear messages from the queue.
       m_messageQueue.Clear();
