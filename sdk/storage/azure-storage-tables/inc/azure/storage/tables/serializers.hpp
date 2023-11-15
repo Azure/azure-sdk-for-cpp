@@ -105,19 +105,21 @@ namespace Azure { namespace Storage { namespace Tables {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
           if (i1.StartsOn.HasValue())
           {
-            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
-                                            "Start",
-                                            i1.StartsOn.Value().ToString(
-                                                Azure::DateTime::DateFormat::Rfc3339,
-                                                Azure::DateTime::TimeFractionFormat::AllDigits)});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "Start",
+                i1.StartsOn.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc3339,
+                    Azure::DateTime::TimeFractionFormat::AllDigits)});
           }
           if (i1.ExpiresOn.HasValue())
           {
-            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
-                                            "Expiry",
-                                            i1.ExpiresOn.Value().ToString(
-                                                Azure::DateTime::DateFormat::Rfc3339,
-                                                Azure::DateTime::TimeFractionFormat::AllDigits)});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "Expiry",
+                i1.ExpiresOn.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc3339,
+                    Azure::DateTime::TimeFractionFormat::AllDigits)});
           }
           writer.Write(
               _internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission", i1.Permissions});
@@ -152,20 +154,22 @@ namespace Azure { namespace Storage { namespace Tables {
         writer.Write(
             _internal::XmlNode{_internal::XmlNodeType::StartTag, "StorageServiceProperties"});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Logging"});
-        writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
-                                        "Version",
-                                        options.ServiceProperties.Logging.Version});
-        writer.Write(
-            _internal::XmlNode{_internal::XmlNodeType::StartTag,
-                               "Delete",
-                               options.ServiceProperties.Logging.Delete ? "true" : "false"});
-        writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
-                                        "Read",
-                                        options.ServiceProperties.Logging.Read ? "true" : "false"});
-        writer.Write(
-            _internal::XmlNode{_internal::XmlNodeType::StartTag,
-                               "Write",
-                               options.ServiceProperties.Logging.Write ? "true" : "false"});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Version",
+            options.ServiceProperties.Logging.Version});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Delete",
+            options.ServiceProperties.Logging.Delete ? "true" : "false"});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Read",
+            options.ServiceProperties.Logging.Read ? "true" : "false"});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Write",
+            options.ServiceProperties.Logging.Write ? "true" : "false"});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
@@ -183,13 +187,14 @@ namespace Azure { namespace Storage { namespace Tables {
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "HourMetrics"});
-        writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
-                                        "Version",
-                                        options.ServiceProperties.HourMetrics.Version});
-        writer.Write(
-            _internal::XmlNode{_internal::XmlNodeType::StartTag,
-                               "Enabled",
-                               options.ServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Version",
+            options.ServiceProperties.HourMetrics.Version});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Enabled",
+            options.ServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
         if (options.ServiceProperties.HourMetrics.IncludeApis.HasValue())
         {
           writer.Write(_internal::XmlNode{
@@ -214,9 +219,10 @@ namespace Azure { namespace Storage { namespace Tables {
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MinuteMetrics"});
-        writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
-                                        "Version",
-                                        options.ServiceProperties.MinuteMetrics.Version});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "Version",
+            options.ServiceProperties.MinuteMetrics.Version});
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
             "Enabled",
@@ -256,9 +262,10 @@ namespace Azure { namespace Storage { namespace Tables {
               _internal::XmlNodeType::StartTag, "AllowedHeaders", i1.AllowedHeaders});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag, "ExposedHeaders", i1.ExposedHeaders});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
-                                          "MaxAgeInSeconds",
-                                          std::to_string(i1.MaxAgeInSeconds)});
+          writer.Write(_internal::XmlNode{
+              _internal::XmlNodeType::StartTag,
+              "MaxAgeInSeconds",
+              std::to_string(i1.MaxAgeInSeconds)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});

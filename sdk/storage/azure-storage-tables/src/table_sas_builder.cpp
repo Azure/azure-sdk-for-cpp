@@ -44,11 +44,11 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = Identifier.empty()
         ? ExpiresOn.ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"

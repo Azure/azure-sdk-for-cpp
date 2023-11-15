@@ -847,14 +847,12 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
   {
     switch (options.UpsertType)
     {
-      case Models::UpsertKind::Merge:
-      {
+      case Models::UpsertKind::Merge: {
         auto response = MergeEntity(tableEntity, Models::MergeEntityOptions(options), context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }
-      default:
-      {
+      default: {
         auto response = UpdateEntity(tableEntity, Models::UpdateEntityOptions(options), context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
