@@ -43,7 +43,7 @@ namespace Azure { namespace Core {
     {
       using type = BasicUniqueHandle<CURL, curl_easy_cleanup>;
     };
-  } // namespace _internal
+  } // namespace _detail
 
   namespace Http {
     namespace _detail {

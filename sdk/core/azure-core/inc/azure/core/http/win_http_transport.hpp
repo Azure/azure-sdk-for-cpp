@@ -46,7 +46,7 @@ namespace Azure { namespace Core {
 
       using type = BasicUniqueHandle<void, FreeHandle>;
     };
-  } // namespace _internal
+  } // namespace _detail
 
   namespace Http {
 
