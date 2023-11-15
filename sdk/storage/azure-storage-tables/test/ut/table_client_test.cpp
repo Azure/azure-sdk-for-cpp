@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
 
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
-    EXPECT_EQ(response.Value.Logging.RetentionPolicy.IsEnabled, false);
+    EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
     EXPECT_EQ(response.Value.Logging.Version, "1.0");
     EXPECT_EQ(response.Value.Logging.Delete, false);
     EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);

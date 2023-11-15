@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Tables {
       /**
        * The retention policy.
        */
-      RetentionPolicy RetentionPolicy;
+      RetentionPolicy RetentionPolicyDefinition;
     };
     /**
      * @brief CORS is an HTTP feature that enables a web application running under one domain to

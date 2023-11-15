@@ -159,10 +159,9 @@ namespace Azure { namespace Storage { namespace Tables {
             _internal::XmlNode{_internal::XmlNodeType::StartTag,
                                "Delete",
                                options.ServiceProperties.Logging.Delete ? "true" : "false"});
-        writer.Write(
-            _internal::XmlNode{_internal::XmlNodeType::StartTag,
-                               "Read",
-                               options.ServiceProperties.Logging.Read ? "true" : "false"});
+        writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
+                                        "Read",
+                                        options.ServiceProperties.Logging.Read ? "true" : "false"});
         writer.Write(
             _internal::XmlNode{_internal::XmlNodeType::StartTag,
                                "Write",
@@ -171,13 +170,15 @@ namespace Azure { namespace Storage { namespace Tables {
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
             "Enabled",
-            options.ServiceProperties.Logging.RetentionPolicy.IsEnabled ? "true" : "false"});
-        if (options.ServiceProperties.Logging.RetentionPolicy.Days.HasValue())
+            options.ServiceProperties.Logging.RetentionPolicyDefinition.IsEnabled ? "true"
+                                                                                  : "false"});
+        if (options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.HasValue())
         {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag,
               "Days",
-              std::to_string(options.ServiceProperties.Logging.RetentionPolicy.Days.Value())});
+              std::to_string(
+                  options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.Value())});
         }
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
@@ -185,10 +186,10 @@ namespace Azure { namespace Storage { namespace Tables {
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
                                         "Version",
                                         options.ServiceProperties.HourMetrics.Version});
-        writer.Write(_internal::XmlNode{
-            _internal::XmlNodeType::StartTag,
-            "Enabled",
-            options.ServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
+        writer.Write(
+            _internal::XmlNode{_internal::XmlNodeType::StartTag,
+                               "Enabled",
+                               options.ServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
         if (options.ServiceProperties.HourMetrics.IncludeApis.HasValue())
         {
           writer.Write(_internal::XmlNode{
@@ -201,7 +202,7 @@ namespace Azure { namespace Storage { namespace Tables {
             _internal::XmlNodeType::StartTag,
             "Enabled",
             options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
-                                                                                 : "false"});
+                                                                                      : "false"});
         if (options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.HasValue())
         {
           writer.Write(_internal::XmlNode{
@@ -232,7 +233,7 @@ namespace Azure { namespace Storage { namespace Tables {
             _internal::XmlNodeType::StartTag,
             "Enabled",
             options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
-                                                                                   : "false"});
+                                                                                        : "false"});
         if (options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.HasValue())
         {
           writer.Write(_internal::XmlNode{

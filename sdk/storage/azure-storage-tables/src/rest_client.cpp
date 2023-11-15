@@ -193,14 +193,14 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
             && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kEnabled)
         {
-          response.Logging.RetentionPolicy.IsEnabled = node.Value == std::string("true");
+          response.Logging.RetentionPolicyDefinition.IsEnabled = node.Value == std::string("true");
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
             && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.Logging.RetentionPolicy.Days = std::stoi(node.Value);
+          response.Logging.RetentionPolicyDefinition.Days = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
