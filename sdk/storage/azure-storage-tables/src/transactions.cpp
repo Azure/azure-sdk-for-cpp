@@ -62,7 +62,7 @@ std::string Transaction::PreparePayload()
   accumulator += "\n\n--" + m_changesetId + "--\n";
   accumulator += "--" + m_batchId + "\n";
   return accumulator;
-};
+}
 
 std::string Transaction::PrepCreateEntity(Models::TableEntity entity)
 {
@@ -77,7 +77,7 @@ std::string Transaction::PrepCreateEntity(Models::TableEntity entity)
   returnValue += "DataServiceVersion: 3.0;\n\n";
   returnValue += Serializers::CreateEntity(entity);
   return returnValue;
-};
+}
 
 std::string Transaction::PrepDeleteEntity(Models::TableEntity entity)
 {
