@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Tables {
        */
       std::vector<Models::Table> Tables;
 
-    protected:
+    public:
       std::shared_ptr<TableServicesClient> m_tableServiceClient;
       ListTablesOptions m_operationOptions;
 

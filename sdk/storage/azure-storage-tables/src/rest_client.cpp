@@ -225,7 +225,8 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
             && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kEnabled)
         {
-          response.HourMetrics.RetentionPolicyDefinition.IsEnabled = node.Value == std::string("true");
+          response.HourMetrics.RetentionPolicyDefinition.IsEnabled
+              = node.Value == std::string("true");
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -257,7 +258,8 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
             && xmlPath[1] == XmlTagEnum::kMinuteMetrics
             && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kEnabled)
         {
-          response.MinuteMetrics.RetentionPolicyDefinition.IsEnabled = node.Value == std::string("true");
+          response.MinuteMetrics.RetentionPolicyDefinition.IsEnabled
+              = node.Value == std::string("true");
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -865,7 +867,7 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
     return Azure::Response<Models::UpsertEntityResult>(
         Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
   }
-};
+}
 
 void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
