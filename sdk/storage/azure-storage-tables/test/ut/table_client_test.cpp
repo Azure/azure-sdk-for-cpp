@@ -141,11 +141,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.Value.Logging.RetentionPolicy.IsEnabled, false);
     EXPECT_EQ(response.Value.Logging.Version, "1.0");
     EXPECT_EQ(response.Value.Logging.Delete, false);
-    EXPECT_EQ(response.Value.HourMetrics.RetentionPolicy.IsEnabled, true);
+    EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
     EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
     EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
     EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
-    EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicy.IsEnabled, false);
+    EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
     EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
     EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
   }
@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
 
     Azure::Storage::Tables::Models::SetServicePropertiesOptions setOptions;
-    setOptions.TableServiceProperties = std::move(response.Value);
+    setOptions.ServiceProperties = std::move(response.Value);
     auto response2 = m_tableServiceClient->SetServiceProperties(setOptions);
     EXPECT_EQ(response2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
   }
@@ -289,7 +289,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(response.Value.ETag.empty());
 
     Azure::Storage::Tables::Models::UpsertEntityOptions options;
-    options.UpsertType = Azure::Storage::Tables::Models::UpsertType::Update;
+    options.UpsertType = Azure::Storage::Tables::Models::UpsertKind::Update;
 
     entity.Properties["Product"] = "Tables2";
     auto updateResponse = m_tableClient->MergeEntity(entity, options);
@@ -299,7 +299,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(updateResponse.Value.ETag.empty());
 
     Azure::Storage::Tables::Models::UpsertEntityOptions options2;
-    options2.UpsertType = Azure::Storage::Tables::Models::UpsertType::Merge;
+    options2.UpsertType = Azure::Storage::Tables::Models::UpsertKind::Merge;
     entity.Properties["Product3"] = "Tables3";
     entity.ETag = updateResponse.Value.ETag;
     auto updateResponse2 = m_tableClient->MergeEntity(entity, options2);

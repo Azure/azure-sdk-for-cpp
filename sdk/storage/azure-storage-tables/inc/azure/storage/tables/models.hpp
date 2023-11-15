@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Tables {
       /**
        * The retention policy.
        */
-      RetentionPolicy RetentionPolicy;
+      RetentionPolicy RetentionPolicyDefinition;
     };
     /**
      * @brief Azure Analytics Logging settings.
@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     struct SetServicePropertiesOptions final
     {
-      TableServiceProperties TableServiceProperties;
+      TableServiceProperties ServiceProperties;
     };
 
     /**
@@ -381,14 +381,14 @@ namespace Azure { namespace Storage { namespace Tables {
       std::map<std::string, std::string> Properties;
       Azure::Nullable<std::string> ETag;
     };
-    enum UpsertType
+    enum UpsertKind
     {
       Update,
       Merge,
     };
     struct UpsertEntityOptions
     {
-      UpsertType UpsertType = UpsertType::Update;
+      UpsertKind UpsertType = UpsertKind::Update;
     };
     struct CreateEntityOptions : public UpsertEntityOptions
     {

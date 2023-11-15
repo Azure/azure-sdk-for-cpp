@@ -225,14 +225,14 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
             && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kEnabled)
         {
-          response.HourMetrics.RetentionPolicy.IsEnabled = node.Value == std::string("true");
+          response.HourMetrics.RetentionPolicyDefinition.IsEnabled = node.Value == std::string("true");
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
             && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.HourMetrics.RetentionPolicy.Days = std::stoi(node.Value);
+          response.HourMetrics.RetentionPolicyDefinition.Days = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -257,14 +257,14 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
             && xmlPath[1] == XmlTagEnum::kMinuteMetrics
             && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kEnabled)
         {
-          response.MinuteMetrics.RetentionPolicy.IsEnabled = node.Value == std::string("true");
+          response.MinuteMetrics.RetentionPolicyDefinition.IsEnabled = node.Value == std::string("true");
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
             && xmlPath[1] == XmlTagEnum::kMinuteMetrics
             && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.MinuteMetrics.RetentionPolicy.Days = std::stoi(node.Value);
+          response.MinuteMetrics.RetentionPolicyDefinition.Days = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -845,7 +845,7 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
   {
     switch (options.UpsertType)
     {
-      case Models::UpsertType::Merge:
+      case Models::UpsertKind::Merge:
       {
         auto response = MergeEntity(tableEntity, Models::MergeEntityOptions(options), context);
         return Azure::Response<Models::UpsertEntityResult>(

@@ -154,97 +154,97 @@ namespace Azure { namespace Storage { namespace Tables {
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Logging"});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
                                         "Version",
-                                        options.TableServiceProperties.Logging.Version});
+                                        options.ServiceProperties.Logging.Version});
         writer.Write(
             _internal::XmlNode{_internal::XmlNodeType::StartTag,
                                "Delete",
-                               options.TableServiceProperties.Logging.Delete ? "true" : "false"});
+                               options.ServiceProperties.Logging.Delete ? "true" : "false"});
         writer.Write(
             _internal::XmlNode{_internal::XmlNodeType::StartTag,
                                "Read",
-                               options.TableServiceProperties.Logging.Read ? "true" : "false"});
+                               options.ServiceProperties.Logging.Read ? "true" : "false"});
         writer.Write(
             _internal::XmlNode{_internal::XmlNodeType::StartTag,
                                "Write",
-                               options.TableServiceProperties.Logging.Write ? "true" : "false"});
+                               options.ServiceProperties.Logging.Write ? "true" : "false"});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
             "Enabled",
-            options.TableServiceProperties.Logging.RetentionPolicy.IsEnabled ? "true" : "false"});
-        if (options.TableServiceProperties.Logging.RetentionPolicy.Days.HasValue())
+            options.ServiceProperties.Logging.RetentionPolicy.IsEnabled ? "true" : "false"});
+        if (options.ServiceProperties.Logging.RetentionPolicy.Days.HasValue())
         {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag,
               "Days",
-              std::to_string(options.TableServiceProperties.Logging.RetentionPolicy.Days.Value())});
+              std::to_string(options.ServiceProperties.Logging.RetentionPolicy.Days.Value())});
         }
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "HourMetrics"});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
                                         "Version",
-                                        options.TableServiceProperties.HourMetrics.Version});
+                                        options.ServiceProperties.HourMetrics.Version});
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
             "Enabled",
-            options.TableServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
-        if (options.TableServiceProperties.HourMetrics.IncludeApis.HasValue())
+            options.ServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
+        if (options.ServiceProperties.HourMetrics.IncludeApis.HasValue())
         {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag,
               "IncludeAPIs",
-              options.TableServiceProperties.HourMetrics.IncludeApis.Value() ? "true" : "false"});
+              options.ServiceProperties.HourMetrics.IncludeApis.Value() ? "true" : "false"});
         }
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
             "Enabled",
-            options.TableServiceProperties.HourMetrics.RetentionPolicy.IsEnabled ? "true"
+            options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                  : "false"});
-        if (options.TableServiceProperties.HourMetrics.RetentionPolicy.Days.HasValue())
+        if (options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.HasValue())
         {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag,
               "Days",
               std::to_string(
-                  options.TableServiceProperties.HourMetrics.RetentionPolicy.Days.Value())});
+                  options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.Value())});
         }
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MinuteMetrics"});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag,
                                         "Version",
-                                        options.TableServiceProperties.MinuteMetrics.Version});
+                                        options.ServiceProperties.MinuteMetrics.Version});
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
             "Enabled",
-            options.TableServiceProperties.MinuteMetrics.IsEnabled ? "true" : "false"});
-        if (options.TableServiceProperties.MinuteMetrics.IncludeApis.HasValue())
+            options.ServiceProperties.MinuteMetrics.IsEnabled ? "true" : "false"});
+        if (options.ServiceProperties.MinuteMetrics.IncludeApis.HasValue())
         {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag,
               "IncludeAPIs",
-              options.TableServiceProperties.MinuteMetrics.IncludeApis.Value() ? "true" : "false"});
+              options.ServiceProperties.MinuteMetrics.IncludeApis.Value() ? "true" : "false"});
         }
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
         writer.Write(_internal::XmlNode{
             _internal::XmlNodeType::StartTag,
             "Enabled",
-            options.TableServiceProperties.MinuteMetrics.RetentionPolicy.IsEnabled ? "true"
+            options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                    : "false"});
-        if (options.TableServiceProperties.MinuteMetrics.RetentionPolicy.Days.HasValue())
+        if (options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.HasValue())
         {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::StartTag,
               "Days",
               std::to_string(
-                  options.TableServiceProperties.MinuteMetrics.RetentionPolicy.Days.Value())});
+                  options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.Value())});
         }
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Cors"});
-        for (const auto& i1 : options.TableServiceProperties.Cors)
+        for (const auto& i1 : options.ServiceProperties.Cors)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "CorsRule"});
           writer.Write(_internal::XmlNode{
