@@ -134,7 +134,6 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   auto bodyStream = response->ExtractBodyStream();
   
   response->SetBody(bodyStream->ReadToEnd(context));
-  std::string bodyString = std::string(response->GetBody().begin(), response->GetBody().end());
   // BodyStream is moved out of response. This makes transport implementation to clean any active
   // session with sockets or internal state.
   return response;
