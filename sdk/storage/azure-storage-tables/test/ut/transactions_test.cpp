@@ -13,8 +13,8 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string url("someUrl");
   const std::string tableName("someTableName");
   const std::string partitionKey("somePartitionKey");
-  std::string batch;
-  std::string changeset;
+  const std::string rowKey("someRowKey");
+
   TEST_F(TablesClientTest, TransactionCreate)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
@@ -22,7 +22,96 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(transaction.GetBatchId().substr(0, 6), "batch_");
     EXPECT_EQ(transaction.GetChangesetId().substr(0, 9), "changeset");
   }
-  void CheckContentLines(std::vector<std::string> const& lines, Models::TransactionAction action)
+
+  TEST_F(TablesClientTest, TransactionBodyInsertOp)
+  {
+    Tables::Transaction transaction(url, tableName, partitionKey);
+    Azure::Storage::Tables::Models::TableEntity entity;
+    entity.RowKey = rowKey;
+    transaction.CreateEntity(entity);
+    EXPECT_EQ(transaction.GetSteps().size(), 1);
+    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::InsertEntity);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
+    auto serialized = transaction.PreparePayload();
+    CheckTransactionBody(serialized, Models::TransactionAction::InsertEntity);
+  }
+
+  TEST_F(TablesClientTest, TransactionBodyDeleteOp)
+  {
+    Tables::Transaction transaction(url, tableName, partitionKey);
+
+    Azure::Storage::Tables::Models::TableEntity entity;
+    entity.RowKey = rowKey;
+    transaction.DeleteEntity(entity);
+    EXPECT_EQ(transaction.GetSteps().size(), 1);
+    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::DeleteEntity);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
+    auto serialized = transaction.PreparePayload();
+    CheckTransactionBody(serialized, Models::TransactionAction::DeleteEntity);
+  }
+
+  TEST_F(TablesClientTest, TransactionBodyMergeOp)
+  {
+    Tables::Transaction transaction(url, tableName, partitionKey);
+
+    Azure::Storage::Tables::Models::TableEntity entity;
+    entity.RowKey = rowKey;
+    transaction.MergeEntity(entity);
+    EXPECT_EQ(transaction.GetSteps().size(), 1);
+    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::MergeEntity);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
+    auto serialized = transaction.PreparePayload();
+    CheckTransactionBody(serialized, Models::TransactionAction::MergeEntity);
+  }
+
+  TEST_F(TablesClientTest, TransactionBodyUpdateOp)
+  {
+    Tables::Transaction transaction(url, tableName, partitionKey);
+    Azure::Storage::Tables::Models::TableEntity entity;
+    entity.RowKey = rowKey;
+    transaction.UpdateEntity(entity);
+    EXPECT_EQ(transaction.GetSteps().size(), 1);
+    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::UpdateEntity);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
+    auto serialized = transaction.PreparePayload();
+    CheckTransactionBody(serialized, Models::TransactionAction::UpdateEntity);
+  }
+
+  TEST_F(TablesClientTest, TransactionBodyInsertMergeOp)
+  {
+    Tables::Transaction transaction(url, tableName, partitionKey);
+    Azure::Storage::Tables::Models::TableEntity entity;
+    entity.RowKey = rowKey;
+    transaction.InsertMergeEntity(entity);
+    EXPECT_EQ(transaction.GetSteps().size(), 1);
+    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::MergeEntity);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
+    auto serialized = transaction.PreparePayload();
+    CheckTransactionBody(serialized, Models::TransactionAction::InsertMergeEntity);
+  }
+
+  TEST_F(TablesClientTest, TransactionBodyInsertReplaceOp)
+  {
+    Tables::Transaction transaction(url, tableName, partitionKey);
+    Azure::Storage::Tables::Models::TableEntity entity;
+    entity.RowKey = rowKey;
+    transaction.InsertReplaceEntity(entity);
+    EXPECT_EQ(transaction.GetSteps().size(), 1);
+    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::UpdateEntity);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
+    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
+    auto serialized = transaction.PreparePayload();
+    CheckTransactionBody(serialized, Models::TransactionAction::InsertReplaceEntity);
+  }
+
+  void TablesClientTest::CheckContentLines(
+      std::vector<std::string> const& lines,
+      Models::TransactionAction action)
   {
     EXPECT_EQ(lines[0], "--" + changeset);
     EXPECT_EQ(lines[1], "Content-Type: application/http");
@@ -35,37 +124,39 @@ namespace Azure { namespace Storage { namespace Test {
       case Models::TransactionAction::DeleteEntity:
         EXPECT_EQ(
             lines[4],
-            "DELETE " + url + "/" + tableName + "(PartitionKey='" + partitionKey
-                + "',RowKey='row1') HTTP/1.1");
+            "DELETE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
+                + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionAction::MergeEntity:
         EXPECT_EQ(
             lines[4],
-            "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey
-                + "',RowKey='row1') HTTP/1.1");
+            "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
+                + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionAction::UpdateEntity:
         EXPECT_EQ(
             lines[4],
-            "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey
-                + "',RowKey='row1') HTTP/1.1");
+            "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
+                + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionAction::InsertMergeEntity:
         EXPECT_EQ(
             lines[4],
-            "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey
-                + "',RowKey='row1') HTTP/1.1");
+            "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
+                + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionAction::InsertReplaceEntity:
         EXPECT_EQ(
             lines[4],
-            "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey
-                + "',RowKey='row1') HTTP/1.1");
+            "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
+                + rowKey + "') HTTP/1.1");
         break;
     }
     EXPECT_EQ(lines[lines.size() - 1], "--" + changeset + "--");
   }
-  void CheckTransactionBody(std::string const& body, Models::TransactionAction action)
+  void TablesClientTest::CheckTransactionBody(
+      std::string const& body,
+      Models::TransactionAction action)
   {
     (void)action;
     std::stringstream ss(body);
@@ -94,91 +185,5 @@ namespace Azure { namespace Storage { namespace Test {
     }
     CheckContentLines(contentLines, action);
     EXPECT_EQ(line, "--" + batch);
-  }
-
-  TEST_F(TablesClientTest, TransactionBodyInsertOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
-    entity.RowKey = "row1";
-    transaction.CreateEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::InsertEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, "row1");
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::InsertEntity);
-  }
-
-  TEST_F(TablesClientTest, TransactionBodyDeleteOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-
-    Azure::Storage::Tables::Models::TableEntity entity;
-    entity.RowKey = "row1";
-    transaction.DeleteEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::DeleteEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, "row1");
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::DeleteEntity);
-  }
-
-  TEST_F(TablesClientTest, TransactionBodyMergeOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-
-    Azure::Storage::Tables::Models::TableEntity entity;
-    entity.RowKey = "row1";
-    transaction.MergeEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::MergeEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, "row1");
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::MergeEntity);
-  }
-
-  TEST_F(TablesClientTest, TransactionBodyUpdateOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
-    entity.RowKey = "row1";
-    transaction.UpdateEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::UpdateEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, "row1");
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::UpdateEntity);
-  }
-
-  TEST_F(TablesClientTest, TransactionBodyInsertMergeOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
-    entity.RowKey = "row1";
-    transaction.InsertMergeEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::MergeEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, "row1");
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::InsertMergeEntity);
-  }
-
-  TEST_F(TablesClientTest, TransactionBodyInsertReplaceOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
-    entity.RowKey = "row1";
-    transaction.InsertReplaceEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::UpdateEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, "row1");
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::InsertReplaceEntity);
   }
 }}} // namespace Azure::Storage::Test

@@ -5,6 +5,7 @@
 #include "test/ut/test_base.hpp"
 
 #include <azure/storage/tables/rest_client.hpp>
+#include <azure/storage/tables/models.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -19,6 +20,18 @@ namespace Azure { namespace Storage { namespace Test {
     std::string m_tableName;
     std::shared_ptr<Tables::TableServicesClient> m_tableServiceClient;
     std::shared_ptr<Tables::TableClient> m_tableClient;
+
+  protected:
+    const std::string url = "someUrl";
+    const std::string tableName = "someTableName";
+    const std::string partitionKey  = "somePartitionKey";
+    const std::string rowKey="someRowKey";
+    std::string batch;
+    std::string changeset;
+    void CheckContentLines(std::vector<std::string> const& lines, Azure::Storage::Tables::Models::TransactionAction action);
+    void CheckTransactionBody(
+        std::string const& body,
+        Azure::Storage::Tables::Models::TransactionAction action);
   };
 
 }}} // namespace Azure::Storage::Test
