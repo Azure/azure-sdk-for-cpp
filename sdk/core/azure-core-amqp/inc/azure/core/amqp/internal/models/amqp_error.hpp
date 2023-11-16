@@ -11,17 +11,17 @@
 #include <azure/core/internal/extendable_enumeration.hpp>
 
 struct ERROR_INSTANCE_TAG;
-namespace Azure { namespace Core { namespace _internal {
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
+  template <typename> struct UniqueHandleHelper;
   template <> struct UniqueHandleHelper<ERROR_INSTANCE_TAG>
   {
     static void FreeAmqpError(ERROR_INSTANCE_TAG* obj);
-
-    using type = BasicUniqueHandle<ERROR_INSTANCE_TAG, FreeAmqpError>;
+    using type = Core::_internal::BasicUniqueHandle<ERROR_INSTANCE_TAG, FreeAmqpError>;
   };
-}}} // namespace Azure::Core::_internal
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  using UniqueAmqpErrorHandle = Azure::Core::_internal::UniqueHandle<ERROR_INSTANCE_TAG>;
+  using UniqueAmqpErrorHandle
+      = Core::_internal::UniqueHandle<ERROR_INSTANCE_TAG, UniqueHandleHelper>;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
