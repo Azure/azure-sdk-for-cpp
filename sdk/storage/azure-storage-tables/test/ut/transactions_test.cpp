@@ -1,6 +1,5 @@
 #include "transactions_test.hpp"
 
-
 #include <chrono>
 #include <sstream>
 #include <string>

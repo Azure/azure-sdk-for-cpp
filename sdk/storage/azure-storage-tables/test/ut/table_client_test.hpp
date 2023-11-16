@@ -4,9 +4,9 @@
 
 #include "test/ut/test_base.hpp"
 
+#include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/transactions.hpp>
-#include <azure/storage/tables/models.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -21,6 +21,5 @@ namespace Azure { namespace Storage { namespace Test {
     std::string m_tableName;
     std::shared_ptr<Tables::TableServicesClient> m_tableServiceClient;
     std::shared_ptr<Tables::TableClient> m_tableClient;
- 
   };
 }}} // namespace Azure::Storage::Test
