@@ -477,7 +477,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     enum TransactionAction
     {
-      InsertEntity,
+      InsertEntity = 32,
       DeleteEntity,
       MergeEntity,
       UpdateEntity,

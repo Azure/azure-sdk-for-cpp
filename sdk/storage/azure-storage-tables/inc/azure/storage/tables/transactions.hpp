@@ -57,7 +57,8 @@ namespace Azure { namespace Storage { namespace Tables {
     void MergeEntity(Models::TableEntity const& entity);
     void UpdateEntity(Models::TableEntity const& entity);
     void UpsertEntity(Models::TableEntity const& entity);
-
+    void InsertReplaceEntity(Models::TableEntity const& entity);
+    void InsertMergeEntity(Models::TableEntity const& entity);
     std::string PreparePayload();
 
   private:

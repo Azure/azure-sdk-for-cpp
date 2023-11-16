@@ -15,7 +15,7 @@ void Transaction::DeleteEntity(Models::TableEntity const& entity)
   Models::TableEntity _entity = entity;
   _entity.PartitionKey = m_partitionKey;
   m_steps.emplace_back(
-      Models::TransactionStep{Models::TransactionAction::DeleteEntity, std::move(entity)});
+      Models::TransactionStep{Models::TransactionAction::DeleteEntity, std::move(_entity)});
 }
 
 void Transaction::MergeEntity(Models::TableEntity const& entity)
@@ -23,16 +23,29 @@ void Transaction::MergeEntity(Models::TableEntity const& entity)
   Models::TableEntity _entity = entity;
   _entity.PartitionKey = m_partitionKey;
   m_steps.emplace_back(
-      Models::TransactionStep{Models::TransactionAction::MergeEntity, std::move(entity)});
+      Models::TransactionStep{Models::TransactionAction::MergeEntity, std::move(_entity)});
+}
+void Transaction::InsertMergeEntity(Models::TableEntity const& entity)
+{
+  Models::TableEntity _entity = entity;
+  _entity.PartitionKey = m_partitionKey;
+  m_steps.emplace_back(
+      Models::TransactionStep{Models::TransactionAction::MergeEntity, std::move(_entity)});
 }
 void Transaction::UpdateEntity(Models::TableEntity const& entity)
 {
   Models::TableEntity _entity = entity;
   _entity.PartitionKey = m_partitionKey;
   m_steps.emplace_back(
-      Models::TransactionStep{Models::TransactionAction::UpdateEntity, std::move(entity)});
+      Models::TransactionStep{Models::TransactionAction::UpdateEntity, std::move(_entity)});
 }
-
+void Transaction::InsertReplaceEntity(Models::TableEntity const& entity)
+{
+  Models::TableEntity _entity = entity;
+  _entity.PartitionKey = m_partitionKey;
+  m_steps.emplace_back(
+      Models::TransactionStep{Models::TransactionAction::UpdateEntity, std::move(_entity)});
+}
 std::string Transaction::PreparePayload()
 {
   std::string accumulator

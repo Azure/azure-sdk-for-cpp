@@ -19,6 +19,7 @@ add_executable (
     macro_guard.cpp
     table_client_test.cpp
     table_client_test.hpp
+    transactions_test.cpp
     # Include shared test source code
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
