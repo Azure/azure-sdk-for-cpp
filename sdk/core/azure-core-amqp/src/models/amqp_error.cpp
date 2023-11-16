@@ -42,8 +42,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AMQP_VALUE info;
     if (!error_get_info(handle, &info) && info)
     {
-      // error_get_info returns the AMQP value in place, so we clone it before passing it to
-      // the UniqueAmqpValueHandle.
+      // error_get_info returns the AMQP value in place, so we clone it before passing it to the
+      // UniqueAmqpValueHandle.
       rv.Info = _detail::AmqpValueFactory::FromUamqp(
                     _detail::UniqueAmqpValueHandle{amqpvalue_clone(info)})
                     .AsMap();
