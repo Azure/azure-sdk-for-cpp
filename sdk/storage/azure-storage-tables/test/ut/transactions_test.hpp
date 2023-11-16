@@ -4,9 +4,9 @@
 
 #include "test/ut/test_base.hpp"
 
-#include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/rest_client.hpp>
 #include <azure/storage/tables/transactions.hpp>
+
 namespace Azure { namespace Storage { namespace Test {
 
   class TransactionsBodyTest : public Azure::Storage::Test::StorageTest {

@@ -1,7 +1,5 @@
 #include "transactions_test.hpp"
 
-#include <azure/storage/tables/models.hpp>
-#include <azure/storage/tables/transactions.hpp>
 
 #include <chrono>
 #include <sstream>
