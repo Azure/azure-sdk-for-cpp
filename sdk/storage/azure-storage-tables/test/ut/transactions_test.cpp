@@ -1,4 +1,4 @@
-#include "table_client_test.hpp"
+#include "transactions_test.hpp"
 
 #include <azure/storage/tables/models.hpp>
 #include <azure/storage/tables/transactions.hpp>
@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string partitionKey("somePartitionKey");
   const std::string rowKey("someRowKey");
 
-  TEST_F(TablesClientTest, TransactionCreate)
+  TEST_F(TransactionsBodyTest, TransactionCreate)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
     EXPECT_EQ(transaction.GetPartitionKey(), partitionKey);
@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(transaction.GetChangesetId().substr(0, 9), "changeset");
   }
 
-  TEST_F(TablesClientTest, TransactionBodyInsertOp)
+  TEST_F(TransactionsBodyTest, TransactionBodyInsertOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
     Azure::Storage::Tables::Models::TableEntity entity;
@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     CheckTransactionBody(serialized, Models::TransactionAction::InsertEntity);
   }
 
-  TEST_F(TablesClientTest, TransactionBodyDeleteOp)
+  TEST_F(TransactionsBodyTest, TransactionBodyDeleteOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
 
@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
     CheckTransactionBody(serialized, Models::TransactionAction::DeleteEntity);
   }
 
-  TEST_F(TablesClientTest, TransactionBodyMergeOp)
+  TEST_F(TransactionsBodyTest, TransactionBodyMergeOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
 
@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     CheckTransactionBody(serialized, Models::TransactionAction::MergeEntity);
   }
 
-  TEST_F(TablesClientTest, TransactionBodyUpdateOp)
+  TEST_F(TransactionsBodyTest, TransactionBodyUpdateOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
     Azure::Storage::Tables::Models::TableEntity entity;
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Test {
     CheckTransactionBody(serialized, Models::TransactionAction::UpdateEntity);
   }
 
-  TEST_F(TablesClientTest, TransactionBodyInsertMergeOp)
+  TEST_F(TransactionsBodyTest, TransactionBodyInsertMergeOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
     Azure::Storage::Tables::Models::TableEntity entity;
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Test {
     CheckTransactionBody(serialized, Models::TransactionAction::InsertMergeEntity);
   }
 
-  TEST_F(TablesClientTest, TransactionBodyInsertReplaceOp)
+  TEST_F(TransactionsBodyTest, TransactionBodyInsertReplaceOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
     Azure::Storage::Tables::Models::TableEntity entity;
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Test {
     CheckTransactionBody(serialized, Models::TransactionAction::InsertReplaceEntity);
   }
 
-  void TablesClientTest::CheckContentLines(
+  void TransactionsBodyTest::CheckContentLines(
       std::vector<std::string> const& lines,
       Models::TransactionAction action)
   {
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     EXPECT_EQ(lines[lines.size() - 1], "--" + changeset + "--");
   }
-  void TablesClientTest::CheckTransactionBody(
+  void TransactionsBodyTest::CheckTransactionBody(
       std::string const& body,
       Models::TransactionAction action)
   {
