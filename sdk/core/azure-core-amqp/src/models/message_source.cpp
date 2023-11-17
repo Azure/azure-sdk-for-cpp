@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  MessageSource::~MessageSource(){};
+  MessageSource::~MessageSource() = default;
 
   MessageSource::MessageSource(Models::AmqpValue const& source)
       : m_impl{std::make_unique<_detail::MessageSourceImpl>(source)}

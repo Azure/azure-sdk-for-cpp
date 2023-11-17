@@ -111,10 +111,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   }
 
-  class LinkSocketListenerEvents
-      : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
-        public Azure::Core::Amqp::_internal::ConnectionEvents,
-        public Azure::Core::Amqp::_internal::SessionEvents {
+  class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
+                                   public Azure::Core::Amqp::_internal::ConnectionEvents,
+                                   public Azure::Core::Amqp::_internal::SessionEvents {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         std::shared_ptr<Azure::Core::Amqp::_internal::Connection>>
         m_listeningQueue;

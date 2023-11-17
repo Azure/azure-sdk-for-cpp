@@ -51,8 +51,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     SocketListener* listener = static_cast<SocketListener*>(context);
     if (listener->m_eventHandler)
     {
-      auto transport{std::make_shared<_internal::Transport>(std::make_shared<_detail::TransportImpl>(
-          xio_create(interfaceDescription, ioParameters), nullptr))};
+      auto transport{
+          std::make_shared<_internal::Transport>(std::make_shared<_detail::TransportImpl>(
+              xio_create(interfaceDescription, ioParameters), nullptr))};
       listener->m_eventHandler->OnSocketAccepted(transport);
     }
   }
@@ -111,4 +112,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         }
 
         void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
-}}}}} // namespace Azure::Core::Amqp::Network::_internal
+}}}}} // namespace Azure::Core::Amqp::Network::_detail
