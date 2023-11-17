@@ -534,18 +534,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     static AmqpValue Deserialize(uint8_t const* data, size_t size);
 
   private:
-    /** @brief Interoperability helper function which creates an AmqpValue from a uAMQP
-     * AMQP_VALUE object.
-     *
-     * @param value source uAMQP AMQP_VALUE object.
-     *
-     * @remarks This is an internal operator which should not be called by customers.
-     *
-     * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, instead it clones
-     * the underlying AMQP_VALUE. This is why it takes a UniqueAmqpValueHandle as a parameter
-     * instead of a raw AMQP_VALUE - that ensures that someone will free the underlying AMQP_VALUE
-     * if needed.
-     */
     AmqpValue(std::unique_ptr<_detail::AmqpValueImpl>&& value);
     std::unique_ptr<_detail::AmqpValueImpl> m_impl;
     friend class _detail::AmqpValueFactory;

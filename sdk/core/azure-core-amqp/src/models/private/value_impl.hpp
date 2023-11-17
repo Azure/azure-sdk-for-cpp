@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpValueImpl(AmqpValueImpl const& other);
     AmqpValueImpl(AmqpValueImpl&& other) noexcept;
 
-    operator AMQP_VALUE_DATA_TAG*() const noexcept { return m_value.get(); }
+    operator AMQP_VALUE() const noexcept { return m_value.get(); }
 
   private:
     UniqueAmqpValueHandle m_value;

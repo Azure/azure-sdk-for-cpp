@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   }
 
   class LinkSocketListenerEvents
-      : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents,
+      : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
         public Azure::Core::Amqp::_internal::ConnectionEvents,
         public Azure::Core::Amqp::_internal::SessionEvents {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
@@ -192,7 +192,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   public:
     LinkSocketListenerEvents() {}
     std::shared_ptr<Connection> WaitForConnection(
-        Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
+        Azure::Core::Amqp::Network::_detail::SocketListener const& listener,
         Azure::Core::Context const& context)
     {
       auto result = m_listeningQueue.WaitForPolledResult(context, listener);
@@ -223,7 +223,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Connection connection("localhost", nullptr, connectionOptions, &events);
     Session session{connection.CreateSession()};
 
-    Network::_internal::SocketListener listener(testPort, &events);
+    Network::_detail::SocketListener listener(testPort, &events);
 
     EXPECT_NO_THROW(listener.Start());
     {

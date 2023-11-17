@@ -19,6 +19,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   extern uint16_t FindAvailableSocket();
 
   using namespace Azure::Core::Amqp::Network::_internal;
+  using namespace Azure::Core::Amqp::Network::_detail;
   using namespace Azure::Core::Amqp::Common::_internal;
 
   class TestTlsTransport : public testing::Test {

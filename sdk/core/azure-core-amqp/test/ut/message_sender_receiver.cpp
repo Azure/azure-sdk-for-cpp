@@ -182,7 +182,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession()};
 
-    Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, nullptr);
+    Azure::Core::Amqp::Network::_detail::SocketListener listener(testPort, nullptr);
     EXPECT_NO_THROW(listener.Start());
     {
       MessageSenderOptions options;

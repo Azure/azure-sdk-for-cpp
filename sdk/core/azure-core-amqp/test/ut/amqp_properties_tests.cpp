@@ -37,7 +37,7 @@ TEST_F(TestProperties, SetAbsoluteExpiryTime)
 
   MessageProperties properties2{properties};
 
-  EXPECT_EQ(properties2.AbsoluteExpiryTime.Value(), testTimestampToCheck);
+  EXPECT_EQ(properties2.AbsoluteExpiryTime.Value(), properties.AbsoluteExpiryTime.Value());
   GTEST_LOG_(INFO) << properties;
   GTEST_LOG_(INFO) << properties2;
 }
@@ -96,7 +96,7 @@ TEST_F(TestProperties, SetCreationTime)
 
   MessageProperties properties2{properties};
 
-  EXPECT_EQ(properties2.CreationTime.Value(), testTimestampToCheck);
+  EXPECT_EQ(properties2.CreationTime.Value(), properties.CreationTime.Value());
 
   GTEST_LOG_(INFO) << properties;
 }
