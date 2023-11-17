@@ -27,21 +27,20 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace _internal {
-  void UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(AMQP_VALUE value)
+  /// @cond INTERNAL
+  void UniqueHandleHelper<std::remove_pointer<AMQP_VALUE>::type>::FreeAmqpValue(AMQP_VALUE value)
   {
     amqpvalue_destroy(value);
   }
+  /// @endcond
 
-  /**
-   * Free a uAMQP Decoder object.
-   *
-   * @param value Decoder handle to free.
-   */
-  void UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>::FreeAmqpDecoder(
+  /// @cond INTERNAL
+  void UniqueHandleHelper<std::remove_pointer<AMQPVALUE_DECODER_HANDLE>::type>::FreeAmqpDecoder(
       AMQPVALUE_DECODER_HANDLE value)
   {
     amqpvalue_decoder_destroy(value);
   }
+  /// @endcond
 }}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
@@ -247,7 +246,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::AmqpValue(AmqpValue&& that) noexcept : m_impl{std::move(that.m_impl)} {}
 
   // Construct a new AmqpValueImpl and move the value from the input into it.
-  AmqpValue::AmqpValue(std::unique_ptr<_detail::AmqpValueImpl>&& impl) : m_impl{std::move(impl)} {}
+
+  AmqpValue::AmqpValue(std::unique_ptr<AmqpValueImpl>&& impl) : m_impl{std::move(impl)} {}
 
   AmqpValue& AmqpValue::operator=(AmqpValue const& that)
   {

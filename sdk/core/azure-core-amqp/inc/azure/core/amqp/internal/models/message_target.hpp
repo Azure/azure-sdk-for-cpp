@@ -54,6 +54,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief Moves assignment operator */
     MessageTarget& operator=(MessageTarget&&) noexcept;
 
+    /* Note: These constructors should NOT be marked as explicit, because we want to enable the
+     * implicit construction of the MessageTarget from a string - this allows callers to construct
+     * Link, MessageSender, and MessageReceiver objects without forcing the creation of a
+     * MessageSource object. */
+
     /** @brief Creates a message target with the given address.
      *
      * @param address The address of the target.

@@ -534,7 +534,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     static AmqpValue Deserialize(uint8_t const* data, size_t size);
 
   private:
-    AmqpValue(std::unique_ptr<_detail::AmqpValueImpl>&& value);
+    /** @brief Construct an AMQP value from the internal implementation of an AMQP value. */
+    AmqpValue(std::unique_ptr<Azure::Core::Amqp::Models::_detail::AmqpValueImpl>&& value);
     std::unique_ptr<_detail::AmqpValueImpl> m_impl;
     friend class _detail::AmqpValueFactory;
   };

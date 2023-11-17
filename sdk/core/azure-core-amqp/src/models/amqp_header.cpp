@@ -15,10 +15,13 @@
 #include <iostream>
 
 namespace Azure { namespace Core { namespace _internal {
+
+  // @cond
   void UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(HEADER_HANDLE handle)
   {
     header_destroy(handle);
   }
+  // @endcond
 }}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {

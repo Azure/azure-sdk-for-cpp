@@ -15,10 +15,12 @@
 #include <iostream>
 
 namespace Azure { namespace Core { namespace _internal {
+  // @cond
   void UniqueHandleHelper<ERROR_INSTANCE_TAG>::FreeAmqpError(ERROR_HANDLE handle)
   {
     error_destroy(handle);
   }
+  // @endcond
 }}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {

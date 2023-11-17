@@ -75,6 +75,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     MessageSource(MessageSourceOptions const& options);
 
+    /* Note: These constructors should NOT be marked as explicit, because we want to enable the
+     * implicit construction of the MessageSource from a string - this allows callers to construct
+     * Link, MessageSender, and MessageReceiver objects without forcing the creation of a
+     * MessageSource object. */
+
     /** @brief Creates a message source with the given address.
      *
      * @param address The address of the source.
