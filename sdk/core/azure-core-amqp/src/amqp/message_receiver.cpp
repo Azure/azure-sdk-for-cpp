@@ -6,6 +6,8 @@
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
 
+#include "../models/private/message_impl.hpp"
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/connection_string_credential.hpp"
 #include "azure/core/amqp/internal/link.hpp"

@@ -119,6 +119,13 @@ set(AZURE_CORE_AMQP_SOURCE
     src/models/message_source.cpp
     src/models/message_target.cpp
     src/models/messaging_values.cpp
+    src/models/private/error_impl.hpp
+    src/models/private/header_impl.hpp
+    src/models/private/message_impl.hpp
+    src/models/private/properties_impl.hpp
+    src/models/private/source_impl.hpp
+    src/models/private/target_impl.hpp
+    src/models/private/value_impl.hpp
     src/network/amqp_header_transport.cpp
     src/network/private/transport_impl.hpp
     src/network/sasl_transport.cpp

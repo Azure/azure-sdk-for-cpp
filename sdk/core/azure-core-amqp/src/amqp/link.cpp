@@ -3,6 +3,8 @@
 
 #include "azure/core/amqp/internal/link.hpp"
 
+#include "../models/private/error_impl.hpp"
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/message_receiver.hpp"
 #include "azure/core/amqp/internal/message_sender.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
@@ -352,7 +354,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_onLinkDetachEvent)
     {
-      link->m_onLinkDetachEvent(Models::_internal::AmqpErrorFactory::FromUamqp(error));
+      link->m_onLinkDetachEvent(Models::_detail::AmqpErrorFactory::FromUamqp(error));
     }
   }
 

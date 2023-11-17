@@ -3,89 +3,71 @@
 
 #pragma once
 
-#include "azure/core/amqp/models/amqp_header.hpp"
-#include "azure/core/amqp/models/amqp_properties.hpp"
-#include "azure/core/amqp/models/amqp_value.hpp"
+#include "azure/core/amqp/internal/models/message_source.hpp"
 
-#include <chrono>
-#include <string>
+#include <azure_uamqp_c/amqp_definitions_fields.h>
+#include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
+#include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
 
-struct SOURCE_INSTANCE_TAG;
+#include <azure_uamqp_c/amqp_definitions_filter_set.h>
+#include <azure_uamqp_c/amqp_definitions_node_properties.h>
+#include <azure_uamqp_c/amqp_definitions_seconds.h>
+#include <azure_uamqp_c/amqp_definitions_source.h>
+
+#include <type_traits>
+
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<std::remove_pointer<SOURCE_HANDLE>::type>
+  {
+    static void FreeMessageSource(SOURCE_HANDLE obj);
+
+    using type = BasicUniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type, FreeMessageSource>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  class MessageSourceImpl;
-}}}}} // namespace Azure::Core::Amqp::Models::_detail
-
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-
-  struct MessageSourceOptions final
-  {
-    AmqpValue Address;
-    Nullable<TerminusDurability> SourceTerminusDurability;
-    Nullable<TerminusExpiryPolicy> SourceTerminusExpiryPolicy;
-    Nullable<std::chrono::system_clock::time_point> Timeout;
-    Nullable<bool> Dynamic;
-    AmqpMap DynamicNodeProperties;
-    Nullable<std::string> DistributionMode;
-    AmqpMap Filter;
-    AmqpValue DefaultOutcome;
-    AmqpArray Outcomes;
-    AmqpArray Capabilities;
-  };
-
-  /**
-   * @brief Represents an AMQP message source.
-   *
-   * An AMQP message source is a node that originates messages. It is the source of messages for a
-   * link. The message source is identified by its address, which is a string that uniquely
-   * identifies the node within the scope of the AMQP container.
-   *
-   * @remarks See
-   * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
-   * for more information about the fields in a message source.
-   */
-  class MessageSource final {
+  class MessageSourceImpl final {
   public:
     /** @brief Creates a default message target.
      */
-    MessageSource();
+    MessageSourceImpl();
     /** @brief Deletes a message target. */
-    ~MessageSource();
+    ~MessageSourceImpl() = default;
 
     // Create a described source from an AMQP Value - used in the OnLinkAttached.
-    MessageSource(AmqpValue const& value);
+    MessageSourceImpl(AmqpValue const& value);
 
     /** @brief Copies a MessageSource */
-    MessageSource(MessageSource const& that);
+    MessageSourceImpl(MessageSourceImpl const& that);
 
     /** Assigns a message source from another.
      */
-    MessageSource& operator=(MessageSource const& that);
+    MessageSourceImpl& operator=(MessageSourceImpl const& that);
 
     /** @brief Move constructor */
-    MessageSource(MessageSource&& other) noexcept;
+    MessageSourceImpl(MessageSourceImpl&& other) noexcept;
 
     /** @brief Move assignment operator */
-    MessageSource& operator=(MessageSource&& other) noexcept;
+    MessageSourceImpl& operator=(MessageSourceImpl&& other) noexcept;
 
     /** @brief Creates a message source with detailed options.
      *
      * @param options Options used constructing the message source.
      */
 
-    MessageSource(MessageSourceOptions const& options);
+    MessageSourceImpl(Models::_internal::MessageSourceOptions const& options);
 
     /** @brief Creates a message source with the given address.
      *
      * @param address The address of the source.
      */
-    MessageSource(std::string const& address);
+    MessageSourceImpl(std::string const& address);
 
     /** @brief Creates a message source with the given address.
      *
      * @param address The address of the source.
      */
-    MessageSource(char const* address);
+    MessageSourceImpl(char const* address);
 
     /** @brief Creates an AMQP value from a message source.
      *
@@ -112,7 +94,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
      * for more information about the fields in a message source.
      */
-    TerminusDurability GetTerminusDurability() const;
+    _internal::TerminusDurability GetTerminusDurability() const;
 
     /** @brief Gets the expiry policy of the source.
      *
@@ -122,7 +104,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
      * for more information about the fields in a message source.
      */
-    TerminusExpiryPolicy GetExpiryPolicy() const;
+    _internal::TerminusExpiryPolicy GetExpiryPolicy() const;
 
     /** @brief Duration that an expiring source will be retained.
      *
@@ -211,8 +193,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-    std::unique_ptr<_detail::MessageSourceImpl> m_impl;
-    // Declared as friend so it can access the private m_impl member.
-    friend std::ostream& operator<<(std::ostream&, MessageSource const&);
+    operator SOURCE_HANDLE() const { return m_source.get(); }
+    Azure::Core::_internal::UniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type> m_source;
+
+    // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.
+    friend std::ostream& operator<<(std::ostream&, MessageSourceImpl const&);
   };
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}} // namespace Azure::Core::Amqp::Models::_detail

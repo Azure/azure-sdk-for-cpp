@@ -10,20 +10,6 @@
 
 #include <azure/core/internal/extendable_enumeration.hpp>
 
-struct ERROR_INSTANCE_TAG;
-namespace Azure { namespace Core { namespace _internal {
-  template <> struct UniqueHandleHelper<ERROR_INSTANCE_TAG>
-  {
-    static void FreeAmqpError(ERROR_INSTANCE_TAG* obj);
-
-    using type = BasicUniqueHandle<ERROR_INSTANCE_TAG, FreeAmqpError>;
-  };
-}}} // namespace Azure::Core::_internal
-
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  using UniqueAmqpErrorHandle = Azure::Core::_internal::UniqueHandle<ERROR_INSTANCE_TAG>;
-}}}}} // namespace Azure::Core::Amqp::Models::_detail
-
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   class AmqpErrorCondition final
@@ -370,19 +356,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   };
   std::ostream& operator<<(std::ostream&, AmqpError const&);
-
-  /**
-   * @brief uAMQP interoperability functions to convert an AmqpError to a uAMQP AMQP_ERROR
-   * and back.
-   *
-   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
-   * layer.
-   */
-  struct AmqpErrorFactory
-  {
-    static AmqpError FromUamqp(ERROR_INSTANCE_TAG* error);
-    static AmqpValue ToAmqp(AmqpError const& error);
-    AmqpErrorFactory() = delete;
-  };
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

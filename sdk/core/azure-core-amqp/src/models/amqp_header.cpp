@@ -4,6 +4,8 @@
 #include "azure/core/amqp/models/amqp_header.hpp"
 
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include "private/header_impl.hpp"
+#include "private/value_impl.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
