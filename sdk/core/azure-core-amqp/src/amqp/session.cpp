@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/internal/session.hpp"
 
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/link.hpp"
 #include "private/claims_based_security_impl.hpp"

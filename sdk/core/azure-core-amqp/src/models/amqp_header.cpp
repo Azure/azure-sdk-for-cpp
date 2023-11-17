@@ -4,6 +4,8 @@
 #include "azure/core/amqp/models/amqp_header.hpp"
 
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include "private/header_impl.hpp"
+#include "private/value_impl.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
@@ -13,10 +15,13 @@
 #include <iostream>
 
 namespace Azure { namespace Core { namespace _internal {
+
+  // @cond
   void UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(HEADER_HANDLE handle)
   {
     header_destroy(handle);
   }
+  // @endcond
 }}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {

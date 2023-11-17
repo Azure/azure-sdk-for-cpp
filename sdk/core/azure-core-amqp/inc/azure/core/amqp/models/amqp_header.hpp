@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
 
 #include <chrono>
@@ -12,20 +11,6 @@
 #include <exception>
 #include <stdexcept>
 #include <vector>
-
-struct HEADER_INSTANCE_TAG;
-
-namespace Azure { namespace Core { namespace _internal {
-  template <> struct UniqueHandleHelper<HEADER_INSTANCE_TAG>
-  {
-    static void FreeAmqpHeader(HEADER_INSTANCE_TAG* obj);
-
-    using type = BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
-  };
-}}} // namespace Azure::Core::_internal
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
-}}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   /**
@@ -128,19 +113,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream&, MessageHeader const&);
 
 }}}} // namespace Azure::Core::Amqp::Models
-
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  /**
-   * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE
-   * and back.
-   *
-   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
-   * layer.
-   */
-  struct MessageHeaderFactory
-  {
-    static MessageHeader FromUamqp(_detail::UniqueMessageHeaderHandle const& properties);
-    static _detail::UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
-  };
-
-}}}}} // namespace Azure::Core::Amqp::Models::_detail

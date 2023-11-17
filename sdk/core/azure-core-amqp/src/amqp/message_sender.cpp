@@ -4,6 +4,9 @@
 // Enable declaration of strerror_s.
 #define __STDC_WANT_LIB_EXT1__ 1
 
+#include "../models/private/error_impl.hpp"
+#include "../models/private/message_impl.hpp"
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/common/completion_operation.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
@@ -482,7 +485,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                 {
                   Models::_detail::UniqueAmqpErrorHandle uniqueError{
                       errorHandle}; // This will free the error handle when it goes out of scope.
-                  error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
+                  error = Models::_detail::AmqpErrorFactory::FromUamqp(errorHandle);
                 }
               }
             }

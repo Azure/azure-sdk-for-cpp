@@ -3,6 +3,9 @@
 
 #include "azure/core/amqp/internal/models/message_target.hpp"
 
+#include "private/target_impl.hpp"
+#include "private/value_impl.hpp"
+
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
@@ -21,16 +24,94 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace _internal {
+  // @cond
   void UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(TARGET_HANDLE value)
   {
     target_destroy(value);
   }
+  // @endcond
 }}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   extern const char* StringFromTerminusDurability(TerminusDurability);
 
+  MessageTarget::~MessageTarget() {}
+
   MessageTarget::MessageTarget(Models::AmqpValue const& target)
+      : m_impl{std::make_unique<_detail::MessageTargetImpl>(target)}
+  {
+  }
+
+  MessageTarget::MessageTarget(std::string const& address)
+      : m_impl{std::make_unique<_detail::MessageTargetImpl>(address)}
+  {
+  }
+  MessageTarget::MessageTarget(char const* address)
+      : m_impl{std::make_unique<_detail::MessageTargetImpl>(address)}
+  {
+  }
+
+  MessageTarget::MessageTarget() : m_impl{std::make_unique<_detail::MessageTargetImpl>()} {}
+
+  MessageTarget::MessageTarget(MessageTarget const& that)
+      : m_impl{std::make_unique<_detail::MessageTargetImpl>(*that.m_impl)}
+  {
+  }
+
+  MessageTarget& MessageTarget::operator=(MessageTarget const& that)
+  {
+    m_impl = std::make_unique<_detail::MessageTargetImpl>(*that.m_impl);
+    return *this;
+  }
+
+  MessageTarget::MessageTarget(MessageTarget&& that) noexcept : m_impl{std::move(that.m_impl)} {}
+
+  MessageTarget& MessageTarget::operator=(MessageTarget&& that) noexcept
+  {
+    m_impl = std::move(that.m_impl);
+    return *this;
+  }
+
+  MessageTarget::MessageTarget(MessageTargetOptions const& options)
+      : m_impl{std::make_unique<_detail::MessageTargetImpl>(options)}
+  {
+  }
+
+  // Convert the MessageSource into a Value.
+  Models::AmqpValue MessageTarget::AsAmqpValue() const { return m_impl->AsAmqpValue(); }
+
+  Models::AmqpValue MessageTarget::GetAddress() const { return m_impl->GetAddress(); }
+
+  TerminusDurability MessageTarget::GetTerminusDurability() const
+  {
+    return m_impl->GetTerminusDurability();
+  }
+
+  TerminusExpiryPolicy MessageTarget::GetExpiryPolicy() const { return m_impl->GetExpiryPolicy(); }
+
+  std::chrono::system_clock::time_point MessageTarget::GetTimeout() const
+  {
+    return m_impl->GetTimeout();
+  }
+
+  bool MessageTarget::GetDynamic() const { return m_impl->GetDynamic(); }
+
+  Models::AmqpMap MessageTarget::GetDynamicNodeProperties() const
+  {
+    return m_impl->GetDynamicNodeProperties();
+  }
+
+  Models::AmqpArray MessageTarget::GetCapabilities() const { return m_impl->GetCapabilities(); }
+
+  std::ostream& operator<<(std::ostream& os, MessageTarget const& target)
+  {
+    os << *target.m_impl;
+    return os;
+  }
+}}}}} // namespace Azure::Core::Amqp::Models::_internal
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
+  MessageTargetImpl::MessageTargetImpl(Models::AmqpValue const& target)
   {
     if (target.IsNull())
     {
@@ -44,7 +125,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     m_target.reset(targetHandle);
   }
 
-  MessageTarget::MessageTarget(std::string const& address) : m_target{target_create()}
+  MessageTargetImpl::MessageTargetImpl(std::string const& address) : m_target{target_create()}
   {
     if (m_target == nullptr)
     {
@@ -57,7 +138,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not set address.");
     }
   }
-  MessageTarget::MessageTarget(char const* address) : m_target{target_create()}
+  MessageTargetImpl::MessageTargetImpl(char const* address) : m_target{target_create()}
   {
     if (m_target == nullptr)
     {
@@ -70,27 +151,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  MessageTarget::MessageTarget() : m_target{target_create()} {}
+  MessageTargetImpl::MessageTargetImpl() : m_target{target_create()} {}
 
-  MessageTarget::MessageTarget(MessageTarget const& that) : m_target{target_clone(that)} {}
+  MessageTargetImpl::MessageTargetImpl(MessageTargetImpl const& that) : m_target{target_clone(that)}
+  {
+  }
 
-  MessageTarget& MessageTarget::operator=(MessageTarget const& that)
+  MessageTargetImpl& MessageTargetImpl::operator=(MessageTargetImpl const& that)
   {
     m_target.reset(target_clone(that));
     return *this;
   }
 
-  MessageTarget::MessageTarget(MessageTarget&& that) noexcept : m_target{std::move(that.m_target)}
+  MessageTargetImpl::MessageTargetImpl(MessageTargetImpl&& that) noexcept
+      : m_target{std::move(that.m_target)}
   {
   }
 
-  MessageTarget& MessageTarget::operator=(MessageTarget&& that) noexcept
+  MessageTargetImpl& MessageTargetImpl::operator=(MessageTargetImpl&& that) noexcept
   {
     m_target = std::move(that.m_target);
     return *this;
   }
 
-  MessageTarget::MessageTarget(MessageTargetOptions const& options) : m_target{target_create()}
+  MessageTargetImpl::MessageTargetImpl(_internal::MessageTargetOptions const& options)
+      : m_target{target_create()}
   {
     if (!options.Address.IsNull())
     {
@@ -104,13 +189,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       terminus_durability durability;
       switch (options.TerminusDurabilityValue.Value())
       {
-        case TerminusDurability::None:
+        case _internal::TerminusDurability::None:
           durability = terminus_durability_none;
           break;
-        case TerminusDurability::Configuration:
+        case _internal::TerminusDurability::Configuration:
           durability = terminus_durability_configuration;
           break;
-        case TerminusDurability::UnsettledState:
+        case _internal::TerminusDurability::UnsettledState:
           durability = terminus_durability_unsettled_state;
           break;
         default:
@@ -126,16 +211,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       terminus_expiry_policy policy;
       switch (options.TerminusExpiryPolicyValue.Value())
       {
-        case TerminusExpiryPolicy::LinkDetach:
+        case _internal::TerminusExpiryPolicy::LinkDetach:
           policy = terminus_expiry_policy_link_detach;
           break;
-        case TerminusExpiryPolicy::SessionEnd:
+        case _internal::TerminusExpiryPolicy::SessionEnd:
           policy = terminus_expiry_policy_session_end;
           break;
-        case TerminusExpiryPolicy::ConnectionClose:
+        case _internal::TerminusExpiryPolicy::ConnectionClose:
           policy = terminus_expiry_policy_connection_close;
           break;
-        case TerminusExpiryPolicy::Never:
+        case _internal::TerminusExpiryPolicy::Never:
           policy = terminus_expiry_policy_never;
           break;
         default:
@@ -187,13 +272,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   // Convert the MessageSource into a Value.
-  Models::AmqpValue MessageTarget::AsAmqpValue() const
+  Models::AmqpValue MessageTargetImpl::AsAmqpValue() const
   {
     Models::_detail::UniqueAmqpValueHandle targetValue{amqpvalue_create_target(m_target.get())};
     return _detail::AmqpValueFactory::FromUamqp(targetValue);
   }
 
-  Models::AmqpValue MessageTarget::GetAddress() const
+  Models::AmqpValue MessageTargetImpl::GetAddress() const
   {
     AMQP_VALUE address;
     if (target_get_address(m_target.get(), &address))
@@ -206,7 +291,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(address)});
   }
 
-  TerminusDurability MessageTarget::GetTerminusDurability() const
+  _internal::TerminusDurability MessageTargetImpl::GetTerminusDurability() const
   {
     terminus_durability value;
     if (target_get_durable(m_target.get(), &value))
@@ -216,17 +301,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     switch (value)
     {
       case terminus_durability_configuration:
-        return TerminusDurability::Configuration;
+        return _internal::TerminusDurability::Configuration;
       case terminus_durability_none:
-        return TerminusDurability::None;
+        return _internal::TerminusDurability::None;
       case terminus_durability_unsettled_state:
-        return TerminusDurability::UnsettledState;
+        return _internal::TerminusDurability::UnsettledState;
       default:
         throw std::logic_error("Unknown terminus durability.");
     }
   }
 
-  TerminusExpiryPolicy MessageTarget::GetExpiryPolicy() const
+  _internal::TerminusExpiryPolicy MessageTargetImpl::GetExpiryPolicy() const
   {
     terminus_expiry_policy value;
     if (target_get_expiry_policy(m_target.get(), &value))
@@ -235,24 +320,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (std::strcmp(value, terminus_expiry_policy_connection_close) == 0)
     {
-      return TerminusExpiryPolicy::ConnectionClose;
+      return _internal::TerminusExpiryPolicy::ConnectionClose;
     }
     if (std::strcmp(value, terminus_expiry_policy_link_detach) == 0)
     {
-      return TerminusExpiryPolicy::LinkDetach;
+      return _internal::TerminusExpiryPolicy::LinkDetach;
     }
     if (std::strcmp(value, terminus_expiry_policy_never) == 0)
     {
-      return TerminusExpiryPolicy::Never;
+      return _internal::TerminusExpiryPolicy::Never;
     }
     if (std::strcmp(value, terminus_expiry_policy_session_end) == 0)
     {
-      return TerminusExpiryPolicy::SessionEnd;
+      return _internal::TerminusExpiryPolicy::SessionEnd;
     }
     throw std::logic_error(std::string("Unknown terminus expiry policy: ") + value);
   }
 
-  std::chrono::system_clock::time_point MessageTarget::GetTimeout() const
+  std::chrono::system_clock::time_point MessageTargetImpl::GetTimeout() const
   {
     seconds value;
     if (target_get_timeout(m_target.get(), &value))
@@ -262,7 +347,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return std::chrono::system_clock::from_time_t(value);
   }
 
-  bool MessageTarget::GetDynamic() const
+  bool MessageTargetImpl::GetDynamic() const
   {
     bool value;
     if (target_get_dynamic(m_target.get(), &value))
@@ -272,7 +357,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  Models::AmqpMap MessageTarget::GetDynamicNodeProperties() const
+  Models::AmqpMap MessageTargetImpl::GetDynamicNodeProperties() const
   {
     AMQP_VALUE value;
     // Note: target_get_dynamic_node_properties does NOT reference the value.
@@ -287,7 +372,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         .AsMap();
   }
 
-  Models::AmqpArray MessageTarget::GetCapabilities() const
+  Models::AmqpArray MessageTargetImpl::GetCapabilities() const
   {
     AMQP_VALUE value;
     if (target_get_capabilities(m_target.get(), &value))
@@ -299,7 +384,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         .AsArray();
   }
 
-  std::ostream& operator<<(std::ostream& os, MessageTarget const& target)
+  std::ostream& operator<<(std::ostream& os, MessageTargetImpl const& target)
   {
     os << "Target{ ";
     {
@@ -355,5 +440,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     os << "}";
     return os;
   }
-
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}} // namespace Azure::Core::Amqp::Models::_detail

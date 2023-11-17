@@ -164,10 +164,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestSessions, SessionBeginEnd)
   {
-    class TestListenerEvents : public Network::_internal::SocketListenerEvents {
+    class TestListenerEvents : public Network::_detail::SocketListenerEvents {
     public:
       std::shared_ptr<Network::_internal::Transport> WaitForResult(
-          Network::_internal::SocketListener const& listener,
+          Network::_detail::SocketListener const& listener,
           Azure::Core::Context const& context = {})
       {
         auto result = m_listenerQueue.WaitForPolledResult(context, listener);
@@ -189,7 +189,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     // Ensure someone is listening on the connection for when we call Session.Begin.
     TestListenerEvents events;
     uint16_t testPort = FindAvailableSocket();
-    Network::_internal::SocketListener listener(testPort, &events);
+    Network::_detail::SocketListener listener(testPort, &events);
     listener.Start();
 
     // Create a connection

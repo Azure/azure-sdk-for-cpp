@@ -3,6 +3,10 @@
 
 #include "azure/core/amqp/models/amqp_message.hpp"
 
+#include "../models/private/header_impl.hpp"
+#include "../models/private/message_impl.hpp"
+#include "../models/private/properties_impl.hpp"
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/models/amqp_protocol.hpp"
 #include "azure/core/amqp/models/amqp_header.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
@@ -16,10 +20,12 @@
 #include <set>
 
 namespace Azure { namespace Core { namespace _internal {
+  // @cond
   void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
   {
     message_destroy(value);
   }
+  // @endcond
 }}} // namespace Azure::Core::_internal
 
 using namespace Azure::Core::Amqp::_detail;

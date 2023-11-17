@@ -121,10 +121,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestConnections, ConnectionOpenClose)
   {
-    class TestListener : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents {
+    class TestListener : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents {
     public:
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> WaitForResult(
-          Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
+          Azure::Core::Amqp::Network::_detail::SocketListener const& listener,
           Azure::Core::Context const& context = {})
       {
         GTEST_LOG_(INFO) << "Waiting for listener to accept connection.";
@@ -153,7 +153,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
 
       TestListener listenerEvents;
-      Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &listenerEvents);
+      Azure::Core::Amqp::Network::_detail::SocketListener listener(testPort, &listenerEvents);
       EXPECT_NO_THROW(listener.Start());
 
       // Create a connection

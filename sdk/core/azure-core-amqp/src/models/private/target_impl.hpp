@@ -3,79 +3,70 @@
 
 #pragma once
 
-#include "azure/core/amqp/models/amqp_header.hpp"
-#include "azure/core/amqp/models/amqp_properties.hpp"
-#include "azure/core/amqp/models/amqp_value.hpp"
+#include "azure/core/amqp/internal/models/message_target.hpp"
+
+#include <azure_uamqp_c/amqp_definitions_fields.h>
+#include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
+#include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
+
+#include <azure_uamqp_c/amqp_definitions_filter_set.h>
+#include <azure_uamqp_c/amqp_definitions_node_properties.h>
+#include <azure_uamqp_c/amqp_definitions_seconds.h>
+#include <azure_uamqp_c/amqp_definitions_target.h>
+
+#include <string>
+#include <type_traits>
+
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<std::remove_pointer<TARGET_HANDLE>::type>
+  {
+    static void FreeMessageTarget(TARGET_HANDLE obj);
+
+    using type = BasicUniqueHandle<std::remove_pointer<TARGET_HANDLE>::type, FreeMessageTarget>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  class MessageTargetImpl;
-}}}}} // namespace Azure::Core::Amqp::Models::_detail
+  using UniqueMessageTargetHandle
+      = Azure::Core::_internal::UniqueHandle<std::remove_pointer<TARGET_HANDLE>::type>;
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-
-  struct MessageTargetOptions final
-  {
-    AmqpValue Address;
-    Nullable<TerminusDurability> TerminusDurabilityValue;
-    Nullable<TerminusExpiryPolicy> TerminusExpiryPolicyValue;
-    Nullable<std::chrono::system_clock::time_point> Timeout;
-    Nullable<bool> Dynamic;
-    AmqpMap DynamicNodeProperties;
-    AmqpArray Capabilities;
-  };
-
-  /**
-   * @brief Represents an AMQP message target.
-   *
-   * The MessageTarget class provides methods to create and manipulate an AMQP message target.
-   * A message target is the intended destination of an AMQP message.
-   *
-   * @remarks See
-   * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
-   * for more information about the fields in a message target.
-   */
-  class MessageTarget final {
+  class MessageTargetImpl final {
   public:
     /** @brief Creates a default message target.
      */
-    MessageTarget();
+    MessageTargetImpl();
     /** @brief Deletes a message target. */
-    ~MessageTarget();
+    ~MessageTargetImpl() = default;
 
-    /** @brief Copies a MessageTarget */
-    MessageTarget(MessageTarget const& that);
+    /** @brief Copies a MessageTargetImpl */
+    MessageTargetImpl(MessageTargetImpl const& that);
 
     /** @brief Copy assignment operator */
-    MessageTarget& operator=(MessageTarget const& that);
+    MessageTargetImpl& operator=(MessageTargetImpl const& that);
 
-    /** @brief Moves a MessageTarget */
-    MessageTarget(MessageTarget&&) noexcept;
+    /** @brief Moves a MessageTargetImpl */
+    MessageTargetImpl(MessageTargetImpl&&) noexcept;
 
     /** @brief Moves assignment operator */
-    MessageTarget& operator=(MessageTarget&&) noexcept;
-
-    /* Note: These constructors should NOT be marked as explicit, because we want to enable the
-     * implicit construction of the MessageTarget from a string - this allows callers to construct
-     * Link, MessageSender, and MessageReceiver objects without forcing the creation of a
-     * MessageSource object. */
+    MessageTargetImpl& operator=(MessageTargetImpl&&) noexcept;
 
     /** @brief Creates a message target with the given address.
      *
      * @param address The address of the target.
      */
-    MessageTarget(std::string const& address);
+    MessageTargetImpl(std::string const& address);
 
     /** @brief Creates a message target with the given address.
      *
      * @param address The address of the target.
      */
-    MessageTarget(char const* address);
+    MessageTargetImpl(char const* address);
 
     /** @brief Creates a message target with detailed options.
      *
      * @param options Options used constructing the message target.
      */
-    MessageTarget(MessageTargetOptions const& options);
+    MessageTargetImpl(_internal::MessageTargetOptions const& options);
 
     /** @brief Creates a message target from an AMQP value.
      *
@@ -83,7 +74,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @remarks Normally used in the OnLinkAttached callback.
      */
-    MessageTarget(Models::AmqpValue const& value);
+    MessageTargetImpl(Models::AmqpValue const& value);
 
     /** @brief Creates an AMQP value from a message target.
      *
@@ -110,7 +101,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * for more information about the fields in a message target.
      *
      */
-    TerminusDurability GetTerminusDurability() const;
+    _internal::TerminusDurability GetTerminusDurability() const;
 
     /** @brief The expiry policy of the target.
      *
@@ -119,7 +110,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * for more information about the fields in a message target.
      *
      */
-    TerminusExpiryPolicy GetExpiryPolicy() const;
+    _internal::TerminusExpiryPolicy GetExpiryPolicy() const;
 
     /** @brief Duration that an expiring target will be retained.
      *
@@ -162,10 +153,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-    std::unique_ptr<_detail::MessageTargetImpl> m_impl;
+    _detail::UniqueMessageTargetHandle m_target;
+
+    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
 
     // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
-    friend std::ostream& operator<<(std::ostream&, MessageTarget const&);
+    friend std::ostream& operator<<(std::ostream&, MessageTargetImpl const&);
   };
 
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
