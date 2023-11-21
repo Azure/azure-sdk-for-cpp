@@ -25,25 +25,28 @@ namespace Azure { namespace Storage { namespace Test {
           GetEnv("STORAGE_CLIENT_ID"),
           GetEnv("STORAGE_CLIENT_SECRET"));
 
-      m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-          Tables::TableServicesClient::
-              CreateFromConnectionString( //
-                                          // Azure::Storage::Tables::TableServicesClient(
-
-                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"),
-                  GetEnv("STORAGE_SUBSCRIPTION_ID"), // m_credential,
-                  // Azure::Storage::_internal::TablesManagementPublicEndpoint,
-                  clientOptions));
+       m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
+         Tables::TableServicesClient(GetEnv("STORAGE_TABLES_URL"),m_credential, clientOptions));
+     // m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
+       //   Tables::TableServicesClient::CreateFromConnectionString(
+         //     GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-      m_tableClient
-          = std::make_shared<Tables::TableClient>(CreateTableClientForTest(clientOptions));
+       m_tableClient
+          = std::make_shared<Tables::TableClient>(CreateKeyTableClientForTest(clientOptions));
     }
+  }
+  Azure::Storage::Tables::TableClient TablesClientTest::CreateKeyTableClientForTest(
+      Tables::TableClientOptions& clientOptions)
+  {
+    m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
+    auto tableClient = Tables::TableClient(
+        GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, clientOptions);
+    return tableClient;
   }
 
   Azure::Storage::Tables::TableClient TablesClientTest::CreateTableClientForTest(
       Tables::TableClientOptions& clientOptions)
   {
-
     m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
     auto tableClient = Tables::TableClient::CreateFromConnectionString(
         GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, clientOptions);

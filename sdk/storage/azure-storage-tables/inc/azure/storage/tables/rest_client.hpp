@@ -171,10 +171,12 @@ namespace Azure { namespace Storage { namespace Tables {
 
   class TableClient final {
   public:
-    explicit TableClient(std::string subscriptionId);
+    explicit TableClient(std::string const& serviceUrl)
+        : m_pipeline(new Core::Http::_internal::HttpPipeline({}, "storage-tables", "", {}, {})),
+          m_url(serviceUrl){};
 
-    explicit TableClient(const std::string& subscritionId, const TableClientOptions& options)
-        : TableClient(subscritionId)
+    explicit TableClient(std::string const& serviceUrl, const TableClientOptions& options)
+        : TableClient(serviceUrl)
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -192,30 +194,40 @@ namespace Azure { namespace Storage { namespace Tables {
     }
 
     explicit TableClient(
-        const std::string& subscritionId,
+        const std::string& serviceUrl,
+        const std::string& tableName,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const TableClientOptions& options)
-        : TableClient(subscritionId, options)
+        const TableClientOptions& options = {})
+        : TableClient(serviceUrl, options)
     {
+      m_tableName = tableName;
+      TableClientOptions newOptions = options;
+      m_url = Azure::Core::Url(serviceUrl);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
       perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
           m_url.GetHost(), options.SecondaryHostForRetryReads));
       perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+      perOperationPolicies.emplace_back(
+          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
       {
         Azure::Core::Credentials::TokenRequestContext tokenContext;
         tokenContext.Scopes.emplace_back(
-            options.Audience.HasValue()
-                ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
-                : TablesAudience::PublicAudience.ToString());
+            newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
+                                           : m_url.GetAbsoluteUrl() + "/.default");
+
         perRetryPolicies.emplace_back(
             std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-                credential, tokenContext, options.EnableTenantDiscovery));
+                credential, tokenContext, newOptions.EnableTenantDiscovery));
       }
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+      perOperationPolicies.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
+          newOptions.ApiVersion.ToString()));
       m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          options,
+          newOptions,
           _internal::TablesServicePackageName,
           _detail::ApiVersion,
           std::move(perRetryPolicies),
@@ -337,15 +349,14 @@ namespace Azure { namespace Storage { namespace Tables {
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
-    std::string m_subscriptionId;
     std::string m_tableName;
     Models::TableEntity DeserializeEntity(Azure::Core::Json::_internal::json json);
   };
 
   class TableServicesClient final {
   public:
-    explicit TableServicesClient(std::string subscriptionId, const TableClientOptions& options = {})
-        : m_subscriptionId(std::move(subscriptionId))
+    explicit TableServicesClient(const TableClientOptions& options = {})
+
     {
       TableClientOptions newOptions = options;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
@@ -364,11 +375,10 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     explicit TableServicesClient(
-        std::string subscriptionId,
+        const std::string& serviceUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const std::string& serviceUrl = Azure::Storage::_internal::TablesManagementPublicEndpoint,
         const TableClientOptions& options = {})
-        : TableServicesClient(subscriptionId, options)
+        : TableServicesClient(options)
 
     {
       TableClientOptions newOptions = options;
@@ -376,13 +386,20 @@ namespace Azure { namespace Storage { namespace Tables {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
       perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+          m_url.GetHost(), options.SecondaryHostForRetryReads));
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+      perOperationPolicies.emplace_back(
+          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
           m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
       perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
       {
         Azure::Core::Credentials::TokenRequestContext tokenContext;
         tokenContext.Scopes.emplace_back(
             newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                           : TablesAudience::PublicAudience.ToString());
+                                           : m_url.GetAbsoluteUrl() + "/.default");
+
         perRetryPolicies.emplace_back(
             std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
                 credential, tokenContext, newOptions.EnableTenantDiscovery));
@@ -398,11 +415,10 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     explicit TableServicesClient(
-        const std::string& subscriptionId,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const std::string& serviceUrl = Azure::Storage::_internal::TablesManagementPublicEndpoint,
         const TableClientOptions& options = TableClientOptions())
-        : m_url(Azure::Core::Url(serviceUrl)), m_subscriptionId(std::move(subscriptionId))
+        : m_url(Azure::Core::Url(serviceUrl))
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -439,7 +455,6 @@ namespace Azure { namespace Storage { namespace Tables {
 
     static TableServicesClient CreateFromConnectionString(
         const std::string& connectionString,
-        const std::string& subscriptionId,
         const TableClientOptions& options = TableClientOptions())
     {
       auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
@@ -448,7 +463,6 @@ namespace Azure { namespace Storage { namespace Tables {
       if (parsedConnectionString.KeyCredential)
       {
         return TableServicesClient(
-            subscriptionId,
             std::move(parsedConnectionString.KeyCredential),
             tablesUrl.GetAbsoluteUrl().empty()
                 ? Azure::Storage::_internal::TablesManagementPublicEndpoint
@@ -457,7 +471,7 @@ namespace Azure { namespace Storage { namespace Tables {
       }
       else
       {
-        return TableServicesClient(subscriptionId, options);
+        return TableServicesClient(options);
       }
     }
 
@@ -484,6 +498,5 @@ namespace Azure { namespace Storage { namespace Tables {
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
-    std::string m_subscriptionId;
   };
 }}} // namespace Azure::Storage::Tables

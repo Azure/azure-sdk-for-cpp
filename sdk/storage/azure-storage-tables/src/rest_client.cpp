@@ -402,11 +402,6 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
   return Response<Models::ServiceStatistics>(std::move(response), std::move(pRawResponse));
 }
 
-TableClient::TableClient(std::string subscriptionId)
-    : m_pipeline(new Core::Http::_internal::HttpPipeline({}, "storage-tables", "", {}, {})),
-      m_url("https://management.azure.com"), m_subscriptionId(std::move(subscriptionId))
-{
-}
 
 Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
 {
