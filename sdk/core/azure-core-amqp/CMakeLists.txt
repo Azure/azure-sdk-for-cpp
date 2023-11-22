@@ -109,6 +109,7 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/private/message_receiver_impl.hpp
     src/amqp/private/message_sender_impl.hpp
     src/amqp/private/session_impl.hpp
+    src/amqp/private/unique_handle.hpp
     src/amqp/session.cpp
     src/common/global_state.cpp
     src/models/amqp_error.cpp

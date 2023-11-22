@@ -7,7 +7,6 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/response.hpp>
 #include <azure/identity/default_azure_credential.hpp>

@@ -22,13 +22,13 @@
 
 #include <memory>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(CONNECTION_HANDLE value)
   {
     connection_destroy(value);
   }
 
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;

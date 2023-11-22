@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
 
+#include "../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "private/error_impl.hpp"
 #include "private/value_impl.hpp"
@@ -14,14 +15,12 @@
 
 #include <iostream>
 
-namespace Azure { namespace Core { namespace _internal {
-  // @cond
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<ERROR_INSTANCE_TAG>::FreeAmqpError(ERROR_HANDLE handle)
   {
     error_destroy(handle);
   }
-  // @endcond
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
 

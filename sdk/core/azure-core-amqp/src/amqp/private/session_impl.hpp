@@ -5,6 +5,7 @@
 
 #include "azure/core/amqp/internal/session.hpp"
 #include "connection_impl.hpp"
+#include "unique_handle.hpp"
 
 #include <azure_uamqp_c/session.h>
 
@@ -13,17 +14,17 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<SESSION_INSTANCE_TAG>
   {
     static void FreeAmqpSession(SESSION_HANDLE obj);
 
-    using type = BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
+    using type = Core::_internal::BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
+  using UniqueAmqpSession = UniqueHandle<SESSION_INSTANCE_TAG>;
 
   class SessionFactory final {
   public:

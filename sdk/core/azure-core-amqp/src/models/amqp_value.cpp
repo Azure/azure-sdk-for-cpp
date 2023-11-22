@@ -26,22 +26,18 @@ using namespace Azure::Core::Amqp::Models::_detail;
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-namespace Azure { namespace Core { namespace _internal {
-  /// @cond INTERNAL
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<std::remove_pointer<AMQP_VALUE>::type>::FreeAmqpValue(AMQP_VALUE value)
   {
     amqpvalue_destroy(value);
   }
-  /// @endcond
 
-  /// @cond INTERNAL
   void UniqueHandleHelper<std::remove_pointer<AMQPVALUE_DECODER_HANDLE>::type>::FreeAmqpDecoder(
       AMQPVALUE_DECODER_HANDLE value)
   {
     amqpvalue_decoder_destroy(value);
   }
-  /// @endcond
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   namespace _detail {

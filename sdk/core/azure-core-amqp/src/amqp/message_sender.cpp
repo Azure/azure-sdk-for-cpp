@@ -28,13 +28,13 @@
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::FreeMessageSender(
       MESSAGE_SENDER_HANDLE value)
   {
     messagesender_destroy(value);
   }
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 

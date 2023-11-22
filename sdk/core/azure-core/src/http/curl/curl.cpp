@@ -1417,25 +1417,25 @@ int CurlConnection::CurlLoggingCallback(CURL*, curl_infotype type, char* data, s
 // the OpenSSL backend.
 #if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_MAC)
 namespace Azure { namespace Core {
-  namespace _internal {
+  namespace _detail {
 
     template <> struct UniqueHandleHelper<X509>
     {
-      using type = BasicUniqueHandle<X509, X509_free>;
+      using type = _internal::BasicUniqueHandle<X509, X509_free>;
     };
     template <> struct UniqueHandleHelper<X509_CRL>
     {
-      using type = BasicUniqueHandle<X509_CRL, X509_CRL_free>;
+      using type = _internal::BasicUniqueHandle<X509_CRL, X509_CRL_free>;
     };
 
     template <> struct UniqueHandleHelper<BIO>
     {
-      using type = BasicUniqueHandle<BIO, BIO_free_all>;
+      using type = _internal::BasicUniqueHandle<BIO, BIO_free_all>;
     };
 #if defined(USE_OPENSSL_1)
     template <> struct UniqueHandleHelper<OCSP_REQ_CTX>
     {
-      using type = BasicUniqueHandle<OCSP_REQ_CTX, OCSP_REQ_CTX_free>;
+      using type = _internal::BasicUniqueHandle<OCSP_REQ_CTX, OCSP_REQ_CTX_free>;
     };
 #endif // USE_OPENSSL_1
 
@@ -1445,7 +1445,7 @@ namespace Azure { namespace Core {
       {
         sk_X509_CRL_pop_free(obj, X509_CRL_free);
       }
-      using type = BasicUniqueHandle<STACK_OF(X509_CRL), FreeCrlStack>;
+      using type = _internal::BasicUniqueHandle<STACK_OF(X509_CRL), FreeCrlStack>;
     };
 
     template <typename Api, typename... Args> auto MakeUniqueHandle(Api& OpensslApi, Args&&... args)
@@ -1457,7 +1457,8 @@ namespace Azure { namespace Core {
                                                       // what OpensslApi returned
       return UniqueHandle<T>{raw};
     }
-  } // namespace _internal
+  } // namespace _detail
+
   namespace Http {
     namespace _detail {
 

@@ -2,25 +2,27 @@
 // Licensed under the MIT License.
 
 #pragma once
+
 #include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/management.hpp"
+#include "unique_handle.hpp"
 
 #include <azure_uamqp_c/cbs.h>
 
 struct CBS_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   template <> struct UniqueHandleHelper<CBS_INSTANCE_TAG>
   {
     static void FreeAmqpCbs(CBS_HANDLE obj);
 
-    using type = BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
+    using type = Core::_internal::BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
+  using UniqueAmqpCbsHandle = UniqueHandle<CBS_INSTANCE_TAG>;
 
   class ClaimsBasedSecurityImpl final : public _internal::ManagementClientEvents {
 
