@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[#5172]](https://github.com/Azure/azure-sdk-for-cpp/issues/5172) `Azure::Nullable::Emplace()` does not set `HasValue()` to `true`.
+
 ### Other Changes
 
 ## 1.11.0-beta.2 (2023-11-02)
