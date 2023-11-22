@@ -19,10 +19,12 @@
 #include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  // @cond
   void UniqueHandleHelper<SOURCE_INSTANCE_TAG>::FreeMessageSource(SOURCE_HANDLE value)
   {
     source_destroy(value);
   }
+  // @endcond
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {

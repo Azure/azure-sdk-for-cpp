@@ -18,10 +18,12 @@
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  // @cond
   void UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(PROPERTIES_HANDLE value)
   {
     properties_destroy(value);
   }
+  // @endcond
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {

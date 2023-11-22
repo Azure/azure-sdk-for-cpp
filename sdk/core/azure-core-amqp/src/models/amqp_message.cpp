@@ -21,10 +21,12 @@
 #include <set>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  // @cond
   void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
   {
     message_destroy(value);
   }
+  // @endcond
 }}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Amqp::_detail;
