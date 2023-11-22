@@ -1455,7 +1455,7 @@ namespace Azure { namespace Core {
       // check raw
       using T = std::remove_pointer_t<decltype(raw)>; // no need to request T when we can see
                                                       // what OpensslApi returned
-      return UniqueHandle<T>{raw};
+      return _internal::UniqueHandle<T>{raw};
     }
   } // namespace _detail
 
