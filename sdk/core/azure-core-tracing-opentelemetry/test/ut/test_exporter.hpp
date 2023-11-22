@@ -11,6 +11,7 @@
 #endif
 
 #include <opentelemetry/sdk/trace/exporter.h>
+#include <opentelemetry/sdk/trace/recordable.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
