@@ -28,34 +28,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-    using UniqueAmqpValueHandle
-        = Amqp::_detail::UniqueHandle<std::remove_pointer<AMQP_VALUE>::type>;
-    using UniqueAmqpDecoderHandle
-        = Amqp::_detail::UniqueHandle<std::remove_pointer<AMQPVALUE_DECODER_HANDLE>::type>;
+  using UniqueAmqpValueHandle = Amqp::_detail::UniqueHandle<std::remove_pointer<AMQP_VALUE>::type>;
+  using UniqueAmqpDecoderHandle
+      = Amqp::_detail::UniqueHandle<std::remove_pointer<AMQPVALUE_DECODER_HANDLE>::type>;
 
-    class AmqpValueFactory final {
-    public:
-      static AmqpValue FromUamqp(UniqueAmqpValueHandle const& value);
-      static AmqpValue FromUamqp(UniqueAmqpValueHandle&& value);
-      static AmqpValue FromUamqp(AmqpValueImpl&& value);
-      // Returns the internal AMQP value handle, without referencing it.
-      static AMQP_VALUE ToUamqp(AmqpValue const& value);
-    };
-    std::ostream& operator<<(std::ostream& os, AMQP_VALUE_DATA_TAG* const value);
+  class AmqpValueFactory final {
+  public:
+    static AmqpValue FromUamqp(UniqueAmqpValueHandle const& value);
+    static AmqpValue FromUamqp(UniqueAmqpValueHandle&& value);
+    static AmqpValue FromUamqp(AmqpValueImpl&& value);
+    // Returns the internal AMQP value handle, without referencing it.
+    static AMQP_VALUE ToUamqp(AmqpValue const& value);
+  };
+  std::ostream& operator<<(std::ostream& os, AMQP_VALUE_DATA_TAG* const value);
 
-    class AmqpValueImpl final {
-      friend class Azure::Core::Amqp::Models::AmqpValue;
-      friend class AmqpValueFactory;
+  class AmqpValueImpl final {
+    friend class Azure::Core::Amqp::Models::AmqpValue;
+    friend class AmqpValueFactory;
 
-    public:
-      AmqpValueImpl(UniqueAmqpValueHandle&& value) noexcept : m_value(std::move(value)) {}
-      AmqpValueImpl(AmqpValueImpl const& other);
-      AmqpValueImpl(AmqpValueImpl&& other) noexcept;
+  public:
+    AmqpValueImpl(UniqueAmqpValueHandle&& value) noexcept : m_value(std::move(value)) {}
+    AmqpValueImpl(AmqpValueImpl const& other);
+    AmqpValueImpl(AmqpValueImpl&& other) noexcept;
 
-      operator AMQP_VALUE() const noexcept { return m_value.get(); }
+    operator AMQP_VALUE() const noexcept { return m_value.get(); }
 
-    private:
-      UniqueAmqpValueHandle m_value;
-    };
+  private:
+    UniqueAmqpValueHandle m_value;
+  };
 
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
