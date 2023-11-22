@@ -10,16 +10,20 @@
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<std::remove_pointer<AMQP_VALUE>::type>
   {
+    // @cond INTERNAL
     static void FreeAmqpValue(AMQP_VALUE value);
     using type
         = Core::_internal::BasicUniqueHandle<std::remove_pointer<AMQP_VALUE>::type, FreeAmqpValue>;
+    // @endcond
   };
 
   template <> struct UniqueHandleHelper<std::remove_pointer<AMQPVALUE_DECODER_HANDLE>::type>
   {
+    // @cond INTERNAL
     static void FreeAmqpDecoder(AMQPVALUE_DECODER_HANDLE value);
     using type = Core::_internal::
         BasicUniqueHandle<std::remove_pointer<AMQPVALUE_DECODER_HANDLE>::type, FreeAmqpDecoder>;
+    // @endcond
   };
 }}}} // namespace Azure::Core::Amqp::_detail
 
