@@ -232,9 +232,7 @@ TEST(AzureCliCredential, ExpiresOnUnixTimestampInt)
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
-  auto const timestampBefore = std::chrono::system_clock::now();
   auto const token = azCliCred.GetToken(trc, {});
-  auto const timestampAfter = std::chrono::system_clock::now();
 
   EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
