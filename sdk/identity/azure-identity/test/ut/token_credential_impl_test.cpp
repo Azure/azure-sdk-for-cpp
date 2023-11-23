@@ -872,7 +872,7 @@ TEST(TokenCredentialImpl, Diagnosability)
           "}",
           "TokenForAccessing",
           "TokenExpiresInSeconds",
-          {}));
+          ""));
     }
     catch (std::exception const& e)
     {
@@ -941,6 +941,52 @@ TEST(TokenCredentialImpl, Diagnosability)
         "relative expiration property ('TokenExpiresInSeconds'): 1.5, "
         "absolute expiration property ('TokenExpiresAtTime'): null, "
         "other properties: 'token_expires_at_time': \"Sun, 22 Nov 3333 04:05:06 GMT\".");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is ok, relative expiration can't be parsed, two absolute expiration property names were
+  // provided, none of them can be parsed.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"TokenForAccessing\":\"ACCESSTOKEN\","
+          "\"TokenExpiresInSeconds\":null,"
+          "\"TokenExpiresAtTime\":null,"
+          "\"token_expires_at_time\":null"
+          "}",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          std::vector<std::string>{"token_expires_at_time", "TokenExpiresAtTime"}));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenExpiresAtTime' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
+        "relative expiration property ('TokenExpiresInSeconds'): null, "
+        "absolute expiration property ('token_expires_at_time'): null, "
+        "absolute expiration property ('TokenExpiresAtTime'): null, "
+        "and there are no other properties.");
 
     Logger::SetListener(nullptr);
   }

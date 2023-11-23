@@ -221,6 +221,50 @@ TEST(AzureCliCredential, ExpiresIn)
   EXPECT_LE(token.ExpiresOn, timestampAfter + std::chrono::seconds(30));
 }
 
+TEST(AzureCliCredential, ExpiresOnUnixTimestampInt)
+{
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\","
+                         "\"expires_on\":1700692424}";
+
+  AzureCliTestCredential const azCliCred(EchoCommand(Token));
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://storage.azure.com/.default");
+
+  auto const timestampBefore = std::chrono::system_clock::now();
+  auto const token = azCliCred.GetToken(trc, {});
+  auto const timestampAfter = std::chrono::system_clock::now();
+
+  EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+  EXPECT_EQ(
+      token.ExpiresOn,
+      DateTime::Parse("2023-11-22T22:33:44.000000Z", DateTime::DateFormat::Rfc3339));
+}
+
+TEST(AzureCliCredential, ExpiresOnUnixTimestampString)
+{
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\","
+                         "\"expires_on\":\"1700692424\"}";
+
+  AzureCliTestCredential const azCliCred(EchoCommand(Token));
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://storage.azure.com/.default");
+
+  auto const timestampBefore = std::chrono::system_clock::now();
+  auto const token = azCliCred.GetToken(trc, {});
+  auto const timestampAfter = std::chrono::system_clock::now();
+
+  EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+  EXPECT_EQ(
+      token.ExpiresOn,
+      DateTime::Parse("2023-11-22T22:33:44.000000Z", DateTime::DateFormat::Rfc3339));
+}
+
 TEST(AzureCliCredential, TimedOut)
 {
   AzureCliCredentialOptions options;

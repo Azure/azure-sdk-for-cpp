@@ -154,7 +154,10 @@ AccessToken AzureCliCredential::GetToken(
       try
       {
         return TokenCredentialImpl::ParseToken(
-            azCliResult, "accessToken", "expiresIn", "expiresOn");
+            azCliResult,
+            "accessToken",
+            "expiresIn",
+            std::vector<std::string>{"expires_on", "expiresOn"});
       }
       catch (json::exception const&)
       {
