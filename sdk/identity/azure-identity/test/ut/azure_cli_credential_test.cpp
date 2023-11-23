@@ -61,10 +61,7 @@ private:
     return m_command;
   }
 
-  int const* GetLocalTimeToUtcDiffSeconds() const override
-  {
-    return &m_localTimeToUtcDiffSeconds;
-  }
+  int const* GetLocalTimeToUtcDiffSeconds() const override { return &m_localTimeToUtcDiffSeconds; }
 
 public:
   explicit AzureCliTestCredential(std::string command) : m_command(std::move(command)) {}
