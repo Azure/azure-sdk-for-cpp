@@ -253,7 +253,7 @@ TEST(AzureCliCredential, ExpiresOnUnixTimestampString)
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
   auto const token = azCliCred.GetToken(trc, {});
-  
+
   EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
   EXPECT_EQ(
