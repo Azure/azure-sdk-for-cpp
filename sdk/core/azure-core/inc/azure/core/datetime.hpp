@@ -342,7 +342,7 @@ namespace Core { namespace _internal {
     };
 
     /**
-     * @brief Provides addtional methods for #Azure::DateTime.
+     * @brief Provides additional methods for #Azure::DateTime.
      *
      */
     class DateTimeExtensions final {
