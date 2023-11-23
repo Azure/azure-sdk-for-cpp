@@ -43,6 +43,10 @@ namespace _detail {
   };
 } // namespace _detail
 
+namespace Core { namespace _internal {
+    class DateTimeExtensions;
+}} // namespace Core::_internal
+
 /**
  * @brief Manages date and time in standardized string formats.
  * @details Supports date range from year 0001 to end of year 9999 with 100ns (7 decimal places
@@ -52,6 +56,7 @@ namespace _detail {
  * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
  */
 class DateTime final : public _detail::Clock::time_point {
+  friend class Core::_internal::DateTimeExtensions;
 
 private:
   AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
@@ -168,6 +173,14 @@ public:
     Rfc3339,
   };
 
+private:
+  static DateTime Parse(
+      std::string const& dateTime,
+      DateFormat format,
+      bool rfc3339NoTimeZoneMeansLocal,
+      int const* localTimeToUtcDiffSeconds);
+
+public:
   /**
    * @brief Create #Azure::DateTime from a string representing time in UTC in the specified
    * format.
@@ -179,7 +192,10 @@ public:
    *
    * @throw std::invalid_argument If \p format is not recognized, or if parsing error.
    */
-  static DateTime Parse(std::string const& dateTime, DateFormat format);
+  static DateTime Parse(std::string const& dateTime, DateFormat format)
+  {
+    return Parse(dateTime, format, false, nullptr);
+  }
 
   /**
    * @brief Get a string representation of the #Azure::DateTime.
@@ -281,49 +297,95 @@ inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime
 }
 
 namespace Core { namespace _internal {
-  /**
-   * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
-   *
-   */
-  class PosixTimeConverter final {
-  public:
     /**
-     * @brief Converts POSIX time to an #Azure::DateTime.
+     * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
      *
-     * @param posixTime The number of seconds since 1970.
-     * @return Calculated #Azure::DateTime.
      */
-    static DateTime PosixTimeToDateTime(int64_t posixTime)
-    {
-      return {DateTime(1970) + std::chrono::seconds(posixTime)};
-    }
+    class PosixTimeConverter final {
+    public:
+      /**
+       * @brief Converts POSIX time to an #Azure::DateTime.
+       *
+       * @param posixTime The number of seconds since 1970.
+       * @return Calculated #Azure::DateTime.
+       */
+      static DateTime PosixTimeToDateTime(int64_t posixTime)
+      {
+        return {DateTime(1970) + std::chrono::seconds(posixTime)};
+      }
+
+      /**
+       * @brief Converts a DateTime to POSIX time.
+       *
+       * @param dateTime The `%DateTime` to convert.
+       * @return The number of seconds since 1970.
+       */
+      static int64_t DateTimeToPosixTime(DateTime const& dateTime)
+      {
+        //  This count starts at the POSIX epoch which is January 1st, 1970 UTC.
+        return std::chrono::duration_cast<std::chrono::seconds>(dateTime - DateTime(1970)).count();
+      }
+
+    private:
+      /**
+       * @brief An instance of `%PosixTimeConverter` class cannot be created.
+       *
+       */
+      PosixTimeConverter() = delete;
+
+      /**
+       * @brief An instance of `%PosixTimeConverter` class cannot be destructed, because no instance
+       * can be created.
+       *
+       */
+      ~PosixTimeConverter() = delete;
+    };
 
     /**
-     * @brief Converts a DateTime to POSIX time.
+     * @brief Provides addtional methods for #Azure::DateTime.
      *
-     * @param dateTime The `%DateTime` to convert.
-     * @return The number of seconds since 1970.
      */
-    static int64_t DateTimeToPosixTime(DateTime const& dateTime)
-    {
-      //  This count starts at the POSIX epoch which is January 1st, 1970 UTC.
-      return std::chrono::duration_cast<std::chrono::seconds>(dateTime - DateTime(1970)).count();
-    }
+    class DateTimeExtensions final {
+    public:
+      /**
+       * @brief Create #Azure::DateTime from a string representing time in UTC in the specified
+       * format.
+       *
+       * @param dateTime A string with the date and time.
+       * @param format A format to which \p dateTime string adheres to.
+       * @param rfc3339NoTimeZoneMeansLocal If time zone is not specified, treat the \p dateTime as
+       * local time.
+       * @param localTimeToUtcDiffSeconds Assume this offset in seconds between local time and UTC
+       * time, for unit test reproduceability. Detect current time zone if `nullptr`.
+       *
+       * @return #Azure::DateTime that was constructed from the \p dateTime string.
+       *
+       * @throw std::invalid_argument If \p format is not recognized, or if parsing error.
+       */
+      static DateTime Parse(
+          std::string const& dateTime,
+          DateTime::DateFormat format,
+          bool rfc3339NoTimeZoneMeansLocal,
+          int const* localTimeToUtcDiffSeconds)
+      {
+        return DateTime::Parse(
+            dateTime, format, rfc3339NoTimeZoneMeansLocal, localTimeToUtcDiffSeconds);
+      }
 
-  private:
-    /**
-     * @brief An instance of `%PosixTimeConverter` class cannot be created.
-     *
-     */
-    PosixTimeConverter() = delete;
+    private:
+      /**
+       * @brief An instance of `%DateTimeExtensions` class cannot be created.
+       *
+       */
+      DateTimeExtensions() = delete;
 
-    /**
-     * @brief An instance of `%PosixTimeConverter` class cannot be destructed, because no instance
-     * can be created.
-     *
-     */
-    ~PosixTimeConverter() = delete;
-  };
+      /**
+       * @brief An instance of `%DateTimeExtensions` class cannot be destructed, because no instance
+       * can be created.
+       *
+       */
+      ~DateTimeExtensions() = delete;
+    };
 }} // namespace Core::_internal
 
 } // namespace Azure

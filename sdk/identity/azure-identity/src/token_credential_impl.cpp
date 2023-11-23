@@ -196,7 +196,9 @@ AccessToken TokenCredentialImpl::ParseToken(
     std::string const& jsonString,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
-    std::string const& expiresOnPropertyName)
+    std::string const& expiresOnPropertyName,
+    bool rfc33339NoTimeZoneMeansLocal,
+    int const* localTimeToUtcDiffSeconds)
 {
   json parsedJson;
   try
@@ -311,9 +313,13 @@ AccessToken TokenCredentialImpl::ParseToken(
     {
       auto const expiresOnAsString = expiresOn.get<std::string>();
       for (auto const& parse : {
-               std::function<DateTime(std::string const&)>([](auto const& s) {
+               std::function<DateTime(std::string const&)>([&](auto const& s) {
                  // 'expires_on' as RFC3339 date string (absolute timestamp)
-                 return DateTime::Parse(s, DateTime::DateFormat::Rfc3339);
+                 return Core::_internal::DateTimeExtensions::Parse(
+                     s,
+                     DateTime::DateFormat::Rfc3339,
+                     rfc33339NoTimeZoneMeansLocal,
+                     localTimeToUtcDiffSeconds);
                }),
                std::function<DateTime(std::string const&)>([](auto const& s) {
                  // 'expires_on' as numeric string (posix time representing an absolute timestamp)

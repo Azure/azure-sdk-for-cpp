@@ -70,6 +70,10 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param expiresOnPropertyName Name of a property in the JSON object that represents token
      * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse it is
      * made.
+     * @param rfc33339NoTimeZoneMeansLocal If an RFC3339 datetime has no time zone information,
+     * treat it as local time.
+     * @param localTimeToUtcDiffSeconds Assume this offset in seconds between local time and UTC
+     * time, for unit test reproduceability. Detect current time zone if `nullptr`.
      *
      * @return A successfully parsed access token.
      *
@@ -79,7 +83,9 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& jsonString,
         std::string const& accessTokenPropertyName,
         std::string const& expiresInPropertyName,
-        std::string const& expiresOnPropertyName);
+        std::string const& expiresOnPropertyName,
+        bool rfc33339NoTimeZoneMeansLocal = false,
+        int const* localTimeToUtcDiffSeconds = nullptr);
 
     /**
      * @brief Holds `#Azure::Core::Http::Request` and all the associated resources for the HTTP

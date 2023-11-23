@@ -154,7 +154,12 @@ AccessToken AzureCliCredential::GetToken(
       try
       {
         return TokenCredentialImpl::ParseToken(
-            azCliResult, "accessToken", "expiresIn", "expiresOn");
+            azCliResult,
+            "accessToken",
+            "expiresIn",
+            "expiresOn",
+            true,
+            GetLocalTimeToUtcDiffSeconds());
       }
       catch (json::exception const&)
       {

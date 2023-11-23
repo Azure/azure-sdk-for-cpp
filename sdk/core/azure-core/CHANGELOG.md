@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added internal provisions for extended `Azure::DateTime` parsing.
+
 ## 1.11.0-beta.2 (2023-11-02)
 
 ### Features Added

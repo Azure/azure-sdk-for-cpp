@@ -51,6 +51,7 @@ std::string EchoCommand(std::string const text)
 class AzureCliTestCredential : public AzureCliCredential {
 private:
   std::string m_command;
+  int m_localTimeToUtcDiffSeconds = -28800; // Redmond (no DST)
 
   std::string GetAzCommand(std::string const& resource, std::string const& tenantId) const override
   {
@@ -58,6 +59,11 @@ private:
     static_cast<void>(tenantId);
 
     return m_command;
+  }
+
+  int const* GetLocalTimeToUtcDiffSeconds() const override
+  {
+    return &m_localTimeToUtcDiffSeconds;
   }
 
 public:
@@ -107,7 +113,7 @@ TEST(AzureCliCredential, NotAvailable)
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T08:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 #else // UWP
   // The credential should throw during GetToken() and not during construction, because it allows
   // customers to put it into ChainedTokenCredential and successfully use it there without writing
@@ -199,7 +205,7 @@ TEST(AzureCliCredential, BigToken)
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T08:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 }
 
 TEST(AzureCliCredential, ExpiresIn)
@@ -567,7 +573,7 @@ TEST(AzureCliCredential, StrictIso8601TimeFormat)
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T08:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 }
 
 TEST(AzureCliCredential, Diagnosability)

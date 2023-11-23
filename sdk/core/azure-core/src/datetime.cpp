@@ -447,7 +447,11 @@ DateTime::operator std::chrono::system_clock::time_point() const
       + std::chrono::duration_cast<std::chrono::system_clock::duration>(*this - SystemClockEpoch);
 }
 
-DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
+DateTime DateTime::Parse(
+    std::string const& dateTime,
+    DateFormat format,
+    bool rfc3339NoTimeZoneMeansLocal,
+    int const* localTimeToUtcDiffSeconds)
 {
   // The values that are not supposed to be read before they are written are set to -123... to avoid
   // warnings on some compilers, yet provide a clearly bad value to make it obvious if things don't
@@ -464,6 +468,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
   int8_t localDiffHours = 0;
   int8_t localDiffMinutes = 0;
   bool roundFracSecUp = false;
+  bool adjustAsLocal = false;
   {
     std::string::size_type const DateTimeLength = dateTime.length();
     std::string::size_type minDateTimeLength = 0;
@@ -721,12 +726,46 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
                                      &cursor, dateTime, DateTimeLength, parsingArea, 2, 2);
             }
           }
+          else if (rfc3339NoTimeZoneMeansLocal) // Fractional seconds were present, but not the time
+                                                // zone
+          {
+            adjustAsLocal = true;
+          }
+        }
+        else if ( // No fractional seconds and no time zone were present
+            rfc3339NoTimeZoneMeansLocal && cursor == DateTimeLength)
+        {
+          adjustAsLocal = true;
         }
       }
     }
     else
     {
       throw std::invalid_argument("Unrecognized date format.");
+    }
+
+    if (adjustAsLocal)
+    {
+      auto const timeTNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+      // LCOV_EXCL_START
+      auto const utcDiffSeconds = localTimeToUtcDiffSeconds != nullptr
+          ? *localTimeToUtcDiffSeconds
+          : static_cast<int>(std::difftime(
+              std::mktime(std::localtime(&timeTNow)), std::mktime(std::gmtime(&timeTNow))));
+      // LCOV_EXCL_STOP
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+      localDiffHours = static_cast<int8_t>(utcDiffSeconds / (60 * 60));
+      localDiffMinutes = static_cast<int8_t>((utcDiffSeconds % (60 * 60)) / 60);
     }
 
     return DateTime(
