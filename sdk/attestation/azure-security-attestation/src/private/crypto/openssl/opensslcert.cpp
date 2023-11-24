@@ -276,7 +276,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       auto exportedPublicKey = newCertificateKey->ExportPublicKey();
       auto publicKey = Cryptography::ImportPublicKey(exportedPublicKey);
       // We know that Crypto::ImportPublicKey always returns an OpenSSLAsymmetricKey.
-      // THis is a bit of a hack but it's an acceptable assumption to make.
+      // This is a bit of a hack but it's an acceptable assumption to make.
       OpenSSLAsymmetricKey* key = static_cast<OpenSSLAsymmetricKey*>(publicKey.get());
       if (X509_set_pubkey(certificate.get(), key->GetKey().get()) != 1)
       {

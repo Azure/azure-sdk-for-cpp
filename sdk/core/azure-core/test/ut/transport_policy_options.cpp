@@ -551,7 +551,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         Azure::Core::Http::Policies::TransportOptions transportOptions;
 
-        // FIrst verify connectivity to the test servers.
+        // First verify connectivity to the test servers.
         transportOptions.EnableCertificateRevocationListCheck = false;
         HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
 
