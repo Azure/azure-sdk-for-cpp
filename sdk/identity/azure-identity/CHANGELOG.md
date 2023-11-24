@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- [[#5141]](https://github.com/Azure/azure-sdk-for-cpp/issues/5141) Added error response details to the Identity exceptions thrown when the authority host returns error response.
+
 ## 1.6.0 (2023-11-10)
 
 ### Features Added
