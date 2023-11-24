@@ -17,9 +17,6 @@
  */
 
 #include <azure/attestation.hpp>
-#include <azure/core/base64.hpp>
-#include <azure/core/cryptography/hash.hpp>
-#include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/identity.hpp>
 
 #include <chrono>
@@ -34,7 +31,6 @@ using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
-using namespace Azure::Core::Cryptography::_internal;
 
 int main()
 {
