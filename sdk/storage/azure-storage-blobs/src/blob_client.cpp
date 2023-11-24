@@ -204,9 +204,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       // In case network failure during reading the body
       const Azure::ETag eTag = downloadResponse.Value.Details.ETag;
-
+      const std::string client_request_id
+          = downloadResponse.RawResponse->GetHeaders().find(_internal::HttpHeaderClientRequestId)
+              == downloadResponse.RawResponse->GetHeaders().end()
+          ? std::string()
+          : downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderClientRequestId);
       auto retryFunction
-          = [this, options, eTag](int64_t retryOffset, const Azure::Core::Context& context)
+          = [this, options, eTag, client_request_id](int64_t retryOffset, const Azure::Core::Context& context)
           -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadBlobOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
@@ -217,7 +221,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryOffset;
         }
         newOptions.AccessConditions.IfMatch = eTag;
-        return std::move(Download(newOptions, context).Value.BodyStream);
+        return std::move(
+            Download(
+                newOptions,
+                context.WithValue(_internal::ReliableStreamClientRequestIdKey, client_request_id))
+                .Value.BodyStream);
       };
 
       _internal::ReliableStreamOptions reliableStreamOptions;
