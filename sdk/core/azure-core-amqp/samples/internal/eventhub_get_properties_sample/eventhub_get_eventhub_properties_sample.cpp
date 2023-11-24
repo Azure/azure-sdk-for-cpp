@@ -172,7 +172,7 @@ int main()
 
   // Establish the connection to the eventhub.
 
-  auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>()};
+  auto credential{std::make_shared<Azure::Identity::DefaultAzureCredential>()};
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "some";
