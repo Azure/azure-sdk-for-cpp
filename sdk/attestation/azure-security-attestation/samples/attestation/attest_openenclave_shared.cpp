@@ -10,14 +10,6 @@
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
  * - LOCATION_SHORT_NAME:  Specifies the short name of an Azure region to use for shared mode
  * operations.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account. Used for authenticated calls to the
- * attestation service.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request. Used for authenticated calls to
- * the attestation service.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request. Used for authenticated calls to
- * the attestation service.
- * - AZURE_CLIENT_SECRET: The client secret. Used for authenticated calls to the attestation
- * service.
  *
  */
 

@@ -7,9 +7,6 @@
  *
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
  * - ISOLATED_SIGNING_KEY: A Base64 encoded DER encoded RSA private key which matches the private
  * key used when creating the ATTESTATION_ISOLATED_URL.
  * - ISOLATED_SIGNING_CERTIFICATE: A Base64 encoded X.509 certificate wrapping the public key of the
@@ -57,10 +54,7 @@ int main()
     clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    auto const credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
     AttestationAdministrationClient const adminClient(
         AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 

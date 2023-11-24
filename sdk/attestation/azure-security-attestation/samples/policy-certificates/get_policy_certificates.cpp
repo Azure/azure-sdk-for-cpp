@@ -12,9 +12,6 @@
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
  * operations.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
 
@@ -41,10 +38,7 @@ int main()
   try
   {
     // create an administration client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    auto const credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
     AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(
         GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 
