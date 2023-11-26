@@ -12,6 +12,8 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/credentials/authorization_challenge_parser.hpp>
 
+#include <mutex>
+#include <shared_mutex>
 #include <stdexcept>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
@@ -23,6 +25,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
       : public Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy {
   private:
     mutable Core::Credentials::TokenRequestContext m_tokenRequestContext;
+    mutable std::shared_timed_mutex m_tokenRequestContextMutex;
 
   public:
     explicit KeyVaultChallengeBasedAuthenticationPolicy(
@@ -44,7 +47,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
         Core::Http::Policies::NextHttpPolicy& nextPolicy,
         Core::Context const& context) const override
     {
-      AuthenticateAndAuthorizeRequest(request, m_tokenRequestContext, context);
+      {
+        std::shared_lock<std::shared_timed_mutex> readLock(m_tokenRequestContextMutex);
+        AuthenticateAndAuthorizeRequest(request, m_tokenRequestContext, context);
+      }
+
       return nextPolicy.Send(request, context);
     }
 
@@ -62,8 +69,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
       ValidateChallengeResponse(scope, request.GetUrl().GetHost());
 
       auto const tenantId = GetTenantId(GetAuthorization(challenge));
-      m_tokenRequestContext.TenantId = tenantId;
-      m_tokenRequestContext.Scopes = {scope};
+      {
+        std::unique_lock<std::shared_timed_mutex> writeLock(m_tokenRequestContextMutex);
+        m_tokenRequestContext.TenantId = tenantId;
+        m_tokenRequestContext.Scopes = {scope};
+      }
 
       AuthenticateAndAuthorizeRequest(request, m_tokenRequestContext, context);
       return true;
