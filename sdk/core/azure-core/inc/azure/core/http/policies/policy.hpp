@@ -23,8 +23,8 @@
 #include <cstddef>
 #include <map>
 #include <memory>
-#include <mutex>
 #include <set>
+#include <shared_mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -549,7 +549,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       Credentials::TokenRequestContext m_tokenRequestContext;
 
       mutable Credentials::AccessToken m_accessToken;
-      mutable std::mutex m_accessTokenMutex;
+      mutable std::shared_timed_mutex m_accessTokenMutex;
       mutable Credentials::TokenRequestContext m_accessTokenContext;
 
     public:
