@@ -27,6 +27,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
     mutable Core::Credentials::TokenRequestContext m_tokenRequestContext;
     mutable std::shared_timed_mutex m_tokenRequestContextMutex;
 
+  protected:
+    KeyVaultChallengeBasedAuthenticationPolicy(
+        KeyVaultChallengeBasedAuthenticationPolicy const& other)
+        : BearerTokenAuthenticationPolicy(other)
+    {
+      std::shared_lock<std::shared_timed_mutex> readLock(other.m_tokenRequestContextMutex);
+      m_tokenRequestContext = other.m_tokenRequestContext;
+    }
+
   public:
     explicit KeyVaultChallengeBasedAuthenticationPolicy(
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
@@ -38,7 +47,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<KeyVaultChallengeBasedAuthenticationPolicy>(*this);
+      return std::unique_ptr<KeyVaultChallengeBasedAuthenticationPolicy>(
+          new KeyVaultChallengeBasedAuthenticationPolicy(*this));
     }
 
   private:
