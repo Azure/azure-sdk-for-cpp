@@ -339,6 +339,9 @@ namespace Azure { namespace Core { namespace Test {
     Core::Url const u0("https://www.microsoft.com");
     Core::Url const u1("https://www.microsoft.com/");
 
+    EXPECT_EQ(u0.GetAbsoluteUrl(), "https://www.microsoft.com");
+    EXPECT_EQ(u1.GetAbsoluteUrl(), "https://www.microsoft.com");
+
     {
       auto url0 = u0;
       auto url1 = u1;
