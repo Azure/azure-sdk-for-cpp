@@ -5,9 +5,6 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/credentials/authorization_challenge_parser.hpp"
 
-#include <chrono>
-#include <mutex>
-
 using Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy;
 
 using Azure::Core::Context;
@@ -74,7 +71,7 @@ bool TokenNeedsRefresh(
       || currentTime > (cachedToken.ExpiresOn - newTokenRequestContext.MinimumExpiration);
 }
 
-void SetBearerToken(
+void ApplyBearerToken(
     Azure::Core::Http::Request& request,
     Azure::Core::Credentials::AccessToken const& token)
 {
@@ -93,7 +90,7 @@ void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
     std::shared_lock<std::shared_timed_mutex> readLock(m_accessTokenMutex);
     if (!TokenNeedsRefresh(m_accessToken, m_accessTokenContext, currentTime, tokenRequestContext))
     {
-      SetBearerToken(request, m_accessToken);
+      ApplyBearerToken(request, m_accessToken);
       return;
     }
   }
@@ -106,5 +103,5 @@ void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
     m_accessTokenContext = tokenRequestContext;
   }
 
-  SetBearerToken(request, m_accessToken);
+  ApplyBearerToken(request, m_accessToken);
 }

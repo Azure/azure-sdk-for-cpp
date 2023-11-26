@@ -23,6 +23,7 @@
 #include <cstddef>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <set>
 #include <shared_mutex>
 #include <string>
@@ -581,6 +582,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const& other)
           : BearerTokenAuthenticationPolicy(other.m_credential, other.m_tokenRequestContext)
       {
+        std::shared_lock<std::shared_timed_mutex> readLock(other.m_accessTokenMutex);
+        m_accessToken = other.m_accessToken;
+        m_accessTokenContext = other.m_accessTokenContext;
       }
 
       void operator=(BearerTokenAuthenticationPolicy const&) = delete;
