@@ -4,10 +4,24 @@
   "languageId": "cpp",
   "dictionaries": [
     "powershell",
-    "cpp"
+    "cpp",
+    "markdown"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "cpp",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    },
+    {
+      "languageId": "markdown",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    }
   ],
   "ignorePaths": [
     "vcpkg/**/*",
+    "out/**/*",
     "*.exe",
     "*.a",
     "*.lib",
@@ -42,6 +56,8 @@
     "ahojnnes",
     "ahsonkhan",
     "Aloctl",
+    "amqp",
+    "Amqp",
     "AMQP",
     "AMQPS",
     "AMQPVALUE",
@@ -51,8 +67,8 @@
     "azsdkengsys",
     "azurecr",
     "azuresdk",
-    "azurl",
     "azuresdkforcpp",
+    "azurl",
     "centralus",
     "centraluseuap",
     "Chukwu",
@@ -145,6 +161,7 @@
     "rehydrated",
     "Reitz",
     "retriable",
+    "rtti",
     "rwxrw",
     "sasia",
     "Schonberger",
