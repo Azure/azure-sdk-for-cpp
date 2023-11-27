@@ -203,6 +203,20 @@ TEST(ClientCertificateCredential, UnsupportedExtension)
                     "Certificate format is not supported. "
                     "Please convert your certificate to '.pem'."));
   }
+
+  try
+  {
+    ClientCertificateCredential const cred(
+        "01234567-89ab-cdef-fedc-ba8976543210", "fedcba98-7654-3210-0123-456789abcdef", "");
+
+    EXPECT_TRUE(!"ClientCertificateCredential with an empty path is supposed to throw.");
+  }
+  catch (Azure::Core::Credentials::AuthenticationException const& ex)
+  {
+    EXPECT_EQ(
+        ex.what(),
+        std::string("Identity: ClientCertificateCredential: Certificate file path is empty."));
+  }
 }
 
 TEST(ClientCertificateCredential, GetOptionsFromEnvironment)

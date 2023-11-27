@@ -400,6 +400,11 @@ ClientCertificateCredential::ClientCertificateCredential(
     CertificateThumbprint mdVec;
     try
     {
+      if (clientCertificatePath.empty())
+      {
+        throw AuthenticationException("Certificate file path is empty.");
+      }
+
       using Azure::Core::_internal::StringExtensions;
       std::string const PemExtension = ".pem";
       auto const certFileExtensionStart = clientCertificatePath.find_last_of('.');
