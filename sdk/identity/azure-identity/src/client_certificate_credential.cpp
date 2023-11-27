@@ -412,7 +412,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         {
           throw AuthenticationException(
               "'" + CertExtension
-              + "' certifiacates are not currently supported. Please convert your certificate to '"
+              + "' certificates are not currently supported. Please convert your certificate to '"
               + PemExtension + "'.");
         }
       }

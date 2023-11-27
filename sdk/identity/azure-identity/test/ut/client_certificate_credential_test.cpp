@@ -161,7 +161,7 @@ TEST(ClientCertificateCredential, UnsupportedExtension)
   {
     EXPECT_EQ(
         ex.what(),
-        std::string("Identity: ClientCertificateCredential: '.pfx' certifiacates are "
+        std::string("Identity: ClientCertificateCredential: '.pfx' certificates are "
                     "not currently supported. Please convert your certificate to '.pem'."));
   }
 }
