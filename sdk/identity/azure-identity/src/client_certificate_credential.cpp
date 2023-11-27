@@ -9,6 +9,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/cryptography/sha_hash.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/uuid.hpp>
@@ -399,16 +400,30 @@ ClientCertificateCredential::ClientCertificateCredential(
     CertificateThumbprint mdVec;
     try
     {
+      std::string const PemExtension = ".pem";
+      auto const PemExtensionLength = PemExtension.length();
+      auto const PathLength = clientCertificatePath.length();
+
+      if (PathLength >= PemExtensionLength)
+      {
+        using Azure::Core::_internal::StringExtensions;
+        auto const CertExtension = clientCertificatePath.substr(PathLength - PemExtensionLength);
+        if (!StringExtensions::LocaleInvariantCaseInsensitiveEqual(CertExtension, PemExtension))
+        {
+          throw AuthenticationException(
+              "'" + CertExtension
+              + "' certifiacates are not currently supported. Please convert your certificate to '"
+              + PemExtension + "'.");
+        }
+      }
+
       std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificatePath);
     }
-    catch (AuthenticationException&)
-    {
-      throw;
-    }
-    catch (std::exception& e)
+    catch (std::exception const& e)
     {
       // WIL does not throw AuthenticationException.
-      throw AuthenticationException(e.what());
+      throw AuthenticationException(
+          std::string("Identity: ClientCertificateCredential: ") + e.what());
     }
 
     // Get thumbprint as hex string:
