@@ -16,6 +16,7 @@ trigger:
       - sdk/core
       - doc/
       - samples/
+      - .vscode/
       - .github/
       - '*.md'
       - /**/*.md
