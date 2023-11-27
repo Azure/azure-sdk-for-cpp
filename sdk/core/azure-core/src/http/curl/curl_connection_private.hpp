@@ -35,7 +35,7 @@ namespace Azure { namespace Core {
     /**
      * @brief  Unique handle for WinHTTP HINTERNET handles.
      *
-     * @note HINTERNET is declared as a "void *". THis means that this definition subsumes all other
+     * @note HINTERNET is declared as a "void *". This means that this definition subsumes all other
      * `void *` types when used with Azure::Core::_internal::UniqueHandle.
      *
      */
