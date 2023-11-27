@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 /**
- * @brief Includes all public headers from Azure Identity SDK library.
+ * @brief Includes all public headers from Azure Identity SDK library.  THis
  *
  */
 

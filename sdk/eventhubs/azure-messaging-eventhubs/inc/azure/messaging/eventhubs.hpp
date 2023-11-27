@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 /**
- * @brief Includes all public headers from Azure Messaging Event Hubs SDK library.
+ * @brief Includes all public headers from Azure Messaging Event Hubs SDK library.  THis
  *
  */
 

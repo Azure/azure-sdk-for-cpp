@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 /**
- * @brief Includes all public headers from Azure Core SDK library.
+ * @brief Includes all public headers from Azure Core SDK library.  THis
  * @note The transport adapter headers are not included.
  */
 

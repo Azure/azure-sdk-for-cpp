@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 /**
- * @brief Includes all public headers from Azure Attestation SDK library.
+ * @brief Includes all public headers from Azure Attestation SDK library. THis
  *
  */
 
