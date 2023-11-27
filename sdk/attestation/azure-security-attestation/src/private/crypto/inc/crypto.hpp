@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   /**
-   * @brief THe Cryptography class provides a set of basic cryptographic functions required
+   * @brief The Cryptography class provides a set of basic cryptographic functions required
    * by the attestation service client implementation and test collateral.
    *
    * It contains two subclasses: {@link Cryptography::AsymmetricKey}, which represents an Asymmetric
