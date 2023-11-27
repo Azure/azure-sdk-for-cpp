@@ -400,21 +400,19 @@ ClientCertificateCredential::ClientCertificateCredential(
     CertificateThumbprint mdVec;
     try
     {
+      using Azure::Core::_internal::StringExtensions;
       std::string const PemExtension = ".pem";
-      auto const PemExtensionLength = PemExtension.length();
-      auto const PathLength = clientCertificatePath.length();
+      auto const certFileExtensionStart = clientCertificatePath.find_last_of('.');
+      auto const certFileExtension = certFileExtensionStart != std::string::npos
+          ? clientCertificatePath.substr(certFileExtensionStart)
+          : std::string{};
 
-      if (PathLength >= PemExtensionLength)
+      if (!StringExtensions::LocaleInvariantCaseInsensitiveEqual(certFileExtension, PemExtension))
       {
-        using Azure::Core::_internal::StringExtensions;
-        auto const CertExtension = clientCertificatePath.substr(PathLength - PemExtensionLength);
-        if (!StringExtensions::LocaleInvariantCaseInsensitiveEqual(CertExtension, PemExtension))
-        {
-          throw AuthenticationException(
-              "'" + CertExtension
-              + "' certificates are not currently supported. Please convert your certificate to '"
-              + PemExtension + "'.");
-        }
+        throw AuthenticationException(
+            "Certificate format"
+            + (certFileExtension.empty() ? " " : " ('" + certFileExtension + "') ")
+            + "is not supported. Please convert your certificate to '" + PemExtension + "'.");
       }
 
       std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificatePath);

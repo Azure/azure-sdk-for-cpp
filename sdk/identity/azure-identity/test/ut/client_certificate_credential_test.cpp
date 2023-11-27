@@ -155,14 +155,53 @@ TEST(ClientCertificateCredential, UnsupportedExtension)
     ClientCertificateCredential const cred(
         "01234567-89ab-cdef-fedc-ba8976543210", "fedcba98-7654-3210-0123-456789abcdef", "file.pfx");
 
-    EXPECT_TRUE(!"ClientCertificateCredential with unsupported extension is supposed to throw.");
+    EXPECT_TRUE(
+        !"ClientCertificateCredential with unsupported extension (.pfx) is supposed to throw.");
   }
   catch (Azure::Core::Credentials::AuthenticationException const& ex)
   {
     EXPECT_EQ(
         ex.what(),
-        std::string("Identity: ClientCertificateCredential: '.pfx' certificates are "
-                    "not currently supported. Please convert your certificate to '.pem'."));
+        std::string("Identity: ClientCertificateCredential: "
+                    "Certificate format ('.pfx') is not supported. "
+                    "Please convert your certificate to '.pem'."));
+  }
+
+  try
+  {
+    ClientCertificateCredential const cred(
+        "01234567-89ab-cdef-fedc-ba8976543210",
+        "fedcba98-7654-3210-0123-456789abcdef",
+        "file.cert");
+
+    EXPECT_TRUE(
+        !"ClientCertificateCredential with unsupported extension (.cert) is supposed to throw.");
+  }
+  catch (Azure::Core::Credentials::AuthenticationException const& ex)
+  {
+    EXPECT_EQ(
+        ex.what(),
+        std::string("Identity: ClientCertificateCredential: "
+                    "Certificate format ('.cert') is not supported. "
+                    "Please convert your certificate to '.pem'."));
+  }
+
+  try
+  {
+    ClientCertificateCredential const cred(
+        "01234567-89ab-cdef-fedc-ba8976543210",
+        "fedcba98-7654-3210-0123-456789abcdef",
+        "noextension");
+
+    EXPECT_TRUE(!"ClientCertificateCredential without an extension is supposed to throw.");
+  }
+  catch (Azure::Core::Credentials::AuthenticationException const& ex)
+  {
+    EXPECT_EQ(
+        ex.what(),
+        std::string("Identity: ClientCertificateCredential: "
+                    "Certificate format is not supported. "
+                    "Please convert your certificate to '.pem'."));
   }
 }
 
