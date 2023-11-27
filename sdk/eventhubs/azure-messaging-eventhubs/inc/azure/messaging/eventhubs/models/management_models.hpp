@@ -32,7 +32,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * that contains it.*/
     std::string Name;
 
-    /** THe identifier of the partition, unique to the Event Hub which contains it. */
+    /** The identifier of the partition, unique to the Event Hub which contains it. */
     std::string PartitionId;
 
     /** The first sequence number available for events in the partition.
