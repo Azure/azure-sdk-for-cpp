@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Core { 
+namespace Azure { namespace Core {
 
   /**
    * @brief Used to convert one form of data  into another, for example encoding binary data into
