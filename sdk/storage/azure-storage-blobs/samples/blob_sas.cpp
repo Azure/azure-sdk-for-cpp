@@ -26,12 +26,18 @@ std::string GetConnectionString()
 
 std::string GetAccountName()
 {
-  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountName;
+  const auto connection_string = GetConnectionString();
+  auto pos1 = connection_string.find("AccountName=");
+  auto pos2 = connection_string.find(";", pos1);
+  return connection_string.substr(pos1 + 12, pos2 - pos1 - 12);
 }
 
 std::string GetAccountKey()
 {
-  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountKey;
+  const auto connection_string = GetConnectionString();
+  auto pos1 = connection_string.find("AccountKey=");
+  auto pos2 = connection_string.find(";", pos1);
+  return connection_string.substr(pos1 + 11, pos2 - pos1 - 11);
 }
 
 int main()
