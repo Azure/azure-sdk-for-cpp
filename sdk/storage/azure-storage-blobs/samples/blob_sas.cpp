@@ -27,17 +27,19 @@ std::string GetConnectionString()
 std::string GetAccountName()
 {
   const auto connection_string = GetConnectionString();
-  auto pos1 = connection_string.find("AccountName=");
+  const std::string property = "AccountName=";
+  auto pos1 = connection_string.find(property);
   auto pos2 = connection_string.find(";", pos1);
-  return connection_string.substr(pos1 + 12, pos2 - pos1 - 12);
+  return connection_string.substr(pos1 + property.length(), pos2 - pos1 - property.length());
 }
 
 std::string GetAccountKey()
 {
   const auto connection_string = GetConnectionString();
-  auto pos1 = connection_string.find("AccountKey=");
+  const std::string property = "AccountKey=";
+  auto pos1 = connection_string.find(property);
   auto pos2 = connection_string.find(";", pos1);
-  return connection_string.substr(pos1 + 11, pos2 - pos1 - 11);
+  return connection_string.substr(pos1 + property.length(), pos2 - pos1 - property.length());
 }
 
 int main()
