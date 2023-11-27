@@ -4,7 +4,20 @@
   "languageId": "cpp",
   "dictionaries": [
     "powershell",
-    "cpp"
+    "cpp",
+    "markdown"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "cpp",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    }
+    {
+      "languageId": "markdown",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    }
   ],
   "ignorePaths": [
     "vcpkg/**/*",
