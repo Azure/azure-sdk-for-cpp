@@ -41,7 +41,7 @@ The proxy will create a file locally containing the data in the .assets folder i
 
 When AZURE_TEST_MODE=PLAYBACK we invoke the playback/start endpoint on test-proxy which causes it to download the appropriate release indicated in assets.json if it is not there already, and replay the responses for the specific request based on the recorded data. When the test is done we call playback/stop
 
-## LIve Testing
+## Live Testing
 
 When AZURE_TEST_MODE=LIVE all requests are sent directly to their destination bypassing the proxy.
 

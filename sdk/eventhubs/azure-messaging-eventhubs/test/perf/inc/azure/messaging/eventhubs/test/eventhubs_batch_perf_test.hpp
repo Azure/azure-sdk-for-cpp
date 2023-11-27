@@ -241,7 +241,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
            false},
           {"PaddingBytes",
            {"--paddingBytes"},
-           "THe number of bytes to send in each message body.",
+           "The number of bytes to send in each message body.",
            1,
            false},
           {"partitionId",
