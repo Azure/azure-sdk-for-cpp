@@ -1259,7 +1259,7 @@ TEST_F(TestValueSerialization, SerializeList)
     EXPECT_EQ(val.size(), 1);
     EXPECT_EQ(0x45, val[0]);
   }
-  // THird form, serialized as first form.
+  // Third form, serialized as first form.
   {
     std::vector<uint8_t> testVector{0xd0, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
