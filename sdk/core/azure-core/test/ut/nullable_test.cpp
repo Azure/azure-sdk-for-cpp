@@ -99,6 +99,34 @@ TEST(Nullable, ValueAssignment)
   EXPECT_FALSE(strVal.HasValue());
 }
 
+TEST(Nullable, Emplace)
+{
+  {
+    Azure::Nullable<int> x;
+    EXPECT_FALSE(x.HasValue());
+    EXPECT_EQ(x.Emplace(42), 42);
+    EXPECT_TRUE(x.HasValue());
+    EXPECT_EQ(x.Value(), 42);
+  }
+
+  {
+    Azure::Nullable<int> y;
+    EXPECT_FALSE(y.HasValue());
+    EXPECT_EQ(y.Emplace(), 0);
+    EXPECT_TRUE(y.HasValue());
+    EXPECT_EQ(y.Value(), 0);
+  }
+
+  {
+    Azure::Nullable<int> z = 42;
+    EXPECT_TRUE(z.HasValue());
+    EXPECT_EQ(z.Value(), 42);
+    EXPECT_EQ(z.Emplace(), 0);
+    EXPECT_TRUE(z.HasValue());
+    EXPECT_EQ(z.Value(), 0);
+  }
+}
+
 TEST(Nullable, Swap)
 {
   Nullable<int> val1;
