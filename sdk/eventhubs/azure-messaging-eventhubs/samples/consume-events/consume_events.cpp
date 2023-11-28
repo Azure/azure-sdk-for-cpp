@@ -21,12 +21,12 @@ int main()
   char* const eventhubName{std::getenv("EVENTHUB_NAME")};
   if (eventhubConnectionString == nullptr)
   {
-    std::cerr << "Missing environment variable EVENTHUB_CONNECTION_STRING" << std::endl;
+    std::cout << "Missing environment variable EVENTHUB_CONNECTION_STRING" << std::endl;
     return 1;
   }
   if (eventhubName == nullptr)
   {
-    std::cerr << "Missing environment variable EVENTHUB_NAME" << std::endl;
+    std::cout << "Missing environment variable EVENTHUB_NAME" << std::endl;
     return 1;
   }
 
@@ -51,14 +51,14 @@ int main()
   partitionClientOptions.StartPosition.Earliest = true;
   partitionClientOptions.StartPosition.Inclusive = true;
 
-  std::cerr << "Creating partition client. Start position: "
+  std::cout << "Creating partition client. Start position: "
             << partitionClientOptions.StartPosition;
 
-  std::cerr << "earliest: HasValue: " << std::boolalpha
+  std::cout << "earliest: HasValue: " << std::boolalpha
             << partitionClientOptions.StartPosition.Earliest.HasValue();
   if (partitionClientOptions.StartPosition.Earliest.HasValue())
   {
-    std::cerr << "earliest: Value: " << std::boolalpha
+    std::cout << "earliest: Value: " << std::boolalpha
               << partitionClientOptions.StartPosition.Earliest.Value() << std::endl;
   }
 
