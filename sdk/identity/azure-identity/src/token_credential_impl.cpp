@@ -72,16 +72,13 @@ std::string TokenCredentialImpl::FormatScopes(
 
     if (scopesIter != scopesEnd)
     {
-      auto const scope = *scopesIter;
-      scopesStr += OptionalUrlEncode(scope, urlEncode);
-    }
+      scopesStr += OptionalUrlEncode(*scopesIter, urlEncode);
 
-    for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
-    {
-      auto const Separator = std::string(" "); // Element separator never gets URL-encoded
-
-      auto const scope = *scopesIter;
-      scopesStr += Separator + OptionalUrlEncode(scope, urlEncode);
+      constexpr auto Separator = " "; // Element separator never gets URL-encoded
+      for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
+      {
+        scopesStr += Separator + OptionalUrlEncode(*scopesIter, urlEncode);
+      }
     }
   }
 
@@ -117,11 +114,16 @@ AccessToken TokenCredentialImpl::GetToken(
         request = shouldRetry(statusCode, *response);
         if (request == nullptr)
         {
+          auto const bodyStream = response->ExtractBodyStream();
+          auto const bodyVec = bodyStream ? bodyStream->ReadToEnd(context) : response->GetBody();
+          auto const responseBody
+              = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
+
           throw std::runtime_error(
               std::string("error response: ")
               + std::to_string(
                   static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
-              + " " + response->GetReasonPhrase());
+              + " " + response->GetReasonPhrase() + "\n\n" + responseBody);
         }
 
         response.reset();
