@@ -5,6 +5,8 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/credentials/authorization_challenge_parser.hpp"
 
+#include <chrono>
+
 using Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy;
 
 using Azure::Core::Context;
