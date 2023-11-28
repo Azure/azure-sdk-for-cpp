@@ -285,7 +285,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     HttpPolicy& operator=(const HttpPolicy& other) = default;
 
     /**
-     * @brief Contructs `%HttpPolicy` by moving \p other `%HttpPolicy`.
+     * @brief Constructs `%HttpPolicy` by moving \p other `%HttpPolicy`.
      * @param other Other `%HttpPolicy` to move.
      *
      */
