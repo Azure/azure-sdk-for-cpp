@@ -11,12 +11,7 @@
 // Both of these should be available from the Azure portal.
 //
 
-#include <azure/core/diagnostics/logger.hpp>
-#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/messaging/eventhubs.hpp>
-
-using namespace Azure::Core::Diagnostics;
-using namespace Azure::Core::Diagnostics::_internal;
 
 #include <iostream>
 
@@ -43,7 +38,6 @@ int main()
   // Retrieve properties about the EventHubs instance just created.
   auto eventhubProperties{consumerClient.GetEventHubProperties()};
   std::cout << "Created event hub, properties: " << eventhubProperties << std::endl;
-  Log::Stream(Logger::Level::Verbose) << "Created event hub, properties: " << eventhubProperties;
 
   // Retrieve properties about the EventHubs instance just created.
   auto partitionProperties{
@@ -57,16 +51,14 @@ int main()
   partitionClientOptions.StartPosition.Earliest = true;
   partitionClientOptions.StartPosition.Inclusive = true;
 
-  Log::Stream(Logger::Level::Verbose)
-      << "Creating partition client. Start position: " << partitionClientOptions.StartPosition;
-  Log::Stream(Logger::Level::Verbose)
-      << "Creating partition client. Start position: " << partitionClientOptions.StartPosition;
+  std::cout << "Creating partition client. Start position: "
+            << partitionClientOptions.StartPosition;
 
-  Log::Stream(Logger::Level::Verbose) << "earliest: HasValue: " << std::boolalpha
-                                      << partitionClientOptions.StartPosition.Earliest.HasValue();
+  std::cout << "earliest: HasValue: " << std::boolalpha
+            << partitionClientOptions.StartPosition.Earliest.HasValue();
   if (partitionClientOptions.StartPosition.Earliest.HasValue())
   {
-    std::cerr << "earliest: Value: " << std::boolalpha
+    std::cout << "earliest: Value: " << std::boolalpha
               << partitionClientOptions.StartPosition.Earliest.Value() << std::endl;
   }
 
