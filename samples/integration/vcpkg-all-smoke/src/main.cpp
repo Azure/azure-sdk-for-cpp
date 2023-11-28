@@ -8,7 +8,6 @@
 
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
-#include <azure/core/internal/json/json.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
 #include <azure/keyvault/keys.hpp>
