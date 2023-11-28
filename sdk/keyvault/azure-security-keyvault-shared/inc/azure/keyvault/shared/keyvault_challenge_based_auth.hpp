@@ -47,6 +47,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
+      // Can't use std::make_shared here because copy constructor is not public.
       return std::unique_ptr<KeyVaultChallengeBasedAuthenticationPolicy>(
           new KeyVaultChallengeBasedAuthenticationPolicy(*this));
     }
