@@ -21,12 +21,12 @@ int main()
   char* const eventhubName{std::getenv("EVENTHUB_NAME")};
   if (eventhubConnectionString == nullptr)
   {
-    std::cout << "Missing environment variable EVENTHUB_CONNECTION_STRING" << std::endl;
+    std::cerr << "Missing environment variable EVENTHUB_CONNECTION_STRING" << std::endl;
     return 1;
   }
   if (eventhubName == nullptr)
   {
-    std::cout << "Missing environment variable EVENTHUB_NAME" << std::endl;
+    std::cerr << "Missing environment variable EVENTHUB_NAME" << std::endl;
     return 1;
   }
 
