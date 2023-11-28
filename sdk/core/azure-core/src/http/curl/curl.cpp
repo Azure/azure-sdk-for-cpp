@@ -1493,7 +1493,7 @@ namespace Azure { namespace Core {
     namespace {
       // int g_ssl_crl_max_size_in_kb = 20;
       /**
-       * @brief THe Cryptography class provides a set of basic cryptographic primatives required
+       * @brief The Cryptography class provides a set of basic cryptographic primatives required
        * by the attestation samples.
        */
 

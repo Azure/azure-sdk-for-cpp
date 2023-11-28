@@ -4,10 +4,24 @@
   "languageId": "cpp",
   "dictionaries": [
     "powershell",
-    "cpp"
+    "cpp",
+    "markdown"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "cpp",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    },
+    {
+      "languageId": "markdown",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    }
   ],
   "ignorePaths": [
     "vcpkg/**/*",
+    "out/**/*",
     "*.exe",
     "*.a",
     "*.lib",
@@ -42,6 +56,8 @@
     "ahojnnes",
     "ahsonkhan",
     "Aloctl",
+    "amqp",
+    "Amqp",
     "AMQP",
     "AMQPS",
     "AMQPVALUE",
@@ -51,14 +67,15 @@
     "azsdkengsys",
     "azurecr",
     "azuresdk",
-    "azurl",
     "azuresdkforcpp",
+    "azurl",
     "centralus",
     "centraluseuap",
     "Chukwu",
     "cmake",
     "CMOCKA",
     "Cobertura",
+    "Contoso",
     "countof",
     "ctest",
     "cuse",
@@ -78,6 +95,7 @@
     "easia",
     "eastus",
     "echsmkey",
+    "Ecdsa",
     "Edlund",
     "EKUs",
     "Entra",
@@ -89,6 +107,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "hlocal",
     "HLOCAL",
     "HRESULT",
     "IMDS",
@@ -113,6 +132,7 @@
     "mmdc",
     "moxygen",
     "MSAL",
+    "msft",
     "MSRC",
     "ncus",
     "Niels",
@@ -125,6 +145,7 @@
     "NOMINMAX",
     "northcentralus",
     "nostd",
+    "nread",
     "NTSTATUS",
     "OIDC",
     "okhttp",
@@ -135,6 +156,8 @@
     "pdbs",
     "phoebusm",
     "Piotrowski",
+    "pkcs",
+    "Pkcs",
     "pscredential",
     "PUCHAR",
     "PVOID",
@@ -145,6 +168,7 @@
     "rehydrated",
     "Reitz",
     "retriable",
+    "rtti",
     "rwxrw",
     "sasia",
     "Schonberger",
@@ -160,6 +184,7 @@
     "stoull",
     "STREQ",
     "Sutou",
+    "tsirpanis",
     "Tsirpanis",
     "uaenorth",
     "uamqp",
@@ -183,8 +208,10 @@
     "Wextra",
     "Wgnu",
     "Wunused",
+    "xbox",
     "Xclang",
-    "XSMB"
+    "XSMB",
+    "zulu"
   ],
   "overrides": [
     {

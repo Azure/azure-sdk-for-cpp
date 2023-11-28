@@ -219,7 +219,10 @@ std::string Url::GetUrlWithoutQuery(bool relative) const
   {
     if (!relative)
     {
-      url += "/";
+      if (m_encodedPath.empty() || m_encodedPath[0] != '/')
+      {
+        url += "/";
+      }
     }
 
     url += m_encodedPath;
