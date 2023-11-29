@@ -79,6 +79,9 @@ function ProcessSnippetsInFile {
 			# Insert the snippet text.
 			$snippet_text = $snippet_map[$snippet_name]
 			$output_file_contents = $output_file_contents -replace "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+", "<!-- @insert_snippet: $snippet_name -->`r`n``````cpp`r`n$snippet_text`r`n```````r`n`r`n"
+			
+			# The Regex::Replace above inserts an extra newline at the end of the file. Remove it.
+			$output_file_contents = $output_file_contents -replace "\s*\Z", ""
 		}
 		elseif ($output_file.Extension -eq '.hpp') {
 			$output_file_contents = $output_file_contents -replace '@insert_snippet:\s+(?<snippet_name>\w+)', '$snippet_map[$snippet_name]'
