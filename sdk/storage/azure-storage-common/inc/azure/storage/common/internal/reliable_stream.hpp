@@ -14,7 +14,8 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  AZ_STORAGE_COMMON_DLLEXPORT extern const Azure::Core::Context::Key ReliableStreamClientRequestIdKey;
+  AZ_STORAGE_COMMON_DLLEXPORT extern const Azure::Core::Context::Key
+      ReliableStreamClientRequestIdKey;
 
   // Options used by reliable stream
   struct ReliableStreamOptions final

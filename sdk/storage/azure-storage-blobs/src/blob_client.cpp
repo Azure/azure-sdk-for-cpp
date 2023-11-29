@@ -209,9 +209,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               == downloadResponse.RawResponse->GetHeaders().end()
           ? std::string()
           : downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderClientRequestId);
-      auto retryFunction
-          = [this, options, eTag, client_request_id](int64_t retryOffset, const Azure::Core::Context& context)
-          -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      auto retryFunction =
+          [this, options, eTag, client_request_id](
+              int64_t retryOffset,
+              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadBlobOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
         newOptions.Range.Value().Offset
