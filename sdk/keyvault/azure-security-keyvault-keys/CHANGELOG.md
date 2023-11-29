@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[#4754]](https://github.com/Azure/azure-sdk-for-cpp/issues/4754) Thread safety for authentication policy.
+
 ### Other Changes
 
 - Fixed GCC 13 compilation error. (A community contribution, courtesy of _[adamdebreceni](https://github.com/adamdebreceni)_)
