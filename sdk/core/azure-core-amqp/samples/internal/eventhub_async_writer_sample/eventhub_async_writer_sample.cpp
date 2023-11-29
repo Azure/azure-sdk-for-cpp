@@ -34,7 +34,6 @@ int main()
   Azure::Core::Amqp::_internal::Session session(connection);
 
   // @begin_snippet: CreateSender
-
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
   senderOptions.MessageSource = "ingress";
@@ -43,7 +42,6 @@ int main()
 
   Azure::Core::Amqp::_internal::MessageSender sender(
       session, credentials->GetEntityPath(), senderOptions, nullptr);
-
   // @end_snippet
 
   // Open the connection to the remote.
