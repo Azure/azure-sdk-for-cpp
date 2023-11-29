@@ -89,7 +89,7 @@ Demonstrates writing messages to the Azure Event Hubs service using the AMQP pro
 ```cpp
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "whatever";
-  connectionOptions.EnableTrace = true;
+  connectionOptions.EnableTrace = false;
   connectionOptions.Port = credential->GetPort();
   Azure::Core::Amqp::_internal::Connection connection(
       credential->GetHostName(), credential, connectionOptions);
