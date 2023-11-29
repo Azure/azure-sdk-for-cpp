@@ -484,10 +484,7 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.Services = Azure::Storage::Sas::AccountSasServices::Table;
     sasBuilder.Protocol = Azure::Storage::Sas::SasProtocol::HttpsOnly;
     sasBuilder.SetPermissions(Azure::Storage::Sas::AccountSasPermissions::All);
-    auto sasToken = /*"?sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2023-11-29T23:43:08Z&st="
-                    "2023-11-29T15:43:08Z&spr=https&sig="
-                    "2oYHjNUuLxTeo80SueLSrPE1igZkQN5iOiFrDSESFC0%3D"; // */
-                    sasBuilder.GenerateSasToken(*creds);
+    auto sasToken = sasBuilder.GenerateSasToken(*creds);
     auto tableserviceClient = Tables::TableServicesClient(
         "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken);
     auto response = tableserviceClient.ListTables();
