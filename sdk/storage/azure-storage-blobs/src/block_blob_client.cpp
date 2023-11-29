@@ -633,7 +633,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto response = _detail::BlobClient::Query(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
-    const auto stautsCode = response.RawResponse->GetStatusCode();
+    const auto statusCode = response.RawResponse->GetStatusCode();
     const auto reasonPhrase = response.RawResponse->GetReasonPhrase();
     const auto requestId
         = response.RawResponse->GetHeaders().count(_internal::HttpHeaderRequestId) != 0
@@ -646,11 +646,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         : std::string();
 
     auto defaultErrorHandler
-        = [stautsCode, reasonPhrase, requestId, clientRequestId](BlobQueryError e) {
+        = [statusCode, reasonPhrase, requestId, clientRequestId](BlobQueryError e) {
             if (e.IsFatal)
             {
               StorageException exception("Fatal " + e.Name + " at " + std::to_string(e.Position));
-              exception.StatusCode = stautsCode;
+              exception.StatusCode = statusCode;
               exception.ReasonPhrase = reasonPhrase;
               exception.RequestId = requestId;
               exception.ClientRequestId = clientRequestId;
