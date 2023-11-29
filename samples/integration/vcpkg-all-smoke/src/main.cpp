@@ -30,9 +30,6 @@ using namespace Azure::Security::Attestation;
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   const std::string leaseID = "leaseID";
   const std::string smokeUrl = "https://blob.com";
   // Creating an attestation service instance requires contacting the attestation service (to
@@ -40,8 +37,7 @@ int main()
   // available) as an anonymous service instance.
   const std::string attestationUrl = "https://sharedwus.wus.attest.azure.net";
 
-  auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // instantiate the clients
   try

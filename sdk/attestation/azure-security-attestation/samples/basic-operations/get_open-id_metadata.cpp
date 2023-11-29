@@ -3,15 +3,12 @@
 
 /**
  * @brief This sample provides the code implementation to use the Attestation SDK client
- * for C++ to retrieve the OpenID metadata for an endpoint..
+ * for C++ to retrieve the OpenID metadata for an endpoint.
  *
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
  * operations.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
 
