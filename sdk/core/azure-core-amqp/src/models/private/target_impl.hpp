@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
@@ -17,18 +18,19 @@
 #include <string>
 #include <type_traits>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<std::remove_pointer<TARGET_HANDLE>::type>
   {
     static void FreeMessageTarget(TARGET_HANDLE obj);
 
-    using type = BasicUniqueHandle<std::remove_pointer<TARGET_HANDLE>::type, FreeMessageTarget>;
+    using type = Core::_internal::
+        BasicUniqueHandle<std::remove_pointer<TARGET_HANDLE>::type, FreeMessageTarget>;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueMessageTargetHandle
-      = Azure::Core::_internal::UniqueHandle<std::remove_pointer<TARGET_HANDLE>::type>;
+      = Amqp::_detail::UniqueHandle<std::remove_pointer<TARGET_HANDLE>::type>;
 
   class MessageTargetImpl final {
   public:

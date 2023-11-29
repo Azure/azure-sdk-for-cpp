@@ -6,6 +6,7 @@
 #include "azure/core/amqp/internal/message_sender.hpp"
 #include "claims_based_security_impl.hpp"
 #include "link_impl.hpp"
+#include "unique_handle.hpp"
 
 #include <azure_uamqp_c/message_sender.h>
 
@@ -13,17 +14,17 @@
 
 #define SENDER_SYNCHRONOUS_CLOSE 0
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
   {
     static void FreeMessageSender(MESSAGE_SENDER_HANDLE obj);
 
-    using type = BasicUniqueHandle<MESSAGE_SENDER_INSTANCE_TAG, FreeMessageSender>;
+    using type = Core::_internal::BasicUniqueHandle<MESSAGE_SENDER_INSTANCE_TAG, FreeMessageSender>;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using UniqueMessageSender = Azure::Core::_internal::UniqueHandle<MESSAGE_SENDER_INSTANCE_TAG>;
+  using UniqueMessageSender = UniqueHandle<MESSAGE_SENDER_INSTANCE_TAG>;
 
   class MessageSenderFactory final {
   public:

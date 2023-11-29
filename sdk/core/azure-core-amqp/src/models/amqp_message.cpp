@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/models/amqp_message.hpp"
 
+#include "../amqp/private/unique_handle.hpp"
 #include "../models/private/header_impl.hpp"
 #include "../models/private/message_impl.hpp"
 #include "../models/private/properties_impl.hpp"
@@ -19,14 +20,14 @@
 #include <iostream>
 #include <set>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // @cond
   void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
   {
     message_destroy(value);
   }
   // @endcond
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Amqp::_detail;
 using namespace Azure::Core::Amqp::Models::_detail;
@@ -42,7 +43,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         HEADER_HANDLE headerValue;
         if (!message_get_header(message, &headerValue))
         {
-          return Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>(headerValue);
+          return UniqueHandle<HEADER_INSTANCE_TAG>(headerValue);
         }
       }
       return nullptr;
@@ -55,7 +56,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         PROPERTIES_HANDLE propertiesValue;
         if (!message_get_properties(message, &propertiesValue))
         {
-          return Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>(propertiesValue);
+          return UniqueHandle<PROPERTIES_INSTANCE_TAG>(propertiesValue);
         }
       }
       return nullptr;

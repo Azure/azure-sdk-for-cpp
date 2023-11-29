@@ -65,7 +65,7 @@ v12
 A `TokenCredential` abstract class (different API surface than v7.5) exists in the [Azure Core](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core) package that all libraries of the new Azure SDK family depend on, and can be used to construct Storage clients. Implementations of this class can be found separately in the [Azure Identity](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity) package.
 
 ```cpp
-BlobServiceClient serviceClient(serviceUrl, std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret));
+BlobServiceClient serviceClient(serviceUrl, std::make_shared<Azure::Identity::DefaultAzureCredential>());
 ```
 
 #### SAS

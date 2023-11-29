@@ -97,11 +97,8 @@ For detailed samples please review the code provided.
 
 To get all the available settings present on the Keyvault instance we will first create a client : 
 ```cpp
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+      = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
   SettingsClient settingsClient(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);

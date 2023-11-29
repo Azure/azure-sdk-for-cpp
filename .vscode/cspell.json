@@ -4,10 +4,24 @@
   "languageId": "cpp",
   "dictionaries": [
     "powershell",
-    "cpp"
+    "cpp",
+    "markdown"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "cpp",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    },
+    {
+      "languageId": "markdown",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    }
   ],
   "ignorePaths": [
     "vcpkg/**/*",
+    "out/**/*",
     "*.exe",
     "*.a",
     "*.lib",
@@ -38,27 +52,34 @@
     "ABFS",
     "ABNF",
     "adamdebreceni",
+    "adfs",
     "Adls",
     "ahojnnes",
     "ahsonkhan",
     "Aloctl",
+    "amqp",
+    "Amqp",
     "AMQP",
+    "amqps",
     "AMQPS",
+    "amqpvalue",
     "AMQPVALUE",
+    "avro",
     "antkmsft",
     "azcore",
     "azsdk",
     "azsdkengsys",
     "azurecr",
     "azuresdk",
-    "azurl",
     "azuresdkforcpp",
+    "azurl",
     "centralus",
     "centraluseuap",
     "Chukwu",
     "cmake",
     "CMOCKA",
     "Cobertura",
+    "Contoso",
     "countof",
     "ctest",
     "cuse",
@@ -78,6 +99,7 @@
     "easia",
     "eastus",
     "echsmkey",
+    "Ecdsa",
     "Edlund",
     "EKUs",
     "Entra",
@@ -89,6 +111,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "hlocal",
     "HLOCAL",
     "HRESULT",
     "IMDS",
@@ -109,11 +132,14 @@
     "LPBYTE",
     "LPSTR",
     "LPWSTR",
+    "mbps",
     "MHSM",
     "mmdc",
     "moxygen",
     "MSAL",
+    "msft",
     "MSRC",
+    "nbio",
     "ncus",
     "Niels",
     "nlohmann",
@@ -125,7 +151,9 @@
     "NOMINMAX",
     "northcentralus",
     "nostd",
+    "nread",
     "NTSTATUS",
+    "Oaep",
     "OIDC",
     "okhttp",
     "opentelemetry",
@@ -135,6 +163,8 @@
     "pdbs",
     "phoebusm",
     "Piotrowski",
+    "pkcs",
+    "Pkcs",
     "pscredential",
     "PUCHAR",
     "PVOID",
@@ -145,6 +175,7 @@
     "rehydrated",
     "Reitz",
     "retriable",
+    "rtti",
     "rwxrw",
     "sasia",
     "Schonberger",
@@ -160,10 +191,12 @@
     "stoull",
     "STREQ",
     "Sutou",
+    "tsirpanis",
     "Tsirpanis",
     "uaenorth",
     "uamqp",
     "uksouth",
+    "Uncomitted",
     "undeleted",
     "unscoped",
     "unskipped",
@@ -175,6 +208,7 @@
     "Verdana",
     "Viet",
     "Viktor",
+    "versionid",
     "vusg",
     "Wdocumentation",
     "Werror",
@@ -183,8 +217,10 @@
     "Wextra",
     "Wgnu",
     "Wunused",
+    "xbox",
     "Xclang",
-    "XSMB"
+    "XSMB",
+    "zulu"
   ],
   "overrides": [
     {
@@ -290,9 +326,21 @@
       ]
     },
     {
+      "filename": "**/sdk/storage/faq.md",
+      "words": [
+        "dont"
+      ]
+    },
+    {
       "filename": "**/sdk/storage/azure-storage-queues/src/rest_client.cpp",
       "words": [
         "numofmessages"
+      ]
+    },
+    {
+      "filename": "**/sdk/storage/azure-storage-queues/swagger/README.md",
+      "words": [
+        "messageid"
       ]
     },
     {

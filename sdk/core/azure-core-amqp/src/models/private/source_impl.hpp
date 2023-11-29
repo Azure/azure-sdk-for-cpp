@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
@@ -16,14 +17,15 @@
 
 #include <type_traits>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<std::remove_pointer<SOURCE_HANDLE>::type>
   {
     static void FreeMessageSource(SOURCE_HANDLE obj);
 
-    using type = BasicUniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type, FreeMessageSource>;
+    using type = Core::_internal::
+        BasicUniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type, FreeMessageSource>;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   class MessageSourceImpl final {
@@ -194,7 +196,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   private:
     operator SOURCE_HANDLE() const { return m_source.get(); }
-    Azure::Core::_internal::UniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type> m_source;
+    Amqp::_detail::UniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type> m_source;
 
     // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.
     friend std::ostream& operator<<(std::ostream&, MessageSourceImpl const&);

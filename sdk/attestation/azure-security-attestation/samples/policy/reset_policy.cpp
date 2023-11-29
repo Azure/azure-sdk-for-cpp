@@ -10,16 +10,10 @@
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
  * - LOCATION_SHORT_NAME:  Specifies the short name of an Azure region to use for shared mode
  * operations.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
 
 #include <azure/attestation.hpp>
-#include <azure/core/base64.hpp>
-#include <azure/core/cryptography/hash.hpp>
-#include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/identity.hpp>
 
 #include <chrono>
@@ -34,7 +28,6 @@ using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
-using namespace Azure::Core::Cryptography::_internal;
 
 int main()
 {
@@ -54,10 +47,7 @@ int main()
     clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    auto const credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
     AttestationAdministrationClient const adminClient(
         AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 

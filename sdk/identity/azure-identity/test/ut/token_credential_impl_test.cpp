@@ -710,6 +710,49 @@ TEST(TokenCredentialImpl, MaxValues)
       std::exception);
 }
 
+TEST(TokenCredentialImpl, AuthErrorResponse)
+{
+  std::string const errorJson
+      = "{\"error\":\"invalid_request\","
+        "\"error_description\":\"AADSTS90014: "
+        "The required field 'scope' is missing from the credential. "
+        "Ensure that you have all the necessary parameters for the login request. "
+        "Trace ID: 01234567-89ab-cdef-0123-456789abcdef "
+        "Correlation ID: fedcba98-7654-3210-0123-456789abcdef "
+        "Timestamp: 2023-11-30 00:51:37Z\","
+        "\"error_codes\":[90014],"
+        "\"timestamp\":\"2023-11-30 00:51:37Z\","
+        "\"trace_id\":\"01234567-89ab-cdef-0123-456789abcdef\","
+        "\"correlation_id\":\"fedcba98-7654-3210-0123-456789abcdef\","
+        "\"error_uri\":\"https://login.microsoftonline.com/error?code=90014\"}";
+
+  try
+  {
+    using Azure::Core::Http::HttpStatusCode;
+    std::vector<std::string> const testScopes;
+    CredentialTestHelper::TokenRequestSimulationServerResponse testResponse;
+    testResponse.StatusCode = HttpStatusCode::BadRequest;
+    testResponse.Body = errorJson;
+
+    static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+        [](auto transport) {
+          TokenCredentialOptions options;
+          options.Transport.Transport = transport;
+
+          return std::make_unique<TokenCredentialImplTester>(
+              HttpMethod::Delete, Url("https://outlook.com/"), options);
+        },
+        {testScopes},
+        {testResponse}));
+
+    EXPECT_TRUE(!"TokenCredentialImpl should throw given the response above.");
+  }
+  catch (AuthenticationException const& ex)
+  {
+    EXPECT_EQ(ex.what(), "GetToken(): error response: 400 Test\n\n" + errorJson);
+  }
+}
+
 TEST(TokenCredentialImpl, Diagnosability)
 {
   using Azure::Core::Diagnostics::Logger;

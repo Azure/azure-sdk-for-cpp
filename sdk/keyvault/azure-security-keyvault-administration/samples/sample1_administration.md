@@ -7,16 +7,11 @@ To get started, you'll need a URI to an Azure Key Vault HSM.
 
 To create a new `SettingsClient` to access settings, you need the endpoint to an Azure Key Vault HSM and credentials.
 
-Key Vault Settings client for C++ currently supports the `ClientSecretCredential` for authenticating.
-
-In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
+Key Vault Settings client for C++ currently supports any `TokenCredential` for authenticating.
 
 ```cpp Snippet:SampleAdministration1CreateCredential
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+      = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
