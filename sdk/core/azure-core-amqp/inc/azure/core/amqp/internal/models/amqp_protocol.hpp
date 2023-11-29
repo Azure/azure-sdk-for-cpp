@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include <azure/core/internal/unique_handle.hpp>
-
 #include <cstdint>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {

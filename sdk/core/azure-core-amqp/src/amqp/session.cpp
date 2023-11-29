@@ -21,12 +21,12 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<SESSION_INSTANCE_TAG>::FreeAmqpSession(SESSION_HANDLE value)
   {
     session_destroy(value);
   }
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Endpoint::~Endpoint()
