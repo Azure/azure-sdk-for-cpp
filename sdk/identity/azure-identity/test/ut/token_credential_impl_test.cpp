@@ -872,7 +872,7 @@ TEST(TokenCredentialImpl, Diagnosability)
           "}",
           "TokenForAccessing",
           "TokenExpiresInSeconds",
-          ""));
+          std::string{}));
     }
     catch (std::exception const& e)
     {
@@ -947,6 +947,17 @@ TEST(TokenCredentialImpl, Diagnosability)
 
   // Token is ok, relative expiration can't be parsed, two absolute expiration property names were
   // provided, none of them can be parsed.
+  // I.e.
+  // 1. Token is ok.
+  // 2. Relative expiration ('TokenExpiresInSeconds') is not ok (null),
+  // 3. Absolute expiration (two properties - 'TokenExpiresAtTime' and 'token_expires_at_time')
+  //    are not ok (both are null).
+  //
+  // The test verifies that we print the log message that involves the names of BOTH absolute
+  // expiration properties.
+  //
+  // For all other tests, the message would include only one absolute expiration property
+  // ('TokenExpiresAtTime'), now we check that both are printed.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -984,8 +995,8 @@ TEST(TokenCredentialImpl, Diagnosability)
         "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
         "relative expiration property ('TokenExpiresInSeconds'): null, "
-        "absolute expiration property ('token_expires_at_time'): null, "
-        "absolute expiration property ('TokenExpiresAtTime'): null, "
+        "absolute expiration property ('token_expires_at_time'): null, " // <-- this gets printed
+        "absolute expiration property ('TokenExpiresAtTime'): null, " // <-- as well as this
         "and there are no other properties.");
 
     Logger::SetListener(nullptr);

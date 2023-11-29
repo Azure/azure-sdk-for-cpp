@@ -10,7 +10,9 @@
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/url.hpp>
 
+#include <algorithm>
 #include <chrono>
+#include <iterator>
 #include <limits>
 #include <map>
 
@@ -277,7 +279,14 @@ AccessToken TokenCredentialImpl::ParseToken(
     }
   }
 
-  if (expiresOnPropertyNames.front().empty())
+  std::vector<std::string> nonEmptyExpiresOnPropertyNames;
+  std::copy_if(
+      expiresOnPropertyNames.begin(),
+      expiresOnPropertyNames.end(),
+      std::back_inserter(nonEmptyExpiresOnPropertyNames),
+      [](auto const& propertyName) { return !propertyName.empty(); });
+
+  if (nonEmptyExpiresOnPropertyNames.empty())
   {
     // 'expires_in' is undefined, 'expires_on' is not expected.
     ThrowJsonPropertyError(
@@ -285,10 +294,10 @@ AccessToken TokenCredentialImpl::ParseToken(
         parsedJson,
         accessTokenPropertyName,
         expiresInPropertyName,
-        expiresOnPropertyNames);
+        nonEmptyExpiresOnPropertyNames);
   }
 
-  for (auto const& expiresOnPropertyName : expiresOnPropertyNames)
+  for (auto const& expiresOnPropertyName : nonEmptyExpiresOnPropertyNames)
   {
     if (parsedJson.contains(expiresOnPropertyName))
     {
@@ -346,11 +355,11 @@ AccessToken TokenCredentialImpl::ParseToken(
   }
 
   ThrowJsonPropertyError(
-      expiresOnPropertyNames.back(),
+      nonEmptyExpiresOnPropertyNames.back(),
       parsedJson,
       accessTokenPropertyName,
       expiresInPropertyName,
-      expiresOnPropertyNames);
+      nonEmptyExpiresOnPropertyNames);
 }
 
 namespace {
