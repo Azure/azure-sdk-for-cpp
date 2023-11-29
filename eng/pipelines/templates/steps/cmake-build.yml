@@ -5,20 +5,21 @@ parameters:
   BuildArgs: ''
   VcpkgArgs: ''
   ServiceDirectory: ''
+  PackageName: ''
 
 
 steps:
   - script: mkdir build
-    displayName: create working directory
+    displayName: create working directory ${{ parameters.PackageName }}
 
   - script: cmake --version
     workingDirectory: build
-    displayName: cmake --version
+    displayName: cmake --version ${{ parameters.PackageName }}
 
   - script: |
       ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
-    displayName: cmake generate
+    displayName: cmake generate ${{ parameters.PackageName }}
     env:
       VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
       X_VCPKG_ASSET_SOURCES: $(X_VCPKG_ASSET_SOURCES_SECRET)

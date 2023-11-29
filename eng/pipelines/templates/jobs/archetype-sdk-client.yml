@@ -204,6 +204,7 @@ jobs:
           parameters:
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             Build: false
+            PackageName: ${{ artifacts.Name }}
             GenerateArgs: >-
               -DINSTALL_GTEST=OFF
               -DBUILD_TESTING=OFF
