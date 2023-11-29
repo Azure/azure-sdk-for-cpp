@@ -1144,7 +1144,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates CSV text configuration.
      *
      * @param recordSeparator Record separator.
-     * @param columnSeparator Column sepeartor.
+     * @param columnSeparator Column separator.
      * @param quotationCharacter Field quote.
      * @param escapeCharacter Escape character.
      * @param hasHeaders If CSV file has headers.
@@ -1191,7 +1191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates CSV text configuration.
      *
      * @param recordSeparator Record separator.
-     * @param columnSeparator Column sepeartor.
+     * @param columnSeparator Column separator.
      * @param quotationCharacter Field quote.
      * @param escapeCharacter Escape character.
      * @param hasHeaders If CSV file has headers.

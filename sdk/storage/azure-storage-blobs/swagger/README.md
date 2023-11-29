@@ -1786,7 +1786,7 @@ directive:
       $.ContainerProperties.properties["DefaultEncryptionScope"].description = "The default encryption scope for the container.";
       $.ContainerProperties.properties["DenyEncryptionScopeOverride"].description = "Indicates whether the container's default encryption scope can be overriden.";
       $.ContainerProperties.properties["DeletedTime"].description = "Data and time at which this container was deleted. Only valid when this container was deleted.";
-      $.ContainerProperties.properties["RemainingRetentionDays"].description = "Remaining days before this container will be permanantely deleted. Only valid when this container was deleted.";
+      $.ContainerProperties.properties["RemainingRetentionDays"].description = "Remaining days before this container will be permanently deleted. Only valid when this container was deleted.";
       $.FilterBlobItem.properties["Name"].description = "Blob name.";
       $.FilterBlobItem.properties["ContainerName"].description = "Blob container name.";
       $.BlobItemInternal.properties["Name"].description = "Blob name.";
@@ -1810,7 +1810,7 @@ directive:
       $.BlobPropertiesInternal.properties["IncrementalCopy"].description = "Included if the blob is incremental copy blob.";
       $.BlobPropertiesInternal.properties["DestinationSnapshot"].description = "Included if the blob is incremental copy blob or incremental copy snapshot, if x-ms-copy-status is success. Snapshot time of the last successful incremental copy snapshot for this blob.";
       $.BlobPropertiesInternal.properties["DeletedTime"].description = "Data and time at which this blob was deleted. Only valid when this blob was deleted.";
-      $.BlobPropertiesInternal.properties["RemainingRetentionDays"].description = "Remaining days before this blob will be permanantely deleted. Only valid when this blob was deleted.";
+      $.BlobPropertiesInternal.properties["RemainingRetentionDays"].description = "Remaining days before this blob will be permanently deleted. Only valid when this blob was deleted.";
       $.BlobPropertiesInternal.properties["AccessTierInferred"].description = "True if the access tier is not explicitly set on the blob.";
       $.BlobPropertiesInternal.properties["CustomerProvidedKeySha256"].description = "SHA-256 hash of the encryption key.";
       $.BlobPropertiesInternal.properties["AccessTierChangeTime"].description = "The time the tier was changed on the object. This is only returned if the tier on the block blob was ever set.";
