@@ -9,10 +9,11 @@ param(
 	[string]$source_dir,
 
 	[Parameter(Mandatory = $true)]
-	[string]$output_dir
+	[string]$output_dir,
+
+	[Parameter(Mandatory = $false)][switch]
+	[bool]$verify = $false
 )
-
-
 
 function ParseSnippets {
 	param (
@@ -60,16 +61,19 @@ function ProcessSnippetsInFile {
 
 	# if there is no match, we don't need to do anything else.
 	if ($snippet_matches.Count -eq 0) {
-		return
+		return $true;
 	}
+
+	$original_file_contents = $output_file_contents
 
 	foreach ($snippet_match in $snippet_matches) {
 		$snippet_name = $snippet_match.Groups['snippet_name'].Value
 		Write-Host "Replacing snippet $snippet_name in file $output_file."
 		if (!$snippet_map[$snippet_name]) {
 			Write-Host "ERROR: Unknown snippet name: $snippet_name in file $output_file"
-			exit 1
+			return $false
 		}
+
 
 		if ($output_file.Extension -eq '.md') {
 
@@ -80,8 +84,6 @@ function ProcessSnippetsInFile {
 			$snippet_text = $snippet_map[$snippet_name]
 			$output_file_contents = $output_file_contents -replace "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+", "<!-- @insert_snippet: $snippet_name -->`r`n``````cpp`r`n$snippet_text`r`n```````r`n`r`n"
 
-			# The Regex::Replace above inserts an extra newline at the end of the file. Remove it.
-			$output_file_contents = $output_file_contents -replace "\s*\Z", "`r`n"
 		}
 		elseif ($output_file.Extension -eq '.hpp') {
 			$output_file_contents = $output_file_contents -replace '@insert_snippet:\s+(?<snippet_name>\w+)', '$snippet_map[$snippet_name]'
@@ -90,12 +92,31 @@ function ProcessSnippetsInFile {
 			$output_file_contents = $output_file_contents -replace '@insert_snippet:\s+(?<snippet_name>\w+)', '$snippet_map[$snippet_name]'
 		}
 		else {
-			Write-Out "ERROR: Unknown file extension: $output_file"
-			exit 1
+			Write-Host "ERROR: Unknown file extension: $output_file"
+			return $false
+		}
+
+	}
+	# The Regex::Replace above inserts an extra newline at the end of the file. Remove it.
+	$output_file_contents = $output_file_contents -replace "`r`n\s*\Z", "`r`n"
+
+	if ($verify) {
+		if ($output_file_contents.Equals($original_file_contents)) {
+			Write-Host "ERROR: Snippet contents does not match for file: $output_file."
+
+			Write-Host "output file contents: `r`n-------`r`n$output_file_contents"
+			Write-Host "`r`n-------"
+			Write-Host "Original file contents: `r`n-------`r`n$original_file_contents"
+			Write-Host "`r`n-------`r`n"
+			return $false
 		}
 	}
-	Set-Content -Path $output_file.FullName -Value $output_file_contents
-	
+ elseif (!$verify) {
+		Write-Host "Writing file: $output_file"
+		Set-Content -Path $output_file.FullName -Value $output_file_contents
+	}
+	return $true
+
 }
 
 $source_dir = Resolve-Path $source_dir
@@ -111,6 +132,14 @@ $snippet_map = ParseSnippets($input_files)
 
 # for each file in $output_files, read the contents of the file, searching for a string @insert_snippet: <snippet_name>. Insert the corresponding snippet from the $snippet_map
 # into the file at that location and write it out.
+$failed = $false
 foreach ($output_file in $output_files) {
-	ProcessSnippetsInFile -snippet_map $snippet_map -output_file $output_file
+	$result = ProcessSnippetsInFile -snippet_map $snippet_map -output_file $output_file
+	if (!$result) {
+		$failed = $true
+	}
+}
+if ($failed) {
+	Write-Host "ERROR: Snippet generation failed."
+	exit 1
 }

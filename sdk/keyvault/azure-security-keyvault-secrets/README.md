@@ -245,4 +245,3 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [secrets_client_src]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 
-
