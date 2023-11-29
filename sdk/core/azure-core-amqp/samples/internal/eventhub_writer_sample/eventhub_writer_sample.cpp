@@ -32,11 +32,6 @@ int main()
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 
-  constexpr int maxMessageSendCount = 5;
-
-  Azure::Core::Amqp::Models::AmqpMessage message;
-  message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
-
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
   senderOptions.MessageSource = "ingress";
@@ -48,12 +43,19 @@ int main()
   // Open the connection to the remote.
   sender.Open();
 
+  // @begin_snippet: SendMessages
+  Azure::Core::Amqp::Models::AmqpMessage message;
+  message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
+
+  constexpr int maxMessageSendCount = 5;
+
   int messageSendCount = 0;
   while (messageSendCount < maxMessageSendCount)
   {
     auto result = sender.Send(message);
     messageSendCount += 1;
   }
+  // @end_snippet
 
   auto timeEnd = std::chrono::high_resolution_clock::now();
   std::chrono::nanoseconds timeDiff = timeEnd - timeStart;
