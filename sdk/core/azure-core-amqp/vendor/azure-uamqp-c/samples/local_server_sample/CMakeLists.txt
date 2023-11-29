@@ -33,3 +33,5 @@ endif()
 else()
 	target_link_libraries(local_server_sample uamqp aziotsharedutil ssl crypto)
 endif()
+
+

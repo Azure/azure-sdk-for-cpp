@@ -628,3 +628,5 @@ TEST_FUNCTION(saslplain_get_interface_returns_the_sasl_plain_mechanism_interface
 }
 
 END_TEST_SUITE(sasl_plain_ut)
+
+

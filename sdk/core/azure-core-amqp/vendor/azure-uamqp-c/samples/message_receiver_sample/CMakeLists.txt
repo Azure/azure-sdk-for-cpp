@@ -33,3 +33,5 @@ endif()
 else()
 	target_link_libraries(message_receiver_sample uamqp aziotsharedutil ${OPENSSL_LIBRARIES})
 endif()
+
+

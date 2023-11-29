@@ -47,3 +47,5 @@ gtest_discover_tests(azure-storage-files-shares-test
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
+
+

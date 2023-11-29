@@ -63,3 +63,5 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultProtocolClient:
   }
   return response;
 }
+
+

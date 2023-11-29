@@ -26,3 +26,4 @@ catch {
   LogError "Add-GithubIssueComment failed with exception:`n$_"
   exit 1
 }
+

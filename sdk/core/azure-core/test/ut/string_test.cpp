@@ -131,3 +131,5 @@ TEST(String, toUpper)
   EXPECT_NE(StringExtensions::ToUpper("a"), "aA");
   EXPECT_NE(StringExtensions::ToUpper("abc"), "abcd");
 }
+
+

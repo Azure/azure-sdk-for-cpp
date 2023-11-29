@@ -322,3 +322,5 @@ if (NOT build_as_object_library)
 endif()
 
 compileTargetAsC99(uamqp)
+
+

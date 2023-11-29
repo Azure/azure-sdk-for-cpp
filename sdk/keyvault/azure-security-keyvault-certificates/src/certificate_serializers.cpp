@@ -818,3 +818,5 @@ std::string CertificateUpdateOptionsSerializer::Serialize(
 
   return updateOptions.dump();
 }
+
+

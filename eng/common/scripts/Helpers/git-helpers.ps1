@@ -36,3 +36,5 @@ function Get-ChangedFiles {
   }
   return $changedFiles
 }
+
+

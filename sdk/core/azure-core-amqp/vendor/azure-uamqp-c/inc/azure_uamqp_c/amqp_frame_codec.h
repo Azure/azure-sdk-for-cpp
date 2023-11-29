@@ -41,3 +41,5 @@ MOCKABLE_FUNCTION(, int, amqp_frame_codec_encode_empty_frame, AMQP_FRAME_CODEC_H
 #endif /* __cplusplus */
 
 #endif /* AMQP_FRAME_CODEC_H */
+
+

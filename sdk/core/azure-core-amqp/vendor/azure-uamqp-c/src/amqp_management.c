@@ -1412,3 +1412,5 @@ int amqp_management_set_override_status_description_key_name(AMQP_MANAGEMENT_HAN
 
     return result;
 }
+
+

@@ -106,3 +106,5 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     key.Properties.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
   }
 }
+
+

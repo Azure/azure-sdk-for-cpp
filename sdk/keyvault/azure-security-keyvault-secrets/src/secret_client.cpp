@@ -266,3 +266,5 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 }
 
 std::string SecretClient::GetUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
+
+

@@ -36,3 +36,5 @@ target_include_directories(
 target_link_libraries(azure-messaging-eventhubs-perf PRIVATE azure-identity azure-messaging-eventhubs azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-messaging-eventhubs-perf PROPERTIES FOLDER "Tests/eventhubs")
+
+

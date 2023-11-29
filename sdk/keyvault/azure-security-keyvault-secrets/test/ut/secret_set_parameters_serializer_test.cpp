@@ -58,3 +58,5 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValueCTAttrTag)
   EXPECT_EQ(jsonParser[AttributesPropertyName][EnabledPropertyName], true);
   EXPECT_EQ(jsonParser[ContentTypePropertyName], params.Properties.ContentType.Value());
 }
+
+

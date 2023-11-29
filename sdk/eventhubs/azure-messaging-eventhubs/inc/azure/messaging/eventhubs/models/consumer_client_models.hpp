@@ -30,3 +30,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   };
 
 }}}} // namespace Azure::Messaging::EventHubs::Models
+
+

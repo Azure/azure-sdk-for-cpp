@@ -221,3 +221,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     friend std::ostream& operator<<(std::ostream&, MessageSource const&);
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
+
+

@@ -23,3 +23,5 @@ void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)
 {
   this->m_bodyStream = std::move(stream);
 }
+
+

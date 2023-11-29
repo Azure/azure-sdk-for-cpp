@@ -226,3 +226,4 @@ if ($SkipSyncAndGenerate -and !$isNewSdkProject) {
 }
 
 return $sdkProjectFolder
+

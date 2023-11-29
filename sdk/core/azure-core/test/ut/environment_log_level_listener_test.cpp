@@ -264,3 +264,5 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWithEmptyString)
   EXPECT_EQ(buffer.str().find("INFO  : \n\n"), std::string::npos);
   std::cerr.rdbuf(old);
 }
+
+

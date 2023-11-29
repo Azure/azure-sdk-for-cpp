@@ -9,3 +9,5 @@ int main(void)
     RUN_TEST_SUITE(amqp_frame_codec_ut, failedTestCount);
     return (int)failedTestCount;
 }
+
+

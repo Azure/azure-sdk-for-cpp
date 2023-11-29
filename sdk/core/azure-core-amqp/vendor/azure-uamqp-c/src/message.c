@@ -1552,3 +1552,5 @@ int message_get_delivery_tag(MESSAGE_HANDLE message, AMQP_VALUE *delivery_tag_va
 
     return result;
 }
+
+

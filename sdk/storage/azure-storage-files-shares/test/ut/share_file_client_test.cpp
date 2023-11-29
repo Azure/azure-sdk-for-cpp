@@ -1853,3 +1853,5 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(xorAccessRights, accessRightsA ^ accessRightsB);
   }
 }}} // namespace Azure::Storage::Test
+
+

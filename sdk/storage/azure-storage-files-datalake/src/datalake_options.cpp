@@ -8,3 +8,5 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   const DataLakeAudience DataLakeAudience::DefaultAudience(_internal::StorageDefaultAudience);
 
 }}}} // namespace Azure::Storage::Files::DataLake
+
+

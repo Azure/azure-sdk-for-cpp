@@ -28,3 +28,5 @@ if (!$?) {
 
 write-host "Dump processes; verify two copies of squid running."
 wsl ps auxf
+
+

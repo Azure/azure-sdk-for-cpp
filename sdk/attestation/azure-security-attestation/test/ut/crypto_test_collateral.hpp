@@ -14,3 +14,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     static std::string TestRsaPublicKey();
   };
 }}}} // namespace Azure::Security::Attestation::Test
+
+

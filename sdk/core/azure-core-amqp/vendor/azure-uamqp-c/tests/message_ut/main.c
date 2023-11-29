@@ -9,3 +9,5 @@ int main(void)
     RUN_TEST_SUITE(message_ut, failedTestCount);
     return (int)failedTestCount;
 }
+
+

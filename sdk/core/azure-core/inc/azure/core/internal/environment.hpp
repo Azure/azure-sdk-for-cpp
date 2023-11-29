@@ -16,3 +16,5 @@ namespace Azure { namespace Core { namespace _internal {
     static void SetVariable(const char* name, const char* value);
   };
 }}} // namespace Azure::Core::_internal
+
+

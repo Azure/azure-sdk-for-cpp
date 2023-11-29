@@ -242,3 +242,4 @@ MOCKABLE_FUNCTION(, const IO_INTERFACE_DESCRIPTION*, header_detect_io_get_interf
 ```
 
 **SRS_HEADER_DETECT_IO_01_096: [** `header_detect_io_get_interface_description` shall return a pointer to an `IO_INTERFACE_DESCRIPTION` structure that contains pointers to the functions: `header_detect_io_retrieve_options`, `header_detect_io_retrieve_create`, `header_detect_io_destroy`, `header_detect_io_open`, `header_detect_io_close`, `header_detect_io_send` and `header_detect_io_dowork`. **]**
+

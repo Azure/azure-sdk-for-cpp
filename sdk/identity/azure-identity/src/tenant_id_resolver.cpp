@@ -56,3 +56,5 @@ bool TenantIdResolver::IsAdfs(std::string const& tenantId)
 {
   return StringExtensions::LocaleInvariantCaseInsensitiveEqual(tenantId, "adfs");
 }
+
+

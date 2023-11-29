@@ -303,3 +303,5 @@ TEST(Logger, LoggerStreamInsertion)
   Log::Stream(Logger::Level::Verbose)
       << "Verbose" << std::put_time(localtime(&time_t), "%c") << std::endl;
 }
+
+

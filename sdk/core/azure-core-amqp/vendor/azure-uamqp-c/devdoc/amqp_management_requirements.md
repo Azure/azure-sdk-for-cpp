@@ -507,3 +507,4 @@ The status description of a response to an unsuccessful operation SHOULD provide
 
 The form of the body of a response to an unsuccessful operation is unspecified and MAY be implementation-dependent.
 **SRS_AMQP_MANAGEMENT_01_080: [** Clients SHOULD ignore the body of response message if the statusCode is not in the 2xx range. **]**
+

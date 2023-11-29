@@ -70,3 +70,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     static void OnIOErrorFn(void* context);
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
+
+

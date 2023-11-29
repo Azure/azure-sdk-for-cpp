@@ -52,3 +52,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   std::ostream& operator<<(std::ostream&, EventHubPartitionProperties const&);
 
 }}}} // namespace Azure::Messaging::EventHubs::Models
+
+

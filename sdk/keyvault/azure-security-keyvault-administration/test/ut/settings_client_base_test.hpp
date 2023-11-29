@@ -84,3 +84,5 @@ namespace Azure {
     SettingsClientTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
   };
 }}}}} // namespace Azure::Security::KeyVault::Administration::Test
+
+

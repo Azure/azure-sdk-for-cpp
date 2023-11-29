@@ -280,3 +280,5 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlobServiceBatch;
   };
 }}} // namespace Azure::Storage::Blobs
+
+

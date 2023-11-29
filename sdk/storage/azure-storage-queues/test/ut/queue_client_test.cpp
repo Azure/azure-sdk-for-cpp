@@ -282,3 +282,5 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(queueClient.GetProperties(), StorageException);
   }
 }}} // namespace Azure::Storage::Test
+
+

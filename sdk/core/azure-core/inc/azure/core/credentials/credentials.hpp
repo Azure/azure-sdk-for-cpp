@@ -155,3 +155,5 @@ namespace Azure { namespace Core { namespace Credentials {
     char const* what() const noexcept override { return m_what.c_str(); }
   };
 }}} // namespace Azure::Core::Credentials
+
+

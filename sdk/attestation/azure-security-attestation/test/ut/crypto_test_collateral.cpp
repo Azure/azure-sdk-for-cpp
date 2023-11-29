@@ -63,3 +63,5 @@ GQIDAQAB
   std::string CryptoTestCollateral::TestRsaPrivateKey() { return testRsaPrivateKey; }
   std::string CryptoTestCollateral::TestRsaPublicKey() { return testRsaPublicKey; }
 }}}} // namespace Azure::Security::Attestation::Test
+
+

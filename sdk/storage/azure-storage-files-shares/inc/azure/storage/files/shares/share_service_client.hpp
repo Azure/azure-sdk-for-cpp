@@ -122,3 +122,5 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Nullable<Models::ShareTokenIntent> m_shareTokenIntent;
   };
 }}}} // namespace Azure::Storage::Files::Shares
+
+

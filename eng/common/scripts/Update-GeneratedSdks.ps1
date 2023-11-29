@@ -14,3 +14,5 @@ if (Test-Path "Function:$UpdateGeneratedSdksFn") {
 } else {
     Write-Error "Function $UpdateGeneratedSdksFn not implemented in Language-Settings.ps1"
 }
+
+

@@ -113,3 +113,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
         void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
+
+

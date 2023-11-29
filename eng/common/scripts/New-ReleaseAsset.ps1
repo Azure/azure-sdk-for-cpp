@@ -60,3 +60,5 @@ $asset = Invoke-RestMethod `
 Write-Verbose "Upload complete. Browser download URL: $($asset.browser_download_url)"
 
 return $asset
+
+

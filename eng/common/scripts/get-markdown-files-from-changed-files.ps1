@@ -11,3 +11,5 @@ param (
 . (Join-Path $PSScriptRoot common.ps1)
 
 return Get-ChangedFiles -TargetCommittish $targetBranch -DiffPath '*.md'
+
+

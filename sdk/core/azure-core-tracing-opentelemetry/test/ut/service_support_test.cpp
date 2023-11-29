@@ -752,3 +752,5 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
     EXPECT_EQ(0ul, spans.size());
   }
 }
+
+

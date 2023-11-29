@@ -87,3 +87,5 @@ std::string HttpSanitizer::SanitizeHeader(std::string const& header, std::string
   return (m_allowedHttpHeaders.find(header) != m_allowedHttpHeaders.end()) ? value
                                                                            : RedactedPlaceholder;
 }
+
+

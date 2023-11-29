@@ -57,3 +57,5 @@ create_map_file(azure-perf azure-perf.map)
 set_target_properties(azure-perf PROPERTIES FOLDER "Core")
 
 add_subdirectory(test)
+
+

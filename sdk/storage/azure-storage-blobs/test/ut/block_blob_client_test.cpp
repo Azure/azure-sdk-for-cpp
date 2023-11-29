@@ -2075,3 +2075,5 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blockBlobClient.GetProperties(), StorageException);
   }
 }}} // namespace Azure::Storage::Test
+
+

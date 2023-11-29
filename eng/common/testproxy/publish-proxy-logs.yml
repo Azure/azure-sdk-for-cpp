@@ -16,3 +16,5 @@ steps:
       Remove-Item -Force ${{ parameters.rootFolder }}/proxy.log
     displayName: Cleanup Copied Log File
     condition: succeededOrFailed()
+
+

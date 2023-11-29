@@ -12,3 +12,5 @@ namespace Azure { namespace Storage { namespace Queues {
   const std::chrono::seconds EnqueueMessageOptions::MessageNeverExpires{-1};
 
 }}} // namespace Azure::Storage::Queues
+
+

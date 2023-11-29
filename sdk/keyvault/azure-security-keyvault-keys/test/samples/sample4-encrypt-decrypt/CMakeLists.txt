@@ -14,3 +14,5 @@ add_executable (
 create_per_service_target_build_for_sample(keyvault sample4-encrypt-decrypt)
 
 target_link_libraries(sample4-encrypt-decrypt PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)
+
+

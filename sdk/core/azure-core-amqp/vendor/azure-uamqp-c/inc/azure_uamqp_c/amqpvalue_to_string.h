@@ -17,3 +17,5 @@ extern "C" {
 #endif /* __cplusplus */
 
 #endif /* AMQPVALUE_TO_STRING_H */
+
+

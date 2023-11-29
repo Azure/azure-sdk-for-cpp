@@ -123,3 +123,5 @@ $null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Mana
 $null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto User' -ObjectID $testApplicationOid
 
 Log "Role assignments created for '$testApplicationOid'"
+
+

@@ -676,3 +676,5 @@ bool is_<#= type_name.ToLower() #>_type_by_descriptor(AMQP_VALUE descriptor)
 <#          } #>
 <#      } #>
 <#  } #>
+
+

@@ -88,3 +88,5 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"help", {"-h", "--help"}, "Display help information.", 0},
       {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0}};
 }
+
+

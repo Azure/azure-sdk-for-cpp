@@ -194,3 +194,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
     Azure::Core::Url const& GetUrl() const { return m_vaultUrl; }
   };
 }}}} // namespace Azure::Security::KeyVault::_detail
+
+

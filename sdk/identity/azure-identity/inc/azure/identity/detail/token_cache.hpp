@@ -102,3 +102,5 @@ namespace Azure { namespace Identity { namespace _detail {
         std::function<Core::Credentials::AccessToken()> const& getNewToken) const;
   };
 }}} // namespace Azure::Identity::_detail
+
+

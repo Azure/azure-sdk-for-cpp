@@ -495,3 +495,5 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
   auto value = KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
 }
+
+

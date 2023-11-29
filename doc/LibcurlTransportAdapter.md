@@ -158,3 +158,5 @@ Whenever a libcurl connection is returned to the pool, the Pool Cleaner Agent (P
 
 PCA goes to sleep for 90 seconds only if a non-expired connection was found. If all connections were expired and removed, PCA is terminated and won't be started again until a connection is moved to the pool.
 PCA prevents applications from keeping expired connections objects in memory. A common scenario where the importance of the PCA can be observed is if the application needs to create a hundred connections and use them all at the same time. Eventually, all the connections would return to the pool and if the Azure SDK client is not used anymore by the application, there would be a hundred expired connections in heap memory until the application ends. 
+
+

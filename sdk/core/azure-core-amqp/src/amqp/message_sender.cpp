@@ -507,3 +507,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     throw std::runtime_error("Error sending message");
   }
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

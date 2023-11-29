@@ -59,3 +59,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return OpenSSLX509Certificate::CreateFromPrivateKey(privateKey, subjectName);
   }
 }}}} // namespace Azure::Security::Attestation::_detail
+
+

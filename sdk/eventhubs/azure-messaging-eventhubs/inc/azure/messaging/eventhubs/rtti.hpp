@@ -34,3 +34,5 @@
 #if defined(AZ_RTTI) || (0 /*@AZ_MESSAGING_EVENTHUBS_RTTI@*/)
 #define AZ_MESSAGING_EVENTHUBS_RTTI
 #endif
+
+

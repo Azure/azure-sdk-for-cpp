@@ -68,3 +68,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 #undef AZURE_SECURITY_KEYVAULT_KEYS_VERSION_MINOR
 #undef AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PATCH
 #undef AZURE_SECURITY_KEYVAULT_KEYS_VERSION_PRERELEASE
+
+

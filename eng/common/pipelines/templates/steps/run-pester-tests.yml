@@ -55,3 +55,4 @@ steps:
       codeCoverageTool: JaCoCo
       summaryFileLocation: $(Build.SourcesDirectory)/${{ parameters.TargetDirectory }}/coverage.xml
       pathToSources: $(Build.SourcesDirectory)/${{ parameters.TargetDirectory }}
+

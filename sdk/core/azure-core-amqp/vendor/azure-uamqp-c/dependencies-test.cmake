@@ -9,3 +9,4 @@ if(${use_installed_dependencies})
     set_platform_files("${CMAKE_CURRENT_LIST_DIR}/deps/azure-c-shared-utility")
     find_package(umock_c REQUIRED CONFIG)
 endif()
+

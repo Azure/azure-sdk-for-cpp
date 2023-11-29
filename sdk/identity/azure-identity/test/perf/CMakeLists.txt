@@ -37,3 +37,5 @@ target_include_directories(
 target_link_libraries(azure-identity-perf PRIVATE azure-identity azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-identity-perf PROPERTIES FOLDER "Tests/Identity")
+
+

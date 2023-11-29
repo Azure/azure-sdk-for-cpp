@@ -359,3 +359,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     return "version=1.0; authorizationrules{=> permit();}; issuancerules{};";
   }
 }}}} // namespace Azure::Security::Attestation::Test
+
+

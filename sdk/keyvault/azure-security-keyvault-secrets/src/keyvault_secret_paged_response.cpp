@@ -41,3 +41,5 @@ void DeletedSecretPagedResponse::OnNextPage(const Azure::Core::Context& context)
   *this = m_secretClient->GetDeletedSecrets(options, context);
   CurrentPageToken = options.NextPageToken.Value();
 }
+
+

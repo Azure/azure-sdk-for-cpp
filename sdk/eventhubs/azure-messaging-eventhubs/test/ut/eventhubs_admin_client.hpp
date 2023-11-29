@@ -241,3 +241,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Messaging::EventHubs::Test
+
+

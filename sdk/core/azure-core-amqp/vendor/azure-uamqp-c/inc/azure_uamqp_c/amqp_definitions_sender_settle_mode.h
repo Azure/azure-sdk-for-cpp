@@ -39,3 +39,5 @@ extern "C" {
 #endif
 
 #endif /* AMQP_DEFINITIONS_SENDER_SETTLE_MODE_H */
+
+

@@ -147,3 +147,4 @@ if ($Stage -eq "Launch")
   until ($complete.Invoke())
   Write-Error "The emulator failed to reach Running status within ${Timeout} seconds"
 }
+

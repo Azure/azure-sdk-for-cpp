@@ -297,3 +297,5 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Core::Context const& context = Azure::Core::Context{});
   };
 }}} // namespace Azure::Security::Attestation
+
+

@@ -49,3 +49,5 @@ int main()
 
   std::cout << "Created event hub, properties: " << eventhubProperties << std::endl;
 }
+
+

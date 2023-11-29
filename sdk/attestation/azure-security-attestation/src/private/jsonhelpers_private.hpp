@@ -41,3 +41,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         const std::string& fieldName);
   };
 }}}} // namespace Azure::Security::Attestation::_detail
+
+

@@ -51,3 +51,5 @@ function(get_az_version VERSION_HPP_FILE)
     message(STATUS "VERSION_PRERELEASE " ${VERSION_PRERELEASE})
     message(STATUS "AZ_LIBRARY_VERSION " ${AZ_LIBRARY_VERSION})
 endfunction()
+
+

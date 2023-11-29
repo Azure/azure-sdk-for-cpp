@@ -603,3 +603,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+

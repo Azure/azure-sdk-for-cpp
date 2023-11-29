@@ -129,3 +129,5 @@ This is necessary because the language is used in several places.
 ## A final note about the initial push
 
 If a directory with several thousand recordings is being migrated, the move and the initial push can take several minutes. For example, java storage recordings were used as a stress test. There are 4,693 files, with a combined size of 666 MB, and the initial push took about 7 minutes. This is a one time cost as the files do not exist yet within the assets repository. Subsequent pushes should have dramatically reduced push time.
+
+

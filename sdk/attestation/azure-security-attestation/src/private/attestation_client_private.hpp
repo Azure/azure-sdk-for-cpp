@@ -454,3 +454,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     operator Models::AttestationToken<T> const &() const { return m_token; }
   };
 }}}} // namespace Azure::Security::Attestation::_detail
+
+

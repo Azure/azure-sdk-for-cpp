@@ -43,3 +43,5 @@ Write-Output $serialized.pretty
 if ($CI) {
     Write-Output "##vso[task.setVariable variable=matrix;isOutput=true]$($serialized.compressed)"
 }
+
+

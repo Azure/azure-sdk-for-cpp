@@ -8,3 +8,5 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   const ShareAudience ShareAudience::DefaultAudience(_internal::StorageDefaultAudience);
 
 }}}} // namespace Azure::Storage::Files::Shares
+
+

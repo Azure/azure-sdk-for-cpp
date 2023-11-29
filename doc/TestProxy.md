@@ -53,3 +53,4 @@ When all recordings are done, we can call "test-proxy push" which will cause the
 
 The test-proxy will fetch the assets lazily, thus the first test execution will take a long time depending on external factors such as network, disk speed, cpu etc. While this is a one time event it can cause timeouts especially in environments that are time bound(e.g. piplines). 
 To solve this issue we can run test-proxy -restore, which will force the download of the data. 
+

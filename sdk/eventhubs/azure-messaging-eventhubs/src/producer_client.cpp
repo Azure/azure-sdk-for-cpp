@@ -211,3 +211,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         session, m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs
+
+

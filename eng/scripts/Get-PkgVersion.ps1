@@ -31,3 +31,5 @@ $VersionString = if ($Matches.prerelease) {
 }
 
 return $VersionString
+
+

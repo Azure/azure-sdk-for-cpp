@@ -140,3 +140,5 @@ std::chrono::milliseconds Azure::Messaging::EventHubs::_detail::RetryOperation::
 
   return std::min(exponentialRetryAfter, m_retryOptions.MaxRetryDelay);
 }
+
+

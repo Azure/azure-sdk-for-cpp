@@ -28,3 +28,5 @@ add_executable (
 
 # Link to Azure SDK
 target_link_libraries(application Azure::azure-storage-blobs get-env-helper)
+
+

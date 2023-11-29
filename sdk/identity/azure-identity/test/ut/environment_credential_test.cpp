@@ -536,3 +536,5 @@ TEST(EnvironmentCredential, ClientSecretNoClientSecret)
 
   Logger::SetListener(nullptr);
 }
+
+

@@ -968,3 +968,5 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::function<void(FileQueryError)> ErrorHandler;
   };
 }}}} // namespace Azure::Storage::Files::DataLake
+
+

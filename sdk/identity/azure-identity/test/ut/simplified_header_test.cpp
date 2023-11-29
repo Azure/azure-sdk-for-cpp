@@ -28,3 +28,5 @@ TEST(SimplifiedHeader, identity)
   static_cast<void>(sizeof(EnvironmentCredential));
   static_cast<void>(sizeof(ManagedIdentityCredential));
 }
+
+

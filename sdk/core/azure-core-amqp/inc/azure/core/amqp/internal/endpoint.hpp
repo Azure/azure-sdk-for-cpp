@@ -98,3 +98,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

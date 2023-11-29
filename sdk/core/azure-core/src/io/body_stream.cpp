@@ -228,3 +228,5 @@ NullBodyStream* NullBodyStream::GetNullBodyStream()
   static NullBodyStream nullBodyStream;
   return &nullBodyStream;
 }
+
+

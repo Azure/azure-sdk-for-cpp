@@ -2,3 +2,5 @@
 # SPDX-License-Identifier: MIT
 
 Stop-Process -Name "test-proxy"
+
+

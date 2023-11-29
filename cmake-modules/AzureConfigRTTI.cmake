@@ -34,3 +34,5 @@ macro(az_rtti_setup targetName packagePart rttiHeaderPath)
     endif()
   endif()
 endmacro()
+
+

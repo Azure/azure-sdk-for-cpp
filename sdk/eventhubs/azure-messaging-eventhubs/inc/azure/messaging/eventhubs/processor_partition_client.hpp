@@ -102,3 +102,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string GetPartitionId() { return m_partitionId; }
   };
 }}} // namespace Azure::Messaging::EventHubs
+
+

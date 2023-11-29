@@ -65,3 +65,5 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
 #undef AZURE_STORAGE_QUEUES_VERSION_MINOR
 #undef AZURE_STORAGE_QUEUES_VERSION_PATCH
 #undef AZURE_STORAGE_QUEUES_VERSION_PRERELEASE
+
+

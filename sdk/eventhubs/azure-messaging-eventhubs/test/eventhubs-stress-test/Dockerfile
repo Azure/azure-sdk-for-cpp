@@ -37,3 +37,5 @@ RUN chmod +x ./azure-messaging-eventhubs-stress-test
 
 CMD ./azure-messaging-eventhubs-stress-test
 # this should be run by the scenarios matrix , run valgrind only when needed since it impacts performance and resources. 
+
+

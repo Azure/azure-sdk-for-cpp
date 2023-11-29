@@ -54,3 +54,5 @@ foreach ($packageName in $packageNamesArray) {
     -Version $newVersion.ToString() `
     -ServiceDirectory $ServiceDirectory
 }
+
+

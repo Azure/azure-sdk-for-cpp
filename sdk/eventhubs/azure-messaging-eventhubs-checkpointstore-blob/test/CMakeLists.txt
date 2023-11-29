@@ -10,3 +10,5 @@ cmake_minimum_required (VERSION 3.13)
 
 # General AMQP Unit tests.
 add_subdirectory ("ut")
+
+

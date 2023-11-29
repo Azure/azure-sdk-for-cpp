@@ -19,3 +19,5 @@ function(create_map_file TARGET_NAME MAP_FILE_NAME)
         message("Skipping map file generation because CMake version does not support target_link_options")
     endif()
 endfunction()
+
+

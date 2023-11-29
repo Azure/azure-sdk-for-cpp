@@ -31,3 +31,5 @@ std::vector<uint8_t> _detail::GetRandomBytesSerializer::GetRandomBytesResponseDe
   auto value = jsonParser[_detail::ValueParameterValue].get<std::string>();
   return Azure::Core::_internal::Base64Url::Base64UrlDecode(value);
 }
+
+

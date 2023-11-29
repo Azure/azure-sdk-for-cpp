@@ -620,3 +620,5 @@ TEST(AzureCliCredential, Diagnosability)
   }
 }
 #endif // not UWP
+
+

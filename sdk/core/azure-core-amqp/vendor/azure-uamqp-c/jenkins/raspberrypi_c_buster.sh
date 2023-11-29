@@ -20,3 +20,5 @@ ls -al
 cmake -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake -Duse_prov_client=OFF -DCMAKE_INSTALL_PREFIX=${TOOLCHAIN_PREFIX} -Drun_e2e_tests=ON -Drun_unittests=ON ..
 make -j 2
 ls -al
+
+

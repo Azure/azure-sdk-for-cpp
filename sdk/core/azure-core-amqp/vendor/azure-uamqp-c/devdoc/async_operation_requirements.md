@@ -58,3 +58,5 @@ MOCKABLE_FUNCTION(, int, async_operation_cancel, ASYNC_OPERATION_HANDLE, async_o
 **SRS_ASYNC_OPERATION_01_007: [** `async_operation_cancel` shall cancel the operation by calling the cancel handler function passed to `async_operation_create`.**]**
 **SRS_ASYNC_OPERATION_01_008: [** On success `async_operation_cancel` shall return 0.**]**
 **SRS_ASYNC_OPERATION_01_009: [** If `async_operation` is NULL, `async_operation_cancel` shall fail and return a non-zero value.**]**
+
+

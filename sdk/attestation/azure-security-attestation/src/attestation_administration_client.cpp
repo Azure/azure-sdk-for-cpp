@@ -562,3 +562,5 @@ void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
     throw;
   }
 }
+
+

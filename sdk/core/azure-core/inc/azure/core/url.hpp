@@ -241,3 +241,5 @@ namespace Azure { namespace Core {
     std::string GetAbsoluteUrl() const;
   };
 }} // namespace Azure::Core
+
+

@@ -9,3 +9,5 @@ namespace Azure { namespace Security { namespace Attestation {
   const AttestationDataType AttestationDataType::Json("JSON");
 
 }}} // namespace Azure::Security::Attestation
+
+

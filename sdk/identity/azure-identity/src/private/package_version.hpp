@@ -69,3 +69,5 @@ namespace Azure { namespace Identity { namespace _detail {
 #undef AZURE_IDENTITY_VERSION_MINOR
 #undef AZURE_IDENTITY_VERSION_PATCH
 #undef AZURE_IDENTITY_VERSION_PRERELEASE
+
+

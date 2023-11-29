@@ -201,3 +201,5 @@ TEST_F(KeyVaultKeyClientMocked, GetPropertiesOfKeys)
   auto response = m_client->GetPropertiesOfKeys();
   EXPECT_NE(response.RawResponse, nullptr);
 }
+
+

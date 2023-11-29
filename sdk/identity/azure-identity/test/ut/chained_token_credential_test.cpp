@@ -211,3 +211,5 @@ TEST(ChainedTokenCredential, Logging)
 
   Logger::SetListener(nullptr);
 }
+
+

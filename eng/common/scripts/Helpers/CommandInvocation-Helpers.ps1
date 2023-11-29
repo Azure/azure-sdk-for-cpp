@@ -40,3 +40,5 @@ function Invoke-LoggedCommand($Command, $ExecutePath, [switch]$GroupOutput)
       }
     }
 }
+
+

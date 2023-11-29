@@ -157,3 +157,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("owner-id", ownerships[0].OwnerId);
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test
+
+

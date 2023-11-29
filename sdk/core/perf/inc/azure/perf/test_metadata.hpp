@@ -41,3 +41,5 @@ namespace Azure { namespace Perf {
     std::function<std::unique_ptr<Azure::Perf::PerfTest>(Azure::Perf::TestOptions)> Factory;
   };
 }} // namespace Azure::Perf
+
+

@@ -140,3 +140,5 @@ else
     Write-Error "Package properties are not available for service directory $($serviceDirectory)"
     exit 1
 }
+
+

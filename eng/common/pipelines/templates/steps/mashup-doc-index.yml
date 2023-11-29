@@ -79,3 +79,4 @@ steps:
     
             # Delete API Directory
             shutil.rmtree(os.path.join(SITE_INDEX, 'api'))
+

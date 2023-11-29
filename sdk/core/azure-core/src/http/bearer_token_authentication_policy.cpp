@@ -107,3 +107,5 @@ void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
 
   ApplyBearerToken(request, m_accessToken);
 }
+
+

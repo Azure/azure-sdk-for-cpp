@@ -36,3 +36,5 @@ target_include_directories(
 target_link_libraries(azure-security-keyvault-certificates-perf PRIVATE azure-identity azure-security-keyvault-certificates azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-security-keyvault-certificates-perf PROPERTIES FOLDER "Tests/Keyvault")
+
+

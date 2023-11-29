@@ -4028,3 +4028,5 @@ TEST_FUNCTION(header_detect_io_get_sasl_header_returns_the_AMQP_header)
 }
 
 END_TEST_SUITE(header_detect_io_ut)
+
+

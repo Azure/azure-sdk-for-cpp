@@ -19,3 +19,5 @@ output AZURE_STORAGE_ACCOUNT_KEY string = key
 output AZURE_STORAGE_CONNECTION_STRING string = connectionString
 output STANDARD_STORAGE_CONNECTION_STRING string = connectionString
 output STORAGE_CONNECTION_STRING string = connectionString
+
+

@@ -242,3 +242,5 @@ std::string Url::GetAbsoluteUrl() const
   return GetUrlWithoutQuery(false)
       + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
+
+

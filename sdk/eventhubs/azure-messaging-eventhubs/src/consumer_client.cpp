@@ -158,3 +158,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         GetSession({}), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs
+
+

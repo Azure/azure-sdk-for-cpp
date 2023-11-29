@@ -154,3 +154,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     /****************** Certificate Backup/Restore Properties **********/
     constexpr static const char X5cPropertyName[] = "x5c";
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
+
+

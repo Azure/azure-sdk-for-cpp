@@ -107,3 +107,5 @@ TEST(KeyEncryptionAlgorithmUnitTest, CheckValues)
   EXPECT_EQ(
       KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384.ToString(), _detail::RSA_AES_KEY_WRAP_384_Value);
 }
+
+

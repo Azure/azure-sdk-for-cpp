@@ -99,3 +99,4 @@ $shouldCleanUp = $configuration["cleanup"] ?? $true
 if ($shouldCleanUp) {
     Remove-Item $tempFolder -Recurse -Force
 }
+

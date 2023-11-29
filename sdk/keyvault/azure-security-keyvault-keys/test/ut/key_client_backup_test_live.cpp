@@ -67,3 +67,5 @@ TEST_F(KeyVaultKeyClient, BackupKey)
     EXPECT_EQ(keyName, response.Value.Name());
   }
 }
+
+

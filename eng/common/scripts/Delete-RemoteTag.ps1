@@ -31,3 +31,4 @@ catch
   LogError "Remove-GitHubSourceReferences failed with exception:`n$_"
   exit 1
 }
+

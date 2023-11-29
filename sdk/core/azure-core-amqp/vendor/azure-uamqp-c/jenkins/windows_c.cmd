@@ -13,3 +13,4 @@ cd %build-root%\build_all\windows
 call build.cmd %*
 if errorlevel 1 goto :eof
 cd %build-root%
+

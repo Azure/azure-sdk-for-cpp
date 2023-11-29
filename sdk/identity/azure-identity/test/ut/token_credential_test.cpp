@@ -84,3 +84,5 @@ TEST_F(TokenCredentialTest, EnvironmentCredential)
   EXPECT_FALSE(token.Token.empty());
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
 }
+
+

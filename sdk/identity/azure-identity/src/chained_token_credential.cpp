@@ -136,3 +136,5 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
 
   throw AuthenticationException("Failed to get token from " + credentialName + '.');
 }
+
+

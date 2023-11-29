@@ -45,3 +45,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     static _detail::UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+

@@ -289,3 +289,5 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     friend class ShareClient;
   };
 }}}} // namespace Azure::Storage::Files::Shares
+
+

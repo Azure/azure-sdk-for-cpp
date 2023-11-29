@@ -22,3 +22,5 @@ if ($IsOutput) {
   Write-Host "Setting variable '$Variable' to '$description'"
   Write-Host "##vso[task.setvariable variable=$Variable]$description"
 }
+
+

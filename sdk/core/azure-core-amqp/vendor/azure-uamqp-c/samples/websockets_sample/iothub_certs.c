@@ -86,3 +86,4 @@ const char iothub_certs[] =
 "RA+GsCyRxj3qrg+E\r\n"
 "-----END CERTIFICATE-----\r\n"
 ;
+

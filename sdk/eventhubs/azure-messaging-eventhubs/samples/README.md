@@ -55,3 +55,5 @@ The value of the `primaryConnectionString` property should be used as the `EVENT
 | consume-events/consume_events.cpp | This sample demonstrates how to receive events from an Event Hub using the `EventHubConsumerClient`. |
 | consume-events/consume_events_aad.cpp | This sample demonstrates how to receive events from an Event Hub using the `EventHubConsumerClient` using an Azure Active Directory account. |
 
+
+

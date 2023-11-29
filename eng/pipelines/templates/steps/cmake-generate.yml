@@ -26,3 +26,5 @@ steps:
   - script: rm -rf build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
     displayName: clean build folder
+
+

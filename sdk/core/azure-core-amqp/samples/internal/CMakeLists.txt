@@ -18,3 +18,5 @@ add_subdirectory ("eventhub_token_writer_sample")
 #add_subdirectory ("eventhub_reader_sample")
 add_subdirectory ("eventhub_sas_reader_sample")
 add_subdirectory ("eventhub_get_properties_sample")
+
+

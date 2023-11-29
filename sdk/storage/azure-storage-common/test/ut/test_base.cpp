@@ -555,3 +555,5 @@ namespace Azure { namespace Storage { namespace Test {
   const Azure::ETag StorageTest::DummyETag2("0x8D812645BFB0CDE");
 
 }}} // namespace Azure::Storage::Test
+
+

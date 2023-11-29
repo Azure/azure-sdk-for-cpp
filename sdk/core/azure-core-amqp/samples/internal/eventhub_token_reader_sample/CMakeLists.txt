@@ -17,3 +17,5 @@ add_executable(eventhub_token_reader_sample
 add_dependencies(eventhub_token_reader_sample azure-core-amqp)
 
 target_link_libraries(eventhub_token_reader_sample PRIVATE azure-core-amqp Azure::azure-identity get-env-helper)
+
+

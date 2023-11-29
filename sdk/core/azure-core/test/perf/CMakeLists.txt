@@ -35,3 +35,5 @@ target_include_directories(
 target_link_libraries(azure-core-perf PRIVATE azure-core azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-core-perf PROPERTIES FOLDER "Tests/Core")
+
+

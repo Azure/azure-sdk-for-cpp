@@ -184,3 +184,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::shared_ptr<_detail::MessageReceiverImpl> m_impl;
   };
 }}}} // namespace Azure::Core::Amqp::_internal
+
+

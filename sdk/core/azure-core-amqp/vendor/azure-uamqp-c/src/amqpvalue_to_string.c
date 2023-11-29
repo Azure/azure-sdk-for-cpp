@@ -717,3 +717,5 @@ char* amqpvalue_to_string(AMQP_VALUE amqp_value)
 
     return result;
 }
+
+

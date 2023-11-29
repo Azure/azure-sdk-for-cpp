@@ -23,3 +23,5 @@ steps:
       Get-ChildItem $ScanPaths -Filter *.md -Recurse | ${{ parameters.ScriptDirectory }}/Test-SampleMetadata.ps1 -AllowParentProducts
     displayName: Verify sample metadata
     workingDirectory: $(Build.SourcesDirectory)
+
+

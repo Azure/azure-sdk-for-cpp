@@ -42,3 +42,5 @@ target_link_libraries(vcpkg-all-smoke
 )
 
 create_per_service_target_build_for_sample(keyvault vcpkg-all-smoke)
+
+

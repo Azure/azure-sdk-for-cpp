@@ -50,3 +50,5 @@ std::string ClientCredentialCore::GetScopesString(
       ? std::string()
       : TokenCredentialImpl::FormatScopes(scopes, TenantIdResolver::IsAdfs(tenantId));
 }
+
+

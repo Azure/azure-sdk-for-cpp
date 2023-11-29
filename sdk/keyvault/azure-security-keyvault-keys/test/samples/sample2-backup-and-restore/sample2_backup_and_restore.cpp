@@ -183,3 +183,5 @@ void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& actual)
   assert(CompareNullableT(expected.ExpiresOn, actual.ExpiresOn));
   assert(CompareNullableT(expected.NotBefore, actual.NotBefore));
 }
+
+

@@ -25,3 +25,4 @@ if not !ERRORLEVEL!==0 exit /b !ERRORLEVEL!
 
 git push --tags
 if not !ERRORLEVEL!==0 exit /b !ERRORLEVEL!
+

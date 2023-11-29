@@ -366,3 +366,5 @@ int amqp_frame_codec_encode_empty_frame(AMQP_FRAME_CODEC_HANDLE amqp_frame_codec
 
     return result;
 }
+
+

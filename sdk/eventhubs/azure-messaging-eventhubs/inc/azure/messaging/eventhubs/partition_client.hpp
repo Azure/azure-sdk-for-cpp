@@ -118,3 +118,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string GetStartExpression(Models::StartPosition const& startPosition);
   };
 }}} // namespace Azure::Messaging::EventHubs
+
+

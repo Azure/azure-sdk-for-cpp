@@ -83,3 +83,5 @@ const SASL_MECHANISM_INTERFACE_DESCRIPTION* saslmssbcbs_get_interface(void)
 {
     return &saslmssbcbs_interface;
 }
+
+

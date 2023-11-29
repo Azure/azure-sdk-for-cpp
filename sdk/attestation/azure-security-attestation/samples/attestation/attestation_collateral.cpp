@@ -354,3 +354,5 @@ std::string AttestationCollateral::GetMinimalPolicy()
 {
   return "version=1.0; authorizationrules{=> permit();}; issuancerules{};";
 }
+
+

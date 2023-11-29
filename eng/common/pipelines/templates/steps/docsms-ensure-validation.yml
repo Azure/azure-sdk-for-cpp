@@ -10,3 +10,5 @@ steps:
     }
   displayName: Check package validation results
   condition: and(succeeded(), ne(variables['DocsMsPackagesAllValid'], ''))
+
+

@@ -122,3 +122,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 #endif // defined(TESTING_BUILD)
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

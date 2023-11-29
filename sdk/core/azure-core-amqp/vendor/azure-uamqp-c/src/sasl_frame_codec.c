@@ -330,3 +330,5 @@ int sasl_frame_codec_encode_frame(SASL_FRAME_CODEC_HANDLE sasl_frame_codec, AMQP
 
     return result;
 }
+
+

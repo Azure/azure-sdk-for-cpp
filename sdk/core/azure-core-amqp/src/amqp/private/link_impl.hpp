@@ -103,3 +103,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Poll() override;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

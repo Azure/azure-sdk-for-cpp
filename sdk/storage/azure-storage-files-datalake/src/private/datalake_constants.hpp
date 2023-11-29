@@ -17,3 +17,5 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   constexpr static const char* PermissionsHeaderName = "x-ms-permissions";
 
 }}}}} // namespace Azure::Storage::Files::DataLake::_detail
+
+

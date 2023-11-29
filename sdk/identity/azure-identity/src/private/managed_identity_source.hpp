@@ -189,3 +189,5 @@ namespace Azure { namespace Identity { namespace _detail {
         Core::Context const& context) const override;
   };
 }}} // namespace Azure::Identity::_detail
+
+

@@ -18,3 +18,5 @@ cmake .. -Drun_unittests:bool=ON -Drun_e2e_tests:bool=ON -G Xcode
 cmake --build . -- --jobs=$CORES
 ctest -C "debug" -V
 popd
+
+

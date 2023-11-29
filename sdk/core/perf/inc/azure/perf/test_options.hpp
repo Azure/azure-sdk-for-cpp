@@ -56,3 +56,5 @@ namespace Azure { namespace Perf {
     bool SensitiveData = false;
   };
 }} // namespace Azure::Perf
+
+

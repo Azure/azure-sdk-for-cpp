@@ -22,3 +22,5 @@ while ($wsl -notmatch 'Ubuntu-20.04.*running') {
 	write-host $wsl
 }
 write-host "Ubuntu installed."
+
+

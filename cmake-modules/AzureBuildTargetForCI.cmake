@@ -35,3 +35,5 @@ macro(create_per_service_target_build_for_sample  service target)
     file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
     
 endmacro()
+
+

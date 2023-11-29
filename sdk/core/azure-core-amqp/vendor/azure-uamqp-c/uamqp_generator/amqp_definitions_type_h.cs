@@ -924,3 +924,5 @@ namespace amqplib_generator
     }
     #endregion
 }
+
+

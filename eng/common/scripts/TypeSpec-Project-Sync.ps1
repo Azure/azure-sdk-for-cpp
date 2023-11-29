@@ -145,3 +145,5 @@ CopySpecToProjectIfNeeded `
   -specAdditionalSubDirectories $configuration["additionalDirectories"]
 
 exit 0
+
+

@@ -14,3 +14,5 @@ npm install -g moxygen
 $docsPath = "$RepoRoot/build/sdk/$ServiceDirectory/$PackageName/docs"
 New-Item -ItemType directory -Path $TargetFolder -Force
 moxygen --anchors --output "$TargetFolder/api-docs.md" "$docsPath/xml"
+
+

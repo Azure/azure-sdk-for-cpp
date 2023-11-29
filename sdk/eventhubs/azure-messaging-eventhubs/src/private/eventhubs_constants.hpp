@@ -19,3 +19,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   constexpr const char* EventHubsServiceScheme = "amqps://";
   constexpr const char* EventHubsConsumerGroupsPath = "/ConsumerGroups/";
 }}}} // namespace Azure::Messaging::EventHubs::_detail
+
+

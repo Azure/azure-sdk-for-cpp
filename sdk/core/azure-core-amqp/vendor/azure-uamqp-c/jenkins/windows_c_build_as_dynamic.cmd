@@ -22,3 +22,5 @@ if errorlevel 1 goto :eof
 
 cmake --build . -- /m
 if errorlevel 1 goto :eof
+
+

@@ -36,3 +36,4 @@ Set up steps:
 [create_service_principal]: https://learn.microsoft.com/purview/create-service-principal-azure
 [assign_role]: https://learn.microsoft.com/azure/storage/blobs/assign-azure-role-data-access?tabs=portal
 [azure_built_in_roles]: https://learn.microsoft.com/azure/role-based-access-control/built-in-roles
+

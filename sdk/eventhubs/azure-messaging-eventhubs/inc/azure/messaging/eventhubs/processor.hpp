@@ -333,3 +333,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Models::Checkpoint> GetCheckpointsMap(Core::Context const& context);
   };
 }}} // namespace Azure::Messaging::EventHubs
+
+

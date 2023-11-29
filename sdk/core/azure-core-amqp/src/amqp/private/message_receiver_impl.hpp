@@ -115,3 +115,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void PopulateLinkProperties();
   };
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

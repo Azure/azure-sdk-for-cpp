@@ -124,3 +124,5 @@ Figure 2.16: AMQP Frame Layout
 Figure 2.16: AMQP Frame Layout
 
 **SRS_AMQP_FRAME_CODEC_01_010: [**An AMQP frame with no body MAY be used to generate artificial traffic as needed to satisfy any negotiated idle timeout interval **]** (see subsection 2.4.5).
+
+

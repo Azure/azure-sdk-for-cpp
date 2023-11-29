@@ -905,3 +905,5 @@ TEST_F(KeyVaultCertificateClientTest, ServiceVersion)
                       "http://account.vault.azure.net", credential, options);
                   EXPECT_EQ(options.ApiVersion, "7.3"););
 }
+
+

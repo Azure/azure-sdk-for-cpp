@@ -62,3 +62,5 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
             COMMENT "Generate documentation for ${PROJECT_NAME} with Doxygen Version ${DOXYGEN_VERSION}")
     endif()
 endfunction()
+
+

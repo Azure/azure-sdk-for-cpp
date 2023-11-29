@@ -15,3 +15,5 @@ add_dependencies(eventhub_reader_sample Azure::azure-core-amqp)
 
 # Link test executable against the prototype.
 target_link_libraries(eventhub_reader_sample PRIVATE Azure::azure-core-amqp)
+
+

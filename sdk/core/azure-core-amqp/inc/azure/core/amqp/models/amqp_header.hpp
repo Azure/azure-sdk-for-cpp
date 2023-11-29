@@ -113,3 +113,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream&, MessageHeader const&);
 
 }}}} // namespace Azure::Core::Amqp::Models
+
+

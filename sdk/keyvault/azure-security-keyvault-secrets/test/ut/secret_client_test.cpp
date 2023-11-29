@@ -270,3 +270,5 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
     EXPECT_EQ(secretName, *findKeyName);
   }
 }
+
+

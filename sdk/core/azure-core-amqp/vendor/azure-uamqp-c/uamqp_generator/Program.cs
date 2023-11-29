@@ -217,3 +217,5 @@ namespace amqplib_generator
         }
     }
 }
+
+

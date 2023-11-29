@@ -1413,3 +1413,5 @@ TEST_FUNCTION(when_an_empty_frame_is_received_decoding_fails)
 }
 
 END_TEST_SUITE(sasl_frame_codec_ut)
+
+

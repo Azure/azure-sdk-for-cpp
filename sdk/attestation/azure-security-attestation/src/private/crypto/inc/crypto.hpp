@@ -218,3 +218,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         std::string const& pemEncodedCertificate);
   };
 }}}} // namespace Azure::Security::Attestation::_detail
+
+

@@ -272,3 +272,5 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [cppdoc_examples]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#pkg-examples
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Feventhubs%2FREADME.png)
+
+

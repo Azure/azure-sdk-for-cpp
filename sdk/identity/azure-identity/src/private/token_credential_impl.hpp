@@ -146,3 +146,5 @@ namespace Azure { namespace Identity { namespace _detail {
         = [](auto const, auto const&) { return nullptr; }) const;
   };
 }}} // namespace Azure::Identity::_detail
+
+

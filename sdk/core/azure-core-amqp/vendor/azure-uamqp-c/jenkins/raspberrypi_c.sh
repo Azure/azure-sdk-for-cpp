@@ -83,3 +83,5 @@ echo ---------- Building the SDK by executing build.sh script ----------
 cmake .. -DCMAKE_TOOLCHAIN_FILE=toolchain-rpi.cmake -DcompileOption_C:STRING="--sysroot=$RPI_ROOT"
 make
 [ $? -eq 0 ] || exit $?
+
+

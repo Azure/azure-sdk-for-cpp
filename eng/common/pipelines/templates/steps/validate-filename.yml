@@ -16,3 +16,4 @@ steps:
       Write-Host "There are no file names that only differ in case."
     displayName: Check file case duplicates
     workingDirectory: ${{ parameters.WorkingDirectory }}
+

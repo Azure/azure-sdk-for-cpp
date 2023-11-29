@@ -199,3 +199,5 @@ TEST_F(TestMessageAmqp, TestBodyAmqpData)
 
   GTEST_LOG_(INFO) << message;
 }
+
+

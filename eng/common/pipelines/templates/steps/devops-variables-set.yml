@@ -19,3 +19,4 @@ steps:
       }
     continueOnError: ${{ parameters.ContinueOnError }}
     displayName: Set DevOps Variables
+

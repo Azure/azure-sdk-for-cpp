@@ -27,3 +27,5 @@ namespace Azure { namespace Identity { namespace _detail {
     static bool IsAdfs(std::string const& tenantId);
   };
 }}} // namespace Azure::Identity::_detail
+
+

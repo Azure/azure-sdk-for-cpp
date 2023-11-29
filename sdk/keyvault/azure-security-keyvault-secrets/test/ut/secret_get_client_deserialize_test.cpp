@@ -105,3 +105,5 @@ TEST(SecretProperties, FactoryValid)
   EXPECT_EQ(props.Id, url);
   EXPECT_EQ(props.VaultUrl, "https://myvault.vault.azure.net");
 }
+
+

@@ -150,3 +150,5 @@ Setting SettingsClient::ParseSetting(std::vector<uint8_t> const& responseBody) c
   }
   return response;
 }
+
+

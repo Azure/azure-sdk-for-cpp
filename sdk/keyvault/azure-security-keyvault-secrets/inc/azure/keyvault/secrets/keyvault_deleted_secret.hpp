@@ -46,3 +46,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     DeletedSecret(std::string name) : KeyVaultSecret(std::move(name)) {}
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
+
+

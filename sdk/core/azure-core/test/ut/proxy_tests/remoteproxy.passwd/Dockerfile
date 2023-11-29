@@ -30,3 +30,5 @@ EXPOSE 3129
 STOPSIGNAL SIGTERM
 
 ENTRYPOINT squid -f /etc/squid/squid.conf && sleep 10 && tail -f /var/log/squid/access.log
+
+

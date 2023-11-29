@@ -110,3 +110,5 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     return nextPolicy.Send(request, context);
   }
 }
+
+

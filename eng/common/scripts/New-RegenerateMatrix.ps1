@@ -100,3 +100,5 @@ for ($i = 0; $i -lt $batches.Length; $i++) {
 
 $compressed = ConvertTo-Json $matrix -Depth 100 -Compress
 Write-Output "##vso[task.setVariable variable=$OutputVariableName;isOutput=true]$compressed"
+
+

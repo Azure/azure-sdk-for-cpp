@@ -72,3 +72,5 @@ gtest_discover_tests(azure-core-tracing-opentelemetry-test
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
+
+

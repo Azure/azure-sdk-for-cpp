@@ -487,3 +487,5 @@ Cryptography::CryptographyClient KeyClient::GetCryptographyClient(
   return Cryptography::_detail::CryptoClientInternalAccess::CreateCryptographyClient(
       vaultUrl, m_apiVersion, m_pipeline);
 }
+
+

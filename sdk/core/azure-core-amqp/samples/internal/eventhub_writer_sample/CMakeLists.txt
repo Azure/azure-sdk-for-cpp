@@ -13,3 +13,5 @@ add_executable(eventhub_writer_sample
 add_dependencies(eventhub_writer_sample Azure::azure-core-amqp)
 
 target_link_libraries(eventhub_writer_sample PRIVATE Azure::azure-core-amqp)
+
+

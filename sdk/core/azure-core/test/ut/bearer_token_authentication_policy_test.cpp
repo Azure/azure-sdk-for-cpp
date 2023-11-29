@@ -458,3 +458,5 @@ TEST(BearerTokenAuthenticationPolicy, ChallengeBasedFailure)
   EXPECT_NE(authHeader, headers.end());
   EXPECT_EQ(authHeader->second, "Bearer ACCESSTOKEN1");
 }
+
+

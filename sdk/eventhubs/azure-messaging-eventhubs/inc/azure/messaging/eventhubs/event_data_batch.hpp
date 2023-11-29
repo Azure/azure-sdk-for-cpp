@@ -194,3 +194,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     friend class _detail::EventDataBatchFactory;
   };
 }}} // namespace Azure::Messaging::EventHubs
+
+

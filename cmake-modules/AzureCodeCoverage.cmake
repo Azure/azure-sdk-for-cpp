@@ -136,3 +136,5 @@ macro(create_code_coverage service target_prefix exe_name)
         file(APPEND ${CMAKE_BINARY_DIR}/${service}-targets-coverage.txt " ${target_prefix}_cov_xml")
     endif()
 endmacro()
+
+

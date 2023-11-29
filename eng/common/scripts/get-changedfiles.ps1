@@ -38,3 +38,5 @@ return Get-ChangedFiles -SourceCommittish $SourceCommittish `
 -TargetCommittish $TargetCommittish `
 -DiffPath $DiffPath `
 -DiffFilterType $DiffFilterType
+
+

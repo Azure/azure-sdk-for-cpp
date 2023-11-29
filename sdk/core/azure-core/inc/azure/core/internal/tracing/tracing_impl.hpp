@@ -283,3 +283,5 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     virtual ~Tracer() = default;
   };
 }}}} // namespace Azure::Core::Tracing::_internal
+
+

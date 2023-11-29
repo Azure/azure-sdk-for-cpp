@@ -787,3 +787,5 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
   }
 }}} // namespace Azure::Storage::Test
+
+

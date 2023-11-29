@@ -128,3 +128,5 @@ namespace Azure { namespace Perf {
    */
   void to_json(Azure::Core::Json::_internal::json& j, const GlobalTestOptions& p);
 }} // namespace Azure::Perf
+
+

@@ -36,3 +36,5 @@ extern "C" {
 #endif
 
 #endif /* AMQP_DEFINITIONS_ADDRESS_STRING_H */
+
+

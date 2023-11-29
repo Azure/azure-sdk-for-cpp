@@ -20,3 +20,5 @@ SecretProperties SecretProperties::CreateFromURL(std::string const& url)
   _detail::SecretSerializer::ParseIDUrl(result, urlInstance.GetAbsoluteUrl());
   return result;
 }
+
+

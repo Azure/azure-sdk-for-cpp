@@ -4264,3 +4264,5 @@ TEST_FUNCTION(when_the_sasl_frame_codec_triggers_an_error_in_the_ERROR_state_not
 }
 
 END_TEST_SUITE(saslclientio_ut)
+
+

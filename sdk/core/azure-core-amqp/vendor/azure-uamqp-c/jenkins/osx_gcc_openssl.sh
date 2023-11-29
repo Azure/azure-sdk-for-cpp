@@ -18,3 +18,5 @@ cmake .. -DOPENSSL_ROOT_DIR:PATH=/usr/local/opt/openssl -Duse_openssl:bool=ON -D
 cmake --build . -- --jobs=$CORES
 ctest -C "debug" -V
 popd
+
+

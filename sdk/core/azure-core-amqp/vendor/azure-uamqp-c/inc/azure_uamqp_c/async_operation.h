@@ -41,3 +41,5 @@ MOCKABLE_FUNCTION(, int, async_operation_cancel, ASYNC_OPERATION_HANDLE, async_o
 #endif /* __cplusplus */
 
 #endif /* ASYNC_OPERATION_H */
+
+

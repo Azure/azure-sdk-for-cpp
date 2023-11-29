@@ -105,3 +105,5 @@ if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY AND BUILD_TESTING)
   
   add_subdirectory(test/ut)
 endif()
+
+

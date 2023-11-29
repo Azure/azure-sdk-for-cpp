@@ -35,3 +35,5 @@ else()
         target_link_libraries(message_sender_sample ${OPENSSL_LIBRARIES})
 
 endif()
+
+

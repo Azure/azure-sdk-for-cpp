@@ -19,3 +19,5 @@ endmacro()
 
 define_sample(consume_events)
 define_sample(consume_events_aad)
+
+

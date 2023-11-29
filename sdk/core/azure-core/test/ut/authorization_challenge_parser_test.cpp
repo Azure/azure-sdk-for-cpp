@@ -205,3 +205,5 @@ TEST(AuthorizationChallengeParser, StorageChallenge)
       GetChallengeParameterFromResponse(response, "Bearer", "resource_id"),
       "https://storage.azure.com");
 }
+
+

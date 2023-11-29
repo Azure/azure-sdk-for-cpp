@@ -494,3 +494,5 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.Value.HttpHeaders.ContentEncoding, fileSasBuilder.ContentEncoding);
   }
 }}} // namespace Azure::Storage::Test
+
+

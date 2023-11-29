@@ -64,3 +64,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 #undef AZURE_ATTESTATION_VERSION_MINOR
 #undef AZURE_ATTESTATION_VERSION_PATCH
 #undef AZURE_ATTESTATION_VERSION_PRERELEASE
+
+

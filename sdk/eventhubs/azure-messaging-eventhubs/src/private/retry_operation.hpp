@@ -79,3 +79,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     bool Execute(std::function<bool()> operation);
   };
 }}}} // namespace Azure::Messaging::EventHubs::_detail
+
+

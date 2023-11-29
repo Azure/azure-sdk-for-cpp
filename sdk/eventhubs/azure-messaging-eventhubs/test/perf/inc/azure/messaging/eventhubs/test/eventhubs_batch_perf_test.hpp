@@ -270,3 +270,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
   };
 
 }}}}} // namespace Azure::Messaging::EventHubs::PerfTest::Batch
+
+

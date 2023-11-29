@@ -52,3 +52,4 @@ Write-Host "Existing version is GA"
 
 Write-Host "Criteria for publishing not satisifed, do NOT publish to vcpkg"
 Write-Host "##vso[task.setvariable variable=PublishToVcpkg]false"
+

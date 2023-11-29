@@ -15,3 +15,5 @@ create_per_service_target_build(identity azure-identity-e2e-test)
 
 create_map_file(azure-identity-e2e-test azure-identity-e2e-test.map)
 target_link_libraries(azure-identity-e2e-test PRIVATE azure-identity)
+
+

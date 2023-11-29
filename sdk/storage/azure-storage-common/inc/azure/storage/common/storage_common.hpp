@@ -55,3 +55,5 @@ namespace Azure { namespace Storage {
   using Metadata = Azure::Core::CaseInsensitiveMap;
 
 }} // namespace Azure::Storage
+
+

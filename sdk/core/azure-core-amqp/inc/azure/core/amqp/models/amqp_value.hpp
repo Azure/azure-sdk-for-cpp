@@ -1180,3 +1180,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpValue m_value;
   };
 }}}} // namespace Azure::Core::Amqp::Models
+
+

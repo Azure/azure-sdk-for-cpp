@@ -67,3 +67,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     friend _detail::EventHubsExceptionFactory;
   };
 }}} // namespace Azure::Messaging::EventHubs
+
+

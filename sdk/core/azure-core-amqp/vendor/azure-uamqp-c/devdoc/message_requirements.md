@@ -392,3 +392,5 @@ MOCKABLE_FUNCTION(, int, message_get_message_format, MESSAGE_HANDLE, message, ui
 **SRS_MESSAGE_01_133: [** On success, `message_get_message_format` shall return 0. **]**
 **SRS_MESSAGE_01_134: [** If `message` or `message_format` is NULL, `message_get_message_format` shall fail and return a non-zero value. **]**
 **SRS_MESSAGE_01_135: [** By default a message on which `message_set_message_format` was not called shall have message format set to 0. **]**
+
+

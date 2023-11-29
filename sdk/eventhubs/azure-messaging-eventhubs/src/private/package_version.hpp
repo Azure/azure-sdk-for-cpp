@@ -67,3 +67,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 #undef AZURE_MESSAGING_EVENTHUBS_VERSION_MINOR
 #undef AZURE_MESSAGING_EVENTHUBS_VERSION_PATCH
 #undef AZURE_MESSAGING_EVENTHUBS_VERSION_PRERELEASE
+
+

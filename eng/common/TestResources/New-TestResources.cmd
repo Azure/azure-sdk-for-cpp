@@ -15,3 +15,5 @@ if "%_cmd%"=="" (
 )
 
 call "%_cmd%" -NoLogo -NoProfile -File "%~dpn0.ps1" %*
+
+

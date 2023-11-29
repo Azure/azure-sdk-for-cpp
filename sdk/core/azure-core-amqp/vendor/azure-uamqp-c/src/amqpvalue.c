@@ -7381,3 +7381,5 @@ AMQP_VALUE amqpvalue_get_list_item_in_place(AMQP_VALUE value, size_t index)
 
     return result;
 }
+
+

@@ -65,3 +65,5 @@ namespace Azure { namespace Core { namespace _internal {
   template <typename T, template <typename> class U = UniqueHandleHelper>
   using UniqueHandle = typename U<T>::type;
 }}} // namespace Azure::Core::_internal
+
+

@@ -615,3 +615,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 #endif
 
 }}}} // namespace Azure::Messaging::EventHubs::Test
+
+

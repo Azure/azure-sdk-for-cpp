@@ -11,3 +11,5 @@ if ($IsWindows) {
 } else { 
   Start-Process nohup 'python3 websocket_server.py' -RedirectStandardOutput $LogFileLocation
 }
+
+

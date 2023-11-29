@@ -15,3 +15,5 @@ Tests:
   Class: GetSecret
   Arguments:
   - --parallel 4
+
+

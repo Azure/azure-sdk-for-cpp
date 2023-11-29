@@ -226,3 +226,5 @@ std::shared_ptr<Azure::Core::Http::HttpTransport> ::AzureSdkGetCustomHttpTranspo
   return std::make_shared<CustomHttpTransportAdapter>();
 }
 ```
+
+

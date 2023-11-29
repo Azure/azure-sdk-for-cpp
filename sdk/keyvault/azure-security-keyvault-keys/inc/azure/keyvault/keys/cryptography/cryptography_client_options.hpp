@@ -44,3 +44,5 @@ namespace Azure {
     CryptographyClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.3"; }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography
+
+

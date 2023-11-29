@@ -271,3 +271,5 @@ No API changes since `1.0.0-beta.6`.
 
 - Support for Client Secret Credential.
 - Support for Environment Credential.
+
+

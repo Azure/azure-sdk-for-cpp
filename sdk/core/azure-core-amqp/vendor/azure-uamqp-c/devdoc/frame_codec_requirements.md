@@ -209,3 +209,5 @@ Figure 2.15: General Frame Layout
 **SRS_FRAME_CODEC_01_071: [**The subsequent bytes in the frame header MAY be interpreted differently depending on the type of the frame.**]** 
 **SRS_FRAME_CODEC_01_072: [**A type code of 0x00 indicates that the frame is an AMQP frame.**]** 
 **SRS_FRAME_CODEC_01_073: [**A type code of 0x01 indicates that the frame is a SASL frame**]** , see Part 5: section 5.3.
+
+

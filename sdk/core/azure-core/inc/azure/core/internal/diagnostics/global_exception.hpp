@@ -37,3 +37,5 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     }
   };
 }}}} // namespace Azure::Core::Diagnostics::_internal
+
+

@@ -12,3 +12,5 @@ steps:
       Write-Host "Daily Branch Name: $branchName"
       Write-Host "##vso[task.setvariable variable=${{ parameters.DailyBranchVariableName }};]$branchName"
     displayName: Set daily docs branch name in $(${{ parameters.DailyBranchVariableName }})
+
+

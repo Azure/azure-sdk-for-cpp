@@ -63,3 +63,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     EXPECT_FALSE(retryOp.ShouldRetry(false, LocalTest::retryOptions.MaxRetries, retryAfter));
   }
 }}}}} // namespace Azure::Messaging::EventHubs::_internal::Test
+
+

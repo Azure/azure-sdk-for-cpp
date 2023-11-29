@@ -132,3 +132,5 @@ void main() {
 The reason why the Operation\<T> is not asking all derived classes to be init based on an HTTP raw response is by design to allow each concrete operation to define its behavior up to the first `Poll()` call.
 
 The Operation\<T> will maintain the ownership of the HTTP raw response and the value (once created). This means that `Extract` is not supported by the operation and calling `GetRawResponse()` and `Value()` will return read-only reference to its internal members.
+
+

@@ -34,3 +34,5 @@ pushd $sdk_build_folder
 cmake $build_root -Duse_installed_dependencies=ON
 make --jobs=$CORES
 popd
+
+

@@ -961,3 +961,5 @@ AMQP_HEADER header_detect_io_get_sasl_amqp_header(void)
     /* Codes_SRS_HEADER_DETECT_IO_01_091: [ `header_detect_io_get_sasl_amqp_header` shall return a structure that should point to a buffer that contains the bytes { 'A', 'M', 'Q', 'P', 3, 1, 0, 0 }. ]*/
     return sasl_amqp_header;
 }
+
+

@@ -104,3 +104,5 @@ void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& ac
   assert(expected.Properties.Version == actual.Properties.Version);
   assert(expected.Id == actual.Id);
 }
+
+

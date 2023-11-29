@@ -14,3 +14,5 @@ add_executable (
 create_per_service_target_build_for_sample(keyvault cleanup-keyvault)
 
 target_link_libraries(cleanup-keyvault PRIVATE azure-security-keyvault-secrets azure-security-keyvault-keys azure-security-keyvault-certificates azure-identity get-env-helper)
+
+

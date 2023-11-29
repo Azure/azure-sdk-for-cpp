@@ -97,3 +97,4 @@
   <Target Name="Microsoft_Azure_Amqp_redist_AfterBuild_ARM_and_Release" Label="ARM and Release" Condition="'$(Platform.ToLower())' == 'arm' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 )" AfterTargets="Microsoft_Azure_Amqp_redist_AfterBuild">
   </Target>
 </Project>
+

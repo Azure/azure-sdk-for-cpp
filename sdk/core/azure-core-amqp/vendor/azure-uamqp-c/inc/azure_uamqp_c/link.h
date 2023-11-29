@@ -87,3 +87,5 @@ MOCKABLE_FUNCTION(, void, link_unsubscribe_on_link_detach_received, ON_LINK_DETA
 #endif /* __cplusplus */
 
 #endif /* LINK_H */
+
+

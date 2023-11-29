@@ -662,3 +662,4 @@ namespace Azure { namespace Storage { namespace Queues {
     };
   } // namespace _detail
 }}} // namespace Azure::Storage::Queues
+

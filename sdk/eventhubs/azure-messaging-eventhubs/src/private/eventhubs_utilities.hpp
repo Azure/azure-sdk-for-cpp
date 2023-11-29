@@ -269,3 +269,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   };
 
 }}}} // namespace Azure::Messaging::EventHubs::_detail
+
+

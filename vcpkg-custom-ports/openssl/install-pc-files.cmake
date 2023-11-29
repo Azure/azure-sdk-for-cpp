@@ -30,3 +30,5 @@ Cflags: -I"${includedir}"
 ]])
 
 vcpkg_fixup_pkgconfig()
+
+

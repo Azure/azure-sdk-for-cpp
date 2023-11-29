@@ -15,3 +15,5 @@ add_executable (
 create_per_service_target_build_for_sample(keyvault certificate-basic-operations)
 
 target_link_libraries(certificate-basic-operations PRIVATE azure-security-keyvault-certificates azure-identity get-env-helper)
+
+

@@ -39,3 +39,5 @@ struct MatchConditions
   ETag IfNoneMatch;
 };
 } // namespace Azure
+
+

@@ -25,3 +25,5 @@ steps:
       pwsh: true
     displayName: Detect API changes
     condition: and(succeededOrFailed(), eq(variables['Build.Reason'],'PullRequest'))
+
+

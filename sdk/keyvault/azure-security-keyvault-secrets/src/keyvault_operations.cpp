@@ -189,3 +189,5 @@ DeleteSecretOperation DeleteSecretOperation::CreateFromResumeToken(
   operation.Poll(context);
   return operation;
 }
+
+

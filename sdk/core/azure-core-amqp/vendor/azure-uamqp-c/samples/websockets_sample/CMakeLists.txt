@@ -26,3 +26,5 @@ endif()
 else()
     target_link_libraries(websockets_sample	uamqp aziotsharedutil)
 endif()
+
+

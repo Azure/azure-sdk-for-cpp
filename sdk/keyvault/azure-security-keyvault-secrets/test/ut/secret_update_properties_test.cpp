@@ -68,3 +68,5 @@ TEST(SecretPropertiesSerializer, Serialize3)
     EXPECT_EQ(properties.Tags[kvp.first], jsonParser[_detail::TagsPropertyName][kvp.first]);
   }
 }
+
+

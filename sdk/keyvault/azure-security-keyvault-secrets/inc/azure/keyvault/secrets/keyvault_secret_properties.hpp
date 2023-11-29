@@ -143,3 +143,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     static SecretProperties CreateFromURL(std::string const& url);
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
+
+

@@ -53,3 +53,5 @@ TEST(RestoreSecretSerializer, SomeValue)
   // cspell: disable-next-line
   EXPECT_EQ(jsonParser["value"], "bXkgbmFtZSBpcw");
 }
+
+

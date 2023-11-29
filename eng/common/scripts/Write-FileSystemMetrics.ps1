@@ -29,3 +29,4 @@ foreach($drive in $drives) {
 
     Write-Output "logmetric: $($entry | ConvertTo-Json -Compress)"
 }
+

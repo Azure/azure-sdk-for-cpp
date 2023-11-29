@@ -39,3 +39,5 @@ extern "C" {
 #endif
 
 #endif /* AMQP_DEFINITIONS_CONNECTION_ERROR_H */
+
+

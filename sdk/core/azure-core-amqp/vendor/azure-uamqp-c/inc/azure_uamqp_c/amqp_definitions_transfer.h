@@ -59,3 +59,5 @@ extern "C" {
 #endif
 
 #endif /* AMQP_DEFINITIONS_TRANSFER_H */
+
+

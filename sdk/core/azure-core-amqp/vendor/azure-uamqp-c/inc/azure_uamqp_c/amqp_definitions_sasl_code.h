@@ -41,3 +41,5 @@ extern "C" {
 #endif
 
 #endif /* AMQP_DEFINITIONS_SASL_CODE_H */
+
+

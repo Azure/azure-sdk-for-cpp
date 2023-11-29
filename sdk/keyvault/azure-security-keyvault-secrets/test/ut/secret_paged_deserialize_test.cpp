@@ -136,3 +136,5 @@ TEST(DeletedSecretPagedResultSerializer, NoneNoNext)
   EXPECT_EQ(result.Items.size(), size_t(0));
   EXPECT_EQ(result.NextPageToken.HasValue(), false);
 }
+
+

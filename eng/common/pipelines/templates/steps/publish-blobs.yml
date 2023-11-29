@@ -31,3 +31,4 @@ steps:
     workingDirectory: $(Pipeline.Workspace)
   displayName: Copy Docs to Blob
   continueOnError: false
+

@@ -159,3 +159,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Core::Context const& context = {});
   };
 }}}} // namespace Azure::Messaging::EventHubs::_detail
+
+

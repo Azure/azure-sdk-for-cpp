@@ -1644,3 +1644,5 @@ TEST_FUNCTION(when_amqp_value_decoding_fails_subsequent_decoding_fails_even_if_t
 }
 
 END_TEST_SUITE(amqp_frame_codec_ut)
+
+

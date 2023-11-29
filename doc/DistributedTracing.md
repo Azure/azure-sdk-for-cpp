@@ -237,3 +237,5 @@ Generated traces have the following attributes:
 | `net.peer.port` | The TCP Port of the Azure service endpoint if not 80 or 443| HTTP Spans.
 | `az.client_request_id` | The value of the `x-ms-client-request-id` header sent by the client | HTTP Spans.
 | `az.service_request_id` | The value of the `x-ms-request-id` sent by the server | HTTP Spans.
+
+

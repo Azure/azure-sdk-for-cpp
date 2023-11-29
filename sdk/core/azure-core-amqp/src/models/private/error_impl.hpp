@@ -39,3 +39,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpErrorFactory() = delete;
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+

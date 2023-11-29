@@ -293,3 +293,4 @@ TEST_F(EventDataTest, ReceivedEventData)
     EXPECT_FALSE(receivedEventData.PartitionKey);
   }
 }
+

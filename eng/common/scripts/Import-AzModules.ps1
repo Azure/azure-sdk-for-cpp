@@ -6,3 +6,5 @@ param (
 . (Join-Path $PSScriptRoot Helpers PSModule-Helpers.ps1)
 
 Install-ModuleIfNotInstalled "Az" $AzModuleVersion | Import-Module
+
+

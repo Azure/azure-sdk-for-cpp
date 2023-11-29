@@ -469,3 +469,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 #endif // SAMPLES_BUILD
   };
 }}}} // namespace Azure::Core::Amqp::_internal
+
+

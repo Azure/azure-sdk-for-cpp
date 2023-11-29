@@ -124,3 +124,5 @@ namespace Azure { namespace Storage { namespace _internal {
     return audience + "/.default";
   }
 }}} // namespace Azure::Storage::_internal
+
+

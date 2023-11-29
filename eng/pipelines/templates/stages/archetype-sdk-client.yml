@@ -171,3 +171,5 @@ stages:
         ArtifactName: packages
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
+
+

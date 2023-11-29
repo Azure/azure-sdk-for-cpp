@@ -79,3 +79,5 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeTok
   operation.Poll(context);
   return operation;
 }
+
+

@@ -70,3 +70,5 @@ Azure::Core::Http::Request AttestationCommonRequest::CreateRequest(
   }
   return request;
 }
+
+

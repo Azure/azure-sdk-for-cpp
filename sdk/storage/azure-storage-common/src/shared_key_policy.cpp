@@ -85,3 +85,5 @@ namespace Azure { namespace Storage { namespace _internal {
         Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
   }
 }}} // namespace Azure::Storage::_internal
+
+

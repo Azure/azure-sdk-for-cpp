@@ -109,3 +109,5 @@ MOCKABLE_FUNCTION(, const char*, sasl_server_mechanism_get_mechanism_name, SASL_
 **SRS_SASL_SERVER_MECHANISM_01_021: [** If the argument `sasl_server_mechanism` is NULL, `sasl_server_mechanism_get_mechanism_name` shall fail and return a non-zero value. **]**
 
 **SRS_SASL_SERVER_MECHANISM_01_022: [** If the underlying `get_mechanism_name` fails, `sasl_server_mechanism_get_mechanism_name` shall return NULL. **]**
+
+

@@ -11,3 +11,5 @@ Tests:
     Class: extendedOptions
     Arguments:
     - -e 1
+
+

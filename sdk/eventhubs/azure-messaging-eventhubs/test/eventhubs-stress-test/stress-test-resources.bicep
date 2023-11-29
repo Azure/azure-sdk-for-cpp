@@ -126,3 +126,5 @@ resource storageAccountName_default_container 'Microsoft.Storage/storageAccounts
 output EVENTHUB_NAME string = eventHubName
 output EVENTHUB_CONNECTION_STRING string = listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', namespaceName, 'RootManageSharedAccessKey'), apiVersion).primaryConnectionString
 output CHECKPOINTSTORE_STORAGE_CONNECTION_STRING string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id, storageApiVersion).keys[0].value};EndpointSuffix=${storageEndpointSuffix}'
+
+

@@ -103,3 +103,4 @@ if ($script:FoundError) {
   LogError "There were README verification failures, scroll up to see the issue(s)"
   exit 1
 }
+

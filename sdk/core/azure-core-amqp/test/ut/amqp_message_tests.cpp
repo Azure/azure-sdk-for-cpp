@@ -382,3 +382,5 @@ TEST_F(MessageSerialization, SerializeMessageWithFooter)
     EXPECT_EQ(message, deserialized);
   }
 }
+
+

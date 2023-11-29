@@ -107,3 +107,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     std::string Serialize() const override;
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail
+
+

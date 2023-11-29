@@ -84,3 +84,5 @@ Azure::Core::CaseInsensitiveMap Request::GetHeaders() const
   // to override them with any duplicate header
   return MergeMaps(this->m_retryHeaders, this->m_headers);
 }
+
+

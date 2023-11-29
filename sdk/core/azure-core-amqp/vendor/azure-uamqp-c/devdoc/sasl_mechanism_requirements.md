@@ -109,3 +109,5 @@ MOCKABLE_FUNCTION(, int, saslmechanism_challenge, SASL_MECHANISM_HANDLE, sasl_me
 **SRS_SASL_MECHANISM_01_020: [**If the argument `sasl_mechanism` is NULL, `saslmechanism_challenge` shall fail and return a non-zero value.**]**
 
 **SRS_SASL_MECHANISM_01_021: [**If the underlying `concrete_sasl_mechanism_challenge` fails, `saslmechanism_challenge` shall fail and return a non-zero value.**]** 
+
+

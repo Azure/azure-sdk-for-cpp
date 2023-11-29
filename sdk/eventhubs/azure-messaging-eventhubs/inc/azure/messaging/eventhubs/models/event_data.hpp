@@ -186,3 +186,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   };
   std::ostream& operator<<(std::ostream&, ReceivedEventData const&);
 }}}} // namespace Azure::Messaging::EventHubs::Models
+
+

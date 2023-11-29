@@ -14,3 +14,5 @@ add_executable (
 create_per_service_target_build_for_sample(keyvault sample2-backup-and-restore)
 
 target_link_libraries(sample2-backup-and-restore PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)
+
+

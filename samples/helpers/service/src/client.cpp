@@ -22,3 +22,5 @@ void Azure::Service::Client::DoSomething(const Azure::Core::Context& context) co
   static_cast<void>(authenticationToken); // to suppress the "unused variable" warning.
 #endif
 }
+
+

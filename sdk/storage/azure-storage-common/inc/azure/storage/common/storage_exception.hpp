@@ -40,3 +40,5 @@ namespace Azure { namespace Storage {
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
   };
 }} // namespace Azure::Storage
+
+

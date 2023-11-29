@@ -65,3 +65,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   };
   std::ostream& operator<<(std::ostream& os, Checkpoint const& value);
 }}}} // namespace Azure::Messaging::EventHubs::Models
+
+

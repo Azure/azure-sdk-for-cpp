@@ -133,3 +133,5 @@ TEST(TenantIdResolver, NoMatchEmpty)
   EXPECT_THROW(
       static_cast<void>(TenantIdResolver::Resolve("aA", trc, {})), AuthenticationException);
 }
+
+

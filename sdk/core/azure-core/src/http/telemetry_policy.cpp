@@ -22,3 +22,5 @@ std::unique_ptr<RawResponse> Azure::Core::Http::Policies::_internal::TelemetryPo
 
   return nextPolicy.Send(request, context);
 }
+
+

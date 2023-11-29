@@ -44,3 +44,4 @@ if ($existingLeases.count -ne 0) {
 LogDebug "Creating new lease on run: $RunId"
 $lease = Add-RetentionLease -Organization $Organization -Project $Project -DefinitionId $DefinitionId -RunId $RunId -OwnerId $OwnerId -DaysValid $DaysValid -Base64EncodedAuthToken $encodedAuthToken
 LogDebug "Lease ID is: $($lease.value.leaseId)"
+

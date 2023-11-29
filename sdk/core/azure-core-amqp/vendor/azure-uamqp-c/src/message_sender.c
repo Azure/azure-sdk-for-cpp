@@ -1160,3 +1160,5 @@ void messagesender_set_trace(MESSAGE_SENDER_HANDLE message_sender, bool traceOn)
         message_sender->is_trace_on = traceOn ? 1 : 0;
     }
 }
+
+

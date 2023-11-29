@@ -203,3 +203,5 @@ TEST_CASE("lexer class")
     CHECK((scan_string(s.c_str()) == json::lexer::token_type::value_string));
   }
 }
+
+

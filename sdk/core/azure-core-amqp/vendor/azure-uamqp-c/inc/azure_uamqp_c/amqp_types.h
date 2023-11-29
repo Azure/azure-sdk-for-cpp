@@ -44,3 +44,5 @@ MU_DEFINE_ENUM(AMQP_TYPE, AMQP_TYPE_VALUES);
 #endif /* __cplusplus */
 
 #endif /* ANQP_TYPES_H */
+
+

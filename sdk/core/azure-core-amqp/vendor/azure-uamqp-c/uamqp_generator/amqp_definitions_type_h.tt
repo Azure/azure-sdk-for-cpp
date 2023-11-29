@@ -101,3 +101,5 @@ extern "C" {
 #endif
 
 #endif /* <#=amqpDefinitionName#> */
+
+

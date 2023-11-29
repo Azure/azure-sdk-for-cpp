@@ -52,3 +52,5 @@ else()
 endif()
 string(REGEX REPLACE "[ ]*\n" "; " CXX_VERSION_RESULT "${CXX_VERSION_RESULT}")
 message(STATUS "Compiler: ${CXX_VERSION_RESULT}")
+
+

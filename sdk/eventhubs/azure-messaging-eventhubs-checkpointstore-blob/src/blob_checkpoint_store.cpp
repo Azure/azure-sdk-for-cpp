@@ -217,3 +217,5 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::SetMetadata(
 
   return returnValue;
 }
+
+

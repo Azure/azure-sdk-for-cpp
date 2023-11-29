@@ -57,3 +57,5 @@ namespace Azure { namespace Core {
     static Uuid CreateFromArray(std::array<uint8_t, UuidSize> const& uuid);
   };
 }} // namespace Azure::Core
+
+

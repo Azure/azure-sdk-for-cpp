@@ -11,3 +11,5 @@ macro(SetUpTestProxy subDir)
     file(COPY ${AZ_ROOT_DIR}/eng/scripts/Stop-TestProxy.ps1
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endmacro()
+
+

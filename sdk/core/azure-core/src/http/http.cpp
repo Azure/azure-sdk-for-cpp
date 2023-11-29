@@ -54,3 +54,5 @@ void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
   // insert (override if duplicated)
   headers[headerName] = headerValue;
 }
+
+

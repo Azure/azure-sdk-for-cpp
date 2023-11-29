@@ -137,3 +137,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     std::shared_ptr<_detail::TransportImpl> m_impl;
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
+
+

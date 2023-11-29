@@ -98,3 +98,5 @@ TEST(RequestFailedException, EmptyValues)
                   Azure::Core::Http::HttpStatusCode::None))),
       std::string::npos);
 }
+
+

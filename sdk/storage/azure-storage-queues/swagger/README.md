@@ -440,3 +440,4 @@ directive:
     transform: >
       $["x-ms-meta"]["description"] = "A set of name-value pairs associated with this queue.";
 ```
+

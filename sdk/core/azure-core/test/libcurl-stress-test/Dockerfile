@@ -37,3 +37,4 @@ RUN chmod +x ./azure-core-libcurl-stress-test
 
 CMD ./azure-core-libcurl-stress-test
 # this should be run by the scenarios matrix , run valgrind only when needed since it impacts performance and resources. 
+

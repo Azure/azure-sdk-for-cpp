@@ -367,3 +367,5 @@ TEST_FUNCTION(saslanonymous_get_interface_returns_the_sasl_anonymous_mechanism_i
 }
 
 END_TEST_SUITE(sasl_anonymous_ut)
+
+

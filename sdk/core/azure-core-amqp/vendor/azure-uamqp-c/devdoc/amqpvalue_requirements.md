@@ -1300,3 +1300,5 @@ Figure 1.20: Layout of Map Encoding
 **SRS_AMQPVALUE_01_396: [**\<encoding name="array32" code="0xf0" category="array" width="4" label="up to 2^32 - 1 array elements with total size less than 2^32 octets"/>**]** 
 
 </type>
+
+

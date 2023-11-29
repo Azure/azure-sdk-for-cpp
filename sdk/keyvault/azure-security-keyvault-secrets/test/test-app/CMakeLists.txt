@@ -22,3 +22,5 @@ if (MSVC)
 endif()
 
 target_link_libraries(keyvault-secrets-test-app PRIVATE azure-security-keyvault-secrets azure-identity)
+
+

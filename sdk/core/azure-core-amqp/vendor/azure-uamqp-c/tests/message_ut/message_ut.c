@@ -4525,3 +4525,5 @@ TEST_FUNCTION(message_get_message_format_without_any_Set_shall_return_the_defaul
 }
 
 END_TEST_SUITE(message_ut)
+
+

@@ -190,3 +190,5 @@ namespace Azure { namespace Core {
         std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse);
   };
 }} // namespace Azure::Core
+
+

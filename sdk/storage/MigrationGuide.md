@@ -502,3 +502,5 @@ More examples can be found at:
 - [Quickstart](https://docs.microsoft.com/azure/storage/blobs/quickstart-blobs-c-plus-plus)
 - [Samples](https://docs.microsoft.com/azure/storage/common/storage-samples-c-plus-plus?toc=/azure/storage/blobs/toc.json)
 - [C++ SDK reference](https://azure.github.io/azure-sdk-for-cpp/storage.html#azure-storage-blobs)
+
+

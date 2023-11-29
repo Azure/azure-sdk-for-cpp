@@ -68,3 +68,5 @@ namespace Azure { namespace Core { namespace Diagnostics {
     ~Logger() = delete;
   };
 }}} // namespace Azure::Core::Diagnostics
+
+

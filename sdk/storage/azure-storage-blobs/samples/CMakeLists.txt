@@ -26,3 +26,5 @@ create_per_service_target_build_for_sample(storage transactional-checksum)
 add_executable(blob-query blob_query.cpp)
 target_link_libraries(blob-query PRIVATE azure-storage-blobs get-env-helper)
 create_per_service_target_build_for_sample(storage blob-query)
+
+

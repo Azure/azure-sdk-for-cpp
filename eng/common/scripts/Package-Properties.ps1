@@ -165,3 +165,5 @@ function Get-PkgPropsForEntireService ($serviceDirectoryPath)
 
     return $projectProps
 }
+
+

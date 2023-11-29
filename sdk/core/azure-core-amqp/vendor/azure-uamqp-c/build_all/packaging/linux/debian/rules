@@ -33,3 +33,5 @@ override_dh_auto_install:
 	mkdir $$(pwd)/debian/tmp/usr/include/azureiot
 	cp $$(pwd)/obj-*/*.a $$(pwd)/debian/tmp/usr/lib/
 	cp $$(pwd)/inc/azure_uamqp_c/* $$(pwd)/debian/tmp/usr/include/azureiot
+
+

@@ -524,3 +524,5 @@ TEST_FUNCTION(when_the_underlying_concrete_challenge_fails_then_saslmechanism_ch
 }
 
 END_TEST_SUITE(sasl_mechanism_ut)
+
+

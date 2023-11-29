@@ -7,3 +7,5 @@ steps:
       }
       Write-Host "##vso[task.setvariable variable=DailyBranchName]$branchName"
     displayName: Set branch name in fork repo
+
+

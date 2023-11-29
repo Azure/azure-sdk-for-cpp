@@ -100,3 +100,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::vector<DeletedSecret> Items;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
+
+

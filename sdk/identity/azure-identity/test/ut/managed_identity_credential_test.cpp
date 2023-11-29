@@ -1486,3 +1486,5 @@ TEST(ManagedIdentityCredential, ImdsCreation)
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 7200s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 7200s);
 }
+
+

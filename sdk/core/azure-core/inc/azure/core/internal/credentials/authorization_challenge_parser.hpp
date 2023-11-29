@@ -43,3 +43,5 @@ namespace Azure { namespace Core { namespace Credentials {
     };
   } // namespace _internal
 }}} // namespace Azure::Core::Credentials
+
+

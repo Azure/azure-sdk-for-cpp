@@ -568,3 +568,5 @@ TEST_FUNCTION(when_the_underlying_get_mechanism_name_fails_then_sasl_server_mech
 }
 
 END_TEST_SUITE(sasl_server_mechanism_ut)
+
+

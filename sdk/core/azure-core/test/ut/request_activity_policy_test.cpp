@@ -343,3 +343,5 @@ TEST(RequestActivityPolicy, TryFailures)
     EXPECT_EQ("Throwing exceptions...", tracer->GetSpans()[3]->GetEvents()[0]);
   }
 }
+
+

@@ -138,3 +138,4 @@ else
 }
 
 Set-ChangeLogContent -ChangeLogLocation $ChangelogPath -ChangeLogEntries $ChangeLogEntries
+

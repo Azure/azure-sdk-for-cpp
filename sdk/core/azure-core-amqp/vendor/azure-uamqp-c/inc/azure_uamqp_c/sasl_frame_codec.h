@@ -35,3 +35,5 @@ MOCKABLE_FUNCTION(, int, sasl_frame_codec_encode_frame, SASL_FRAME_CODEC_HANDLE,
 #endif /* __cplusplus */
 
 #endif /* SASL_FRAME_CODEC_H */
+
+

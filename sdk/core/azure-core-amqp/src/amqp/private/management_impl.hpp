@@ -131,3 +131,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) override;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

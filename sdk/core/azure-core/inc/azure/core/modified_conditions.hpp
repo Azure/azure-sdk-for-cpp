@@ -40,3 +40,5 @@ struct ModifiedConditions
   Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
 };
 } // namespace Azure
+
+

@@ -2508,3 +2508,5 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 }
+
+

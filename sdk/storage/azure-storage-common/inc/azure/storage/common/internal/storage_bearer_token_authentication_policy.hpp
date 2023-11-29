@@ -8,3 +8,5 @@
 // installations, with long path and maximum path length of 260 characters.
 
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
+
+

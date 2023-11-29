@@ -14,3 +14,5 @@ param (
 
 Write-Verbose "Sleeping for 60 seconds to let RBAC replicate"
 Start-Sleep -s 60
+
+

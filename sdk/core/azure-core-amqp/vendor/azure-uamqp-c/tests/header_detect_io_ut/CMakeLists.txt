@@ -17,3 +17,5 @@ set(${theseTestsName}_h_files
 build_c_test_artifacts(${theseTestsName} ON "tests/uamqp_tests")
 
 compile_c_test_artifacts_as(${theseTestsName} C99)
+
+

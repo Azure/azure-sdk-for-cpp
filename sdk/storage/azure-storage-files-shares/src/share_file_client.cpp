@@ -1282,3 +1282,5 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
 }}}} // namespace Azure::Storage::Files::Shares
+
+

@@ -730,3 +730,5 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(shareClient.GetPermission(created.FilePermissionKey), StorageException);
   }
 }}} // namespace Azure::Storage::Test
+
+

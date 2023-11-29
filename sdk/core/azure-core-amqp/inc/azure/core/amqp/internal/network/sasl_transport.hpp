@@ -47,3 +47,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   };
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
+
+

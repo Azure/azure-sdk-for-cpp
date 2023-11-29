@@ -3686,3 +3686,5 @@ TEST_FUNCTION(connection_unsubscribe_on_connection_close_received_with_NULL_even
 }
 
 END_TEST_SUITE(connection_ut)
+
+

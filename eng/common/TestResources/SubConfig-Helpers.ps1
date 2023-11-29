@@ -159,3 +159,5 @@ function UpdateSubscriptionConfiguration([object]$subscriptionConfigurationBase,
         Write-Host ($subscriptionConfigurationBase | ConvertTo-Json)
         Write-Host "##vso[task.setvariable variable=SubscriptionConfiguration;]$serialized"
 }
+
+

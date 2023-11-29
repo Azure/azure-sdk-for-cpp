@@ -102,3 +102,5 @@ $updatedWI = UpdatePackageWorkItemReleaseState -id $workItem.id -state "In Relea
 $updatedWI = UpdatePackageVersions $workItem -plannedVersions $plannedVersions
 
 Write-Host "Release tracking item is at https://dev.azure.com/azure-sdk/Release/_workitems/edit/$($updatedWI.id)/"
+
+

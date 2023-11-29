@@ -22,3 +22,5 @@ TEST(Template, GetValue)
   EXPECT_EQ(templateClient.GetValue(14), 1);
   EXPECT_EQ(templateClient.GetValue(18), 0);
 }
+
+

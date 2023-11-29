@@ -500,3 +500,5 @@ int main(void)
         platform_deinit();
     }
 }
+
+

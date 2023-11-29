@@ -29,3 +29,5 @@ $SUDO cp $CRTFILE "/usr/local/share/ca-certificates"
 $SUDO update-ca-certificates
 
 dotnet dev-certs https --clean --import $PFXFILE -p "password"
+
+

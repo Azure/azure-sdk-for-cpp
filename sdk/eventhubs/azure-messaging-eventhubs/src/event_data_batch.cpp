@@ -95,3 +95,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     return EventDataBatch{options};
   }
 }}}} // namespace Azure::Messaging::EventHubs::_detail
+
+

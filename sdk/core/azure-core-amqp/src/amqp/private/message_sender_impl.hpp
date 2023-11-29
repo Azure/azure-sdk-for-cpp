@@ -97,3 +97,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::MessageSenderOptions m_options;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

@@ -37,3 +37,5 @@ endif()
 else()
 	target_link_libraries(eh_sender_with_sas_token_sample	uamqp aziotsharedutil ${OPENSSL_LIBRARIES})
 endif()
+
+

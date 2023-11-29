@@ -85,3 +85,5 @@ namespace Azure { namespace Core { namespace _internal {
     std::string const& ToString() const { return m_enumerationValue; }
   };
 }}} // namespace Azure::Core::_internal
+
+

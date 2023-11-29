@@ -14,3 +14,5 @@ add_dependencies(eventhub_writer_async_sample Azure::azure-core-amqp)
 
 # Link test executable against the prototype.
 target_link_libraries(eventhub_writer_async_sample PRIVATE Azure::azure-core-amqp get-env-helper)
+
+

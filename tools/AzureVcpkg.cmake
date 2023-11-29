@@ -49,3 +49,5 @@ macro(az_vcpkg_integrate)
     set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
   endif()
 endmacro()
+
+

@@ -31,3 +31,5 @@ namespace Azure { namespace Core {
       = std::set<std::string, _internal::StringExtensions::CaseInsensitiveComparator>;
 
 }} // namespace Azure::Core
+
+

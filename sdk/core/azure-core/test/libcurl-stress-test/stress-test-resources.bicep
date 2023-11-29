@@ -25,3 +25,5 @@ resource servicebus 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
 }
 
 output QUEUE_NAME_WITH_SESSIONS string = 'testQueueWithSessions'
+
+

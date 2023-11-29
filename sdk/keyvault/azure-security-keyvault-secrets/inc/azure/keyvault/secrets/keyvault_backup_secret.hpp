@@ -23,3 +23,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::vector<uint8_t> Secret;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
+
+

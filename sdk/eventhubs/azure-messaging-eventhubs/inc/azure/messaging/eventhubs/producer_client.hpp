@@ -197,3 +197,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
   };
 }}} // namespace Azure::Messaging::EventHubs
+
+

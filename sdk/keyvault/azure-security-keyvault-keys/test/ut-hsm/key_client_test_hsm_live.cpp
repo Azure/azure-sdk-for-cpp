@@ -80,3 +80,4 @@ TEST_F(KeyVaultKeyHSMClient, GetRandomBytes)
   }
   EXPECT_TRUE(true);
 }
+

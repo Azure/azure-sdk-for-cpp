@@ -40,3 +40,5 @@ extern "C" {
 #endif
 
 #endif /* AMQP_DEFINITIONS_TERMINUS_EXPIRY_POLICY_H */
+
+

@@ -90,3 +90,5 @@ RrCsEpJsnJXkx/6O
 "@ > $certPath
 
 $EnvironmentVariables["AZURE_CLIENT_CERTIFICATE_PATH"] = $certPath
+
+

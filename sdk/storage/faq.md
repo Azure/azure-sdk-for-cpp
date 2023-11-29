@@ -406,3 +406,5 @@ If you're using SAS authentication, you should:
 You shouldn't write your own functions to generate signatures or sign the requests. It's not a trivial task and there are many edge cases to cover. Use official tools or the SDK instead.
 
 If you still cannot figure out the problem with the above steps, you can open [a GitHub issue](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose) with the request ID or client request ID of the failed request.
+
+

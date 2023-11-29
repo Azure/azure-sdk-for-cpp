@@ -50,3 +50,5 @@ add_executable(managed_identity_credential_sample managed_identity_credential.cp
 target_link_libraries(managed_identity_credential_sample PRIVATE azure-identity service)
 target_include_directories(managed_identity_credential_sample PRIVATE .)
 create_per_service_target_build_for_sample(identity managed_identity_credential_sample)
+
+

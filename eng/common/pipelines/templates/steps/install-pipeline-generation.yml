@@ -14,3 +14,5 @@ steps:
       --tool-path ${{parameters.ToolPath}}
     workingDirectory: $(Pipeline.Workspace)/pipeline-generator
     displayName: 'Install pipeline generator tool'
+
+

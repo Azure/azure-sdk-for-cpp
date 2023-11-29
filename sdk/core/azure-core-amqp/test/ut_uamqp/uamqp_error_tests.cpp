@@ -89,3 +89,5 @@ TEST_F(TestError, AmqpErrorConditions)
   condition = AmqpErrorCondition::ResourceLocked;
   condition = AmqpErrorCondition::UnauthorizedAccess;
 }
+
+

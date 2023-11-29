@@ -264,3 +264,5 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
         json::parse(Base64Url::Base64UrlDecode(policy.EncodedPolicy)).dump(1, ' ', true));
   }
 }
+
+

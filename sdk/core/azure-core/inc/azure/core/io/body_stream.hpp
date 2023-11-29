@@ -317,3 +317,5 @@ namespace Azure { namespace Core { namespace IO {
     int64_t Length() const override;
   };
 }}} // namespace Azure::Core::IO
+
+

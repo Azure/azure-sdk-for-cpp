@@ -25,3 +25,5 @@ endif()
 endif()
 
 add_sample_directory(websockets_sample)
+
+

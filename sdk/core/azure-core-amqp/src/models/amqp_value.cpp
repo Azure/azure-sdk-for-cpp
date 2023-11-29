@@ -1130,3 +1130,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return !m_impl || !m_impl->m_value || (amqpvalue_get_type(*m_impl) == AMQP_TYPE_NULL);
   }
 }}}} // namespace Azure::Core::Amqp::Models
+
+

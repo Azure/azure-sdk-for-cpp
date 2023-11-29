@@ -19,3 +19,5 @@ if ($IsWindows -and $AgentImage -match "windows|win|MMS\d{4}") {
 }
 
 Write-Host "##vso[task.setvariable variable=OSName]$osName"
+
+

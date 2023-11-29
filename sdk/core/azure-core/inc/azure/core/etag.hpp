@@ -186,3 +186,5 @@ public:
   static const ETag& Any();
 };
 } // namespace Azure
+
+

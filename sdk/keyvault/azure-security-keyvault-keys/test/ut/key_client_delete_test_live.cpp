@@ -366,3 +366,5 @@ TEST_F(KeyVaultKeyClient, RecoverOperationResumeToken)
     auto key = keyResponse.Value;
   }
 }
+
+

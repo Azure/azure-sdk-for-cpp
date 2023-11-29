@@ -9,3 +9,5 @@ int main(void)
     RUN_TEST_SUITE(sasl_server_mechanism_ut, failedTestCount);
     return (int)failedTestCount;
 }
+
+

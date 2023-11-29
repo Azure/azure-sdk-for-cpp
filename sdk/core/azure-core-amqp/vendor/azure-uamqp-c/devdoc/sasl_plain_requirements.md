@@ -152,3 +152,5 @@ When no authorization identity is provided, the server derives an authorization 
 This ensures that the derivation of different representations of the authentication identity produces the same authorization identity.
 
 The server MAY use the credentials to initialize any new authentication database, such as one suitable for [CRAM-MD5] or [DIGEST-MD5].
+
+

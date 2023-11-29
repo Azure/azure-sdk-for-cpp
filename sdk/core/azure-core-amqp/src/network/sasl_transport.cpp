@@ -81,3 +81,5 @@ Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
   return _detail::TransportImpl::CreateFromXioHandle(
       xio_create(saslclientio_get_interface_description(), &saslConfig), eventHandler);
 }
+
+

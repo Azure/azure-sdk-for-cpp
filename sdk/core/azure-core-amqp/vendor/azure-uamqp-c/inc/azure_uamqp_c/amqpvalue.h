@@ -120,3 +120,5 @@ extern "C" {
 #endif /* __cplusplus */
 
 #endif /* AMQPVALUE_H */
+
+

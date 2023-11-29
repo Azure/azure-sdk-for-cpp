@@ -302,3 +302,5 @@ RecoverDeletedCertificateOperation RecoverDeletedCertificateOperation::CreateFro
   operation.Poll(context);
   return operation;
 }
+
+

@@ -17,3 +17,5 @@ target_link_libraries(azure-messaging-eventhubs-stress-test PRIVATE azure-messag
 create_map_file(azure-messaging-eventhubs-stress-test azure-messaging-eventhubs-stress-test.map)
 file(COPY ${CMAKE_CURRENT_BINARY_DIR}
   DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+

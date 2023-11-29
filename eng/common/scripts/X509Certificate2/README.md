@@ -22,3 +22,5 @@ $cert2 = New-X509Certificate2 -SubjectName 'CN=Azure SDK' -SubjectAlternativeNam
 $PemCertificateWithV3Extensions = ($cert2 | Format-X509Certificate2 -Type Certificate) + "`n" + ($cert2 | Format-X509Certificate2 -Type Pkcs8)
 $CertificateWithV3ExtensionsBase64 = $cert2 | Format-X509Certificate2 -Type CertificateBase64
  ```
+
+

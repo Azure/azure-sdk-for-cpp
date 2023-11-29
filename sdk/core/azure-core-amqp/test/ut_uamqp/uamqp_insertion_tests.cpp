@@ -42,3 +42,5 @@ TEST_F(TestUAMQPInsertions, TestInsertions)
     GTEST_LOG_(INFO) << state;
   }
 }
+
+

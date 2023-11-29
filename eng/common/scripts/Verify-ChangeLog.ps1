@@ -28,3 +28,4 @@ if (!$validChangeLog)
 }
 
 exit 0
+

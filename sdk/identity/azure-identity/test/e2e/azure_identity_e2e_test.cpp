@@ -155,3 +155,5 @@ int main(int argc, char** argv)
   PrintEnvVariables(resourceUsedMsg);
   return 1;
 }
+
+

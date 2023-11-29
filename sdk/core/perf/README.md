@@ -296,3 +296,5 @@ Security issues and bugs should be reported privately, via email, to the Microso
 ### License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
+
+

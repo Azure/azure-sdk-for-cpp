@@ -15,3 +15,4 @@ TEST(TestAssert, NoReturnPathTest)
 {
   EXPECT_DEATH(Azure::Core::_internal::AzureNoReturnPath("Test"), ".*");
 }
+

@@ -65,3 +65,4 @@ jobs:
             -CommitMsg "Auto-generated docs from SHA(s) $(Build.SourceVersion)"
             -GitUrl "https://$(azuresdk-github-pat)@github.com/$(Build.Repository.Name).git"
             -PushArgs "--force"
+

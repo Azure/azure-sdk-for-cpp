@@ -420,3 +420,5 @@ to true on any of the transfer performatives for the delivery is equivalent to s
 true for all the transfer performatives for the delivery.
 The batchable value does not form part of the transfer state, and is not retained if a link is suspended
 and subsequently resumed.
+
+

@@ -9,3 +9,5 @@ int main(void)
     RUN_TEST_SUITE(amqpvalue_ut, failedTestCount);
     return (int)failedTestCount;
 }
+
+

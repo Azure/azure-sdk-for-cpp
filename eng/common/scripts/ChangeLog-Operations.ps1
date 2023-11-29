@@ -400,3 +400,4 @@ function Confirm-ChangeLogForRelease {
   }
   return $isValid
 }
+

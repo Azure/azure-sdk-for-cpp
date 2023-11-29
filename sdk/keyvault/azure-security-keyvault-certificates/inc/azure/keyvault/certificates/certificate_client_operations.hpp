@@ -245,3 +245,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context());
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates
+
+

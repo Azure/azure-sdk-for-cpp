@@ -46,3 +46,5 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     std::string SanitizeHeader(std::string const& headerName, std::string const& headerValue) const;
   };
 }}}} // namespace Azure::Core::Http::_internal
+
+

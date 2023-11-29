@@ -451,3 +451,5 @@ function Get-GithubReferenceCommitDate($commitUrl, $AuthToken) {
   }
   return $commitResponse.committer.date
 }
+
+

@@ -23,3 +23,5 @@ public:
   /// Minimal Attestation Policy.
   static std::string GetMinimalPolicy();
 };
+
+

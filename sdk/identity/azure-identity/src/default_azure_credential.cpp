@@ -69,3 +69,5 @@ AccessToken DefaultAzureCredential::GetToken(
           "(https://aka.ms/azsdk/cpp/identity/troubleshooting).");
   }
 }
+
+

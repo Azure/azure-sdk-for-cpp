@@ -418,3 +418,5 @@ namespace Azure { namespace Core { namespace Test {
     static std::string GetAssetsPath() { return "assets.json"; }
   };
 }}} // namespace Azure::Core::Test
+
+

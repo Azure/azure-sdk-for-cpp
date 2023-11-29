@@ -38,3 +38,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   const CertificatePolicyAction CertificatePolicyAction::EmailContacts(_detail::EmailContactsValue);
 
 }}}} // namespace Azure::Security::KeyVault::Certificates
+
+

@@ -664,3 +664,5 @@ Field Details
 error error causing the close
 
 **S_R_S_CONNECTION_01_238: [**If set, this field indicates that the connection is being closed due to an error condition.**]** The value of the field SHOULD contain details on the cause of the error.
+
+

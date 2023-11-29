@@ -144,3 +144,5 @@ TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
     EXPECT_EQ(result.PartitionId, "0");
   }());
 }
+
+

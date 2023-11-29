@@ -49,3 +49,5 @@ Invoke-WebRequest -Uri http://azuresdkforcpp.azurewebsites.net/get -Proxy $proxy
 
 Invoke-WebRequest -Uri https://azuresdkforcpp.azurewebsites.net/get -Proxy $proxyAuthServer -ProxyCredential $proxyCredential
 Invoke-WebRequest -Uri http://azuresdkforcpp.azurewebsites.net/get -Proxy $proxyAuthServer -ProxyCredential $proxyCredential
+
+

@@ -73,3 +73,5 @@ namespace Azure { namespace Perf { namespace Test {
   std::unique_ptr<Azure::Core::Http::HttpTransport> HttpClientGetTest::m_httpClient;
 
 }}} // namespace Azure::Perf::Test
+
+

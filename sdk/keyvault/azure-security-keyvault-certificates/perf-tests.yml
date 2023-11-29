@@ -15,3 +15,5 @@ Tests:
   Class: GetCertificate
   Arguments:
   - --parallel 4
+
+

@@ -179,3 +179,5 @@ namespace Azure { namespace Core { namespace Http {
     std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };
 }}} // namespace Azure::Core::Http
+
+

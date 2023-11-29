@@ -10,3 +10,5 @@ find_dependency(OpenSSL)
 include("${CMAKE_CURRENT_LIST_DIR}/azure-security-attestation-cppTargets.cmake")
 
 check_required_components("azure-security-attestation-cpp")
+
+

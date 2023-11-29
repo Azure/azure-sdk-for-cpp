@@ -66,3 +66,5 @@ namespace Azure { namespace Core { namespace OpenTelemetry { namespace _detail {
 #undef AZURE_CORE_OPENTELEMETRY_VERSION_MINOR
 #undef AZURE_CORE_OPENTELEMETRY_VERSION_PATCH
 #undef AZURE_CORE_OPENTELEMETRY_VERSION_PRERELEASE
+
+

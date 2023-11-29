@@ -17,3 +17,5 @@ add_executable(eventhub_sas_writer_sample
 add_dependencies(eventhub_sas_writer_sample Azure::azure-core-amqp)
 
 target_link_libraries(eventhub_sas_writer_sample PRIVATE Azure::azure-core-amqp get-env-helper)
+
+

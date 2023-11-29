@@ -34,3 +34,5 @@
 #if defined(AZ_RTTI) || (0 /*@AZ_STORAGE_COMMON_RTTI@*/)
 #define AZ_STORAGE_COMMON_RTTI
 #endif
+
+

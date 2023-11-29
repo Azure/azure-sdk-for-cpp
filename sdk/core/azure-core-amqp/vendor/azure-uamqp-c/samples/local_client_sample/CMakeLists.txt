@@ -33,3 +33,5 @@ endif()
 else()
 	target_link_libraries(local_client_sample	uamqp aziotsharedutil)
 endif()
+
+

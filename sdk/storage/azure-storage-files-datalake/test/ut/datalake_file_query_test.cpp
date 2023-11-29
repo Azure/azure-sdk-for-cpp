@@ -416,3 +416,5 @@ xx
     EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
   }
 }}} // namespace Azure::Storage::Test
+
+

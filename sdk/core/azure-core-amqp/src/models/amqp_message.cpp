@@ -845,3 +845,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return os;
   }
 }}}} // namespace Azure::Core::Amqp::Models
+
+

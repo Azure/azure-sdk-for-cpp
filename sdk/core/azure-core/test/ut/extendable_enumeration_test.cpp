@@ -57,3 +57,5 @@ TEST(ExtendableEnumeration, BasicTests)
     EXPECT_EQ(enumVal, enumVal2);
   }
 }
+
+

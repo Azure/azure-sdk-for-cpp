@@ -517,3 +517,5 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::SubmitBlobBatchResult(), std::move(response.RawResponse));
   }
 }}} // namespace Azure::Storage::Blobs
+
+

@@ -255,3 +255,5 @@ Azure::Core::Cryptography::_internal::Sha512Hash::Sha512Hash()
 {
 }
 #endif
+
+

@@ -1935,3 +1935,4 @@ directive:
       $["200"].schema.properties["CommittedBlocks"].description = "List of committed blocks.";
       $["200"].schema.properties["UncommittedBlocks"].description = "List of uncommitted blocks.";
 ```
+

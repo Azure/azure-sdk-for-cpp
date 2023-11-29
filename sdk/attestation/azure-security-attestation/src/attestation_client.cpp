@@ -302,3 +302,5 @@ Azure::Security::Attestation::AttestationClient AttestationClient::Create(
 {
   return Create(endpoint, nullptr, options, context);
 }
+
+

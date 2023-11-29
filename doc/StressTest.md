@@ -27,3 +27,5 @@ The deployment script will run the following steps :
 * deploy the helm chart - caveat - make sure to have a .helmignore file present in which you exclude files that are not required for the deployment (e.g. test source code) . When initiating a deployment helm zips the whole folder , in order to upload it the chart needs to be less than 1MB. Thus excluding any unneeded files is advisable. 
 
 The Dockerfile is very flexible, it can be used to include the binaries for the tests or include the code and run the config/build of the tests as part of the build , or anything in between. The only requirement is that the command lines to run the test executables are specified in the scenarios.txt
+
+

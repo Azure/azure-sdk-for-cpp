@@ -109,3 +109,5 @@ extern "C" {
 #endif /* __cplusplus */
 
 #endif /* CONNECTION_H */
+
+

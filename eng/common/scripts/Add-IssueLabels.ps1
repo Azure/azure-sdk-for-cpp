@@ -26,3 +26,4 @@ catch {
   LogError "Add-GithubIssueLabels failed with exception:`n$_"
   exit 1
 }
+

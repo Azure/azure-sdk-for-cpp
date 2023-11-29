@@ -266,3 +266,5 @@ TEST(DefaultAzureCredential, LogMessages)
 
   Logger::SetListener(nullptr);
 }
+
+

@@ -523,3 +523,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates
+
+

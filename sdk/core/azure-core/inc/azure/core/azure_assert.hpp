@@ -64,3 +64,5 @@ namespace Azure { namespace Core { namespace _internal {
 #define AZURE_UNREACHABLE_CODE() ::Azure::Core::_internal::AzureNoReturnPath("unreachable code!")
 /** @brief Indicate that the function is not implemented. */
 #define AZURE_NOT_IMPLEMENTED() ::Azure::Core::_internal::AzureNoReturnPath("not implemented code!")
+
+

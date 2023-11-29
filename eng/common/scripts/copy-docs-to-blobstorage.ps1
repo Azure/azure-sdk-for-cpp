@@ -250,3 +250,4 @@ if ($LASTEXITCODE)
     Write-Host "Copying failed with error code [$LASTEXITCODE]. Dumping the logs to help diagnose."
     Get-ChildItem $env:UserProfile\.azcopy -Filter *.log | ForEach-Object { "LOG: " + $_; Get-Content $_; }
 }
+

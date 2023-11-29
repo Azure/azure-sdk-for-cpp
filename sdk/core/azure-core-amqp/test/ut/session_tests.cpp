@@ -214,3 +214,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   }
 #endif // !AZ_PLATFORM_MAC
 }}}} // namespace Azure::Core::Amqp::Tests
+
+

@@ -165,3 +165,5 @@ add_subdirectory(sdk/template)
 if(BUILD_SAMPLES)
   add_subdirectory(samples/integration/vcpkg-all-smoke)
 endif()
+
+

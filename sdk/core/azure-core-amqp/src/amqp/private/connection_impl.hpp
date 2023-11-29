@@ -172,3 +172,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     static void OnIOErrorFn(void* context);
   };
 }}}} // namespace Azure::Core::Amqp::_detail
+
+

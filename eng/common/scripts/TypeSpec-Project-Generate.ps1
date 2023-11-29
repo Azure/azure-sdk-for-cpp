@@ -119,3 +119,5 @@ if ($shouldCleanUp) {
     Remove-Item $tempFolder -Recurse -Force
 }
 exit 0
+
+

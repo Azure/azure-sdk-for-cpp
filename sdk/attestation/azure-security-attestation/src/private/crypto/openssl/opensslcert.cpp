@@ -454,3 +454,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return std::unique_ptr<OpenSSLAsymmetricKey>(new OpenSSLAsymmetricKey(std::move(pkey)));
   }
 }}}} // namespace Azure::Security::Attestation::_detail
+
+
