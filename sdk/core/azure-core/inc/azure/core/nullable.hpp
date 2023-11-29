@@ -218,6 +218,7 @@ public:
   {
     Reset();
     ::new (static_cast<void*>(&m_value)) T(std::forward<U>(Args)...);
+    m_hasValue = true;
     return m_value;
   }
 

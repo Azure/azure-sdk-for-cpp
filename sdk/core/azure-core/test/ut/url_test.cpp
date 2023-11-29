@@ -333,4 +333,49 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NE(params.find("param"), params.end());
     EXPECT_EQ(params["param"], "value");
   }
+
+  TEST(URL, LeadingSlashInPath)
+  {
+    Core::Url const u0("https://www.microsoft.com");
+    Core::Url const u1("https://www.microsoft.com/");
+
+    EXPECT_EQ(u0.GetAbsoluteUrl(), "https://www.microsoft.com");
+    EXPECT_EQ(u1.GetAbsoluteUrl(), "https://www.microsoft.com");
+
+    {
+      auto url0 = u0;
+      auto url1 = u1;
+      url0.AppendPath("path");
+      url1.AppendPath("path");
+      EXPECT_EQ(url0.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+      EXPECT_EQ(url1.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+    }
+
+    {
+      auto url0 = u0;
+      auto url1 = u1;
+      url0.AppendPath("/path");
+      url1.AppendPath("/path");
+      EXPECT_EQ(url0.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+      EXPECT_EQ(url1.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+    }
+
+    {
+      auto url0 = u0;
+      auto url1 = u1;
+      url0.SetPath("path");
+      url1.SetPath("path");
+      EXPECT_EQ(url0.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+      EXPECT_EQ(url1.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+    }
+
+    {
+      auto url0 = u0;
+      auto url1 = u1;
+      url0.SetPath("/path");
+      url1.SetPath("/path");
+      EXPECT_EQ(url0.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+      EXPECT_EQ(url1.GetAbsoluteUrl(), "https://www.microsoft.com/path");
+    }
+  }
 }}} // namespace Azure::Core::Test
