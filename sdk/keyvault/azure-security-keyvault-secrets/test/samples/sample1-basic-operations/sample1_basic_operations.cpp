@@ -22,9 +22,6 @@ using namespace std::chrono_literals;
 int main()
 {
   // @begin_snippet: SecretSample1CreateCredential
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client

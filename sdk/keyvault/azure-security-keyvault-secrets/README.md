@@ -53,11 +53,7 @@ First step is to create  a SecretClient.
 
 <!-- @insert_snippet: SecretSample1CreateCredential -->
 ```cpp
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
@@ -149,7 +145,7 @@ List all the secrets in keyvault.
          secretsVersion.HasPage();
          secretsVersion.MoveToNextPage())
     { // go through each version of the secret
-      // the number of results returned for in a  page is not guaranteed
+      // the number of results returned for in a page is not guaranteed
       // it can be anywhere from 0 to 25
       for (auto const& secret : secretsVersion.Items)
       {
