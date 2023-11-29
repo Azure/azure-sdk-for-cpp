@@ -47,7 +47,7 @@ An AMQP Message Sender is responsible for sending messages to an AMQP server ove
 ```cpp
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
-  senderOptions.MessageSource = "ingress";
+  senderOptions.MessageSource = "source";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 

@@ -99,15 +99,11 @@ function ProcessSnippetsInFile {
 	}
 	# The Regex::Replace above inserts an extra newline at the end of the file. Remove it.
 	$output_file_contents = $output_file_contents -replace "`r`n\s*\Z", "`r`n"
+	$original_contents = $original_file_contents -replace "`r`n\s*\Z", "`r`n"
 
 	if ($verify) {
-		if ($output_file_contents.Equals($original_file_contents)) {
+		if ($output_file_contents -ne $original_contents) {
 			Write-Host "ERROR: Snippet contents does not match for file: $output_file."
-
-			Write-Host "output file contents: `r`n-------`r`n$output_file_contents"
-			Write-Host "`r`n-------"
-			Write-Host "Original file contents: `r`n-------`r`n$original_file_contents"
-			Write-Host "`r`n-------`r`n"
 			return $false
 		}
 	}
@@ -141,5 +137,12 @@ foreach ($output_file in $output_files) {
 }
 if ($failed) {
 	Write-Host "ERROR: Snippet generation failed."
+
+	Write-Host "`r`nTo fix this error, run the following command locally:"
+	Write-Host "`r`n`r`n`tpowershell -ExecutionPolicy Bypass -File eng/scripts/Generate-Snippets.ps1 -source_dir $source_dir -output_dir $output_dir`r`n"
+	Write-Host "`r`nThen, run the following command to verify the changes."
+	Write-Host "`r`n`r`n`tpowershell -ExecutionPolicy Bypass -File eng/scripts/Generate-Snippets.ps1 -source_dir $source_dir -output_dir $output_dir -verify`r`n"
+	Write-Host "`r`nFinally, commit the changes and push to the remote branch."
+
 	exit 1
 }
