@@ -24,6 +24,7 @@ using namespace std::chrono_literals;
 
 int main()
 {
+  // @begin_snippet: SecretSample1CreateCredential
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
@@ -32,28 +33,36 @@ int main()
 
   // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-
-  std::string secretName("MySampleSecret");
-  std::string secretValue("my secret value");
+  // @end_snippet
 
   try
   {
     // create secret
-    secretClient.SetSecret(secretName, secretValue);
+    // @begin_snippet: SecretSample1CreateSecret
+    std::string secretName("MySampleSecret");
+    std::string secretValue("my secret value");
 
+    secretClient.SetSecret(secretName, secretValue);
+    // @end_snippet
+
+    // @begin_snippet: SecretSample1GetSecret
     // get secret
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::cout << "Secret is returned with name " << secret.Name << " and value "
               << secret.Value.Value() << std::endl;
+    // @end_snippet
 
+    // @begin_snippet: SecretSample1UpdateSecretProperties
     // change one of the properties
     secret.Properties.ContentType = "my content";
     // update the secret
     KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
     std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
               << std::endl;
+    // @end_snippet
 
+    // @begin_snippet: SecretSample1DeleteSecret
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
@@ -64,6 +73,7 @@ int main()
 
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secret.Name);
+    // @end_snippet
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
