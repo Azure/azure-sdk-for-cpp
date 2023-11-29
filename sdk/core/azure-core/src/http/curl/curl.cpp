@@ -1283,11 +1283,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
   key.append(",");
-#if defined(AZ_PLATFORM_LINUX)
   key.append(!options.CAPath.empty() ? options.CAPath : "0");
-#else
-  key.append("0"); // CAPath is always empty on Windows;
-#endif
   key.append(",");
   key.append(
       options.Proxy.HasValue() ? (options.Proxy.Value().empty() ? "NoProxy" : options.Proxy.Value())
@@ -2319,9 +2315,14 @@ CurlConnection::CurlConnection(
     }
   }
 
-#if defined(AZ_PLATFORM_LINUX)
   if (!options.CAPath.empty())
   {
+#if defined(AZ_PLATFORM_LINUX)
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed to set CA path to:" + options.CAPath
+        + ". Setting the CA Path is only supported on Linux.");
+#endif
     if (!SetLibcurlOption(m_handle, CURLOPT_CAPATH, options.CAPath.c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
@@ -2330,7 +2331,6 @@ CurlConnection::CurlConnection(
           + std::string(curl_easy_strerror(result)));
     }
   }
-#endif
 
 #if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())
