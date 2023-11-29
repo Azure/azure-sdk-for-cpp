@@ -894,7 +894,6 @@ TEST(TokenCredentialImpl, Diagnosability)
         "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
         "relative expiration property ('TokenExpiresInSeconds'): \"one\", "
-        "absolute expiration property (''): undefined, "
         "and there are no other properties.");
 
     Logger::SetListener(nullptr);
