@@ -119,7 +119,7 @@ jobs:
               filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Generate-Snippets.ps1
               arguments: >
                -source_dir $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}/${{artifact.Name}}
-               -output_dir $(Build.SourcesDirectory)/sdk/)${{parameters.ServiceDirectory}}/${{artifact.Name}}
+               -output_dir $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}/${{artifact.Name}}
                -verify
               pwsh: true
             displayName: Verify Snippets are correct
