@@ -25,13 +25,13 @@ namespace Azure { namespace Storage { namespace Test {
           GetEnv("STORAGE_CLIENT_ID"),
           GetEnv("STORAGE_CLIENT_SECRET"));
 
-       m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-         Tables::TableServicesClient(GetEnv("STORAGE_TABLES_URL"),m_credential, clientOptions));
-     // m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-       //   Tables::TableServicesClient::CreateFromConnectionString(
-         //     GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
+      m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
+          Tables::TableServicesClient(GetEnv("STORAGE_TABLES_URL"), m_credential, clientOptions));
+      // m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
+      //   Tables::TableServicesClient::CreateFromConnectionString(
+      //     GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-       m_tableClient
+      m_tableClient
           = std::make_shared<Tables::TableClient>(CreateKeyTableClientForTest(clientOptions));
     }
   }
@@ -472,5 +472,28 @@ namespace Azure { namespace Storage { namespace Test {
 
     response = m_tableClient->SubmitTransaction(transaction2);
     EXPECT_FALSE(response.Value.Error.HasValue());
+  }
+
+  TEST_F(TablesClientTest, SasClient1)
+  {
+    auto creds = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
+        GetAccountName(), GetAccountKey());
+    Azure::Storage::Sas::AccountSasBuilder sasBuilder;
+    sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+    sasBuilder.ResourceTypes = Azure::Storage::Sas::AccountSasResource::All;
+    sasBuilder.Services = Azure::Storage::Sas::AccountSasServices::Table;
+    sasBuilder.Protocol = Azure::Storage::Sas::SasProtocol::HttpsOnly;
+    sasBuilder.SetPermissions(Azure::Storage::Sas::AccountSasPermissions::All);
+    auto sasToken = /*"?sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2023-11-29T23:43:08Z&st="
+                    "2023-11-29T15:43:08Z&spr=https&sig="
+                    "2oYHjNUuLxTeo80SueLSrPE1igZkQN5iOiFrDSESFC0%3D"; // */
+                    sasBuilder.GenerateSasToken(*creds);
+    auto tableserviceClient = Tables::TableServicesClient(
+        "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken);
+    auto response = tableserviceClient.ListTables();
+
+    auto tableClient = Tables::TableClient(
+        "https://" + GetAccountName() + ".table.core.windows.net/Tables" + sasToken, m_tableName);
+    auto tableResponse = tableClient.Create();
   }
 }}} // namespace Azure::Storage::Test

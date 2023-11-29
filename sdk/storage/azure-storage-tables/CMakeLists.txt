@@ -44,7 +44,6 @@ set(
     inc/azure/storage/tables/dll_import_export.hpp
     inc/azure/storage/tables/rest_client.hpp
     inc/azure/storage/tables/rtti.hpp
-    inc/azure/storage/tables/table_sas_builder.hpp
     inc/azure/storage/tables/models.hpp
     inc/azure/storage/tables/transactions.hpp
     inc/azure/storage/tables/serializers.hpp
@@ -54,7 +53,6 @@ set(
   AZURE_STORAGE_TABLES_SOURCE
     src/private/package_version.hpp
     src/rest_client.cpp
-    src/table_sas_builder.cpp
     src/transactions.cpp
 )
 

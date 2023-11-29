@@ -19,8 +19,33 @@ namespace Azure { namespace Storage { namespace Test {
 
     Azure::Storage::Tables::TableClient CreateKeyTableClientForTest(
         Tables::TableClientOptions& clientOptions);
+    std::string GetConnectionString()
+    {
+      const static std::string ConnectionString = "";
 
-  protected: 
+      if (!ConnectionString.empty())
+      {
+        return ConnectionString;
+      }
+      const static std::string envConnectionString = GetEnv("STANDARD_STORAGE_CONNECTION_STRING");
+      if (!envConnectionString.empty())
+      {
+        return envConnectionString;
+      }
+      throw std::runtime_error("Cannot find connection string.");
+    }
+
+    std::string GetAccountName()
+    {
+      return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountName;
+    }
+
+    std::string GetAccountKey()
+    {
+      return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountKey;
+    }
+
+  protected:
     std::string m_tableName;
     std::shared_ptr<Tables::TableServicesClient> m_tableServiceClient;
     std::shared_ptr<Tables::TableClient> m_tableClient;

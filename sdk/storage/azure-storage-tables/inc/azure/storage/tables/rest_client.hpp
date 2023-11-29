@@ -171,12 +171,11 @@ namespace Azure { namespace Storage { namespace Tables {
 
   class TableClient final {
   public:
-    explicit TableClient(std::string const& serviceUrl)
-        : m_pipeline(new Core::Http::_internal::HttpPipeline({}, "storage-tables", "", {}, {})),
-          m_url(serviceUrl){};
-
-    explicit TableClient(std::string const& serviceUrl, const TableClientOptions& options)
-        : TableClient(serviceUrl)
+    explicit TableClient(
+        std::string const& serviceUrl,
+        std::string const& tableName,
+        const TableClientOptions& options = {})
+        : m_url(serviceUrl), m_tableName(tableName)
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -198,7 +197,7 @@ namespace Azure { namespace Storage { namespace Tables {
         const std::string& tableName,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const TableClientOptions& options = {})
-        : TableClient(serviceUrl, options)
+        : TableClient(serviceUrl, tableName, options)
     {
       m_tableName = tableName;
       TableClientOptions newOptions = options;
@@ -295,7 +294,7 @@ namespace Azure { namespace Storage { namespace Tables {
       }
       else
       {
-        return TableClient(tableName, options);
+        return TableClient(tablesUrl.GetAbsoluteUrl(), tableName, options);
       }
     }
 
@@ -374,6 +373,34 @@ namespace Azure { namespace Storage { namespace Tables {
           std::move(perOperationPolicies));
     };
 
+    /**
+     * @brief Initializes a new instance of QueueClient.
+     *
+     * @param queueUrl A url referencing the queue that includes the name of the account and the
+     * name of the queue.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
+    explicit TableServicesClient(
+        const std::string& serviceUrl,
+        const TableClientOptions& options = TableClientOptions())
+    {
+      m_url = Azure::Core::Url(serviceUrl);
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
+          m_url.GetHost(), options.SecondaryHostForRetryReads));
+      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+      perOperationPolicies.emplace_back(
+          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+          options,
+          _internal::QueueServicePackageName,
+          _detail::ApiVersion,
+          std::move(perRetryPolicies),
+          std::move(perOperationPolicies));
+    }
+
     explicit TableServicesClient(
         const std::string& serviceUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
@@ -415,8 +442,8 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     explicit TableServicesClient(
+        const std::string& serviceUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
-        const std::string& serviceUrl = Azure::Storage::_internal::TablesManagementPublicEndpoint,
         const TableClientOptions& options = TableClientOptions())
         : m_url(Azure::Core::Url(serviceUrl))
     {
@@ -463,10 +490,11 @@ namespace Azure { namespace Storage { namespace Tables {
       if (parsedConnectionString.KeyCredential)
       {
         return TableServicesClient(
-            std::move(parsedConnectionString.KeyCredential),
             tablesUrl.GetAbsoluteUrl().empty()
                 ? Azure::Storage::_internal::TablesManagementPublicEndpoint
                 : tablesUrl.GetAbsoluteUrl(),
+            std::move(parsedConnectionString.KeyCredential),
+
             options);
       }
       else
