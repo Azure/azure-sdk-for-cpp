@@ -139,9 +139,9 @@ if ($failed) {
 	Write-Host "ERROR: Snippet generation failed."
 
 	Write-Host "`r`nTo fix this error, run the following command locally:"
-	Write-Host "`r`n`r`n`tpowershell -ExecutionPolicy Bypass -File eng/scripts/Generate-Snippets.ps1 -source_dir $source_dir -output_dir $output_dir`r`n"
+	Write-Host "`r`n`r`n`t powershell -ExecutionPolicy Bypass -File eng/scripts/Generate-Snippets.ps1 -source_dir $source_dir -output_dir $output_dir`r`n"
 	Write-Host "`r`nThen, run the following command to verify the changes."
-	Write-Host "`r`n`r`n`tpowershell -ExecutionPolicy Bypass -File eng/scripts/Generate-Snippets.ps1 -source_dir $source_dir -output_dir $output_dir -verify`r`n"
+	Write-Host "`r`n`r`n`t powershell -ExecutionPolicy Bypass -File eng/scripts/Generate-Snippets.ps1 -source_dir $source_dir -output_dir $output_dir -verify`r`n"
 	Write-Host "`r`nFinally, commit the changes and push to the remote branch."
 
 	exit 1
