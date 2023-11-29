@@ -1,6 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#pragma once
+
+#include "azure/storage/common/dll_import_export.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/io/body_stream.hpp>
 
@@ -9,6 +13,9 @@
 #include <memory>
 
 namespace Azure { namespace Storage { namespace _internal {
+
+  AZ_STORAGE_COMMON_DLLEXPORT extern const Azure::Core::Context::Key
+      ReliableStreamClientRequestIdKey;
 
   // Options used by reliable stream
   struct ReliableStreamOptions final
