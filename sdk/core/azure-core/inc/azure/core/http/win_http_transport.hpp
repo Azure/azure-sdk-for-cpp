@@ -140,7 +140,8 @@ namespace Azure { namespace Core {
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateSessionHandle();
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateConnectionHandle(
           Azure::Core::Url const& url,
-          Azure::Core::Context const& context);
+          Azure::Core::Context const& context,
+          Azure::Core::_internal::UniqueHandle<HINTERNET> const& sessionHandle);
       std::unique_ptr<_detail::WinHttpRequest> CreateRequestHandle(
           Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
           Azure::Core::Url const& url,

@@ -47,7 +47,7 @@ DefaultAzureCredential::DefaultAzureCredential(
   // calls.
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
       GetCredentialName(),
-      ChainedTokenCredential::Sources{envCred, wiCred, azCliCred, managedIdentityCred},
+      ChainedTokenCredential::Sources{envCred, wiCred, managedIdentityCred, azCliCred},
       true);
 }
 

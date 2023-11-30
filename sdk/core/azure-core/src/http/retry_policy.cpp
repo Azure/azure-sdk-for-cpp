@@ -142,7 +142,8 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
 
       // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
       // doesn't need to be retried), then ShouldRetry returns false.
-      if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
+      if (request.DoNotRetry
+          || !ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
       {
         // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
         // trying to perform same request would use last retry query/headers
@@ -156,7 +157,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
         Log::Write(Logger::Level::Warning, std::string("HTTP Transport error: ") + e.what());
       }
 
-      if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
+      if (request.DoNotRetry || !ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {
         throw;
       }

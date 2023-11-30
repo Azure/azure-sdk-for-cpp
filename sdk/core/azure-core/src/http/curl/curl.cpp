@@ -345,9 +345,15 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   // Create CurlSession to perform request
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Creating a new session.");
 
+  auto options = m_options;
+  if (request.ConnectionTimeout > std::chrono::milliseconds(0))
+  {
+    options.ConnectionTimeout = request.ConnectionTimeout;
+  }
+
   auto session = std::make_unique<CurlSession>(
       request,
-      CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(request, m_options),
+      CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(request, options),
       m_options);
 
   CURLcode performing;

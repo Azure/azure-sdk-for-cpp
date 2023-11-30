@@ -826,7 +826,8 @@ WinHttpTransport::~WinHttpTransport() = default;
 
 Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateConnectionHandle(
     Azure::Core::Url const& url,
-    Azure::Core::Context const& context)
+    Azure::Core::Context const& context,
+    Azure::Core::_internal::UniqueHandle<HINTERNET> const& sessionHandle)
 {
   // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
   uint16_t port = url.GetPort();
@@ -837,7 +838,7 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateConnecti
   // Specify an HTTP server.
   // This function always operates synchronously.
   Azure::Core::_internal::UniqueHandle<HINTERNET> rv(WinHttpConnect(
-      m_sessionHandle.get(),
+      sessionHandle.get(),
       StringToWideString(url.GetHost()).c_str(),
       port == 0 ? INTERNET_DEFAULT_PORT : port,
       0));
@@ -1352,8 +1353,23 @@ std::unique_ptr<RawResponse> _detail::WinHttpRequest::SendRequestAndGetResponse(
 
 std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
 {
+  // Not very fancy, can be written better.
+  Azure::Core::_internal::UniqueHandle<HINTERNET> sessionHandle;
+  Azure::Core::_internal::UniqueHandle<HINTERNET> const* sessionHandlePtr = &m_sessionHandle;
+  if (request.ConnectionTimeout > std::chrono::milliseconds(0))
+  {
+    sessionHandle = CreateSessionHandle();
+    auto timeoutMsec = static_cast<DWORD>(request.ConnectionTimeout.count());
+    if (!WinHttpSetOption(
+            sessionHandle.get(), WINHTTP_OPTION_CONNECT_TIMEOUT, &timeoutMsec, sizeof(timeoutMsec)))
+    {
+      GetErrorAndThrow("Error while setting connection timeout.");
+    }
+    sessionHandlePtr = &sessionHandle;
+  }
+
   Azure::Core::_internal::UniqueHandle<HINTERNET> connectionHandle
-      = CreateConnectionHandle(request.GetUrl(), context);
+      = CreateConnectionHandle(request.GetUrl(), context, *sessionHandlePtr);
   std::unique_ptr<_detail::WinHttpRequest> requestHandle(
       CreateRequestHandle(connectionHandle, request.GetUrl(), request.GetMethod()));
 

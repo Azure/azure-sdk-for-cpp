@@ -420,6 +420,16 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
   return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
     return TokenCredentialImpl::GetToken(context, [&]() {
       auto request = std::make_unique<TokenRequest>(m_request);
+      if (m_isFirstRequest)
+      {
+        std::unique_lock<std::mutex> lock(m_isFirstRequestMutex);
+        if (m_isFirstRequest)
+        {
+          m_isFirstRequest = false;
+          request->HttpRequest.ConnectionTimeout = std::chrono::seconds(1);
+          request->HttpRequest.DoNotRetry = true;
+        }
+      }
 
       if (!scopesStr.empty())
       {

@@ -19,6 +19,7 @@
 #include "azure/core/url.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cstdint>
 #include <functional>
 #include <map>
@@ -164,7 +165,7 @@ namespace Azure { namespace Core { namespace Http {
   }; // extensible enum HttpMethod
 
   namespace Policies { namespace _internal {
-    class RetryPolicy;
+      class RetryPolicy;
   }} // namespace Policies::_internal
 
   /**
@@ -210,6 +211,9 @@ namespace Azure { namespace Core { namespace Http {
     void StartTry();
 
   public:
+    bool DoNotRetry = false;
+    std::chrono::milliseconds ConnectionTimeout = std::chrono::milliseconds(0); // 0 means default
+
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *

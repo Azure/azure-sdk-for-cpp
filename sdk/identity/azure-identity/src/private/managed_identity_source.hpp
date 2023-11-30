@@ -10,7 +10,9 @@
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/url.hpp>
 
+#include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <utility>
 
@@ -173,6 +175,8 @@ namespace Azure { namespace Identity { namespace _detail {
   class ImdsManagedIdentitySource final : public ManagedIdentitySource {
   private:
     Core::Http::Request m_request;
+    mutable std::mutex m_isFirstRequestMutex;
+    mutable std::atomic<bool> m_isFirstRequest = true;
 
     explicit ImdsManagedIdentitySource(
         std::string const& clientId,
