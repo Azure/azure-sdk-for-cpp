@@ -32,11 +32,13 @@ auto client = Azure::Service::CreateFromConnectionString(connectionString);
 ```
 ~~~
 
-The problem with this of course is that if the ignature of the `CreateFromConnectionString` function changes, the snippet will no longer be accurate. To solve this problem, we use the snippet source to generate the snippet. 
+The problem with this of course is that if the signature of the `CreateFromConnectionString` function changes, the snippet will no 
+longer be accurate. To solve this problem, we use the snippet source to generate the snippet.
 
 ## Creating Snippets for the Azure SDK for C++
 
-There are two steps to generating snippets for the Azure SDK for C++. The first is 
+There are two steps to generating snippets for the Azure SDK for C++. The first is annotating the source code, 
+the second is running the snippet generation tool to update the snippets in the documentation.
 
 ### Snippet Source
 
