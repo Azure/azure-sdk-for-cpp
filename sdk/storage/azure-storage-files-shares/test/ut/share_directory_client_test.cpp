@@ -1190,18 +1190,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(allAccessRights, directoryHandles[0].AccessRights.Value());
   }
 
-  TEST_F(FileShareDirectoryClientTest, ListHandlesWithClientName_PLAYBACKONLY_)
-  {
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(),
-        "testing",
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
-    auto directoryClient = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("dir1");
-    auto directoryHandles = directoryClient.ListHandles().DirectoryHandles;
-    EXPECT_EQ(directoryHandles.size(), 1L);
-    EXPECT_FALSE(directoryHandles[0].ClientName.empty());
-  }
-
   TEST_F(FileShareDirectoryClientTest, WithShareSnapshot)
   {
     const std::string timestamp1 = "2001-01-01T01:01:01.1111000Z";
