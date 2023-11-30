@@ -91,3 +91,4 @@ jobs:
           CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
           GenerateArgs: ${{ cmakeOption.Value }}
           Env: "$(CmakeEnvArg)"
+          PackageName: ${{ artifact.Name }}

@@ -1,5 +1,5 @@
 # cSpell:ignore vsts
-# cSpell:ignore parseazuresdkcpp
+# cSpell:ignore parseazuresdkcpp sbom
 
 parameters:
   - name: Artifacts
@@ -232,7 +232,7 @@ jobs:
 
                 # Set AZURE_SDK_VERSION for use in Doxygen generation
                 Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
-              displayName: Create package info JSON file
+              displayName: Create package info JSON file for ${{ artifact.Name }}
 
             - task: Powershell@2
               inputs:
@@ -252,7 +252,7 @@ jobs:
                     build/vcpkg/ports/${{ artifact.VcpkgPortName }}/. `
                     $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port
                 pwsh: true
-              displayName: Copy vcpkg port files from build
+              displayName: Copy vcpkg port files from build for ${{ artifact.Name }}
 
             - pwsh: |
                 $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
@@ -263,7 +263,7 @@ jobs:
                 } else {
                   Write-Warning "$changeLogPath does not exist"
                 }
-              displayName: Copy CHANGELOG.md to package artifact
+              displayName: Copy CHANGELOG.md to package artifact for ${{ artifact.Name }}
 
             - script: cmake --build . --target ${{ artifact.Path }}-docs
               workingDirectory: build
@@ -287,7 +287,17 @@ jobs:
                   -TargetFolder $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/docs/docs.ms
                 ignoreLASTEXITCODE: true
                 pwsh: true
-              displayName: Generate artifacts for docs.ms
+              displayName: Generate ${{ artifact.Name }} artifacts for docs.ms
+
+            - task: Powershell@2
+              inputs:
+                filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Generate-Snippets.ps1
+                arguments: >
+                 -source_dir $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}/${{artifact.Name}}
+                 -output_dir $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}/${{artifact.Name}}
+                 -verify
+                pwsh: true
+              displayName: Verify Snippets are correct for ${{artifact.Name}}
 
             - pwsh: |
                 New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
