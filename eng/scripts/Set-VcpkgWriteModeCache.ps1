@@ -37,10 +37,10 @@ $token = New-AzStorageAccountSASToken `
     -Context $ctx `
     -ExpiryTime (Get-Date).AddDays(1)
 
-# $vcpkgBinarySourceSas = $token
-# if ($token.StartsWith('?')) {
+$vcpkgBinarySourceSas = $token
+if ($token.StartsWith('?')) {
     $vcpkgBinarySourceSas = $token.Substring(1)
-# }
+}
 
 Write-Host "Enusre redaction of SAS tokens in logs" 
 Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SAS_TOKEN;issecret=true;]$vcpkgBinarySourceSas"
