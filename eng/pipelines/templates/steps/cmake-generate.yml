@@ -7,23 +7,23 @@ parameters:
 steps:
   - script: mkdir build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
-    displayName: create working directory ${{ parameters.PackageName }}
+    displayName: create working directory for ${{ parameters.PackageName }}
 
   - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: ENVs ${{ parameters.PackageName }}
+    displayName: ENVs for ${{ parameters.PackageName }}
 
   - script: pwd
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: Show current path ${{ parameters.PackageName }}
+    displayName: Show current path for ${{ parameters.PackageName }}
 
   - script: |
       ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: cmake generate ${{ parameters.PackageName }}
+    displayName: cmake generate for ${{ parameters.PackageName }}
     env:
       VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
 
   - script: rm -rf build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
-    displayName: clean build folder ${{ parameters.PackageName }}
+    displayName: clean build folder for ${{ parameters.PackageName }}
