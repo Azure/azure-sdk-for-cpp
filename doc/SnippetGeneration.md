@@ -65,7 +65,7 @@ auto client = Azure::Service::CreateFromConnectionString(connectionString);
 ```
 
 The "name" of a snippet can be any string of "word" characters as defined by [.Net Regular 
-Expressions](https://learn.microsoft.com/en-us/dotnet/standard/base-types/character-classes-in-regular-expressions#WordCharacter).
+Expressions](https://learn.microsoft.com/dotnet/standard/base-types/character-classes-in-regular-expressions#WordCharacter).
 
 Note that it is critically important that the snippet source be valid code. 
 The snippet generation tool does not compile the snippet source, instead the snippet source should be included in the source code built with the project.
