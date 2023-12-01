@@ -40,8 +40,11 @@ namespace Azure { namespace Storage { namespace Tables {
         std::string const& url,
         std::string const& tableName,
         std::string const& partitionKey)
-        : m_partitionKey(std::move(partitionKey)), m_url(url), m_tableName(tableName)
+        : m_partitionKey(std::move(partitionKey)), m_tableName(tableName)
     {
+      Azure::Core::Url _url(url);
+      _url.SetQueryParameters({});
+      m_url = _url.GetAbsoluteUrl();
       m_batchId = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
       m_changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
     }

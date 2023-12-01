@@ -60,7 +60,8 @@ Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServ
   std::string xmlBody = Serializers::SetServiceProperties(options);
   auto url = m_url;
 
-  url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
+  url.AppendQueryParameter("restype", "service");
+  url.AppendQueryParameter("comp", "properties");
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(xmlBody.data()), xmlBody.length());
 
@@ -88,7 +89,8 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
 {
   (void)options;
   auto url = m_url;
-  url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
+  url.AppendQueryParameter("restype", "service");
+  url.AppendQueryParameter("comp", "properties");
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
@@ -332,7 +334,8 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
   std::string accountName = host.substr(0, host.find('.'));
   accountName += "-secondary";
   url.SetHost(accountName + "." + host.substr(host.find('.') + 1));
-  url.SetQueryParameters({{"restype", "service"}, {"comp", "stats"}});
+  url.AppendQueryParameter("restype", "service");
+  url.AppendQueryParameter("comp", "stats");
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
   auto pRawResponse = m_pipeline->Send(request, context);
@@ -401,7 +404,6 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
   }
   return Response<Models::ServiceStatistics>(std::move(response), std::move(pRawResponse));
 }
-
 
 Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
 {
@@ -545,6 +547,7 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
 {
   (void)options;
   auto url = m_url;
+  url.SetPath("");
   url.AppendPath(m_tableName);
   url.AppendQueryParameter("comp", "acl");
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);

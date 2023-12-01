@@ -10,6 +10,8 @@ namespace Azure { namespace Storage { namespace Test {
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
   void TablesClientTest::SetUp()
   {
+    auto param = GetParam();
+
     Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
     StorageTest::SetUp();
     if (shouldSkipTest())
@@ -20,19 +22,61 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
 
-      m_credential = CreateClientSecretCredential(
-          GetEnv("STORAGE_TENANT_ID"),
-          GetEnv("STORAGE_CLIENT_ID"),
-          GetEnv("STORAGE_CLIENT_SECRET"));
+      // m_credential = CreateClientSecretCredential(
+      //     GetEnv("STORAGE_TENANT_ID"),
+      //     GetEnv("STORAGE_CLIENT_ID"),
+      //      GetEnv("STORAGE_CLIENT_SECRET"));
 
-      m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-          Tables::TableServicesClient(GetEnv("STORAGE_TABLES_URL"), m_credential, clientOptions));
+      //  m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
+      //      Tables::TableServicesClient(GetEnv("STORAGE_TABLES_URL"), m_credential,
+      //      clientOptions));
       // m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
       //   Tables::TableServicesClient::CreateFromConnectionString(
       //     GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
-      auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-      m_tableClient
-          = std::make_shared<Tables::TableClient>(CreateKeyTableClientForTest(clientOptions));
+      //  auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
+      //  m_tableClient
+      //     = std::make_shared<Tables::TableClient>(CreateKeyTableClientForTest(clientOptions));
+      auto testName = GetTestNameLowerCase();
+
+      m_tableName = testName.substr(0, testName.find('-', 0)) + LowercaseRandomString(10);
+      switch (param)
+      {
+        case AuthType::ConnectionString:
+          m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
+              Tables::TableServicesClient::CreateFromConnectionString(
+                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING")));
+          m_tableClient = std::make_shared<Tables::TableClient>(
+              Tables::TableClient::CreateFromConnectionString(
+                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, clientOptions));
+          break;
+        case AuthType::Key:
+          m_credential = CreateClientSecretCredential(
+              GetEnv("STORAGE_TENANT_ID"),
+              GetEnv("STORAGE_CLIENT_ID"),
+              GetEnv("STORAGE_CLIENT_SECRET"));
+          m_tableServiceClient
+              = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
+                  GetEnv("STORAGE_TABLES_URL"), m_credential, clientOptions));
+          m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
+              GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, clientOptions));
+          break;
+        case AuthType::SAS:
+          auto creds = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
+              GetAccountName(), GetAccountKey());
+          Azure::Storage::Sas::AccountSasBuilder sasBuilder;
+          sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+          sasBuilder.ResourceTypes = Azure::Storage::Sas::AccountSasResource::All;
+          sasBuilder.Services = Azure::Storage::Sas::AccountSasServices::All;
+          sasBuilder.Protocol = Azure::Storage::Sas::SasProtocol::HttpsOnly;
+          sasBuilder.SetPermissions(Azure::Storage::Sas::AccountSasPermissions::All);
+          auto sasToken = sasBuilder.GenerateSasToken(*creds);
+          m_tableServiceClient
+              = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
+                  "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken));
+          m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
+              "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken, m_tableName));
+          break;
+      }
     }
   }
   Azure::Storage::Tables::TableClient TablesClientTest::CreateKeyTableClientForTest(
@@ -53,9 +97,9 @@ namespace Azure { namespace Storage { namespace Test {
     return tableClient;
   }
 
-  TEST_F(TablesClientTest, ClientConstructor) { EXPECT_FALSE(m_tableClient == nullptr); }
+  TEST_P(TablesClientTest, ClientConstructor) { EXPECT_FALSE(m_tableClient == nullptr); }
 
-  TEST_F(TablesClientTest, CreateTable)
+  TEST_P(TablesClientTest, CreateTable)
   {
     auto createResponse = m_tableClient->Create();
     EXPECT_EQ(createResponse.Value.TableName, m_tableName);
@@ -64,16 +108,26 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
   }
 
-  TEST_F(TablesClientTest, GetAccessPolicy)
+  TEST_P(TablesClientTest, GetAccessPolicy)
   {
+    if (GetParam() != AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
     auto createResponse = m_tableClient->Create();
 
     auto getResponse = m_tableClient->GetAccessPolicy();
     EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 0);
   }
 
-  TEST_F(TablesClientTest, SetAccessPolicy)
+  TEST_P(TablesClientTest, SetAccessPolicy)
   {
+    if (GetParam() != AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
     auto createResponse = m_tableClient->Create();
     Azure::Storage::Tables::Models::TableAccessPolicy newPolicy{};
     Azure::Storage::Tables::Models::SignedIdentifier newIdentifier{};
@@ -103,7 +157,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Permissions, newIdentifier.Permissions);
   }
 
-  TEST_F(TablesClientTest, ListTables)
+  TEST_P(TablesClientTest, ListTables)
   {
     auto createResponse = m_tableClient->Create();
 
@@ -123,7 +177,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(TablesClientTest, DeleteTable)
+  TEST_P(TablesClientTest, DeleteTable)
   {
     auto createResponse = m_tableClient->Create();
 
@@ -131,12 +185,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
-  TEST_F(TablesClientTest, ServiceClientConstructors)
+  TEST_P(TablesClientTest, ServiceClientConstructors)
   {
     EXPECT_FALSE(m_tableServiceClient == nullptr);
   }
 
-  TEST_F(TablesClientTest, ServiceClientGetProperties)
+  TEST_P(TablesClientTest, ServiceClientGetProperties)
   {
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
 
@@ -153,7 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
   }
 
-  TEST_F(TablesClientTest, ServiceClientSet)
+  TEST_P(TablesClientTest, ServiceClientSet)
   {
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
 
@@ -165,7 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
   }
 
-  TEST_F(TablesClientTest, ServiceClientStatistics)
+  TEST_P(TablesClientTest, ServiceClientStatistics)
   {
     Azure::Storage::Tables::Models::GetServiceStatisticsOptions statsOptions;
 
@@ -175,7 +229,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.Value.GeoReplication.Status.ToString(), "live");
   }
 
-  TEST_F(TablesClientTest, EntityCreate)
+  TEST_P(TablesClientTest, EntityCreate)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
 
@@ -190,7 +244,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(response.Value.ETag.empty());
   }
 
-  TEST_F(TablesClientTest, EntityUpdate)
+  TEST_P(TablesClientTest, EntityUpdate)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
 
@@ -219,7 +273,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(updateResponse2.Value.ETag.empty());
   }
 
-  TEST_F(TablesClientTest, EntityMerge)
+  TEST_P(TablesClientTest, EntityMerge)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
 
@@ -248,7 +302,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(updateResponse2.Value.ETag.empty());
   }
 
-  TEST_F(TablesClientTest, EntityDelete)
+  TEST_P(TablesClientTest, EntityDelete)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
 
@@ -278,7 +332,7 @@ namespace Azure { namespace Storage { namespace Test {
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
-  TEST_F(TablesClientTest, EntityUpsert)
+  TEST_P(TablesClientTest, EntityUpsert)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
 
@@ -312,7 +366,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(updateResponse2.Value.ETag.empty());
   }
 
-  TEST_F(TablesClientTest, EntityQuery)
+  TEST_P(TablesClientTest, EntityQuery)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
 
@@ -348,7 +402,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
 
-  TEST_F(TablesClientTest, TransactionCreateFail_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -370,7 +424,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
-  TEST_F(TablesClientTest, TransactionCreateOK_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -392,7 +446,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_F(TablesClientTest, TransactionDelete_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -420,7 +474,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_F(TablesClientTest, TransactionMerge_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -447,7 +501,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_F(TablesClientTest, TransactionUpdate_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
   {
     Azure::Storage::Tables::Models::TableEntity entity;
     Azure::Storage::Tables::Models::TableEntity entity2;
@@ -474,23 +528,31 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_F(TablesClientTest, SasClient1)
-  {
-    auto creds = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
-        GetAccountName(), GetAccountKey());
-    Azure::Storage::Sas::AccountSasBuilder sasBuilder;
-    sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-    sasBuilder.ResourceTypes = Azure::Storage::Sas::AccountSasResource::All;
-    sasBuilder.Services = Azure::Storage::Sas::AccountSasServices::Table;
-    sasBuilder.Protocol = Azure::Storage::Sas::SasProtocol::HttpsOnly;
-    sasBuilder.SetPermissions(Azure::Storage::Sas::AccountSasPermissions::All);
-    auto sasToken = sasBuilder.GenerateSasToken(*creds);
-    auto tableserviceClient = Tables::TableServicesClient(
-        "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken);
-    auto response = tableserviceClient.ListTables();
-
-    auto tableClient = Tables::TableClient(
-        "https://" + GetAccountName() + ".table.core.windows.net/Tables" + sasToken, m_tableName);
-    auto tableResponse = tableClient.Create();
-  }
+  namespace {
+    static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
+    {
+      std::string stringValue = "";
+      switch (info.param)
+      {
+        case AuthType::ConnectionString:
+          stringValue = "connectionstring";
+          break;
+        case AuthType::Key:
+          stringValue = "key";
+          break;
+        case AuthType::SAS:
+          stringValue = "sas";
+          break;
+        default:
+          stringValue = "key";
+          break;
+      }
+      return stringValue;
+    }
+  } // namespace
+  INSTANTIATE_TEST_SUITE_P(
+      Tables,
+      TablesClientTest,
+      ::testing::Values(AuthType::Key, AuthType::ConnectionString, AuthType::SAS),
+      GetSuffix);
 }}} // namespace Azure::Storage::Test

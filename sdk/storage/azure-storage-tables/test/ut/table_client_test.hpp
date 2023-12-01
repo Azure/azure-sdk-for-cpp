@@ -9,8 +9,15 @@
 #include <azure/storage/tables/transactions.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
+  enum class AuthType
+  {
+    Key = 0x0,
+    SAS = 0x1,
+    ConnectionString = 0x2,
+  };
 
-  class TablesClientTest : public Azure::Storage::Test::StorageTest {
+  class TablesClientTest : public Azure::Storage::Test::StorageTest,
+                           public ::testing::WithParamInterface<AuthType> {
   protected:
     void SetUp() override;
 
