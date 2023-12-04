@@ -36,9 +36,9 @@ namespace Azure { namespace Storage { namespace Test {
       //  auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       //  m_tableClient
       //     = std::make_shared<Tables::TableClient>(CreateKeyTableClientForTest(clientOptions));
-      auto testName = GetTestNameLowerCase();
+      m_tableName = GetTestNameLowerCase();
 
-      m_tableName = testName.substr(0, testName.find('-', 0)) + LowercaseRandomString(10);
+      std::replace(m_tableName.begin(), m_tableName.end(),'-','0');
       switch (param)
       {
         case AuthType::ConnectionString:
@@ -79,6 +79,23 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
   }
+
+  void TablesClientTest::TearDown()
+  {
+    if (!m_tableName.empty())
+    {
+      try
+      {
+
+        auto deleteResponse = m_tableClient->Delete();
+      }
+      catch (...)
+      {
+	  }
+    }
+    StorageTest::TearDown();
+  }
+
   Azure::Storage::Tables::TableClient TablesClientTest::CreateKeyTableClientForTest(
       Tables::TableClientOptions& clientOptions)
   {

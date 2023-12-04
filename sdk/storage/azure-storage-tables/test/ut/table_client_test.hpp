@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Test {
                            public ::testing::WithParamInterface<AuthType> {
   protected:
     void SetUp() override;
-
+    void TearDown() override;
     Azure::Storage::Tables::TableClient CreateTableClientForTest(
         Tables::TableClientOptions& clientOptions);
 
