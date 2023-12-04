@@ -12,16 +12,15 @@
 
 struct SOCKET_LISTENER_INSTANCE_TAG;
 struct IO_INTERFACE_DESCRIPTION_TAG;
-// struct XIO_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
 
   class SocketListenerEvents {
   protected:
     ~SocketListenerEvents() {}
 
   public:
-    virtual void OnSocketAccepted(std::shared_ptr<Transport> newTransport) = 0;
+    virtual void OnSocketAccepted(std::shared_ptr<_internal::Transport> newTransport) = 0;
   };
 
   class SocketListener final {
@@ -46,4 +45,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     SOCKET_LISTENER_INSTANCE_TAG* m_socket;
   };
 
-}}}}} // namespace Azure::Core::Amqp::Network::_internal
+}}}}} // namespace Azure::Core::Amqp::Network::_detail

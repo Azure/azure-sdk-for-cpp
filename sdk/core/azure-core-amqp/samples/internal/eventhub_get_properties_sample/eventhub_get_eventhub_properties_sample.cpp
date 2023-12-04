@@ -5,7 +5,7 @@
 #include <azure/core/amqp/internal/connection_string_credential.hpp>
 #include <azure/core/amqp/internal/management.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
-#include <azure/identity/client_secret_credential.hpp>
+#include <azure/identity.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -172,10 +172,7 @@ int main()
 
   // Establish the connection to the eventhub.
 
-  auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      std::getenv("SAMPLES_TENANT_ID"),
-      std::getenv("SAMPLES_CLIENT_ID"),
-      std::getenv("SAMPLES_CLIENT_SECRET"))};
+  auto credential{std::make_shared<Azure::Identity::DefaultAzureCredential>()};
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "some";

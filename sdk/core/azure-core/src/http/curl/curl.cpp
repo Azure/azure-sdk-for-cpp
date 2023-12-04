@@ -222,7 +222,7 @@ static void CleanupThread()
               return CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0;
             }))
     {
-      // Cancelled by another thead or no connections on wakeup
+      // Cancelled by another thread or no connections on wakeup
       CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
       break;
     }
@@ -1417,25 +1417,25 @@ int CurlConnection::CurlLoggingCallback(CURL*, curl_infotype type, char* data, s
 // the OpenSSL backend.
 #if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_MAC)
 namespace Azure { namespace Core {
-  namespace _internal {
+  namespace _detail {
 
     template <> struct UniqueHandleHelper<X509>
     {
-      using type = BasicUniqueHandle<X509, X509_free>;
+      using type = _internal::BasicUniqueHandle<X509, X509_free>;
     };
     template <> struct UniqueHandleHelper<X509_CRL>
     {
-      using type = BasicUniqueHandle<X509_CRL, X509_CRL_free>;
+      using type = _internal::BasicUniqueHandle<X509_CRL, X509_CRL_free>;
     };
 
     template <> struct UniqueHandleHelper<BIO>
     {
-      using type = BasicUniqueHandle<BIO, BIO_free_all>;
+      using type = _internal::BasicUniqueHandle<BIO, BIO_free_all>;
     };
 #if defined(USE_OPENSSL_1)
     template <> struct UniqueHandleHelper<OCSP_REQ_CTX>
     {
-      using type = BasicUniqueHandle<OCSP_REQ_CTX, OCSP_REQ_CTX_free>;
+      using type = _internal::BasicUniqueHandle<OCSP_REQ_CTX, OCSP_REQ_CTX_free>;
     };
 #endif // USE_OPENSSL_1
 
@@ -1445,7 +1445,7 @@ namespace Azure { namespace Core {
       {
         sk_X509_CRL_pop_free(obj, X509_CRL_free);
       }
-      using type = BasicUniqueHandle<STACK_OF(X509_CRL), FreeCrlStack>;
+      using type = _internal::BasicUniqueHandle<STACK_OF(X509_CRL), FreeCrlStack>;
     };
 
     template <typename Api, typename... Args> auto MakeUniqueHandle(Api& OpensslApi, Args&&... args)
@@ -1455,9 +1455,10 @@ namespace Azure { namespace Core {
       // check raw
       using T = std::remove_pointer_t<decltype(raw)>; // no need to request T when we can see
                                                       // what OpensslApi returned
-      return UniqueHandle<T>{raw};
+      return _internal::UniqueHandle<T>{raw};
     }
-  } // namespace _internal
+  } // namespace _detail
+
   namespace Http {
     namespace _detail {
 
@@ -1466,7 +1467,7 @@ namespace Azure { namespace Core {
 
       std::string GetOpenSSLError(std::string const& what)
       {
-        auto bio(Azure::Core::_internal::MakeUniqueHandle(BIO_new, BIO_s_mem()));
+        auto bio(Azure::Core::_detail::MakeUniqueHandle(BIO_new, BIO_s_mem()));
 
         BIO_printf(bio.get(), "Error in %hs: ", what.c_str());
         if (ERR_peek_error() != 0)
@@ -1492,7 +1493,7 @@ namespace Azure { namespace Core {
     namespace {
       // int g_ssl_crl_max_size_in_kb = 20;
       /**
-       * @brief THe Cryptography class provides a set of basic cryptographic primatives required
+       * @brief The Cryptography class provides a set of basic cryptographic primatives required
        * by the attestation samples.
        */
 
@@ -1501,7 +1502,7 @@ namespace Azure { namespace Core {
         Log::Stream(Logger::Level::Informational) << "Load CRL from Url: " << url << std::endl;
         Azure::Core::_internal::UniqueHandle<X509_CRL> crl;
 #if defined(USE_OPENSSL_3)
-        crl = Azure::Core::_internal::MakeUniqueHandle(
+        crl = Azure::Core::_detail::MakeUniqueHandle(
             X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
 #else
         std::string host, port, path;
@@ -1524,7 +1525,7 @@ namespace Azure { namespace Core {
           return nullptr;
         }
         Azure::Core::_internal::UniqueHandle<BIO> bio{
-            Azure::Core::_internal::MakeUniqueHandle(BIO_new_connect, host.c_str())};
+            Azure::Core::_detail::MakeUniqueHandle(BIO_new_connect, host.c_str())};
         if (!bio)
         {
           Log::Write(
@@ -1541,7 +1542,7 @@ namespace Azure { namespace Core {
         }
 
         auto requestContext
-            = Azure::Core::_internal::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
+            = Azure::Core::_detail::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
         if (!requestContext)
         {
           Log::Write(
@@ -1938,7 +1939,7 @@ int CurlConnection::VerifyCertificateError(int ok, X509_STORE_CTX* storeContext)
   X509* err_cert;
   int err, depth;
   Azure::Core::_internal::UniqueHandle<BIO> bio_err(
-      Azure::Core::_internal::MakeUniqueHandle(BIO_new, BIO_s_mem()));
+      Azure::Core::_detail::MakeUniqueHandle(BIO_new, BIO_s_mem()));
 
   err_cert = X509_STORE_CTX_get_current_cert(storeContext);
   err = X509_STORE_CTX_get_error(storeContext);

@@ -614,7 +614,7 @@ directive:
       $["x-ms-marker"]["x-nullable"] = true;
 ```
 
-### CreateDirecotry
+### CreateDirectory
 
 ```yaml
 directive:

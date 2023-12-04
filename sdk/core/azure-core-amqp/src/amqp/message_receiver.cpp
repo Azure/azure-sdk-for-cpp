@@ -6,6 +6,8 @@
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
 
+#include "../models/private/message_impl.hpp"
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/connection_string_credential.hpp"
 #include "azure/core/amqp/internal/link.hpp"
@@ -29,13 +31,13 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Amqp::_internal;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
       MESSAGE_RECEIVER_HANDLE value)
   {
     messagereceiver_destroy(value);
   }
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 

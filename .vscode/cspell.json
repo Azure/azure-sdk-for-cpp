@@ -4,10 +4,24 @@
   "languageId": "cpp",
   "dictionaries": [
     "powershell",
-    "cpp"
+    "cpp",
+    "markdown"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "cpp",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    },
+    {
+      "languageId": "markdown",
+      "allowCompoundWords": true,
+      "caseSensitive": true
+    }
   ],
   "ignorePaths": [
     "vcpkg/**/*",
+    "out/**/*",
     "*.exe",
     "*.a",
     "*.lib",
@@ -26,7 +40,8 @@
     "eng/docs/api/assets/**/*",
     "eng/CredScanSuppression.json",
     "**/test/ut/recordings/*.json",
-    "sdk/core/azure-core-amqp/vendor/**/*"
+    "sdk/core/azure-core-amqp/vendor/**/*",
+    "sdk/storage/*/NOTICE.txt"
   ],
   // * Unless configured otherwise, these words are not case sensitive
   // * Alphabetize the list when making changes so the list is easier for future
@@ -37,27 +52,34 @@
     "ABFS",
     "ABNF",
     "adamdebreceni",
+    "adfs",
     "Adls",
     "ahojnnes",
     "ahsonkhan",
     "Aloctl",
+    "amqp",
+    "Amqp",
     "AMQP",
+    "amqps",
     "AMQPS",
+    "amqpvalue",
     "AMQPVALUE",
+    "avro",
     "antkmsft",
     "azcore",
     "azsdk",
     "azsdkengsys",
     "azurecr",
     "azuresdk",
-    "azurl",
     "azuresdkforcpp",
+    "azurl",
     "centralus",
     "centraluseuap",
     "Chukwu",
     "cmake",
     "CMOCKA",
     "Cobertura",
+    "Contoso",
     "countof",
     "ctest",
     "cuse",
@@ -77,6 +99,7 @@
     "easia",
     "eastus",
     "echsmkey",
+    "Ecdsa",
     "Edlund",
     "EKUs",
     "Entra",
@@ -88,6 +111,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "hlocal",
     "HLOCAL",
     "HRESULT",
     "IMDS",
@@ -108,12 +132,15 @@
     "LPBYTE",
     "LPSTR",
     "LPWSTR",
+    "mbps",
     "MHSM",
     "mmdc",
     "mmspecial",
     "moxygen",
     "MSAL",
+    "msft",
     "MSRC",
+    "nbio",
     "ncus",
     "Niels",
     "nlohmann",
@@ -125,8 +152,10 @@
     "NOMINMAX",
     "northcentralus",
     "nostd",
+    "nread",
     "NTSTATUS",
     "odata",
+    "Oaep",
     "OIDC",
     "okhttp",
     "opentelemetry",
@@ -136,6 +165,8 @@
     "pdbs",
     "phoebusm",
     "Piotrowski",
+    "pkcs",
+    "Pkcs",
     "pscredential",
     "PUCHAR",
     "PVOID",
@@ -146,6 +177,7 @@
     "rehydrated",
     "Reitz",
     "retriable",
+    "rtti",
     "rwxrw",
     "sasia",
     "Schonberger",
@@ -162,10 +194,12 @@
     "STREQ",
     "Sutou",
     "testid",
+    "tsirpanis",
     "Tsirpanis",
     "uaenorth",
     "uamqp",
     "uksouth",
+    "Uncomitted",
     "undeleted",
     "unscoped",
     "unskipped",
@@ -177,6 +211,7 @@
     "Verdana",
     "Viet",
     "Viktor",
+    "versionid",
     "vusg",
     "Wdocumentation",
     "Werror",
@@ -185,8 +220,10 @@
     "Wextra",
     "Wgnu",
     "Wunused",
+    "xbox",
     "Xclang",
-    "XSMB"
+    "XSMB",
+    "zulu"
   ],
   "overrides": [
     {
@@ -292,9 +329,21 @@
       ]
     },
     {
+      "filename": "**/sdk/storage/faq.md",
+      "words": [
+        "dont"
+      ]
+    },
+    {
       "filename": "**/sdk/storage/azure-storage-queues/src/rest_client.cpp",
       "words": [
         "numofmessages"
+      ]
+    },
+    {
+      "filename": "**/sdk/storage/azure-storage-queues/swagger/README.md",
+      "words": [
+        "messageid"
       ]
     },
     {

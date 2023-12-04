@@ -11,11 +11,13 @@ namespace Azure { namespace Storage { namespace _internal {
   constexpr static const char* TablesServicePackageName = "storage-tables";
   constexpr static const char* HttpQuerySnapshot = "snapshot";
   constexpr static const char* HttpQueryVersionId = "versionid";
+  constexpr static const char* HttpQueryTimeout = "timeout";
   constexpr static const char* StorageScope = "https://storage.azure.com/.default";
   constexpr static const char* StorageDefaultAudience = "https://storage.azure.com";
   constexpr static const char* TablesManagementScope = "https://management.azure.com/.default";
   constexpr static const char* TablesManagementPublicEndpoint = "https://management.azure.com";
   constexpr static const char* HttpHeaderDate = "date";
+  constexpr static const char* HttpHeaderXMsDate = "x-ms-date";
   constexpr static const char* HttpHeaderXMsVersion = "x-ms-version";
   constexpr static const char* HttpHeaderRequestId = "x-ms-request-id";
   constexpr static const char* HttpHeaderClientRequestId = "x-ms-client-request-id";

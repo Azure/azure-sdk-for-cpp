@@ -2,27 +2,28 @@ parameters:
   CmakeGeneratePath: ''
   Env: ''
   GenerateArgs: ''
+  PackageName: ''
 
 steps:
   - script: mkdir build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
-    displayName: create working directory
+    displayName: create working directory for ${{ parameters.PackageName }}
 
   - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: ENVs
+    displayName: ENVs for ${{ parameters.PackageName }}
 
   - script: pwd
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: Show current path
+    displayName: Show current path for ${{ parameters.PackageName }}
 
   - script: |
       ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: cmake generate
+    displayName: cmake generate for ${{ parameters.PackageName }}
     env:
       VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
 
   - script: rm -rf build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
-    displayName: clean build folder
+    displayName: clean build folder for ${{ parameters.PackageName }}

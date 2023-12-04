@@ -9,6 +9,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/cryptography/sha_hash.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/uuid.hpp>
@@ -399,16 +400,33 @@ ClientCertificateCredential::ClientCertificateCredential(
     CertificateThumbprint mdVec;
     try
     {
+      if (clientCertificatePath.empty())
+      {
+        throw AuthenticationException("Certificate file path is empty.");
+      }
+
+      using Azure::Core::_internal::StringExtensions;
+      std::string const PemExtension = ".pem";
+      auto const certFileExtensionStart = clientCertificatePath.find_last_of('.');
+      auto const certFileExtension = certFileExtensionStart != std::string::npos
+          ? clientCertificatePath.substr(certFileExtensionStart)
+          : std::string{};
+
+      if (!StringExtensions::LocaleInvariantCaseInsensitiveEqual(certFileExtension, PemExtension))
+      {
+        throw AuthenticationException(
+            "Certificate format"
+            + (certFileExtension.empty() ? " " : " ('" + certFileExtension + "') ")
+            + "is not supported. Please convert your certificate to '" + PemExtension + "'.");
+      }
+
       std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificatePath);
     }
-    catch (AuthenticationException&)
-    {
-      throw;
-    }
-    catch (std::exception& e)
+    catch (std::exception const& e)
     {
       // WIL does not throw AuthenticationException.
-      throw AuthenticationException(e.what());
+      throw AuthenticationException(
+          std::string("Identity: ClientCertificateCredential: ") + e.what());
     }
 
     // Get thumbprint as hex string:

@@ -3,7 +3,10 @@
 
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
 
+#include "../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include "private/error_impl.hpp"
+#include "private/value_impl.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
@@ -12,26 +15,28 @@
 
 #include <iostream>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  // @cond
   void UniqueHandleHelper<ERROR_INSTANCE_TAG>::FreeAmqpError(ERROR_HANDLE handle)
   {
     error_destroy(handle);
   }
-}}} // namespace Azure::Core::_internal
+  // @endcond
+}}}} // namespace Azure::Core::Amqp::_detail
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
 
   /*
    * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP
    * code will NOT take ownership of the underlying ERROR_HANDLE object.
    */
-  AmqpError AmqpErrorFactory::FromUamqp(ERROR_HANDLE handle)
+  _internal::AmqpError AmqpErrorFactory::FromUamqp(ERROR_HANDLE handle)
   {
-    AmqpError rv;
+    _internal::AmqpError rv;
     const char* stringValue;
     if (!error_get_condition(handle, &stringValue))
     {
-      rv.Condition = AmqpErrorCondition(stringValue);
+      rv.Condition = _internal::AmqpErrorCondition(stringValue);
     }
 
     if (!error_get_description(handle, &stringValue))
@@ -52,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return rv;
   }
 
-  AmqpValue AmqpErrorFactory::ToAmqp(AmqpError const& error)
+  AmqpValue AmqpErrorFactory::ToAmqp(_internal::AmqpError const& error)
   {
     _detail::UniqueAmqpErrorHandle errorHandle(error_create(error.Condition.ToString().data()));
     if (!error.Description.empty())
@@ -71,6 +76,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     // The UniqueAmqpValueHandle will take care of freeing the cloned handle.
     return _detail::AmqpValueFactory::FromUamqp(handleAsValue);
   }
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   std::ostream& operator<<(std::ostream& os, AmqpError const& error)
   {
     os << "Error {";

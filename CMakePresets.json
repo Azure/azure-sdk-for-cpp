@@ -521,6 +521,7 @@
       "inherits": [
         "x64-static",
         "release-build",
+        "enable-tests",
         "enable-perf"
       ]
     },

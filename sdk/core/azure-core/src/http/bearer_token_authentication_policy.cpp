@@ -61,21 +61,49 @@ bool BearerTokenAuthenticationPolicy::AuthorizeRequestOnChallenge(
   return false;
 }
 
+namespace {
+bool TokenNeedsRefresh(
+    Azure::Core::Credentials::AccessToken const& cachedToken,
+    Azure::Core::Credentials::TokenRequestContext const& cachedTokenRequestContext,
+    Azure::DateTime const& currentTime,
+    Azure::Core::Credentials::TokenRequestContext const& newTokenRequestContext)
+{
+  return newTokenRequestContext.TenantId != cachedTokenRequestContext.TenantId
+      || newTokenRequestContext.Scopes != cachedTokenRequestContext.Scopes
+      || currentTime > (cachedToken.ExpiresOn - newTokenRequestContext.MinimumExpiration);
+}
+
+void ApplyBearerToken(
+    Azure::Core::Http::Request& request,
+    Azure::Core::Credentials::AccessToken const& token)
+{
+  request.SetHeader("authorization", "Bearer " + token.Token);
+}
+} // namespace
+
 void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
     Request& request,
     Credentials::TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  std::lock_guard<std::mutex> lock(m_accessTokenMutex);
+  DateTime const currentTime = std::chrono::system_clock::now();
 
-  if (tokenRequestContext.TenantId != m_accessTokenContext.TenantId
-      || tokenRequestContext.Scopes != m_accessTokenContext.Scopes
-      || std::chrono::system_clock::now()
-          > (m_accessToken.ExpiresOn - tokenRequestContext.MinimumExpiration))
+  {
+    std::shared_lock<std::shared_timed_mutex> readLock(m_accessTokenMutex);
+    if (!TokenNeedsRefresh(m_accessToken, m_accessTokenContext, currentTime, tokenRequestContext))
+    {
+      ApplyBearerToken(request, m_accessToken);
+      return;
+    }
+  }
+
+  std::unique_lock<std::shared_timed_mutex> writeLock(m_accessTokenMutex);
+  // Check if token needs refresh for the second time in case another thread has just updated it.
+  if (TokenNeedsRefresh(m_accessToken, m_accessTokenContext, currentTime, tokenRequestContext))
   {
     m_accessToken = m_credential->GetToken(tokenRequestContext, context);
     m_accessTokenContext = tokenRequestContext;
   }
 
-  request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
+  ApplyBearerToken(request, m_accessToken);
 }

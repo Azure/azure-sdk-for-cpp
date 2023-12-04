@@ -25,6 +25,7 @@
 #include <memory>
 #include <mutex>
 #include <set>
+#include <shared_mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -284,7 +285,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     HttpPolicy& operator=(const HttpPolicy& other) = default;
 
     /**
-     * @brief Contructs `%HttpPolicy` by moving \p other `%HttpPolicy`.
+     * @brief Constructs `%HttpPolicy` by moving \p other `%HttpPolicy`.
      * @param other Other `%HttpPolicy` to move.
      *
      */
@@ -549,7 +550,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       Credentials::TokenRequestContext m_tokenRequestContext;
 
       mutable Credentials::AccessToken m_accessToken;
-      mutable std::mutex m_accessTokenMutex;
+      mutable std::shared_timed_mutex m_accessTokenMutex;
       mutable Credentials::TokenRequestContext m_accessTokenContext;
 
     public:
@@ -569,6 +570,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {
+        // Can't use std::make_shared here because copy constructor is not public.
         return std::unique_ptr<HttpPolicy>(new BearerTokenAuthenticationPolicy(*this));
       }
 
@@ -581,6 +583,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const& other)
           : BearerTokenAuthenticationPolicy(other.m_credential, other.m_tokenRequestContext)
       {
+        std::shared_lock<std::shared_timed_mutex> readLock(other.m_accessTokenMutex);
+        m_accessToken = other.m_accessToken;
+        m_accessTokenContext = other.m_accessTokenContext;
       }
 
       void operator=(BearerTokenAuthenticationPolicy const&) = delete;

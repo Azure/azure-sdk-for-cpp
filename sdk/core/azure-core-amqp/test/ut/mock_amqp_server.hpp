@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   extern uint16_t FindAvailableSocket();
   namespace MessageTests {
 
-    class AmqpServerMock : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents,
+    class AmqpServerMock : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
                            public Azure::Core::Amqp::_internal::ConnectionEvents,
                            public Azure::Core::Amqp::_internal::SessionEvents,
                            public Azure::Core::Amqp::_internal::MessageReceiverEvents,
@@ -77,7 +77,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     private:
       bool WaitForConnection(
-          Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
+          Azure::Core::Amqp::Network::_detail::SocketListener const& listener,
           Azure::Core::Context const& context = {})
       {
         auto result = m_connectionQueue.WaitForPolledResult(context, listener);
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         //    Azure::Core::Context listenerContext;
         m_serverThread = std::thread([this, &threadStarted, &running]() {
-          Azure::Core::Amqp::Network::_internal::SocketListener listener(GetPort(), this);
+          Azure::Core::Amqp::Network::_detail::SocketListener listener(GetPort(), this);
           try
           {
             GTEST_LOG_(INFO) << "Start test listener on port " << GetPort();

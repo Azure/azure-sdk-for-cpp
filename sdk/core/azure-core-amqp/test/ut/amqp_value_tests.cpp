@@ -279,26 +279,6 @@ TEST_F(TestValues, TestList)
     AmqpDescribed desc2{list2[0].AsDescribed()};
     EXPECT_EQ(desc2.GetDescriptor(), AmqpValue{static_cast<uint64_t>(29ll)});
   }
-
-  {
-    AmqpList test;
-    _internal::AmqpError error;
-    error.Condition = _internal::AmqpErrorCondition("test:error");
-    error.Description = "test description";
-    test.push_back(_internal::AmqpErrorFactory::ToAmqp(error));
-    EXPECT_EQ(1, test.size());
-    EXPECT_EQ(AmqpValueType::Composite, test[0].GetType());
-    AmqpComposite testAsComposite{test[0].AsComposite()};
-    EXPECT_EQ(testAsComposite.GetDescriptor(), AmqpValue{static_cast<uint64_t>(29ll)});
-    {
-      AmqpValue testAsValue{test.AsAmqpValue()};
-      EXPECT_EQ(AmqpValueType::List, testAsValue.GetType());
-
-      auto testAsList{testAsValue.AsList()};
-      EXPECT_EQ(AmqpValueType::Composite, testAsList[0].GetType());
-      EXPECT_EQ(test[0], testAsList[0]);
-    }
-  }
 }
 
 TEST_F(TestValues, TestMap)
@@ -1279,7 +1259,7 @@ TEST_F(TestValueSerialization, SerializeList)
     EXPECT_EQ(val.size(), 1);
     EXPECT_EQ(0x45, val[0]);
   }
-  // THird form, serialized as first form.
+  // Third form, serialized as first form.
   {
     std::vector<uint8_t> testVector{0xd0, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};

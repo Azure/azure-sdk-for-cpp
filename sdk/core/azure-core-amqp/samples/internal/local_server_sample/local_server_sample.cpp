@@ -21,12 +21,12 @@ namespace LocalServerSample {
 class SampleEvents : public ConnectionEvents,
                      public SessionEvents,
                      public MessageReceiverEvents,
-                     public Network::_internal::SocketListenerEvents {
+                     public Network::_detail::SocketListenerEvents {
 public:
   SampleEvents() {}
 
   std::unique_ptr<Connection> WaitForIncomingConnection(
-      Network::_internal::SocketListener& listener,
+      Network::_detail::SocketListener& listener,
       Azure::Core::Context const& context = {})
   {
     auto result = m_connectionQueue.WaitForPolledResult(context, listener);
@@ -161,7 +161,7 @@ int LocalServerSampleMain()
 {
   SampleEvents sampleEvents;
   // Configure a socket listener on the AMQP port (5672).
-  Network::_internal::SocketListener listener(5672, &sampleEvents);
+  Network::_detail::SocketListener listener(5672, &sampleEvents);
 
   listener.Start();
   auto connection = sampleEvents.WaitForIncomingConnection(listener);

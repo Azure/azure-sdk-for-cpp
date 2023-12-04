@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
    */
   class UploadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
   private:
-    // C++ can upload and download from contiguos memory or file only
+    // C++ can upload and download from continuous memory or file only
     std::vector<uint8_t> m_uploadBuffer;
 
   public:

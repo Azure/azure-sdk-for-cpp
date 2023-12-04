@@ -10,12 +10,6 @@ variables have been set by the user:
 * EVENTHUBS_CONNECTION_STRING - The service connection string for the eventhubs instance.
 * EVENTHUB_NAME - Name of the eventhubs instance to communicate with.
 * EVENTHUBS_HOST - Fully qualified domain name for the eventhubs instance.
-* AZURE_TENANT_ID - The tenant ID for the user or service principal which has
-been granted access to the eventhubs service instance.
-* AZURE_CLIENT_ID - The client ID for the user or service principal which has been 
-granted access to the eventhubs service instance.
-* AZURE_CLIENT_SECRET - The client secret for the user or service principal
-  which has been granted access to the eventhubs service instance.
 
 The tests also assume that the currently logged on user is authorized to call
 into the Event Hubs service instance because they use [Azure::Core::Credentials::TokenCredential](https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-core/1.3.1/class_azure_1_1_core_1_1_credentials_1_1_token_credential.html) for authorization.

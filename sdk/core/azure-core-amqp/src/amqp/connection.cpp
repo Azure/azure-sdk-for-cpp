@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/internal/connection.hpp"
 
+#include "../models/private/value_impl.hpp"
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
@@ -21,13 +22,13 @@
 
 #include <memory>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(CONNECTION_HANDLE value)
   {
     connection_destroy(value);
   }
 
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;

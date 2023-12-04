@@ -3,6 +3,8 @@
 
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 
+#include "private/value_impl.hpp"
+
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
 #include <azure_uamqp_c/messaging.h>

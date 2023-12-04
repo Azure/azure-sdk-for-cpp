@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/internal/session.hpp"
 
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/link.hpp"
 #include "private/claims_based_security_impl.hpp"
@@ -20,12 +21,12 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<SESSION_INSTANCE_TAG>::FreeAmqpSession(SESSION_HANDLE value)
   {
     session_destroy(value);
   }
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Endpoint::~Endpoint()

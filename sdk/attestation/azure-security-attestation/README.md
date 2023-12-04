@@ -116,8 +116,7 @@ authentication, the documentation for that API will reflect that the attestation
 
 To interact with the authenticated APIs supported by the Azure Attestation service, your client must present an Azure Active Directory bearer token to the service.
 
-The simplest way of providing a bearer token is to use the  `ClientSecretCredential` authentication method by providing client secret credentials is being used in this
-getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
+The simplest way of providing a bearer token is to use the `DefaultAzureCredential` authentication method is being used in this getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
 
 ## Key concepts
 
@@ -219,8 +218,7 @@ If the attestation APIs require authentication, use the following:
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-    = std::make_shared<Azure::Identity::ClientSecretCredential>(
-      std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
+    = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 auto client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
@@ -265,8 +263,7 @@ All administrative clients are authenticated.
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
+      = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(m_endpoint, credential));
 ```
 

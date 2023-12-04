@@ -7,16 +7,14 @@
 #include "azure/core/amqp/models/amqp_properties.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
+#include <chrono>
+#include <string>
+
 struct SOURCE_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
-  template <> struct UniqueHandleHelper<SOURCE_INSTANCE_TAG>
-  {
-    static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
-
-    using type = BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
-  };
-}}} // namespace Azure::Core::_internal
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
+  class MessageSourceImpl;
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
@@ -52,7 +50,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
     MessageSource();
     /** @brief Deletes a message target. */
-    ~MessageSource() = default;
+    ~MessageSource();
 
     // Create a described source from an AMQP Value - used in the OnLinkAttached.
     MessageSource(AmqpValue const& value);
@@ -76,6 +74,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
 
     MessageSource(MessageSourceOptions const& options);
+
+    /* Note: These constructors should NOT be marked as explicit, because we want to enable the
+     * implicit construction of the MessageSource from a string - this allows callers to construct
+     * Link, MessageSender, and MessageReceiver objects without forcing the creation of a
+     * MessageSource object. */
 
     /** @brief Creates a message source with the given address.
      *
@@ -213,10 +216,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-    operator SOURCE_INSTANCE_TAG*() const { return m_source.get(); }
-    Azure::Core::_internal::UniqueHandle<SOURCE_INSTANCE_TAG> m_source;
-
-    // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.
+    std::unique_ptr<_detail::MessageSourceImpl> m_impl;
+    // Declared as friend so it can access the private m_impl member.
     friend std::ostream& operator<<(std::ostream&, MessageSource const&);
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

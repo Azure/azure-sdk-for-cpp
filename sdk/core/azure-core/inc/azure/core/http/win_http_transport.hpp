@@ -32,11 +32,11 @@
 #include <winhttp.h>
 
 namespace Azure { namespace Core {
-  namespace _internal {
+  namespace _detail {
     /**
-     * @brief  Unique handle for WinHTTP HINTERNET handles.
+     * @brief Unique handle for WinHTTP HINTERNET handles.
      *
-     * @note HINTERNET is declared as a "void *". THis means that this definition subsumes all other
+     * @note HINTERNET is declared as a "void *". This means that this definition subsumes all other
      * `void *` types when used with Azure::Core::_internal::UniqueHandle.
      *
      */
@@ -44,9 +44,9 @@ namespace Azure { namespace Core {
     {
       static void FreeHandle(HINTERNET obj) { WinHttpCloseHandle(obj); }
 
-      using type = BasicUniqueHandle<void, FreeHandle>;
+      using type = _internal::BasicUniqueHandle<void, FreeHandle>;
     };
-  } // namespace _internal
+  } // namespace _detail
 
   namespace Http {
 

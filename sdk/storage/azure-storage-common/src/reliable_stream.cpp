@@ -20,6 +20,7 @@ namespace Azure { namespace Storage {
   } // namespace _detail
 
   namespace _internal {
+    Azure::Core::Context::Key const ReliableStreamClientRequestIdKey;
 
     size_t ReliableStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
     {

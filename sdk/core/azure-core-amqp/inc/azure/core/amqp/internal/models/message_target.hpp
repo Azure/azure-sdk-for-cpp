@@ -7,19 +7,8 @@
 #include "azure/core/amqp/models/amqp_properties.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
-struct TARGET_INSTANCE_TAG;
-
-namespace Azure { namespace Core { namespace _internal {
-  template <> struct UniqueHandleHelper<TARGET_INSTANCE_TAG>
-  {
-    static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
-
-    using type = BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
-  };
-}}} // namespace Azure::Core::_internal
-
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
+  class MessageTargetImpl;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
@@ -51,7 +40,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
     MessageTarget();
     /** @brief Deletes a message target. */
-    ~MessageTarget() = default;
+    ~MessageTarget();
 
     /** @brief Copies a MessageTarget */
     MessageTarget(MessageTarget const& that);
@@ -64,6 +53,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     /** @brief Moves assignment operator */
     MessageTarget& operator=(MessageTarget&&) noexcept;
+
+    /* Note: These constructors should NOT be marked as explicit, because we want to enable the
+     * implicit construction of the MessageTarget from a string - this allows callers to construct
+     * Link, MessageSender, and MessageReceiver objects without forcing the creation of a
+     * MessageSource object. */
 
     /** @brief Creates a message target with the given address.
      *
@@ -168,9 +162,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-    _detail::UniqueMessageTargetHandle m_target;
-
-    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
+    std::unique_ptr<_detail::MessageTargetImpl> m_impl;
 
     // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
     friend std::ostream& operator<<(std::ostream&, MessageTarget const&);

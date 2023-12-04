@@ -53,6 +53,11 @@ std::string timeToString(std::chrono::system_clock::time_point t)
 }
 } // namespace
 
+MessageTarget ReturnsTarget() { return MessageTarget(); }
+MessageTarget ReturnsTarget(const char* str) { return MessageTarget(str); }
+MessageTarget ReturnsTarget(const std::string& str) { return MessageTarget(str); }
+MessageTarget ReturnsTarget(MessageTargetOptions& options) { return MessageTarget(options); }
+
 TEST_F(TestSourceTarget, TargetProperties)
 {
   {
@@ -63,6 +68,48 @@ TEST_F(TestSourceTarget, TargetProperties)
     EXPECT_EQ(TerminusExpiryPolicy::SessionEnd, target.GetExpiryPolicy());
     EXPECT_EQ(false, target.GetDynamic());
     EXPECT_ANY_THROW(target.GetDynamicNodeProperties());
+  }
+
+  {
+    MessageTarget target{};
+
+    MessageTarget target2 = target;
+    MessageTarget target3{target};
+    MessageTarget target4{ReturnsTarget()};
+  }
+  {
+    MessageTarget target{"abcdefg"};
+
+    MessageTarget target2 = target;
+    MessageTarget target3{target};
+    MessageTarget target4{ReturnsTarget("abcdefg")};
+
+    EXPECT_EQ(target.GetAddress(), target2.GetAddress());
+
+    GTEST_LOG_(INFO) << "Target: " << target;
+  }
+
+  {
+    std::string str{"abcdefg"};
+    MessageTarget target{str};
+
+    MessageTarget target2 = target;
+    MessageTarget target3{target};
+    MessageTarget target4{ReturnsTarget(str)};
+
+    EXPECT_EQ(target.GetAddress(), target2.GetAddress());
+  }
+  {
+    MessageTargetOptions options;
+    options.Address = "Address";
+    options.Capabilities.push_back(AmqpSymbol{"Test"}.AsAmqpValue());
+    MessageTarget target{options};
+
+    MessageTarget target2 = target;
+    MessageTarget target3{target};
+    MessageTarget target4{ReturnsTarget(options)};
+
+    EXPECT_EQ(target.GetAddress(), target2.GetAddress());
   }
 
   {
@@ -224,6 +271,11 @@ TEST_F(TestSourceTarget, TargetThroughValue)
   EXPECT_EQ(target.GetAddress(), target2.GetAddress());
 }
 
+MessageSource ReturnsSource() { return MessageSource(); }
+MessageSource ReturnsSource(const char* str) { return MessageSource(str); }
+MessageSource ReturnsSource(const std::string& str) { return MessageSource(str); }
+MessageSource ReturnsSource(MessageSourceOptions& options) { return MessageSource(options); }
+
 TEST_F(TestSourceTarget, SourceProperties)
 {
   {
@@ -234,6 +286,48 @@ TEST_F(TestSourceTarget, SourceProperties)
     EXPECT_EQ(TerminusExpiryPolicy::SessionEnd, source.GetExpiryPolicy());
     EXPECT_EQ(false, source.GetDynamic());
     EXPECT_ANY_THROW(source.GetDynamicNodeProperties());
+  }
+
+  {
+    MessageSource source{};
+
+    MessageSource source2 = source;
+    MessageSource source3{source};
+    MessageSource source4{ReturnsSource()};
+  }
+  {
+    MessageSource source{"abcdefg"};
+
+    MessageSource source2 = source;
+    MessageSource source3{source};
+    MessageSource source4{ReturnsSource("abcdefg")};
+
+    EXPECT_EQ(source.GetAddress(), source2.GetAddress());
+
+    GTEST_LOG_(INFO) << "source: " << source;
+  }
+
+  {
+    std::string str{"abcdefg"};
+    MessageSource source{str};
+
+    MessageSource source2 = source;
+    MessageSource source3{source};
+    MessageSource source4{ReturnsSource(str)};
+
+    EXPECT_EQ(source.GetAddress(), source2.GetAddress());
+  }
+  {
+    MessageSourceOptions options;
+    options.Address = "Address";
+    options.Capabilities.push_back(AmqpSymbol{"Test"}.AsAmqpValue());
+    MessageSource source{options};
+
+    MessageSource source2 = source;
+    MessageSource source3{source};
+    MessageSource source4{ReturnsSource(options)};
+
+    EXPECT_EQ(source.GetAddress(), source2.GetAddress());
   }
 
   {

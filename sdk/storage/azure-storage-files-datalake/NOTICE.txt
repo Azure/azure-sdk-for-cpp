@@ -1,12 +1,10 @@
-azure-storage-files-datalake
-
 NOTICES AND INFORMATION
 Do Not Translate or Localize
 
-This software incorporates material from third parties. Microsoft makes certain
-open source code available at https://3rdpartysource.microsoft.com, or you may
-send a check or money order for US $5.00, including the product name, the open
-source component name, and version number, to:
+This software incorporates material from third parties.
+Microsoft makes certain open source code available at https://3rdpartysource.microsoft.com,
+or you may send a check or money order for US $5.00, including the product name,
+the open source component name, platform, and version number, to:
 
 Source Code Compliance Team
 Microsoft Corporation
@@ -14,58 +12,25 @@ One Microsoft Way
 Redmond, WA 98052
 USA
 
-Notwithstanding any other terms, you may reverse engineer this software to the
-extent required to debug changes to any libraries licensed under the GNU Lesser
-General Public License.
+Notwithstanding any other terms, you may reverse engineer this software to the extent
+required to debug changes to any libraries licensed under the GNU Lesser General Public License.
 
-------------------------------------------------------------------------------
+---------------------------------------------------------
 
-Azure SDK for C++ uses third-party libraries or other resources that may be
-distributed under licenses different than the Azure SDK for C++ software.
-
-In the event that we accidentally failed to list a required notice, please
-bring it to our attention. Post an issue or email us:
-
-           azcppsdkhelp@microsoft.com
-
-The attached notices are provided for information only.
+open-telemetry/opentelemetry-cpp da2911cf4458c7068f967c17c65d07eeba449a08 - Apache-2.0
 
 
-License notice for CMake Modules AddGoogleTest
--------------------------------------------------------------------
-
-BSD 3-Clause License
-
-Copyright (c) 2017, University of Cincinnati
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-License notice for
--------------------------------------------------------------------
+Copyright 2017, OpenCensus
+Copyright 2020 opentelemetry
+Copyright 2019, OpenTelemetry
+Copyright 2020, OpenTelemetry
+Copyright 2021, OpenTelemetry
+copyright 2021, OpenTelemetry
+Copyright 2017 The Abseil Authors
+Copyright 2018 The Abseil Authors
+Copyright 2019 The Abseil Authors
+Copyright (c) Microsoft Corporation
+Copyright 2020, Open Telemetry Authors
 
                                  Apache License
                            Version 2.0, January 2004
@@ -269,164 +234,157 @@ License notice for
    See the License for the specific language governing permissions and
    limitations under the License.
 
-License notice for
--------------------------------------------------------------------
 
-The MIT License (MIT)
+---------------------------------------------------------
 
-Copyright (c) 2015 Max Woolf
+---------------------------------------------------------
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+curl/curl 2cfac302fbeec68f1727cba3d1705e16f02220ad - curl
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-License notice for
--------------------------------------------------------------------
-
-MIT License
-
-Copyright (c) 2016 Nicolas Seriot
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-License notice for
--------------------------------------------------------------------
-
-The MIT License (MIT)
-
-Copyright (c) 2016-2018 Viktor Kirilov
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-License notice for
--------------------------------------------------------------------
-
-The MIT License
-
-Copyright (c) 2018-2019 Bryan Gillespie
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-License notice for
--------------------------------------------------------------------
-
-MIT License 
-
-Copyright (c) 2015-2017 Niels Lohmann
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-License notice for cpplint
--------------------------------------------------------------------
-
-cpplint.py and its corresponding unit tests are Copyright (C) 2009 Google Inc.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-License notice for libcurl
--------------------------------------------------------------------
+(c) CopyRight EdelWeb
+copyright When contributing
+Copyright 2009, John Malmberg
+Copyright 2011, John Malmberg
+Copyright 2012, John Malmberg
+Copyright 2013, John Malmberg
+Copyright 2014, John Malmberg
+Copyright (c) 2001 Eric Lavigne
+Copyright (c) 2016, Evgeny Grin
+Copyright (c) 2000 - 2019 David Odin
+Copyright (c) 2001 Alexander Peslyak
+Copyright (c) 2006-2015 wolfSSL Inc.
+Copyright (c) 1998-2016 Daniel Stenberg
+Copyright (c) 2017 - 2019 Red Hat, Inc.
+Copyright (c) 2004 - 2014, Guenter Knauf
+Copyright (c) 2004 - 2015, Guenter Knauf
+Copyright (c) 2011 - 2019, Jim Hollinger
+Copyright (c) 2004 - 2019 Daniel Stenberg
+Copyright (c) 1998 - $year, Daniel Stenberg
+Copyright (c) 2003 - 2019 Simtec Electronics
+Copyright 2002-2016 Core Security Technologies
+Copyright (c) 2017 Reini Urban <rurban@cpan.org>
+Copyright (c) 2000 The Apache Software Foundation.
+Copyright (c) 2003-2016 CORE Security Technologies
+Copyright (c) 2010, Howard Chu, <hyc@openldap.org>
+Copyright (c) 2010, Mandy Wu, <mandy.wu@intel.com>
+Copyright (c) 2003 - 2019 The OpenEvidence Project.
+Copyright (c) 2011 Daniel Stenberg <daniel@haxx.se>
+Copyright (c) 2013 Daniel Stenberg <daniel@haxx.se>
+Copyright (c) 1996-2019 Internet Software Consortium.
+Copyright (c) 1998, 1999 Kungliga Tekniska Hogskolan.
+Copyright (c) 2010, Howard Chu, <hyc@highlandsun.com>
+Copyright (c) 2011, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2015, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2015, Jay Satiro, <raysatiro@yahoo.com>
+Copyright (c) 2016, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2006, David Shaw <dshaw@jabberwocky.com>
+Copyright (c) 2001 Michael Teo <michaelteo@bigfoot.com>
+Copyright (c) 2001-2004 Damien Miller <djm@openbsd.org>
+Copyright (c) 2008 Kaveh Ghazi <ghazi@caip.rutgers.edu>
+Copyright (c) 2010, Hoi-Ho Chan, <hoiho.chan@gmail.com>
+Copyright (c) 2003 - 2007, Gisle Vanem <gvanem@yahoo.no>
+Copyright (c) 2003 - 2008, Gisle Vanem <gvanem@yahoo.no>
+Copyright (c) 2005 - 2008, Gisle Vanem <gvanem@yahoo.no>
+Copyright (c) 2005 - 2009, Gisle Vanem <gvanem@yahoo.no>
+Copyright (c) 2019, Michael Forney, <mforney@mforney.org>
+Copyright (c) 1996 - 2019 by Internet Software Consortium.
+Copyright (c) 2010-2012, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2010-2015, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2010-2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2010-2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012, Marc Hoersken, <info@marc-hoersken.de>
+Copyright (c) 2013 - 2018 Daniel Stenberg <daniel@haxx.se>
+Copyright (c) 2013, Linus Nielsen Feltzing <linus@haxx.se>
+Copyright (c) 2013-2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2013-2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2014, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 2016-2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2017-2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2018-2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1983 Regents of the University of California.
+Copyright (c) 1998 - 2019 Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012, Mark Salisbury, <mark.salisbury@hp.com>
+Copyright (c) 1996 - 2020, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1997 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1999 - 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1999 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2001 - 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2001 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2003 - 2015, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2003 - 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2004 - 2020, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2005 - 2015, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2005 - 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2008 - 2016, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2009 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2010 - 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2010 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2010 - 2019, Howard Chu, <hyc@highlandsun.com>
+Copyright (c) 2011 - 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2011 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012 - 2016, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012 - 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012 - 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012 - 2020, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2013 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2014, Vijay Panghal, <vpanghal@maginatics.com>
+Copyright (c) 2015 - 2016, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2015 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2016 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2017 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2017-2018, Yiming Jing, <jingyiming@baidu.com>
+Copyright (c) 2018 - 2019 Jeroen Ooms <jeroenooms@gmail.com>
+Copyright (c) 2018 - 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2010, 2011, Hoi-Ho Chan, <hoiho.chan@gmail.com>
+Copyright (c) 2010 - 2011, Hoi-Ho Chan, <hoiho.chan@gmail.com>
+Copyright (c) 2012 - 2014, Nick Zitzmann, <nickzman@gmail.com>
+Copyright (c) 2012 - 2017, Nick Zitzmann, <nickzman@gmail.com>
+Copyright (c) 2017 - 2018, Yiming Jing, <jingyiming@baidu.com>
+Copyright (c) 2012 - 2016, Marc Hoersken, <info@marc-hoersken.de>
+Copyright (c) 2012 - 2018, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 2012 - 2019, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 2013 - 2018, Linus Nielsen Feltzing <linus@haxx.se>
+Copyright (c) 2014 - 2016, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 2014 - 2017, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 2014 - 2019, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 2015 - 2019, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 2016 - 2019, Steve Holme, <steve_holme@hotmail.com>
+Copyright (c) 1998 - 2011, 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2011, 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2012, 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2013, 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2014, 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2014, 2019, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2015, 2017, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 1998 - 2019, 2018, Daniel Stenberg, <daniel@haxx.se>
+Copyright (c) 2012 - 2014, Linus Nielsen Feltzing, <linus@haxx.se>
+Copyright (c) 2012 - 2016, Linus Nielsen Feltzing, <linus@haxx.se>
+Copyright (c) 2013 - 2019, Linus Nielsen Feltzing, <linus@haxx.se>
+Copyright (c) 1998 - 2016, Vijay Panghal, <vpanghal@maginatics.com>
+Copyright (c) 2009, Markus Moeller, <markus_moeller@compuserve.com>
+Copyright (c) 1998 - 2019, Florin Petriuc, <petriuc.florin@gmail.com>
+Copyright (c) 2014, Bill Nagel <wnagel@tycoint.com> , Exacq Technologies
+Copyright (c) 2009, 2011, Markus Moeller, <markus_moeller@compuserve.com>
+Copyright symbol VALUE License', https://curl.haxx.se/docs/copyright.html
+Copyright (c) 1998, 1999, 2017 Kungliga Tekniska Hogskolan (Royal Institute of Technology, Stockholm, Sweden).
+Copyright (c) 1995, 1996, 1997, 1998, 1999 Kungliga Tekniska Hogskolan (Royal Institute of Technology, Stockholm, Sweden).
 
 COPYRIGHT AND PERMISSION NOTICE
 
@@ -450,3 +408,388 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 Except as contained in this notice, the name of a copyright holder shall not
 be used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization of the copyright holder.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+nlohmann/json db78ac1d7716f56fc9f1b030b715f872f93964e4 - MIT
+
+
+(c) 2016
+Copyright 2015 Google Inc.
+Copyright 2018 Google Inc.
+Copyright Louis Dionne 2015
+Copyright 2017 Roman Lebedev.
+Copyright (c) 2009 Google Inc.
+Copyright (c) 2009 Florian Loitsch.
+Copyright (c) 2015-2017 Niels Lohmann.
+Copyright (c) 2016-2019 Viktor Kirilov
+Copyright (c) 2013 - 2020 Niels Lohmann
+Copyright 2016 Ismael Jimenez Martinez.
+Copyright (c) 2012, Erik Edlund <erik.edlund@32767.se>
+Copyright (c) 2018 Vitaliy Manushkin <agri@akamo.info>
+Copyright (c) 2013-2019 Niels Lohmann (http://nlohmann.me)
+Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>
+Copyright (c) 2009 Florian Loitsch (http://florian.loitsch.com/)
+Copyright (c) 2009 Florian Loitsch (https://florian.loitsch.com/)
+Copyright (c) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+Copyright (c) 2008-2009 Bjorn Hoehrmann (http://bjoern.hoehrmann.de/) <bjoern@hoehrmann.de>
+Copyright (c) 2008-2009 Bjorn Hoehrmann (https://bjoern.hoehrmann.de/) <bjoern@hoehrmann.de>
+Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de> sa http://bjoern.hoehrmann.de/utf-8/decoder/dfa
+
+MIT License 
+
+Copyright (c) 2013-2020 Niels Lohmann
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+openssl/openssl d82e959e621a3d597f1e0d50ff8c2d8b96915fd7 - OpenSSL
+
+
+Copyright 2005 Nokia
+Copyright 2011 Google Inc.
+Copyright 2017 Ribose Inc.
+(c) 2013 ATT Wi-Fi Services
+Copyright 2017 BaishanCloud
+Copyright 2013 M. J. Dominus
+Copyright Patrick Powell 1995
+Copyright (c) 2011, RTFM, Inc.
+Copyright 2013 Mark Jason Dominus
+Copyright 2016 VMS Software, Inc.
+Copyright (c) 2004, EdelKey Project
+Copyright (c) 2015 CloudFlare, Inc.
+Copyright (c) 2015, CloudFlare, Inc.
+Copyright (c) 2005 WISeKey SA1 InterU
+Copyright (c) 2012, Intel Corporation
+Copyright (c) 2014, Intel Corporation
+Copyright (c) 2002 The OpenTSA Project
+Copyright 1998-$YEAR The OpenSSL Authors
+Copyright 2004-2014, Akamai Technologies
+holder is Tim Hudson (tjh@cryptsoft.com)
+Copyright 2014 Cryptography Research, Inc.
+Copyright 2015 Cryptography Research, Inc.
+Copyright 2016 Cryptography Research, Inc.
+Copyright 2016 The OpenSSL Project Authors
+Copyright 2017 The OpenSSL Project Authors
+Copyright 2018 The OpenSSL Project Authors
+Copyright 2019 The OpenSSL Project Authors
+Copyright 2020 The OpenSSL Project Authors
+Copyright (c) 1998-2019 The OpenSSL Project
+Copyright (c) 1998-2021 The OpenSSL Project
+Copyright (c) 2006, Network Resonance, Inc.
+Copyright (c) 2012-2014 Daniel J. Bernstein
+copyrighted by the Free Software Foundation
+Copyright (c) 2012-2016 Jean-Philippe Aumasson
+Copyright 1995-2016 The OpenSSL Project Authors
+Copyright 1995-2017 The OpenSSL Project Authors
+Copyright 1995-2018 The OpenSSL Project Authors
+Copyright 1995-2019 The OpenSSL Project Authors
+Copyright 1995-2020 The OpenSSL Project Authors
+Copyright 1995-2021 The OpenSSL Project Authors
+Copyright 1995-2022 The OpenSSL Project Authors
+Copyright 1998-2001 The OpenSSL Project Authors
+Copyright 1998-2016 The OpenSSL Project Authors
+Copyright 1998-2017 The OpenSSL Project Authors
+Copyright 1998-2018 The OpenSSL Project Authors
+Copyright 1998-2019 The OpenSSL Project Authors
+Copyright 1998-2020 The OpenSSL Project Authors
+Copyright 1998-2021 The OpenSSL Project Authors
+Copyright 1998-2022 The OpenSSL Project Authors
+Copyright 1999-2016 The OpenSSL Project Authors
+Copyright 1999-2017 The OpenSSL Project Authors
+Copyright 1999-2018 The OpenSSL Project Authors
+Copyright 1999-2019 The OpenSSL Project Authors
+Copyright 1999-2020 The OpenSSL Project Authors
+Copyright 1999-2021 The OpenSSL Project Authors
+Copyright 1999-2022 The OpenSSL Project Authors
+Copyright 2000-2016 The OpenSSL Project Authors
+Copyright 2000-2017 The OpenSSL Project Authors
+Copyright 2000-2018 The OpenSSL Project Authors
+Copyright 2000-2019 The OpenSSL Project Authors
+Copyright 2000-2020 The OpenSSL Project Authors
+Copyright 2000-2021 The OpenSSL Project Authors
+Copyright 2000-2022 The OpenSSL Project Authors
+Copyright 2001-2016 The OpenSSL Project Authors
+Copyright 2001-2017 The OpenSSL Project Authors
+Copyright 2001-2018 The OpenSSL Project Authors
+Copyright 2001-2019 The OpenSSL Project Authors
+Copyright 2001-2020 The OpenSSL Project Authors
+Copyright 2001-2021 The OpenSSL Project Authors
+Copyright 2001-2022 The OpenSSL Project Authors
+Copyright 2002-2016 The OpenSSL Project Authors
+Copyright 2002-2017 The OpenSSL Project Authors
+Copyright 2002-2018 The OpenSSL Project Authors
+Copyright 2002-2019 The OpenSSL Project Authors
+Copyright 2002-2020 The OpenSSL Project Authors
+Copyright 2002-2021 The OpenSSL Project Authors
+Copyright 2002-2022 The OpenSSL Project Authors
+Copyright 2003-2016 The OpenSSL Project Authors
+Copyright 2003-2017 The OpenSSL Project Authors
+Copyright 2003-2018 The OpenSSL Project Authors
+Copyright 2003-2020 The OpenSSL Project Authors
+Copyright 2003-2021 The OpenSSL Project Authors
+Copyright 2004-2016 The OpenSSL Project Authors
+Copyright 2004-2017 The OpenSSL Project Authors
+Copyright 2004-2018 The OpenSSL Project Authors
+Copyright 2004-2019 The OpenSSL Project Authors
+Copyright 2004-2020 The OpenSSL Project Authors
+Copyright 2004-2021 The OpenSSL Project Authors
+Copyright 2005-2016 The OpenSSL Project Authors
+Copyright 2005-2017 The OpenSSL Project Authors
+Copyright 2005-2018 The OpenSSL Project Authors
+Copyright 2005-2019 The OpenSSL Project Authors
+Copyright 2005-2020 The OpenSSL Project Authors
+Copyright 2005-2021 The OpenSSL Project Authors
+Copyright 2006-2016 The OpenSSL Project Authors
+Copyright 2006-2017 The OpenSSL Project Authors
+Copyright 2006-2018 The OpenSSL Project Authors
+Copyright 2006-2019 The OpenSSL Project Authors
+Copyright 2006-2020 The OpenSSL Project Authors
+Copyright 2006-2021 The OpenSSL Project Authors
+Copyright 2007-2016 The OpenSSL Project Authors
+Copyright 2007-2018 The OpenSSL Project Authors
+Copyright 2007-2020 The OpenSSL Project Authors
+Copyright 2007-2021 The OpenSSL Project Authors
+Copyright 2008-2016 The OpenSSL Project Authors
+Copyright 2008-2018 The OpenSSL Project Authors
+Copyright 2008-2019 The OpenSSL Project Authors
+Copyright 2008-2020 The OpenSSL Project Authors
+Copyright 2008-2021 The OpenSSL Project Authors
+Copyright 2008-2022 The OpenSSL Project Authors
+Copyright 2009-2016 The OpenSSL Project Authors
+Copyright 2009-2018 The OpenSSL Project Authors
+Copyright 2009-2020 The OpenSSL Project Authors
+Copyright 2009-2021 The OpenSSL Project Authors
+Copyright 2009-2022 The OpenSSL Project Authors
+Copyright 2010-2016 The OpenSSL Project Authors
+Copyright 2010-2019 The OpenSSL Project Authors
+Copyright 2010-2020 The OpenSSL Project Authors
+Copyright 2010-2021 The OpenSSL Project Authors
+Copyright 2010-2022 The OpenSSL Project Authors
+Copyright 2011-2016 The OpenSSL Project Authors
+Copyright 2011-2017 The OpenSSL Project Authors
+Copyright 2011-2018 The OpenSSL Project Authors
+Copyright 2011-2019 The OpenSSL Project Authors
+Copyright 2011-2020 The OpenSSL Project Authors
+Copyright 2011-2021 The OpenSSL Project Authors
+Copyright 2012, Samuel Neves <sneves@dei.uc.pt>
+Copyright 2012-2016 The OpenSSL Project Authors
+Copyright 2012-2017 The OpenSSL Project Authors
+Copyright 2012-2019 The OpenSSL Project Authors
+Copyright 2012-2020 The OpenSSL Project Authors
+Copyright 2012-2021 The OpenSSL Project Authors
+Copyright 2012-2022 The OpenSSL Project Authors
+Copyright 2013-2016 The OpenSSL Project Authors
+Copyright 2013-2017 The OpenSSL Project Authors
+Copyright 2013-2018 The OpenSSL Project Authors
+Copyright 2013-2019 The OpenSSL Project Authors
+Copyright 2013-2020 The OpenSSL Project Authors
+Copyright 2013-2021 The OpenSSL Project Authors
+Copyright 2014-2016 Cryptography Research, Inc.
+Copyright 2014-2016 The OpenSSL Project Authors
+Copyright 2014-2017 The OpenSSL Project Authors
+Copyright 2014-2018 The OpenSSL Project Authors
+Copyright 2014-2019 The OpenSSL Project Authors
+Copyright 2014-2020 The OpenSSL Project Authors
+Copyright 2014-2021 The OpenSSL Project Authors
+Copyright 2015-2016 Cryptography Research, Inc.
+Copyright 2015-2016 The OpenSSL Project Authors
+Copyright 2015-2017 The OpenSSL Project Authors
+Copyright 2015-2018 The OpenSSL Project Authors
+Copyright 2015-2019 The OpenSSL Project Authors
+Copyright 2015-2020 The OpenSSL Project Authors
+Copyright 2015-2021 The OpenSSL Project Authors
+Copyright 2015-2022 The OpenSSL Project Authors
+Copyright 2016-2016 The OpenSSL Project Authors
+Copyright 2016-2017 The OpenSSL Project Authors
+Copyright 2016-2018 The OpenSSL Project Authors
+Copyright 2016-2019 The OpenSSL Project Authors
+Copyright 2016-2020 The OpenSSL Project Authors
+Copyright 2016-2021 The OpenSSL Project Authors
+Copyright 2016-2022 The OpenSSL Project Authors
+Copyright 2017-2018 The OpenSSL Project Authors
+Copyright 2017-2019 The OpenSSL Project Authors
+Copyright 2017-2020 The OpenSSL Project Authors
+Copyright 2017-2021 The OpenSSL Project Authors
+Copyright 2017-2022 The OpenSSL Project Authors
+Copyright 2018-2019 The OpenSSL Project Authors
+Copyright 2018-2020 The OpenSSL Project Authors
+Copyright 2018-2021 The OpenSSL Project Authors
+Copyright 2019-2020 The OpenSSL Project Authors
+Copyright 2019-2021 The OpenSSL Project Authors
+Copyright 20xx-20yy The OpenSSL Project Authors
+Copyright (c) 2002, Oracle and/or its affiliates
+Copyright (c) 2017, Oracle and/or its affiliates
+Copyright (c) 2018, Oracle and/or its affiliates
+Copyright 1995-$YEAR The OpenSSL Project Authors
+Copyright 1998-$YEAR The OpenSSL Project Authors
+Copyright 1999-$YEAR The OpenSSL Project Authors
+Copyright 2000-$YEAR The OpenSSL Project Authors
+Copyright 2017 Ribose Inc. (https://www.ribose.com)
+Copyright (c) 1995-1998 Eric A. Young, Tim J. Hudson
+Copyright (c) 2008 Andy Polyakov <appro@openssl.org>
+Copyright (c) 1995-1998 Eric Young (eay@cryptsoft.com)
+Copyright (c) 1989, 1991 Free Software Foundation, Inc.
+Copyright (c) 2017 National Security Research Institute
+Copyright (c) 2004, Richard Levitte <richard@levitte.org>
+Copyright (c) 2013-2014 Timo Teras <timo.teras@gmail.com>
+Copyright (c) 2007 KISA(Korea Information Security Agency)
+Copyright (c) 2004, 2018, Richard Levitte <richard@levitte.org>
+Copyright (c) 2016 Viktor Dukhovni <openssl-users@dukhovni.org>
+Copyright 2006 NTT (Nippon Telegraph and Telephone Corporation)
+Copyright (c) 2005 WISeKey SA1 Internat(onal1)0 WISeKey CertifyID Advanced G1 CA0
+Copyright (c) 2005 WISeKey SA1 International1 0 WISeKey CertifyID Advanced G1 CA0
+Copyright (c) 2004 Kungliga Tekniska Hogskolan (Royal Institute of Technology, Stockholm, Sweden)
+
+
+  LICENSE ISSUES
+  ==============
+
+  The OpenSSL toolkit stays under a double license, i.e. both the conditions of
+  the OpenSSL License and the original SSLeay license apply to the toolkit.
+  See below for the actual license texts.
+
+  OpenSSL License
+  ---------------
+
+/* ====================================================================
+ * Copyright (c) 1998-2019 The OpenSSL Project.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. All advertising materials mentioning features or use of this
+ *    software must display the following acknowledgment:
+ *    "This product includes software developed by the OpenSSL Project
+ *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+ *
+ * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
+ *    endorse or promote products derived from this software without
+ *    prior written permission. For written permission, please contact
+ *    openssl-core@openssl.org.
+ *
+ * 5. Products derived from this software may not be called "OpenSSL"
+ *    nor may "OpenSSL" appear in their names without prior written
+ *    permission of the OpenSSL Project.
+ *
+ * 6. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the OpenSSL Project
+ *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This product includes cryptographic software written by Eric Young
+ * (eay@cryptsoft.com).  This product includes software written by Tim
+ * Hudson (tjh@cryptsoft.com).
+ *
+ */
+
+ Original SSLeay License
+ -----------------------
+
+/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
+ * All rights reserved.
+ *
+ * This package is an SSL implementation written
+ * by Eric Young (eay@cryptsoft.com).
+ * The implementation was written so as to conform with Netscapes SSL.
+ *
+ * This library is free for commercial and non-commercial use as long as
+ * the following conditions are aheared to.  The following conditions
+ * apply to all code found in this distribution, be it the RC4, RSA,
+ * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
+ * included with this distribution is covered by the same copyright terms
+ * except that the holder is Tim Hudson (tjh@cryptsoft.com).
+ *
+ * Copyright remains Eric Young's, and as such any Copyright notices in
+ * the code are not to be removed.
+ * If this package is used in a product, Eric Young should be given attribution
+ * as the author of the parts of the library used.
+ * This can be in the form of a textual message at program startup or
+ * in documentation (online or textual) provided with the package.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *    "This product includes cryptographic software written by
+ *     Eric Young (eay@cryptsoft.com)"
+ *    The word 'cryptographic' can be left out if the rouines from the library
+ *    being used are not cryptographic related :-).
+ * 4. If you include any Windows specific code (or a derivative thereof) from
+ *    the apps directory (application code) you must include an acknowledgement:
+ *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
+ *
+ * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * The licence and distribution terms for any publically available version or
+ * derivative of this code cannot be changed.  i.e. this code cannot simply be
+ * copied and put under another distribution licence
+ * [including the GNU Public Licence.]
+ */
+
+
+
+---------------------------------------------------------
+

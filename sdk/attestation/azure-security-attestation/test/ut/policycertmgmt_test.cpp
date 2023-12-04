@@ -304,7 +304,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   }
 
   // Verify that we get an exception if we try to set a policy management certificate on an AAD
-  // instance. THe primary purpose of this test is to increase code coverage numbers.
+  // instance. The primary purpose of this test is to increase code coverage numbers.
   TEST_F(CertificateTests, VerifyFailedAddCertificate)
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));
@@ -331,7 +331,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
   // Verify that we get an exception if we try to remove a policy management certificate on an AAD
-  // instance. THe primary purpose of this test is to increase code coverage numbers.
+  // instance. The primary purpose of this test is to increase code coverage numbers.
   TEST_F(CertificateTests, VerifyFailedRemoveCertificate)
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));

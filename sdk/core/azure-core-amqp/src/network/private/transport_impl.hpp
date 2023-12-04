@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 
-#include <azure/core/internal/unique_handle.hpp>
+#include "../../amqp/private/unique_handle.hpp"
+#include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 
 #include <azure_c_shared_utility/xio.h>
 
@@ -13,17 +13,17 @@
 #include <stdexcept>
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<XIO_INSTANCE_TAG>
   {
     static void FreeXio(XIO_HANDLE obj);
 
-    using type = BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
+    using type = Core::_internal::BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
-  using UniqueXioHandle = Azure::Core::_internal::UniqueHandle<XIO_INSTANCE_TAG>;
+  using UniqueXioHandle = Amqp::_detail::UniqueHandle<XIO_INSTANCE_TAG>;
 
   struct TransportImpl : public std::enable_shared_from_this<TransportImpl>
   {

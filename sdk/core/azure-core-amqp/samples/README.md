@@ -73,6 +73,28 @@ Demonstrates reading messages from the Azure Event Hubs service using the AMQP p
 ### eventhub_sas_writer_sample
 Demonstrates writing messages to the Azure Event Hubs service using the AMQP protocol with SAS authentication.
 
+<!-- @insert_snippet: CreateSender -->
+```cpp
+  Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+  senderOptions.Name = "sender-link";
+  senderOptions.MessageSource = "source";
+  senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
+  senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+
+  Azure::Core::Amqp::_internal::MessageSender sender(
+      session, credentials->GetEntityPath(), senderOptions, nullptr);
+```
+
+<!-- @insert_snippet: create_connection -->
+```cpp
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.ContainerId = "whatever";
+  connectionOptions.EnableTrace = true;
+  connectionOptions.Port = credential->GetPort();
+  Azure::Core::Amqp::_internal::Connection connection(
+      credential->GetHostName(), credential, connectionOptions);
+```
+
 ### eventhub_token_reader_sample
 Demonstrates reading messages from the Azure Event Hubs service using the AMQP protocol with an Azure bearer token authentication.
 
@@ -90,3 +112,4 @@ Demonstrates receiving messages from a local AMQP server using the AMQP protocol
 
 ### eventhub_get_eventhub_properties_sample
 Demonstrates receiving messages from the Azure Event Hubs service using an AMQP Management API.
+
