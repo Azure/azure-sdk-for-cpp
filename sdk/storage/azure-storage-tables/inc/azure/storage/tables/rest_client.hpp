@@ -374,10 +374,10 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     /**
-     * @brief Initializes a new instance of QueueClient.
+     * @brief Initializes a new instance of tableClient.
      *
-     * @param queueUrl A url referencing the queue that includes the name of the account and the
-     * name of the queue.
+     * @param serviceUrl A url referencing the table that includes the name of the account and the
+     * name of the table.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
@@ -395,7 +395,7 @@ namespace Azure { namespace Storage { namespace Tables {
           std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
       m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
           options,
-          _internal::QueueServicePackageName,
+          _internal::TablesServicePackageName,
           _detail::ApiVersion,
           std::move(perRetryPolicies),
           std::move(perOperationPolicies));

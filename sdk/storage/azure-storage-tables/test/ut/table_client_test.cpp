@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
       //     = std::make_shared<Tables::TableClient>(CreateKeyTableClientForTest(clientOptions));
       m_tableName = GetTestNameLowerCase();
 
-      std::replace(m_tableName.begin(), m_tableName.end(),'-','0');
+      std::replace(m_tableName.begin(), m_tableName.end(), '-', '0');
       switch (param)
       {
         case AuthType::ConnectionString:
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       catch (...)
       {
-	  }
+      }
     }
     StorageTest::TearDown();
   }
