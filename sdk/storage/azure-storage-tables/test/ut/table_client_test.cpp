@@ -558,7 +558,7 @@ namespace Azure { namespace Storage { namespace Test {
           stringValue = "key";
           break;
         case AuthType::SAS:
-          stringValue = "sas";
+          stringValue = "sas_LIVEONLY_";
           break;
         default:
           stringValue = "key";
