@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Test {
     if (m_tableServiceClient.get() == nullptr)
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-
+      auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       // m_credential = CreateClientSecretCredential(
       //     GetEnv("STORAGE_TENANT_ID"),
       //     GetEnv("STORAGE_CLIENT_ID"),
@@ -44,10 +44,10 @@ namespace Azure { namespace Storage { namespace Test {
         case AuthType::ConnectionString:
           m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
               Tables::TableServicesClient::CreateFromConnectionString(
-                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING")));
+                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"),clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(
               Tables::TableClient::CreateFromConnectionString(
-                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, clientOptions));
+                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, tableClientOptions));
           break;
         case AuthType::Key:
           m_credential = CreateClientSecretCredential(
@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Test {
               = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
                   GetEnv("STORAGE_TABLES_URL"), m_credential, clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
-              GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, clientOptions));
+              GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, tableClientOptions));
           break;
         case AuthType::SAS:
           auto creds = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
@@ -72,9 +72,9 @@ namespace Azure { namespace Storage { namespace Test {
           auto sasToken = sasBuilder.GenerateSasToken(*creds);
           m_tableServiceClient
               = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
-                  "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken));
+                  "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
-              "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken, m_tableName));
+              "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken, m_tableName,tableClientOptions));
           break;
       }
     }
@@ -558,7 +558,7 @@ namespace Azure { namespace Storage { namespace Test {
           stringValue = "key";
           break;
         case AuthType::SAS:
-          stringValue = "sas_LIVEONLY_";
+          stringValue = "sas";
           break;
         default:
           stringValue = "key";
