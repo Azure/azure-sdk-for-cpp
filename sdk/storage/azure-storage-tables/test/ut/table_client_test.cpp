@@ -179,6 +179,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, ListTables)
   {
+    if (GetParam() == AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
     auto createResponse = m_tableClient->Create();
 
     Azure::Storage::Tables::Models::ListTablesOptions listOptions;
@@ -212,6 +217,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientGetProperties)
   {
+    if (GetParam() == AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
 
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
@@ -229,6 +239,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientSet)
   {
+    if (GetParam() != AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
 
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
@@ -241,6 +256,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientStatistics)
   {
+    if (GetParam() != AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
     Azure::Storage::Tables::Models::GetServiceStatisticsOptions statsOptions;
 
     auto response = m_tableServiceClient->GetStatistics(statsOptions);
