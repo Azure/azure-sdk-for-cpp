@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Test {
         case AuthType::ConnectionString:
           m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
               Tables::TableServicesClient::CreateFromConnectionString(
-                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"),clientOptions));
+                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(
               Tables::TableClient::CreateFromConnectionString(
                   GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, tableClientOptions));
@@ -72,9 +72,12 @@ namespace Azure { namespace Storage { namespace Test {
           auto sasToken = sasBuilder.GenerateSasToken(*creds);
           m_tableServiceClient
               = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
-                  "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,clientOptions));
+                  "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,
+                  clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
-              "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken, m_tableName,tableClientOptions));
+              "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,
+              m_tableName,
+              tableClientOptions));
           break;
       }
     }
@@ -125,7 +128,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
   }
 
-  TEST_P(TablesClientTest, GetAccessPolicy)
+  TEST_P(TablesClientTest, GetAccessPolicy_LIVEONLY_)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
@@ -138,7 +141,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 0);
   }
 
-  TEST_P(TablesClientTest, SetAccessPolicy)
+  TEST_P(TablesClientTest, SetAccessPolicy_LIVEONLY_)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
