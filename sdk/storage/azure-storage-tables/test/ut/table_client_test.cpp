@@ -237,13 +237,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
   }
 
-  TEST_P(TablesClientTest, ServiceClientSet)
+  TEST_P(TablesClientTest, ServiceClientSet_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
+
     Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
 
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
@@ -254,13 +250,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
   }
 
-  TEST_P(TablesClientTest, ServiceClientStatistics)
+  TEST_P(TablesClientTest, ServiceClientStatistics_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
     Azure::Storage::Tables::Models::GetServiceStatisticsOptions statsOptions;
 
     auto response = m_tableServiceClient->GetStatistics(statsOptions);
