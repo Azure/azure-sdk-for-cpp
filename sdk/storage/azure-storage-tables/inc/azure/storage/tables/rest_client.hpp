@@ -42,28 +42,6 @@ namespace Azure { namespace Storage { namespace Tables {
     constexpr static const char* ApiVersion = "2019-02-02";
   } // namespace _detail
 
-  class AllowedMethodsType final
-      : public Core::_internal::ExtendableEnumeration<AllowedMethodsType> {
-  public:
-    AllowedMethodsType() = default;
-
-    explicit AllowedMethodsType(std::string allowedMethods)
-        : ExtendableEnumeration(std::move(allowedMethods))
-    {
-    }
-
-    static AllowedMethodsType const Delete;
-    static AllowedMethodsType const Get;
-    static AllowedMethodsType const Head;
-    static AllowedMethodsType const Merge;
-    static AllowedMethodsType const Post;
-    static AllowedMethodsType const Options;
-    static AllowedMethodsType const Put;
-    static AllowedMethodsType const Patch;
-    static AllowedMethodsType const Connect;
-    static AllowedMethodsType const Trace;
-  };
-
   /**
    * @brief API version for Storage Tables service.
    */
@@ -100,7 +78,7 @@ namespace Azure { namespace Storage { namespace Tables {
      * @brief API version 2019-12-12.
      *
      */
-    AZ_STORAGE_TABLES_DLLEXPORT const static ServiceVersion V2023_01_01;
+    AZ_STORAGE_TABLES_DLLEXPORT const static ServiceVersion V2019_02_02;
 
   private:
     std::string m_version;
@@ -165,182 +143,200 @@ namespace Azure { namespace Storage { namespace Tables {
      * Audience is not set.
      */
     Azure::Nullable<TablesAudience> Audience;
-
-    std::string SubscriptionId;
   };
 
   class TableClient final {
   public:
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param serviceUrl The URL of the service account that is the target of the desired operation.
+     * The URL may contain SAS query parameters.
+     * @param tableName The name of the table.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
     explicit TableClient(
         std::string const& serviceUrl,
         std::string const& tableName,
-        const TableClientOptions& options = {})
-        : m_url(serviceUrl), m_tableName(tableName)
-    {
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          options,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies),
-          std::move(perOperationPolicies));
-    }
-
+        const TableClientOptions& options = {});
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param serviceUrl The URL of the service account that is the target of the desired operation.
+     * The URL may contain SAS query parameters.
+     * @param tableName The name of the table.
+     * @param credential The shared key credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
     explicit TableClient(
         const std::string& serviceUrl,
         const std::string& tableName,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const TableClientOptions& options = {})
-        : TableClient(serviceUrl, tableName, options)
-    {
-      m_tableName = tableName;
-      TableClientOptions newOptions = options;
-      m_url = Azure::Core::Url(serviceUrl);
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+        const TableClientOptions& options = {});
 
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      {
-        Azure::Core::Credentials::TokenRequestContext tokenContext;
-        tokenContext.Scopes.emplace_back(
-            newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                           : m_url.GetAbsoluteUrl() + "/.default");
-
-        perRetryPolicies.emplace_back(
-            std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-                credential, tokenContext, newOptions.EnableTenantDiscovery));
-      }
-      perOperationPolicies.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
-          newOptions.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          newOptions,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies),
-          std::move(perOperationPolicies));
-    }
-
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param serviceUrl The URL of the service account that is the target of the desired operation.
+     * The URL may contain SAS query parameters.
+     * @param tableName The name of the table.
+     * @param credential The shared key credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
     explicit TableClient(
         const std::string& tableName,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         std::string url,
-        const TableClientOptions& options)
-        : m_url(std::move(url)), m_tableName(tableName)
+        const TableClientOptions& options = {});
 
-    {
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          options,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies),
-          std::move(perOperationPolicies));
-
-      TableClientOptions newOptions = options;
-      newOptions.PerRetryPolicies.emplace_back(
-          std::make_unique<_internal::SharedKeyPolicyLite>(credential));
-
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
-      perRetryPolicies2.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
-      perRetryPolicies2.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies2.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
-          newOptions.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          newOptions,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies2),
-          std::move(perOperationPolicies2));
-    }
-
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param connectionString the connection string used to initialize.
+     * @param tableName The name of the table.
+     * @param credential The shared key credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     * @return TableClient.
+     */
     static TableClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& tableName,
-        const TableClientOptions& options = TableClientOptions())
-    {
-      auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
-      auto tablesUrl = std::move(parsedConnectionString.TableServiceUrl);
+        const TableClientOptions& options = {});
 
-      if (parsedConnectionString.KeyCredential)
-      {
-        return TableClient(
-            tableName,
-            std::move(parsedConnectionString.KeyCredential),
-            tablesUrl.GetAbsoluteUrl().empty()
-                ? Azure::Storage::_internal::TablesManagementPublicEndpoint
-                : tablesUrl.GetAbsoluteUrl(),
-            options);
-      }
-      else
-      {
-        return TableClient(tablesUrl.GetAbsoluteUrl(), tableName, options);
-      }
-    }
-
+    /**
+     * @brief Create the table indicated in the tableName field of the client.
+     *
+     * @param context for canceling long running operations.
+     * @return Create table result.
+     */
     Response<Models::Table> Create(Core::Context const& context = {});
 
+    /**
+     * @brief Delete the table indicated in the tableName field of the client.
+     *
+     * @param context for canceling long running operations.
+     * @return Delete table result.
+     */
     Response<Models::DeleteResult> Delete(Core::Context const& context = {});
 
+    /**
+     * @brief Get table access policy.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Get access policy result.
+     */
     Response<Models::TableAccessPolicy> GetAccessPolicy(
         Models::GetTableAccessPolicyOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Set table access policy.
+     *
+     * @param tableAccessPolicy The TableAccessPolicy to set.
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Set access policy result.
+     */
     Response<Models::SetTableAccessPolicyResult> SetAccessPolicy(
         Models::TableAccessPolicy const& tableAccessPolicy,
         Models::SetTableAccessPolicyOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Create table entity.
+     *
+     * @param tableEntity The TableEntity to set.
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Create entity result.
+     */
     Response<Models::CreateEntityResult> CreateEntity(
         Models::TableEntity const& tableEntity,
         Models::CreateEntityOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Update table entity.
+     *
+     * @param tableEntity The TableEntity to set.
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Update entity result.
+     */
     Response<Models::UpdateEntityResult> UpdateEntity(
         Models::TableEntity const& tableEntity,
         Models::UpdateEntityOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Merge table entity.
+     *
+     * @param tableEntity The TableEntity to merge.
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Merge entity result.
+     */
     Response<Models::MergeEntityResult> MergeEntity(
         Models::TableEntity const& tableEntity,
         Models::MergeEntityOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Delete table entity.
+     *
+     * @param tableEntity The TableEntity to delete.
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Delete entity result.
+     */
     Response<Models::DeleteEntityResult> DeleteEntity(
         Models::TableEntity const& tableEntity,
         Models::DeleteEntityOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Upsert table entity.
+     *
+     * @param tableEntity The TableEntity to upsert.
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Upsert entity result.
+     */
     Response<Models::UpsertEntityResult> UpsertEntity(
         Models::TableEntity const& tableEntity,
         Models::UpsertEntityOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Query table entities.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Entity list paged response.
+     */
     Models::QueryEntitiesPagedResponse QueryEntities(
         Models::QueryEntitiesOptions const& options = {},
         Core::Context const& context = {});
-
+    /**
+     * @brief Creates a new transaction.
+     *
+     * @param partitionKey The partition key of the transaction.
+     * @return New transaction.
+     */
     Transaction CreateTransaction(std::string const& partitionKey);
+
+    /**
+     * @brief Submits a transaction.
+     *
+     * @param transaction The transaction to submit.
+     * @param context for canceling long running operations.
+     * @return Submit transaction result.
+     */
     Response<Models::SubmitTransactionResult> SubmitTransaction(
         Transaction& transaction,
         Core::Context const& context = {});
@@ -354,24 +350,13 @@ namespace Azure { namespace Storage { namespace Tables {
 
   class TableServicesClient final {
   public:
-    explicit TableServicesClient(const TableClientOptions& options = {})
-
-    {
-      TableClientOptions newOptions = options;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
-          newOptions.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          newOptions,
-          "storage-tables",
-          _detail::ApiVersion,
-          std::move(perRetryPolicies),
-          std::move(perOperationPolicies));
-    };
+    /**
+     * @brief Initializes a new instance of tableServicesClient.
+     *
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
+    explicit TableServicesClient(const TableClientOptions& options = {});
 
     /**
      * @brief Initializes a new instance of tableClient.
@@ -383,142 +368,93 @@ namespace Azure { namespace Storage { namespace Tables {
      */
     explicit TableServicesClient(
         const std::string& serviceUrl,
-        const TableClientOptions& options = TableClientOptions())
-    {
-      m_url = Azure::Core::Url(serviceUrl);
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          options,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies),
-          std::move(perOperationPolicies));
-    }
+        const TableClientOptions& options = {});
 
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param serviceUrl A url referencing the table that includes the name of the account and the
+     * name of the table.
+     * @param credential The shared key credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
     explicit TableServicesClient(
         const std::string& serviceUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const TableClientOptions& options = {})
-        : TableServicesClient(options)
+        const TableClientOptions& options = {});
 
-    {
-      TableClientOptions newOptions = options;
-      m_url = Azure::Core::Url(serviceUrl);
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
-
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      {
-        Azure::Core::Credentials::TokenRequestContext tokenContext;
-        tokenContext.Scopes.emplace_back(
-            newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                           : m_url.GetAbsoluteUrl() + "/.default");
-
-        perRetryPolicies.emplace_back(
-            std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-                credential, tokenContext, newOptions.EnableTenantDiscovery));
-      }
-      perOperationPolicies.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
-          newOptions.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          newOptions,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies),
-          std::move(perOperationPolicies));
-    };
-
+    /**
+     * @brief Initializes a new instance of tableClient.
+     * @param serviceUrl A url referencing the table that includes the name of the account and the
+     * name of the table.
+     *
+     * @param credential The shared key credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     * @return TableServicesClient.
+     */
     explicit TableServicesClient(
         const std::string& serviceUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
-        const TableClientOptions& options = TableClientOptions())
-        : m_url(Azure::Core::Url(serviceUrl))
-    {
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), options.SecondaryHostForRetryReads));
-      perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies.emplace_back(
-          std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          options,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies),
-          std::move(perOperationPolicies));
-
-      TableClientOptions newOptions = options;
-      newOptions.PerRetryPolicies.emplace_back(
-          std::make_unique<_internal::SharedKeyPolicyLite>(credential));
-
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
-      perRetryPolicies2.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-          m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
-      perRetryPolicies2.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-      perOperationPolicies2.emplace_back(std::make_unique<_internal::StorageServiceVersionPolicy>(
-          newOptions.ApiVersion.ToString()));
-      m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-          newOptions,
-          _internal::TablesServicePackageName,
-          _detail::ApiVersion,
-          std::move(perRetryPolicies2),
-          std::move(perOperationPolicies2));
-    }
-
+        const TableClientOptions& options = {});
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param connectionString the connection string used to initialize.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     * @return TableServicesClient.
+     */
     static TableServicesClient CreateFromConnectionString(
         const std::string& connectionString,
-        const TableClientOptions& options = TableClientOptions())
-    {
-      auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
-      auto tablesUrl = std::move(parsedConnectionString.TableServiceUrl);
+        const TableClientOptions& options = {});
 
-      if (parsedConnectionString.KeyCredential)
-      {
-        return TableServicesClient(
-            tablesUrl.GetAbsoluteUrl().empty()
-                ? Azure::Storage::_internal::TablesManagementPublicEndpoint
-                : tablesUrl.GetAbsoluteUrl(),
-            std::move(parsedConnectionString.KeyCredential),
-
-            options);
-      }
-      else
-      {
-        return TableServicesClient(options);
-      }
-    }
-
+    /**
+     * @brief List tables.
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return List tables paged response.
+     */
     Models::ListTablesPagedResponse ListTables(
         const Models::ListTablesOptions& options = {},
         const Azure::Core::Context& context = {}) const;
 
+    /**
+     * @brief Set service properties
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     */
     Response<Models::SetServicePropertiesResult> SetServiceProperties(
         Models::SetServicePropertiesOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Get service properties
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Get service properties result.
+     */
     Response<Models::TableServiceProperties> GetServiceProperties(
         Models::GetServicePropertiesOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Get service statistics
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Get service statistics result.
+     */
     Response<Models::ServiceStatistics> GetStatistics(
         Models::GetServiceStatisticsOptions const& options = {},
         Core::Context const& context = {});
 
+    /**
+     * @brief Pre flight check
+     * @param options Optional parameters to execute this function.
+     * @param context for canceling long running operations.
+     * @return Get service statistics result.
+     */
     Response<Models::PreflightCheckResult> PreflightCheck(
         Models::PreflightCheckOptions const& options,
         Core::Context const& context = {});

@@ -360,3 +360,5 @@ build/
 .assets
 
 CMakeUserPresets.json
+/vcpkg_installed
+/_deps/vcpkg-subbuild
