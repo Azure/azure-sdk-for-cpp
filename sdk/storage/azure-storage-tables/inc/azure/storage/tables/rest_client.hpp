@@ -179,10 +179,9 @@ namespace Azure { namespace Storage { namespace Tables {
     /**
      * @brief Initializes a new instance of tableClient.
      *
-     * @param serviceUrl The URL of the service account that is the target of the desired operation.
-     * The URL may contain SAS query parameters.
      * @param tableName The name of the table.
      * @param credential The shared key credential used to sign requests.
+     * @param url A url referencing the table that includes the name of the account and the name of
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
@@ -197,7 +196,6 @@ namespace Azure { namespace Storage { namespace Tables {
      *
      * @param connectionString the connection string used to initialize.
      * @param tableName The name of the table.
-     * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      * @return TableClient.
@@ -392,7 +390,6 @@ namespace Azure { namespace Storage { namespace Tables {
      * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
-     * @return TableServicesClient.
      */
     explicit TableServicesClient(
         const std::string& serviceUrl,
