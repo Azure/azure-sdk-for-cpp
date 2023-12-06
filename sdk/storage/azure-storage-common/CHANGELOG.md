@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Removed unnecessary dependencies on non-Windows platforms. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
+
 ### Breaking Changes
 
 ### Bugs Fixed
