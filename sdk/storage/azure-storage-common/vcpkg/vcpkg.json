@@ -22,7 +22,8 @@
     },
     {
       "name": "libxml2",
-      "platform": "!windows"
+      "platform": "!windows",
+      "default-features": false
     },
     {
       "name": "openssl",
