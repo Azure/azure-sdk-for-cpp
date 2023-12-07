@@ -8,8 +8,8 @@
     },
     {
       "name": "libxml2",
-      "platform": "!windows & !uwp",
-      "default-features": false
+      "default-features": false,
+      "platform": "!windows & !uwp"
     },
     {
       "name": "openssl"
