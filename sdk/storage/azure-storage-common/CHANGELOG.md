@@ -12,6 +12,12 @@
 
 ### Other Changes
 
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
+
+- Theodore Tsirpanis _([GitHub](https://github.com/teo-tsirpanis))_
+
 ## 12.5.0 (2023-11-07)
 
 ### Features Added
