@@ -223,9 +223,13 @@ TEST(AzureCliCredential, ExpiresIn)
 
 TEST(AzureCliCredential, ExpiresOnUnixTimestampInt)
 {
+  // 'expires_on' is 1700692424, which is a Unix timestamp of a date in 2023.
+  // 'ExpiresOn' is a date in 2022.
+  // The test checks that when both are present, 'expires_on' value (2023) is taken,
+  // and not that of 'ExpiresOn'.
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
-                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\","
-                         "\"expires_on\":1700692424}";
+                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\"," // <-- 2022
+                         "\"expires_on\":1700692424}"; // <-- 2023
 
   AzureCliTestCredential const azCliCred(EchoCommand(Token));
 
@@ -243,9 +247,15 @@ TEST(AzureCliCredential, ExpiresOnUnixTimestampInt)
 
 TEST(AzureCliCredential, ExpiresOnUnixTimestampString)
 {
+  // 'expires_on' is 1700692424, which is a Unix timestamp of a date in 2023.
+  // 'ExpiresOn' is a date in 2022.
+  // The test checks that when both are present, 'expires_on' value (2023) is taken,
+  // and not that of 'ExpiresOn'.
+  // The test is similar to the one above, but the Unix timestamp is represented as string
+  // containing an integer.
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
-                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\","
-                         "\"expires_on\":\"1700692424\"}";
+                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\"," // <-- 2022
+                         "\"expires_on\":\"1700692424\"}"; // <-- 2023
 
   AzureCliTestCredential const azCliCred(EchoCommand(Token));
 

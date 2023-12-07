@@ -68,11 +68,16 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param expiresInPropertyName Name of a property in the JSON object that represents token
      * expiration in number of seconds from now.
      * @param expiresOnPropertyNames Names of properties in the JSON object that represent token
-     * expiration as absolute date-time stamp.
+     * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse the
+     * corresponding property will be made. Empty string elements will be ignored.
+     *
      *
      * @return A successfully parsed access token.
      *
      * @throw `std::exception` if there was a problem parsing the token.
+     *
+     * @note The order of elements in \p expiresOnPropertyNames does matter: the code will first try
+     * to find a property with the name of the first element, then of a second one, and so on.
      */
     static Core::Credentials::AccessToken ParseToken(
         std::string const& jsonString,

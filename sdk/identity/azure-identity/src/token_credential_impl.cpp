@@ -288,7 +288,8 @@ AccessToken TokenCredentialImpl::ParseToken(
 
   if (nonEmptyExpiresOnPropertyNames.empty())
   {
-    // 'expires_in' is undefined, 'expires_on' is not expected.
+    // The code was not able to parse the value of 'expires_in', and the caller did not pass any
+    // 'expires_on' for us to find and try parse.
     ThrowJsonPropertyError(
         expiresInPropertyName,
         parsedJson,
