@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #include <azure/core/base64.hpp>
 #include <azure/storage/tables/serializers.hpp>
 #include <azure/storage/tables/transactions.hpp>
