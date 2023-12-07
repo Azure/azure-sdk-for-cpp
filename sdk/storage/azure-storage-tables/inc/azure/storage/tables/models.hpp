@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     /**
-     * @brief Include this parameter to specify that the queues' metadata be returned as part of
+     * @brief Include this parameter to specify that the tables' metadata be returned as part of
      * the response body.
      */
     enum class ListTablesIncludeFlags
@@ -68,33 +68,33 @@ namespace Azure { namespace Storage { namespace Tables {
     struct ListTablesOptions final
     {
       /**
-       * @brief Specifies a string that filters the results to return only queues whose name
+       * @brief Specifies a string that filters the results to return only tables whose name
        * begins with the specified prefix.
        */
       Azure::Nullable<std::string> Prefix;
 
       /**
-       * @brief A string value that identifies the portion of the list of queues to be returned
+       * @brief A string value that identifies the portion of the list of tables to be returned
        * with the next listing operation. The operation returns a non-empty continuation token if
-       * the listing operation did not return all queues remaining to be listed with the current
+       * the listing operation did not return all tables remaining to be listed with the current
        * segment. The ContinuationToken value can be used as the value for the ContinuationToken
        * parameter in a subsequent call to request the next segment of list items.
        */
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * @brief Specifies the maximum number of queues to return.
+       * @brief Specifies the maximum number of tables to return.
        */
       Azure::Nullable<int32_t> PageSizeHint;
 
       /**
-       * @brief Specifies that the queue's metadata be returned.
+       * @brief Specifies that the table's metadata be returned.
        */
       Models::ListTablesIncludeFlags Include = Models::ListTablesIncludeFlags::None;
     };
 
     /**
-     * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::ListQueues.
+     * @brief Response type for #Azure::Storage::Tables::TableServiceClient::ListTables.
      */
     class ListTablesPagedResponse final
         : public Azure::Core::PagedResponse<ListTablesPagedResponse> {
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Tables {
       Azure::Nullable<std::string> Prefix;
 
       /**
-       * Queue items.
+       * Table items.
        */
       std::vector<Models::Table> Tables;
 
@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Tables {
     };
     /**
      * @brief A summary of request statistics grouped by API in hour or minute aggregates for
-     * queues.
+     * tables.
      */
     struct Metrics final
     {
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Tables {
        */
       std::string Version;
       /**
-       * Indicates whether metrics are enabled for the Queue service.
+       * Indicates whether metrics are enabled for the Table service.
        */
       bool IsEnabled = bool();
       /**
@@ -234,11 +234,11 @@ namespace Azure { namespace Storage { namespace Tables {
        */
       AnalyticsLogging Logging;
       /**
-       * A summary of request statistics grouped by API in hourly aggregates for queues.
+       * A summary of request statistics grouped by API in hourly aggregates for tables.
        */
       Metrics HourMetrics;
       /**
-       * A summary of request statistics grouped by API in minute aggregates for queues.
+       * A summary of request statistics grouped by API in minute aggregates for tables.
        */
       Metrics MinuteMetrics;
       /**

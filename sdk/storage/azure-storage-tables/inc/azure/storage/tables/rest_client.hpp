@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * @brief Initializes a new instance of tableClient.
-     * 
+     *
      * @param serviceUrl A url referencing the table that includes the name of the account and the
      * name of the table.
      * @param credential The shared key credential used to sign requests.
@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * @brief List tables.
-     * 
+     *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return List tables paged response.
@@ -418,7 +418,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * @brief Set service properties
-     * 
+     *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      */
@@ -428,7 +428,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * @brief Get service properties
-     * 
+     *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Get service properties result.
@@ -439,7 +439,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * @brief Get service statistics
-     * 
+     *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Get service statistics result.
@@ -450,7 +450,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * @brief Pre flight check
-     * 
+     *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Get service statistics result.
