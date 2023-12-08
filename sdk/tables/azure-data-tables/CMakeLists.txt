@@ -22,7 +22,7 @@ include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
 include(CreateMapFile)
-
+find_package(azure-storage-common-cpp CONFIG QUIET)
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
