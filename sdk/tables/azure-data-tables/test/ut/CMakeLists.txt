@@ -25,7 +25,7 @@ add_executable (
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../../storage/azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../../storage/azure-storage-common/test/ut/test_base.hpp
 )
-create_per_service_target_build(data azure-data-tables-test)
+create_per_service_target_build(tables azure-data-tables-test)
 create_map_file(azure-data-tables-test azure-data-tables-test.map)
 
 # Include shared test headers
