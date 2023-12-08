@@ -71,7 +71,6 @@ namespace Azure { namespace Identity { namespace _detail {
      * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse the
      * corresponding property will be made. Empty string elements will be ignored.
      *
-     *
      * @return A successfully parsed access token.
      *
      * @throw `std::exception` if there was a problem parsing the token.
