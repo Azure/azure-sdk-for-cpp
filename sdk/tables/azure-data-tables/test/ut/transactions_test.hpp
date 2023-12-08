@@ -4,10 +4,10 @@
 
 #include "test/ut/test_base.hpp"
 
-#include <azure/storage/tables/rest_client.hpp>
-#include <azure/storage/tables/transactions.hpp>
+#include <azure/data/tables/rest_client.hpp>
+#include <azure/data/tables/transactions.hpp>
 
-namespace Azure { namespace Storage { namespace Test {
+namespace Azure { namespace Data { namespace Test {
 
   class TransactionsBodyTest : public Azure::Storage::Test::StorageTest {
 
@@ -20,9 +20,9 @@ namespace Azure { namespace Storage { namespace Test {
     std::string changeset;
     void CheckContentLines(
         std::vector<std::string> const& lines,
-        Azure::Storage::Tables::Models::TransactionAction action);
+        Azure::Data::Tables::Models::TransactionAction action);
     void CheckTransactionBody(
         std::string const& body,
-        Azure::Storage::Tables::Models::TransactionAction action);
+        Azure::Data::Tables::Models::TransactionAction action);
   };
 }}} // namespace Azure::Storage::Test

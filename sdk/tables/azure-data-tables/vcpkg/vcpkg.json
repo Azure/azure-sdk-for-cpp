@@ -2,13 +2,13 @@
 # Licensed under the MIT License.
 
 {
-  "name": "azure-storage-tables-cpp",
+  "name": "azure-data-tables-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
     "Microsoft Azure Storage Tables SDK for C++",
     "This library provides Azure Storage Tables SDK."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-tables",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/tables/azure-data-tables",
   "license": "MIT",
   "dependencies": [
     {

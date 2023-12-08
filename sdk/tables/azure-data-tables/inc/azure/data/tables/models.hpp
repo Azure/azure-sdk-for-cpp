@@ -7,7 +7,7 @@
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
-#include <azure/storage/tables/dll_import_export.hpp>
+#include <azure/data/tables/dll_import_export.hpp>
 
 #include <cstdint>
 #include <map>
@@ -16,7 +16,7 @@
 #include <utility>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Tables {
+namespace Azure { namespace Data { namespace Tables {
   class TableServicesClient;
   class TableClient;
 
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     /**
-     * @brief Response type for #Azure::Storage::Tables::TableServiceClient::ListTables.
+     * @brief Response type for #Azure::Data::Tables::TableServiceClient::ListTables.
      */
     class ListTablesPagedResponse final
         : public Azure::Core::PagedResponse<ListTablesPagedResponse> {
@@ -256,14 +256,14 @@ namespace Azure { namespace Storage { namespace Tables {
     };
 
     /**
-     * @brief Response type for #Azure::Storage::Tables::TablesServiceClient::SetProperties.
+     * @brief Response type for #Azure::Data::Tables::TablesServiceClient::SetProperties.
      */
     struct SetServicePropertiesResult final
     {
     };
 
     /**
-     * @brief Response type for #Azure::Storage::Tables::TablesServiceClient::PreflightCheck.
+     * @brief Response type for #Azure::Data::Tables::TablesServiceClient::PreflightCheck.
      */
     struct PreflightCheckResult final
     {
@@ -502,4 +502,4 @@ namespace Azure { namespace Storage { namespace Tables {
       Azure::Nullable<TransactionError> Error;
     };
   } // namespace Models
-}}} // namespace Azure::Storage::Tables
+}}} // namespace Azure::Data::Tables

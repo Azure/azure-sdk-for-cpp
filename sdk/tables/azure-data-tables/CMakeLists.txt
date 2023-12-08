@@ -6,7 +6,7 @@ include(AzureVcpkg)
 az_vcpkg_integrate()
 
 cmake_minimum_required (VERSION 3.13)
-project(azure-storage-tables LANGUAGES CXX)
+project(azure-data-tables LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -26,67 +26,67 @@ include(CreateMapFile)
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
-    SetCompileOptions(STORAGE_TABLES)
-    GetFolderList(STORAGE_TABLES)
+    SetCompileOptions(DATA_TABLES)
+    GetFolderList(DATA_TABLES)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp CONFIG QUIET)
-  if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp REQUIRED)
+  find_package(azure-data-common-cpp CONFIG QUIET)
+  if(NOT azure-data-common-cpp_FOUND)
+    find_package(azure-data-common-cpp REQUIRED)
   endif()
 endif()
 
 set(
-  AZURE_STORAGE_TABLES_HEADER
-    inc/azure/storage/tables/dll_import_export.hpp
-    inc/azure/storage/tables/rest_client.hpp
-    inc/azure/storage/tables/rtti.hpp
-    inc/azure/storage/tables/models.hpp
-    inc/azure/storage/tables/transactions.hpp
-    inc/azure/storage/tables/serializers.hpp
+  AZURE_DATA_TABLES_HEADER
+    inc/azure/data/tables/dll_import_export.hpp
+    inc/azure/data/tables/rest_client.hpp
+    inc/azure/data/tables/rtti.hpp
+    inc/azure/data/tables/models.hpp
+    inc/azure/data/tables/transactions.hpp
+    inc/azure/data/tables/serializers.hpp
 )
 
 set(
-  AZURE_STORAGE_TABLES_SOURCE
+  AZURE_DATA_TABLES_SOURCE
     src/private/package_version.hpp
     src/rest_client.cpp
     src/transactions.cpp
 )
 
-add_library(azure-storage-tables ${AZURE_STORAGE_TABLES_HEADER} ${AZURE_STORAGE_TABLES_SOURCE})
-create_per_service_target_build(storage azure-storage-tables)
+add_library(azure-data-tables ${AZURE_DATA_TABLES_HEADER} ${AZURE_DATA_TABLES_SOURCE})
+create_per_service_target_build(data azure-data-tables)
 # make sure that users can consume the project as a library.
-add_library(Azure::azure-storage-tables ALIAS azure-storage-tables)
+add_library(Azure::azure-data-tables ALIAS azure-data-tables)
 
 target_include_directories(
-  azure-storage-tables
+  azure-data-tables
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-storage-tables PUBLIC Azure::azure-storage-common)
+target_link_libraries(azure-data-tables PUBLIC Azure::azure-storage-common)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
-generate_documentation(azure-storage-tables ${AZ_LIBRARY_VERSION})
+generate_documentation(azure-data-tables ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(
-    azure-storage-tables
-    STORAGE_TABLES
-    azure/storage/tables/dll_import_export.hpp
+    azure-data-tables
+    DATA_TABLES
+    azure/data/tables/dll_import_export.hpp
   )
   
 az_rtti_setup(
-  azure-storage-tables
-  STORAGE_TABLES
-  azure/storage/tables/rtti.hpp
+  azure-data-tables
+  DATA_TABLES
+  azure/data/tables/rtti.hpp
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-tables azure-storage-test "tests?/*;samples?/*")
+create_code_coverage(data azure-data-tables azure-data-tables-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
   add_subdirectory(test/ut)

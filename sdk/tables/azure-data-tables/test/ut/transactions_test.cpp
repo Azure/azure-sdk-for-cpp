@@ -6,9 +6,9 @@
 #include <sstream>
 #include <string>
 #include <thread>
-using namespace Azure::Storage::Tables;
+using namespace Azure::Data::Tables;
 
-namespace Azure { namespace Storage { namespace Test {
+namespace Azure { namespace Data { namespace Test {
   const std::string url("someUrl");
   const std::string tableName("someTableName");
   const std::string partitionKey("somePartitionKey");
@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(TransactionsBodyTest, TransactionBodyInsertOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
     entity.RowKey = rowKey;
     transaction.CreateEntity(entity);
     EXPECT_EQ(transaction.GetSteps().size(), 1);
@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
 
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
     entity.RowKey = rowKey;
     transaction.DeleteEntity(entity);
     EXPECT_EQ(transaction.GetSteps().size(), 1);
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
 
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
     entity.RowKey = rowKey;
     transaction.MergeEntity(entity);
     EXPECT_EQ(transaction.GetSteps().size(), 1);
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(TransactionsBodyTest, TransactionBodyUpdateOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
     entity.RowKey = rowKey;
     transaction.UpdateEntity(entity);
     EXPECT_EQ(transaction.GetSteps().size(), 1);
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(TransactionsBodyTest, TransactionBodyInsertMergeOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
     entity.RowKey = rowKey;
     transaction.InsertMergeEntity(entity);
     EXPECT_EQ(transaction.GetSteps().size(), 1);
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(TransactionsBodyTest, TransactionBodyInsertReplaceOp)
   {
     Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
     entity.RowKey = rowKey;
     transaction.InsertReplaceEntity(entity);
     EXPECT_EQ(transaction.GetSteps().size(), 1);

@@ -20,19 +20,19 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
-#include <azure/storage/tables/dll_import_export.hpp>
-#include <azure/storage/tables/models.hpp>
-#include <azure/storage/tables/rest_client.hpp>
-#include <azure/storage/tables/rtti.hpp>
-#include <azure/storage/tables/transactions.hpp>
+#include <azure/data/tables/dll_import_export.hpp>
+#include <azure/data/tables/models.hpp>
+#include <azure/data/tables/rest_client.hpp>
+#include <azure/data/tables/rtti.hpp>
+#include <azure/data/tables/transactions.hpp>
 
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-
-namespace Azure { namespace Storage { namespace Tables {
+using namespace Azure::Storage;
+namespace Azure { namespace Data { namespace Tables {
   namespace _detail {
     /**
      * The version used for the operations to Azure storage services.
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Tables {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Storage::Tables::Models::TablesAudience::PublicAudience will be assumed if
+     * #Azure::Data::Tables::Models::TablesAudience::PublicAudience will be assumed if
      * Audience is not set.
      */
     Azure::Nullable<TablesAudience> Audience;
@@ -463,4 +463,4 @@ namespace Azure { namespace Storage { namespace Tables {
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
   };
-}}} // namespace Azure::Storage::Tables
+}}} // namespace Azure::Data::Tables

@@ -20,9 +20,9 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
-#include <azure/storage/tables/dll_import_export.hpp>
-#include <azure/storage/tables/models.hpp>
-#include <azure/storage/tables/rtti.hpp>
+#include <azure/data/tables/dll_import_export.hpp>
+#include <azure/data/tables/models.hpp>
+#include <azure/data/tables/rtti.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -30,7 +30,7 @@
 #include <utility>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Tables {
+namespace Azure { namespace Data { namespace Tables {
 
   class Transaction final {
   public:
@@ -74,4 +74,4 @@ namespace Azure { namespace Storage { namespace Tables {
     std::string m_batchId;
     std::string m_changesetId;
   };
-}}} // namespace Azure::Storage::Tables
+}}} // namespace Azure::Data::Tables

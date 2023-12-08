@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/storage/tables/rest_client.hpp"
+#include "azure/data/tables/rest_client.hpp"
 
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
@@ -10,12 +10,12 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/internal/xml_wrapper.hpp>
-#include <azure/storage/tables/serializers.hpp>
+#include <azure/data/tables/serializers.hpp>
 
 #include <sstream>
 #include <string>
-using namespace Azure::Storage::Tables;
-
+using namespace Azure::Data::Tables;
+using namespace Azure::Storage;
 const TablesAudience TablesAudience::PublicAudience(
     Azure::Storage::_internal::TablesManagementScope);
 

@@ -1,0 +1,74 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+trigger:
+  branches:
+    include:
+      - main
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/storage
+
+pr:
+  branches:
+    include:
+      - main
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/tables
+      - eng/common/testproxy
+
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+    parameters:
+      ServiceDirectory: tables
+      # Not running tests on CI but only on LiveTest mode
+      CtestRegex: azure-data-tables
+      LineCoverageTarget: 85
+      BranchCoverageTarget: 50
+      LiveTestCtestRegex: azure-data-tables
+      Clouds: Preview
+      SupportedClouds: Preview
+      Artifacts:
+        - Name: azure-data-tables
+          Path: azure-data-tables
+          VcpkgPortName: azure-data-tables-cpp
+      TestEnv:
+        - Name: AAD_TENANT_ID
+          Value: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        - Name: AAD_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AAD_CLIENT_SECRET
+          Value: "non-real-secret"          
+        - Name: STANDARD_STORAGE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=account-name;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        - Name: ADLS_GEN2_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        - Name: PREMIUM_FILE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        # Tables related env vars
+        - Name: STORAGE_TENANT_ID
+          Value: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        - Name: STORAGE_CLIENT_ID
+          Value: "non-real-client"
+        - Name: STORAGE_CLIENT_SECRET
+          Value: "some-secret"
+        - Name: STORAGE_SUBSCRIPTION_ID
+          Value: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        - Name: STORAGE_RESOURCE_GROUP
+          Value: "rg-fake"
+        - Name: TABLES_STORAGE_ACCOUNT_NAME
+          Value: "account-name"
+        - Name: LOGGING__LOGLEVEL__DEFAULT
+          Value: "debug"
+        - Name: STORAGE_TABLES_URL
+          Value: "https://account-name.table.core.windows.net"
+      CMakeTestOptions:
+        - Name: Default
+          Value: ''
+        - Name: Test
+          Value: '-DBUILD_TESTING=ON'

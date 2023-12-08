@@ -4,11 +4,11 @@
 
 #include "test/ut/test_base.hpp"
 
-#include <azure/storage/tables/models.hpp>
-#include <azure/storage/tables/rest_client.hpp>
-#include <azure/storage/tables/transactions.hpp>
+#include <azure/data/tables/models.hpp>
+#include <azure/data/tables/rest_client.hpp>
+#include <azure/data/tables/transactions.hpp>
 
-namespace Azure { namespace Storage { namespace Test {
+namespace Azure { namespace Data { namespace Test {
   enum class AuthType
   {
     Key = 0x0,
@@ -21,10 +21,10 @@ namespace Azure { namespace Storage { namespace Test {
   protected:
     void SetUp() override;
     void TearDown() override;
-    Azure::Storage::Tables::TableClient CreateTableClientForTest(
+    Azure::Data::Tables::TableClient CreateTableClientForTest(
         Tables::TableClientOptions& clientOptions);
 
-    Azure::Storage::Tables::TableClient CreateKeyTableClientForTest(
+    Azure::Data::Tables::TableClient CreateKeyTableClientForTest(
         Tables::TableClientOptions& clientOptions);
     std::string GetConnectionString()
     {

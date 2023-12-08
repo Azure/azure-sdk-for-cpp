@@ -21,19 +21,19 @@
 #include <azure/storage/common/internal/xml_wrapper.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
-#include <azure/storage/tables/dll_import_export.hpp>
-#include <azure/storage/tables/models.hpp>
-#include <azure/storage/tables/rest_client.hpp>
-#include <azure/storage/tables/rtti.hpp>
-#include <azure/storage/tables/transactions.hpp>
+#include <azure/data/tables/dll_import_export.hpp>
+#include <azure/data/tables/models.hpp>
+#include <azure/data/tables/rest_client.hpp>
+#include <azure/data/tables/rtti.hpp>
+#include <azure/data/tables/transactions.hpp>
 
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-
-namespace Azure { namespace Storage { namespace Tables {
+using namespace Azure::Storage;
+namespace Azure { namespace Data { namespace Tables {
   class Serializers final {
   public:
     static std::string const CreateEntity(Models::TableEntity const& tableEntity)
@@ -274,4 +274,4 @@ namespace Azure { namespace Storage { namespace Tables {
       return xmlBody;
     }
   };
-}}} // namespace Azure::Storage::Tables
+}}} // namespace Azure::Data::Tables

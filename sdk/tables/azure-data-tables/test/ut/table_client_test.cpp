@@ -5,8 +5,8 @@
 
 #include <chrono>
 #include <thread>
-
-namespace Azure { namespace Storage { namespace Test {
+using namespace Azure::Data;
+namespace Azure { namespace Data { namespace Test {
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
   void TablesClientTest::SetUp()
   {
@@ -22,20 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-      // m_credential = CreateClientSecretCredential(
-      //     GetEnv("STORAGE_TENANT_ID"),
-      //     GetEnv("STORAGE_CLIENT_ID"),
-      //      GetEnv("STORAGE_CLIENT_SECRET"));
 
-      //  m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-      //      Tables::TableServicesClient(GetEnv("STORAGE_TABLES_URL"), m_credential,
-      //      clientOptions));
-      // m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-      //   Tables::TableServicesClient::CreateFromConnectionString(
-      //     GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
-      //  auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-      //  m_tableClient
-      //     = std::make_shared<Tables::TableClient>(CreateKeyTableClientForTest(clientOptions));
       m_tableName = GetTestNameLowerCase();
 
       std::replace(m_tableName.begin(), m_tableName.end(), '-', '0');
@@ -55,7 +42,7 @@ namespace Azure { namespace Storage { namespace Test {
               GetEnv("STORAGE_CLIENT_ID"),
               GetEnv("STORAGE_CLIENT_SECRET"));
           m_tableServiceClient
-              = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
+              = std::make_shared<Tables::TableServicesClient>(Azure::Data::Tables::TableServicesClient(
                   GetEnv("STORAGE_TABLES_URL"), m_credential, clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
               GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, tableClientOptions));
@@ -99,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
     StorageTest::TearDown();
   }
 
-  Azure::Storage::Tables::TableClient TablesClientTest::CreateKeyTableClientForTest(
+  Azure::Data::Tables::TableClient TablesClientTest::CreateKeyTableClientForTest(
       Tables::TableClientOptions& clientOptions)
   {
     m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
@@ -108,7 +95,7 @@ namespace Azure { namespace Storage { namespace Test {
     return tableClient;
   }
 
-  Azure::Storage::Tables::TableClient TablesClientTest::CreateTableClientForTest(
+  Azure::Data::Tables::TableClient TablesClientTest::CreateTableClientForTest(
       Tables::TableClientOptions& clientOptions)
   {
     m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
@@ -149,8 +136,8 @@ namespace Azure { namespace Storage { namespace Test {
       return;
     }
     auto createResponse = m_tableClient->Create();
-    Azure::Storage::Tables::Models::TableAccessPolicy newPolicy{};
-    Azure::Storage::Tables::Models::SignedIdentifier newIdentifier{};
+    Azure::Data::Tables::Models::TableAccessPolicy newPolicy{};
+    Azure::Data::Tables::Models::SignedIdentifier newIdentifier{};
     newIdentifier.Id = "testid";
     newIdentifier.Permissions = "r";
     newIdentifier.StartsOn = Azure::DateTime::Parse(
@@ -186,7 +173,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto createResponse = m_tableClient->Create();
 
-    Azure::Storage::Tables::Models::ListTablesOptions listOptions;
+    Azure::Data::Tables::Models::ListTablesOptions listOptions;
 
     auto listResponse = m_tableServiceClient->ListTables(listOptions);
 
@@ -222,7 +209,7 @@ namespace Azure { namespace Storage { namespace Test {
       SkipTest();
       return;
     }
-    Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
+    Azure::Data::Tables::Models::GetServicePropertiesOptions getOptions;
 
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
     EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
@@ -240,11 +227,11 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_P(TablesClientTest, ServiceClientSet_LIVEONLY_)
   {
 
-    Azure::Storage::Tables::Models::GetServicePropertiesOptions getOptions;
+    Azure::Data::Tables::Models::GetServicePropertiesOptions getOptions;
 
     auto response = m_tableServiceClient->GetServiceProperties(getOptions);
 
-    Azure::Storage::Tables::Models::SetServicePropertiesOptions setOptions;
+    Azure::Data::Tables::Models::SetServicePropertiesOptions setOptions;
     setOptions.ServiceProperties = std::move(response.Value);
     auto response2 = m_tableServiceClient->SetServiceProperties(setOptions);
     EXPECT_EQ(response2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
@@ -252,7 +239,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientStatistics_LIVEONLY_)
   {
-    Azure::Storage::Tables::Models::GetServiceStatisticsOptions statsOptions;
+    Azure::Data::Tables::Models::GetServiceStatisticsOptions statsOptions;
 
     auto response = m_tableServiceClient->GetStatistics(statsOptions);
 
@@ -262,7 +249,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, EntityCreate)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
 
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
@@ -277,7 +264,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, EntityUpdate)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
 
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
@@ -306,7 +293,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, EntityMerge)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
 
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
@@ -335,7 +322,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, EntityDelete)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
 
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
@@ -365,7 +352,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, EntityUpsert)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
 
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
@@ -376,8 +363,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
-    Azure::Storage::Tables::Models::UpsertEntityOptions options;
-    options.UpsertType = Azure::Storage::Tables::Models::UpsertKind::Update;
+    Azure::Data::Tables::Models::UpsertEntityOptions options;
+    options.UpsertType = Azure::Data::Tables::Models::UpsertKind::Update;
 
     entity.Properties["Product"] = "Tables2";
     auto updateResponse = m_tableClient->MergeEntity(entity, options);
@@ -386,8 +373,8 @@ namespace Azure { namespace Storage { namespace Test {
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(updateResponse.Value.ETag.empty());
 
-    Azure::Storage::Tables::Models::UpsertEntityOptions options2;
-    options2.UpsertType = Azure::Storage::Tables::Models::UpsertKind::Merge;
+    Azure::Data::Tables::Models::UpsertEntityOptions options2;
+    options2.UpsertType = Azure::Data::Tables::Models::UpsertKind::Merge;
     entity.Properties["Product3"] = "Tables3";
     entity.ETag = updateResponse.Value.ETag;
     auto updateResponse2 = m_tableClient->MergeEntity(entity, options2);
@@ -399,7 +386,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, EntityQuery)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity;
 
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
@@ -418,7 +405,7 @@ namespace Azure { namespace Storage { namespace Test {
     entity.RowKey = "R3";
     m_tableClient->CreateEntity(entity);
 
-    Azure::Storage::Tables::Models::QueryEntitiesOptions options;
+    Azure::Data::Tables::Models::QueryEntitiesOptions options;
 
     auto responseQuery = m_tableClient->QueryEntities(options);
     EXPECT_EQ(responseQuery.TableEntities.size(), 3);
@@ -435,8 +422,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
-    Azure::Storage::Tables::Models::TableEntity entity2;
+    Azure::Data::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity2;
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
@@ -457,8 +444,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
-    Azure::Storage::Tables::Models::TableEntity entity2;
+    Azure::Data::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity2;
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
@@ -479,8 +466,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
-    Azure::Storage::Tables::Models::TableEntity entity2;
+    Azure::Data::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity2;
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
@@ -507,8 +494,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
-    Azure::Storage::Tables::Models::TableEntity entity2;
+    Azure::Data::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity2;
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
@@ -534,8 +521,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
   {
-    Azure::Storage::Tables::Models::TableEntity entity;
-    Azure::Storage::Tables::Models::TableEntity entity2;
+    Azure::Data::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity2;
     entity.PartitionKey = "P1";
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";

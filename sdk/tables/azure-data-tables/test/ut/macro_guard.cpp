@@ -12,4 +12,4 @@
 #define max(x, y) small
 #define min(x, y) small
 
-#include <azure/storage/tables/rest_client.hpp>
+#include <azure/data/tables/rest_client.hpp>

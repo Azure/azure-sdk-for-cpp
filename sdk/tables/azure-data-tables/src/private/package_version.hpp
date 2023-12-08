@@ -16,7 +16,7 @@
 #define AZURE_STORAGE_TABLES_VERSION_ITOA_HELPER(i) #i
 #define AZURE_STORAGE_TABLES_VERSION_ITOA(i) AZURE_STORAGE_TABLES_VERSION_ITOA_HELPER(i)
 
-namespace Azure { namespace Storage { namespace Tables { namespace _detail {
+namespace Azure { namespace Data { namespace Tables { namespace _detail {
   /**
    * @brief Provides version information.
    */
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Tables { namespace _detail {
               AZURE_STORAGE_TABLES_VERSION_MINOR) "." AZURE_STORAGE_TABLES_VERSION_ITOA(AZURE_STORAGE_TABLES_VERSION_PATCH);
     }
   };
-}}}} // namespace Azure::Storage::Tables::_detail
+}}}} // namespace Azure::Data::Tables::_detail
 
 #undef AZURE_STORAGE_TABLES_VERSION_ITOA_HELPER
 #undef AZURE_STORAGE_TABLES_VERSION_ITOA
