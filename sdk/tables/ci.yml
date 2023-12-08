@@ -8,7 +8,7 @@ trigger:
       - hotfix/*
   paths:
     include:
-      - sdk/storage
+      - sdk/tables
 
 pr:
   branches:
@@ -27,10 +27,10 @@ stages:
     parameters:
       ServiceDirectory: tables
       # Not running tests on CI but only on LiveTest mode
-      CtestRegex: azure-data-tables
+      CtestRegex: azure-data
       LineCoverageTarget: 85
       BranchCoverageTarget: 50
-      LiveTestCtestRegex: azure-data-tables
+      LiveTestCtestRegex: azure-data
       Clouds: Preview
       SupportedClouds: Preview
       Artifacts:
