@@ -290,11 +290,11 @@ namespace Azure { namespace Data { namespace Tables {
       /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
       /** Constant value of type GeoReplicationStatus: Live */
-      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Live;
+      AZ_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Live;
       /** Constant value of type GeoReplicationStatus: Bootstrap */
-      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      AZ_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
       /** Constant value of type GeoReplicationStatus: Unavailable */
-      AZ_STORAGE_TABLES_DLLEXPORT const static GeoReplicationStatus Unavailable;
+      AZ_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Unavailable;
 
     private:
       std::string m_value;

@@ -80,7 +80,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief API version 2019-12-12.
      *
      */
-    AZ_STORAGE_TABLES_DLLEXPORT const static ServiceVersion V2019_02_02;
+    AZ_DATA_TABLES_DLLEXPORT const static ServiceVersion V2019_02_02;
 
   private:
     std::string m_version;

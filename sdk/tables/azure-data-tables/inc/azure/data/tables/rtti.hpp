@@ -16,7 +16,7 @@
 #pragma once
 
 /**
- * @def AZ_STORAGE_TABLES_RTTI
+ * @def AZ_DATA_TABLES_RTTI
  * @brief A macro indicating whether the code is built with RTTI or not.
  *
  * @details `AZ_RTTI` could be defined while building the Azure SDK with CMake, however, after
@@ -31,6 +31,6 @@
  * condition when it was not.
  */
 
-#if defined(AZ_RTTI) || (0 /*@AZ_STORAGE_TABLES_RTTI@*/)
-#define AZ_STORAGE_TABLES_RTTI
+#if defined(AZ_RTTI) || (0 /*@AZ_DATA_TABLES_RTTI@*/)
+#define AZ_DATA_TABLES_RTTI
 #endif
