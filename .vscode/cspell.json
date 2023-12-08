@@ -329,6 +329,14 @@
       ]
     },
     {
+      "filename": "**/sdk/tables/test-resources.json",
+      "words": [
+        "bfqt",
+        "rwdlacup",
+        "pfile"
+      ]
+    },
+    {
       "filename": "**/sdk/storage/faq.md",
       "words": [
         "dont"
