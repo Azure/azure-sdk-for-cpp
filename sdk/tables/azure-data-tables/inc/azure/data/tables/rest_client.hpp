@@ -35,11 +35,16 @@ using namespace Azure::Storage;
 namespace Azure { namespace Data { namespace Tables {
   namespace _detail {
     /**
-     * The version used for the operations to Azure storage services.
+     * The version used for the operations to Tables services.
      */
     constexpr static const char* ApiVersion = "2019-02-02";
+    /**
+     * The package name of the SDK.
+     */
+    constexpr static const char* TablesServicePackageName = "storage-tables";
   } // namespace _detail
 
+ 
   /**
    * @brief API version for Storage Tables service.
    */

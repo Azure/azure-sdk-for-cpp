@@ -8,7 +8,6 @@ namespace Azure { namespace Storage { namespace _internal {
   constexpr static const char* DatalakeServicePackageName = "storage-files-datalake";
   constexpr static const char* FileServicePackageName = "storage-files-shares";
   constexpr static const char* QueueServicePackageName = "storage-queues";
-  constexpr static const char* TablesServicePackageName = "storage-tables";
   constexpr static const char* HttpQuerySnapshot = "snapshot";
   constexpr static const char* HttpQueryVersionId = "versionid";
   constexpr static const char* HttpQueryTimeout = "timeout";
