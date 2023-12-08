@@ -3,6 +3,6 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-project (azure-storage LANGUAGES CXX)
+project (azure-data LANGUAGES CXX)
 
 add_subdirectory(azure-data-tables)
