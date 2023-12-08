@@ -11,6 +11,9 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
+#include <azure/data/tables/dll_import_export.hpp>
+#include <azure/data/tables/models.hpp>
+#include <azure/data/tables/rtti.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy_lite.hpp>
@@ -20,9 +23,6 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
-#include <azure/data/tables/dll_import_export.hpp>
-#include <azure/data/tables/models.hpp>
-#include <azure/data/tables/rtti.hpp>
 
 #include <cstdint>
 #include <memory>

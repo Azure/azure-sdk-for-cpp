@@ -9,8 +9,8 @@
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
-#include <azure/storage/common/internal/xml_wrapper.hpp>
 #include <azure/data/tables/serializers.hpp>
+#include <azure/storage/common/internal/xml_wrapper.hpp>
 
 #include <sstream>
 #include <string>
@@ -144,9 +144,7 @@ TableServicesClient TableServicesClient::CreateFromConnectionString(
   if (parsedConnectionString.KeyCredential)
   {
     return TableServicesClient(
-        tablesUrl.GetAbsoluteUrl(),
-        std::move(parsedConnectionString.KeyCredential),
-        options);
+        tablesUrl.GetAbsoluteUrl(), std::move(parsedConnectionString.KeyCredential), options);
   }
   else
   {

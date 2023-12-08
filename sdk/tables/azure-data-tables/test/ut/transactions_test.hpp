@@ -25,4 +25,4 @@ namespace Azure { namespace Data { namespace Test {
         std::string const& body,
         Azure::Data::Tables::Models::TransactionAction action);
   };
-}}} // namespace Azure::Storage::Test
+}}} // namespace Azure::Data::Test

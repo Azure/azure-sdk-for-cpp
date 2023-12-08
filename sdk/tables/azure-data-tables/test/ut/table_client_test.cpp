@@ -41,8 +41,8 @@ namespace Azure { namespace Data { namespace Test {
               GetEnv("STORAGE_TENANT_ID"),
               GetEnv("STORAGE_CLIENT_ID"),
               GetEnv("STORAGE_CLIENT_SECRET"));
-          m_tableServiceClient
-              = std::make_shared<Tables::TableServicesClient>(Azure::Data::Tables::TableServicesClient(
+          m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
+              Azure::Data::Tables::TableServicesClient(
                   GetEnv("STORAGE_TABLES_URL"), m_credential, clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
               GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, tableClientOptions));
@@ -573,4 +573,4 @@ namespace Azure { namespace Data { namespace Test {
       TablesClientTest,
       ::testing::Values(AuthType::Key, AuthType::ConnectionString, AuthType::SAS),
       GetSuffix);
-}}} // namespace Azure::Storage::Test
+}}} // namespace Azure::Data::Test

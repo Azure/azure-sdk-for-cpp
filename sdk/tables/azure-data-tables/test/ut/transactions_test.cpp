@@ -185,4 +185,4 @@ namespace Azure { namespace Data { namespace Test {
     CheckContentLines(contentLines, action);
     EXPECT_EQ(line, "--" + batch);
   }
-}}} // namespace Azure::Storage::Test
+}}} // namespace Azure::Data::Test

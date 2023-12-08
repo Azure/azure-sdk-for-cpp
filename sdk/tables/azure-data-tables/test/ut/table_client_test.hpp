@@ -57,4 +57,4 @@ namespace Azure { namespace Data { namespace Test {
     std::shared_ptr<Tables::TableServicesClient> m_tableServiceClient;
     std::shared_ptr<Tables::TableClient> m_tableClient;
   };
-}}} // namespace Azure::Storage::Test
+}}} // namespace Azure::Data::Test
