@@ -4,7 +4,7 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
-    REF azure-storage-tables_@AZ_LIBRARY_VERSION@
+    REF azure-data-tables_@AZ_LIBRARY_VERSION@
     SHA512 0
 )
 
