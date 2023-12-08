@@ -70,10 +70,11 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param expiresOnPropertyName Name of a property in the JSON object that represents token
      * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse it is
      * made.
-     * @param rfc33339NoTimeZoneMeansLocal If an RFC3339 datetime has no time zone information,
-     * treat it as local time.
-     * @param localTimeToUtcDiffSeconds Assume this offset in seconds between local time and UTC
-     * time, for unit test reproduceability. Detect current time zone if `nullptr`.
+     * @param utcDiffSeconds Optional. If not 0, it represents the difference between the
+     * UTC and a desired time zone, in seconds. Then, should an RFC3339 timestamp come without a
+     * time zone information, a corresponding time zone offset will be applied to such timestamp.
+     * No credential other than AzureCliCredential (which gets timestamps as local time without time
+     * zone) should need to set it.
      *
      * @return A successfully parsed access token.
      *
@@ -84,8 +85,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& accessTokenPropertyName,
         std::string const& expiresInPropertyName,
         std::string const& expiresOnPropertyName,
-        bool rfc33339NoTimeZoneMeansLocal = false,
-        int const* localTimeToUtcDiffSeconds = nullptr);
+        int utcDiffSeconds = 0);
 
     /**
      * @brief Holds `#Azure::Core::Http::Request` and all the associated resources for the HTTP

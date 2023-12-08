@@ -51,7 +51,7 @@ std::string EchoCommand(std::string const text)
 class AzureCliTestCredential : public AzureCliCredential {
 private:
   std::string m_command;
-  int m_localTimeToUtcDiffSeconds = -28800; // Redmond (no DST)
+  int m_localTimeToUtcDiffSeconds = 0;
 
   std::string GetAzCommand(std::string const& resource, std::string const& tenantId) const override
   {
@@ -61,7 +61,7 @@ private:
     return m_command;
   }
 
-  int const* GetLocalTimeToUtcDiffSeconds() const override { return &m_localTimeToUtcDiffSeconds; }
+  int GetLocalTimeToUtcDiffSeconds() const override { return m_localTimeToUtcDiffSeconds; }
 
 public:
   explicit AzureCliTestCredential(std::string command) : m_command(std::move(command)) {}
@@ -83,6 +83,8 @@ public:
 
   decltype(m_tenantId) const& GetTenantId() const { return m_tenantId; }
   decltype(m_cliProcessTimeout) const& GetCliProcessTimeout() const { return m_cliProcessTimeout; }
+
+  void SetLocalTimeToUtcDiffSeconds(int diff) { m_localTimeToUtcDiffSeconds = diff; }
 };
 } // namespace
 
@@ -110,7 +112,7 @@ TEST(AzureCliCredential, NotAvailable)
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime::Parse("2022-08-24T08:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 #else // UWP
   // The credential should throw during GetToken() and not during construction, because it allows
   // customers to put it into ChainedTokenCredential and successfully use it there without writing
@@ -202,7 +204,7 @@ TEST(AzureCliCredential, BigToken)
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime::Parse("2022-08-24T08:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 }
 
 TEST(AzureCliCredential, ExpiresIn)
@@ -570,7 +572,41 @@ TEST(AzureCliCredential, StrictIso8601TimeFormat)
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime::Parse("2022-08-24T08:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+}
+
+TEST(AzureCliCredential, LocalTime)
+{
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2023-12-07 00:43:08\"}";
+
+  {
+    AzureCliTestCredential azCliCred(EchoCommand(Token));
+    azCliCred.SetLocalTimeToUtcDiffSeconds(-28800); // Redmond (no DST)
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
+    auto const token = azCliCred.GetToken(trc, {});
+
+    EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+    EXPECT_EQ(
+        token.ExpiresOn, DateTime::Parse("2023-12-07T08:43:08Z", DateTime::DateFormat::Rfc3339));
+  }
+
+  {
+    AzureCliTestCredential azCliCred(EchoCommand(Token));
+    azCliCred.SetLocalTimeToUtcDiffSeconds(7200); // Kyiv (no DST)
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
+    auto const token = azCliCred.GetToken(trc, {});
+
+    EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+    EXPECT_EQ(
+        token.ExpiresOn, DateTime::Parse("2023-12-06T22:43:08Z", DateTime::DateFormat::Rfc3339));
+  }
 }
 
 TEST(AzureCliCredential, Diagnosability)

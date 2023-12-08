@@ -14,7 +14,6 @@
 ### Other Changes
 
 - [[#4756]] (https://github.com/Azure/azure-sdk-for-cpp/issues/4756) `BearerTokenAuthenticationPolicy` now uses shared mutex lock for read operations.
-- Added internal provisions for extended `Azure::DateTime` parsing.
 
 ## 1.11.0-beta.2 (2023-11-02)
 

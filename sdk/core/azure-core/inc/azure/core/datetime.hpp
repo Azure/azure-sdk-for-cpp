@@ -43,10 +43,6 @@ namespace _detail {
   };
 } // namespace _detail
 
-namespace Core { namespace _internal {
-  class DateTimeExtensions;
-}} // namespace Core::_internal
-
 /**
  * @brief Manages date and time in standardized string formats.
  * @details Supports date range from year 0001 to end of year 9999 with 100ns (7 decimal places
@@ -56,7 +52,6 @@ namespace Core { namespace _internal {
  * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
  */
 class DateTime final : public _detail::Clock::time_point {
-  friend class Core::_internal::DateTimeExtensions;
 
 private:
   AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
@@ -173,14 +168,6 @@ public:
     Rfc3339,
   };
 
-private:
-  static DateTime Parse(
-      std::string const& dateTime,
-      DateFormat format,
-      bool rfc3339NoTimeZoneMeansLocal,
-      int const* localTimeToUtcDiffSeconds);
-
-public:
   /**
    * @brief Create #Azure::DateTime from a string representing time in UTC in the specified
    * format.
@@ -192,10 +179,7 @@ public:
    *
    * @throw std::invalid_argument If \p format is not recognized, or if parsing error.
    */
-  static DateTime Parse(std::string const& dateTime, DateFormat format)
-  {
-    return Parse(dateTime, format, false, nullptr);
-  }
+  static DateTime Parse(std::string const& dateTime, DateFormat format);
 
   /**
    * @brief Get a string representation of the #Azure::DateTime.
@@ -339,52 +323,6 @@ namespace Core { namespace _internal {
      *
      */
     ~PosixTimeConverter() = delete;
-  };
-
-  /**
-   * @brief Provides additional methods for #Azure::DateTime.
-   *
-   */
-  class DateTimeExtensions final {
-  public:
-    /**
-     * @brief Create #Azure::DateTime from a string representing time in UTC in the specified
-     * format.
-     *
-     * @param dateTime A string with the date and time.
-     * @param format A format to which \p dateTime string adheres to.
-     * @param rfc3339NoTimeZoneMeansLocal If time zone is not specified, treat the \p dateTime as
-     * local time.
-     * @param localTimeToUtcDiffSeconds Assume this offset in seconds between local time and UTC
-     * time, for unit test reproduceability. Detect current time zone if `nullptr`.
-     *
-     * @return #Azure::DateTime that was constructed from the \p dateTime string.
-     *
-     * @throw std::invalid_argument If \p format is not recognized, or if parsing error.
-     */
-    static DateTime Parse(
-        std::string const& dateTime,
-        DateTime::DateFormat format,
-        bool rfc3339NoTimeZoneMeansLocal,
-        int const* localTimeToUtcDiffSeconds)
-    {
-      return DateTime::Parse(
-          dateTime, format, rfc3339NoTimeZoneMeansLocal, localTimeToUtcDiffSeconds);
-    }
-
-  private:
-    /**
-     * @brief An instance of `%DateTimeExtensions` class cannot be created.
-     *
-     */
-    DateTimeExtensions() = delete;
-
-    /**
-     * @brief An instance of `%DateTimeExtensions` class cannot be destructed, because no instance
-     * can be created.
-     *
-     */
-    ~DateTimeExtensions() = delete;
   };
 }} // namespace Core::_internal
 

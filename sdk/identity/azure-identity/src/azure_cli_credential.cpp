@@ -13,7 +13,9 @@
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
 
+#include <chrono>
 #include <cstdio>
+#include <ctime>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>
@@ -127,6 +129,25 @@ std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::str
   return command;
 }
 
+int AzureCliCredential::GetLocalTimeToUtcDiffSeconds() const
+{
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+  // LCOV_EXCL_START
+  auto const timeTNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+  return static_cast<int>(
+      std::difftime(std::mktime(std::localtime(&timeTNow)), std::mktime(std::gmtime(&timeTNow))));
+  // LCOV_EXCL_STOP
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+}
+
 namespace {
 std::string RunShellCommand(
     std::string const& command,
@@ -154,12 +175,7 @@ AccessToken AzureCliCredential::GetToken(
       try
       {
         return TokenCredentialImpl::ParseToken(
-            azCliResult,
-            "accessToken",
-            "expiresIn",
-            "expiresOn",
-            true,
-            GetLocalTimeToUtcDiffSeconds());
+            azCliResult, "accessToken", "expiresIn", "expiresOn", GetLocalTimeToUtcDiffSeconds());
       }
       catch (json::exception const&)
       {
