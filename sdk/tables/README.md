@@ -2,7 +2,7 @@
 
 Azure Table Storage offers structured storage in the form of tables. The Table Storage API is a REST API for working with tables and the data that they contain.
 
-- [Azure.Data.Tables](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/tables/azure-data-tables/README.md) Azure Table Storage offers structured storage in the form of tables. The Table Storage API is a REST API for working with tables and the data that they contain.
+- Azure.Data.Tables Azure Table Storage offers structured storage in the form of tables. The Table Storage API is a REST API for working with tables and the data that they contain.
 
 ## Contributing
 
