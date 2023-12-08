@@ -16,8 +16,6 @@
 #include <string>
 using namespace Azure::Data::Tables;
 using namespace Azure::Storage;
-const TablesAudience TablesAudience::PublicAudience(
-    Azure::Storage::_internal::TablesManagementScope);
 
 TableServicesClient::TableServicesClient(const TableClientOptions& options)
 {
@@ -146,11 +144,8 @@ TableServicesClient TableServicesClient::CreateFromConnectionString(
   if (parsedConnectionString.KeyCredential)
   {
     return TableServicesClient(
-        tablesUrl.GetAbsoluteUrl().empty()
-            ? Azure::Storage::_internal::TablesManagementPublicEndpoint
-            : tablesUrl.GetAbsoluteUrl(),
+        tablesUrl.GetAbsoluteUrl(),
         std::move(parsedConnectionString.KeyCredential),
-
         options);
   }
   else
@@ -648,9 +643,7 @@ TableClient TableClient::CreateFromConnectionString(
     return TableClient(
         tableName,
         std::move(parsedConnectionString.KeyCredential),
-        tablesUrl.GetAbsoluteUrl().empty()
-            ? Azure::Storage::_internal::TablesManagementPublicEndpoint
-            : tablesUrl.GetAbsoluteUrl(),
+        tablesUrl.GetAbsoluteUrl(),
         options);
   }
   else

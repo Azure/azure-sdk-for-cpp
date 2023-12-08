@@ -101,12 +101,6 @@ namespace Azure { namespace Data { namespace Tables {
         : ExtendableEnumeration(std::move(tablesAudience))
     {
     }
-
-    /**
-     * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
-     * Storage account.
-     */
-    AZ_STORAGE_TABLES_DLLEXPORT const static TablesAudience PublicAudience;
   };
 
   /**
