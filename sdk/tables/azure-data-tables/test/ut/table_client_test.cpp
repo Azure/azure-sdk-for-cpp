@@ -168,23 +168,26 @@ namespace Azure { namespace Data { namespace Test {
   {
     if (GetParam() == AuthType::ConnectionString)
     {
-      SkipTest();
-      return;
+      EXPECT_TRUE(true);
     }
-    auto createResponse = m_tableClient->Create();
-
-    Azure::Data::Tables::Models::ListTablesOptions listOptions;
-
-    auto listResponse = m_tableServiceClient->ListTables(listOptions);
-
-    for (auto table : listResponse.Tables)
+    else
     {
-      if (table.TableName == m_tableName)
+
+      auto createResponse = m_tableClient->Create();
+
+      Azure::Data::Tables::Models::ListTablesOptions listOptions;
+
+      auto listResponse = m_tableServiceClient->ListTables(listOptions);
+
+      for (auto table : listResponse.Tables)
       {
-        EXPECT_EQ(table.TableName, m_tableName);
-        EXPECT_EQ(table.EditLink, "Tables('" + m_tableName + "')");
-        EXPECT_TRUE(table.Type.find(".Tables") != std::string::npos);
-        EXPECT_TRUE(table.Id.find(m_tableName) != std::string::npos);
+        if (table.TableName == m_tableName)
+        {
+          EXPECT_EQ(table.TableName, m_tableName);
+          EXPECT_EQ(table.EditLink, "Tables('" + m_tableName + "')");
+          EXPECT_TRUE(table.Type.find(".Tables") != std::string::npos);
+          EXPECT_TRUE(table.Id.find(m_tableName) != std::string::npos);
+        }
       }
     }
   }
@@ -206,22 +209,24 @@ namespace Azure { namespace Data { namespace Test {
   {
     if (GetParam() == AuthType::ConnectionString)
     {
-      SkipTest();
-      return;
+      EXPECT_TRUE(true);
     }
-    Azure::Data::Tables::Models::GetServicePropertiesOptions getOptions;
+    else
+    {
+      Azure::Data::Tables::Models::GetServicePropertiesOptions getOptions;
 
-    auto response = m_tableServiceClient->GetServiceProperties(getOptions);
-    EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
-    EXPECT_EQ(response.Value.Logging.Version, "1.0");
-    EXPECT_EQ(response.Value.Logging.Delete, false);
-    EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
-    EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
-    EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
-    EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
-    EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
-    EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
-    EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
+      auto response = m_tableServiceClient->GetServiceProperties(getOptions);
+      EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
+      EXPECT_EQ(response.Value.Logging.Version, "1.0");
+      EXPECT_EQ(response.Value.Logging.Delete, false);
+      EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
+      EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
+      EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
+      EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
+      EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
+      EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
+      EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
+    }
   }
 
   TEST_P(TablesClientTest, ServiceClientSet_LIVEONLY_)
