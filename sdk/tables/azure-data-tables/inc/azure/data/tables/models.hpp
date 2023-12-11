@@ -126,7 +126,11 @@ namespace Azure { namespace Data { namespace Tables {
       std::vector<Models::Table> Tables;
 
     public:
+      /**
+       * Table Service Client.
+       */
       std::shared_ptr<TableServicesClient> m_tableServiceClient;
+      /** Operation options */
       ListTablesOptions m_operationOptions;
 
     private:
@@ -212,7 +216,7 @@ namespace Azure { namespace Data { namespace Tables {
        * The origin domains that are permitted to make a request against the storage service via
        * CORS. The origin domain is the domain from which the request originates. Note that the
        * origin must be an exact case-sensitive match with the origin that the user age sends to the
-       * service. You can also use the wildcard character '*' to allow all origin domains to make
+       * service. You can also use the wild card character '*' to allow all origin domains to make
        * requests via CORS.
        */
       std::string AllowedOrigins;
@@ -273,6 +277,9 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct SetServicePropertiesOptions final
     {
+      /**
+       * Service properties.
+       */
       TableServiceProperties ServiceProperties;
     };
 
@@ -296,7 +303,13 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct PreflightCheckOptions final
     {
+      /**
+       * Origin.
+       */
       std::string Origin;
+      /**
+       * Table Name.
+       */
       std::string TableName;
     };
 
@@ -437,9 +450,21 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct TableEntity final
     {
+      /**
+       * Partition Key
+       */
       std::string PartitionKey;
+      /**
+       * Row Key
+       */
       std::string RowKey;
+      /**
+       * Properties
+       */
       std::map<std::string, std::string> Properties;
+      /**
+       * ETag
+       */
       Azure::Nullable<std::string> ETag;
     };
 
@@ -459,6 +484,10 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct UpsertEntityOptions
     {
+      /**
+       * @brief Upsert type.
+       *
+       */
       UpsertKind UpsertType = UpsertKind::Update;
     };
     /**
@@ -468,6 +497,11 @@ namespace Azure { namespace Data { namespace Tables {
     struct CreateEntityOptions : public UpsertEntityOptions
     {
       CreateEntityOptions() = default;
+      /**
+       * @brief Create Entity options constructor.
+       *
+       * @param other Upsert Entity options.
+       */
       CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
@@ -477,6 +511,9 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct CreateEntityResult
     {
+      /**
+       * ETag
+       */
       std::string ETag;
     };
 
@@ -486,7 +523,16 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct UpdateEntityOptions final
     {
+      /**
+       * @brief Update Entity options default constructor.
+       *
+       */
       UpdateEntityOptions() = default;
+      /**
+       * @brief Update Entity options constructor.
+       *
+       * @param other Update Entity options.
+       */
       UpdateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
@@ -496,6 +542,9 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct UpdateEntityResult
     {
+      /**
+       * ETag
+       */
       std::string ETag;
     };
 
@@ -505,7 +554,16 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct MergeEntityOptions final
     {
+      /**
+       * @brief Merge Entity options default constructor.
+       *
+       */
       MergeEntityOptions() = default;
+      /**
+       * @brief Merge Entity options constructor.
+       *
+       * @param other Upsert Entity options.
+       */
       MergeEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
@@ -515,6 +573,9 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct MergeEntityResult
     {
+      /**
+       * ETag
+       */
       std::string ETag;
     };
 
@@ -543,16 +604,34 @@ namespace Azure { namespace Data { namespace Tables {
                                       CreateEntityResult
     {
       std::string ETag;
-
+      /**
+       * @brief Upsert Entity result default constructor.
+       *
+       */
       UpsertEntityResult() = default;
+      /**
+       * @brief Upsert Entity result constructor.
+       *
+       * @param other Merge Entity result.
+       */
       UpsertEntityResult(MergeEntityResult const& other)
           : MergeEntityResult(other), ETag(std::move(other.ETag))
       {
       }
+      /**
+       * @brief Upsert Entity result constructor.
+       *
+       * @param other Update Entity result.
+       */
       UpsertEntityResult(UpdateEntityResult const& other)
           : UpdateEntityResult(other), ETag(std::move(other.ETag))
       {
       }
+      /**
+       * @brief Upsert Entity result constructor.
+       *
+       * @param other Create Entity result.
+       */
       UpsertEntityResult(CreateEntityResult const& other)
           : CreateEntityResult(other), ETag(std::move(other.ETag))
       {
@@ -565,9 +644,25 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct QueryEntitiesOptions final
     {
+      /**
+       * @brief The Partition key.
+       *
+       */
       std::string PartitionKey;
+      /**
+       * @brief The row key.
+       *
+       */
       std::string RowKey;
+      /**
+       * @brief The select query.
+       *
+       */
       std::string SelectColumns;
+      /**
+       * @brief The filter expression.
+       *
+       */
       Azure::Nullable<std::string> Filter;
     };
 
@@ -578,8 +673,17 @@ namespace Azure { namespace Data { namespace Tables {
     class QueryEntitiesPagedResponse final
         : public Azure::Core::PagedResponse<QueryEntitiesPagedResponse> {
     public:
+      /**
+       * Next partition key.
+       */
       std::string NextPartitionKey;
+      /**
+       * Next row key.
+       */
       std::string NextRowKey;
+      /**
+       * Table entities.
+       */
       std::vector<Models::TableEntity> TableEntities;
 
     private:
@@ -611,7 +715,13 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct TransactionStep final
     {
+      /**
+       * Action.
+       */
       TransactionAction Action;
+      /**
+       * Entity.
+       */
       Models::TableEntity Entity;
     };
 
@@ -621,7 +731,13 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct TransactionError final
     {
+      /**
+       * Error Message.
+       */
       std::string Message;
+      /**
+       * Error Code.
+       */
       std::string Code;
     };
 
@@ -631,7 +747,13 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct SubmitTransactionResult final
     {
+      /**
+       * Status Code.
+       */
       std::string StatusCode;
+      /**
+       * Error.
+       */
       Azure::Nullable<TransactionError> Error;
     };
   } // namespace Models
