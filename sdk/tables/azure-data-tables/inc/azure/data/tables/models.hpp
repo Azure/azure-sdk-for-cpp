@@ -27,10 +27,25 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct Table final
     {
+      /**
+       * Table Name.
+       */
       std::string TableName;
+      /**
+       * Meta data.
+       */
       std::string Metadata;
+      /**
+       * Edit Link.
+       */
       std::string EditLink;
+      /**
+       * Type.
+       */
       std::string Type;
+      /**
+       * Id.
+       */
       std::string Id;
     };
 
@@ -101,7 +116,7 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Response type for #Azure::Data::Tables::TableServiceClient::ListTables.
+     * @brief List tables paged response.
      */
     class ListTablesPagedResponse final
         : public Azure::Core::PagedResponse<ListTablesPagedResponse> {
@@ -284,14 +299,14 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Response type for #Azure::Data::Tables::TablesServiceClient::SetProperties.
+     * @brief Set service properties response
      */
     struct SetServicePropertiesResult final
     {
     };
 
     /**
-     * @brief Response type for #Azure::Data::Tables::TablesServiceClient::PreflightCheck.
+     * @brief Preflight check response.
      */
     struct PreflightCheckResult final
     {
@@ -603,6 +618,9 @@ namespace Azure { namespace Data { namespace Tables {
                                       UpdateEntityResult,
                                       CreateEntityResult
     {
+      /**
+       * ETag
+       */
       std::string ETag;
       /**
        * @brief Upsert Entity result default constructor.
