@@ -41,7 +41,7 @@
     "eng/CredScanSuppression.json",
     "**/test/ut/recordings/*.json",
     "sdk/core/azure-core-amqp/vendor/**/*",
-    "sdk/storage/*/NOTICE.txt"
+    "sdk/storage/*/NOTICE.txt",
     "sdk/tables/*/NOTICE.txt"
   ],
   // * Unless configured otherwise, these words are not case sensitive
