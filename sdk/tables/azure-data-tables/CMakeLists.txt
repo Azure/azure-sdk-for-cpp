@@ -86,7 +86,7 @@ az_rtti_setup(
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(data azure-data-tables azure-data-tables-test "tests?/*;samples?/*")
+create_code_coverage(tables azure-data-tables azure-data-tables-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
   add_subdirectory(test/ut)
