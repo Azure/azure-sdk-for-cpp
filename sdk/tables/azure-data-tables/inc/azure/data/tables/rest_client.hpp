@@ -346,7 +346,7 @@ namespace Azure { namespace Data { namespace Tables {
   };
 
   /**
-   * @brief Table Serivces Client
+   * @brief Table Services Client
    */
   class TableServicesClient final {
   public:
