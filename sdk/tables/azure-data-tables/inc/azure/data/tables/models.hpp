@@ -22,6 +22,9 @@ namespace Azure { namespace Data { namespace Tables {
 
   namespace Models {
 
+    /**
+     * @brief Table definition struct.
+     */
     struct Table final
     {
       std::string TableName;
@@ -65,6 +68,10 @@ namespace Azure { namespace Data { namespace Tables {
       return lhs;
     }
 
+    /**
+     * @brief List Tables options.
+     *
+     */
     struct ListTablesOptions final
     {
       /**
@@ -125,6 +132,7 @@ namespace Azure { namespace Data { namespace Tables {
     private:
       void OnNextPage(const Azure::Core::Context& context);
     };
+
     /**
      * @brief The retention policy.
      */
@@ -140,6 +148,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       Nullable<int32_t> Days;
     };
+
     /**
      * @brief A summary of request statistics grouped by API in hour or minute aggregates for
      * tables.
@@ -163,6 +172,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       RetentionPolicy RetentionPolicyDefinition;
     };
+
     /**
      * @brief Azure Analytics Logging settings.
      */
@@ -189,6 +199,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       RetentionPolicy RetentionPolicyDefinition;
     };
+
     /**
      * @brief CORS is an HTTP feature that enables a web application running under one domain to
      * access resources in another domain. Web browsers implement a security restriction known as
@@ -224,6 +235,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       int32_t MaxAgeInSeconds = int32_t();
     };
+
     /**
      * @brief Storage Service Properties.
      */
@@ -246,10 +258,19 @@ namespace Azure { namespace Data { namespace Tables {
        */
       std::vector<CorsRule> Cors;
     };
+
+    /**
+     * @brief Get Service Properties options.
+     *
+     */
     struct GetServicePropertiesOptions final
     {
     };
 
+    /**
+     * @brief Set Service Properties options.
+     *
+     */
     struct SetServicePropertiesOptions final
     {
       TableServiceProperties ServiceProperties;
@@ -269,11 +290,16 @@ namespace Azure { namespace Data { namespace Tables {
     {
     };
 
+    /**
+     * @brief Preflight check options.
+     *
+     */
     struct PreflightCheckOptions final
     {
       std::string Origin;
       std::string TableName;
     };
+
     /**
      * @brief The status of the secondary location.
      */
@@ -299,6 +325,7 @@ namespace Azure { namespace Data { namespace Tables {
     private:
       std::string m_value;
     };
+
     /**
      * @brief Geo-Replication information for the Secondary Storage Service.
      */
@@ -315,9 +342,11 @@ namespace Azure { namespace Data { namespace Tables {
        */
       Nullable<DateTime> LastSyncedOn;
     };
+
     /**
      * @brief Stats for the storage service.
      */
+
     struct ServiceStatistics final
     {
       /**
@@ -326,14 +355,26 @@ namespace Azure { namespace Data { namespace Tables {
       Models::GeoReplication GeoReplication;
     };
 
+    /**
+     * @brief Get Service Statistics options.
+     *
+     */
     struct GetServiceStatisticsOptions final
     {
     };
 
+    /**
+     * @brief Delete result.
+     *
+     */
     struct DeleteResult final
     {
     };
 
+    /**
+     * @brief Signed identifier.
+     *
+     */
     struct SignedIdentifier final
     {
       /**
@@ -353,6 +394,11 @@ namespace Azure { namespace Data { namespace Tables {
        */
       std::string Permissions;
     };
+
+    /**
+     * @brief Table Access Policy.
+     *
+     */
     struct TableAccessPolicy final
     {
       /**
@@ -361,18 +407,34 @@ namespace Azure { namespace Data { namespace Tables {
       std::vector<SignedIdentifier> SignedIdentifiers;
     };
 
+    /**
+     * @brief Get Table Access Policy options.
+     *
+     */
     struct GetTableAccessPolicyOptions final
     {
     };
 
+    /**
+     * @brief Set Table Access Policy options.
+     *
+     */
     struct SetTableAccessPolicyOptions final
     {
     };
 
+    /**
+     * @brief Set Table Access Policy result.
+     *
+     */
     struct SetTableAccessPolicyResult final
     {
     };
 
+    /**
+     * @brief Table Entity
+     *
+     */
     struct TableEntity final
     {
       std::string PartitionKey;
@@ -380,55 +442,102 @@ namespace Azure { namespace Data { namespace Tables {
       std::map<std::string, std::string> Properties;
       Azure::Nullable<std::string> ETag;
     };
+
+    /**
+     * @brief Upsert Kind
+     *
+     */
     enum UpsertKind
     {
       Update,
       Merge,
     };
+
+    /**
+     * @brief Upsert Entity options.
+     *
+     */
     struct UpsertEntityOptions
     {
       UpsertKind UpsertType = UpsertKind::Update;
     };
+    /**
+     * @brief Create Entity options.
+     *
+     */
     struct CreateEntityOptions : public UpsertEntityOptions
     {
       CreateEntityOptions() = default;
       CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
+    /**
+     * @brief Create Entity result.
+     *
+     */
     struct CreateEntityResult
     {
       std::string ETag;
     };
 
+    /**
+     * @brief Update Entity options.
+     *
+     */
     struct UpdateEntityOptions final
     {
       UpdateEntityOptions() = default;
       UpdateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
+    /**
+     * @brief Update Entity result.
+     *
+     */
     struct UpdateEntityResult
     {
       std::string ETag;
     };
 
+    /**
+     * @brief Merge Entity options.
+     *
+     */
     struct MergeEntityOptions final
     {
       MergeEntityOptions() = default;
       MergeEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
+    /**
+     * @brief Merge Entity result.
+     *
+     */
     struct MergeEntityResult
     {
       std::string ETag;
     };
+
+    /**
+     * @brief Delete Entity options.
+     *
+     */
     struct DeleteEntityOptions final
     {
     };
 
+    /**
+     * @brief Delete Entity result.
+     *
+     */
     struct DeleteEntityResult final
     {
     };
 
+    /**
+     * @brief Query Entities options.
+     *
+     */
     struct UpsertEntityResult final : public MergeEntityResult,
                                       UpdateEntityResult,
                                       CreateEntityResult
@@ -450,6 +559,10 @@ namespace Azure { namespace Data { namespace Tables {
       }
     };
 
+    /**
+     * @brief Query Entities options.
+     *
+     */
     struct QueryEntitiesOptions final
     {
       std::string PartitionKey;
@@ -458,6 +571,10 @@ namespace Azure { namespace Data { namespace Tables {
       Azure::Nullable<std::string> Filter;
     };
 
+    /**
+     * @brief Query Entities result.
+     *
+     */
     class QueryEntitiesPagedResponse final
         : public Azure::Core::PagedResponse<QueryEntitiesPagedResponse> {
     public:
@@ -474,6 +591,10 @@ namespace Azure { namespace Data { namespace Tables {
       void OnNextPage(const Azure::Core::Context& context);
     };
 
+    /**
+     * @brief Transaction Action
+     *
+     */
     enum TransactionAction
     {
       InsertEntity = 32,
@@ -484,18 +605,30 @@ namespace Azure { namespace Data { namespace Tables {
       InsertReplaceEntity
     };
 
+    /**
+     * @brief Transaction Step
+     *
+     */
     struct TransactionStep final
     {
       TransactionAction Action;
       Models::TableEntity Entity;
     };
 
+    /**
+     * @brief Transaction Error
+     *
+     */
     struct TransactionError final
     {
       std::string Message;
       std::string Code;
     };
 
+    /**
+     * @brief Submit Transaction options.
+     *
+     */
     struct SubmitTransactionResult final
     {
       std::string StatusCode;
