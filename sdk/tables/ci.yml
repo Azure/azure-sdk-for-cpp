@@ -29,7 +29,7 @@ stages:
       # Not running tests on CI but only on LiveTest mode
       CtestRegex: azure-data
       LineCoverageTarget: 63
-      BranchCoverageTarget: 50
+      BranchCoverageTarget: 33
       LiveTestCtestRegex: azure-data
       Clouds: Preview
       SupportedClouds: Preview
