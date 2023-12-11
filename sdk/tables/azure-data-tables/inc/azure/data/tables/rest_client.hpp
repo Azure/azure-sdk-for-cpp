@@ -141,6 +141,9 @@ namespace Azure { namespace Data { namespace Tables {
     Azure::Nullable<TablesAudience> Audience;
   };
 
+  /**
+   * @brief Table Client
+   */
   class TableClient final {
   public:
     /**
@@ -342,6 +345,9 @@ namespace Azure { namespace Data { namespace Tables {
     Models::TableEntity DeserializeEntity(Azure::Core::Json::_internal::json json);
   };
 
+  /**
+   * @brief Table Serivces Client
+   */
   class TableServicesClient final {
   public:
     /**
