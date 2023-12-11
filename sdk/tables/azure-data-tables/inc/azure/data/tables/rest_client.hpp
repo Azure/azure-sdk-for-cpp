@@ -135,8 +135,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     /**
      * The Audience to use for authentication with Azure Active Directory (AAD).
-     * #Azure::Data::Tables::Models::TablesAudience::PublicAudience will be assumed if
-     * Audience is not set.
+     * 
      */
     Azure::Nullable<TablesAudience> Audience;
   };
