@@ -1,9 +1,6 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 {
   "name": "azure-data-tables-cpp",
-  "version-semver": "@AZ_LIBRARY_VERSION@",
+  "version-semver": "1.0.0",
   "description": [
     "Microsoft Azure Data Tables SDK for C++",
     "This library provides Azure Data Tables SDK."
@@ -11,11 +8,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/tables/azure-data-tables",
   "license": "MIT",
   "dependencies": [
-    {
-      "name": "azure-storage-common-cpp",
-      "default-features": false,
-      "version>=": "12.5.0"
-    },
+    "azure-storage-common-cpp",
     {
       "name": "vcpkg-cmake",
       "host": true

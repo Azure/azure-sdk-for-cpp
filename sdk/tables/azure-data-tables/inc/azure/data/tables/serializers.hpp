@@ -34,8 +34,17 @@
 #include <vector>
 using namespace Azure::Storage;
 namespace Azure { namespace Data { namespace Tables {
+
+  /**
+   * @brief Serializers for TableService operations.
+   *
+   */
   class Serializers final {
   public:
+    /**
+     * @brief Serialize a TableEntity object into a JSON string for Create Entity operation.
+     *
+     */
     static std::string const CreateEntity(Models::TableEntity const& tableEntity)
     {
       std::string jsonBody;
@@ -54,6 +63,10 @@ namespace Azure { namespace Data { namespace Tables {
       return jsonBody;
     }
 
+    /**
+     * @brief Serialize a TableEntity object into a JSON string for Merge Entity operation.
+     *
+     */
     static std::string const MergeEntity(Models::TableEntity const& tableEntity)
     {
       std::string jsonBody;
@@ -72,6 +85,10 @@ namespace Azure { namespace Data { namespace Tables {
       return jsonBody;
     }
 
+    /**
+     * @brief Serialize a TableEntity object into a JSON string for Update Entity operation.
+     *
+     */
     static std::string const UpdateEntity(Models::TableEntity const& tableEntity)
     {
       std::string jsonBody;
@@ -90,6 +107,10 @@ namespace Azure { namespace Data { namespace Tables {
       return jsonBody;
     }
 
+    /**
+     * @brief Serialize a TableEntity object into a JSON string for Upsert Entity operation.
+     *
+     */
     static std::string const SetAccessPolicy(Models::TableAccessPolicy const& tableAccessPolicy)
     {
       std::string xmlBody;
@@ -131,6 +152,10 @@ namespace Azure { namespace Data { namespace Tables {
       return xmlBody;
     }
 
+    /**
+     * @brief Serialize a TableEntity object into a XML string for Create operation.
+     *
+     */
     static std::string const Create(std::string const& tableName)
     {
       std::string jsonBody;
@@ -143,6 +168,10 @@ namespace Azure { namespace Data { namespace Tables {
       return jsonBody;
     }
 
+    /**
+     * @brief Serialize a TableEntity object into a XML string for Set service properties operation.
+     *
+     */
     static std::string const SetServiceProperties(
         Models::SetServicePropertiesOptions const& options)
     {

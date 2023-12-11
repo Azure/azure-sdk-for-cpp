@@ -535,7 +535,7 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Query Entities options.
+     * @brief Upsert Entitiy result.
      *
      */
     struct UpsertEntityResult final : public MergeEntityResult,
