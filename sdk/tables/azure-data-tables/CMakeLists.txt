@@ -47,6 +47,7 @@ set(
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/transactions.hpp
     inc/azure/data/tables/serializers.hpp
+    inc/azure/data/tables.hpp
 )
 
 set(
@@ -90,6 +91,7 @@ create_code_coverage(tables azure-data-tables azure-data-tables-test "tests?/*;s
 
 if(BUILD_TESTING)
   add_subdirectory(test/ut)
+  add_subdirectory(test/stress)
 endif()
 
 #if(BUILD_SAMPLES)
