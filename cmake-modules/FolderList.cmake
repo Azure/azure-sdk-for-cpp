@@ -72,15 +72,34 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     set(DOWNLOAD_FILE ${DEP_NAME}_${DEP_VERSION}.zip)
     set(DEP_PREFIX azure-sdk-for-cpp)
 
-    if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
-        message("Downloading latest version of ${DEP_NAME}")
-        #get the latest version from main
-        file(DOWNLOAD http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE})
-    else()
-        message("Downloading version ${DEP_VERSION} of ${DEP_NAME}")
-        # get the zip
-        file(DOWNLOAD https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE} ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE})
-    endif()
+    foreach(RETRY_ATTEMPT RANGE 2)
+        if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
+            message("Downloading latest version of ${DEP_NAME}")
+            #get the latest version from main
+            file(
+                DOWNLOAD http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip
+                ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE}
+                SHOW_PROGRESS
+                STATUS DOWNLOAD_STATUS
+            )
+        else()
+            message("Downloading version ${DEP_VERSION} of ${DEP_NAME}")
+            # get the zip
+            file(
+                DOWNLOAD https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE}
+                ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE}
+                SHOW_PROGRESS
+                STATUS DOWNLOAD_STATUS
+            )
+        endif()
+
+        list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+        if (${STATUS_CODE} EQUAL 0)
+            break()
+        else()
+            message("Download unsuccessful, retry attempt will be made.")
+        endif()
+    endforeach()
 
     #extract the zip
     file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE} DESTINATION ${DOWNLOAD_FOLDER}/${DEP_NAME})
