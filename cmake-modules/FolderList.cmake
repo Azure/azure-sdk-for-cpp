@@ -96,8 +96,6 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
         list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
         if (${STATUS_CODE} EQUAL 0)
             break()
-        else()
-            message("Download unsuccessful, retry attempt will be made.")
         endif()
     endforeach()
 
