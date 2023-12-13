@@ -84,7 +84,7 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
 
     foreach(RETRY_ATTEMPT RANGE 2)
         math(EXPR RETRY_DELAY "10 * ${RETRY_ATTEMPT}" OUTPUT_FORMAT DECIMAL)
-        if (RETRY_DELAY GREATER 0)
+        if (RETRY_ATTEMPT GREATER 0)
             message("Waiting for ${RETRY_DELAY} seconds before retrying download.")
             execute_process(COMMAND ${CMAKE_COMMAND} -E sleep ${RETRY_DELAY})
         endif()
