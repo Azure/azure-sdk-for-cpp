@@ -480,10 +480,6 @@
       "type": "string",
       "value": "[parameters('testApplicationSecret')]"
     },
-    "STANDARD_STORAGE_CONNECTION_STRING": {
-      "type": "string",
-      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('accountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('accountName')), variables('storageApiVersion')).keys[0].value, ';EndpointSuffix=', parameters('storageEndpointSuffix'))]"
-    },
     "ACCOUNT_NAME": {
       "type": "string",
       "value": "[variables('accountName')]"
