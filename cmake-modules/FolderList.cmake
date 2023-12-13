@@ -73,31 +73,40 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     set(DEP_PREFIX azure-sdk-for-cpp)
 
     foreach(RETRY_ATTEMPT RANGE 2)
-        if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
-            message("Downloading latest version of ${DEP_NAME}")
-            #get the latest version from main
-            file(
-                DOWNLOAD http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip
-                ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE}
-                SHOW_PROGRESS
-                STATUS DOWNLOAD_STATUS
-            )
-        else()
-            message("Downloading version ${DEP_VERSION} of ${DEP_NAME}")
-            # get the zip
-            file(
-                DOWNLOAD https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE}
-                ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE}
-                SHOW_PROGRESS
-                STATUS DOWNLOAD_STATUS
-            )
+        math(EXPR RETRY_DELAY "10 * ${RETRY_ATTEMPT}" OUTPUT_FORMAT DECIMAL)
+        if (RETRY_DELAY GREATER 0)
+            message("Waiting for ${RETRY_DELAY} seconds before retrying download.")
+            execute_process(COMMAND ${CMAKE_COMMAND} -E sleep ${RETRY_DELAY})
         endif()
+
+        if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
+            #get the latest version from main
+            SET(DOWNLOAD_LINK "http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip")
+            message("Downloading latest version of ${DEP_NAME}")
+        else()
+            # get the zip
+            SET(DOWNLOAD_LINK "https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE}")
+            message("Downloading version ${DEP_VERSION} of ${DEP_NAME}")
+        endif()
+    
+        file(
+            DOWNLOAD ${DOWNLOAD_LINK}
+            ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE}
+            SHOW_PROGRESS
+            STATUS DOWNLOAD_STATUS
+        )
 
         list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
         if (${STATUS_CODE} EQUAL 0)
             break()
+        else()
+            list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+            message("Download failed with status code ${STATUS_CODE}: ${ERROR_MESSAGE}.")
         endif()
     endforeach()
+    if (NOT ${STATUS_CODE} EQUAL 0)
+        message(FATAL_ERROR "Dependency download failed (Link: ${DOWNLOAD_LINK}).")
+    endif()
 
     #extract the zip
     file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE} DESTINATION ${DOWNLOAD_FOLDER}/${DEP_NAME})
