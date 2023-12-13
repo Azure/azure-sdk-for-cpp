@@ -37,4 +37,4 @@ COPY --from=build ./build/sdk/tables/azure-data-tables/test/stress/azure-data-ta
 RUN chmod +x ./azure-data-tables-stress-test
 #
 CMD ./azure-data-tables-stress-test
-# this should be run by the scenarios matrix , run valgrind only when needed since it impacts performance and resources. 
+# this should be run by the scenarios matrix , run valgrind only when needed since it impacts performance and resources.
