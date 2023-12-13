@@ -13,4 +13,3 @@ matrix:
     constantDetach:
       testTarget: azure-data-tables-stress-test
       memory: "1.5Gi"
-    
