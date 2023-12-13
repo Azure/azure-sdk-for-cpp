@@ -72,6 +72,16 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     set(DOWNLOAD_FILE ${DEP_NAME}_${DEP_VERSION}.zip)
     set(DEP_PREFIX azure-sdk-for-cpp)
 
+    if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
+        #get the latest version from main
+        SET(DOWNLOAD_LINK "http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip")
+        SET(DOWNLOAD_MESSAGE "Downloading latest version of ${DEP_NAME}")
+    else()
+        # get the zip
+        SET(DOWNLOAD_LINK "https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE}")
+        SET(DOWNLOAD_MESSAGE "Downloading version ${DEP_VERSION} of ${DEP_NAME}")
+    endif()
+
     foreach(RETRY_ATTEMPT RANGE 2)
         math(EXPR RETRY_DELAY "10 * ${RETRY_ATTEMPT}" OUTPUT_FORMAT DECIMAL)
         if (RETRY_DELAY GREATER 0)
@@ -79,16 +89,7 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
             execute_process(COMMAND ${CMAKE_COMMAND} -E sleep ${RETRY_DELAY})
         endif()
 
-        if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
-            #get the latest version from main
-            SET(DOWNLOAD_LINK "http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip")
-            message("Downloading latest version of ${DEP_NAME}")
-        else()
-            # get the zip
-            SET(DOWNLOAD_LINK "https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE}")
-            message("Downloading version ${DEP_VERSION} of ${DEP_NAME}")
-        endif()
-    
+        message(${DOWNLOAD_MESSAGE})
         file(
             DOWNLOAD ${DOWNLOAD_LINK}
             ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE}
