@@ -43,9 +43,14 @@ namespace Azure { namespace Data { namespace Test {
               GetEnv("STORAGE_CLIENT_SECRET"));
           m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
               Azure::Data::Tables::TableServicesClient(
-                  GetEnv("STORAGE_TABLES_URL"), m_credential, clientOptions));
+                  "https://" + GetAccountName() + ".table.core.windows.net/",
+                  m_credential,
+                  clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
-              GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, tableClientOptions));
+              "https://" + GetAccountName() + ".table.core.windows.net/",
+              m_tableName,
+              m_credential,
+              tableClientOptions));
           break;
         case AuthType::SAS:
           auto creds = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
