@@ -38,16 +38,8 @@ stages:
           Path: azure-data-tables
           VcpkgPortName: azure-data-tables-cpp
       TestEnv:
-        - Name: AAD_TENANT_ID
-          Value: "72f988bf-86f1-41af-91ab-2d7cd011db47"
-        - Name: AAD_CLIENT_ID
-          Value: "non-real-client"
-        - Name: AAD_CLIENT_SECRET
-          Value: "non-real-secret"          
         - Name: STANDARD_STORAGE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=account-name;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
-        - Name: ADLS_GEN2_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         - Name: PREMIUM_FILE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         # Tables related env vars
