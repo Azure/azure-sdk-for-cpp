@@ -73,13 +73,13 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     set(DEP_PREFIX azure-sdk-for-cpp)
 
     if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
+        SET(DOWNLOAD_MESSAGE "Downloading latest version of ${DEP_NAME}")
         #get the latest version from main
         SET(DOWNLOAD_LINK "http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip")
-        SET(DOWNLOAD_MESSAGE "Downloading latest version of ${DEP_NAME}")
     else()
+        SET(DOWNLOAD_MESSAGE "Downloading version ${DEP_VERSION} of ${DEP_NAME}")
         # get the zip
         SET(DOWNLOAD_LINK "https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE}")
-        SET(DOWNLOAD_MESSAGE "Downloading version ${DEP_VERSION} of ${DEP_NAME}")
     endif()
 
     foreach(RETRY_ATTEMPT RANGE 2)
