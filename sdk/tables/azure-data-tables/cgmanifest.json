@@ -37,16 +37,6 @@
       "Component": {
         "Type": "git",
         "git": {
-          "RepositoryUrl": "https://github.com/openssl/openssl",
-          "CommitHash": "d82e959e621a3d597f1e0d50ff8c2d8b96915fd7"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "git",
-        "git": {
           "RepositoryUrl": "https://gitlab.gnome.org/GNOME/libxml2",
           "CommitHash": "da703eaaea152f6dd9e871cbe7f0ae46322c583d"
         }
