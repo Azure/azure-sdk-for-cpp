@@ -57,7 +57,7 @@
       "signedServices": "bfqt",
       "signedPermission": "rwdlacup",
       "signedResourceTypes": "sco",
-      "keyToSign": "key2",
+      "keyToSign": "key1",
       "signedExpiry": "2099-01-01T23:59:00Z"
     },
     "authorizationApiVersion": "2018-01-01-preview",
