@@ -121,7 +121,7 @@ namespace Azure { namespace Data { namespace Tables {
     class ListTablesPagedResponse final
         : public Azure::Core::PagedResponse<ListTablesPagedResponse> {
 
-      friend class TableServicesClient;
+      friend class Azure::Data::Tables::TableServicesClient;
       friend class Azure::Core::PagedResponse<ListTablesPagedResponse>;
 
     public:
@@ -707,7 +707,7 @@ namespace Azure { namespace Data { namespace Tables {
     private:
       std::shared_ptr<TableClient> m_tableClient;
       QueryEntitiesOptions m_operationOptions;
-      friend class TableServicesClient;
+      friend class Azure::Data::Tables::TableServicesClient;
       friend class Azure::Core::PagedResponse<QueryEntitiesPagedResponse>;
 
       void OnNextPage(const Azure::Core::Context& context);
