@@ -2521,3 +2521,89 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 }
+
+TEST(TokenCredentialImpl, ParseExpiresOnVectorEdgeCases)
+{
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Json::_internal::json;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+
+  Logger::SetLevel(Logger::Level::Verbose);
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"token\": \"X\", \"expires_at\": 1700692424}",
+          "token",
+          "expires_in",
+          std::vector<std::string>{}));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'expires_in' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON: Access token property ('token'): string.length=1, "
+        "relative expiration property ('expires_in'): undefined, "
+        "other properties: 'expires_at': 1700692424.");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"token\": \"X\", \"expires_at\": 1700692424}",
+          "token",
+          "expires_in",
+          std::vector<std::string>{"", "expires_on", ""}));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'expires_on' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON: Access token property ('token'): string.length=1, "
+        "relative expiration property ('expires_in'): undefined, "
+        "absolute expiration property ('expires_on'): undefined, "
+        "other properties: 'expires_at': 1700692424.");
+
+    Logger::SetListener(nullptr);
+  }
+}

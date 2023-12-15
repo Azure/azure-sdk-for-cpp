@@ -248,9 +248,9 @@ TEST(AzureCliCredential, ExpiresOnUnixTimestampInt)
 TEST(AzureCliCredential, ExpiresOnUnixTimestampString)
 {
   // 'expires_on' is 1700692424, which is a Unix timestamp of a date in 2023.
-  // 'ExpiresOn' is a date in 2022.
+  // 'expiresOn' is a date in 2022.
   // The test checks that when both are present, 'expires_on' value (2023) is taken,
-  // and not that of 'ExpiresOn'.
+  // and not that of 'expiresOn'.
   // The test is similar to the one above, but the Unix timestamp is represented as string
   // containing an integer.
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
