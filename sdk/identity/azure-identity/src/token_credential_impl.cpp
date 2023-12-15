@@ -332,6 +332,8 @@ AccessToken TokenCredentialImpl::ParseToken(
   {
     if (parsedJson.contains(expiresOnPropertyName))
     {
+      auto const& expiresOn = parsedJson[expiresOnPropertyName];
+
       if (expiresOn.is_number_unsigned())
       {
         try
