@@ -66,12 +66,12 @@ Entities are similar to rows. An entity has a **`PartitionKey`**, a **`RowKey`**
 The following sections provide several code snippets covering some of the most common Table tasks, including:
 
 * [Creating and deleting a table](#create-delete-a-table "Creating and deleting a table")
-* [Manipulating entities](#maipulating-entities "Manipulating entities")
+* [Manipulating entities](#manipulating-entities "Manipulating entities")
 * [Table Service Operations](#table-service-operations "Table Service Operations")
 
 ### Creating and deleting a table
 
-In oder to Create/Delete a table we need to create a TablesClient first.
+In order to Create/Delete a table we need to create a TablesClient first.
 
 ```cpp
 #include <azure/data/tables.hpp>
@@ -83,14 +83,14 @@ auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
 tableClient.Create();
 ```
 
-In oder to Delete a table we need to call the delete method on the previously created client.
+In order to Delete a table we need to call the delete method on the previously created client.
 ```cpp
 tableClient.Delete();
 ```
 
 ### Manipulating entities
 
-In oder to Create/Update/Merge/Delete entities we need to create a TablesClient first.
+In order to Create/Update/Merge/Delete entities we need to create a TablesClient first.
 
 ```cpp
 #include <azure/data/tables.hpp>
@@ -134,7 +134,7 @@ To delete the entity, we call the DeleteEntity method on the table client.
 
 ### Table Service Operations
 
-In oder to get the service properties we need to create a TableServiceClient first.
+In order to get the service properties we need to create a TableServiceClient first.
 
 ```cpp
 #include <azure/data/tables.hpp>
