@@ -65,7 +65,7 @@ Entities are similar to rows. An entity has a **`PartitionKey`**, a **`RowKey`**
 
 The following sections provide several code snippets covering some of the most common Table tasks, including:
 
-* [Creating and deleting a table](#create-delete-a-table "Creating and deleting a table")
+* [Creating and deleting a table](#creating-and-deleting-a-table "Creating and deleting a table")
 * [Manipulating entities](#manipulating-entities "Manipulating entities")
 * [Table Service Operations](#table-service-operations "Table Service Operations")
 
