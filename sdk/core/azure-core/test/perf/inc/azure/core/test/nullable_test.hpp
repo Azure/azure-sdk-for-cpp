@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Test {
     NullableTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
     /**
-     * @brief Use NUllable to assing and read.
+     * @brief Use Nullable to assign and read.
      *
      */
     void Run(Azure::Core::Context const&) override

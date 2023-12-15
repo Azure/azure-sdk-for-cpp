@@ -91,7 +91,7 @@ namespace Azure { namespace Perf {
     BaseTest(Azure::Perf::TestOptions options) : m_options(options) {}
 
     /**
-     * @brief Run one time at the beggining and before any test.
+     * @brief Run one time at the beginning and before any test.
      *
      * @remark No matter if the parallel option is set to more than one, the global setup will run
      * only once.
@@ -103,7 +103,7 @@ namespace Azure { namespace Perf {
      * @brief Run one time per each test thread.
      *
      * @remark Each test thread will run the main test in a loop after running the setup from each
-     * thead.
+     * thread.
      *
      */
     virtual void Setup() {}

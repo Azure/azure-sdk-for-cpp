@@ -95,7 +95,7 @@ public:
         break;
       }
       default:
-        // imposible to get here
+        // impossible to get here
         AZURE_UNREACHABLE_CODE();
     }
   }
