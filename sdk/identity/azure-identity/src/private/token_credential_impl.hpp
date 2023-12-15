@@ -87,7 +87,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& jsonString,
         std::string const& accessTokenPropertyName,
         std::string const& expiresInPropertyName,
-        std::vector<std::string> const& expiresOnPropertyNames
+        std::vector<std::string> const& expiresOnPropertyNames,
         int utcDiffSeconds);
 
     /**
