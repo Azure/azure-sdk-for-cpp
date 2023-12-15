@@ -31,8 +31,9 @@
 #include <string>
 #include <utility>
 #include <vector>
-using namespace Azure::Storage;
+
 namespace Azure { namespace Data { namespace Tables {
+  using namespace Azure::Storage;
   namespace _detail {
     /**
      * The version used for the operations to Tables services.

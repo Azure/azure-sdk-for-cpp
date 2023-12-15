@@ -32,9 +32,9 @@
 #include <string>
 #include <utility>
 #include <vector>
-using namespace Azure::Storage;
-namespace Azure { namespace Data { namespace Tables {
 
+namespace Azure { namespace Data { namespace Tables {
+  using namespace Azure::Storage;
   /**
    * @brief Serializers for TableService operations.
    *
