@@ -263,7 +263,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       ResetPolicyTest();
     }
 
-    /** @brief Tests for policy modification using a secured JWS with an emphemerally generated key.
+    /** @brief Tests for policy modification using a secured JWS with an ephemerally generated key.
      *
      * Forwards to the `SetPolicyTest` and `ResetPolicyTest` with a newly created
      * AttestationSigingKey parameter.

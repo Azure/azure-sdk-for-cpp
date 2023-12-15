@@ -225,7 +225,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     virtual void SetStatus(SpanStatus const& status, std::string const& description) = 0;
 
     /**
-     * @brief Propogate information from the current span to the HTTP request headers.
+     * @brief Propagate information from the current span to the HTTP request headers.
      *
      * @param request HTTP Request to the service. If there is an active tracing span, this will
      * add required headers to the HTTP Request.
