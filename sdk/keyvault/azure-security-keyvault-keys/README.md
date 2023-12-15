@@ -151,12 +151,11 @@ az keyvault security-domain download --hsm-name <your-key-vault-name> --sd-wrapp
 
 #### Create KeyClient
 
-Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI, you can create the [KeyClient][key_client_class]:
+Once you've replaced **your-vault-url** with the above returned URI, you can create the [KeyClient][key_client_class]:
 
 ```cpp
-// Create a new key client using the default credential from Azure Identity using environment variables previously set,
-// including AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID.
-auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
+// Create a new key client using the default credential from Azure Identity.
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 KeyClient client("AZURE_KEYVAULT_URL", credential);
 
 // Create a new key using the key client.
@@ -171,9 +170,8 @@ key = client.GetKey("key-name");
 Once you've created a `KeyVaultKey` in the Azure Key Vault, you can also create the [CryptographyClient][crypto_client_class]:
 
 ```cpp
-// Create a new cryptography client using the default credential from Azure Identity using environment variables previously set,
-// including AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID.
-auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
+// Create a new cryptography client using the default credential from Azure Identity.
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 CryptographyClient cryptoClient(key.Id, credential);
 ```
 

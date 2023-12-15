@@ -60,8 +60,11 @@
     "amqp",
     "Amqp",
     "AMQP",
+    "amqps",
     "AMQPS",
+    "amqpvalue",
     "AMQPVALUE",
+    "avro",
     "antkmsft",
     "azcore",
     "azsdk",
@@ -129,12 +132,14 @@
     "LPBYTE",
     "LPSTR",
     "LPWSTR",
+    "mbps",
     "MHSM",
     "mmdc",
     "moxygen",
     "MSAL",
     "msft",
     "MSRC",
+    "nbio",
     "ncus",
     "Niels",
     "nlohmann",
@@ -148,6 +153,7 @@
     "nostd",
     "nread",
     "NTSTATUS",
+    "Oaep",
     "OIDC",
     "okhttp",
     "opentelemetry",
@@ -190,6 +196,7 @@
     "uaenorth",
     "uamqp",
     "uksouth",
+    "Uncomitted",
     "undeleted",
     "unscoped",
     "unskipped",
@@ -201,6 +208,7 @@
     "Verdana",
     "Viet",
     "Viktor",
+    "versionid",
     "vusg",
     "Wdocumentation",
     "Werror",
@@ -318,9 +326,21 @@
       ]
     },
     {
+      "filename": "**/sdk/storage/faq.md",
+      "words": [
+        "dont"
+      ]
+    },
+    {
       "filename": "**/sdk/storage/azure-storage-queues/src/rest_client.cpp",
       "words": [
         "numofmessages"
+      ]
+    },
+    {
+      "filename": "**/sdk/storage/azure-storage-queues/swagger/README.md",
+      "words": [
+        "messageid"
       ]
     },
     {

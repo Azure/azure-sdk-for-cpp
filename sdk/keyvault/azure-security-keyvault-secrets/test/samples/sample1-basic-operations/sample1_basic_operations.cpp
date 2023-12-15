@@ -7,9 +7,6 @@
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
 
@@ -24,36 +21,41 @@ using namespace std::chrono_literals;
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  // @begin_snippet: SecretSample1CreateCredential
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-
-  std::string secretName("MySampleSecret");
-  std::string secretValue("my secret value");
+  // @end_snippet
 
   try
   {
     // create secret
-    secretClient.SetSecret(secretName, secretValue);
+    // @begin_snippet: SecretSample1CreateSecret
+    std::string secretName("MySampleSecret");
+    std::string secretValue("my secret value");
 
+    secretClient.SetSecret(secretName, secretValue);
+    // @end_snippet
+
+    // @begin_snippet: SecretSample1GetSecret
     // get secret
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::cout << "Secret is returned with name " << secret.Name << " and value "
               << secret.Value.Value() << std::endl;
+    // @end_snippet
 
+    // @begin_snippet: SecretSample1UpdateSecretProperties
     // change one of the properties
     secret.Properties.ContentType = "my content";
     // update the secret
     KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
     std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
               << std::endl;
+    // @end_snippet
 
+    // @begin_snippet: SecretSample1DeleteSecret
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
@@ -64,6 +66,7 @@ int main()
 
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secret.Name);
+    // @end_snippet
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

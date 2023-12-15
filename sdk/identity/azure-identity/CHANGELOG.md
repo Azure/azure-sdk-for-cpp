@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- [[#5116]](https://github.com/Azure/azure-sdk-for-cpp/issues/5116) `AzureCliCredential`: Added support for the new response field which represents token expiration timestamp as time zone agnostic value.
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -12,7 +14,7 @@
 
 ### Other Changes
 
-- [[#5141]](https://github.com/Azure/azure-sdk-for-cpp/issues/5141) Added error response details to the Identity exceptions thrown when the authority host returns error response.
+- [[#5141]](https://github.com/Azure/azure-sdk-for-cpp/issues/5141) Added error response details to the `AuthenticationException` thrown when the authority host returns error response.
 
 ## 1.6.0 (2023-11-10)
 

@@ -11,15 +11,9 @@
 // * EVENTHUBS_HOST - contains the fully qualified domain name for the eventhub service instance.
 // * EVENTHUB_NAME - the name of the Event Hub instance.
 //
-// The following environment variables are required to authenticate the request using
-// Azure::Identity::EnvironmentCredential:
-// * AZURE_CLIENT_ID - the application client ID used to authenticate the request.
-// * AZURE_TENANT_ID - the tenant ID or domain used to authenticate the request.
-// * AZURE_CLIENT_SECRET - the application client secret used to authenticate the request.
-//
 // Both of these should be available from the Azure portal.
 //
-#include <azure/identity/environment_credential.hpp>
+#include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
 #include <iostream>
@@ -39,8 +33,7 @@ int main()
     return 1;
   }
 
-  std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-      = std::make_shared<Azure::Identity::EnvironmentCredential>();
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   Azure::Messaging::EventHubs::ProducerClient producerClient(
       eventhubsHost, eventhubName, credential);

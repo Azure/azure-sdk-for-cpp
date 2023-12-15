@@ -1,4 +1,5 @@
 param(
+    [string] $StorageAccountName = 'cppvcpkgcache',
     [string] $StorageAccountKey
 )
 
@@ -27,7 +28,7 @@ $env:PSModulePath = $modulePaths -join $moduleSeperator
 Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
 $ctx = New-AzStorageContext `
-    -StorageAccountName 'cppvcpkgcache' `
+    -StorageAccountName $StorageAccountName `
     -StorageAccountKey $StorageAccountKey
 $token = New-AzStorageAccountSASToken `
     -Service Blob `
@@ -35,7 +36,14 @@ $token = New-AzStorageAccountSASToken `
     -Permission "rwc" `
     -Context $ctx `
     -ExpiryTime (Get-Date).AddDays(1)
-$vcpkgBinarySourceSas = $token.Substring(1)
+
+$vcpkgBinarySourceSas = $token
+if ($token.StartsWith('?')) {
+    $vcpkgBinarySourceSas = $token.Substring(1)
+}
+
+Write-Host "Ensure redaction of SAS tokens in logs" 
+Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SAS_TOKEN;issecret=true;]$vcpkgBinarySourceSas"
 
 Write-Host "Setting vcpkg binary cache to read and write"
 Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$vcpkgBinarySourceSas,readwrite"

@@ -305,10 +305,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       // In case network failure during reading the body
       auto eTag = downloadResponse.Value.Details.ETag;
-
-      auto retryFunction
-          = [this, options, eTag](int64_t retryOffset, const Azure::Core::Context& context)
-          -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      const std::string client_request_id
+          = downloadResponse.RawResponse->GetHeaders().find(_internal::HttpHeaderClientRequestId)
+              == downloadResponse.RawResponse->GetHeaders().end()
+          ? std::string()
+          : downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderClientRequestId);
+      auto retryFunction =
+          [this, options, eTag, client_request_id](
+              int64_t retryOffset,
+              const Azure::Core::Context& context) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
         DownloadFileOptions newOptions = options;
         newOptions.Range = Core::Http::HttpRange();
         newOptions.Range.Value().Offset
@@ -318,7 +323,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryOffset;
         }
 
-        auto newResponse = Download(newOptions, context);
+        auto newResponse = Download(
+            newOptions,
+            context.WithValue(_internal::ReliableStreamClientRequestIdKey, client_request_id));
         if (eTag != newResponse.Value.Details.ETag)
         {
           throw Azure::Core::RequestFailedException("File was modified in the middle of download.");
@@ -692,7 +699,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         fileHandle.Path = std::move(handle.Path.Content);
       }
       fileHandle.ClientIp = std::move(handle.ClientIp);
-      fileHandle.ClientName = std::move(handle.ClientName);
       fileHandle.FileId = std::move(handle.FileId);
       fileHandle.HandleId = std::move(handle.HandleId);
       fileHandle.LastReconnectedOn = std::move(handle.LastReconnectedOn);

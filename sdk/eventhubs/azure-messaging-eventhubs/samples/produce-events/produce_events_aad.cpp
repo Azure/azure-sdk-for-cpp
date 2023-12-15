@@ -10,12 +10,6 @@
 //
 // Both of these should be available from the Azure portal.
 //
-// In addition, the following environment variables are required to authenticate the request using
-// Azure::Identity::EnvironmentCredential:
-// * AZURE_TENANT_ID - contains the tenant id used to authenticate the request.
-// * AZURE_CLIENT_ID - contains the client id used to authenticate the request.
-// * AZURE_CLIENT_SECRET - contains the client secret used to authenticate the request.
-//
 
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
@@ -37,8 +31,7 @@ int main()
     return 1;
   }
 
-  std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-      = std::make_shared<Azure::Identity::EnvironmentCredential>();
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   Azure::Messaging::EventHubs::ProducerClient producerClient(
       eventhubsHost, eventhubName, credential);

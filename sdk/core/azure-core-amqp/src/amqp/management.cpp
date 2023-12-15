@@ -12,7 +12,6 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/internal/unique_handle.hpp>
 
 #include <azure_uamqp_c/amqp_management.h>
 

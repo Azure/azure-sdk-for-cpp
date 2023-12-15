@@ -318,6 +318,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Set Acls
     auto rootDirClient = m_fileSystemClient->GetDirectoryClient("");
+    /* cspell:disable-next-line */
     rootDirClient.SetPermissions("rwxrwxrwx");
     auto aclResult = rootDirClient.GetAccessControlList();
     auto acls = aclResult.Value.Acls;

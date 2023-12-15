@@ -7,15 +7,10 @@ To get started, you'll need a URI to an Azure Key Vault.
 
 To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 
-Key Vault Certificate client for C++ currently supports the `ClientSecretCredential` for authenticating.
-
-In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
+Key Vault Certificate client for C++ currently supports any `TokenCredential` for authenticating.
 
 ```cpp Snippet:CertificateSample3CreateCredential
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.

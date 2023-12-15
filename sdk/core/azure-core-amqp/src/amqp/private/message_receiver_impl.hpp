@@ -9,6 +9,7 @@
 #include "link_impl.hpp"
 #include "message_receiver_impl.hpp"
 #include "session_impl.hpp"
+#include "unique_handle.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 
@@ -21,18 +22,19 @@
 
 #define RECEIVER_SYNCHRONOUS_CLOSE 0
 
-namespace Azure { namespace Core { namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
   {
     static void FreeMessageReceiver(MESSAGE_RECEIVER_HANDLE obj);
 
-    using type = BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
+    using type
+        = Core::_internal::BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  using UniqueMessageReceiver = Azure::Core::_internal::UniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG>;
+  using UniqueMessageReceiver = UniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG>;
 
   class MessageReceiverFactory final {
   public:
