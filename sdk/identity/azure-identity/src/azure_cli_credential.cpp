@@ -153,8 +153,21 @@ AccessToken AzureCliCredential::GetToken(
 
       try
       {
+        // The order of elements in the vector below does matter - the code tries to find them
+        // consequently, and if finding the first one succeeds, we would not attempt to parse the
+        // second one. That is important, because the newer Azure CLI versions do have the new
+        // 'expires_on' field, which is not affected by time zone changes. The 'expiresOn' field was
+        // the only field that was present in the older versions, and it had problems, because it
+        // was a local timestamp without the time zone information.
+        // So, if only the 'expires_on' is available, we try to use it, and only if it is not
+        // available, we fall back to trying to get the value via 'expiresOn', which we also now are
+        // able to handle correctly, except when the token expiration crosses the time when the
+        // local system clock moves to and from DST.
         return TokenCredentialImpl::ParseToken(
-            azCliResult, "accessToken", "expiresIn", "expiresOn");
+            azCliResult,
+            "accessToken",
+            "expiresIn",
+            std::vector<std::string>{"expires_on", "expiresOn"});
       }
       catch (json::exception const&)
       {

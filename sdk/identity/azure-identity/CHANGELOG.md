@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- [[#5116]](https://github.com/Azure/azure-sdk-for-cpp/issues/5116) `AzureCliCredential`: Added support for the new response field which represents token expiration timestamp as time zone agnostic value.
+
 ### Breaking Changes
 
 ### Bugs Fixed
