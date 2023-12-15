@@ -140,6 +140,8 @@ int AzureCliCredential::GetLocalTimeToUtcDiffSeconds() const
   // LCOV_EXCL_START
   auto const timeTNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
+  // std::difftime() returns difference in seconds.
+  // We do not expect any fractional parts, but should there be any - we do not care about them.
   return static_cast<int>(
       std::difftime(std::mktime(std::localtime(&timeTNow)), std::mktime(std::gmtime(&timeTNow))));
   // LCOV_EXCL_STOP
