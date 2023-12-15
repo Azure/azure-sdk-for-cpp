@@ -33,7 +33,7 @@
 #include <vector>
 
 namespace Azure { namespace Data { namespace Tables {
-  using namespace Azure::Storage;
+  
   namespace _detail {
     /**
      * The version used for the operations to Tables services.
@@ -186,7 +186,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     explicit TableClient(
         const std::string& tableName,
-        std::shared_ptr<StorageSharedKeyCredential> credential,
+        std::shared_ptr<Azure::Storage::StorageSharedKeyCredential> credential,
         std::string url,
         const TableClientOptions& options = {});
 
@@ -395,7 +395,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     explicit TableServicesClient(
         const std::string& serviceUrl,
-        std::shared_ptr<StorageSharedKeyCredential> credential,
+        std::shared_ptr<Azure::Storage::StorageSharedKeyCredential> credential,
         const TableClientOptions& options = {});
     /**
      * @brief Initializes a new instance of tableClient.

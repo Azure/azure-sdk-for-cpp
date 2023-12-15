@@ -55,6 +55,7 @@ set(
     src/private/package_version.hpp
     src/rest_client.cpp
     src/transactions.cpp
+    src/serializers.cpp
 )
 
 add_library(azure-data-tables ${AZURE_DATA_TABLES_HEADER} ${AZURE_DATA_TABLES_SOURCE})
