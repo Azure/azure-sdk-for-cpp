@@ -46,6 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char CerPropertyName[] = "cer";
 
     /***************** Certificates Policy *****************/
+    // cspell: ignore ekus upns
     constexpr static const char PolicyPropertyName[] = "policy";
     constexpr static const char KeyPropsPropertyName[] = "key_props";
     constexpr static const char KeyTypePropertyName[] = "kty";

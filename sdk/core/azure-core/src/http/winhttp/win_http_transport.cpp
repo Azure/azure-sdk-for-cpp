@@ -29,6 +29,8 @@
 #include <wincrypt.h>
 #include <winhttp.h>
 
+// cspell: ignore hcertstore
+
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Diagnostics;

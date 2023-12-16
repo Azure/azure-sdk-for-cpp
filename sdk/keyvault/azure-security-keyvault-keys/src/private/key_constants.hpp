@@ -83,6 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char HsmPropertyName[] = "hsm";
 
   /***************** Encryption Algorithm *********/
+  // cspell: ignore CBCPAD
   constexpr static const char Rsa15Value[] = "RSA1_5";
   constexpr static const char RsaOaepValue[] = "RSA-OAEP";
   constexpr static const char RsaOaep256Value[] = "RSA-OAEP-256";
