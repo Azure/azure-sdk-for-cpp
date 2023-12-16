@@ -8,6 +8,8 @@
 
 #include <stdexcept>
 
+// cspell: ignore ownerid
+
 using namespace Azure::Messaging::EventHubs::Models;
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(

@@ -1,4 +1,4 @@
-<!-- cspell:words gunicorn Nlcjpw userx Nlcng dvcm passwordx userc -->
+<!-- cspell:words gunicorn Nlcjpw userx Nlcng dvcm passwordx userc larryocore LARRYO -->
 
 # Create squid proxy docker container
 

@@ -1,3 +1,4 @@
+<!-- cspell: ignore nocleanup -->
 # Azure SDK Perf for C++
 
 Azure perf for C++ (`azure-perf`) provides shared primitives, abstractions, and helpers for running performance tests for an Azure SDK clients for C++. It represent the C++ version of the [.NET original version](https://github.com/Azure/azure-sdk-for-net/tree/main/common/Perf).

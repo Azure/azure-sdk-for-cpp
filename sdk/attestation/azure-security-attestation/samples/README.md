@@ -1,3 +1,4 @@
+<!-- cspell: words sharedcae -->
 ---
 page_type: sample
 languages:

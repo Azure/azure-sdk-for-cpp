@@ -6,6 +6,8 @@
 #Requires -Version 6.0
 #Requires -PSEdition Core
 
+# cspell: ignore asia australia australiasoutheast europe india iowa virginia
+
 using namespace System.Security.Cryptography
 using namespace System.Security.Cryptography.X509Certificates
 

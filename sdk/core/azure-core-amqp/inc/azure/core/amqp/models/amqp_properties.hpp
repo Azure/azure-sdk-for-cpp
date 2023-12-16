@@ -105,6 +105,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     Nullable<std::string> ContentType;
 
+    // cspell: ignore IANAHTTPPARAMS
     /** @brief MIME Content Encoding
      *
      * The content-encoding property is used as a modifier to the content-type. When present, its
