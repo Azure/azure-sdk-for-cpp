@@ -70,6 +70,11 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param expiresOnPropertyNames Names of properties in the JSON object that represent token
      * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse the
      * corresponding property will be made. Empty string elements will be ignored.
+     * @param utcDiffSeconds Optional. If not 0, it represents the difference between the UTC and a
+     * desired time zone, in seconds. Then, should an RFC3339 timestamp come without a time zone
+     * information, a corresponding time zone offset will be applied to such timestamp.
+     * No credential other than AzureCliCredential (which gets timestamps as local time without time
+     * zone) should need to set it.
      *
      * @return A successfully parsed access token.
      *
@@ -82,7 +87,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& jsonString,
         std::string const& accessTokenPropertyName,
         std::string const& expiresInPropertyName,
-        std::vector<std::string> const& expiresOnPropertyNames);
+        std::vector<std::string> const& expiresOnPropertyNames,
+        int utcDiffSeconds = 0);
 
     /**
      * @brief Parses JSON that contains access token and its expiration.

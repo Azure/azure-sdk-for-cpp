@@ -12,9 +12,11 @@
 
 #include <algorithm>
 #include <chrono>
+#include <iomanip>
 #include <iterator>
 #include <limits>
 #include <map>
+#include <sstream>
 
 using Azure::Identity::_detail::TokenCredentialImpl;
 
@@ -197,13 +199,39 @@ std::string TokenAsDiagnosticString(
       + "\' property.\nSee Azure::Core::Diagnostics::Logger for details"
         " (https://aka.ms/azsdk/cpp/identity/troubleshooting).");
 }
+
+std::string TimeZoneOffsetAsString(int utcDiffSeconds)
+{
+  if (utcDiffSeconds == 0)
+  {
+    return {};
+  }
+
+  std::ostringstream os;
+  if (utcDiffSeconds >= 0)
+  {
+    os << '+';
+  }
+  else
+  {
+    os << '-';
+    utcDiffSeconds = -utcDiffSeconds;
+  }
+
+  os << std::setw(2) << std::setfill('0') << (utcDiffSeconds / (60 * 60)) << ':';
+  os << std::setw(2) << std::setfill('0') << ((utcDiffSeconds % (60 * 60)) / 60);
+
+  return os.str();
+}
+
 } // namespace
 
 AccessToken TokenCredentialImpl::ParseToken(
     std::string const& jsonString,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
-    std::vector<std::string> const& expiresOnPropertyNames)
+    std::vector<std::string> const& expiresOnPropertyNames,
+    int utcDiffSeconds)
 {
   json parsedJson;
   try
@@ -324,13 +352,14 @@ AccessToken TokenCredentialImpl::ParseToken(
         }
       }
 
+      auto const tzOffsetStr = TimeZoneOffsetAsString(utcDiffSeconds);
       if (expiresOn.is_string())
       {
         auto const expiresOnAsString = expiresOn.get<std::string>();
         for (auto const& parse : {
-                 std::function<DateTime(std::string const&)>([](auto const& s) {
+                 std::function<DateTime(std::string const&)>([&](auto const& s) {
                    // 'expires_on' as RFC3339 date string (absolute timestamp)
-                   return DateTime::Parse(s, DateTime::DateFormat::Rfc3339);
+                   return DateTime::Parse(s + tzOffsetStr, DateTime::DateFormat::Rfc3339);
                  }),
                  std::function<DateTime(std::string const&)>([](auto const& s) {
                    // 'expires_on' as numeric string (posix time representing an absolute timestamp)
