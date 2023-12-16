@@ -3,7 +3,7 @@
 
 /**
  *
- * @brief This sample provides explamles of handling paged operations.
+ * @brief This sample provides examples of handling paged operations.
  * @details This sample provides the code implementation to use the Key Vault Certificates SDK
  * client for C++ to create, get properties of certificates, get properties of certificate versions,
  * delete , get deleted certificates, purge

@@ -4,11 +4,19 @@
 
 ### Features Added
 
+- Removed unnecessary dependencies on non-Windows platforms. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage better with their contributions to this release:
+
+- Theodore Tsirpanis _([GitHub](https://github.com/teo-tsirpanis))_
 
 ## 12.5.0 (2023-11-07)
 

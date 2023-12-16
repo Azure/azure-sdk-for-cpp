@@ -99,9 +99,9 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(response.SetHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
-          auto secondtHeader = headers.begin();
-          secondtHeader++;
-          return secondtHeader->first == expected.first && secondtHeader->second == expected.second
+          auto secondHeader = headers.begin();
+          secondHeader++;
+          return secondHeader->first == expected.first && secondHeader->second == expected.second
               && headers.size() == 2;
         },
         response.GetHeaders(),
@@ -111,10 +111,10 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(response.SetHeader("valid3", "header3"));
     EXPECT_PRED2(
         [](Azure::Core::CaseInsensitiveMap headers, std::pair<std::string, std::string> expected) {
-          auto secondtHeader = headers.begin();
-          secondtHeader++;
-          secondtHeader++;
-          return secondtHeader->first == expected.first && secondtHeader->second == expected.second
+          auto secondHeader = headers.begin();
+          secondHeader++;
+          secondHeader++;
+          return secondHeader->first == expected.first && secondHeader->second == expected.second
               && headers.size() == 3;
         },
         response.GetHeaders(),

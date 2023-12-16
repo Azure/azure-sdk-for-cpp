@@ -70,7 +70,7 @@ int main()
   // Send an event with a UTF-8 encoded string body.
   {
     Azure::Messaging::EventHubs::Models::EventData event{"Hello Eventhubs!"};
-    event.MessageId = "test-message-id-hellowworld";
+    event.MessageId = "test-message-id-helloworld";
     batch.TryAddMessage(event);
   }
 

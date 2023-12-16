@@ -452,7 +452,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<DateTime> DeletedOn;
       /**
-       * Remaining days before this container will be permanantely deleted. Only valid when this
+       * Remaining days before this container will be permanently deleted. Only valid when this
        * container was deleted.
        */
       Nullable<int32_t> RemainingRetentionDays;
@@ -1359,7 +1359,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<DateTime> DeletedOn;
       /**
-       * Remaining days before this blob will be permanantely deleted. Only valid when this blob was
+       * Remaining days before this blob will be permanently deleted. Only valid when this blob was
        * deleted.
        */
       Nullable<int32_t> RemainingRetentionDays;

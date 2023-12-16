@@ -8,6 +8,7 @@
     },
     {
       "name": "libxml2",
+      "default-features": false,
       "platform": "!windows & !uwp"
     },
     {
