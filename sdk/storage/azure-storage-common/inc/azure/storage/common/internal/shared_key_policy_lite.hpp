@@ -11,17 +11,19 @@
 #include <string>
 
 namespace Azure { namespace Storage { namespace _internal {
+#if defined(TESTING_BUILD)
   namespace Test {
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
   } // namespace Test
-
+#endif
   class SharedKeyPolicyLite final : public Core::Http::Policies::HttpPolicy {
+#if defined(TESTING_BUILD)
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
-
+#endif
   public:
     explicit SharedKeyPolicyLite(std::shared_ptr<StorageSharedKeyCredential> credential)
         : m_credential(std::move(credential))
