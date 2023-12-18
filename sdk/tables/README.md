@@ -45,7 +45,7 @@ The following components make up the Azure Tables Service:
 * A table within the account, which contains a set of entities
 * An entity within a table, as a dictionary
 
-The Azure Tables client library for Go allows you to interact with each of these components through the
+The Azure Tables client library for C++ allows you to interact with each of these components through the
 use of a dedicated client object.
 
 ### Clients

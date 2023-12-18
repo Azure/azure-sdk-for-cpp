@@ -5,7 +5,7 @@
  * @file
  * @brief Run-time type info enable or disable.
  *
- * @details When RTTI is enabled, defines a macro `AZ_STORAGE_TABLES_RTTI`.
+ * @details When RTTI is enabled, defines a macro `AZ_DATA_TABLES_RTTI`.
  * When the macro is not defined, RTTI is disabled.
  *
  * @details Each library has this header file. These headers are being configured by

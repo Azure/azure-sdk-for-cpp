@@ -99,7 +99,7 @@ namespace Azure { namespace Data { namespace Test {
   {
     m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
     auto tableClient = Tables::TableClient(
-        GetEnv("STORAGE_TABLES_URL"), m_tableName, m_credential, clientOptions);
+        GetEnv("DATA_TABLES_URL"), m_tableName, m_credential, clientOptions);
     return tableClient;
   }
 

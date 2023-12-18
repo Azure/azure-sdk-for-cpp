@@ -42,20 +42,21 @@ endif()
 set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/dll_import_export.hpp
+    inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rest_client.hpp
     inc/azure/data/tables/rtti.hpp
-    inc/azure/data/tables/models.hpp
-    inc/azure/data/tables/transactions.hpp
     inc/azure/data/tables/serializers.hpp
     inc/azure/data/tables.hpp
+    inc/azure/data/tables/transactions.hpp
+
 )
 
 set(
   AZURE_DATA_TABLES_SOURCE
     src/private/package_version.hpp
     src/rest_client.cpp
-    src/transactions.cpp
     src/serializers.cpp
+    src/transactions.cpp
 )
 
 add_library(azure-data-tables ${AZURE_DATA_TABLES_HEADER} ${AZURE_DATA_TABLES_SOURCE})

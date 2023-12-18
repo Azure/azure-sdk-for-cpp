@@ -57,7 +57,7 @@ stages:
           Value: "account-name"
         - Name: LOGGING__LOGLEVEL__DEFAULT
           Value: "debug"
-        - Name: STORAGE_TABLES_URL
+        - Name: DATA_TABLES_URL
           Value: "https://account-name.table.core.windows.net"
       CMakeTestOptions:
         - Name: Default

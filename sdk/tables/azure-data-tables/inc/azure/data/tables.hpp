@@ -1,6 +1,12 @@
-#pragma once
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+/**
+ * @brief Includes all public headers from Azure Data Tables SDK library.
+ *
+ */
+
+#pragma once
 
 #include "azure/data/tables/dll_import_export.hpp"
 #include "azure/data/tables/models.hpp"

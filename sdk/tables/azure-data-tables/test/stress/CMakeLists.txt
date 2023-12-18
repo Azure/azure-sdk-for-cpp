@@ -14,6 +14,5 @@ add_executable(
 
 target_link_libraries(azure-data-tables-stress-test PRIVATE azure-data-tables)
 
-#create_map_file(azure-storage-tables-stress-test azure-storage-tables-stress-test.map)
 file(COPY ${CMAKE_CURRENT_BINARY_DIR}
   DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)

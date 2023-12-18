@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 
 apiVersion: v2
-name: storage-tables-stress-test
-description: Streess test for Azure Storage Tables c++ SDK
+name: data-tables-stress-test
+description: Stress test for Azure Data Tables c++ SDK
 version: 0.0.2
 appVersion: v0.1
 annotations:
