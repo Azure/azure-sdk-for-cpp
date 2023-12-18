@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief The representation of a `OPTIONS` HTTP method based on [RFC 2616]
-     * (https://datatracker.ietf.org/doc/html/rfc5789).
+     * (https://datatracker.ietf.org/doc/html/rfc2616).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Options;
 

@@ -21,6 +21,8 @@ ATM the docker image is build by hand and hard-coded in the chart to simplify ma
 
 To build the image run "docker build -t <acr>/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  -f .\Dockerfile .\..\..\..\..\..\"
 
+The relative path is required to give docker engine the context of the build. It represents the path to which the docker file commands are relative to. 
+
 To push to mcr : "docker push <acr>/azuresdkforcpp/curlstress:v8"
 Obviously after logging in to the acr "az acr login -n <acr>"
 
