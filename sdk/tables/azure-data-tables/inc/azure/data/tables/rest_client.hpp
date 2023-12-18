@@ -33,7 +33,7 @@
 #include <vector>
 
 namespace Azure { namespace Data { namespace Tables {
-  
+
   namespace _detail {
     /**
      * The version used for the operations to Tables services.
