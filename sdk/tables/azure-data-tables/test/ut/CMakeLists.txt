@@ -33,7 +33,7 @@ target_include_directories(azure-data-tables-test PRIVATE ${CMAKE_CURRENT_SOURCE
 
 target_link_libraries(azure-data-tables-test PRIVATE azure-data-tables azure-storage-blobs azure-identity azure-core-test-fw gtest gtest_main gmock)
 
-# gtest_discover_tests will scan the test from azure-storage-tables-test and call add_test
+# gtest_discover_tests will scan the test from azure-data-tables-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-data-tables-test
      TEST_PREFIX azure-data-tables.

@@ -42,7 +42,7 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * The package name of the SDK.
      */
-    constexpr static const char* TablesServicePackageName = "storage-tables";
+    constexpr static const char* TablesServicePackageName = "data-tables";
   } // namespace _detail
 
   /**

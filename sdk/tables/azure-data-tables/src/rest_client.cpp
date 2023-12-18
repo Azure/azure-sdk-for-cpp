@@ -29,7 +29,7 @@ TableServicesClient::TableServicesClient(const TableClientOptions& options)
       std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
-      "storage-tables",
+      _detail::TablesServicePackageName,
       _detail::ApiVersion,
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
