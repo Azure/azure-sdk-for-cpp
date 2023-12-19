@@ -43,10 +43,10 @@ set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/dll_import_export.hpp
     inc/azure/data/tables/models.hpp
-    inc/azure/data/tables/rest_client.hpp
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables/serializers.hpp
     inc/azure/data/tables.hpp
+    inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/transactions.hpp
 
 )
@@ -54,8 +54,8 @@ set(
 set(
   AZURE_DATA_TABLES_SOURCE
     src/private/package_version.hpp
-    src/rest_client.cpp
     src/serializers.cpp
+    src/tables_clients.cpp
     src/transactions.cpp
 )
 

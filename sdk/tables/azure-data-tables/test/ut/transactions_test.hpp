@@ -4,7 +4,7 @@
 
 #include "test/ut/test_base.hpp"
 
-#include <azure/data/tables/rest_client.hpp>
+#include <azure/data/tables/tables_clients.hpp>
 #include <azure/data/tables/transactions.hpp>
 
 namespace Azure { namespace Data { namespace Test {

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/rest_client.hpp"
+#include "azure/data/tables/tables_clients.hpp"
 
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
