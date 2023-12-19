@@ -27,9 +27,11 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
     request.SetHeader("x-ms-date", "Thu, 23 Apr 2020 09:43:37 GMT");
     auto result = policy.GetSignature(request);
-    EXPECT_EQ(result.length(), 44);
-    auto decodedResult = Azure::Core::Convert::Base64Decode(result);
-    EXPECT_EQ(decodedResult.size(), 32);
+    const std::string stringTest = "Thu, 23 Apr 2020 09:43:37 GMT\n/account-name/?comp=properties";
+    const std::string expectedSignature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+        std::vector<uint8_t>(stringTest.begin(), stringTest.end()),
+                                       std::vector<uint8_t>(accountKey.begin(), accountKey.end())));
+    EXPECT_EQ(result, expectedSignature);
   }
 
   TEST(SharedKeyCredentialLiteTest, SharedKeyCredentialLiteNoDate)
@@ -67,7 +69,12 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
     request.SetHeader("x-ms-date", "Thu, 23 Apr 2020 09:43:37 GMT");
     auto result = policy.GetSignature(request);
-    EXPECT_EQ(result.length(), 44);
+    const std::string stringTest = "Thu, 23 Apr 2020 09:43:37 GMT\n/account-name/";
+    const std::string expectedSignature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+        std::vector<uint8_t>(stringTest.begin(), stringTest.end()),
+        std::vector<uint8_t>(accountKey.begin(), accountKey.end())));
+   
+    EXPECT_EQ(result,expectedSignature);
   }
 
 }}}} // namespace Azure::Storage::_internal::Test
