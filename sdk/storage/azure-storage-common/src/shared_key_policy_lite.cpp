@@ -35,10 +35,7 @@ namespace Azure { namespace Storage { namespace _internal {
       auto compValue = queryParameters.at(keyValue);
       string_to_sign += "?comp=" + Azure::Core::Url::Decode(compValue);
     }
-    string_to_sign += "\n";
-    // remove last linebreak
-    string_to_sign.pop_back();
-
+   
     return Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
         Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
