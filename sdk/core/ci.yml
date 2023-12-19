@@ -76,10 +76,10 @@ stages:
 #          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
 #          displayName: Verify Proxy Server Working Correctly.
 #          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-            
+
 #      PostTestSteps:
 #        - pwsh: |
-#            docker ps -q -f ancestor=ubuntu/squid | ForEach-Object { `
+#            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
 #                docker stop $_ `
 #            }
 #          displayName: Shutdown Squid Proxy.
@@ -102,7 +102,7 @@ stages:
           Value: "https://non-real-account.vault.azure.net"
         - Name: AZURE_KEYVAULT_HSM_URL
           Value: "https://non-real-account.managedhsm.azure.net/"
-# Key Vault & Identity 
+# Key Vault & Identity
         - Name: AZURE_TENANT_ID
           Value: "33333333-3333-3333-3333-333333333333"
         - Name: AZURE_CLIENT_ID

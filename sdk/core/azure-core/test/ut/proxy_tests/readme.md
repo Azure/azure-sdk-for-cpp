@@ -4,8 +4,7 @@
 
 Running the proxy tests requires two docker containers, one hosting an anonymous squid proxy, the other hosting an authenticated squid proxy.
 
-This container is derived from the ubuntu/squid container on dockerhub. This container is maintained by the Ubuntu team and has
-a current version of Ubuntu in it, with a version of squid built to match.
+This container is derived from the `azsdkengsys.azurecr.io/mirror/ubuntu/squid` container, and requires [authentication to the azsdkengsys container registry](https://learn.microsoft.com/azure/container-registry/container-registry-authentication?tabs=azure-cli) to pull. This container is mirrored from ubuntu/squid on dockerhub, maintained by the Ubuntu team and has a current version of Ubuntu in it, with a version of squid built to match. To update the image in the mirror, see [this pipeline](https://dev.azure.com/azure-sdk/internal/_build/index?definitionId=6572).
 
 ## Building the container
 
