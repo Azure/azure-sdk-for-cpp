@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
     const std::string stringTest = "Thu, 23 Apr 2020 09:43:37 GMT\n/account-name/?comp=properties";
     const std::string expectedSignature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringTest.begin(), stringTest.end()),
-                                       std::vector<uint8_t>(accountKey.begin(), accountKey.end())));
+        std::vector<uint8_t>(accountKey.begin(), accountKey.end())));
     EXPECT_EQ(result, expectedSignature);
   }
 
@@ -73,8 +73,8 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
     const std::string expectedSignature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringTest.begin(), stringTest.end()),
         std::vector<uint8_t>(accountKey.begin(), accountKey.end())));
-   
-    EXPECT_EQ(result,expectedSignature);
+
+    EXPECT_EQ(result, expectedSignature);
   }
 
 }}}} // namespace Azure::Storage::_internal::Test
