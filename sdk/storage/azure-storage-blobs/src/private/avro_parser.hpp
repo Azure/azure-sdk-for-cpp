@@ -106,30 +106,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     std::shared_ptr<SharedStatus> m_status;
   };
 
-  class AvroDatum;
-
-  class AvroRecord final {
-  public:
-    bool HasField(const std::string& key) const { return FindField(key) != m_keys->size(); }
-    const AvroDatum& Field(const std::string& key) const { return m_values.at(FindField(key)); }
-    AvroDatum& Field(const std::string& key) { return m_values.at(FindField(key)); }
-    const AvroDatum& FieldAt(size_t i) const { return m_values.at(i); }
-    AvroDatum& FieldAt(size_t i) { return m_values.at(i); }
-
-  private:
-    size_t FindField(const std::string& key) const
-    {
-      auto i = find(m_keys->begin(), m_keys->end(), key);
-      return i - m_keys->begin();
-    }
-    const std::vector<std::string>* m_keys = nullptr;
-    std::vector<AvroDatum> m_values;
-
-    friend class AvroDatum;
-  };
-
-  using AvroMap = std::map<std::string, AvroDatum>;
-
   class AvroDatum final {
   public:
     AvroDatum() : m_schema(AvroSchema::NullSchema) {}
@@ -150,6 +126,28 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   private:
     AvroSchema m_schema;
     AvroStreamReader::ReaderPos m_data;
+  };
+
+  using AvroMap = std::map<std::string, AvroDatum>;
+
+  class AvroRecord final {
+  public:
+    bool HasField(const std::string& key) const { return FindField(key) != m_keys->size(); }
+    const AvroDatum& Field(const std::string& key) const { return m_values.at(FindField(key)); }
+    AvroDatum& Field(const std::string& key) { return m_values.at(FindField(key)); }
+    const AvroDatum& FieldAt(size_t i) const { return m_values.at(i); }
+    AvroDatum& FieldAt(size_t i) { return m_values.at(i); }
+
+  private:
+    size_t FindField(const std::string& key) const
+    {
+      auto i = find(m_keys->begin(), m_keys->end(), key);
+      return i - m_keys->begin();
+    }
+    const std::vector<std::string>* m_keys = nullptr;
+    std::vector<AvroDatum> m_values;
+
+    friend class AvroDatum;
   };
 
   class AvroObjectContainerReader final {
