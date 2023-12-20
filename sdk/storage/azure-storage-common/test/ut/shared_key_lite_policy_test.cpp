@@ -4,7 +4,7 @@
 #include "test_base.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/storage/common/internal/shared_key_policy_lite.hpp>
+#include <azure/storage/common/internal/shared_key_lite_policy.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
 namespace Azure { namespace Storage { namespace _internal { namespace Test {
@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
 
     std::shared_ptr<StorageSharedKeyCredential> credential;
     auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
-    SharedKeyPolicyLite policy(parsedConnectionString.KeyCredential);
+    SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
     Azure::Core::Url url("https://goqu.table.core.windows.net");
     url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
 
     std::shared_ptr<StorageSharedKeyCredential> credential;
     auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
-    SharedKeyPolicyLite policy(parsedConnectionString.KeyCredential);
+    SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
     Azure::Core::Url url("https://goqu.table.core.windows.net");
     url.SetQueryParameters({{"restype", "service"}, {"comp", "properties"}});
@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace _internal { namespace Test {
 
     std::shared_ptr<StorageSharedKeyCredential> credential;
     auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
-    SharedKeyPolicyLite policy(parsedConnectionString.KeyCredential);
+    SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
     Azure::Core::Url url("https://goqu.table.core.windows.net");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/storage/common/internal/shared_key_policy_lite.hpp"
+#include "azure/storage/common/internal/shared_key_lite_policy.hpp"
 
 #include "azure/storage/common/crypt.hpp"
 
@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  std::string SharedKeyPolicyLite::GetSignature(const Core::Http::Request& request) const
+  std::string SharedKeyLitePolicy::GetSignature(const Core::Http::Request& request) const
   {
     std::string string_to_sign;
 

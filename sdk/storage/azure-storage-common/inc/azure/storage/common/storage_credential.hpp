@@ -22,7 +22,7 @@ namespace Azure { namespace Storage {
 
   namespace _internal {
     class SharedKeyPolicy;
-    class SharedKeyPolicyLite;
+    class SharedKeyLitePolicy;
   } // namespace _internal
 
   /**
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage {
 
   private:
     friend class _internal::SharedKeyPolicy;
-    friend class _internal::SharedKeyPolicyLite;
+    friend class _internal::SharedKeyLitePolicy;
     friend struct Sas::BlobSasBuilder;
     friend struct Sas::ShareSasBuilder;
     friend struct Sas::DataLakeSasBuilder;

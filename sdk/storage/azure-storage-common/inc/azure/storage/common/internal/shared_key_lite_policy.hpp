@@ -18,23 +18,23 @@ namespace Azure { namespace Storage { namespace _internal {
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
   } // namespace Test
 #endif
-  class SharedKeyPolicyLite final : public Core::Http::Policies::HttpPolicy {
+  class SharedKeyLitePolicy final : public Core::Http::Policies::HttpPolicy {
 #if defined(TESTING_BUILD)
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
 #endif
   public:
-    explicit SharedKeyPolicyLite(std::shared_ptr<StorageSharedKeyCredential> credential)
+    explicit SharedKeyLitePolicy(std::shared_ptr<StorageSharedKeyCredential> credential)
         : m_credential(std::move(credential))
     {
     }
 
-    ~SharedKeyPolicyLite() override {}
+    ~SharedKeyLitePolicy() override {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<SharedKeyPolicyLite>(m_credential);
+      return std::make_unique<SharedKeyLitePolicy>(m_credential);
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(

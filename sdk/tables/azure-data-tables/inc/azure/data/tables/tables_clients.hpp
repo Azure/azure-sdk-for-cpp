@@ -18,7 +18,7 @@
 #include <azure/data/tables/transactions.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
-#include <azure/storage/common/internal/shared_key_policy_lite.hpp>
+#include <azure/storage/common/internal/shared_key_lite_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
