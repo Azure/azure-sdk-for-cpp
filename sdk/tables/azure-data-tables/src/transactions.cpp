@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/base64.hpp>
 #include <azure/data/tables/serializers.hpp>
 #include <azure/data/tables/transactions.hpp>
 using namespace Azure::Data::Tables;

@@ -3,14 +3,7 @@
 
 #include "azure/data/tables/tables_clients.hpp"
 
-#include <azure/core/exception.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/http_status_code.hpp>
-#include <azure/core/internal/environment.hpp>
-#include <azure/core/internal/json/json.hpp>
-#include <azure/core/io/body_stream.hpp>
 #include <azure/data/tables/serializers.hpp>
-#include <azure/storage/common/internal/xml_wrapper.hpp>
 
 #include <sstream>
 #include <string>

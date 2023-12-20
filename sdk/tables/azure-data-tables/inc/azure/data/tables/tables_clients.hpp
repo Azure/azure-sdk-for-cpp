@@ -3,28 +3,17 @@
 
 #pragma once
 
-#include <azure/core/context.hpp>
-#include <azure/core/credentials/credentials.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/response.hpp>
-#include <azure/core/url.hpp>
-#include <azure/data/tables/dll_import_export.hpp>
 #include <azure/data/tables/models.hpp>
-#include <azure/data/tables/rtti.hpp>
-#include <azure/data/tables/tables_clients.hpp>
 #include <azure/data/tables/transactions.hpp>
-#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_lite_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
-#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_credential.hpp>
 
 #include <cstdint>
 #include <memory>
