@@ -28,8 +28,8 @@ stages:
       ServiceDirectory: tables
       # Not running tests on CI but only on LiveTest mode
       CtestRegex: azure-data
-      LineCoverageTarget: 63
-      BranchCoverageTarget: 33
+      LineCoverageTarget: 80
+      BranchCoverageTarget: 45
       LiveTestCtestRegex: azure-data
       Clouds: Preview
       SupportedClouds: Preview
