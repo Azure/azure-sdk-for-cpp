@@ -11,7 +11,7 @@
 #include <string>
 #include <utility>
 #include <vector>
-
+using namespace Azure::Storage;
 namespace Azure { namespace Data { namespace Tables {
   /**
    * @brief Serializers for TableService operations.
@@ -38,10 +38,16 @@ namespace Azure { namespace Data { namespace Tables {
     static std::string const UpdateEntity(Models::TableEntity const& tableEntity);
 
     /**
-     * @brief Serialize a TableEntity object into a JSON string for Upsert Entity operation.
+     * @brief Serialize a TableAccessPolicy object into XML.
      *
      */
     static std::string const SetAccessPolicy(Models::TableAccessPolicy const& tableAccessPolicy);
+
+    /**
+     * @brief Deserialize a TableAccessPolicy from XML.
+     *
+     */
+    static Models::TableAccessPolicy TableAccessPolicyFromXml(std::vector<uint8_t> responseData);
 
     /**
      * @brief Serialize a TableEntity object into a XML string for Create operation.
@@ -50,10 +56,17 @@ namespace Azure { namespace Data { namespace Tables {
     static std::string const Create(std::string const& tableName);
 
     /**
-     * @brief Serialize a TableEntity object into a XML string for Set service properties operation.
+     * @brief Serialize Service properties into XML.
      *
      */
     static std::string const SetServiceProperties(
         Models::SetServicePropertiesOptions const& options);
+
+    /**
+     * @brief Deserialize TableServiceProprties from XML.
+     *
+     */
+    static Models::TableServiceProperties ServicePropertiesFromXml(
+        std::vector<uint8_t> responseData);
   };
 }}} // namespace Azure::Data::Tables

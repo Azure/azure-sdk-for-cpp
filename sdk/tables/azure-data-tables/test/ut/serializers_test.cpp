@@ -21,13 +21,13 @@ namespace Azure { namespace Data { namespace Test {
     identifier.Permissions = "r";
     policy.SignedIdentifiers.emplace_back(identifier);
     auto serialized = Serializers::SetAccessPolicy(policy);
-    EXPECT_EQ(
-        serialized,
-        "<?xml version=\"1.0\" "
-        "encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>test</"
-        "Id><AccessPolicy><Start>2023-12-01T01:01:01.0000000Z</"
-        "Start><Expiry>2023-12-02T01:01:01.0000000Z</Expiry><Permission>r</Permission></"
-        "AccessPolicy></SignedIdentifier></SignedIdentifiers>");
+
+    auto data = Serializers::TableAccessPolicyFromXml(
+        std::vector<uint8_t>(serialized.begin(), serialized.end()));
+    EXPECT_EQ(data.SignedIdentifiers[0].Id, "test");
+    EXPECT_EQ(data.SignedIdentifiers[0].Permissions, "r");
+    EXPECT_EQ(data.SignedIdentifiers[0].StartsOn.Value(), Azure::DateTime(2023, 12, 1, 1, 1, 1));
+    EXPECT_EQ(data.SignedIdentifiers[0].ExpiresOn.Value(), Azure::DateTime(2023, 12, 2, 1, 1, 1));
   }
 
   TEST_F(SerializersTest, SetServiceProperties)
@@ -59,20 +59,31 @@ namespace Azure { namespace Data { namespace Test {
     policy.ServiceProperties.Cors[0].ExposedHeaders = "*";
 
     auto serialized = Serializers::SetServiceProperties(policy);
-    EXPECT_EQ(
-        serialized,
-        "<?xml version=\"1.0\" "
-        "encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</"
-        "Version><Delete>true</Delete><Read>true</Read><Write>true</"
-        "Write><RetentionPolicy><Enabled>true</Enabled><Days>1</Days></RetentionPolicy></"
-        "Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</"
-        "IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>1</Days></RetentionPolicy></"
-        "HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</"
-        "Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>false</Enabled><Days>1</"
-        "Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedOrigins>*</"
-        "AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders>*</"
-        "AllowedHeaders><ExposedHeaders>*</ExposedHeaders><MaxAgeInSeconds>0</MaxAgeInSeconds></"
-        "CorsRule></Cors></StorageServiceProperties>");
+    auto data = Serializers::ServicePropertiesFromXml(
+        std::vector<uint8_t>(serialized.begin(), serialized.end()));
+    EXPECT_EQ(data.HourMetrics.Version, "1.0");
+    EXPECT_EQ(data.HourMetrics.IsEnabled, true);
+    EXPECT_EQ(data.HourMetrics.IncludeApis.Value(), true);
+    EXPECT_EQ(data.HourMetrics.RetentionPolicyDefinition.Days.Value(), 1);
+    EXPECT_EQ(data.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
+
+    EXPECT_EQ(data.MinuteMetrics.Version, "1.0");
+    EXPECT_EQ(data.MinuteMetrics.IsEnabled, true);
+    EXPECT_EQ(data.MinuteMetrics.IncludeApis.Value(), true);
+    EXPECT_EQ(data.MinuteMetrics.RetentionPolicyDefinition.Days.Value(), 1);
+    EXPECT_EQ(data.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, true);
+
+    EXPECT_EQ(data.Logging.Version, "1.0");
+    EXPECT_EQ(data.Logging.Delete, true);
+    EXPECT_EQ(data.Logging.Read, true);
+    EXPECT_EQ(data.Logging.Write, true);
+    EXPECT_EQ(data.Logging.RetentionPolicyDefinition.Days.Value(), 1);
+    EXPECT_EQ(data.Logging.RetentionPolicyDefinition.IsEnabled, true);
+
+    EXPECT_EQ(data.Cors[0].AllowedOrigins, "*");
+    EXPECT_EQ(data.Cors[0].AllowedMethods, "GET");
+    EXPECT_EQ(data.Cors[0].AllowedHeaders, "*");
+    EXPECT_EQ(data.Cors[0].ExposedHeaders, "*");
   }
 
 }}} // namespace Azure::Data::Test
