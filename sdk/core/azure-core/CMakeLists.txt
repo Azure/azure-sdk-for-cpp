@@ -68,6 +68,7 @@ set(
     inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
     inc/azure/core/credentials/credentials.hpp
+    inc/azure/core/credentials/shared_key_credential.hpp
     inc/azure/core/credentials/token_credential_options.hpp
     inc/azure/core/cryptography/hash.hpp
     inc/azure/core/datetime.hpp
@@ -79,6 +80,7 @@ set(
     inc/azure/core/http/http_status_code.hpp
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/policies/service_version_policy.hpp
+    inc/azure/core/http/policies/shared_key_lite_policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
@@ -123,8 +125,10 @@ set(
     src/base64.cpp
     src/context.cpp
     src/credentials/authorization_challenge_parser.cpp
+    src/credentials/shared_key_credential.cpp
     src/cryptography/md5.cpp
     src/cryptography/sha_hash.cpp
+    src/cryptography/hmacsha256.cpp
     src/datetime.cpp
     src/environment.cpp
     src/environment_log_level_listener.cpp
@@ -139,6 +143,7 @@ set(
     src/http/request.cpp
     src/http/request_activity_policy.cpp
     src/http/retry_policy.cpp
+    src/http/shared_key_lite_policy.cpp
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
@@ -153,7 +158,7 @@ set(
     src/uuid.cpp
     )
 
-add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
+add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE} "src/cryptography/hmacsha256.cpp")
 
 target_include_directories(
   azure-core

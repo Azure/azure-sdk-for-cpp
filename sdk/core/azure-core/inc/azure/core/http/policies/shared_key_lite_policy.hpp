@@ -3,14 +3,14 @@
 
 #pragma once
 
-#include "azure/storage/common/storage_credential.hpp"
+#include "azure/core/credentials/shared_key_credential.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 
 #include <memory>
 #include <string>
-
-namespace Azure { namespace Storage { namespace _internal {
+using namespace Azure::Core::Credentials;
+namespace Azure { namespace Core { namespace Http { namespace Policies {
 #if defined(TESTING_BUILD)
   namespace Test {
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace _internal {
     friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
 #endif
   public:
-    explicit SharedKeyLitePolicy(std::shared_ptr<StorageSharedKeyCredential> credential)
+    explicit SharedKeyLitePolicy(std::shared_ptr<SharedKeyCredential> credential)
         : m_credential(std::move(credential))
     {
     }
@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   private:
     std::string GetSignature(const Core::Http::Request& request) const;
-    std::shared_ptr<StorageSharedKeyCredential> m_credential;
+    std::shared_ptr<SharedKeyCredential> m_credential;
   };
 
-}}} // namespace Azure::Storage::_internal
+}}}} // namespace Azure::Core::Http::Policies

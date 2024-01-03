@@ -8,44 +8,37 @@
 #include <memory>
 #include <mutex>
 #include <string>
-
-namespace Azure { namespace Storage {
+namespace Azure { namespace Core { namespace Http { namespace Policies {
+  class SharedKeyPolicy;
+  class SharedKeyLitePolicy;
+}}}}
+      namespace Azure { namespace Core { namespace Credentials {
 
   namespace Sas {
     struct AccountSasBuilder;
-    struct BlobSasBuilder;
-    struct ShareSasBuilder;
-    struct DataLakeSasBuilder;
-    struct QueueSasBuilder;
-    struct TableSasBuilder;
   } // namespace Sas
 
-  namespace _internal {
-    class SharedKeyPolicy;
-    class SharedKeyLitePolicy;
-  } // namespace _internal
-
   /**
-   * @brief A StorageSharedKeyCredential is a credential backed by a storage account's name and
+   * @brief A SharedKeyCredential is a credential backed by an account's name and
    * one of its access keys.
    */
-  class StorageSharedKeyCredential final {
+  class SharedKeyCredential final {
   public:
     /**
-     * @brief Initializes a new instance of the StorageSharedKeyCredential.
+     * @brief Initializes a new instance of the SharedKeyCredential.
      *
-     * @param accountName Name of the storage account.
-     * @param accountKey Access key of the storage
+     * @param accountName Name of the  account.
+     * @param accountKey Access key of the 
      * account.
      */
-    explicit StorageSharedKeyCredential(std::string accountName, std::string accountKey)
+    explicit SharedKeyCredential(std::string accountName, std::string accountKey)
         : AccountName(std::move(accountName)), m_accountKey(std::move(accountKey))
     {
     }
 
     /**
-     * @brief Update the storage account's access key. This intended to be used when you've
-     * regenerated your storage account's access keys and want to update long lived clients.
+     * @brief Update the  account's access key. This intended to be used when you've
+     * regenerated your account's access keys and want to update long lived clients.
      *
      * @param accountKey A storage account access key.
      */
@@ -56,17 +49,13 @@ namespace Azure { namespace Storage {
     }
 
     /**
-     * @brief Gets the name of the Storage Account.
+     * @brief Gets the name of the Account.
      */
     const std::string AccountName;
 
   private:
-    friend class _internal::SharedKeyPolicy;
-    friend class _internal::SharedKeyLitePolicy;
-    friend struct Sas::BlobSasBuilder;
-    friend struct Sas::ShareSasBuilder;
-    friend struct Sas::DataLakeSasBuilder;
-    friend struct Sas::QueueSasBuilder;
+    friend class Azure::Core::Http::Policies::SharedKeyPolicy;
+    friend class Azure::Core::Http::Policies::SharedKeyLitePolicy;
     friend struct Sas::AccountSasBuilder;
     std::string GetAccountKey() const
     {
@@ -89,7 +78,7 @@ namespace Azure { namespace Storage {
       Azure::Core::Url QueueServiceUrl;
       Azure::Core::Url DataLakeServiceUrl;
       Azure::Core::Url TableServiceUrl;
-      std::shared_ptr<StorageSharedKeyCredential> KeyCredential;
+      std::shared_ptr<SharedKeyCredential> KeyCredential;
     };
 
     ConnectionStringParts ParseConnectionString(const std::string& connectionString);
@@ -98,4 +87,4 @@ namespace Azure { namespace Storage {
 
   } // namespace _internal
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Core::Credentials

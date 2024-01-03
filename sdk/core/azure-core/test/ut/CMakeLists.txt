@@ -86,6 +86,7 @@ add_executable (
     retry_policy_test.cpp
     service_tracing_test.cpp
     sha_test.cpp
+    shared_key_lite_policy_test.cpp
     simplified_header_test.cpp
     string_test.cpp
     telemetry_policy_test.cpp

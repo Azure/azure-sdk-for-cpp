@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/storage/common/internal/shared_key_lite_policy.hpp"
+#include "azure/core/http/policies/shared_key_lite_policy.hpp"
 
-#include "azure/storage/common/crypt.hpp"
-
+#include <azure/core/cryptography/hash.hpp>
+#include <azure/core/base64.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/strings.hpp>
 
 #include <algorithm>
 
-namespace Azure { namespace Storage { namespace _internal {
+namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   std::string SharedKeyLitePolicy::GetSignature(const Core::Http::Request& request) const
   {
@@ -36,8 +36,8 @@ namespace Azure { namespace Storage { namespace _internal {
       string_to_sign += "?comp=" + Azure::Core::Url::Decode(compValue);
     }
 
-    return Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+    return Azure::Core::Convert::Base64Encode(Azure::Core::Cryptography::HmacSha256Hash::HmacSha256(
         std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
         Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
   }
-}}} // namespace Azure::Storage::_internal
+}}}} // namespace Azure::Core::Http::Policies

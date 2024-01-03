@@ -18,7 +18,6 @@ add_executable (
   azure-storage-common-test
     crypt_functions_test.cpp
     metadata_test.cpp
-    shared_key_lite_policy_test.cpp
     storage_credential_test.cpp
     test_base.cpp
     test_base.hpp
