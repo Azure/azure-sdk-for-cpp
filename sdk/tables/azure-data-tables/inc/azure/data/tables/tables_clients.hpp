@@ -9,10 +9,9 @@
 #include <azure/core/xml.hpp>
 #include <azure/data/tables/models.hpp>
 #include <azure/data/tables/transactions.hpp>
-#include <azure/storage/common/internal/constants.hpp>
+#include <azure/core/http/policies/service_version_policy.hpp>
 #include <azure/storage/common/internal/shared_key_lite_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
-#include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 

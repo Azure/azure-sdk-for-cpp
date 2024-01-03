@@ -47,6 +47,7 @@
 
 // azure/core/http/policies
 #include "azure/core/http/policies/policy.hpp"
+#include "azure/core/http/policies/service_version_policy.hpp"
 
 // azure/core/io
 #include "azure/core/io/body_stream.hpp"

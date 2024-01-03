@@ -78,6 +78,7 @@ set(
     inc/azure/core/http/http.hpp
     inc/azure/core/http/http_status_code.hpp
     inc/azure/core/http/policies/policy.hpp
+    inc/azure/core/http/policies/service_version_policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
