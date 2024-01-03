@@ -4,14 +4,14 @@
 #pragma once
 #include <azure/core/internal/json/json.hpp>
 #include <azure/data/tables/models.hpp>
-#include <azure/storage/common/internal/xml_wrapper.hpp>
+#include <azure/core/xml.hpp>
 
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-using namespace Azure::Storage;
+
 namespace Azure { namespace Data { namespace Tables {
   /**
    * @brief Serializers for TableService operations.

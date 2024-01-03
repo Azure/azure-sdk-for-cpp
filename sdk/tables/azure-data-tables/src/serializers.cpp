@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 #include <azure/data/tables/serializers.hpp>
-
-using namespace Azure::Storage;
+#include <azure/core/internal/json/json.hpp>
+using namespace Azure::Core::Xml;
 using namespace Azure::Data::Tables;
 
 std::string const Serializers::CreateEntity(Models::TableEntity const& tableEntity)
@@ -64,17 +64,17 @@ std::string const Serializers::SetAccessPolicy(Models::TableAccessPolicy const& 
 {
   std::string xmlBody;
   {
-    _internal::XmlWriter writer;
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifiers"});
+    XmlWriter writer;
+    writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifiers"});
     for (const auto& i1 : tableAccessPolicy.SignedIdentifiers)
     {
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifier"});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Id", i1.Id});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
+      writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifier"});
+      writer.Write(XmlNode{XmlNodeType::StartTag, "Id", i1.Id});
+      writer.Write(XmlNode{XmlNodeType::StartTag, "AccessPolicy"});
       if (i1.StartsOn.HasValue())
       {
-        writer.Write(_internal::XmlNode{
-            _internal::XmlNodeType::StartTag,
+        writer.Write(XmlNode{
+            XmlNodeType::StartTag,
             "Start",
             i1.StartsOn.Value().ToString(
                 Azure::DateTime::DateFormat::Rfc3339,
@@ -82,20 +82,20 @@ std::string const Serializers::SetAccessPolicy(Models::TableAccessPolicy const& 
       }
       if (i1.ExpiresOn.HasValue())
       {
-        writer.Write(_internal::XmlNode{
-            _internal::XmlNodeType::StartTag,
+        writer.Write(XmlNode{
+            XmlNodeType::StartTag,
             "Expiry",
             i1.ExpiresOn.Value().ToString(
                 Azure::DateTime::DateFormat::Rfc3339,
                 Azure::DateTime::TimeFractionFormat::AllDigits)});
       }
       writer.Write(
-          _internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission", i1.Permissions});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          XmlNode{XmlNodeType::StartTag, "Permission", i1.Permissions});
+      writer.Write(XmlNode{XmlNodeType::EndTag});
+      writer.Write(XmlNode{XmlNodeType::EndTag});
     }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::End});
     xmlBody = writer.GetDocument();
   }
   return xmlBody;
@@ -105,7 +105,7 @@ std::string const Serializers::Create(std::string const& tableName)
 {
   std::string jsonBody;
   {
-    auto jsonRoot = Core::Json::_internal::json::object();
+    auto jsonRoot = Azure::Core::Json::_internal::json::object();
 
     jsonRoot["TableName"] = tableName;
     jsonBody = jsonRoot.dump();
@@ -118,121 +118,121 @@ std::string const Serializers::SetServiceProperties(
 {
   std::string xmlBody;
   {
-    _internal::XmlWriter writer;
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "StorageServiceProperties"});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Logging"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag, "Version", options.ServiceProperties.Logging.Version});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    XmlWriter writer;
+    writer.Write(XmlNode{XmlNodeType::StartTag, "StorageServiceProperties"});
+    writer.Write(XmlNode{XmlNodeType::StartTag, "Logging"});
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag, "Version", options.ServiceProperties.Logging.Version});
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Delete",
         options.ServiceProperties.Logging.Delete ? "true" : "false"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Read",
         options.ServiceProperties.Logging.Read ? "true" : "false"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Write",
         options.ServiceProperties.Logging.Write ? "true" : "false"});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Enabled",
         options.ServiceProperties.Logging.RetentionPolicyDefinition.IsEnabled ? "true" : "false"});
     if (options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.HasValue())
     {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag,
           "Days",
           std::to_string(
               options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.Value())});
     }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "HourMetrics"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::StartTag, "HourMetrics"});
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Version",
         options.ServiceProperties.HourMetrics.Version});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Enabled",
         options.ServiceProperties.HourMetrics.IsEnabled ? "true" : "false"});
     if (options.ServiceProperties.HourMetrics.IncludeApis.HasValue())
     {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag,
           "IncludeAPIs",
           options.ServiceProperties.HourMetrics.IncludeApis.Value() ? "true" : "false"});
     }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Enabled",
         options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                   : "false"});
     if (options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.HasValue())
     {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag,
           "Days",
           std::to_string(
               options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.Value())});
     }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MinuteMetrics"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::StartTag, "MinuteMetrics"});
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Version",
         options.ServiceProperties.MinuteMetrics.Version});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Enabled",
         options.ServiceProperties.MinuteMetrics.IsEnabled ? "true" : "false"});
     if (options.ServiceProperties.MinuteMetrics.IncludeApis.HasValue())
     {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag,
           "IncludeAPIs",
           options.ServiceProperties.MinuteMetrics.IncludeApis.Value() ? "true" : "false"});
     }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "RetentionPolicy"});
-    writer.Write(_internal::XmlNode{
-        _internal::XmlNodeType::StartTag,
+    writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
+    writer.Write(XmlNode{
+        XmlNodeType::StartTag,
         "Enabled",
         options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                     : "false"});
     if (options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.HasValue())
     {
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag,
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag,
           "Days",
           std::to_string(
               options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.Value())});
     }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Cors"});
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::StartTag, "Cors"});
     for (const auto& i1 : options.ServiceProperties.Cors)
     {
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "CorsRule"});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "AllowedOrigins", i1.AllowedOrigins});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "AllowedMethods", i1.AllowedMethods});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "AllowedHeaders", i1.AllowedHeaders});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "ExposedHeaders", i1.ExposedHeaders});
-      writer.Write(_internal::XmlNode{
-          _internal::XmlNodeType::StartTag, "MaxAgeInSeconds", std::to_string(i1.MaxAgeInSeconds)});
-      writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+      writer.Write(XmlNode{XmlNodeType::StartTag, "CorsRule"});
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag, "AllowedOrigins", i1.AllowedOrigins});
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag, "AllowedMethods", i1.AllowedMethods});
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag, "AllowedHeaders", i1.AllowedHeaders});
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag, "ExposedHeaders", i1.ExposedHeaders});
+      writer.Write(XmlNode{
+          XmlNodeType::StartTag, "MaxAgeInSeconds", std::to_string(i1.MaxAgeInSeconds)});
+      writer.Write(XmlNode{XmlNodeType::EndTag});
     }
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-    writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::EndTag});
+    writer.Write(XmlNode{XmlNodeType::End});
     xmlBody = writer.GetDocument();
   }
   return xmlBody;
@@ -241,7 +241,7 @@ std::string const Serializers::SetServiceProperties(
 Models::TableAccessPolicy Serializers::TableAccessPolicyFromXml(std::vector<uint8_t> responseData)
 {
   Models::TableAccessPolicy response;
-  _internal::XmlReader reader(
+  XmlReader reader(
       reinterpret_cast<const char*>(responseData.data()), responseData.size());
   enum class XmlTagEnum
   {
@@ -268,16 +268,16 @@ Models::TableAccessPolicy Serializers::TableAccessPolicyFromXml(std::vector<uint
   while (true)
   {
     auto node = reader.Read();
-    if (node.Type == _internal::XmlNodeType::End)
+    if (node.Type == XmlNodeType::End)
     {
       break;
     }
-    else if (node.Type == _internal::XmlNodeType::StartTag)
+    else if (node.Type == XmlNodeType::StartTag)
     {
       auto ite = XmlTagEnumMap.find(node.Name);
       xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
     }
-    else if (node.Type == _internal::XmlNodeType::Text)
+    else if (node.Type == XmlNodeType::Text)
     {
       if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kSignedIdentifiers
           && xmlPath[1] == XmlTagEnum::kSignedIdentifier && xmlPath[2] == XmlTagEnum::kId)
@@ -307,10 +307,10 @@ Models::TableAccessPolicy Serializers::TableAccessPolicyFromXml(std::vector<uint
         vectorElement1.Permissions = node.Value;
       }
     }
-    else if (node.Type == _internal::XmlNodeType::Attribute)
+    else if (node.Type == XmlNodeType::Attribute)
     {
     }
-    else if (node.Type == _internal::XmlNodeType::EndTag)
+    else if (node.Type == XmlNodeType::EndTag)
     {
       if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kSignedIdentifiers
           && xmlPath[1] == XmlTagEnum::kSignedIdentifier)
@@ -329,7 +329,7 @@ Models::TableServiceProperties Serializers::ServicePropertiesFromXml(
     std::vector<uint8_t> responseData)
 {
   Models::TableServiceProperties response;
-  _internal::XmlReader reader(
+  XmlReader reader(
       reinterpret_cast<const char*>(responseData.data()), responseData.size());
   enum class XmlTagEnum
   {
@@ -380,16 +380,16 @@ Models::TableServiceProperties Serializers::ServicePropertiesFromXml(
   while (true)
   {
     auto node = reader.Read();
-    if (node.Type == _internal::XmlNodeType::End)
+    if (node.Type == XmlNodeType::End)
     {
       break;
     }
-    else if (node.Type == _internal::XmlNodeType::StartTag)
+    else if (node.Type == XmlNodeType::StartTag)
     {
       auto ite = XmlTagEnumMap.find(node.Name);
       xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
     }
-    else if (node.Type == _internal::XmlNodeType::Text)
+    else if (node.Type == XmlNodeType::Text)
     {
       if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
           && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kVersion)
@@ -530,10 +530,10 @@ Models::TableServiceProperties Serializers::ServicePropertiesFromXml(
         vectorElement1.MaxAgeInSeconds = std::stoi(node.Value);
       }
     }
-    else if (node.Type == _internal::XmlNodeType::Attribute)
+    else if (node.Type == XmlNodeType::Attribute)
     {
     }
-    else if (node.Type == _internal::XmlNodeType::EndTag)
+    else if (node.Type == XmlNodeType::EndTag)
     {
       if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
           && xmlPath[1] == XmlTagEnum::kCors && xmlPath[2] == XmlTagEnum::kCorsRule)

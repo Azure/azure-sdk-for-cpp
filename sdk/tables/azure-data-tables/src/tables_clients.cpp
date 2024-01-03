@@ -244,7 +244,7 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
   Models::ServiceStatistics response;
   {
     const auto& responseBody = pRawResponse->GetBody();
-    _internal::XmlReader reader(
+    Azure::Core::Xml::XmlReader reader(
         reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
     enum class XmlTagEnum
     {
@@ -265,16 +265,16 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
     while (true)
     {
       auto node = reader.Read();
-      if (node.Type == _internal::XmlNodeType::End)
+      if (node.Type == Azure::Core::Xml::XmlNodeType::End)
       {
         break;
       }
-      else if (node.Type == _internal::XmlNodeType::StartTag)
+      else if (node.Type == Azure::Core::Xml::XmlNodeType::StartTag)
       {
         auto ite = XmlTagEnumMap.find(node.Name);
         xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
       }
-      else if (node.Type == _internal::XmlNodeType::Text)
+      else if (node.Type == Azure::Core::Xml::XmlNodeType::Text)
       {
         if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceStats
             && xmlPath[1] == XmlTagEnum::kGeoReplication && xmlPath[2] == XmlTagEnum::kStatus)
@@ -289,10 +289,10 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
               = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
         }
       }
-      else if (node.Type == _internal::XmlNodeType::Attribute)
+      else if (node.Type == Azure::Core::Xml::XmlNodeType::Attribute)
       {
       }
-      else if (node.Type == _internal::XmlNodeType::EndTag)
+      else if (node.Type == Azure::Core::Xml::XmlNodeType::EndTag)
       {
 
         xmlPath.pop_back();
