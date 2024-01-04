@@ -14,6 +14,9 @@
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
 #include <webservices.h>
 #else
 #include <libxml/xmlreader.h>
@@ -57,6 +60,11 @@ namespace Azure { namespace Core { namespace Xml {
 
   XmlReader::XmlReader(const char* data, size_t length)
   {
+    if (length > static_cast<size_t>(std::numeric_limits<ULONG>::max()))
+    {
+      throw std::runtime_error("Xml data too big.");
+    }
+
     auto context = std::make_unique<XmlReaderContext>();
 
     WS_XML_READER_BUFFER_INPUT bufferInput;
