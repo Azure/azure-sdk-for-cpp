@@ -10,7 +10,7 @@
 #include <memory>
 #include <string>
 using namespace Azure::Core::Credentials;
-namespace Azure { namespace Core { namespace Http { namespace Policies {
+namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
 #if defined(TESTING_BUILD)
   namespace Test {
     class SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
@@ -53,4 +53,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     std::shared_ptr<SharedKeyCredential> m_credential;
   };
 
-}}}} // namespace Azure::Core::Http::Policies
+}}}}} // namespace Azure::Core::Http::Policies::_internal

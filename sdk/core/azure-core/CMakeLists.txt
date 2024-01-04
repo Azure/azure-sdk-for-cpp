@@ -81,6 +81,7 @@ set(
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/policies/service_version_policy.hpp
     inc/azure/core/http/policies/shared_key_lite_policy.hpp
+    inc/azure/core/http/policies/switch_to_secondary_policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
@@ -144,6 +145,7 @@ set(
     src/http/request_activity_policy.cpp
     src/http/retry_policy.cpp
     src/http/shared_key_lite_policy.cpp
+    src/http/switch_to_secondary_policy.cpp
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp

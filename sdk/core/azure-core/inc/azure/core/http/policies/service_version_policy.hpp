@@ -8,15 +8,13 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies {
+namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
 
   class ServiceVersionPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
-  constexpr static const char* HttpHeaderXMsVersion = "x-ms-version";
+    constexpr static const char* HttpHeaderXMsVersion = "x-ms-version";
+
   public:
-    explicit ServiceVersionPolicy(std::string apiVersion)
-        : m_apiVersion(std::move(apiVersion))
-    {
-    }
+    explicit ServiceVersionPolicy(std::string apiVersion) : m_apiVersion(std::move(apiVersion)) {}
 
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {
@@ -39,4 +37,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     std::string m_apiVersion;
   };
 
-}}}} // namespace Azure::Core::Http::Policies
+}}}}} // namespace Azure::Core::Http::Policies::_internal

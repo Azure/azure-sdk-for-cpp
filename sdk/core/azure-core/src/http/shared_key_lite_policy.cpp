@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies {
+namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal{
 
   std::string SharedKeyLitePolicy::GetSignature(const Core::Http::Request& request) const
   {
@@ -40,4 +40,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
         std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
         Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
   }
-}}}} // namespace Azure::Core::Http::Policies
+}}}}} // namespace Azure::Core::Http::Policies

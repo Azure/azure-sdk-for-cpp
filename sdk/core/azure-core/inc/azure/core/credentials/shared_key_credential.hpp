@@ -8,11 +8,11 @@
 #include <memory>
 #include <mutex>
 #include <string>
-namespace Azure { namespace Core { namespace Http { namespace Policies {
+namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
   class SharedKeyPolicy;
   class SharedKeyLitePolicy;
-}}}}
-      namespace Azure { namespace Core { namespace Credentials {
+}}}}} // namespace Azure::Core::Http::Policies::_internal
+namespace Azure { namespace Core { namespace Credentials {
 
   namespace Sas {
     struct AccountSasBuilder;
@@ -54,8 +54,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     const std::string AccountName;
 
   private:
-    friend class Azure::Core::Http::Policies::SharedKeyPolicy;
-    friend class Azure::Core::Http::Policies::SharedKeyLitePolicy;
+    friend class Azure::Core::Http::Policies::_internal::SharedKeyPolicy;
+    friend class Azure::Core::Http::Policies::_internal::SharedKeyLitePolicy;
     friend struct Sas::AccountSasBuilder;
     std::string GetAccountKey() const
     {
