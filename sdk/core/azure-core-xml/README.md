@@ -1,28 +1,10 @@
 # Azure Template Package client library for C++
 
-Azure Template Package client library for C++ (`azure-template`)  matches necessary patterns that the development team has established to create a unified SDK written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
-
-The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
+Azure Core Xml provides an implementstion of serializing/deserializing Xml documents in C++ (`azure-core-xml`). These libraries follow the Azure SDK Design Guidelines for C++.
 
 ## Getting started
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md)
-
-# Key concepts
-
-Bullet point list of your library's main concepts.
-
-# Examples
-
-Examples of some of the key concepts for your library.
-
-# Troubleshooting
-
-Running into issues? This section should contain details as to what to do there.
-
-# Next steps
-
-More sample code should go here, along with links out to the appropriate example tests.
+This library is not meant for direct use, but rather as a dependency for other libraries. If you are looking to use this library, please check out the [Azure SDK for C++](https://github.com/azure/azure-sdk-for-cpp)
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
