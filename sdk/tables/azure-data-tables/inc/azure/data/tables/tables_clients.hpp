@@ -5,15 +5,10 @@
 
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core/response.hpp>
+#include <azure/core.hpp>
 #include <azure/core/xml.hpp>
 #include <azure/data/tables/models.hpp>
 #include <azure/data/tables/transactions.hpp>
-#include <azure/core/http/policies/service_version_policy.hpp>
-#include <azure/core/http/policies/shared_key_lite_policy.hpp>
-#include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
-#include <azure/core/http/policies/switch_to_secondary_policy.hpp>
-#include <azure/storage/common/storage_common.hpp>
 
 #include <cstdint>
 #include <memory>

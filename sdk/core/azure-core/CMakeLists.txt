@@ -78,10 +78,12 @@ set(
     inc/azure/core/exception.hpp
     inc/azure/core/http/http.hpp
     inc/azure/core/http/http_status_code.hpp
+    inc/azure/core/http/policies/per_retry_policy.hpp
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/policies/service_version_policy.hpp
     inc/azure/core/http/policies/shared_key_lite_policy.hpp
     inc/azure/core/http/policies/switch_to_secondary_policy.hpp
+    inc/azure/core/http/policies/tenant_bearer_token_policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
@@ -139,6 +141,7 @@ set(
     src/http/http.cpp
     src/http/http_sanitizer.cpp
     src/http/log_policy.cpp
+    src/http/per_retry_policy.cpp
     src/http/policy.cpp
     src/http/raw_response.cpp
     src/http/request.cpp
@@ -146,6 +149,7 @@ set(
     src/http/retry_policy.cpp
     src/http/shared_key_lite_policy.cpp
     src/http/switch_to_secondary_policy.cpp
+    src/http/tenant_bearer_token_policy.cpp
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp

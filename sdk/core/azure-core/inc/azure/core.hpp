@@ -31,6 +31,7 @@
 
 // azure/core/credentials
 #include "azure/core/credentials/credentials.hpp"
+#include "azure/core/credentials/shared_key_credential.hpp"
 #include "azure/core/credentials/token_credential_options.hpp"
 
 // azure/core/cryptography
@@ -46,9 +47,12 @@
 #include "azure/core/http/transport.hpp"
 
 // azure/core/http/policies
+#include "azure/core/http/policies/per_retry_policy.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/policies/service_version_policy.hpp"
 #include "azure/core/http/policies/shared_key_lite_policy.hpp"
+#include "azure/core/http/policies/switch_to_secondary_policy.hpp"
+#include "azure/core/http/policies/tenant_bearer_token_policy.hpp"
 
 // azure/core/io
 #include "azure/core/io/body_stream.hpp"

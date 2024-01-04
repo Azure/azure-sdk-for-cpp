@@ -8,7 +8,6 @@
 #include <sstream>
 #include <string>
 using namespace Azure::Data::Tables;
-using namespace Azure::Storage;
 
 TableServicesClient::TableServicesClient(const TableClientOptions& options)
 {
@@ -18,7 +17,7 @@ TableServicesClient::TableServicesClient(const TableClientOptions& options)
   perRetryPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
-  perRetryPolicies.emplace_back(std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+  perRetryPolicies.emplace_back(std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
@@ -40,7 +39,7 @@ TableServicesClient::TableServicesClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           options.ApiVersion.ToString()));
@@ -67,7 +66,7 @@ TableServicesClient::TableServicesClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           options.ApiVersion.ToString()));
@@ -76,7 +75,7 @@ TableServicesClient::TableServicesClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
     tokenContext.Scopes.emplace_back(
@@ -84,7 +83,7 @@ TableServicesClient::TableServicesClient(
                                        : m_url.GetAbsoluteUrl() + "/.default");
 
     perRetryPolicies.emplace_back(
-        std::make_unique<Azure::Storage::_internal::StorageBearerTokenAuthenticationPolicy>(
+        std::make_unique<Azure::Core::Http::Policies::_internal::TenantBearerTokenAuthenticationPolicy>(
             credential, tokenContext, newOptions.EnableTenantDiscovery));
   }
   perOperationPolicies.emplace_back(
@@ -110,7 +109,7 @@ TableServicesClient::TableServicesClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           options.ApiVersion.ToString()));
@@ -131,7 +130,7 @@ TableServicesClient::TableServicesClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies2.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies2.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           newOptions.ApiVersion.ToString()));
@@ -330,7 +329,7 @@ TableClient::TableClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           options.ApiVersion.ToString()));
@@ -358,7 +357,7 @@ TableClient::TableClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           options.ApiVersion.ToString()));
@@ -367,7 +366,7 @@ TableClient::TableClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
     tokenContext.Scopes.emplace_back(
@@ -375,7 +374,8 @@ TableClient::TableClient(
                                        : m_url.GetAbsoluteUrl() + "/.default");
 
     perRetryPolicies.emplace_back(
-        std::make_unique<Azure::Storage::_internal::StorageBearerTokenAuthenticationPolicy>(
+        std::make_unique<
+            Azure::Core::Http::Policies::_internal::TenantBearerTokenAuthenticationPolicy>(
             credential, tokenContext, newOptions.EnableTenantDiscovery));
   }
   perOperationPolicies.emplace_back(
@@ -403,7 +403,7 @@ TableClient::TableClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           options.ApiVersion.ToString()));
@@ -424,7 +424,7 @@ TableClient::TableClient(
       std::make_unique<Azure::Core::Http::Policies::_internal::SwitchToSecondaryPolicy>(
       m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies2.emplace_back(
-      std::make_unique<Azure::Storage::_internal::StoragePerRetryPolicy>());
+      std::make_unique<Azure::Core::Http::Policies::_internal::PerRetryPolicy>());
   perOperationPolicies2.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::ServiceVersionPolicy>(
           newOptions.ApiVersion.ToString()));

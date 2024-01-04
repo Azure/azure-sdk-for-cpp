@@ -1,8 +1,7 @@
 {
   "sourceFilesToProcess": null,
   "additionalIncludeDirectories": [
-    "../../../core/azure-core/inc",
-    "../../../storage/azure-storage-common/inc"
+    "../../../core/azure-core/inc"
   ],
   "sourceFilesToSkip": [
   ],
