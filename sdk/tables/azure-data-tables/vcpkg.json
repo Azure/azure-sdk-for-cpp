@@ -9,6 +9,8 @@
   "license": "MIT",
   "dependencies": [
     "azure-storage-common-cpp",
+    "azure-core-cpp",
+    "azure-core-xml-cpp",
     {
       "name": "vcpkg-cmake",
       "host": true

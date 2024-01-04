@@ -66,7 +66,9 @@ target_include_directories(
 
 target_link_libraries(azure-core-xml PUBLIC Azure::azure-core)
 
-if(NOT WIN32)
+if(WIN32)
+    target_link_libraries(azure-core-xml PRIVATE bcrypt webservices)
+else()
     find_package(LibXml2 REQUIRED)
     target_include_directories(azure-core-xml SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIRS})
     target_link_libraries(azure-core-xml PRIVATE ${LIBXML2_LIBRARIES})

@@ -33,9 +33,9 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp CONFIG QUIET)
-  if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp REQUIRED)
+  find_package(azure-core-cpp CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp REQUIRED)
   endif()
   find_package(azure-core-xml-cpp CONFIG QUIET)
   if(NOT azure-core-xml-cpp_FOUND)
@@ -75,7 +75,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-data-tables PUBLIC Azure::azure-storage-common Azure::azure-core-xml Azure::azure-core)
+target_link_libraries(azure-data-tables PUBLIC Azure::azure-core-xml Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-data-tables ${AZ_LIBRARY_VERSION})
