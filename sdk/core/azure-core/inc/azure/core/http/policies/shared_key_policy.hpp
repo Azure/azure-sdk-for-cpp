@@ -13,30 +13,19 @@
 using namespace Azure::Core::Credentials;
 
 namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
-#if defined(TESTING_BUILD)
-  namespace Test {
-    class SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
-    class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
-    class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
-  } // namespace Test
-#endif
-  class SharedKeyLitePolicy final : public Core::Http::Policies::HttpPolicy {
-#if defined(TESTING_BUILD)
-    friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
-    friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
-    friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
-#endif
+
+  class SharedKeyPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
-    explicit SharedKeyLitePolicy(std::shared_ptr<SharedKeyCredential> credential)
+    explicit SharedKeyPolicy(std::shared_ptr<SharedKeyCredential> credential)
         : m_credential(std::move(credential))
     {
     }
 
-    ~SharedKeyLitePolicy() override {}
+    ~SharedKeyPolicy() override {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<SharedKeyLitePolicy>(m_credential);
+      return std::make_unique<SharedKeyPolicy>(m_credential);
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(
@@ -45,13 +34,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
         Core::Context const& context) const override
     {
       request.SetHeader(
-          "Authorization",
-          "SharedKeyLite " + m_credential->AccountName + ":" + GetSignature(request));
+          "Authorization", "SharedKey " + m_credential->AccountName + ":" + GetSignature(request));
       return nextPolicy.Send(request, context);
     }
 
   private:
     std::string GetSignature(const Core::Http::Request& request) const;
+
     std::shared_ptr<SharedKeyCredential> m_credential;
   };
 
