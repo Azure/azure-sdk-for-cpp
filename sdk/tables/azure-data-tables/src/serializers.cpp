@@ -3,6 +3,8 @@
 
 #include <azure/data/tables/serializers.hpp>
 #include <azure/core/internal/json/json.hpp>
+
+
 using namespace Azure::Core::Xml;
 using namespace Azure::Data::Tables;
 
