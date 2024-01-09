@@ -23,7 +23,7 @@
 #include <libxml/xmlwriter.h>
 #endif
 
-namespace Azure { namespace Core { namespace Xml {
+namespace Azure { namespace Core { namespace _internal { namespace Xml {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
@@ -618,4 +618,4 @@ namespace Azure { namespace Core { namespace Xml {
 
 #endif
 
-}}} // namespace Azure::Core::Xml
+}}}} // namespace Azure::Core::_internal::Xml

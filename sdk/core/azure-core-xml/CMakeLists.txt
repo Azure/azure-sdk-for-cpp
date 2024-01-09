@@ -44,7 +44,6 @@ set(
     inc/azure/core/xml.hpp
     inc/azure/core/xml/dll_import_export.hpp
     inc/azure/core/xml/rtti.hpp
-    inc/azure/core/xml/template_client.hpp
     inc/azure/core/xml/xml_wrapper.hpp
 )
 
@@ -93,13 +92,3 @@ az_rtti_setup(
   CORE_XML
   azure/core/xml/rtti.hpp
 )
-
-if(BUILD_TESTING)
-    if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
-      include(AddGoogleTest)
-      enable_testing ()
-    endif()
-
-    # tests
-    add_subdirectory(test)
-endif()

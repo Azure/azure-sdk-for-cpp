@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
   class ServiceVersionPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
     constexpr static const char* HttpHeaderXMsVersion = "x-ms-version";

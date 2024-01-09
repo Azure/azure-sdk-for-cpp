@@ -3,14 +3,16 @@
 
 #include <azure/core/base64.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/http/policies/shared_key_lite_policy.hpp>
-#include <azure/core/credentials/shared_key_credential.hpp>
+#include <azure/data/tables/policies/shared_key_lite_policy.hpp>
+#include <azure/data/tables/credentials/shared_key_credential.hpp>
 #include <azure/core/cryptography/hash.hpp>
 #include <gtest/gtest.h>
 
 using namespace Azure::Core::Http::Policies;
-using namespace Azure::Core::Http::Policies::_internal;
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+using namespace Azure::Data::Tables::_internal::Policies;
+using namespace Azure::Data::Tables::Credentials;
+using namespace Azure::Data::Tables::Credentials::_internal;
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
   namespace Test {
 
     TEST(SharedKeyCredentialLiteTest, SharedKeyCredentialLite)
@@ -23,8 +25,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
           + ";EndpointSuffix = core.windows.net ";
 
       std::shared_ptr<SharedKeyCredential> credential;
-      auto parsedConnectionString
-          = Azure::Core::Credentials::_internal::ParseConnectionString(connectionString);
+      auto parsedConnectionString = ParseConnectionString(connectionString);
       SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
       Azure::Core::Url url("https://goqu.table.core.windows.net");
@@ -51,8 +52,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
           + ";EndpointSuffix = core.windows.net ";
 
       std::shared_ptr<SharedKeyCredential> credential;
-      auto parsedConnectionString
-          = Azure::Core::Credentials::_internal::ParseConnectionString(connectionString);
+      auto parsedConnectionString = ParseConnectionString(connectionString);
       SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
       Azure::Core::Url url("https://goqu.table.core.windows.net");
@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
 
       std::shared_ptr<SharedKeyCredential> credential;
       auto parsedConnectionString
-          = Azure::Core::Credentials::_internal::ParseConnectionString(connectionString);
+          = ParseConnectionString(connectionString);
       SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
       Azure::Core::Url url("https://goqu.table.core.windows.net");
@@ -88,4 +88,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
       EXPECT_EQ(result, expectedSignature);
     }
 
-}}}}}} // namespace Azure::Core::Http::Policies::_internal::Test
+}}}}}}// namespace Azure::Data::Tables::_internal::Policies::Test

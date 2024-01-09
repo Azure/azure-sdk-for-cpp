@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/http/policies/per_retry_policy.hpp"
+#include "azure/data/tables/policies/timeout_policy.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/platform.hpp>
@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <chrono>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
-  std::unique_ptr<Core::Http::RawResponse> PerRetryPolicy::Send(
+  std::unique_ptr<Core::Http::RawResponse> TimeoutPolicy::Send(
       Core::Http::Request& request,
       Core::Http::Policies::NextHttpPolicy nextPolicy,
       Core::Context const& context) const
@@ -45,4 +45,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     return nextPolicy.Send(request, context);
   }
 
-}}}}} // namespace Azure::Core::Http::Policies::_internal
+}}}}} // namespace Azure::Data::Tables::_internal::Policies

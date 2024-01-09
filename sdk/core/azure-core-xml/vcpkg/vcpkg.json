@@ -6,14 +6,12 @@
     "NOTE: All changes made to this file will get overwritten by the next port release.",
     "Please contribute your changes to https://github.com/Azure/azure-sdk-for-cpp."
   ],
-  "name": "azure-template-cpp",
+  "name": "azure-core-xml-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
-    "Microsoft Azure Template SDK for C++",
-    "This is a template library meant to illustrate initial client library development process for Azure SDK.",
-    "It is not meant to be published to vcpkg."
+    "Azure Core Xml provides an implementation of serializing/deserializing Xml documents in C++."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/template/azure-template",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/",
   "license": "MIT",
   "dependencies": [
     {

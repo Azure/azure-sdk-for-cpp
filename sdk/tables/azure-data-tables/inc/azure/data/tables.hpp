@@ -14,3 +14,11 @@
 #include "azure/data/tables/serializers.hpp"
 #include "azure/data/tables/tables_clients.hpp"
 #include "azure/data/tables/transactions.hpp"
+
+#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/policies/service_version_policy.hpp"
+#include "azure/data/tables/policies/shared_key_lite_policy.hpp"
+#include "azure/data/tables/policies/shared_key_policy.hpp"
+#include "azure/data/tables/policies/switch_to_secondary_policy.hpp"
+#include "azure/data/tables/policies/tenant_bearer_token_policy.hpp"
+#include "azure/data/tables/policies/timeout_policy.hpp"

@@ -3,29 +3,17 @@
 
 #pragma once
 
-#include "azure/core/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/shared_key_credential.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 
 #include <memory>
 #include <string>
 
-using namespace Azure::Core::Credentials;
+using namespace Azure::Data::Tables::Credentials;
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
-#if defined(TESTING_BUILD)
-  namespace Test {
-    class SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
-    class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
-    class SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
-  } // namespace Test
-#endif
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
   class SharedKeyLitePolicy final : public Core::Http::Policies::HttpPolicy {
-#if defined(TESTING_BUILD)
-    friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLite_Test;
-    friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoDate_Test;
-    friend class Test::SharedKeyCredentialLiteTest_SharedKeyCredentialLiteNoQuery_Test;
-#endif
   public:
     explicit SharedKeyLitePolicy(std::shared_ptr<SharedKeyCredential> credential)
         : m_credential(std::move(credential))
@@ -50,9 +38,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
       return nextPolicy.Send(request, context);
     }
 
-  private:
     std::string GetSignature(const Core::Http::Request& request) const;
     std::shared_ptr<SharedKeyCredential> m_credential;
   };
 
-}}}}} // namespace Azure::Core::Http::Policies::_internal
+}}}}} // namespace Azure::Data::Tables::_internal::Policies

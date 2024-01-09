@@ -8,7 +8,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
   class TenantBearerTokenAuthenticationPolicy final
       : public Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy {

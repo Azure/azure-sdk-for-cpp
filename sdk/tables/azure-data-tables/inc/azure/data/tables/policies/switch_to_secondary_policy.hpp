@@ -10,7 +10,7 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
   AZ_CORE_DLLEXPORT extern const Azure::Core::Context::Key SecondaryHostReplicaStatusKey;
 

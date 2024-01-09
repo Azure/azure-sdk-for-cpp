@@ -7,20 +7,20 @@
 
 #include <memory>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
-  class PerRetryPolicy final : public Core::Http::Policies::HttpPolicy {
+  class TimeoutPolicy final : public Core::Http::Policies::HttpPolicy {
     constexpr static const char* HttpHeaderDate = "date";
     constexpr static const char* HttpHeaderXMsDate = "x-ms-date";
     constexpr static const char* HttpQueryTimeout = "timeout";
     constexpr static const char* HttpHeaderClientRequestId = "x-ms-client-request-id";
 
   public:
-    ~PerRetryPolicy() override {}
+    ~TimeoutPolicy() override {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<PerRetryPolicy>(*this);
+      return std::make_unique<TimeoutPolicy>(*this);
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(

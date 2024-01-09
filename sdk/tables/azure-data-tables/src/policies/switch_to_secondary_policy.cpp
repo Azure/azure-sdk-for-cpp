@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/http/policies/switch_to_secondary_policy.hpp>
+#include <azure/data/tables/policies/switch_to_secondary_policy.hpp>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
   Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
 
@@ -49,4 +49,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     return response;
   }
 
-}}}}} // namespace Azure::Core::Http::Policies::_internal
+}}}}} // namespace Azure::Data::Tables::_internal::Policies

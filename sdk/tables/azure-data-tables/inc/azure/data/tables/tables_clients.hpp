@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include <azure/core.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core.hpp>
 #include <azure/core/xml.hpp>
+#include <azure/data/tables/credentials/shared_key_credential.hpp>
 #include <azure/data/tables/models.hpp>
 #include <azure/data/tables/transactions.hpp>
 
@@ -170,7 +171,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     explicit TableClient(
         const std::string& tableName,
-        std::shared_ptr<Azure::Core::Credentials::SharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         std::string url,
         const TableClientOptions& options = {});
 
@@ -379,7 +380,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     explicit TableServicesClient(
         const std::string& serviceUrl,
-        std::shared_ptr<Azure::Core::Credentials::SharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         const TableClientOptions& options = {});
     /**
      * @brief Initializes a new instance of tableClient.

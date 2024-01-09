@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/shared_key_credential.hpp"
 
 #include <algorithm>
 
-namespace Azure { namespace Core { namespace Credentials { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace Credentials { namespace _internal {
 
   ConnectionStringParts ParseConnectionString(const std::string& connectionString)
   {
@@ -55,35 +55,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace _internal {
     std::string accountName = getWithDefault(connectionStringMap, "AccountName");
     connectionStringParts.AccountName = accountName;
 
-    std::string endpoint = getWithDefault(connectionStringMap, "BlobEndpoint");
-    if (endpoint.empty() && !accountName.empty())
-    {
-      endpoint = defaultEndpointsProtocol + "://" + accountName + ".blob." + EndpointSuffix;
-    }
-    connectionStringParts.BlobServiceUrl = Azure::Core::Url(std::move(endpoint));
-
-    endpoint = getWithDefault(connectionStringMap, "DfsEndpoint");
-    if (endpoint.empty() && !accountName.empty())
-    {
-      endpoint = defaultEndpointsProtocol + "://" + accountName + ".dfs." + EndpointSuffix;
-    }
-    connectionStringParts.DataLakeServiceUrl = Azure::Core::Url(std::move(endpoint));
-
-    endpoint = getWithDefault(connectionStringMap, "FileEndpoint");
-    if (endpoint.empty() && !accountName.empty())
-    {
-      endpoint = defaultEndpointsProtocol + "://" + accountName + ".file." + EndpointSuffix;
-    }
-    connectionStringParts.FileServiceUrl = Azure::Core::Url(std::move(endpoint));
-
-    endpoint = getWithDefault(connectionStringMap, "QueueEndpoint");
-    if (endpoint.empty() && !accountName.empty())
-    {
-      endpoint = defaultEndpointsProtocol + "://" + accountName + ".queue." + EndpointSuffix;
-    }
-    connectionStringParts.QueueServiceUrl = Azure::Core::Url(std::move(endpoint));
-
-    endpoint = getWithDefault(connectionStringMap, "TableEndpoint");
+    std::string endpoint  = getWithDefault(connectionStringMap, "TableEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".table." + EndpointSuffix;
@@ -109,14 +81,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace _internal {
       {
         sas = '?' + sas;
       }
-      connectionStringParts.BlobServiceUrl
-          = Azure::Core::Url(connectionStringParts.BlobServiceUrl.GetAbsoluteUrl() + sas);
-      connectionStringParts.DataLakeServiceUrl
-          = Azure::Core::Url(connectionStringParts.DataLakeServiceUrl.GetAbsoluteUrl() + sas);
-      connectionStringParts.FileServiceUrl
-          = Azure::Core::Url(connectionStringParts.FileServiceUrl.GetAbsoluteUrl() + sas);
-      connectionStringParts.QueueServiceUrl
-          = Azure::Core::Url(connectionStringParts.QueueServiceUrl.GetAbsoluteUrl() + sas);
+     
       connectionStringParts.TableServiceUrl
           = Azure::Core::Url(connectionStringParts.TableServiceUrl.GetAbsoluteUrl() + sas);
     }
@@ -132,4 +97,4 @@ namespace Azure { namespace Core { namespace Credentials { namespace _internal {
     }
     return audience + "/.default";
   }
-}}}} // namespace Azure::Core::Credentials::_internal
+}}}}} // namespace Azure::Data::Tables::Credentials::_internal

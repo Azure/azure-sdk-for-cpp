@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-#include "azure/core/http/policies/tenant_bearer_token_policy.hpp"
+#include "azure/data/tables/policies/tenant_bearer_token_policy.hpp"
 
 #include <azure/core/internal/credentials/authorization_challenge_parser.hpp>
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
   std::unique_ptr<Azure::Core::Http::RawResponse>
   TenantBearerTokenAuthenticationPolicy::AuthorizeAndSendRequest(
@@ -49,4 +49,4 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     return true;
   }
 
-}}}}} // namespace Azure::Core::Http::Policies::_internal
+}}}}} // namespace Azure::Data::Tables::_internal::Policies

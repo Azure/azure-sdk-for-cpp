@@ -68,7 +68,6 @@ set(
     inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
     inc/azure/core/credentials/credentials.hpp
-    inc/azure/core/credentials/shared_key_credential.hpp
     inc/azure/core/credentials/token_credential_options.hpp
     inc/azure/core/cryptography/hash.hpp
     inc/azure/core/datetime.hpp
@@ -78,13 +77,7 @@ set(
     inc/azure/core/exception.hpp
     inc/azure/core/http/http.hpp
     inc/azure/core/http/http_status_code.hpp
-    inc/azure/core/http/policies/per_retry_policy.hpp
     inc/azure/core/http/policies/policy.hpp
-    inc/azure/core/http/policies/service_version_policy.hpp
-    inc/azure/core/http/policies/shared_key_lite_policy.hpp
-    inc/azure/core/http/policies/shared_key_policy.hpp
-    inc/azure/core/http/policies/switch_to_secondary_policy.hpp
-    inc/azure/core/http/policies/tenant_bearer_token_policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
@@ -129,7 +122,6 @@ set(
     src/base64.cpp
     src/context.cpp
     src/credentials/authorization_challenge_parser.cpp
-    src/credentials/shared_key_credential.cpp
     src/cryptography/md5.cpp
     src/cryptography/sha_hash.cpp
     src/cryptography/hmacsha256.cpp
@@ -142,16 +134,11 @@ set(
     src/http/http.cpp
     src/http/http_sanitizer.cpp
     src/http/log_policy.cpp
-    src/http/per_retry_policy.cpp
     src/http/policy.cpp
     src/http/raw_response.cpp
     src/http/request.cpp
     src/http/request_activity_policy.cpp
     src/http/retry_policy.cpp
-    src/http/shared_key_lite_policy.cpp
-    src/http/shared_key_policy.cpp
-    src/http/switch_to_secondary_policy.cpp
-    src/http/tenant_bearer_token_policy.cpp
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp

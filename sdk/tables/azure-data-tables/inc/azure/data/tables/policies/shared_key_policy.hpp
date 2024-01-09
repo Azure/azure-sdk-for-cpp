@@ -3,16 +3,16 @@
 
 #pragma once
 
-#include "azure/core/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/shared_key_credential.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 
 #include <memory>
 #include <string>
 
-using namespace Azure::Core::Credentials;
+using namespace Azure::Data::Tables::Credentials;
 
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
 
   class SharedKeyPolicy final : public Core::Http::Policies::HttpPolicy {
   public:

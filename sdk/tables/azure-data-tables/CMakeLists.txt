@@ -52,11 +52,23 @@ set(
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/transactions.hpp
-
+    inc/azure/data/tables/credentials/shared_key_credential.hpp
+    inc/azure/data/tables/policies/service_version_policy.hpp
+    inc/azure/data/tables/policies/shared_key_lite_policy.hpp
+    inc/azure/data/tables/policies/shared_key_policy.hpp
+    inc/azure/data/tables/policies/switch_to_secondary_policy.hpp
+    inc/azure/data/tables/policies/tenant_bearer_token_policy.hpp
+    inc/azure/data/tables/policies/timeout_policy.hpp
 )
 
 set(
   AZURE_DATA_TABLES_SOURCE
+    src/credentials/shared_key_credential.cpp
+    src/policies/shared_key_lite_policy.cpp
+    src/policies/shared_key_policy.cpp
+    src/policies/switch_to_secondary_policy.cpp
+    src/policies/tenant_bearer_token_policy.cpp
+    src/policies/timeout_policy.cpp
     src/private/package_version.hpp
     src/serializers.cpp
     src/tables_clients.cpp
