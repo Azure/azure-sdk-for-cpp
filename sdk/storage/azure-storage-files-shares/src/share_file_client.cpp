@@ -699,6 +699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         fileHandle.Path = std::move(handle.Path.Content);
       }
       fileHandle.ClientIp = std::move(handle.ClientIp);
+      fileHandle.ClientName = std::move(handle.ClientName);
       fileHandle.FileId = std::move(handle.FileId);
       fileHandle.HandleId = std::move(handle.HandleId);
       fileHandle.LastReconnectedOn = std::move(handle.LastReconnectedOn);

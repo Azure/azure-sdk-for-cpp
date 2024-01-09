@@ -301,6 +301,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       std::string ClientIp;
       /**
+       * Name of the client machine where the share is being mounted.
+       */
+      std::string ClientName;
+      /**
        * Time when the session that previously opened the handle has last been reconnected. (UTC).
        */
       DateTime OpenedOn;
