@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
+  "Registrations": [
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/google/googletest",
+          "CommitHash": "703bd9caab50b139428cea1aaff9974ebee5742e"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "other",
+        "Other": {
+          "Name": "clang-format",
+          "Version": "9.0.0-2",
+          "DownloadUrl": "https://ubuntu.pkgs.org/18.04/ubuntu-updates-universe-amd64/clang-format-9_9-2~ubuntu18.04.2_amd64.deb.html"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "other",
+        "Other": {
+          "Name": "doxygen",
+          "Version": "1.8.20",
+          "DownloadUrl": "http://doxygen.nl/files/doxygen-1.8.20-setup.exe"
+        }
+      },
+      "DevelopmentDependency": true
+    }
+  ]
+}

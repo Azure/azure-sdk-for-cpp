@@ -165,5 +165,4 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     void OnAppend(const uint8_t* data, size_t length) override;
   };
-
 }}} // namespace Azure::Core::Cryptography

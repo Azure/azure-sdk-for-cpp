@@ -3,17 +3,13 @@
 
 #pragma once
 
+#include <azure/core.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core/response.hpp>
+#include <azure/core/xml.hpp>
+#include <azure/data/tables/credentials/shared_key_credential.hpp>
 #include <azure/data/tables/models.hpp>
 #include <azure/data/tables/transactions.hpp>
-#include <azure/storage/common/internal/constants.hpp>
-#include <azure/storage/common/internal/shared_key_lite_policy.hpp>
-#include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
-#include <azure/storage/common/internal/storage_service_version_policy.hpp>
-#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
-#include <azure/storage/common/storage_common.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -44,7 +40,7 @@ namespace Azure { namespace Data { namespace Tables {
      *
      * @param version The string version for Storage Tables Service.
      */
-    explicit ServiceVersion(std::string version) : m_version(std::move(version)) {}
+    explicit ServiceVersion(std::string version) : m_version{std::move(version)} {}
 
     /**
      * @brief Enable comparing between two versions.
@@ -175,7 +171,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     explicit TableClient(
         const std::string& tableName,
-        std::shared_ptr<Azure::Storage::StorageSharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         std::string url,
         const TableClientOptions& options = {});
 
@@ -384,7 +380,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     explicit TableServicesClient(
         const std::string& serviceUrl,
-        std::shared_ptr<Azure::Storage::StorageSharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         const TableClientOptions& options = {});
     /**
      * @brief Initializes a new instance of tableClient.

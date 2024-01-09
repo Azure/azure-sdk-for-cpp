@@ -6,8 +6,10 @@
 #include <sstream>
 #include <string>
 #include <thread>
+
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::Models;
+using namespace Azure::Data::Tables::_detail;
 
 namespace Azure { namespace Data { namespace Test {
 

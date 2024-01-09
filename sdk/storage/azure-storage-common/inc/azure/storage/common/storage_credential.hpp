@@ -68,7 +68,6 @@ namespace Azure { namespace Storage {
     friend struct Sas::DataLakeSasBuilder;
     friend struct Sas::QueueSasBuilder;
     friend struct Sas::AccountSasBuilder;
-    friend struct Sas::TableSasBuilder;
     std::string GetAccountKey() const
     {
       std::lock_guard<std::mutex> guard(m_mutex);

@@ -6,21 +6,24 @@
     "NOTE: All changes made to this file will get overwritten by the next port release.",
     "Please contribute your changes to https://github.com/Azure/azure-sdk-for-cpp."
   ],
-  "name": "azure-data-tables-cpp",
+  "name": "azure-core-xml-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
-    "Microsoft Azure Data Tables SDK for C++",
-    "This library provides Azure Data Tables SDK."
+    "Azure Core Xml provides an implementation of serializing/deserializing Xml documents in C++."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/tables/azure-data-tables",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/",
   "license": "MIT",
   "dependencies": [
     {
       "name": "azure-core-cpp",
+      "default-features": false,
+      "version>=": "1.3.1"
     },
     {
-      "name": "azure-core-xml-cpp",
-    }
+      "name": "libxml2",
+      "default-features": false,
+      "platform": "!windows"
+    },
     {
       "name": "vcpkg-cmake",
       "host": true

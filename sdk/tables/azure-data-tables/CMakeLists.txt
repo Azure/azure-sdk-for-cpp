@@ -33,9 +33,13 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp CONFIG QUIET)
-  if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp REQUIRED)
+  find_package(azure-core-cpp CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp REQUIRED)
+  endif()
+  find_package(azure-core-xml-cpp CONFIG QUIET)
+  if(NOT azure-core-xml-cpp_FOUND)
+    find_package(azure-core-xml-cpp REQUIRED)
   endif()
 endif()
 
@@ -48,11 +52,25 @@ set(
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/transactions.hpp
-
+    inc/azure/data/tables/credentials/shared_key_credential.hpp
+    inc/azure/data/tables/cryptography/hmacsha256.hpp
+    inc/azure/data/tables/policies/service_version_policy.hpp
+    inc/azure/data/tables/policies/shared_key_lite_policy.hpp
+    inc/azure/data/tables/policies/shared_key_policy.hpp
+    inc/azure/data/tables/policies/switch_to_secondary_policy.hpp
+    inc/azure/data/tables/policies/tenant_bearer_token_policy.hpp
+    inc/azure/data/tables/policies/timeout_policy.hpp
 )
 
 set(
   AZURE_DATA_TABLES_SOURCE
+    src/credentials/shared_key_credential.cpp
+    src/cryptography/hmacsha256.cpp
+    src/policies/shared_key_lite_policy.cpp
+    src/policies/shared_key_policy.cpp
+    src/policies/switch_to_secondary_policy.cpp
+    src/policies/tenant_bearer_token_policy.cpp
+    src/policies/timeout_policy.cpp
     src/private/package_version.hpp
     src/serializers.cpp
     src/tables_clients.cpp
@@ -64,6 +82,14 @@ create_per_service_target_build(tables azure-data-tables)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-data-tables ALIAS azure-data-tables)
 
+if(WIN32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
+else()
+    # Required for Hashing (sha ).
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
+endif()
+
 target_include_directories(
   azure-data-tables
     PUBLIC
@@ -71,7 +97,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-data-tables PUBLIC Azure::azure-storage-common)
+target_link_libraries(azure-data-tables PUBLIC Azure::azure-core-xml Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-data-tables ${AZ_LIBRARY_VERSION})
