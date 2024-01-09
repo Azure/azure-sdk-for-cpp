@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2023-01-03";
+    constexpr static const char* ApiVersion = "2024-02-04";
   } // namespace _detail
   namespace Models {
     /**
@@ -1300,6 +1300,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * Client IP that opened the handle.
          */
         std::string ClientIp;
+        /**
+         * Name of the client machine where the share is being mounted.
+         */
+        std::string ClientName;
         /**
          * Time when the session that previously opened the handle has last been reconnected. (UTC).
          */
