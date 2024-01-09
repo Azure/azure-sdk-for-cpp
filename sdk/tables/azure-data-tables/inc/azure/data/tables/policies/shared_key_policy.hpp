@@ -17,7 +17,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
   class SharedKeyPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
     explicit SharedKeyPolicy(std::shared_ptr<SharedKeyCredential> credential)
-        : m_credential(std::move(credential))
+        : m_credential{std::move(credential)}
     {
     }
 

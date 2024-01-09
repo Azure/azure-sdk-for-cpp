@@ -32,7 +32,7 @@ public:
    * account.
    */
   explicit SharedKeyCredential(std::string accountName, std::string accountKey)
-      : AccountName(std::move(accountName)), m_accountKey(std::move(accountKey))
+      : AccountName{std::move(accountName)}, m_accountKey{std::move(accountKey)}
   {
   }
 

@@ -40,7 +40,7 @@ namespace Azure { namespace Data { namespace Tables {
      *
      * @param version The string version for Storage Tables Service.
      */
-    explicit ServiceVersion(std::string version) : m_version(std::move(version)) {}
+    explicit ServiceVersion(std::string version) : m_version{std::move(version)} {}
 
     /**
      * @brief Enable comparing between two versions.

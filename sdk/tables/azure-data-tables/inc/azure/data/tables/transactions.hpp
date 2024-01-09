@@ -25,7 +25,7 @@ namespace Azure { namespace Data { namespace Tables {
         std::string const& url,
         std::string const& tableName,
         std::string const& partitionKey)
-        : m_partitionKey(std::move(partitionKey)), m_tableName(tableName)
+        : m_partitionKey{std::move(partitionKey)}, m_tableName{tableName}
     {
       Azure::Core::Url _url(url);
       _url.SetQueryParameters({});

@@ -25,8 +25,8 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
         Azure::Core::Credentials::TokenRequestContext tokenRequestContext,
         bool enableTenantDiscovery)
         : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
-          m_scopes(tokenRequestContext.Scopes), m_safeTenantId(tokenRequestContext.TenantId),
-          m_enableTenantDiscovery(enableTenantDiscovery)
+          m_scopes{tokenRequestContext.Scopes}, m_safeTenantId{tokenRequestContext.TenantId},
+          m_enableTenantDiscovery{enableTenantDiscovery}
     {
     }
 
@@ -41,9 +41,9 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
     struct SafeTenantId
     {
     public:
-      explicit SafeTenantId(std::string tenantId) : m_tenantId(std::move(tenantId)) {}
+      explicit SafeTenantId(std::string tenantId) : m_tenantId{std::move(tenantId)} {}
 
-      SafeTenantId(const SafeTenantId& other) : m_tenantId(other.Get()) {}
+      SafeTenantId(const SafeTenantId& other) : m_tenantId{other.Get()} {}
 
       std::string Get() const
       {

@@ -22,7 +22,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
   class SwitchToSecondaryPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
   public:
     explicit SwitchToSecondaryPolicy(std::string primaryHost, std::string secondaryHost)
-        : m_primaryHost(std::move(primaryHost)), m_secondaryHost(std::move(secondaryHost))
+        : m_primaryHost{std::move(primaryHost)}, m_secondaryHost{std::move(secondaryHost)}
     {
     }
 

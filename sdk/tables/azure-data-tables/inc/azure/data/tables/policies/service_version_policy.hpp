@@ -14,7 +14,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
     constexpr static const char* HttpHeaderXMsVersion = "x-ms-version";
 
   public:
-    explicit ServiceVersionPolicy(std::string apiVersion) : m_apiVersion(std::move(apiVersion)) {}
+    explicit ServiceVersionPolicy(std::string apiVersion) : m_apiVersion{std::move(apiVersion)} {}
 
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {
