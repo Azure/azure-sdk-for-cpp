@@ -1,6 +1,6 @@
 # Azure Template Package client library for C++
 
-Azure Core Xml provides an implementstion of serializing/deserializing Xml documents in C++ (`azure-core-xml`). These libraries follow the Azure SDK Design Guidelines for C++.
+Azure Core Xml provides an implementation of serializing/deserializing Xml documents in C++ (`azure-core-xml`). These libraries follow the Azure SDK Design Guidelines for C++.
 
 ## Getting started
 
