@@ -4,7 +4,7 @@
 #include <azure/data/tables/serializers.hpp>
 #include <azure/data/tables/transactions.hpp>
 using namespace Azure::Data::Tables;
-
+using namespace Azure::Data::Tables::_detail;
 void Transaction::CreateEntity(Models::TableEntity const& entity)
 {
   Models::TableEntity _entity = entity;

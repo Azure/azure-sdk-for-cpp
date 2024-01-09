@@ -16,6 +16,7 @@
 #include "azure/data/tables/transactions.hpp"
 
 #include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/cryptography/hmacsha256.hpp"
 #include "azure/data/tables/policies/service_version_policy.hpp"
 #include "azure/data/tables/policies/shared_key_lite_policy.hpp"
 #include "azure/data/tables/policies/shared_key_policy.hpp"

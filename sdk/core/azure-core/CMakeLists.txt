@@ -124,7 +124,6 @@ set(
     src/credentials/authorization_challenge_parser.cpp
     src/cryptography/md5.cpp
     src/cryptography/sha_hash.cpp
-    src/cryptography/hmacsha256.cpp
     src/datetime.cpp
     src/environment.cpp
     src/environment_log_level_listener.cpp
@@ -153,7 +152,7 @@ set(
     src/uuid.cpp
     )
 
-add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE} "src/cryptography/hmacsha256.cpp")
+add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 
 target_include_directories(
   azure-core

@@ -8,7 +8,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
   class SharedKeyPolicy;
   class SharedKeyLitePolicy;
 }}}}} // namespace Azure::Data::Tables::_internal::Policies
@@ -49,13 +49,13 @@ public:
   }
 
   /**
-   * @brief Gets the name of the Account.
+   * @brief The name of the Account.
    */
   const std::string AccountName;
 
 private:
-  friend class Azure::Data::Tables::_internal::Policies::SharedKeyPolicy;
-  friend class Azure::Data::Tables::_internal::Policies::SharedKeyLitePolicy;
+  friend class Azure::Data::Tables::_detail::Policies::SharedKeyPolicy;
+  friend class Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy;
   friend struct Sas::AccountSasBuilder;
   std::string GetAccountKey() const
   {

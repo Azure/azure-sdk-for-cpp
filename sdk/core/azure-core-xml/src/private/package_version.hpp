@@ -16,7 +16,7 @@
 #define AZURE_CORE_XML_VERSION_ITOA_HELPER(i) #i
 #define AZURE_CORE_XML_VERSION_ITOA(i) AZURE_CORE_XML_VERSION_ITOA_HELPER(i)
 
-namespace Azure { namespace Core { namespace Xml { namespace _detail {
+ namespace Azure { namespace Core { namespace _internal { namespace Xml {
   /**
    * @brief Provides version information.
    */

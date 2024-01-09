@@ -1,15 +1,18 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "azure/data/tables//cryptography/hmacsha256.hpp"
+
 #include <azure/core/base64.hpp>
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/data/tables/policies/shared_key_lite_policy.hpp>
-#include <azure/data/tables/credentials/shared_key_credential.hpp>
 #include <azure/core/cryptography/hash.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/data/tables/credentials/shared_key_credential.hpp>
+#include <azure/data/tables/policies/shared_key_lite_policy.hpp>
+
 #include <gtest/gtest.h>
 
 using namespace Azure::Core::Http::Policies;
-using namespace Azure::Data::Tables::_internal::Policies;
+using namespace Azure::Data::Tables::_detail::Policies;
 using namespace Azure::Data::Tables::Credentials;
 using namespace Azure::Data::Tables::Credentials::_internal;
 namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
@@ -36,7 +39,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
       const std::string stringTest
           = "Thu, 23 Apr 2020 09:43:37 GMT\n/account-name/?comp=properties";
       const std::string expectedSignature = Azure::Core::Convert::Base64Encode(
-          Azure::Core::Cryptography::HmacSha256Hash::HmacSha256(
+          Azure::Data::Tables::_detail::Cryptography::HmacSha256::Compute(
               std::vector<uint8_t>(stringTest.begin(), stringTest.end()),
               std::vector<uint8_t>(accountKey.begin(), accountKey.end())));
       EXPECT_EQ(result, expectedSignature);
@@ -71,8 +74,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
           + ";EndpointSuffix = core.windows.net ";
 
       std::shared_ptr<SharedKeyCredential> credential;
-      auto parsedConnectionString
-          = ParseConnectionString(connectionString);
+      auto parsedConnectionString = ParseConnectionString(connectionString);
       SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
       Azure::Core::Url url("https://goqu.table.core.windows.net");
@@ -81,11 +83,11 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
       auto result = policy.GetSignature(request);
       const std::string stringTest = "Thu, 23 Apr 2020 09:43:37 GMT\n/account-name/";
       const std::string expectedSignature = Azure::Core::Convert::Base64Encode(
-          Azure::Core::Cryptography::HmacSha256Hash::HmacSha256(
+          Azure::Data::Tables::_detail::Cryptography::HmacSha256::Compute(
               std::vector<uint8_t>(stringTest.begin(), stringTest.end()),
               std::vector<uint8_t>(accountKey.begin(), accountKey.end())));
 
       EXPECT_EQ(result, expectedSignature);
     }
 
-}}}}}}// namespace Azure::Data::Tables::_internal::Policies::Test
+}}}}}} // namespace Azure::Data::Tables::_internal::Policies::Test

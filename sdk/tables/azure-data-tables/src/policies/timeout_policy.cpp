@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <chrono>
 
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
   std::unique_ptr<Core::Http::RawResponse> TimeoutPolicy::Send(
       Core::Http::Request& request,
@@ -45,4 +45,4 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
     return nextPolicy.Send(request, context);
   }
 
-}}}}} // namespace Azure::Data::Tables::_internal::Policies
+}}}}} // namespace Azure::Data::Tables::_detail::Policies

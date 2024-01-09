@@ -12,7 +12,8 @@
 #include <utility>
 #include <vector>
 
-namespace Azure { namespace Data { namespace Tables {
+namespace Azure { namespace Data { namespace Tables { namespace _detail {
+
   /**
    * @brief Serializers for TableService operations.
    *
@@ -69,4 +70,4 @@ namespace Azure { namespace Data { namespace Tables {
     static Models::TableServiceProperties ServicePropertiesFromXml(
         std::vector<uint8_t> responseData);
   };
-}}} // namespace Azure::Data::Tables
+}}}} // namespace Azure::Data::Tables::_detail

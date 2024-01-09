@@ -8,7 +8,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
   class TenantBearerTokenAuthenticationPolicy final
       : public Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy {
@@ -77,4 +77,4 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
         Azure::Core::Context const& context) const override;
   };
 
-}}}}} // namespace Azure::Core::Http::Policies::_internal
+}}}}} // namespace Azure::Data::Tables::_detail::Policies

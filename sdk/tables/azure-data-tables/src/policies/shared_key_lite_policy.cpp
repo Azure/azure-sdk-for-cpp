@@ -3,14 +3,16 @@
 
 #include "azure/data/tables/policies/shared_key_lite_policy.hpp"
 
-#include <azure/core/cryptography/hash.hpp>
+#include "azure/data/tables/cryptography/hmacsha256.hpp"
+
 #include <azure/core/base64.hpp>
+#include <azure/core/cryptography/hash.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/strings.hpp>
 
 #include <algorithm>
 
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
   std::string SharedKeyLitePolicy::GetSignature(const Core::Http::Request& request) const
   {
@@ -36,8 +38,9 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
       string_to_sign += "?comp=" + Azure::Core::Url::Decode(compValue);
     }
 
-    return Azure::Core::Convert::Base64Encode(Azure::Core::Cryptography::HmacSha256Hash::HmacSha256(
-        std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
-        Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
+    return Azure::Core::Convert::Base64Encode(
+        Azure::Data::Tables::_detail::Cryptography::HmacSha256::Compute(
+            std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
+            Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
   }
-}}}}} // namespace Azure::Data::Tables::_internal::Policies
+}}}}} // namespace Azure::Data::Tables::_detail::Policies

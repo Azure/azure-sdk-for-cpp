@@ -3,7 +3,7 @@
 
 #include <azure/data/tables/policies/switch_to_secondary_policy.hpp>
 
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
   Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
 
@@ -49,4 +49,4 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
     return response;
   }
 
-}}}}} // namespace Azure::Data::Tables::_internal::Policies
+}}}}} // namespace Azure::Data::Tables::_detail::Policies

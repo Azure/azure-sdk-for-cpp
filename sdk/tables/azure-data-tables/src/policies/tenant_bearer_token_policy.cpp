@@ -4,7 +4,7 @@
 
 #include <azure/core/internal/credentials/authorization_challenge_parser.hpp>
 
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
   std::unique_ptr<Azure::Core::Http::RawResponse>
   TenantBearerTokenAuthenticationPolicy::AuthorizeAndSendRequest(
@@ -49,4 +49,4 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
     return true;
   }
 
-}}}}} // namespace Azure::Data::Tables::_internal::Policies
+}}}}} // namespace Azure::Data::Tables::_detail::Policies

@@ -7,7 +7,7 @@
 
 #include <memory>
 
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
   class TimeoutPolicy final : public Core::Http::Policies::HttpPolicy {
     constexpr static const char* HttpHeaderDate = "date";
@@ -29,4 +29,4 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
         Core::Context const& context) const override;
   };
 
-}}}}} // namespace Azure::Core::Http::Policies::_internal
+}}}}} // namespace Azure::Data::Tables::_detail::Policies

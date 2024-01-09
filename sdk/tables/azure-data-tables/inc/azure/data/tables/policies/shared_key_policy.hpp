@@ -12,7 +12,7 @@
 
 using namespace Azure::Data::Tables::Credentials;
 
-namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
   class SharedKeyPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
@@ -44,4 +44,4 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
     std::shared_ptr<SharedKeyCredential> m_credential;
   };
 
-}}}}} // namespace Azure::Core::Http::Policies::_internal
+}}}}} // namespace Azure::Data::Tables::_detail::Policies

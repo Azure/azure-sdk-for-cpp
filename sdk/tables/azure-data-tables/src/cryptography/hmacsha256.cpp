@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/azure_assert.hpp"
-#include "azure/core/cryptography/hash.hpp"
-#include "azure/core/platform.hpp"
+#include "azure/data/tables/cryptography/hmacsha256.hpp"
+#include <azure/core/azure_assert.hpp>
+#include <azure/core/cryptography/hash.hpp>
+#include <azure/core/platform.hpp>
 #if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs to go before bcrypt
 #include <windows.h>
@@ -18,7 +19,7 @@
 #include <numeric>
 #include <stdexcept>
 #include <vector>
-namespace Azure { namespace Core { namespace Cryptography {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Cryptography {
 #if defined(AZ_PLATFORM_WINDOWS)
 
   enum class AlgorithmType
@@ -86,7 +87,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
   };
 
-  std::vector<uint8_t> HmacSha256Hash::HmacSha256(
+  std::vector<uint8_t> HmacSha256::Compute(
       const std::vector<uint8_t>& data,
       const std::vector<uint8_t>& key)
   {
@@ -156,4 +157,4 @@ namespace Azure { namespace Core { namespace Cryptography {
   }
 
 #endif
-}}} // namespace Azure::Core::Cryptography
+}}}}} // namespace Azure::Data::Tables::_detail::Cryptography

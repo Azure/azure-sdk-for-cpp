@@ -53,6 +53,7 @@ set(
     inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/transactions.hpp
     inc/azure/data/tables/credentials/shared_key_credential.hpp
+    inc/azure/data/tables/cryptography/hmacsha256.hpp
     inc/azure/data/tables/policies/service_version_policy.hpp
     inc/azure/data/tables/policies/shared_key_lite_policy.hpp
     inc/azure/data/tables/policies/shared_key_policy.hpp
@@ -64,6 +65,7 @@ set(
 set(
   AZURE_DATA_TABLES_SOURCE
     src/credentials/shared_key_credential.cpp
+    src/cryptography/hmacsha256.cpp
     src/policies/shared_key_lite_policy.cpp
     src/policies/shared_key_policy.cpp
     src/policies/switch_to_secondary_policy.cpp
@@ -79,6 +81,14 @@ add_library(azure-data-tables ${AZURE_DATA_TABLES_HEADER} ${AZURE_DATA_TABLES_SO
 create_per_service_target_build(tables azure-data-tables)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-data-tables ALIAS azure-data-tables)
+
+if(WIN32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
+else()
+    # Required for Hashing (sha ).
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
+endif()
 
 target_include_directories(
   azure-data-tables

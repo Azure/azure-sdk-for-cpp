@@ -165,12 +165,4 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     void OnAppend(const uint8_t* data, size_t length) override;
   };
-
-  class HmacSha256Hash final {
-    public:
-    static std::vector<uint8_t> HmacSha256(
-        const std::vector<uint8_t>& data,
-        const std::vector<uint8_t>& key);
-  };
-
 }}} // namespace Azure::Core::Cryptography
