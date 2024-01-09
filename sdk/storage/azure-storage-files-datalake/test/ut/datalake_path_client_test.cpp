@@ -473,9 +473,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakePathClientTest, PathGetPropertiesOwnerGroupPermissions)
+  TEST_F(DataLakePathClientTest, PathGetPropertiesAccessControlList)
   {
     auto properties = m_pathClient->GetProperties().Value;
+    ASSERT_TRUE(properties.Acls.HasValue() && !properties.Acls.Value().empty());
     ASSERT_TRUE(properties.Owner.HasValue());
     ASSERT_TRUE(properties.Group.HasValue());
     ASSERT_TRUE(properties.Permissions.HasValue());

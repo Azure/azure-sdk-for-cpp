@@ -221,6 +221,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.Details.EncryptionContext = encryptionContext->second;
     }
+    auto acl = headers.find(_detail::ACLHeaderName);
+    if (acl != headers.end())
+    {
+      ret.Details.Acls = Models::Acl::DeserializeAcls(acl->second);
+    }
     auto owner = headers.find(_detail::OwnerHeaderName);
     if (owner != headers.end())
     {
