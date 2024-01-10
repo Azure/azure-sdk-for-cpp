@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-12-02/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2024-05-04/blob.json
 ```
 
 ## ModelFour Options
@@ -102,12 +102,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2022-11-02"]
+        "enum": ["2023-11-03"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2022-11-02";
+      $.ApiVersionParameter.enum[0] = "2023-11-03";
 ```
 
 ### Rename Operations

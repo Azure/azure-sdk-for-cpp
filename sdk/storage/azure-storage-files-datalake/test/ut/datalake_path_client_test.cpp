@@ -473,12 +473,53 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakePathClientTest, PathGetPropertiesOwnerGroupPermissions)
+  TEST_F(DataLakePathClientTest, GetPropertiesAccessControlList_PLAYBACKONLY_)
   {
     auto properties = m_pathClient->GetProperties().Value;
-    ASSERT_TRUE(properties.Owner.HasValue());
-    ASSERT_TRUE(properties.Group.HasValue());
-    ASSERT_TRUE(properties.Permissions.HasValue());
+    EXPECT_TRUE(properties.Acls.HasValue() && !properties.Acls.Value().empty());
+    EXPECT_TRUE(properties.Owner.HasValue());
+    EXPECT_TRUE(properties.Group.HasValue());
+    EXPECT_TRUE(properties.Permissions.HasValue());
+  }
+
+  TEST_F(DataLakePathClientTest, GetPropertiesWithUserPrincipalName_PLAYBACKONLY_)
+  {
+    std::string userPrincipalName = "kat@microsoft.com";
+    std::string userObjectId = "72a3f86f-271f-439e-b031-25678907d381";
+    std::vector<Files::DataLake::Models::Acl> acls;
+    Files::DataLake::Models::Acl acl;
+    acl.Type = "user";
+    acl.Id = userObjectId;
+    acl.Permissions = "rwx";
+    acls.emplace_back(acl);
+    m_pathClient->SetAccessControlList(acls);
+    Files::DataLake::GetPathPropertiesOptions options;
+
+    // UserPrincipalName = true
+    options.UserPrincipalName = true;
+    auto properties = m_pathClient->GetProperties(options).Value;
+    ASSERT_TRUE(properties.Acls.HasValue() && !properties.Acls.Value().empty());
+    EXPECT_TRUE(properties.Owner.HasValue());
+    EXPECT_TRUE(properties.Group.HasValue());
+    EXPECT_TRUE(properties.Permissions.HasValue());
+    // Validate that the user principal name is returned
+    acls = properties.Acls.Value();
+    auto it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userPrincipalName; });
+    EXPECT_NE(it, acls.end());
+
+    // UserPrincipalName = false
+    options.UserPrincipalName = false;
+    properties = m_pathClient->GetProperties(options).Value;
+    ASSERT_TRUE(properties.Acls.HasValue() && !properties.Acls.Value().empty());
+    EXPECT_TRUE(properties.Owner.HasValue());
+    EXPECT_TRUE(properties.Group.HasValue());
+    EXPECT_TRUE(properties.Permissions.HasValue());
+    // Validate that the user principal name is returned
+    acls = properties.Acls.Value();
+    it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userObjectId; });
+    EXPECT_NE(it, acls.end());
   }
 
   TEST_F(DataLakePathClientTest, Audience)
