@@ -2,6 +2,8 @@
 
 ## 1.11.0 (2024-01-11)
 
+- Added 'OPTIONS' HTTP method to `Azure::Core::Http::HttpMethod` enum.
+
 ### Features Added
 
 - Added TLS 1.3 support to WinHTTP transport.
