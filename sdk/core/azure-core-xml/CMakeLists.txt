@@ -9,17 +9,11 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.13)
 project(azure-core-xml LANGUAGES CXX)
 
-include(AzureTransportAdapters)
-include(AzureBuildTargetForCI)
-include(AzureVersion)
-include(AzureCodeCoverage)
-include(AzureDoxygen)
-include(AzureGlobalCompileOptions)
-include(AzureConfigRTTI)
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
 include(AzureVersion)
 include(AzureCodeCoverage)
@@ -31,8 +25,16 @@ include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-
-if(NOT AZ_ALL_LIBRARIES)
+if(FETCH_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
+    include(FolderList)
+    SetCompileOptions(CORE_XML)
+    GetFolderList(CORE_XML)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
+    endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp REQUIRED)
