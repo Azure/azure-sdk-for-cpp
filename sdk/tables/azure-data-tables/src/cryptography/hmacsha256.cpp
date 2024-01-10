@@ -138,7 +138,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
 
 #elif defined(AZ_PLATFORM_POSIX)
 
-  std::vector<uint8_t> HmacSha256::HmacSha256(
+  std::vector<uint8_t> HmacSha256::Compute(
       const std::vector<uint8_t>& data,
       const std::vector<uint8_t>& key)
   {
