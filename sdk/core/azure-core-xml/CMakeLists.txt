@@ -43,10 +43,9 @@ endif()
 
 set(
   AZURE_CORE_XML_HEADER
-    inc/azure/core/xml.hpp
     inc/azure/core/xml/dll_import_export.hpp
     inc/azure/core/xml/rtti.hpp
-    inc/azure/core/xml/xml_wrapper.hpp
+    inc/azure/core/xml/internal/xml_wrapper.hpp
 )
 
 set(

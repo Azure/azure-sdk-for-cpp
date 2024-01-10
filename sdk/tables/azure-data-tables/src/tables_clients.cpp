@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/data/tables/policies/service_version_policy.hpp>
-#include <azure/data/tables/policies/shared_key_lite_policy.hpp>
-#include <azure/data/tables/policies/shared_key_policy.hpp>
-#include <azure/data/tables/policies/switch_to_secondary_policy.hpp>
-#include <azure/data/tables/policies/tenant_bearer_token_policy.hpp>
-#include <azure/data/tables/policies/timeout_policy.hpp>
-#include <azure/data/tables/serializers.hpp>
+#include <azure/data/tables/internal/policies/service_version_policy.hpp>
+#include <azure/data/tables/internal/policies/shared_key_lite_policy.hpp>
+#include <azure/data/tables/internal/policies/shared_key_policy.hpp>
+#include <azure/data/tables/internal/policies/switch_to_secondary_policy.hpp>
+#include <azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp>
+#include <azure/data/tables/internal/policies/timeout_policy.hpp>
+#include <azure/data/tables/internal/serializers.hpp>
 #include <azure/data/tables/tables_clients.hpp>
 
 #include <sstream>

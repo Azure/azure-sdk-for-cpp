@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/xml/xml_wrapper.hpp"
+#include "azure/core/xml/internal/xml_wrapper.hpp"
 
 #include <azure/core/platform.hpp>
 

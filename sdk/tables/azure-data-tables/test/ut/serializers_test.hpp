@@ -4,7 +4,7 @@
 
 #include "test/ut/test_base.hpp"
 
-#include <azure/data/tables/serializers.hpp>
+#include <azure/data/tables/internal/serializers.hpp>
 #include <azure/data/tables/tables_clients.hpp>
 
 namespace Azure { namespace Data { namespace Test {

@@ -46,20 +46,20 @@ endif()
 set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/dll_import_export.hpp
+    inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
+    inc/azure/data/tables/internal/policies/service_version_policy.hpp
+    inc/azure/data/tables/internal/policies/shared_key_lite_policy.hpp
+    inc/azure/data/tables/internal/policies/shared_key_policy.hpp
+    inc/azure/data/tables/internal/policies/switch_to_secondary_policy.hpp
+    inc/azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp
+    inc/azure/data/tables/internal/policies/timeout_policy.hpp
+    inc/azure/data/tables/internal/serializers.hpp
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rtti.hpp
-    inc/azure/data/tables/serializers.hpp
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/transactions.hpp
     inc/azure/data/tables/credentials/shared_key_credential.hpp
-    inc/azure/data/tables/cryptography/hmacsha256.hpp
-    inc/azure/data/tables/policies/service_version_policy.hpp
-    inc/azure/data/tables/policies/shared_key_lite_policy.hpp
-    inc/azure/data/tables/policies/shared_key_policy.hpp
-    inc/azure/data/tables/policies/switch_to_secondary_policy.hpp
-    inc/azure/data/tables/policies/tenant_bearer_token_policy.hpp
-    inc/azure/data/tables/policies/timeout_policy.hpp
 )
 
 set(

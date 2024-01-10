@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #include <azure/core/internal/json/json.hpp>
-#include <azure/data/tables/serializers.hpp>
+#include <azure/data/tables/internal/serializers.hpp>
 
 using namespace Azure::Core::_internal::Xml;
 using namespace Azure::Data::Tables;

@@ -2,8 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 #pragma once
-#include <azure/core/internal/json/json.hpp>
-#include <azure/core/xml.hpp>
+#include <azure/core/xml/internal/xml_wrapper.hpp>
 #include <azure/data/tables/models.hpp>
 
 #include <cstdint>
