@@ -21,7 +21,7 @@ namespace Azure { namespace Storage {
 
   namespace _internal {
     class SharedKeyPolicy;
-  } // namespace _internal
+  }
 
   /**
    * @brief A StorageSharedKeyCredential is a credential backed by a storage account's name and

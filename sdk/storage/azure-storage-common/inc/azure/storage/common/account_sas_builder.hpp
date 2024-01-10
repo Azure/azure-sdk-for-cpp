@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * access signature.
      */
     Files = 4,
-    
+
     /**
      * @brief Indicates all services are accessible from the shared
      * access signature.
