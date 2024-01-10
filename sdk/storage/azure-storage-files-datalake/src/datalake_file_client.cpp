@@ -182,7 +182,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto response = m_blobClient.Download(blobOptions, context);
+    auto response = m_blobClient.Download(
+        blobOptions,
+        options.UserPrincipalName.HasValue() ? context.WithValue(
+            Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
+            options.UserPrincipalName.Value())
+                                             : context);
     Models::DownloadFileResult ret;
     ret.Body = std::move(response.Value.BodyStream);
     ret.Details.HttpHeaders = std::move(response.Value.Details.HttpHeaders);

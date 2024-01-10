@@ -716,11 +716,52 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, FileDownloadAccessControlList)
   {
     auto downloadResult = m_fileClient->Download().Value;
-    ASSERT_TRUE(
+    EXPECT_TRUE(
         downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
-    ASSERT_TRUE(downloadResult.Details.Owner.HasValue());
-    ASSERT_TRUE(downloadResult.Details.Group.HasValue());
-    ASSERT_TRUE(downloadResult.Details.Permissions.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Group.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
+  }
+
+  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName)
+  {
+    std::string userPrincipalName = "kat@microsoft.com";
+    std::vector<Files::DataLake::Models::Acl> acls;
+    Files::DataLake::Models::Acl acl;
+    acl.Type = "user";
+    acl.Id = "72a3f86f-271f-439e-b031-25678907d381";
+    acl.Permissions = "rwx";
+    acls.emplace_back(acl);
+    m_fileClient->SetAccessControlList(acls);
+    Files::DataLake::DownloadFileOptions options;
+
+    // UserPrincipalName = true
+    options.UserPrincipalName = true;
+    auto downloadResult = m_fileClient->Download(options).Value;
+    EXPECT_TRUE(
+        downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
+    EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Group.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
+    // Validate that the user principal name is returned
+    acls = downloadResult.Details.Acls.Value();
+    auto it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userPrincipalName; });
+    EXPECT_NE(it, acls.end());
+
+    // UserPrincipalName = false
+    options.UserPrincipalName = false;
+    downloadResult = m_fileClient->Download(options).Value;
+    EXPECT_TRUE(
+        downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
+    EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Group.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
+    // Validate that the user principal name is not returned
+    acls = downloadResult.Details.Acls.Value();
+    it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userPrincipalName; });
+    EXPECT_EQ(it, acls.end());
   }
 
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)

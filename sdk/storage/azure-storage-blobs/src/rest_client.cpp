@@ -3633,6 +3633,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-range-get-content-crc64",
             options.RangeGetContentCRC64.Value() ? "true" : "false");
       }
+      if (options.UserPrincipalName.HasValue())
+      {
+        request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
+      }
       if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
       {
         request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
@@ -3923,6 +3927,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
       {
         request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
+      if (options.UserPrincipalName.HasValue())
+      {
+        request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
       }
       if (options.IfModifiedSince.HasValue())
       {

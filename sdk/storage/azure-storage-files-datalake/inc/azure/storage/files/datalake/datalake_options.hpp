@@ -766,6 +766,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+
+    /**
+     * Valid only when Hierarchical Namespace is enabled for the account. If "true", the user
+     * identity values returned in the owner and group fields of each list entry will be transformed
+     * from Azure Active Directory Object IDs to User Principal Names. If "false", the values will
+     * be returned as Azure Active Directory Object IDs. The default value is false. Note that group
+     * and application Object IDs are not translated because they do not have unique friendly names.
+     */
+    Nullable<bool> UserPrincipalName;
   };
 
   /**
@@ -802,6 +811,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+
+    /**
+     * Valid only when Hierarchical Namespace is enabled for the account. If "true", the user
+     * identity values returned in the owner and group fields of each list entry will be transformed
+     * from Azure Active Directory Object IDs to User Principal Names. If "false", the values will
+     * be returned as Azure Active Directory Object IDs. The default value is false. Note that group
+     * and application Object IDs are not translated because they do not have unique friendly names.
+     */
+    Nullable<bool> UserPrincipalName;
   };
 
   /**
