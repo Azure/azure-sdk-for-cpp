@@ -14,11 +14,10 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
 }}}}} // namespace Azure::Data::Tables::_detail::Policies
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
-struct AccountSasBuilder;
+  struct AccountSasBuilder;
 }}}} // namespace Azure::Data::Tables::Sas
 
 namespace Azure { namespace Data { namespace Tables { namespace Credentials {
-
 
   /**
    * @brief A SharedKeyCredential is a credential backed by an account's name and

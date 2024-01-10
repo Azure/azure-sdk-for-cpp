@@ -3,10 +3,11 @@
 
 #include "azure/data/tables/account_sas_builder.hpp"
 
-#include "azure/data/tables/internal/cryptography/url_encode.hpp"
 #include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
-#include <azure/core/http/http.hpp>
+#include "azure/data/tables/internal/cryptography/url_encode.hpp"
+
 #include <azure/core/base64.hpp>
+#include <azure/core/http/http.hpp>
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
   namespace {
@@ -122,12 +123,15 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
         + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
         + EncryptionScope + "\n";
 
-    std::string signature = Azure::Core::Convert::Base64Encode(Azure::Data::Tables::_detail::Cryptography::HmacSha256::Compute(
-        std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-        Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
+    std::string signature = Azure::Core::Convert::Base64Encode(
+        Azure::Data::Tables::_detail::Cryptography::HmacSha256::Compute(
+            std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+            Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Url builder;
-    builder.AppendQueryParameter("sv", Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(SasVersion));
+    builder.AppendQueryParameter(
+        "sv",
+        Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(SasVersion));
     builder.AppendQueryParameter(
         "ss",
         Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(services));

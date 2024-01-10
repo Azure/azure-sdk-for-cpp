@@ -2,7 +2,9 @@
 // Licensed under the MIT License.
 
 #include "table_client_test.hpp"
+
 #include "azure/data/tables/account_sas_builder.hpp"
+
 #include <azure/core/internal/strings.hpp>
 
 #include <chrono>

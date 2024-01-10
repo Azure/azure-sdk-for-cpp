@@ -44,12 +44,16 @@ namespace Azure { namespace Data { namespace Test {
 
     std::string GetAccountName()
     {
-      return Azure::Data::Tables::Credentials::_internal::ParseConnectionString(GetConnectionString()).AccountName;
+      return Azure::Data::Tables::Credentials::_internal::ParseConnectionString(
+                 GetConnectionString())
+          .AccountName;
     }
 
     std::string GetAccountKey()
     {
-      return Azure::Data::Tables::Credentials::_internal::ParseConnectionString(GetConnectionString()).AccountKey;
+      return Azure::Data::Tables::Credentials::_internal::ParseConnectionString(
+                 GetConnectionString())
+          .AccountKey;
     }
 
   protected:

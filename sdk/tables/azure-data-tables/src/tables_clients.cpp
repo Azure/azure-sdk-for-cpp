@@ -115,7 +115,8 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies));
 
   TableClientOptions newOptions = options;
-  newOptions.PerRetryPolicies.emplace_back(std::make_unique<Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy>(credential));
+  newOptions.PerRetryPolicies.emplace_back(
+      std::make_unique<Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy>(credential));
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
@@ -391,7 +392,8 @@ TableClient::TableClient(
       std::move(perOperationPolicies));
 
   TableClientOptions newOptions = options;
-  newOptions.PerRetryPolicies.emplace_back(std::make_unique<Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy>(credential));
+  newOptions.PerRetryPolicies.emplace_back(
+      std::make_unique<Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy>(credential));
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
