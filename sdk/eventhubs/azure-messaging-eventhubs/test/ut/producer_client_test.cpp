@@ -13,6 +13,8 @@
 
 #include <gtest/gtest.h>
 
+// cspell: ignore edboptions
+
 class ProducerClientTest : public EventHubsTestBase {
 };
 
