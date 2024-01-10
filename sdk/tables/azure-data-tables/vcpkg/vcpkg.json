@@ -20,7 +20,7 @@
     },
     {
       "name": "azure-core-xml-cpp",
-    }
+    },
     {
       "name": "vcpkg-cmake",
       "host": true
