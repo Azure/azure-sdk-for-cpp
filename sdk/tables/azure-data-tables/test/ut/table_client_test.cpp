@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #include "table_client_test.hpp"
-
+#include "azure/data/tables/account_sas_builder.hpp"
 #include <azure/core/internal/strings.hpp>
 
 #include <chrono>
@@ -56,14 +56,14 @@ namespace Azure { namespace Data { namespace Test {
               tableClientOptions));
           break;
         case AuthType::SAS:
-          auto creds = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
+          auto creds = std::make_shared<Azure::Data::Tables::Credentials::SharedKeyCredential>(
               GetAccountName(), GetAccountKey());
-          Azure::Storage::Sas::AccountSasBuilder sasBuilder;
+          Azure::Data::Tables::Sas::AccountSasBuilder sasBuilder;
           sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          sasBuilder.ResourceTypes = Azure::Storage::Sas::AccountSasResource::All;
-          sasBuilder.Services = Azure::Storage::Sas::AccountSasServices::All;
-          sasBuilder.Protocol = Azure::Storage::Sas::SasProtocol::HttpsOnly;
-          sasBuilder.SetPermissions(Azure::Storage::Sas::AccountSasPermissions::All);
+          sasBuilder.ResourceTypes = Azure::Data::Tables::Sas::AccountSasResource::All;
+          sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServices::All;
+          sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
+          sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
           auto sasToken = sasBuilder.GenerateSasToken(*creds);
           m_tableServiceClient
               = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(

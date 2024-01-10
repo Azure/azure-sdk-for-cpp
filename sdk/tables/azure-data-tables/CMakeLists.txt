@@ -45,8 +45,10 @@ endif()
 
 set(
   AZURE_DATA_TABLES_HEADER
+    inc/azure/data/tables/account_sas_builder.hpp
     inc/azure/data/tables/dll_import_export.hpp
     inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
+    inc/azure/data/tables/internal/cryptography/url_encode.hpp
     inc/azure/data/tables/internal/policies/service_version_policy.hpp
     inc/azure/data/tables/internal/policies/shared_key_lite_policy.hpp
     inc/azure/data/tables/internal/policies/shared_key_policy.hpp
@@ -64,6 +66,7 @@ set(
 
 set(
   AZURE_DATA_TABLES_SOURCE
+    src/account_sas_builder.cpp
     src/credentials/shared_key_credential.cpp
     src/cryptography/hmacsha256.cpp
     src/policies/shared_key_lite_policy.cpp

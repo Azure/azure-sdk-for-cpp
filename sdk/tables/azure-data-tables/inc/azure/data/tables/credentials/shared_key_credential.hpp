@@ -12,11 +12,13 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
   class SharedKeyPolicy;
   class SharedKeyLitePolicy;
 }}}}} // namespace Azure::Data::Tables::_detail::Policies
+
+namespace Azure { namespace Data { namespace Tables { namespace Sas {
+struct AccountSasBuilder;
+}}}} // namespace Azure::Data::Tables::Sas
+
 namespace Azure { namespace Data { namespace Tables { namespace Credentials {
 
-  namespace Sas {
-    struct AccountSasBuilder;
-  } // namespace Sas
 
   /**
    * @brief A SharedKeyCredential is a credential backed by an account's name and
@@ -56,7 +58,8 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
   private:
     friend class Azure::Data::Tables::_detail::Policies::SharedKeyPolicy;
     friend class Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy;
-    friend struct Sas::AccountSasBuilder;
+    friend struct Azure::Data::Tables::Sas::AccountSasBuilder;
+
     std::string GetAccountKey() const
     {
       std::lock_guard<std::mutex> guard(m_mutex);
