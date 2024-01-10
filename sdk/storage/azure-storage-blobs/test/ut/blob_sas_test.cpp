@@ -530,7 +530,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasNonRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, AccountSasService_LIVEONLY_) // keeps failing in CI
+  TEST_F(BlobSasTest, AccountSasService)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 

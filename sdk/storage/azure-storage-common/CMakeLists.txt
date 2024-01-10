@@ -125,8 +125,6 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-common azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  # define a symbol that enables some test hooks in code
-  add_compile_definitions(TESTING_BUILD)
   add_subdirectory(test/ut)
 endif()
 

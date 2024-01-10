@@ -5,7 +5,6 @@
 ### Features Added
 
 - Removed unnecessary dependencies on non-Windows platforms. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
-- Added support for 'azure-data-tables' connection strings. 
 
 ### Breaking Changes
 
