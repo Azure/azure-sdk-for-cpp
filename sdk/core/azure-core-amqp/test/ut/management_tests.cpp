@@ -11,6 +11,8 @@
 
 #include <gtest/gtest.h>
 
+// cspell: ignore abcdabcd
+
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   class TestManagement : public testing::Test {

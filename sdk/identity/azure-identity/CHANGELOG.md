@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- [[#5075]](https://github.com/Azure/azure-sdk-for-cpp/issues/5075) `AzureCliCredential` assumes token expiration time without local time zone adjustment.
+
 ### Other Changes
 
 - [[#5141]](https://github.com/Azure/azure-sdk-for-cpp/issues/5141) Added error response details to the `AuthenticationException` thrown when the authority host returns error response.
