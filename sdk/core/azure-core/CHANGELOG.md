@@ -1,19 +1,28 @@
 # Release History
 
-## 1.11.0-beta.3 (Unreleased)
+## 1.11.0 (2024-01-11)
 
 ### Features Added
 
-### Breaking Changes
+- Added TLS 1.3 support to WinHTTP transport.
+- Environment Log Level Listener now logs the ThreadID for the thread originating the trace.
+- [[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983) Added support for setting `CURLOPT_CAPATH` libcurl option on Linux. (A community contribution, courtesy of _[phoebusm](https://github.com/phoebusm)_)
 
 ### Bugs Fixed
 
 - [[#5172]](https://github.com/Azure/azure-sdk-for-cpp/issues/5172) `Azure::Nullable::Emplace()` does not set `HasValue()` to `true`.
 - [[#5130]](https://github.com/Azure/azure-sdk-for-cpp/issues/5130) `Url::AppendPath()` and `Url::SetPath()` may end up with a double slash at the beginning of a path.
+- [[#5007]](https://github.com/Azure/azure-sdk-for-cpp/issues/5007) Some versions of GCC no longer include stdint.h in cstdint.
 
 ### Other Changes
 
 - [[#4756]] (https://github.com/Azure/azure-sdk-for-cpp/issues/4756) `BearerTokenAuthenticationPolicy` now uses shared mutex lock for read operations.
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Phoebus Mak _([GitHub](https://github.com/phoebusm))_
 
 ## 1.11.0-beta.2 (2023-11-02)
 
