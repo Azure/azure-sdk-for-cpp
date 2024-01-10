@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2022-11-02";
+    constexpr static const char* ApiVersion = "2023-11-03";
   } // namespace _detail
   namespace Models {
     /**
@@ -3675,6 +3675,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<bool> RangeGetContentMD5;
         Nullable<bool> RangeGetContentCRC64;
+        Nullable<bool> UserPrincipalName;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
@@ -3697,6 +3698,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
+        Nullable<bool> UserPrincipalName;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;

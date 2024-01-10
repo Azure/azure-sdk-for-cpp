@@ -5,6 +5,7 @@
 
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/blob_responses.hpp"
+#include "azure/storage/blobs/dll_import_export.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/storage/common/storage_credential.hpp>
@@ -21,6 +22,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 }}}} // namespace Azure::Storage::Files::DataLake
 
 namespace Azure { namespace Storage { namespace Blobs {
+
+  namespace _detail {
+    AZ_STORAGE_BLOBS_DLLEXPORT extern const Azure::Core::Context::Key
+        DataLakeInteroperabilityExtraOptionsKey;
+  } // namespace _detail
 
   class BlockBlobClient;
   class AppendBlobClient;

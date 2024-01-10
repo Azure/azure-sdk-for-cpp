@@ -88,12 +88,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2023-08-03"]
+        "enum": ["2023-11-03"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2023-08-03";
+      $.ApiVersionParameter.enum[0] = "2023-11-03";
 ```
 
 ### Rename Operations
