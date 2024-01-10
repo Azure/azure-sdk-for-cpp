@@ -2,10 +2,9 @@
 
 ## 1.11.0 (2024-01-11)
 
-- Added 'OPTIONS' HTTP method to `Azure::Core::Http::HttpMethod` enum.
-
 ### Features Added
 
+- Added 'OPTIONS' HTTP method to `Azure::Core::Http::HttpMethod` enum.
 - Added TLS 1.3 support to WinHTTP transport.
 - Environment Log Level Listener now logs the ThreadID for the thread originating the trace.
 - [[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983) Added support for setting `CURLOPT_CAPATH` libcurl option on Linux. (A community contribution, courtesy of _[phoebusm](https://github.com/phoebusm)_)
