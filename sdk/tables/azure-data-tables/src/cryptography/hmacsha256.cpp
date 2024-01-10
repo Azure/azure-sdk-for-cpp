@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "azure/data/tables/cryptography/hmacsha256.hpp"
+
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/platform.hpp>
@@ -11,7 +12,9 @@
 
 #include <bcrypt.h>
 #elif defined(AZ_PLATFORM_POSIX)
+#include <openssl/bio.h>
 #include <openssl/evp.h>
+#include <openssl/hmac.h>
 #endif
 
 #include <algorithm>

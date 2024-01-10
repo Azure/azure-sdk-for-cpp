@@ -55,7 +55,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials { na
     std::string accountName = getWithDefault(connectionStringMap, "AccountName");
     connectionStringParts.AccountName = accountName;
 
-    std::string endpoint  = getWithDefault(connectionStringMap, "TableEndpoint");
+    std::string endpoint = getWithDefault(connectionStringMap, "TableEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".table." + EndpointSuffix;
@@ -81,7 +81,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials { na
       {
         sas = '?' + sas;
       }
-     
+
       connectionStringParts.TableServiceUrl
           = Azure::Core::Url(connectionStringParts.TableServiceUrl.GetAbsoluteUrl() + sas);
     }

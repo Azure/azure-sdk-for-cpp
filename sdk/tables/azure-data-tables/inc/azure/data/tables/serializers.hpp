@@ -3,8 +3,8 @@
 
 #pragma once
 #include <azure/core/internal/json/json.hpp>
-#include <azure/data/tables/models.hpp>
 #include <azure/core/xml.hpp>
+#include <azure/data/tables/models.hpp>
 
 #include <cstdint>
 #include <memory>

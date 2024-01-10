@@ -18,4 +18,4 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
         const std::vector<uint8_t>& data,
         const std::vector<uint8_t>& key);
   };
-}}}}} // namespace Azure::Data::Tables::_details::Cryptography
+}}}}} // namespace Azure::Data::Tables::_detail::Cryptography
