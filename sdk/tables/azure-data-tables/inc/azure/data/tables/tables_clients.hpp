@@ -31,14 +31,14 @@ namespace Azure { namespace Data { namespace Tables {
   } // namespace _detail
 
   /**
-   * @brief API version for Storage Tables service.
+   * @brief API version for Tables service.
    */
   class ServiceVersion final {
   public:
     /**
      * @brief Construct a new Service Version object
      *
-     * @param version The string version for Storage Tables Service.
+     * @param version The string version for Tables Service.
      */
     explicit ServiceVersion(std::string version) : m_version{std::move(version)} {}
 

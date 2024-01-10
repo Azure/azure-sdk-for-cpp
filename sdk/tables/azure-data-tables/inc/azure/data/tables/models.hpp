@@ -256,7 +256,7 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Storage Service Properties.
+     * @brief Table Service Properties.
      */
     struct TableServiceProperties final
     {
