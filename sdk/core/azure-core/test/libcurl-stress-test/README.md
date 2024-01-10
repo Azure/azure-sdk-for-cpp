@@ -19,7 +19,7 @@ Where namespace will be created if missing , search directory can be any folder 
 
 ATM the docker image is build by hand and hard-coded in the chart to simplify matters.  
 
-To build the image run "docker build -t <acr>/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  ."
+To build the image run "docker build -t <acr>/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  -f .\Dockerfile .\..\..\..\..\..\"
 
 To push to mcr : "docker push <acr>/azuresdkforcpp/curlstress:v8"
 Obviously after logging in to the acr "az acr login -n <acr>"
