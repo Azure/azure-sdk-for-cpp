@@ -388,7 +388,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.EncryptionContext = encryptionContext->second;
     }
-    auto acl = headers.find(_detail::ACLHeaderName);
+    auto acl = headers.find(_detail::AclHeaderName);
     if (acl != headers.end())
     {
       ret.Acls = Models::Acl::DeserializeAcls(acl->second);

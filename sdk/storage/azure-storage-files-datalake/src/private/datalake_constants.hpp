@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   constexpr static const char* DataLakePathAlreadyExists = "PathAlreadyExists";
   constexpr static const char* DataLakeIsDirectoryKey = "hdi_isFolder";
   constexpr static const char* EncryptionContextHeaderName = "x-ms-encryption-context";
-  constexpr static const char* ACLHeaderName = "x-ms-acl";
+  constexpr static const char* AclHeaderName = "x-ms-acl";
   constexpr static const char* OwnerHeaderName = "x-ms-owner";
   constexpr static const char* GroupHeaderName = "x-ms-group";
   constexpr static const char* PermissionsHeaderName = "x-ms-permissions";

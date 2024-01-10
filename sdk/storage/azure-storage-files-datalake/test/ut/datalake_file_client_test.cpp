@@ -713,7 +713,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(ReadFile(testName), std::runtime_error);
   }
 
-  TEST_F(DataLakeFileClientTest, FileDownloadAccessControlList)
+  TEST_F(DataLakeFileClientTest, FileDownloadAccessControlList_PLAYBACKONLY_)
   {
     auto downloadResult = m_fileClient->Download().Value;
     EXPECT_TRUE(
@@ -723,13 +723,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
   }
 
-  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName)
+  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName_PLAYBACKONLY_)
   {
     std::string userPrincipalName = "kat@microsoft.com";
+    std::string userObjectId = "72a3f86f-271f-439e-b031-25678907d381";
     std::vector<Files::DataLake::Models::Acl> acls;
     Files::DataLake::Models::Acl acl;
     acl.Type = "user";
-    acl.Id = "72a3f86f-271f-439e-b031-25678907d381";
+    acl.Id = userObjectId;
     acl.Permissions = "rwx";
     acls.emplace_back(acl);
     m_fileClient->SetAccessControlList(acls);
@@ -738,7 +739,7 @@ namespace Azure { namespace Storage { namespace Test {
     // UserPrincipalName = true
     options.UserPrincipalName = true;
     auto downloadResult = m_fileClient->Download(options).Value;
-    EXPECT_TRUE(
+    ASSERT_TRUE(
         downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
     EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
     EXPECT_TRUE(downloadResult.Details.Group.HasValue());
@@ -752,7 +753,7 @@ namespace Azure { namespace Storage { namespace Test {
     // UserPrincipalName = false
     options.UserPrincipalName = false;
     downloadResult = m_fileClient->Download(options).Value;
-    EXPECT_TRUE(
+    ASSERT_TRUE(
         downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
     EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
     EXPECT_TRUE(downloadResult.Details.Group.HasValue());
@@ -760,8 +761,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Validate that the user principal name is not returned
     acls = downloadResult.Details.Acls.Value();
     it = std::find_if(
-        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userPrincipalName; });
-    EXPECT_EQ(it, acls.end());
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userObjectId; });
+    EXPECT_NE(it, acls.end());
   }
 
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
