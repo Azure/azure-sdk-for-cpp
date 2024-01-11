@@ -2,6 +2,8 @@
 
 ## 1.11.0-beta.3 (Unreleased)
 
+- Added 'OPTIONS' HTTP method to `Azure::Core::Http::HttpMethod` enum.
+
 ### Features Added
 
 - Added 'OPTIONS' HTTP method to `Azure::Core::Http::HttpMethod` enum.
