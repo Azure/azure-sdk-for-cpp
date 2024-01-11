@@ -120,6 +120,8 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The default is the built-in system specific path. More about this option:
      * https://curl.se/libcurl/c/CURLOPT_CAINFO.html
      *
+     * @remark This option is known to only work on Linux and might throw if set on other platforms.
+     *
      */
     std::string CAInfo;
 
