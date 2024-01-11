@@ -14,6 +14,7 @@
 
 - Fixed several memory leaks.
 - AMQP Link Credits now work as expected.
+- Integrated the fix for NVD - CVE-2024-21646.
 
 ### Other Changes
 
