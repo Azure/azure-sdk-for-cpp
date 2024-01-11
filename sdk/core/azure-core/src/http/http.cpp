@@ -26,7 +26,6 @@ const HttpMethod HttpMethod::Post("POST");
 const HttpMethod HttpMethod::Put("PUT");
 const HttpMethod HttpMethod::Delete("DELETE");
 const HttpMethod HttpMethod::Patch("PATCH");
-const HttpMethod HttpMethod::Options("OPTIONS");
 
 namespace {
 bool IsInvalidHeaderNameChar(char c)

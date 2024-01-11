@@ -34,7 +34,6 @@ TEST(HttpMethod, Get)
   EXPECT_NE(get, HttpMethod::Delete);
   EXPECT_NE(get, HttpMethod::Patch);
   EXPECT_NE(get, HttpMethod("TRACE"));
-  EXPECT_NE(get, HttpMethod::Options);
   EXPECT_NE(get, HttpMethod("HUMUHUMUNUKUNUKUAPUAA"));
 
   EXPECT_NE(HttpMethod::Head, get);
@@ -43,7 +42,6 @@ TEST(HttpMethod, Get)
   EXPECT_NE(HttpMethod::Delete, get);
   EXPECT_NE(HttpMethod::Patch, get);
   EXPECT_NE(HttpMethod("TRACE"), get);
-  EXPECT_NE(HttpMethod::Options, get);
   EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), get);
 }
 
@@ -72,7 +70,6 @@ TEST(HttpMethod, Head)
   EXPECT_NE(head, HttpMethod::Delete);
   EXPECT_NE(head, HttpMethod::Patch);
   EXPECT_NE(head, HttpMethod("TRACE"));
-  EXPECT_NE(head, HttpMethod::Options);
   EXPECT_NE(head, HttpMethod("HUMUHUMUNUKUNUKUAPUAA"));
 
   EXPECT_NE(HttpMethod::Get, head);
@@ -81,7 +78,6 @@ TEST(HttpMethod, Head)
   EXPECT_NE(HttpMethod::Delete, head);
   EXPECT_NE(HttpMethod::Patch, head);
   EXPECT_NE(HttpMethod("TRACE"), head);
-  EXPECT_NE(HttpMethod::Options, head);
   EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), head);
 }
 
@@ -110,7 +106,6 @@ TEST(HttpMethod, Post)
   EXPECT_NE(post, HttpMethod::Delete);
   EXPECT_NE(post, HttpMethod::Patch);
   EXPECT_NE(post, HttpMethod("TRACE"));
-  EXPECT_NE(post, HttpMethod::Options);
   EXPECT_NE(post, HttpMethod("HUMUHUMUNUKUNUKUAPUAA"));
 
   EXPECT_NE(HttpMethod::Get, post);
@@ -119,7 +114,6 @@ TEST(HttpMethod, Post)
   EXPECT_NE(HttpMethod::Delete, post);
   EXPECT_NE(HttpMethod::Patch, post);
   EXPECT_NE(HttpMethod("TRACE"), post);
-  EXPECT_NE(HttpMethod::Options, post);
   EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), post);
 }
 
@@ -148,7 +142,6 @@ TEST(HttpMethod, Put)
   EXPECT_NE(put, HttpMethod::Delete);
   EXPECT_NE(put, HttpMethod::Patch);
   EXPECT_NE(put, HttpMethod("TRACE"));
-  EXPECT_NE(put, HttpMethod::Options);
   EXPECT_NE(put, HttpMethod("HUMUHUMUNUKUNUKUAPUAA"));
 
   EXPECT_NE(HttpMethod::Get, put);
@@ -157,7 +150,6 @@ TEST(HttpMethod, Put)
   EXPECT_NE(HttpMethod::Delete, put);
   EXPECT_NE(HttpMethod::Patch, put);
   EXPECT_NE(HttpMethod("TRACE"), put);
-  EXPECT_NE(HttpMethod::Options, put);
   EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), put);
 }
 
@@ -186,7 +178,6 @@ TEST(HttpMethod, Delete)
   EXPECT_NE(delete_, HttpMethod::Put);
   EXPECT_NE(delete_, HttpMethod::Patch);
   EXPECT_NE(delete_, HttpMethod("TRACE"));
-  EXPECT_NE(delete_, HttpMethod::Options);
   EXPECT_NE(delete_, HttpMethod("HUMUHUMUNUKUNUKUAPUAA"));
 
   EXPECT_NE(HttpMethod::Get, delete_);
@@ -195,7 +186,6 @@ TEST(HttpMethod, Delete)
   EXPECT_NE(HttpMethod::Put, delete_);
   EXPECT_NE(HttpMethod::Patch, delete_);
   EXPECT_NE(HttpMethod("TRACE"), delete_);
-  EXPECT_NE(HttpMethod::Options, delete_);
   EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), delete_);
 }
 
@@ -223,7 +213,6 @@ TEST(HttpMethod, Patch)
   EXPECT_NE(patch, HttpMethod::Post);
   EXPECT_NE(patch, HttpMethod::Put);
   EXPECT_NE(patch, HttpMethod::Delete);
-  EXPECT_NE(patch, HttpMethod::Options);
   EXPECT_NE(patch, HttpMethod("TRACE"));
   EXPECT_NE(patch, HttpMethod("HUMUHUMUNUKUNUKUAPUAA"));
 
@@ -232,7 +221,6 @@ TEST(HttpMethod, Patch)
   EXPECT_NE(HttpMethod::Post, patch);
   EXPECT_NE(HttpMethod::Put, patch);
   EXPECT_NE(HttpMethod::Delete, patch);
-  EXPECT_NE(HttpMethod::Options, patch);
   EXPECT_NE(HttpMethod("TRACE"), patch);
   EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), patch);
 }
@@ -266,44 +254,7 @@ TEST(HttpMethod, Trace)
   EXPECT_NE(HttpMethod::Put, trace);
   EXPECT_NE(HttpMethod::Delete, trace);
   EXPECT_NE(HttpMethod::Patch, trace);
-  EXPECT_NE(HttpMethod::Options, trace);
   EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), trace);
-}
-
-TEST(HttpMethod, Options)
-{
-  HttpMethod const options = HttpMethod("OPTIONS");
-  EXPECT_EQ(options.ToString(), "OPTIONS");
-
-  EXPECT_EQ(options, options);
-  EXPECT_EQ(options, HttpMethod("OPTIONS"));
-  EXPECT_EQ(HttpMethod("OPTIONS"), options);
-
-  EXPECT_NE(options, HttpMethod("Options"));
-  EXPECT_NE(HttpMethod("Options"), options);
-
-  EXPECT_NE(options, HttpMethod(std::string()));
-  EXPECT_NE(HttpMethod(std::string()), options);
-
-  EXPECT_EQ(options, HttpMethod::Options);
-
-  EXPECT_NE(options, HttpMethod::Get);
-  EXPECT_NE(options, HttpMethod::Head);
-  EXPECT_NE(options, HttpMethod::Post);
-  EXPECT_NE(options, HttpMethod::Put);
-  EXPECT_NE(options, HttpMethod::Delete);
-  EXPECT_NE(options, HttpMethod::Patch);
-  EXPECT_NE(options, HttpMethod("TRACE"));
-  EXPECT_NE(options, HttpMethod("HUMUHUMUNUKUNUKUAPUAA"));
-
-  EXPECT_NE(HttpMethod::Get, options);
-  EXPECT_NE(HttpMethod::Head, options);
-  EXPECT_NE(HttpMethod::Post, options);
-  EXPECT_NE(HttpMethod::Put, options);
-  EXPECT_NE(HttpMethod::Delete, options);
-  EXPECT_NE(HttpMethod::Patch, options);
-  EXPECT_NE(HttpMethod("TRACE"), options);
-  EXPECT_NE(HttpMethod("HUMUHUMUNUKUNUKUAPUAA"), options);
 }
 
 TEST(HttpMethod, HawaiianFish)
