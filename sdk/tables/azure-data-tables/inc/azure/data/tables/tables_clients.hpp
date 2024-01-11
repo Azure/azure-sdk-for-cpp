@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <azure/core.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/response.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
