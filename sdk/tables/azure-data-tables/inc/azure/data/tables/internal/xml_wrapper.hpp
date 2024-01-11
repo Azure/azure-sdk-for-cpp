@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal { namespace Xml { namespace Delete {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Xml {
 
   enum class XmlNodeType
   {
@@ -77,4 +77,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Xml { namespa
     void* m_context = nullptr;
   };
 
-}}}}} // namespace Azure::Core::_internal::Xml::Delete
+}}}}} // namespace Azure::Data::Tables::_detail::Xml

@@ -4,7 +4,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/data/tables/internal/serializers.hpp>
 
-using namespace Azure::Core::_internal::Xml;
+using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables;
 namespace Azure { namespace Data { namespace Tables { namespace _detail {
   std::string const Serializers::CreateEntity(Models::TableEntity const& tableEntity)

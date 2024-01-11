@@ -16,10 +16,12 @@
   "license": "MIT",
   "dependencies": [
     {
-      "name": "azure-core-cpp",
+      "name": "azure-core-cpp"
     },
     {
-      "name": "azure-core-xml-cpp",
+      "name": "libxml2",
+      "default-features": false,
+      "platform": "!windows"
     },
     {
       "name": "vcpkg-cmake",

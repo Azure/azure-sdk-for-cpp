@@ -32,6 +32,16 @@
         }
       },
       "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://gitlab.gnome.org/GNOME/libxml2",
+          "CommitHash": "da703eaaea152f6dd9e871cbe7f0ae46322c583d"
+        }
+      },
+      "DevelopmentDependency": false
     }
   ]
 }

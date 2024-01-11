@@ -28,5 +28,3 @@ if (BUILD_TESTING)
   add_subdirectory(azure-core-test)
 endif()
 
-add_subdirectory(azure-core-xml)
-

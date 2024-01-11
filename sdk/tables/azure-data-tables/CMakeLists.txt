@@ -37,10 +37,6 @@ elseif(NOT AZ_ALL_LIBRARIES)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp REQUIRED)
   endif()
-  find_package(azure-core-xml-cpp CONFIG QUIET)
-  if(NOT azure-core-xml-cpp_FOUND)
-    find_package(azure-core-xml-cpp REQUIRED)
-  endif()
 endif()
 
 set(
@@ -56,6 +52,7 @@ set(
     inc/azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp
     inc/azure/data/tables/internal/policies/timeout_policy.hpp
     inc/azure/data/tables/internal/serializers.hpp
+    inc/azure/data/tables/internal/xml_wrapper.hpp
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables.hpp
@@ -78,6 +75,7 @@ set(
     src/serializers.cpp
     src/tables_clients.cpp
     src/transactions.cpp
+    src/xml_wrapper.cpp
 )
 
 add_library(azure-data-tables ${AZURE_DATA_TABLES_HEADER} ${AZURE_DATA_TABLES_SOURCE})
@@ -86,11 +84,14 @@ create_per_service_target_build(tables azure-data-tables)
 add_library(Azure::azure-data-tables ALIAS azure-data-tables)
 
 if(WIN32)
-    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
+    target_link_libraries(azure-data-tables PRIVATE bcrypt webservices crypt32)
 else()
     # Required for Hashing (sha ).
     find_package(OpenSSL REQUIRED)
-    target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
+    target_link_libraries(azure-data-tables PRIVATE OpenSSL::SSL)
+    find_package(LibXml2 REQUIRED)
+    target_include_directories(azure-data-tables SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIRS})
+    target_link_libraries(azure-data-tables PRIVATE ${LIBXML2_LIBRARIES})
 endif()
 
 target_include_directories(
@@ -100,7 +101,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-data-tables PUBLIC Azure::azure-core-xml Azure::azure-core)
+target_link_libraries(azure-data-tables PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-data-tables ${AZ_LIBRARY_VERSION})

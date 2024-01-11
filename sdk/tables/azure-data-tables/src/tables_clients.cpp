@@ -14,6 +14,7 @@
 #include <string>
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::_detail::Policies;
+using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::Credentials::_internal;
 using namespace Azure::Data::Tables::_detail;
 
@@ -250,8 +251,7 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
   Models::ServiceStatistics response;
   {
     const auto& responseBody = pRawResponse->GetBody();
-    Azure::Core::_internal::Xml::XmlReader reader(
-        reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
+    Xml::XmlReader reader(reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
     enum class XmlTagEnum
     {
       kUnknown,
@@ -271,16 +271,16 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
     while (true)
     {
       auto node = reader.Read();
-      if (node.Type == Azure::Core::_internal::Xml::XmlNodeType::End)
+      if (node.Type == XmlNodeType::End)
       {
         break;
       }
-      else if (node.Type == Azure::Core::_internal::Xml::XmlNodeType::StartTag)
+      else if (node.Type == XmlNodeType::StartTag)
       {
         auto ite = XmlTagEnumMap.find(node.Name);
         xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
       }
-      else if (node.Type == Azure::Core::_internal::Xml::XmlNodeType::Text)
+      else if (node.Type == XmlNodeType::Text)
       {
         if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceStats
             && xmlPath[1] == XmlTagEnum::kGeoReplication && xmlPath[2] == XmlTagEnum::kStatus)
@@ -295,10 +295,10 @@ Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
               = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
         }
       }
-      else if (node.Type == Azure::Core::_internal::Xml::XmlNodeType::Attribute)
+      else if (node.Type == XmlNodeType::Attribute)
       {
       }
-      else if (node.Type == Azure::Core::_internal::Xml::XmlNodeType::EndTag)
+      else if (node.Type == XmlNodeType::EndTag)
       {
 
         xmlPath.pop_back();

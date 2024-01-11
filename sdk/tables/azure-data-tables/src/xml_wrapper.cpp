@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/xml/internal/xml_wrapper.hpp"
+#include "azure/data/tables/internal/xml_wrapper.hpp"
 
 #include <azure/core/platform.hpp>
 
@@ -23,7 +23,7 @@
 #include <libxml/xmlwriter.h>
 #endif
 
-namespace Azure { namespace Core { namespace _internal { namespace Xml { namespace Delete {
+namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Xml {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
@@ -618,4 +618,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Xml { namespa
 
 #endif
 
-}}}}} // namespace Azure::Core::_internal::Xml::Delete
+}}}}} // namespace Azure::Data::Tables::_detail::Xml
