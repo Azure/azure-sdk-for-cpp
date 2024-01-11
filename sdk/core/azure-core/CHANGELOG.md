@@ -6,8 +6,6 @@
 
 ### Features Added
 
-- Added 'OPTIONS' HTTP method to `Azure::Core::Http::HttpMethod` enum.
-
 ### Breaking Changes
 
 ### Bugs Fixed
