@@ -2317,12 +2317,6 @@ CurlConnection::CurlConnection(
 
   if (!options.CAPath.empty())
   {
-#if defined(AZ_PLATFORM_LINUX)
-    throw Azure::Core::Http::TransportException(
-        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-        + ". Failed to set CA path to:" + options.CAPath
-        + ". Setting the CA Path is only supported on Linux.");
-#endif
     if (!SetLibcurlOption(m_handle, CURLOPT_CAPATH, options.CAPath.c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
