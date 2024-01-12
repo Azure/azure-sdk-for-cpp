@@ -167,7 +167,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
           properties.PartitionIds.push_back(static_cast<std::string>(partition));
         }
       }
-      managementClient.Close();
+      managementClient.Close(context);
 
       return properties;
     }
@@ -259,7 +259,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
                 .count()));
         properties.IsEmpty = bodyMap["is_partition_empty"];
       }
-      managementClient.Close();
+      managementClient.Close(context);
 
       return properties;
     }

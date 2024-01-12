@@ -72,6 +72,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::string GetName() const;
 
+    LINK_HANDLE GetUnderlyingLink() const { return m_link; };
+
     Models::_internal::MessageTarget const& GetTarget() const;
     Models::_internal::MessageSource const& GetSource() const;
 

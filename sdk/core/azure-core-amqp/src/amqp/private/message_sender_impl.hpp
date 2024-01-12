@@ -12,7 +12,7 @@
 
 #include <tuple>
 
-#define SENDER_SYNCHRONOUS_CLOSE 0
+#define SENDER_SYNCHRONOUS_CLOSE 1
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl& operator=(MessageSenderImpl&&) noexcept = delete;
 
     void Open(Context const& context);
-    void Close();
+    void Close(Context const& context);
     std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context);
@@ -76,6 +76,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::AmqpMessage const& message,
         Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Context const& context);
+
+    void OnLinkDetached(Models::_internal::AmqpError const& error);
 
     bool m_senderOpen{false};
     UniqueMessageSender m_messageSender{};

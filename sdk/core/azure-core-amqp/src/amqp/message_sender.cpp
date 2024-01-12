@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   void MessageSender::Open(Context const& context) { m_impl->Open(context); }
-  void MessageSender::Close() { m_impl->Close(); }
+  void MessageSender::Close(Context const& context) { m_impl->Close(context); }
   std::tuple<MessageSendStatus, Models::_internal::AmqpError> MessageSender::Send(
       Models::AmqpMessage const& message,
       Context const& context)
@@ -158,23 +158,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_target);
     PopulateLinkProperties();
 
-    m_link->SubscribeToDetachEvent([this](Models::_internal::AmqpError const& error) {
-      if (m_senderOpen)
-      {
-        if (m_events)
-        {
-          m_events->OnMessageSenderDisconnected(error);
-        }
-        // Log that an error occurred.
-        Log::Stream(Logger::Level::Warning)
-            << "Message sender link detached: " << error.Condition.ToString() << ": "
-            << error.Description;
-
-        // Cache the error we received in the OnDetach notification so we can return it to the user
-        // on the next send which fails.
-        m_savedMessageError = error;
-      }
-    });
+    m_link->SubscribeToDetachEvent(
+        [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
   }
 
   /* Populate link properties from options. */
@@ -324,21 +309,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_senderOpen = true;
   }
 
-  void MessageSenderImpl::Close()
+  void MessageSenderImpl::Close(Context const& context)
   {
     if (m_senderOpen)
     {
       if (m_options.EnableTrace)
       {
-        Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
-      }
-
-      if (m_options.EnableTrace)
-      {
         Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
-        Log::Stream(Logger::Level::Verbose) << "Unsubscribe from link detach event.";
       }
-      m_link->UnsubscribeFromDetachEvent();
 
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
           m_link); // This will ensure that the link is cleaned up on the next poll()
@@ -348,27 +326,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           || m_currentState == _internal::MessageSenderState::Open;
 #endif
 
-      m_session->GetConnection()->EnableAsyncOperation(false);
-
-      auto lock{m_session->GetConnection()->Lock()};
-
-      if (messagesender_close(m_messageSender.get()))
       {
-        throw std::runtime_error("Could not close message sender");
-      }
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
+        }
 
+        auto lock{m_session->GetConnection()->Lock()};
+
+        if (messagesender_close(m_messageSender.get()))
+        {
+          throw std::runtime_error("Could not close message sender");
+        }
+      }
 #if SENDER_SYNCHRONOUS_CLOSE
-      if (m_options.EnableTrace)
-      {
-        Log::Stream(Logger::Level::Verbose)
-            << "Wait for sender detach to complete. Current state: " << m_currentState;
-      }
-
       // The message sender (and it's underlying link) is in the half open state. Wait until the
       // link has fully closed.
-      if (shouldWaitForClose && false)
+      if (shouldWaitForClose)
       {
-        lock.unlock();
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Wait for sender detach to complete. Current state: " << m_currentState;
+        }
 
         auto result = m_closeQueue.WaitForResult(context);
         if (!result)
@@ -382,8 +362,45 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
       }
 #endif
+      {
+        auto lock{m_session->GetConnection()->Lock()};
+
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Sender Unsubscribe from link detach event. Link instance: "
+              << m_link->GetUnderlyingLink();
+        }
+        m_link->UnsubscribeFromDetachEvent();
+
+        // Now that the connection is closed, the link is no longer needed. This will free the link
+        m_link.reset();
+      }
+      m_session->GetConnection()->EnableAsyncOperation(false);
 
       m_senderOpen = false;
+    }
+  }
+
+  void MessageSenderImpl::OnLinkDetached(Models::_internal::AmqpError const& error)
+  {
+    if (m_senderOpen)
+    {
+      if (m_events)
+      {
+        m_events->OnMessageSenderDisconnected(error);
+      }
+      // Log that an error occurred.
+      Log::Stream(Logger::Level::Warning)
+          << "Message sender link detached: " << error.Condition.ToString() << ": "
+          << error.Description;
+
+      // Cache the error we received in the OnDetach notification so we can return it to the user
+      // on the next send which fails.
+      m_savedMessageError = error;
+
+      // When we've received a link detached, we can complete the close.
+      m_closeQueue.CompleteOperation(error);
     }
   }
 

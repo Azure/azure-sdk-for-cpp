@@ -677,7 +677,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {
           throw std::runtime_error("Could not put Claims Based Security token.");
         }
-        claimsBasedSecurity->Close();
+        claimsBasedSecurity->Close(context);
         if (m_options.EnableTrace)
         {
           Log::Stream(Logger::Level::Verbose)
@@ -690,7 +690,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       catch (std::runtime_error const&)
       {
         // Ensure that the claims based security object is closed before we leave this scope.
-        claimsBasedSecurity->Close();
+        claimsBasedSecurity->Close(context);
         throw;
       }
     }

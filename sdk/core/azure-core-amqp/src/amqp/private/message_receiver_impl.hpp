@@ -20,7 +20,7 @@
 #include <memory>
 #include <vector>
 
-#define RECEIVER_SYNCHRONOUS_CLOSE 0
+#define RECEIVER_SYNCHRONOUS_CLOSE 1
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     operator bool() const { return (m_messageReceiver != nullptr); }
 
     void Open(Context const& context);
-    void Close();
+    void Close(Context const& context);
     std::string GetLinkName() const;
     std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
 
@@ -106,6 +106,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     virtual Models::AmqpValue OnMessageReceived(
         std::shared_ptr<Models::AmqpMessage> const& message);
+
+    void OnLinkDetached(Models::_internal::AmqpError const& error);
 
     static void OnMessageReceiverStateChangedFn(
         const void* context,

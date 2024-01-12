@@ -79,9 +79,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
     MessageTests::AmqpServerMock mockServer;
 
+    mockServer.EnableTrace(false);
+
+ 
     ConnectionOptions options;
     options.Port = mockServer.GetPort();
-    options.EnableTrace = false;
+    options.EnableTrace = true;
     options.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
     Connection connection("localhost", nullptr, options);
     Session session{connection.CreateSession()};

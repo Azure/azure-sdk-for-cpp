@@ -633,6 +633,7 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                 error = NULL;
             }
             remove_all_pending_deliveries(link_instance, true);
+
             // signal link detach received in order to handle cases like redirect
             if (link_instance->on_link_detach_received_event_subscription.on_link_detach_received != NULL)
             {
@@ -1308,7 +1309,6 @@ int link_attach(LINK_HANDLE link, ON_TRANSFER_RECEIVED on_transfer_received, ON_
             link->on_transfer_received = on_transfer_received;
             link->on_link_flow_on = on_link_flow_on;
             link->callback_context = callback_context;
-
             if (session_begin(link->session) != 0)
             {
                 LogError("Begin session failed");

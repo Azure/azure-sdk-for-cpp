@@ -75,7 +75,7 @@ EventHubProperties GetEventHubProperties(
       properties.PartitionIds.push_back(static_cast<std::string>(partition));
     }
   }
-  managementClient.Close();
+  managementClient.Close({});
 
   return properties;
 }
@@ -94,7 +94,8 @@ struct EventHubPartitionProperties final
 std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
     Azure::Core::Amqp::_internal::Session const& session,
     std::string const& eventHubName,
-    std::string const& partitionId)
+    std::string const& partitionId,
+    Azure::Core::Context const& context = {})
 {
 
   // Create a management client off the session.
@@ -105,7 +106,7 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
   Azure::Core::Amqp::_internal::ManagementClient managementClient(
       session.CreateManagementClient(eventHubName, managementClientOptions));
 
-  managementClient.Open();
+  managementClient.Open(context);
 
   // Send a message to the management endpoint to retrieve the properties of the eventhub.
   Azure::Core::Amqp::Models::AmqpMessage message;
@@ -116,7 +117,7 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
       "READ" /* operation */,
       "com.microsoft:partition" /* type of operation */,
       "" /* locales */,
-      message);
+      message,context);
 
   EventHubPartitionProperties properties;
   bool error{false};
@@ -150,7 +151,7 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
             .count()));
     properties.IsEmpty = bodyMap["is_partition_empty"];
   }
-  managementClient.Close();
+  managementClient.Close(context);
 
   return std::make_tuple(error, properties);
 }

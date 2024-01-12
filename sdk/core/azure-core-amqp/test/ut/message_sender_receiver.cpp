@@ -269,7 +269,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, SenderSendAsync)
   {
+    class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      SenderLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
+    private:
+      void MessageReceived(
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received: " << *message;
+      }
+    };
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = true;
+    auto senderEndpoint
+        = std::make_shared<SenderLinkEndpoint>("localhost/ingress", mockServiceEndpointOptions);
     MessageTests::AmqpServerMock mockServer{};
+    mockServer.AddServiceEndpoint(senderEndpoint);
 
     GTEST_LOG_(INFO) << "Test port: " << mockServer.GetPort();
 
@@ -329,14 +351,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, SenderSendSync)
   {
+    class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      SenderLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
+    private:
+      void MessageReceived(
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received: " << *message;
+      }
+    };
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = true;
+    auto senderEndpoint
+        = std::make_shared<SenderLinkEndpoint>("localhost/ingress", mockServiceEndpointOptions);
     MessageTests::AmqpServerMock mockServer{};
+    mockServer.AddServiceEndpoint(senderEndpoint);
+
     ConnectionOptions connectionOptions;
 
     GTEST_LOG_(INFO) << "Test port: " << mockServer.GetPort();
 
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
     connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_case()->name();
-
     connectionOptions.Port = mockServer.GetPort();
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession()};
@@ -372,7 +416,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, AuthenticatedSender)
   {
+    class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      ReceiverServiceEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
+    private:
+      void MessageReceived(
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received: " << *message;
+      }
+    };
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = false;
+    auto serviceEndpoint
+        = std::make_shared<ReceiverServiceEndpoint>("testLocation", mockServiceEndpointOptions);
+
     MessageTests::AmqpServerMock server;
+    server.AddServiceEndpoint(serviceEndpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
         "Endpoint=amqp://localhost:" + std::to_string(server.GetPort())
@@ -383,6 +449,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
     connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->name();
     connectionOptions.Port = server.GetPort();
+    connectionOptions.EnableTrace = true;
     Connection connection("localhost", sasCredential, connectionOptions);
     Session session{connection.CreateSession()};
 
@@ -390,6 +457,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     MessageSenderOptions senderOptions;
     senderOptions.Name = "sender-link";
+    senderOptions.EnableTrace = true;
     senderOptions.MessageSource = "ingress";
     senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
     senderOptions.MaxMessageSize = 65536;
@@ -461,8 +529,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiver)
   {
-    class ReceiverMock : public MessageTests::AmqpServerMock {
+    class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
     public:
+      ReceiverServiceEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
       void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
       void SetSenderNodeName(std::string const& senderNodeName)
       {
@@ -475,17 +550,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       void Poll() const override
       {
-        if (m_shouldSendMessage
-            && m_linkMessageQueues.find(m_senderNodeName) != m_linkMessageQueues.end())
+        if (m_shouldSendMessage && HasMessageSender())
         {
           GTEST_LOG_(INFO) << "Sending message to client." + m_senderNodeName;
           Azure::Core::Amqp::Models::AmqpMessage sendMessage;
           sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
-          if (m_linkMessageQueues.at(m_senderNodeName).LinkSender)
+          if (HasMessageSender())
           {
             GTEST_LOG_(INFO) << "Sent, resetting should send.";
             m_shouldSendMessage = false;
-            m_linkMessageQueues.at(m_senderNodeName).LinkSender->Send(sendMessage);
+            GetMessageSender().Send(sendMessage);
           }
           else
           {
@@ -493,9 +567,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           }
         }
       }
+
+      void MessageReceived(
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received: " << *message;
+      }
     };
 
-    ReceiverMock server;
+    MessageTests::AmqpServerMock server;
+    auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
+        "testLocation", MessageTests::MockServiceEndpointOptions{});
+    server.AddServiceEndpoint(serviceEndpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
         "Endpoint=amqp://localhost:" + std::to_string(server.GetPort())
@@ -509,7 +592,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Connection connection("localhost", sasCredential, connectionOptions);
     Session session{connection.CreateSession()};
 
-    server.SetSenderNodeName(sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
+    serviceEndpoint->SetSenderNodeName(
+        sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
     server.StartListening();
 
     MessageReceiverOptions receiverOptions;
@@ -527,7 +611,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // Send a message.
     {
-      server.ShouldSendMessage(true);
+      serviceEndpoint->ShouldSendMessage(true);
       auto message = receiver.WaitForIncomingMessage();
       GTEST_LOG_(INFO) << "Received message.";
       ASSERT_TRUE(message.first);
@@ -551,7 +635,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     {
       GTEST_LOG_(INFO) << "Trigger message send for polling.";
-      server.ShouldSendMessage(true);
+      serviceEndpoint->ShouldSendMessage(true);
       std::this_thread::sleep_for(std::chrono::milliseconds(5000));
       GTEST_LOG_(INFO) << "Message should have been sent and processed.";
       auto result = receiver.TryWaitForIncomingMessage();
@@ -563,8 +647,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiverAzureToken)
   {
-    class ReceiverMock : public MessageTests::AmqpServerMock {
+    class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
     public:
+      ReceiverServiceEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
       void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
       void SetSenderNodeName(std::string const& senderNodeName)
       {
@@ -577,19 +668,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       void Poll() const override
       {
-        if (m_shouldSendMessage
-            && m_linkMessageQueues.find(m_senderNodeName) != m_linkMessageQueues.end())
+        if (m_shouldSendMessage && HasMessageSender())
         {
+          GTEST_LOG_(INFO) << "Sending message to client." + m_senderNodeName;
           Azure::Core::Amqp::Models::AmqpMessage sendMessage;
           sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
-          if (m_linkMessageQueues.at(m_senderNodeName).LinkSender)
+          if (HasMessageSender())
           {
-            m_linkMessageQueues.at(m_senderNodeName).LinkSender->Send(sendMessage);
+            GTEST_LOG_(INFO) << "Sent, resetting should send.";
             m_shouldSendMessage = false;
+            GetMessageSender().Send(sendMessage);
+          }
+          else
+          {
+            GTEST_LOG_(INFO) << "No sender, skipping";
           }
         }
       }
+      void MessageReceived(
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received: " << *message;
+      }
     };
+
+    MessageTests::AmqpServerMock server;
+    auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
+        "testLocation", MessageTests::MockServiceEndpointOptions{});
+    server.AddServiceEndpoint(serviceEndpoint);
 
     class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
       Azure::Core::Credentials::AccessToken GetToken(
@@ -608,8 +714,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
     };
 
-    ReceiverMock server;
-
     auto tokenCredential = std::make_shared<AzureTokenCredential>();
     std::string hostName = "localhost";
     std::string entityPath = "testLocation";
@@ -624,7 +728,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Connection connection(hostName, tokenCredential, connectionOptions);
     Session session{connection.CreateSession()};
 
-    server.SetSenderNodeName(endpoint);
+    serviceEndpoint->SetSenderNodeName(endpoint);
     server.StartListening();
 
     MessageReceiverOptions receiverOptions;
@@ -643,7 +747,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           std::chrono::system_clock::now() + std::chrono::seconds(15))};
 
       // Tell the server it should send a message in the polling loop.
-      server.ShouldSendMessage(true);
+      serviceEndpoint->ShouldSendMessage(true);
       GTEST_LOG_(INFO) << "Waiting for message to be received.";
       std::pair<std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>, bool> response;
       ASSERT_NO_THROW(response = receiver.WaitForIncomingMessage(receiveContext));
@@ -667,8 +771,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiverTryReceive)
   {
-    class ReceiverMock : public MessageTests::AmqpServerMock {
+    class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
     public:
+      ReceiverServiceEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
       void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
       void SetSenderNodeName(std::string const& senderNodeName)
       {
@@ -681,17 +792,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       void Poll() const override
       {
-        if (m_shouldSendMessage
-            && m_linkMessageQueues.find(m_senderNodeName) != m_linkMessageQueues.end())
+        if (m_shouldSendMessage && HasMessageSender())
         {
           GTEST_LOG_(INFO) << "Sending message to client." + m_senderNodeName;
           Azure::Core::Amqp::Models::AmqpMessage sendMessage;
           sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
-          if (m_linkMessageQueues.at(m_senderNodeName).LinkSender)
+          if (HasMessageSender())
           {
             GTEST_LOG_(INFO) << "Sent, resetting should send.";
             m_shouldSendMessage = false;
-            m_linkMessageQueues.at(m_senderNodeName).LinkSender->Send(sendMessage);
+            GetMessageSender().Send(sendMessage);
           }
           else
           {
@@ -699,9 +809,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           }
         }
       }
+      void MessageReceived(
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received: " << *message;
+      }
     };
 
-    ReceiverMock server;
+    MessageTests::AmqpServerMock server;
+    auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
+        "testLocation", MessageTests::MockServiceEndpointOptions{});
+    server.AddServiceEndpoint(serviceEndpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
         "Endpoint=amqp://localhost:" + std::to_string(server.GetPort())
@@ -715,7 +833,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Connection connection("localhost", sasCredential, connectionOptions);
     Session session{connection.CreateSession()};
 
-    server.SetSenderNodeName(sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
+    serviceEndpoint->SetSenderNodeName(
+        sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
     server.StartListening();
 
     MessageReceiverOptions receiverOptions;
@@ -738,7 +857,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     {
       GTEST_LOG_(INFO) << "Trigger message send for polling.";
-      server.ShouldSendMessage(true);
+      serviceEndpoint->ShouldSendMessage(true);
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
       GTEST_LOG_(INFO) << "Message should have been sent and processed.";
       auto result = receiver.TryWaitForIncomingMessage();
