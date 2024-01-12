@@ -1,16 +1,20 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 1.0.0-beta.6 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-- EventHub `ConsumerClient` and `ProcessorClient` objects now return pointers to `EventData` objects instead of `EventData` objects by value.
-
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0-beta.5 (2024-01-11)
+
+### Breaking Changes
+
+- EventHub `ConsumerClient` and `ProcessorClient` objects now return pointers to `EventData` objects instead of `EventData` objects by value.
 
 ## 1.0.0-beta.4 (2023-11-07)
 
