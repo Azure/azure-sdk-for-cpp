@@ -14,7 +14,7 @@
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Data::Tables::_detail::Policies;
 using namespace Azure::Data::Tables::Credentials;
-using namespace Azure::Data::Tables::Credentials::_internal;
+using namespace Azure::Data::Tables::Credentials::_detail;
 namespace Azure { namespace Data { namespace Tables { namespace _internal { namespace Policies {
   namespace Test {
 

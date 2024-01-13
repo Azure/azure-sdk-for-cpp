@@ -215,20 +215,17 @@ namespace Azure { namespace Data { namespace Tables {
      * @return Get access policy result.
      */
     Response<Models::TableAccessPolicy> GetAccessPolicy(
-        Models::GetTableAccessPolicyOptions const& options = {},
         Core::Context const& context = {});
 
     /**
      * @brief Set table access policy.
      *
      * @param tableAccessPolicy The TableAccessPolicy to set.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Set access policy result.
      */
     Response<Models::SetTableAccessPolicyResult> SetAccessPolicy(
         Models::TableAccessPolicy const& tableAccessPolicy,
-        Models::SetTableAccessPolicyOptions const& options = {},
         Core::Context const& context = {});
 
     /**
@@ -280,7 +277,6 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::DeleteEntityResult> DeleteEntity(
         Models::TableEntity const& tableEntity,
-        Models::DeleteEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**
@@ -420,23 +416,19 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Get service properties
      *
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Get service properties result.
      */
     Response<Models::TableServiceProperties> GetServiceProperties(
-        Models::GetServicePropertiesOptions const& options = {},
         Core::Context const& context = {});
 
     /**
      * @brief Get service statistics
      *
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Get service statistics result.
      */
     Response<Models::ServiceStatistics> GetStatistics(
-        Models::GetServiceStatisticsOptions const& options = {},
         Core::Context const& context = {});
 
     /**

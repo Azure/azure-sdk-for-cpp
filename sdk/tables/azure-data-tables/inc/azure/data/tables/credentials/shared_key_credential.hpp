@@ -69,7 +69,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
     std::string m_accountKey;
   };
 
-  namespace _internal {
+  namespace _detail {
     struct ConnectionStringParts
     {
       std::string AccountName;
@@ -80,6 +80,6 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
 
     ConnectionStringParts ParseConnectionString(const std::string& connectionString);
     std::string GetDefaultScopeForAudience(const std::string& audience);
-  } // namespace _internal
+  } // namespace _detail
 
 }}}} // namespace Azure::Data::Tables::Credentials

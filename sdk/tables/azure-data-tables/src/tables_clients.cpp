@@ -15,7 +15,7 @@
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::_detail::Policies;
 using namespace Azure::Data::Tables::_detail::Xml;
-using namespace Azure::Data::Tables::Credentials::_internal;
+using namespace Azure::Data::Tables::Credentials::_detail;
 using namespace Azure::Data::Tables::_detail;
 
 TableServicesClient::TableServicesClient(const TableClientOptions& options)
@@ -204,10 +204,8 @@ Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServ
 }
 
 Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceProperties(
-    Models::GetServicePropertiesOptions const& options,
     Core::Context const& context)
 {
-  (void)options;
   auto url = m_url;
   url.AppendQueryParameter("restype", "service");
   url.AppendQueryParameter("comp", "properties");
@@ -229,10 +227,8 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
 }
 
 Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
-    Models::GetServiceStatisticsOptions const& options,
     const Core::Context& context)
 {
-  (void)options;
   auto url = m_url;
   std::string host = url.GetHost();
   std::string accountName = host.substr(0, host.find('.'));
@@ -541,14 +537,12 @@ Models::ListTablesPagedResponse TableServicesClient::ListTables(
 
 Azure::Response<Models::SetTableAccessPolicyResult> TableClient::SetAccessPolicy(
     Models::TableAccessPolicy const& tableAccessPolicy,
-    Models::SetTableAccessPolicyOptions const& options,
     Core::Context const& context)
 
 {
   auto url = m_url;
   url.AppendPath(m_tableName);
   url.AppendQueryParameter("comp", "acl");
-  (void)options;
   std::string xmlBody = Serializers::SetAccessPolicy(tableAccessPolicy);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<const uint8_t*>(xmlBody.data()), xmlBody.length());
@@ -569,10 +563,8 @@ Azure::Response<Models::SetTableAccessPolicyResult> TableClient::SetAccessPolicy
 }
 
 Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
-    Models::GetTableAccessPolicyOptions const& options,
     Core::Context const& context)
 {
-  (void)options;
   auto url = m_url;
   url.SetPath("");
   url.AppendPath(m_tableName);
@@ -748,10 +740,8 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
 
 Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
     Models::TableEntity const& tableEntity,
-    Models::DeleteEntityOptions const& options,
     Core::Context const& context)
 {
-  (void)options;
   auto url = m_url;
   url.AppendPath(
       m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
