@@ -210,7 +210,6 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Get table access policy.
      *
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Get access policy result.
      */
@@ -271,7 +270,6 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Delete table entity.
      *
      * @param tableEntity The TableEntity to delete.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Delete entity result.
      */
