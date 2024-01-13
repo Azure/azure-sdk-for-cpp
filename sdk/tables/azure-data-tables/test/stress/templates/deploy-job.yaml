@@ -1,0 +1,25 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+{{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.deploy-example") -}}
+{{- define "stress.deploy-example" -}}
+metadata:
+  labels:
+    chaos: "{{ default false .Stress.chaos }}"
+spec:
+  containers:
+    - name: main
+      image: {{ .Stress.imageTag }}
+      imagePullPolicy: Always
+      command:
+        [
+          "valgrind",
+          "--tool=memcheck",
+          "-s",
+          "./azure-data-tables-stress-test",
+        ]
+      {{- include "stress-test-addons.container-env" . | nindent 6 }}
+      resources:
+        limits:
+          memory: {{.Stress.memory }}
+          cpu: "1"
+{{- end -}}
