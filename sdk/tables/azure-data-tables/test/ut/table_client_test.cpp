@@ -223,9 +223,7 @@ namespace Azure { namespace Data { namespace Test {
     }
     else
     {
-      Azure::Data::Tables::Models::GetServicePropertiesOptions getOptions;
-
-      auto response = m_tableServiceClient->GetServiceProperties(getOptions);
+      auto response = m_tableServiceClient->GetServiceProperties();
       EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
       EXPECT_EQ(response.Value.Logging.Version, "1.0");
       EXPECT_EQ(response.Value.Logging.Delete, false);
@@ -241,10 +239,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientSet_LIVEONLY_)
   {
-
-    Azure::Data::Tables::Models::GetServicePropertiesOptions getOptions;
-
-    auto response = m_tableServiceClient->GetServiceProperties(getOptions);
+    auto response = m_tableServiceClient->GetServiceProperties();
 
     Azure::Data::Tables::Models::SetServicePropertiesOptions setOptions;
     setOptions.ServiceProperties = std::move(response.Value);
@@ -254,9 +249,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientStatistics_LIVEONLY_)
   {
-    Azure::Data::Tables::Models::GetServiceStatisticsOptions statsOptions;
-
-    auto response = m_tableServiceClient->GetStatistics(statsOptions);
+    auto response = m_tableServiceClient->GetStatistics();
 
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     EXPECT_EQ(response.Value.GeoReplication.Status.ToString(), "live");

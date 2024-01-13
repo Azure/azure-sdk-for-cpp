@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-namespace Azure { namespace Data { namespace Tables { namespace Credentials { namespace _internal {
+namespace Azure { namespace Data { namespace Tables { namespace Credentials { namespace _detail {
 
   ConnectionStringParts ParseConnectionString(const std::string& connectionString)
   {
@@ -97,4 +97,4 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials { na
     }
     return audience + "/.default";
   }
-}}}}} // namespace Azure::Data::Tables::Credentials::_internal
+}}}}} // namespace Azure::Data::Tables::Credentials::_detail
