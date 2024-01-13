@@ -213,8 +213,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param context for canceling long running operations.
      * @return Get access policy result.
      */
-    Response<Models::TableAccessPolicy> GetAccessPolicy(
-        Core::Context const& context = {});
+    Response<Models::TableAccessPolicy> GetAccessPolicy(Core::Context const& context = {});
 
     /**
      * @brief Set table access policy.
@@ -426,8 +425,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param context for canceling long running operations.
      * @return Get service statistics result.
      */
-    Response<Models::ServiceStatistics> GetStatistics(
-        Core::Context const& context = {});
+    Response<Models::ServiceStatistics> GetStatistics(Core::Context const& context = {});
 
     /**
      * @brief Pre flight check
