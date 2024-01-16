@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/core/dll_import_export.hpp"
+#include "azure/data/tables/dll_import_export.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 
@@ -12,11 +12,11 @@
 
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
-  AZ_CORE_DLLEXPORT extern const Azure::Core::Context::Key SecondaryHostReplicaStatusKey;
+  AZ_DATA_TABLES_DLLEXPORT extern const Azure::Core::Context::Key SecondaryHostReplicaStatus;
 
   inline Azure::Core::Context WithReplicaStatus(const Azure::Core::Context& context)
   {
-    return context.WithValue(SecondaryHostReplicaStatusKey, std::make_shared<bool>(true));
+    return context.WithValue(SecondaryHostReplicaStatus, std::make_shared<bool>(true));
   }
 
   class SwitchToSecondaryPolicy final : public Azure::Core::Http::Policies::HttpPolicy {

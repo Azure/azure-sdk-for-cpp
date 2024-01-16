@@ -5,7 +5,7 @@
 
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
-  Azure::Core::Context::Key const SecondaryHostReplicaStatusKey;
+  Azure::Core::Context::Key const SecondaryHostReplicaStatus;
 
   std::unique_ptr<Azure::Core::Http::RawResponse> SwitchToSecondaryPolicy::Send(
       Azure::Core::Http::Request& request,
@@ -13,7 +13,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
       const Azure::Core::Context& context) const
   {
     std::shared_ptr<bool> replicaStatus;
-    context.TryGetValue(SecondaryHostReplicaStatusKey, replicaStatus);
+    context.TryGetValue(SecondaryHostReplicaStatus, replicaStatus);
 
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
