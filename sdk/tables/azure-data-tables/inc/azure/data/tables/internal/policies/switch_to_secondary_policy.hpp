@@ -12,11 +12,11 @@
 
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
-  AZ_DATA_TABLES_DLLEXPORT extern const Azure::Core::Context::Key SecondaryHostReplicaStatus;
+  AZ_DATA_TABLES_DLLEXPORT extern const Azure::Core::Context::Key SecondaryHostReplicaStatusKey;
 
   inline Azure::Core::Context WithReplicaStatus(const Azure::Core::Context& context)
   {
-    return context.WithValue(SecondaryHostReplicaStatus, std::make_shared<bool>(true));
+    return context.WithValue(SecondaryHostReplicaStatusKey, std::make_shared<bool>(true));
   }
 
   class SwitchToSecondaryPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
