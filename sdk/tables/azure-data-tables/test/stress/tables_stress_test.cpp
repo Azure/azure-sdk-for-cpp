@@ -14,7 +14,7 @@
 #define WARMUP 100
 #define ROUNDS 1000
 
-#include <azure/data/tables.hpp>
+#include "azure/data/tables.hpp"
 
 #include <iostream>
 
