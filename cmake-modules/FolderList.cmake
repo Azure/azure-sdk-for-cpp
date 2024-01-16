@@ -30,6 +30,8 @@ macro(GetFolderList project)
     elseif(${project} STREQUAL STORAGE_QUEUES)
         DownloadDepVersion(sdk/core azure-core 1.10.3)
         DownloadDepVersion(sdk/storage/azure-storage-common azure-storage-common 12.5.0)
+    elseif(${project} STREQUAL DATA_TABLES)
+        DownloadDepVersion(sdk/core azure-core 1.10.3)
     elseif(${project} STREQUAL EVENTHUBS)
         DownloadDepVersion(sdk/core azure-core 1.10.1)
         DownloadDepVersion(sdk/core azure-core-amqp 1.0.0-beta.1)
@@ -39,6 +41,8 @@ macro(GetFolderList project)
         DownloadDepVersion(sdk/eventhubs azure-messaging-eventhubs 1.0.0-beta.3)
         DownloadDepVersion(sdk/storage/azure-storage-common azure-storage-common 12.3.3)
         DownloadDepVersion(sdk/storage/azure-storage-blobs azure-storage-blobs 12.8.0)
+     elseif(${project} STREQUAL CORE_XML)
+        DownloadDepVersion(sdk/core azure-core 1.10.3)
     endif()
     list(REMOVE_DUPLICATES BUILD_FOLDERS)
 endmacro()
@@ -73,13 +77,40 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     set(DEP_PREFIX azure-sdk-for-cpp)
 
     if(FETCH_SOURCE_DEPS STREQUAL "LATEST")
-        message("Downloading latest version of ${DEP_NAME}")
+        SET(DOWNLOAD_MESSAGE "Downloading latest version of ${DEP_NAME}")
         #get the latest version from main
-        file(DOWNLOAD http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE})
+        SET(DOWNLOAD_LINK "http://github.com/Azure/azure-sdk-for-cpp/archive/main.zip")
     else()
-        message("Downloading version ${DEP_VERSION} of ${DEP_NAME}")
+        SET(DOWNLOAD_MESSAGE "Downloading version ${DEP_VERSION} of ${DEP_NAME}")
         # get the zip
-        file(DOWNLOAD https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE} ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE})
+        SET(DOWNLOAD_LINK "https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/${DOWNLOAD_FILE}")
+    endif()
+
+    foreach(RETRY_ATTEMPT RANGE 2)
+        math(EXPR RETRY_DELAY "10 * ${RETRY_ATTEMPT}" OUTPUT_FORMAT DECIMAL)
+        if (RETRY_ATTEMPT GREATER 0)
+            message("Waiting for ${RETRY_DELAY} seconds before retrying download.")
+            execute_process(COMMAND ${CMAKE_COMMAND} -E sleep ${RETRY_DELAY})
+        endif()
+
+        message(${DOWNLOAD_MESSAGE})
+        file(
+            DOWNLOAD ${DOWNLOAD_LINK}
+            ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE}
+            SHOW_PROGRESS
+            STATUS DOWNLOAD_STATUS
+        )
+
+        list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+        if (${STATUS_CODE} EQUAL 0)
+            break()
+        else()
+            list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+            message("Download failed with status code ${STATUS_CODE}: ${ERROR_MESSAGE}.")
+        endif()
+    endforeach()
+    if (NOT ${STATUS_CODE} EQUAL 0)
+        message(FATAL_ERROR "Dependency download failed (Link: ${DOWNLOAD_LINK}).")
     endif()
 
     #extract the zip

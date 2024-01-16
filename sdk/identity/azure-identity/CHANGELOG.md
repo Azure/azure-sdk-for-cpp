@@ -1,12 +1,24 @@
 # Release History
 
-## 1.7.0-beta.1 (Unreleased)
+## 1.7.0-beta.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.7.0-beta.1 (2024-01-11)
+
+### Features Added
+
+- [[#5116]](https://github.com/Azure/azure-sdk-for-cpp/issues/5116) `AzureCliCredential`: Added support for the new response field which represents token expiration timestamp as time zone agnostic value.
+
+### Bugs Fixed
+
+- [[#5075]](https://github.com/Azure/azure-sdk-for-cpp/issues/5075) `AzureCliCredential` assumes token expiration time without local time zone adjustment.
 
 ### Other Changes
 

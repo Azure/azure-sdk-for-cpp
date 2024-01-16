@@ -13,7 +13,9 @@
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
 
+#include <chrono>
 #include <cstdio>
+#include <ctime>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>
@@ -127,6 +129,27 @@ std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::str
   return command;
 }
 
+int AzureCliCredential::GetLocalTimeToUtcDiffSeconds() const
+{
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+  // LCOV_EXCL_START
+  auto const timeTNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+  // std::difftime() returns difference in seconds.
+  // We do not expect any fractional parts, but should there be any - we do not care about them.
+  return static_cast<int>(
+      std::difftime(std::mktime(std::localtime(&timeTNow)), std::mktime(std::gmtime(&timeTNow))));
+  // LCOV_EXCL_STOP
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+}
+
 namespace {
 std::string RunShellCommand(
     std::string const& command,
@@ -153,8 +176,22 @@ AccessToken AzureCliCredential::GetToken(
 
       try
       {
+        // The order of elements in the vector below does matter - the code tries to find them
+        // consequently, and if finding the first one succeeds, we would not attempt to parse the
+        // second one. That is important, because the newer Azure CLI versions do have the new
+        // 'expires_on' field, which is not affected by time zone changes. The 'expiresOn' field was
+        // the only field that was present in the older versions, and it had problems, because it
+        // was a local timestamp without the time zone information.
+        // So, if only the 'expires_on' is available, we try to use it, and only if it is not
+        // available, we fall back to trying to get the value via 'expiresOn', which we also now are
+        // able to handle correctly, except when the token expiration crosses the time when the
+        // local system clock moves to and from DST.
         return TokenCredentialImpl::ParseToken(
-            azCliResult, "accessToken", "expiresIn", "expiresOn");
+            azCliResult,
+            "accessToken",
+            "expiresIn",
+            std::vector<std::string>{"expires_on", "expiresOn"},
+            GetLocalTimeToUtcDiffSeconds());
       }
       catch (json::exception const&)
       {

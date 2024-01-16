@@ -51,6 +51,7 @@ std::string EchoCommand(std::string const text)
 class AzureCliTestCredential : public AzureCliCredential {
 private:
   std::string m_command;
+  int m_localTimeToUtcDiffSeconds = 0;
 
   std::string GetAzCommand(std::string const& resource, std::string const& tenantId) const override
   {
@@ -59,6 +60,8 @@ private:
 
     return m_command;
   }
+
+  int GetLocalTimeToUtcDiffSeconds() const override { return m_localTimeToUtcDiffSeconds; }
 
 public:
   explicit AzureCliTestCredential(std::string command) : m_command(std::move(command)) {}
@@ -80,6 +83,8 @@ public:
 
   decltype(m_tenantId) const& GetTenantId() const { return m_tenantId; }
   decltype(m_cliProcessTimeout) const& GetCliProcessTimeout() const { return m_cliProcessTimeout; }
+
+  void SetLocalTimeToUtcDiffSeconds(int diff) { m_localTimeToUtcDiffSeconds = diff; }
 };
 } // namespace
 
@@ -219,6 +224,56 @@ TEST(AzureCliCredential, ExpiresIn)
 
   EXPECT_GE(token.ExpiresOn, timestampBefore + std::chrono::seconds(30));
   EXPECT_LE(token.ExpiresOn, timestampAfter + std::chrono::seconds(30));
+}
+
+TEST(AzureCliCredential, ExpiresOnUnixTimestampInt)
+{
+  // 'expires_on' is 1700692424, which is a Unix timestamp of a date in 2023.
+  // 'ExpiresOn' is a date in 2022.
+  // The test checks that when both are present, 'expires_on' value (2023) is taken,
+  // and not that of 'ExpiresOn'.
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\"," // <-- 2022
+                         "\"expires_on\":1700692424}"; // <-- 2023
+
+  AzureCliTestCredential const azCliCred(EchoCommand(Token));
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://storage.azure.com/.default");
+
+  auto const token = azCliCred.GetToken(trc, {});
+
+  EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+  EXPECT_EQ(
+      token.ExpiresOn,
+      DateTime::Parse("2023-11-22T22:33:44.000000Z", DateTime::DateFormat::Rfc3339));
+}
+
+TEST(AzureCliCredential, ExpiresOnUnixTimestampString)
+{
+  // 'expires_on' is 1700692424, which is a Unix timestamp of a date in 2023.
+  // 'expiresOn' is a date in 2022.
+  // The test checks that when both are present, 'expires_on' value (2023) is taken,
+  // and not that of 'expiresOn'.
+  // The test is similar to the one above, but the Unix timestamp is represented as string
+  // containing an integer.
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\"," // <-- 2022
+                         "\"expires_on\":\"1700692424\"}"; // <-- 2023
+
+  AzureCliTestCredential const azCliCred(EchoCommand(Token));
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://storage.azure.com/.default");
+
+  auto const token = azCliCred.GetToken(trc, {});
+
+  EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+  EXPECT_EQ(
+      token.ExpiresOn,
+      DateTime::Parse("2023-11-22T22:33:44.000000Z", DateTime::DateFormat::Rfc3339));
 }
 
 TEST(AzureCliCredential, TimedOut)
@@ -568,6 +623,40 @@ TEST(AzureCliCredential, StrictIso8601TimeFormat)
   EXPECT_EQ(
       token.ExpiresOn,
       DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+}
+
+TEST(AzureCliCredential, LocalTime)
+{
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2023-12-07 00:43:08\"}";
+
+  {
+    AzureCliTestCredential azCliCred(EchoCommand(Token));
+    azCliCred.SetLocalTimeToUtcDiffSeconds(-28800); // Redmond (no DST)
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
+    auto const token = azCliCred.GetToken(trc, {});
+
+    EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+    EXPECT_EQ(
+        token.ExpiresOn, DateTime::Parse("2023-12-07T08:43:08Z", DateTime::DateFormat::Rfc3339));
+  }
+
+  {
+    AzureCliTestCredential azCliCred(EchoCommand(Token));
+    azCliCred.SetLocalTimeToUtcDiffSeconds(7200); // Kyiv (no DST)
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
+    auto const token = azCliCred.GetToken(trc, {});
+
+    EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+    EXPECT_EQ(
+        token.ExpiresOn, DateTime::Parse("2023-12-06T22:43:08Z", DateTime::DateFormat::Rfc3339));
+  }
 }
 
 TEST(AzureCliCredential, Diagnosability)

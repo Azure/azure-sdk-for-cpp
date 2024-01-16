@@ -312,7 +312,7 @@ TEST(Context, HeapLinkIntegrity)
     EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(b, value));
     EXPECT_EQ(value, "b");
 
-    // Now overide the generation
+    // Now override the generation
     secondGeneration = secondGeneration.WithValue(c, std::string("c"));
     EXPECT_TRUE(secondGeneration.TryGetValue<std::string>(a, value));
     EXPECT_EQ(value, "a"); // Still know about first gen - The link is still in heap

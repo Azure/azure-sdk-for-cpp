@@ -212,7 +212,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
      * @details OpenTelemetry defines a `TextMapCarrier` class as a class which allows reading and
      * writing to a map of text elements. The OpenTelemetry
      * [HttpTraceContext](https://opentelemetry-cpp.readthedocs.io/en/latest/otel_docs/classopentelemetry_1_1trace_1_1propagation_1_1HttpTraceContext.html)
-     * uses a TextMapCarrier to propogate the required HTTP headers from an OpenTelemetry context
+     * uses a TextMapCarrier to propagate the required HTTP headers from an OpenTelemetry context
      * into an HTTP request.
      */
     class HttpRequestTextMapPropagator

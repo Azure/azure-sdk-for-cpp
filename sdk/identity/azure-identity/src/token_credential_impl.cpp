@@ -10,9 +10,13 @@
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/url.hpp>
 
+#include <algorithm>
 #include <chrono>
+#include <iomanip>
+#include <iterator>
 #include <limits>
 #include <map>
+#include <sstream>
 
 using Azure::Identity::_detail::TokenCredentialImpl;
 
@@ -169,14 +173,14 @@ std::string TokenAsDiagnosticString(
     json const& jsonObject,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
-    std::string const& expiresOnPropertyName);
+    std::vector<std::string> const& expiresOnPropertyNames);
 
 [[noreturn]] void ThrowJsonPropertyError(
     std::string const& failedPropertyName,
     json const& jsonObject,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
-    std::string const& expiresOnPropertyName)
+    std::vector<std::string> const& expiresOnPropertyNames)
 {
   if (IdentityLog::ShouldWrite(IdentityLog::Level::Verbose))
   {
@@ -184,7 +188,10 @@ std::string TokenAsDiagnosticString(
         IdentityLog::Level::Verbose,
         ParseTokenLogPrefix
             + TokenAsDiagnosticString(
-                jsonObject, accessTokenPropertyName, expiresInPropertyName, expiresOnPropertyName));
+                jsonObject,
+                accessTokenPropertyName,
+                expiresInPropertyName,
+                expiresOnPropertyNames));
   }
 
   throw std::runtime_error(
@@ -192,13 +199,39 @@ std::string TokenAsDiagnosticString(
       + "\' property.\nSee Azure::Core::Diagnostics::Logger for details"
         " (https://aka.ms/azsdk/cpp/identity/troubleshooting).");
 }
+
+std::string TimeZoneOffsetAsString(int utcDiffSeconds)
+{
+  if (utcDiffSeconds == 0)
+  {
+    return {};
+  }
+
+  std::ostringstream os;
+  if (utcDiffSeconds >= 0)
+  {
+    os << '+';
+  }
+  else
+  {
+    os << '-';
+    utcDiffSeconds = -utcDiffSeconds;
+  }
+
+  os << std::setw(2) << std::setfill('0') << (utcDiffSeconds / (60 * 60)) << ':';
+  os << std::setw(2) << std::setfill('0') << ((utcDiffSeconds % (60 * 60)) / 60);
+
+  return os.str();
+}
+
 } // namespace
 
 AccessToken TokenCredentialImpl::ParseToken(
     std::string const& jsonString,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
-    std::string const& expiresOnPropertyName)
+    std::vector<std::string> const& expiresOnPropertyNames,
+    int utcDiffSeconds)
 {
   json parsedJson;
   try
@@ -222,7 +255,7 @@ AccessToken TokenCredentialImpl::ParseToken(
         parsedJson,
         accessTokenPropertyName,
         expiresInPropertyName,
-        expiresOnPropertyName);
+        expiresOnPropertyNames);
   }
 
   AccessToken accessToken;
@@ -276,77 +309,89 @@ AccessToken TokenCredentialImpl::ParseToken(
     }
   }
 
-  if (expiresOnPropertyName.empty())
+  std::vector<std::string> nonEmptyExpiresOnPropertyNames;
+  std::copy_if(
+      expiresOnPropertyNames.begin(),
+      expiresOnPropertyNames.end(),
+      std::back_inserter(nonEmptyExpiresOnPropertyNames),
+      [](auto const& propertyName) { return !propertyName.empty(); });
+
+  if (nonEmptyExpiresOnPropertyNames.empty())
   {
-    // 'expires_in' is undefined, 'expires_on' is not expected.
+    // The code was not able to parse the value of 'expires_in', and the caller did not pass any
+    // 'expires_on' for us to find and try parse.
     ThrowJsonPropertyError(
         expiresInPropertyName,
         parsedJson,
         accessTokenPropertyName,
         expiresInPropertyName,
-        expiresOnPropertyName);
+        nonEmptyExpiresOnPropertyNames);
   }
 
-  if (parsedJson.contains(expiresOnPropertyName))
+  for (auto const& expiresOnPropertyName : nonEmptyExpiresOnPropertyNames)
   {
-    auto const& expiresOn = parsedJson[expiresOnPropertyName];
-
-    if (expiresOn.is_number_unsigned())
+    if (parsedJson.contains(expiresOnPropertyName))
     {
-      try
-      {
-        // 'expires_on' as number (posix time representing an absolute timestamp)
-        auto const value = expiresOn.get<std::int64_t>();
-        if (value <= MaxPosixTimestamp)
-        {
-          accessToken.ExpiresOn = PosixTimeConverter::PosixTimeToDateTime(value);
-          return accessToken;
-        }
-      }
-      catch (std::exception const&)
-      {
-        // expiresIn.get<std::int64_t>() has thrown, we may throw later.
-      }
-    }
+      auto const& expiresOn = parsedJson[expiresOnPropertyName];
 
-    if (expiresOn.is_string())
-    {
-      auto const expiresOnAsString = expiresOn.get<std::string>();
-      for (auto const& parse : {
-               std::function<DateTime(std::string const&)>([](auto const& s) {
-                 // 'expires_on' as RFC3339 date string (absolute timestamp)
-                 return DateTime::Parse(s, DateTime::DateFormat::Rfc3339);
-               }),
-               std::function<DateTime(std::string const&)>([](auto const& s) {
-                 // 'expires_on' as numeric string (posix time representing an absolute timestamp)
-                 return PosixTimeConverter::PosixTimeToDateTime(
-                     ParseNumericExpiration(s, MaxPosixTimestamp));
-               }),
-               std::function<DateTime(std::string const&)>([](auto const& s) {
-                 // 'expires_on' as RFC1123 date string (absolute timestamp)
-                 return DateTime::Parse(s, DateTime::DateFormat::Rfc1123);
-               }),
-           })
+      if (expiresOn.is_number_unsigned())
       {
         try
         {
-          accessToken.ExpiresOn = parse(expiresOnAsString);
-          return accessToken;
+          // 'expires_on' as number (posix time representing an absolute timestamp)
+          auto const value = expiresOn.get<std::int64_t>();
+          if (value <= MaxPosixTimestamp)
+          {
+            accessToken.ExpiresOn = PosixTimeConverter::PosixTimeToDateTime(value);
+            return accessToken;
+          }
         }
         catch (std::exception const&)
         {
-          // parse() has thrown, we may throw later.
+          // expiresIn.get<std::int64_t>() has thrown, we may throw later.
+        }
+      }
+
+      auto const tzOffsetStr = TimeZoneOffsetAsString(utcDiffSeconds);
+      if (expiresOn.is_string())
+      {
+        auto const expiresOnAsString = expiresOn.get<std::string>();
+        for (auto const& parse : {
+                 std::function<DateTime(std::string const&)>([&](auto const& s) {
+                   // 'expires_on' as RFC3339 date string (absolute timestamp)
+                   return DateTime::Parse(s + tzOffsetStr, DateTime::DateFormat::Rfc3339);
+                 }),
+                 std::function<DateTime(std::string const&)>([](auto const& s) {
+                   // 'expires_on' as numeric string (posix time representing an absolute timestamp)
+                   return PosixTimeConverter::PosixTimeToDateTime(
+                       ParseNumericExpiration(s, MaxPosixTimestamp));
+                 }),
+                 std::function<DateTime(std::string const&)>([](auto const& s) {
+                   // 'expires_on' as RFC1123 date string (absolute timestamp)
+                   return DateTime::Parse(s, DateTime::DateFormat::Rfc1123);
+                 }),
+             })
+        {
+          try
+          {
+            accessToken.ExpiresOn = parse(expiresOnAsString);
+            return accessToken;
+          }
+          catch (std::exception const&)
+          {
+            // parse() has thrown, we may throw later.
+          }
         }
       }
     }
   }
 
   ThrowJsonPropertyError(
-      expiresOnPropertyName,
+      nonEmptyExpiresOnPropertyNames.back(),
       parsedJson,
       accessTokenPropertyName,
       expiresInPropertyName,
-      expiresOnPropertyName);
+      nonEmptyExpiresOnPropertyNames);
 }
 
 namespace {
@@ -435,7 +480,7 @@ std::string TokenAsDiagnosticString(
     json const& jsonObject,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
-    std::string const& expiresOnPropertyName)
+    std::vector<std::string> const& expiresOnPropertyNames)
 {
   std::string result = "Please report an issue with the following details:\nToken JSON";
 
@@ -458,22 +503,29 @@ std::string TokenAsDiagnosticString(
           : PrintSanitizedJsonObject(accessTokenProperty, false);
     }
 
-    for (auto const& p : {
-             std::pair<char const*, std::string const*>{"relative", &expiresInPropertyName},
-             std::pair<char const*, std::string const*>{"absolute", &expiresOnPropertyName},
-         })
     {
-      result += ", ";
-      result += p.first;
-      result += " expiration property ('" + *p.second + "'): ";
+      std::vector<std::pair<char const*, std::string const*>> expirationProperties{
+          {"relative", &expiresInPropertyName}};
 
-      if (!jsonObject.contains(*p.second))
+      for (auto const& ap : expiresOnPropertyNames)
       {
-        result += "undefined";
+        expirationProperties.emplace_back(std::make_pair("absolute", &ap));
       }
-      else
+
+      for (auto const& p : expirationProperties)
       {
-        result += PrintSanitizedJsonObject(jsonObject[*p.second], true);
+        result += ", ";
+        result += p.first;
+        result += " expiration property ('" + *p.second + "'): ";
+
+        if (!jsonObject.contains(*p.second))
+        {
+          result += "undefined";
+        }
+        else
+        {
+          result += PrintSanitizedJsonObject(jsonObject[*p.second], true);
+        }
       }
     }
 
@@ -481,7 +533,8 @@ std::string TokenAsDiagnosticString(
     for (auto const& property : jsonObject.items())
     {
       if (property.key() != accessTokenPropertyName && property.key() != expiresInPropertyName
-          && property.key() != expiresOnPropertyName)
+          && std::find(expiresOnPropertyNames.begin(), expiresOnPropertyNames.end(), property.key())
+              == expiresOnPropertyNames.end())
       {
         otherProperties[property.key()] = property.value();
       }

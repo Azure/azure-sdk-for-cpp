@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 
 # DisableDockerDetector "This was used for testing in the past. If such testing can be supported in the future this container will be used again."
-FROM ubuntu/squid
+# NOTE: this registry requires authentication in order to be pulled from.
+FROM azsdkengsys.azurecr.io/mirror/ubuntu/squid
 LABEL maintainer "Larry Osterman<github.com/LarryOsterman>"
 
 ENV NGINX_VERSION 1.23.1

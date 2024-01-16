@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @param request Http Request associated with the action.
      */
     WinHttpAction(WinHttpRequest* request)
-        // Create a non-inheritable anonymous manual reset event intialized as unset.
+        // Create a non-inheritable anonymous manual reset event initialized as unset.
         : m_httpRequest(request), m_actionCompleteEvent(CreateEvent(nullptr, TRUE, FALSE, nullptr))
     {
       if (!m_actionCompleteEvent)

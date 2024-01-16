@@ -62,7 +62,7 @@
 // (***) - note that we condition on WIN32 (i.e. all Windows including UWP, per CMake definition),
 // and not on MSVC. That's because dllimport/dllexport is potentially needed on Windows platform
 // regardless of the compiler used, but GCC or Clang have different syntax for that. We don't handle
-// other compilers on Windows currentlty, but later we may add support (see "#if defined(_MSC_VER)"
+// other compilers on Windows currently, but later we may add support (see "#if defined(_MSC_VER)"
 // below).
 
 #pragma once

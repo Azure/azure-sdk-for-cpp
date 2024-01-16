@@ -13,6 +13,8 @@
 #include <azure_uamqp_c/sasl_plain.h>
 #include <azure_uamqp_c/saslclientio.h>
 
+// cspell: ignore saslclientio
+
 Azure::Core::Amqp::Network::_internal::Transport
 Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     std::string const& saslKeyName,
