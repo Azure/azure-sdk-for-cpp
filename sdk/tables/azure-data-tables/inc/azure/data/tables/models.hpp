@@ -3,11 +3,12 @@
 
 #pragma once
 
+#include "azure/data/tables/dll_import_export.hpp"
+
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
-#include <azure/data/tables/dll_import_export.hpp>
 
 #include <cstdint>
 #include <map>
