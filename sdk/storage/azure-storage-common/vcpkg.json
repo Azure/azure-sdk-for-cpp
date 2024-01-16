@@ -12,7 +12,7 @@
     {
       "name": "libxml2",
       "default-features": false,
-      "platform": "!windows"
+      "platform": "!windows & !uwp"
     },
     {
       "name": "openssl",
