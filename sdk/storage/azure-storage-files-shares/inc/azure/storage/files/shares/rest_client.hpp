@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-02-04";
+    constexpr static const char* ApiVersion = "2024-05-04";
   } // namespace _detail
   namespace Models {
     /**
@@ -2570,6 +2570,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<bool> SupportRename;
       };
       static Response<Models::GetFileRangeListResult> GetRangeList(
           Core::Http::_internal::HttpPipeline& pipeline,
