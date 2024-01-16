@@ -1,16 +1,10 @@
 # Release History
 
-## 4.3.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 4.2.1 (2024-01-16)
 
 ### Bugs Fixed
 
 - [[#4754]](https://github.com/Azure/azure-sdk-for-cpp/issues/4754) Thread safety for authentication policy.
-
-### Other Changes
 
 ## 4.2.0 (2023-05-09)
 
