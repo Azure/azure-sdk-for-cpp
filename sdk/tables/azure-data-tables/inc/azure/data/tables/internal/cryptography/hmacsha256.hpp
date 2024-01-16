@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/core/azure_assert.hpp"
+#include <azure/core/azure_assert.hpp>
 
 #include <memory>
 #include <stdexcept>

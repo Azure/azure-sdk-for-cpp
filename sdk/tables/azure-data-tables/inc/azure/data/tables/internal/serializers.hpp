@@ -2,8 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 #pragma once
-#include <azure/data/tables/internal/xml_wrapper.hpp>
-#include <azure/data/tables/models.hpp>
+#include "azure/data/tables/internal/xml_wrapper.hpp"
+#include "azure/data/tables/models.hpp"
 
 #include <cstdint>
 #include <memory>

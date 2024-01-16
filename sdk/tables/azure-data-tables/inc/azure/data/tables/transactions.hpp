@@ -3,9 +3,10 @@
 
 #pragma once
 
+#include "azure/data/tables/models.hpp"
+
 #include <azure/core/url.hpp>
 #include <azure/core/uuid.hpp>
-#include <azure/data/tables/models.hpp>
 
 namespace Azure { namespace Data { namespace Tables {
   /**

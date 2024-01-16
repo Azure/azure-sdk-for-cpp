@@ -12,4 +12,4 @@
 #define max(x, y) small
 #define min(x, y) small
 
-#include <azure/data/tables.hpp>
+#include "azure/data/tables.hpp"
