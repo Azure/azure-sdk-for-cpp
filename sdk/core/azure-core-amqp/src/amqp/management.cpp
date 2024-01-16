@@ -200,14 +200,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ManagementClientImpl::Close(Context const& context)
   {
+    Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close" << std::endl;
     SetState(ManagementState::Closing);
     if (m_messageSender && m_messageSenderOpen)
     {
+      Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close Sender" << std::endl;
       m_messageSender->Close(context);
       m_messageSenderOpen = false;
     }
     if (m_messageReceiver && m_messageReceiverOpen)
     {
+      Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close Receiver" << std::endl;
       m_messageReceiver->Close(context);
       m_messageReceiverOpen = false;
     }

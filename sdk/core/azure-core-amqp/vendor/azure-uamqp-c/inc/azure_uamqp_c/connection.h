@@ -100,6 +100,7 @@ extern "C" {
     MOCKABLE_FUNCTION(, void, connection_destroy_endpoint, ENDPOINT_HANDLE, endpoint);
     MOCKABLE_FUNCTION(, int, connection_encode_frame, ENDPOINT_HANDLE, endpoint, AMQP_VALUE, performative, PAYLOAD*, payloads, size_t, payload_count, ON_SEND_COMPLETE, on_send_complete, void*, callback_context);
     MOCKABLE_FUNCTION(, void, connection_set_trace, CONNECTION_HANDLE, connection, bool, trace_on);
+    MOCKABLE_FUNCTION(, bool, connection_get_trace, CONNECTION_HANDLE, connection);
 
     MOCKABLE_FUNCTION(, ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE, connection_subscribe_on_connection_close_received, CONNECTION_HANDLE, connection, ON_CONNECTION_CLOSE_RECEIVED, on_connection_close_received, void*, context);
     MOCKABLE_FUNCTION(, void, connection_unsubscribe_on_connection_close_received, ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE, event_subscription);

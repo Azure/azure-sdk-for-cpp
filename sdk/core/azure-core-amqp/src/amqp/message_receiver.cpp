@@ -559,6 +559,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         m_link->UnsubscribeFromDetachEvent();
 
+        // Now that the connection is closed, the link is no longer needed. This will free the link
+        m_link.reset();
+
         m_receiverOpen = false;
       }
     }

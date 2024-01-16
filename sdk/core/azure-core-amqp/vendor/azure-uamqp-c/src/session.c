@@ -67,19 +67,42 @@ static void remove_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
     if (link_endpoint != NULL)
     {
         LINK_ENDPOINT_INSTANCE* endpoint_instance = (LINK_ENDPOINT_INSTANCE*)link_endpoint;
-        SESSION_INSTANCE* session_instance = endpoint_instance->session;
+      LOG(AZ_LOG_TRACE,
+          LOG_LINE,
+          ">> Session %p Remove link endpoint %s %p",
+          (void*)endpoint_instance->session,
+          endpoint_instance->name,
+          (void*)endpoint_instance);
+      SESSION_INSTANCE* session_instance = endpoint_instance->session;
         uint32_t i;
 
         for (i = 0; i < session_instance->link_endpoint_count; i++)
         {
             if (session_instance->link_endpoints[i] == link_endpoint)
             {
+              if (connection_get_trace(session_instance->connection))
+              {
+                LOG(AZ_LOG_TRACE,
+                    LOG_LINE,
+                    ">>> Found link endpoint %s %p",
+                    endpoint_instance->name,
+                    (void*)endpoint_instance);
+              }
                 break;
             }
         }
 
         if (i < session_instance->link_endpoint_count)
         {
+            if (connection_get_trace(session_instance->connection))
+            {
+                LOG(AZ_LOG_TRACE,
+                    LOG_LINE,
+                    ">>> Session %p Removing link endpoint %s %p",
+                    session_instance,
+                    endpoint_instance->name,
+                    (void*)endpoint_instance);
+            }
             LINK_ENDPOINT_INSTANCE** new_endpoints;
 
             if (i < (session_instance->link_endpoint_count - 1))
@@ -89,6 +112,13 @@ static void remove_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
 
             session_instance->link_endpoint_count--;
 
+              if (connection_get_trace(session_instance->connection))
+            {
+                LOG(AZ_LOG_TRACE,
+                    LOG_LINE,
+                    ">>> Link endpoint count %u",
+                    session_instance->link_endpoint_count);
+            }
             if (session_instance->link_endpoint_count == 0)
             {
                 free(session_instance->link_endpoints);

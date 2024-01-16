@@ -2100,6 +2100,25 @@ void connection_set_trace(CONNECTION_HANDLE connection, bool trace_on)
     }
 }
 
+bool connection_get_trace(CONNECTION_HANDLE connection)
+{
+    	bool result;
+
+	/* Codes_S_R_S_CONNECTION_07_004: [If connection is NULL then connection_get_trace shall return false.] */
+        if (connection == NULL)
+        {
+		LogError("NULL connection");
+		result = false;
+	}
+        else
+        {
+		/* Codes_S_R_S_CONNECTION_07_003: [connection_get_trace shall return the current state of the trace logging.] */
+		result = connection->is_trace_on == 1;
+	}
+
+	return result;
+}
+
 int connection_set_remote_idle_timeout_empty_frame_send_ratio(CONNECTION_HANDLE connection, double idle_timeout_empty_frame_send_ratio)
 {
     int result;
