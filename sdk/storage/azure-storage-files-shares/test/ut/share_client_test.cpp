@@ -729,4 +729,30 @@ namespace Azure { namespace Storage { namespace Test {
     shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(shareClient.GetPermission(created.FilePermissionKey), StorageException);
   }
+
+  TEST_F(FileShareClientTest, EnableSnapshotVirtualDirectoryAccess_PLAYBACKONLY_)
+  {
+    std::string shareName = LowercaseRandomString();
+    auto shareClient = m_shareServiceClient->GetShareClient(shareName);
+    Files::Shares::CreateShareOptions createOptions;
+    createOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+    shareClient.Create(createOptions);
+
+    Files::Shares::SetSharePropertiesOptions setPropertiesOptions;
+    // EnableSnapshotVirtualDirectoryAccess = true
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = true;
+    shareClient.SetProperties(setPropertiesOptions);
+    auto properties = shareClient.GetProperties().Value;
+    EXPECT_TRUE(
+        properties.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && properties.EnableSnapshotVirtualDirectoryAccess.Value());
+
+    // EnableSnapshotVirtualDirectoryAccess = false
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = false;
+    shareClient.SetProperties(setPropertiesOptions);
+    properties = shareClient.GetProperties().Value;
+    EXPECT_TRUE(
+        properties.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && !properties.EnableSnapshotVirtualDirectoryAccess.Value());
+  }
 }}} // namespace Azure::Storage::Test
