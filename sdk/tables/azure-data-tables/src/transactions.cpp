@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/data/tables/internal/serializers.hpp>
-#include <azure/data/tables/transactions.hpp>
+#include "azure/data/tables/transactions.hpp"
+
+#include "azure/data/tables/internal/serializers.hpp"
 
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::_detail;

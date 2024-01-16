@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/data/tables/internal/policies/switch_to_secondary_policy.hpp>
+#include "azure/data/tables/internal/policies/switch_to_secondary_policy.hpp"
 
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
 
