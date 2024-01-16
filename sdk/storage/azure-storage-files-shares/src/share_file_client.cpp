@@ -669,6 +669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.SupportRename = options.SupportRename;
     return _detail::FileClient::GetRangeList(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }

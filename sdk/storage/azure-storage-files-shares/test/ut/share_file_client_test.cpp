@@ -901,6 +901,43 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, GetRangeListDiffWithRename_PLAYBACKONLY_)
+  {
+    size_t rangeSize = 128;
+    std::vector<uint8_t> rangeContent = RandomBuffer(rangeSize);
+    auto memBodyStream = Core::IO::MemoryBodyStream(rangeContent);
+    std::string sourceFileName = RandomString();
+    std::string destFileName = RandomString();
+
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(sourceFileName);
+    fileClient.Create(rangeSize);
+
+    EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
+
+    auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
+    EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
+
+    fileClient
+        = m_shareClient->GetRootDirectoryClient().RenameFile(sourceFileName, destFileName).Value;
+
+    Files::Shares::GetFileRangeListOptions options;
+    options.Range = Core::Http::HttpRange();
+    options.Range.Value().Offset = 64;
+    options.Range.Value().Length = 64;
+    Files::Shares::Models::GetFileRangeListResult result;
+
+    // SupportRename == true
+    options.SupportRename = true;
+    EXPECT_NO_THROW(result = fileClient.GetRangeListDiff(snapshot, options).Value);
+    EXPECT_EQ(1U, result.Ranges.size());
+    EXPECT_EQ(64, result.Ranges[0].Offset);
+    EXPECT_TRUE(result.Ranges[0].Length.HasValue());
+
+    // SupportRename == false
+    options.SupportRename = false;
+    EXPECT_THROW(fileClient.GetRangeListDiff(snapshot, options), StorageException);
+  }
+
   TEST_F(FileShareFileClientTest, PreviousRangeWithSnapshot)
   {
     size_t fileSize = 1024 * 10;
