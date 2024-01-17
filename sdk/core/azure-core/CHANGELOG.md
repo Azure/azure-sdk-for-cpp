@@ -8,9 +8,11 @@
 
 ### Bugs Fixed
 
-- [[#5154]](https://github.com/Azure/azure-sdk-for-cpp/issues/5154) WinHttp Transport logging (and exception strings) have dangling periods making it harder to read.
+- [[#5154]](https://github.com/Azure/azure-sdk-for-cpp/issues/5154) WinHTTP Transport logging (and exception strings) have dangling periods making it harder to read.
 
 ### Other Changes
+
+- Improved log messages for WinHTTP Transport to help diagnose WinHTTP state machine related issues.
 
 ## 1.11.0 (2024-01-11)
 
