@@ -10,6 +10,7 @@
 
 - [[#5172]](https://github.com/Azure/azure-sdk-for-cpp/issues/5172) `Azure::Nullable::Emplace()` does not set `HasValue()` to `true`.
 - [[#5130]](https://github.com/Azure/azure-sdk-for-cpp/issues/5130) `Url::AppendPath()` and `Url::SetPath()` may end up with a double slash at the beginning of a path.
+- [[#5154]](https://github.com/Azure/azure-sdk-for-cpp/issues/5154) WinHttp Transport logging (and exception strings) have dangling periods making it harder to read.
 
 ### Other Changes
 
