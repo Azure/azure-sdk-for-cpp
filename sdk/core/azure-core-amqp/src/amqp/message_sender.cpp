@@ -146,6 +146,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.MessageSource,
         m_target);
     PopulateLinkProperties();
+
+    m_link->SubscribeToDetachEvent(
+        [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
   }
 
   void MessageSenderImpl::CreateLink()

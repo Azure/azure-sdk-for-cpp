@@ -190,6 +190,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>>
           m_messageQueue;
+      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool>
+          m_messageSenderDisconnectedQueue;
+      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool>
+          m_messageReceiverDisconnectedQueue;
 
       virtual void MessageReceived(
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message)
@@ -208,6 +212,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
             MessageReceived(std::get<0>(*message));
           }
+          auto senderDisconnected = m_messageSenderDisconnectedQueue.TryWaitForResult();
+          if (senderDisconnected)
+          {
+            GTEST_LOG_(INFO) << "Sender disconnected: " << std::get<0>(*senderDisconnected);
+            m_sender->Close(m_listenerContext);
+            m_sender.reset();
+          }
+
+          auto receiverDisconnected = m_messageReceiverDisconnectedQueue.TryWaitForResult();
+          if (receiverDisconnected)
+          {
+            GTEST_LOG_(INFO) << "Receiver disconnected: " << std::get<0>(*receiverDisconnected);
+            m_receiver->Close(m_listenerContext);
+            m_receiver.reset();
+          }
+
+          if (!m_receiver && !m_sender)
+          {
+            GTEST_LOG_(INFO) << "No more links, exiting message loop.";
+            break;
+          }
+
           std::this_thread::yield();
         }
       }
@@ -238,6 +264,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
       {
         GTEST_LOG_(INFO) << "Message receiver disconnected: " << error << std::endl;
+        m_messageReceiverDisconnectedQueue.CompleteOperation(true);
       }
 
       // Inherited via MessageSenderEvents
@@ -255,6 +282,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
       {
         GTEST_LOG_(INFO) << "Message Sender Disconnected: Error: " << error;
+        m_messageSenderDisconnectedQueue.CompleteOperation(true);
       }
 
     private:
@@ -267,6 +295,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint("$cbs", options)
       {
       }
+      void ForceCbsError(bool forceError) { m_forceCbsError = forceError; }
 
     private:
       bool m_forceCbsError{false};
@@ -509,7 +538,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
       }
 
-      void ForceCbsError(bool forceError) { m_forceCbsError = forceError; }
+      void ForceCbsError(bool forceError)
+      {
+        for (const auto& serviceEndpoint : m_serviceEndpoints)
+        {
+          if (serviceEndpoint->GetName() == "$cbs")
+          {
+            static_cast<AmqpClaimBasedSecurity*>(serviceEndpoint.get())->ForceCbsError(forceError);
+          }
+        }
+      }
 
       void EnableTrace(bool enableTrace) { m_enableTrace = enableTrace; }
 
@@ -526,7 +564,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::string m_connectionId;
       std::thread m_serverThread;
       std::uint16_t m_testPort;
-      bool m_forceCbsError{false};
 
     protected:
       // For each incoming message source, we create a queue of messages intended for that

@@ -913,7 +913,6 @@ void link_destroy(LINK_HANDLE link)
     }
     else
     {
-        LOG(AZ_LOG_TRACE, LOG_LINE, "-> link_destroy: %s (%p)", link->name, link->link_endpoint);
         remove_all_pending_deliveries((LINK_INSTANCE*)link, false);
         tickcounter_destroy(link->tick_counter);
 

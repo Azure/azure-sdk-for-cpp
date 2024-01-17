@@ -432,12 +432,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         GTEST_LOG_(INFO) << "Message received: " << *message;
       }
     };
+    MessageTests::AmqpServerMock server;
+
     MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
     mockServiceEndpointOptions.EnableTrace = false;
     auto serviceEndpoint
         = std::make_shared<ReceiverServiceEndpoint>("testLocation", mockServiceEndpointOptions);
 
-    MessageTests::AmqpServerMock server;
     server.AddServiceEndpoint(serviceEndpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
@@ -493,6 +494,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
     };
 
+    class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      ReceiverServiceEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
+    private:
+      void MessageReceived(
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received: " << *message;
+      }
+    };
     MessageTests::AmqpServerMock server;
 
     auto tokenCredential = std::make_shared<AzureTokenCredential>();
@@ -500,6 +517,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     std::string entityPath = "testLocation";
     uint16_t port = server.GetPort();
     std::string endpoint = "amqp://" + hostName + ":" + std::to_string(port) + "/" + entityPath;
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = false;
+    auto serviceEndpoint
+        = std::make_shared<ReceiverServiceEndpoint>(endpoint, mockServiceEndpointOptions);
+    server.AddServiceEndpoint(serviceEndpoint);
 
     ConnectionOptions connectionOptions;
 
@@ -577,7 +600,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     MessageTests::AmqpServerMock server;
     auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
-        "testLocation", MessageTests::MockServiceEndpointOptions{});
+        "amqp://localhost:" + std::to_string(server.GetPort()) + "/testLocation", MessageTests::MockServiceEndpointOptions{});
     server.AddServiceEndpoint(serviceEndpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
@@ -694,7 +717,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     MessageTests::AmqpServerMock server;
     auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
-        "testLocation", MessageTests::MockServiceEndpointOptions{});
+        "amqp://localhost:" + std::to_string(server.GetPort()) + "/testLocation",
+        MessageTests::MockServiceEndpointOptions{});
+
     server.AddServiceEndpoint(serviceEndpoint);
 
     class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
@@ -818,7 +843,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     MessageTests::AmqpServerMock server;
     auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
-        "testLocation", MessageTests::MockServiceEndpointOptions{});
+        "amqp://localhost:" + std::to_string(server.GetPort()) + "/testLocation",
+        MessageTests::MockServiceEndpointOptions{});
     server.AddServiceEndpoint(serviceEndpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(

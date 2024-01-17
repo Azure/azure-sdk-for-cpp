@@ -168,6 +168,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_source,
         m_options.MessageTarget);
     PopulateLinkProperties();
+
+    Log::Stream(Logger::Level::Verbose)
+        << "MessageReceiver: Subscribe to link detach on:" << m_link->GetUnderlyingLink();
+
+    m_link->SubscribeToDetachEvent(
+        [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
   }
 
   void MessageReceiverImpl::CreateLink()
@@ -177,7 +183,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     PopulateLinkProperties();
 
     Log::Stream(Logger::Level::Verbose)
-        << "MessageReceiver: Subscribe to link detach on ." << m_link->GetUnderlyingLink();
+        << "MessageReceiver: Subscribe to link detach on:" << m_link->GetUnderlyingLink();
 
     m_link->SubscribeToDetachEvent(
         [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
@@ -545,11 +551,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
       {
         auto lock{m_session->GetConnection()->Lock()};
-        if (m_options.EnableTrace)
-        {
-          Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
-        }
-        m_session->GetConnection()->EnableAsyncOperation(false);
 
         // We've received the close, we don't care about the detach event any more.
         if (m_options.EnableTrace)
@@ -561,9 +562,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         // Now that the connection is closed, the link is no longer needed. This will free the link
         m_link.reset();
-
-        m_receiverOpen = false;
       }
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
+      }
+      m_session->GetConnection()->EnableAsyncOperation(false);
+
+      m_receiverOpen = false;
     }
   }
 
