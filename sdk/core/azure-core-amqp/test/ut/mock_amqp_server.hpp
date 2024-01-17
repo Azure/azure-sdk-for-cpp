@@ -58,8 +58,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_name{name}, m_enableTrace{options.EnableTrace}, m_listenerContext{
-                                                                  options.ListenerContext}
+          : m_name{name}, m_listenerContext{options.ListenerContext},
+            m_enableTrace{options.EnableTrace}
       {
       }
 
@@ -97,7 +97,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           else
           {
             GTEST_LOG_(INFO) << "Sender already created for target " << target;
-            throw std::runtime_error("Sender already created for target " + target.GetAddress());
+            throw std::runtime_error(
+                "Sender already created for target "
+                + static_cast<std::string>(target.GetAddress()));
           }
         }
         else if (role == Azure::Core::Amqp::_internal::SessionRole::Sender)
@@ -119,7 +121,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           else
           {
             GTEST_LOG_(INFO) << "Receiver already created for source " << source;
-            throw std::runtime_error("Receiver already created for source " + source.GetAddress());
+            throw std::runtime_error(
+                "Receiver already created for source "
+                + static_cast<std::string>(source.GetAddress()));
           }
         }
         else
@@ -289,12 +293,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::string m_name;
     };
 
-    class AmqpClaimBasedSecurity : public MockServiceEndpoint {
+    class AmqpClaimBasedSecurity final : public MockServiceEndpoint {
     public:
       AmqpClaimBasedSecurity(MockServiceEndpointOptions const& options)
           : MockServiceEndpoint("$cbs", options)
       {
       }
+      virtual ~AmqpClaimBasedSecurity() = default;
+
       void ForceCbsError(bool forceError) { m_forceCbsError = forceError; }
 
     private:
@@ -663,7 +669,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         // We didn't find this endpoint in our list of known names. Punt.
         GTEST_LOG_(INFO) << "Unknown endpoint name: " << endpointName;
-        __debugbreak();
         return false;
       }
     };
