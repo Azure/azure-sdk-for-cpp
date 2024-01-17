@@ -2,11 +2,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "azure/data/tables/models.hpp"
+#include "azure/data/tables/tables_clients.hpp"
+#include "azure/data/tables/transactions.hpp"
 #include "test/ut/test_base.hpp"
-
-#include <azure/data/tables/models.hpp>
-#include <azure/data/tables/tables_clients.hpp>
-#include <azure/data/tables/transactions.hpp>
 
 namespace Azure { namespace Data { namespace Test {
   enum class AuthType
@@ -44,15 +43,13 @@ namespace Azure { namespace Data { namespace Test {
 
     std::string GetAccountName()
     {
-      return Azure::Data::Tables::Credentials::_internal::ParseConnectionString(
-                 GetConnectionString())
+      return Azure::Data::Tables::Credentials::_detail::ParseConnectionString(GetConnectionString())
           .AccountName;
     }
 
     std::string GetAccountKey()
     {
-      return Azure::Data::Tables::Credentials::_internal::ParseConnectionString(
-                 GetConnectionString())
+      return Azure::Data::Tables::Credentials::_detail::ParseConnectionString(GetConnectionString())
           .AccountKey;
     }
 

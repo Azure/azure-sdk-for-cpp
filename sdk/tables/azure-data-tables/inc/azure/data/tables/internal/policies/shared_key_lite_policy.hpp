@@ -10,12 +10,10 @@
 #include <memory>
 #include <string>
 
-using namespace Azure::Data::Tables::Credentials;
-
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
   class SharedKeyLitePolicy final : public Core::Http::Policies::HttpPolicy {
   public:
-    explicit SharedKeyLitePolicy(std::shared_ptr<SharedKeyCredential> credential)
+    explicit SharedKeyLitePolicy(std::shared_ptr<Credentials::SharedKeyCredential> credential)
         : m_credential{std::move(credential)}
     {
     }
@@ -39,7 +37,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
     }
 
     std::string GetSignature(const Core::Http::Request& request) const;
-    std::shared_ptr<SharedKeyCredential> m_credential;
+    std::shared_ptr<Credentials::SharedKeyCredential> m_credential;
   };
 
 }}}}} // namespace Azure::Data::Tables::_detail::Policies

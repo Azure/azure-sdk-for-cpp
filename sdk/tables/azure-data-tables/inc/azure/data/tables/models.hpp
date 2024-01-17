@@ -3,11 +3,12 @@
 
 #pragma once
 
+#include "azure/data/tables/dll_import_export.hpp"
+
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
-#include <azure/data/tables/dll_import_export.hpp>
 
 #include <cstdint>
 #include <map>
@@ -279,14 +280,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Get Service Properties options.
-     *
-     */
-    struct GetServicePropertiesOptions final
-    {
-    };
-
-    /**
      * @brief Set Service Properties options.
      *
      */
@@ -384,14 +377,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Get Service Statistics options.
-     *
-     */
-    struct GetServiceStatisticsOptions final
-    {
-    };
-
-    /**
      * @brief Delete result.
      *
      */
@@ -436,22 +421,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Get Table Access Policy options.
-     *
-     */
-    struct GetTableAccessPolicyOptions final
-    {
-    };
-
-    /**
-     * @brief Set Table Access Policy options.
-     *
-     */
-    struct SetTableAccessPolicyOptions final
-    {
-    };
-
-    /**
      * @brief Set Table Access Policy result.
      *
      */
@@ -487,7 +456,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Upsert Kind
      *
      */
-    enum UpsertKind
+    enum class UpsertKind
     {
       Update,
       Merge,
@@ -592,14 +561,6 @@ namespace Azure { namespace Data { namespace Tables {
        * ETag
        */
       std::string ETag;
-    };
-
-    /**
-     * @brief Delete Entity options.
-     *
-     */
-    struct DeleteEntityOptions final
-    {
     };
 
     /**
@@ -717,7 +678,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Transaction Action
      *
      */
-    enum TransactionAction
+    enum class TransactionAction
     {
       InsertEntity = 32,
       DeleteEntity,

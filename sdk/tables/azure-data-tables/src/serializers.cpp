@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "azure/data/tables/internal/serializers.hpp"
+
 #include <azure/core/internal/json/json.hpp>
-#include <azure/data/tables/internal/serializers.hpp>
 
 using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables;
