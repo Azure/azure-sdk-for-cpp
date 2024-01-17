@@ -6,6 +6,9 @@
 
 ### Breaking Changes
 
+- `PartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed.
+- `ProcessorPartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed.
+
 ### Bugs Fixed
 
 ### Other Changes
