@@ -34,13 +34,6 @@
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter 
 
-################
-# Automation
-################
-
-# Git Hub integration and bot rules
-/.github/                @jsquire @rickwinter @ronniegeraghty
-
 ###########
 # Eng Sys
 ###########

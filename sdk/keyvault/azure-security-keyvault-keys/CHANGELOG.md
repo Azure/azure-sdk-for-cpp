@@ -8,6 +8,12 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 4.4.1 (2024-01-16)
+
+### Bugs Fixed
+
 - [[#4754]](https://github.com/Azure/azure-sdk-for-cpp/issues/4754) Thread safety for authentication policy.
 
 ### Other Changes

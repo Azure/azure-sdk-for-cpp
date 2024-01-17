@@ -235,10 +235,10 @@ namespace Azure { namespace Core { namespace Test {
                         .ConnectionPoolIndex.clear());
   }
 
-#if defined(AZ_PLATFORM_LINUX)
   TEST(CurlTransportOptions, setCADirectory)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
+#if defined(AZ_PLATFORM_LINUX)
     // openssl default cert location will be used only if environment variable SSL_CERT_DIR
     // is not set
     const char* ca = getenv(X509_get_default_cert_dir_env());
@@ -250,6 +250,9 @@ namespace Azure { namespace Core { namespace Test {
     {
       curlOptions.CAPath = X509_get_default_cert_dir();
     }
+#else
+    curlOptions.CAPath = "UnsupportedPathOnWindows";
+#endif
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;
@@ -265,6 +268,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
+#if defined(AZ_PLATFORM_LINUX)
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
     EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
     EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
@@ -273,8 +277,24 @@ namespace Azure { namespace Core { namespace Test {
     // app-destruction
     EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                         .ConnectionPoolIndex.clear());
-  }
+#else
+    EXPECT_THROW(
+        pipeline.Send(request, Azure::Core::Context::ApplicationContext),
+        Azure::Core::Http::TransportException);
+    try
+    {
+      pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+    }
+    catch (Azure::Core::Http::TransportException& e)
+    {
+      EXPECT_TRUE(
+          std::string(e.what()).find(
+              "A requested feature, protocol or option was not found built-in "
+              "in this libcurl due to a build-time decision.")
+          != std::string::npos);
+    }
 #endif
+  }
 
   TEST(CurlTransportOptions, httpsDefault)
   {
