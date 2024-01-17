@@ -420,7 +420,6 @@ void messagereceiver_destroy(MESSAGE_RECEIVER_HANDLE message_receiver)
 int messagereceiver_open(MESSAGE_RECEIVER_HANDLE message_receiver, ON_MESSAGE_RECEIVED on_message_received, void* callback_context)
 {
     int result;
-    LOG(AZ_LOG_TRACE, LOG_LINE, "messagereceiver_open. Link: %p", message_receiver->link);
     if (message_receiver == NULL)
     {
         LogError("NULL message_receiver");

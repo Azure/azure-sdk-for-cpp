@@ -1308,6 +1308,7 @@ int link_attach(LINK_HANDLE link, ON_TRANSFER_RECEIVED on_transfer_received, ON_
             link->on_link_state_changed = on_link_state_changed;
             link->on_transfer_received = on_transfer_received;
             link->on_link_flow_on = on_link_flow_on;
+
             link->callback_context = callback_context;
             if (session_begin(link->session) != 0)
             {

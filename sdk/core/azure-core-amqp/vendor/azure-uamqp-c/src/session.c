@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "azure_macro_utils/macro_utils.h"
-#include "azure_c_shared_utility/xlogging.h"
 #include "azure_c_shared_utility/gballoc.h"
 #include "azure_uamqp_c/session.h"
 #include "azure_uamqp_c/connection.h"
@@ -1191,6 +1190,7 @@ void session_destroy_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
     if (link_endpoint != NULL)
     {
         LINK_ENDPOINT_INSTANCE* endpoint_instance = (LINK_ENDPOINT_INSTANCE*)link_endpoint;
+
         if (endpoint_instance->link_endpoint_state == LINK_ENDPOINT_STATE_ATTACHED)
         {
             endpoint_instance->link_endpoint_state = LINK_ENDPOINT_STATE_DETACHING;
