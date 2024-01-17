@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Models::_internal::MessageSource const& source,
           Models::_internal::MessageTarget const& target)
       {
-        GTEST_LOG_(INFO) << "MockServiceEndopint::OnLinkAttached for name: " << m_name
+        GTEST_LOG_(INFO) << "MockServiceEndpoint::OnLinkAttached for name: " << m_name
                          << " Source : " << source << " Target : " << target;
 
         // If the incoming role is receiver, then we want to create a sender to talk to it.
