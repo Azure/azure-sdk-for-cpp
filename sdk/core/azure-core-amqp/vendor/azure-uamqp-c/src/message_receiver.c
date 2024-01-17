@@ -420,6 +420,7 @@ void messagereceiver_destroy(MESSAGE_RECEIVER_HANDLE message_receiver)
 int messagereceiver_open(MESSAGE_RECEIVER_HANDLE message_receiver, ON_MESSAGE_RECEIVED on_message_received, void* callback_context)
 {
     int result;
+
     if (message_receiver == NULL)
     {
         LogError("NULL message_receiver");

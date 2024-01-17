@@ -1095,7 +1095,6 @@ LINK_ENDPOINT_HANDLE session_create_link_endpoint(SESSION_HANDLE session, const 
 {
     LINK_ENDPOINT_INSTANCE* result;
 
-
     /* Codes_S_R_S_SESSION_01_044: [If session, name or frame_received_callback is NULL, session_create_link_endpoint shall fail and return NULL.] */
     if ((session == NULL) ||
         (name == NULL))
