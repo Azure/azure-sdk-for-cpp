@@ -16,7 +16,9 @@
   "license": "MIT",
   "dependencies": [
     {
-      "name": "azure-core-cpp"
+      "name": "azure-core-cpp",
+      "default-features": false,
+      "version>=": "1.11.0"
     },
     {
       "name": "libxml2",
