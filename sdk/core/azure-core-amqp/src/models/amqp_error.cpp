@@ -91,7 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     else
     {
-        os << "Error {null}";
+      os << "Error {null}";
     }
     return os;
   }

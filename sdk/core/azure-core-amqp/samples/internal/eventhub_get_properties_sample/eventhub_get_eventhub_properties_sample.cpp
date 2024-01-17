@@ -116,7 +116,8 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
       "READ" /* operation */,
       "com.microsoft:partition" /* type of operation */,
       "" /* locales */,
-      message,context);
+      message,
+      context);
 
   EventHubPartitionProperties properties;
   bool error{false};
@@ -172,7 +173,6 @@ int main()
 
   // Establish the connection to the eventhub.
 
-
   auto credential{
       std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
           eventhubConnectionString)};
@@ -183,7 +183,7 @@ int main()
   connectionOptions.Port = connectionParser.GetPort();
   connectionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
   Azure::Core::Amqp::_internal::Connection connection(
-      connectionParser.GetHostName(), credential,  connectionOptions);
+      connectionParser.GetHostName(), credential, connectionOptions);
 
   // Establish a session to the eventhub.
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;

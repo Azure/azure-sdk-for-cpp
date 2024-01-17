@@ -81,7 +81,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.EnableTrace(false);
 
- 
     ConnectionOptions options;
     options.Port = mockServer.GetPort();
     options.EnableTrace = true;

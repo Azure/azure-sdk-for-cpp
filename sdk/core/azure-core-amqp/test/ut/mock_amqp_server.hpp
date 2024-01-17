@@ -58,8 +58,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_name{name}, m_enableTrace{options.EnableTrace},
-            m_listenerContext{options.ListenerContext}
+          : m_name{name}, m_enableTrace{options.EnableTrace}, m_listenerContext{
+                                                                  options.ListenerContext}
       {
       }
 

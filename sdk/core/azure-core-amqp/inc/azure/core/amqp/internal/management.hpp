@@ -176,7 +176,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /**
      * @brief Close the management instance.
-     * 
+     *
      * @param context Context for the operation.
      */
     void Close(Context const& context = {});

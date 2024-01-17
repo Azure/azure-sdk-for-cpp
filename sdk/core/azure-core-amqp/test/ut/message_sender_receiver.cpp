@@ -600,7 +600,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     MessageTests::AmqpServerMock server;
     auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
-        "amqp://localhost:" + std::to_string(server.GetPort()) + "/testLocation", MessageTests::MockServiceEndpointOptions{});
+        "amqp://localhost:" + std::to_string(server.GetPort()) + "/testLocation",
+        MessageTests::MockServiceEndpointOptions{});
     server.AddServiceEndpoint(serviceEndpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(

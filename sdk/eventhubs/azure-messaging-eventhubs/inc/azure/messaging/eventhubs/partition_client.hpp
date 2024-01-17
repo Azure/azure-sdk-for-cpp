@@ -85,7 +85,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Closes the connection to the Event Hub service.
      */
-    void Close(Core::Context const&context) { m_receiver.Close(context); }
+    void Close(Core::Context const& context) { m_receiver.Close(context); }
 
   private:
     friend class _detail::PartitionClientFactory;

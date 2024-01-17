@@ -157,10 +157,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 namespace {
 void EnsureGlobalStateInitialized()
 {
-// Force the global instance to exist. This is required to ensure that uAMQP and
-// azure-c-shared-utility is
-auto globalInstance = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
-(void)globalInstance;
+  // Force the global instance to exist. This is required to ensure that uAMQP and
+  // azure-c-shared-utility is
+  auto globalInstance
+      = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
+  (void)globalInstance;
 }
 } // namespace
 
