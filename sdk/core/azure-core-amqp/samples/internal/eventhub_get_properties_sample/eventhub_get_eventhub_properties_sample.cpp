@@ -20,7 +20,6 @@ struct EventHubProperties final
   std::vector<std::string> PartitionIds;
   Azure::DateTime CreatedAt;
 };
-
 EventHubProperties GetEventHubProperties(
     Azure::Core::Amqp::_internal::Session const& session,
     std::string const& eventHubName)
@@ -173,7 +172,10 @@ int main()
 
   // Establish the connection to the eventhub.
 
-  auto credential{std::make_shared<Azure::Identity::DefaultAzureCredential>()};
+
+  auto credential{
+      std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
+          eventhubConnectionString)};
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "some";
@@ -181,7 +183,7 @@ int main()
   connectionOptions.Port = connectionParser.GetPort();
   connectionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
   Azure::Core::Amqp::_internal::Connection connection(
-      connectionParser.GetHostName(), credential, connectionOptions);
+      connectionParser.GetHostName(), credential,  connectionOptions);
 
   // Establish a session to the eventhub.
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;

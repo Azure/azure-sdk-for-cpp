@@ -515,6 +515,10 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                     /* new link attach */
                     if (session_instance->on_link_attached != NULL)
                     {
+                        if (connection_get_trace(session_instance->connection))
+                        {
+                          LOG(AZ_LOG_TRACE, LOG_LINE, ">>> Session %p Creating link endpoint %s", session_instance, name);
+                      }
                         LINK_ENDPOINT_HANDLE new_link_endpoint = session_create_link_endpoint(session_instance, name);
                         if (new_link_endpoint == NULL)
                         {
