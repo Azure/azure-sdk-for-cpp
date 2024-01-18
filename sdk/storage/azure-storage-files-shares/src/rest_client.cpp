@@ -12,6 +12,7 @@
 #include <azure/core/http/http_status_code.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
@@ -422,20 +423,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kEnabled)
             {
-              response.HourMetrics.Enabled = node.Value == std::string("true");
+              response.HourMetrics.Enabled
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kIncludeAPIs)
             {
-              response.HourMetrics.IncludeApis = node.Value == std::string("true");
+              response.HourMetrics.IncludeApis
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kHourMetrics
                 && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kEnabled)
             {
-              response.HourMetrics.RetentionPolicy.Enabled = node.Value == std::string("true");
+              response.HourMetrics.RetentionPolicy.Enabled
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -454,21 +461,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kMinuteMetrics && xmlPath[2] == XmlTagEnum::kEnabled)
             {
-              response.MinuteMetrics.Enabled = node.Value == std::string("true");
+              response.MinuteMetrics.Enabled
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kMinuteMetrics
                 && xmlPath[2] == XmlTagEnum::kIncludeAPIs)
             {
-              response.MinuteMetrics.IncludeApis = node.Value == std::string("true");
+              response.MinuteMetrics.IncludeApis
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kMinuteMetrics
                 && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kEnabled)
             {
-              response.MinuteMetrics.RetentionPolicy.Enabled = node.Value == std::string("true");
+              response.MinuteMetrics.RetentionPolicy.Enabled
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -518,7 +531,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kMultichannel && xmlPath[4] == XmlTagEnum::kEnabled)
             {
               response.Protocol.Value().Settings.Multichannel.Enabled
-                  = node.Value == std::string("true");
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
           }
           else if (node.Type == _internal::XmlNodeType::Attribute)
@@ -614,6 +628,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kLeaseDuration,
           kEnabledProtocols,
           kRootSquash,
+          kEnableSnapshotVirtualDirectoryAccess,
           kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -647,6 +662,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"LeaseDuration", XmlTagEnum::kLeaseDuration},
             {"EnabledProtocols", XmlTagEnum::kEnabledProtocols},
             {"RootSquash", XmlTagEnum::kRootSquash},
+            {"EnableSnapshotVirtualDirectoryAccess",
+             XmlTagEnum::kEnableSnapshotVirtualDirectoryAccess},
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -709,7 +726,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
                 && xmlPath[3] == XmlTagEnum::kDeleted)
             {
-              vectorElement1.Deleted = node.Value == std::string("true");
+              vectorElement1.Deleted
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -866,6 +885,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               vectorElement1.Details.RootSquash = Models::ShareRootSquash(node.Value);
             }
             else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kEnableSnapshotVirtualDirectoryAccess)
+            {
+              vectorElement1.Details.EnableSnapshotVirtualDirectoryAccess
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
+            }
+            else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kNextMarker)
             {
@@ -931,6 +960,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.RootSquash.HasValue() && !options.RootSquash.Value().ToString().empty())
       {
         request.SetHeader("x-ms-root-squash", options.RootSquash.Value().ToString());
+      }
+      if (options.EnableSnapshotVirtualDirectoryAccess.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-enable-snapshot-virtual-directory-access",
+            options.EnableSnapshotVirtualDirectoryAccess.Value() ? "true" : "false");
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1043,6 +1078,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         response.RootSquash
             = Models::ShareRootSquash(pRawResponse->GetHeaders().at("x-ms-root-squash"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-enable-snapshot-virtual-directory-access") != 0)
+      {
+        response.EnableSnapshotVirtualDirectoryAccess
+            = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                pRawResponse->GetHeaders().at("x-ms-enable-snapshot-virtual-directory-access"),
+                "true");
       }
       return Response<Models::ShareProperties>(std::move(response), std::move(pRawResponse));
     }
@@ -1382,6 +1424,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.RootSquash.HasValue() && !options.RootSquash.Value().ToString().empty())
       {
         request.SetHeader("x-ms-root-squash", options.RootSquash.Value().ToString());
+      }
+      if (options.EnableSnapshotVirtualDirectoryAccess.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-enable-snapshot-virtual-directory-access",
+            options.EnableSnapshotVirtualDirectoryAccess.Value() ? "true" : "false");
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1735,8 +1783,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       if (pRawResponse->GetHeaders().count("x-ms-file-permission-key") != 0)
       {
         response.SmbProperties.PermissionKey
@@ -1806,8 +1854,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-server-encrypted"), "true");
       response.SmbProperties.Attributes
           = Models::FileAttributes(pRawResponse->GetHeaders().at("x-ms-file-attributes"));
       if (pRawResponse->GetHeaders().count("x-ms-file-creation-time") != 0)
@@ -1919,8 +1967,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       if (pRawResponse->GetHeaders().count("x-ms-file-permission-key") != 0)
       {
         response.SmbProperties.PermissionKey
@@ -1983,8 +2031,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       Models::SetDirectoryMetadataResult response;
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       return Response<Models::SetDirectoryMetadataResult>(
           std::move(response), std::move(pRawResponse));
     }
@@ -2333,7 +2381,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && node.Name == "Encoded")
             {
-              response.Encoded = node.Value == std::string("true");
+              response.Encoded = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                  node.Value, "true");
             }
             else if (
                 xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -2345,21 +2394,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kPrefix && node.Name == "Encoded")
             {
-              response.Prefix.Encoded = node.Value == std::string("true");
+              response.Prefix.Encoded
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
                 && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
             {
-              vectorElement1.Name.Encoded = node.Value == std::string("true");
+              vectorElement1.Name.Encoded
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
                 && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
             {
-              vectorElement2.Name.Encoded = node.Value == std::string("true");
+              vectorElement2.Name.Encoded
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
           }
           else if (node.Type == _internal::XmlNodeType::EndTag)
@@ -2571,7 +2626,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kPath && node.Name == "Encoded")
             {
-              vectorElement1.Path.Encoded = node.Value == std::string("true");
+              vectorElement1.Path.Encoded
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
           }
           else if (node.Type == _internal::XmlNodeType::EndTag)
@@ -2740,8 +2797,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       response.FilePermissionKey = pRawResponse->GetHeaders().at("x-ms-file-permission-key");
       response.FileAttributes = pRawResponse->GetHeaders().at("x-ms-file-attributes");
       response.FileCreationTime = DateTime::Parse(
@@ -2847,8 +2904,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       if (pRawResponse->GetHeaders().count("x-ms-file-permission-key") != 0)
       {
         response.SmbProperties.PermissionKey
@@ -3002,7 +3059,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.HttpHeaders.ContentHash.Algorithm = HashAlgorithm::Md5;
       }
       response.Details.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-server-encrypted") == std::string("true");
+          = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+              pRawResponse->GetHeaders().at("x-ms-server-encrypted"), "true");
       response.Details.SmbProperties.Attributes
           = Models::FileAttributes(pRawResponse->GetHeaders().at("x-ms-file-attributes"));
       if (pRawResponse->GetHeaders().count("x-ms-file-creation-time") != 0)
@@ -3156,8 +3214,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         response.CopyStatus = Models::CopyStatus(pRawResponse->GetHeaders().at("x-ms-copy-status"));
       }
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-server-encrypted"), "true");
       response.SmbProperties.Attributes
           = Models::FileAttributes(pRawResponse->GetHeaders().at("x-ms-file-attributes"));
       if (pRawResponse->GetHeaders().count("x-ms-file-creation-time") != 0)
@@ -3320,8 +3378,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       if (pRawResponse->GetHeaders().count("x-ms-file-permission-key") != 0)
       {
         response.SmbProperties.PermissionKey
@@ -3387,8 +3445,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       Models::SetFileMetadataResult response;
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       return Response<Models::SetFileMetadataResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::_detail::AcquireFileLeaseResult> FileClient::AcquireLease(
@@ -3612,7 +3670,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
       {
         response.IsServerEncrypted
-            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+            = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       }
       return Response<Models::UploadFileRangeResult>(std::move(response), std::move(pRawResponse));
     }
@@ -3711,7 +3770,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
       {
         response.IsServerEncrypted
-            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+            = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       }
       return Response<Models::UploadFileRangeFromUriResult>(
           std::move(response), std::move(pRawResponse));
@@ -4169,7 +4229,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kPath && node.Name == "Encoded")
             {
-              vectorElement1.Path.Encoded = node.Value == std::string("true");
+              vectorElement1.Path.Encoded
+                  = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+                      node.Value, "true");
             }
           }
           else if (node.Type == _internal::XmlNodeType::EndTag)
@@ -4337,8 +4399,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.IsServerEncrypted = !Core::_internal::StringExtensions::CaseInsensitiveComparator()(
+          pRawResponse->GetHeaders().at("x-ms-request-server-encrypted"), "true");
       response.FilePermissionKey = pRawResponse->GetHeaders().at("x-ms-file-permission-key");
       response.FileAttributes = pRawResponse->GetHeaders().at("x-ms-file-attributes");
       response.FileCreationTime = DateTime::Parse(
