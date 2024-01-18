@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   namespace {
 
-    class ManagementServiceEndpoint : public MessageTests::MockServiceEndpoint {
+    class ManagementServiceEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
       void SetStatusCode(AmqpValue expectedStatusCode)
       {
@@ -74,6 +74,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint("$management", options)
       {
       }
+
+      virtual ~ManagementServiceEndpoint() = default;
 
     private:
       AmqpValue OnMessageReceived(

@@ -277,6 +277,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint(name, options)
       {
       }
+      virtual ~SenderLinkEndpoint() = default;
 
     private:
       void MessageReceived(
@@ -351,7 +352,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, SenderSendSync)
   {
-    class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
+    class SenderLinkEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
       SenderLinkEndpoint(
           std::string const& name,
@@ -359,6 +360,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint(name, options)
       {
       }
+
+      virtual ~SenderLinkEndpoint() = default;
 
     private:
       void MessageReceived(
@@ -424,6 +427,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint(name, options)
       {
       }
+
+      virtual ~ReceiverServiceEndpoint() = default;
 
     private:
       void MessageReceived(
@@ -502,6 +507,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint(name, options)
       {
       }
+      virtual ~ReceiverServiceEndpoint() = default;
 
     private:
       void MessageReceived(
@@ -560,6 +566,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint(name, options)
       {
       }
+      virtual ~ReceiverServiceEndpoint() = default;
 
       void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
       void SetSenderNodeName(std::string const& senderNodeName)
@@ -679,6 +686,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint(name, options)
       {
       }
+      virtual ~ReceiverServiceEndpoint() = default;
 
       void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
       void SetSenderNodeName(std::string const& senderNodeName)
@@ -797,7 +805,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiverTryReceive)
   {
-    class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
+    class ReceiverServiceEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
       ReceiverServiceEndpoint(
           std::string const& name,
@@ -805,6 +813,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           : MockServiceEndpoint(name, options)
       {
       }
+      virtual ~ReceiverServiceEndpoint() = default;
 
       void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
       void SetSenderNodeName(std::string const& senderNodeName)
