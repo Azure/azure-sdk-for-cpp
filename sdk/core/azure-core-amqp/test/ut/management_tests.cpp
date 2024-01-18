@@ -226,7 +226,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   namespace {
 
-    class NullResponseManagementServiceEndpoint : public MessageTests::MockServiceEndpoint {
+    class NullResponseManagementServiceEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
       NullResponseManagementServiceEndpoint(MessageTests::MockServiceEndpointOptions const& options)
           : MockServiceEndpoint("$management", options)
