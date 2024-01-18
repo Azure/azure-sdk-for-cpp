@@ -58,8 +58,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_name{name}, m_listenerContext{options.ListenerContext},
-            m_enableTrace{options.EnableTrace}
+          : m_listenerContext{options.ListenerContext}, m_enableTrace{options.EnableTrace},
+            m_name{name}
       {
       }
 
@@ -187,6 +187,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     private:
       Azure::Core::Context m_listenerContext; // Used to cancel the listener if necessary.
       bool m_enableTrace{true};
+      std::string m_name;
       std::thread m_serverThread;
       std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> m_sender;
       std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> m_receiver;
@@ -288,9 +289,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         GTEST_LOG_(INFO) << "Message Sender Disconnected: Error: " << error;
         m_messageSenderDisconnectedQueue.CompleteOperation(true);
       }
-
-    private:
-      std::string m_name;
     };
 
     class AmqpClaimBasedSecurity final : public MockServiceEndpoint {
@@ -879,12 +877,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           if (val.second.LinkSender)
           {
-            val.second.LinkSender->Close({});
+            val.second.LinkSender->Close();
             val.second.LinkSender.reset();
           }
           if (val.second.LinkReceiver)
           {
-            val.second.LinkReceiver->Close({});
+            val.second.LinkReceiver->Close();
             val.second.LinkReceiver.reset();
           }
         }

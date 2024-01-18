@@ -74,7 +74,7 @@ EventHubProperties GetEventHubProperties(
       properties.PartitionIds.push_back(static_cast<std::string>(partition));
     }
   }
-  managementClient.Close({});
+  managementClient.Close();
 
   return properties;
 }

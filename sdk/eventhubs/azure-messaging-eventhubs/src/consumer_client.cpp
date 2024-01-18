@@ -55,7 +55,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Tear down the sessions and then the connections, in that order.
     for (auto& sender : m_receivers)
     {
-      sender.second.Close({});
+      sender.second.Close();
     }
     while (!m_sessions.empty())
     {
