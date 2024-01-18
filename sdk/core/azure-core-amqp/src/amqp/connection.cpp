@@ -642,15 +642,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Log::Stream(Logger::Level::Verbose)
             << "No cached token for " << audienceUrl << ", Authenticating.";
       }
-      // Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-      // sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
-      // sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
 
-      // auto authenticationSession{std::make_shared<SessionImpl>(
-      //     shared_from_this(), sessionOptions, nullptr)};
-
-      auto claimsBasedSecurity
-          = std::make_shared<ClaimsBasedSecurityImpl>(session /*authenticationSession*/);
+      auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
       auto cbsOpenStatus = claimsBasedSecurity->Open(context);
       if (cbsOpenStatus != CbsOpenResult::Ok)
       {
@@ -677,7 +670,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {
           throw std::runtime_error("Could not put Claims Based Security token.");
         }
-        claimsBasedSecurity->Close();
+        Log::Stream(Logger::Level::Verbose) << "Close CBS object";
+        claimsBasedSecurity->Close(context);
         if (m_options.EnableTrace)
         {
           Log::Stream(Logger::Level::Verbose)
@@ -690,7 +684,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       catch (std::runtime_error const&)
       {
         // Ensure that the claims based security object is closed before we leave this scope.
-        claimsBasedSecurity->Close();
+        claimsBasedSecurity->Close(context);
         throw;
       }
     }

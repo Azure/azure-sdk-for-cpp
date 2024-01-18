@@ -586,7 +586,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
         partitionClients.erase(partitionClientIterator);
       }
-      partitionClient->Close();
+      partitionClient->Close(context);
     }
 
     processor.Stop();

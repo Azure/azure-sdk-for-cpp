@@ -4,7 +4,11 @@
 
 ### Features Added
 
+The `Close` method on AMQP Message Sender and Message Receiver now blocks until the client receives a `DETACH` response from the remote node.
+
 ### Breaking Changes
+
+- The `Close` method on AMQP Message Sender and Message Receiver now accepts an `Azure::Core::Context` parameter. This parameter is defaulted so this change should not affect existing code.
 
 ### Bugs Fixed
 

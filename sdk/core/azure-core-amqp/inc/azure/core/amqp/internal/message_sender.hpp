@@ -140,7 +140,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Closes a message sender.
      *
      */
-    void Close();
+    void Close(Context const& context = {});
 
     /** @brief Returns the link negotiated maximum message size
      *

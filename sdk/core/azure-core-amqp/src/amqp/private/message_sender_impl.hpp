@@ -12,8 +12,6 @@
 
 #include <tuple>
 
-#define SENDER_SYNCHRONOUS_CLOSE 0
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
   {
@@ -56,7 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl& operator=(MessageSenderImpl&&) noexcept = delete;
 
     void Open(Context const& context);
-    void Close();
+    void Close(Context const& context);
     std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context);
@@ -77,6 +75,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Context const& context);
 
+    void OnLinkDetached(Models::_internal::AmqpError const& error);
+
     bool m_senderOpen{false};
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;
@@ -87,10 +87,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::AmqpError>
         m_sendCompleteQueue;
 
-#if SENDER_SYNCHRONOUS_CLOSE
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
         m_closeQueue;
-#endif
     _internal::MessageSenderState m_currentState{};
 
     std::shared_ptr<_detail::SessionImpl> m_session;

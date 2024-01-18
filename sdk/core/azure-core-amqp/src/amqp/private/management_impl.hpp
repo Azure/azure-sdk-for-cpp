@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     /**
      * @brief Close the management instance.
      */
-    void Close();
+    void Close(Context const& context);
 
     _internal::ManagementOperationResult ExecuteOperation(
         std::string const& operationToPerform,

@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   ClaimsBasedSecurity::~ClaimsBasedSecurity() noexcept {}
 
   CbsOpenResult ClaimsBasedSecurity::Open(Context const& context) { return m_impl->Open(context); }
-  void ClaimsBasedSecurity::Close() { m_impl->Close(); }
+  void ClaimsBasedSecurity::Close(Context const& context) { m_impl->Close(context); }
 
   std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurity::PutToken(
       CbsTokenType tokenType,
@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ClaimsBasedSecurityImpl::Close() { m_management->Close(); }
+  void ClaimsBasedSecurityImpl::Close(Context const& context) { m_management->Close(context); }
 
   std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurityImpl::PutToken(
       CbsTokenType tokenType,

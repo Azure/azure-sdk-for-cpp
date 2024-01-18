@@ -81,11 +81,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   std::ostream& operator<<(std::ostream& os, AmqpError const& error)
   {
-    os << "Error {";
-    os << "Condition =" << error.Condition.ToString();
-    os << ", Description=" << error.Description;
-    os << ", Info=" << error.Info;
-    os << "}";
+    if (error)
+    {
+      os << "Error {";
+      os << "Condition =" << error.Condition.ToString();
+      os << ", Description=" << error.Description;
+      os << ", Info=" << error.Info;
+      os << "}";
+    }
+    else
+    {
+      os << "Error {null}";
+    }
     return os;
   }
 

@@ -147,7 +147,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Closes the message receiver.
      *
      */
-    void Close();
+    void Close(Context const& context = {});
 
     /** @brief Gets the name of the underlying link.
      *

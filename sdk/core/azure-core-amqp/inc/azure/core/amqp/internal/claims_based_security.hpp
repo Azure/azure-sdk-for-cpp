@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ClaimsBasedSecurity& operator=(ClaimsBasedSecurity&&) noexcept = default;
 
     CbsOpenResult Open(Context const& context = {});
-    void Close();
+    void Close(Context const& context = {});
     std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,

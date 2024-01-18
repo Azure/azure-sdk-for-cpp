@@ -516,7 +516,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       AMQP_VALUE value;
       if (!source_get_address(source, &value))
       {
-        os << "Address: " << source.GetAddress() << std::endl;
+        os << "Address: " << source.GetAddress();
       }
     }
     {

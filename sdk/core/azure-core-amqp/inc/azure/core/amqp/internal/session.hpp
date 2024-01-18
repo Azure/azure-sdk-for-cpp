@@ -20,6 +20,7 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   namespace MessageTests {
     class AmqpServerMock;
+    class MockServiceEndpoint;
     class MessageListenerEvents;
   } // namespace MessageTests
 
@@ -229,6 +230,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
 #if TESTING_BUILD
     friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
+    friend class Azure::Core::Amqp::Tests::MessageTests::MockServiceEndpoint;
     friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
     friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
     friend class Azure::Core::Amqp::Tests::LinkSocketListenerEvents;
