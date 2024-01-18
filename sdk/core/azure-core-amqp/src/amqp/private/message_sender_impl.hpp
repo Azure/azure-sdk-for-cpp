@@ -12,8 +12,6 @@
 
 #include <tuple>
 
-#define SENDER_SYNCHRONOUS_CLOSE 1
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
   {
@@ -89,10 +87,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::AmqpError>
         m_sendCompleteQueue;
 
-#if SENDER_SYNCHRONOUS_CLOSE
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
         m_closeQueue;
-#endif
     _internal::MessageSenderState m_currentState{};
 
     std::shared_ptr<_detail::SessionImpl> m_session;

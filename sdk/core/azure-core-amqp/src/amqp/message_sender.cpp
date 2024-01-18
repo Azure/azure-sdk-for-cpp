@@ -249,13 +249,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
              "Message Sender unexpectedly entered the Error State.",
              {}});
       }
-#if SENDER_SYNCHRONOUS_CLOSE
 
       if (oldState == MESSAGE_SENDER_STATE_CLOSING && newState == MESSAGE_SENDER_STATE_IDLE)
       {
         sender->m_closeQueue.CompleteOperation(Models::_internal::AmqpError{});
       }
-#endif
     }
   }
 
@@ -324,10 +322,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
           m_link); // This will ensure that the link is cleaned up on the next poll()
 
-#if SENDER_SYNCHRONOUS_CLOSE
       bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
           || m_currentState == _internal::MessageSenderState::Open;
-#endif
 
       {
         if (m_options.EnableTrace)
@@ -342,7 +338,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           throw std::runtime_error("Could not close message sender");
         }
       }
-#if SENDER_SYNCHRONOUS_CLOSE
       // The message sender (and it's underlying link) is in the half open state. Wait until the
       // link has fully closed.
       if (shouldWaitForClose)
@@ -364,7 +359,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           throw std::runtime_error("Error closing message sender");
         }
       }
-#endif
+
       {
         auto lock{m_session->GetConnection()->Lock()};
 
