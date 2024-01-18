@@ -174,6 +174,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * specified, the default is NoRootSquash.
      */
     Azure::Nullable<Models::ShareRootSquash> RootSquash;
+
+    /**
+     * Version 2023-08-03 and newer. Specifies whether the snapshot virtual directory should be
+     * accessible at the root of share mount point when NFS is enabled. This header is only
+     * returned for shares, not for snapshots.
+     */
+    Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
   };
 
   /**
@@ -226,6 +233,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * specified, the default is NoRootSquash.
      */
     Azure::Nullable<Models::ShareRootSquash> RootSquash;
+
+    /**
+     * Version 2023-08-03 and newer. Specifies whether the snapshot virtual directory should be
+     * accessible at the root of share mount point when NFS is enabled. This header is only
+     * returned for shares, not for snapshots.
+     */
+    Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
   };
 
   /**
