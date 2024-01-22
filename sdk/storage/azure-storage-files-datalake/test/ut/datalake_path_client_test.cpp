@@ -522,6 +522,40 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(it, acls.end());
   }
 
+  TEST_F(DataLakePathClientTest, GetAccessControlListWithUserPrincipalName)
+  {
+    std::string userPrincipalName = "kat@microsoft.com";
+    std::string userObjectId = "72a3f86f-271f-439e-b031-25678907d381";
+    std::vector<Files::DataLake::Models::Acl> acls;
+    Files::DataLake::Models::Acl acl;
+    acl.Type = "user";
+    acl.Id = userObjectId;
+    acl.Permissions = "rwx";
+    acls.emplace_back(acl);
+    m_pathClient->SetAccessControlList(acls);
+    Files::DataLake::GetPathAccessControlListOptions options;
+
+    // UserPrincipalName = true
+    options.UserPrincipalName = true;
+    auto properties = m_pathClient->GetAccessControlList(options).Value;
+    ASSERT_TRUE(!properties.Acls.empty());
+    // Validate that the user principal name is returned
+    acls = properties.Acls;
+    auto it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userPrincipalName; });
+    EXPECT_NE(it, acls.end());
+
+    // UserPrincipalName = false
+    options.UserPrincipalName = false;
+    properties = m_pathClient->GetAccessControlList(options).Value;
+    ASSERT_TRUE(!properties.Acls.empty());
+    // Validate that the user principal name is returned
+    acls = properties.Acls;
+    it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userObjectId; });
+    EXPECT_NE(it, acls.end());
+  }
+
   TEST_F(DataLakePathClientTest, Audience)
   {
     auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
