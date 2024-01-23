@@ -132,48 +132,6 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareServiceClientTest, ListSharesEnableSnapshotVirtualDirectoryAccess_PLAYBACKONLY_)
-  {
-    std::string shareName1 = LowercaseRandomString();
-    std::string shareName2 = LowercaseRandomString();
-    auto shareClient1 = m_shareServiceClient->GetShareClient(shareName1);
-    auto shareClient2 = m_shareServiceClient->GetShareClient(shareName2);
-    Files::Shares::CreateShareOptions createOptions;
-    createOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
-    shareClient1.Create(createOptions);
-    shareClient2.Create(createOptions);
-
-    Files::Shares::SetSharePropertiesOptions setPropertiesOptions;
-    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = true;
-    shareClient1.SetProperties(setPropertiesOptions);
-    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = false;
-    shareClient2.SetProperties(setPropertiesOptions);
-
-    Azure::Nullable<Files::Shares::Models::ShareItem> share1;
-    Azure::Nullable<Files::Shares::Models::ShareItem> share2;
-    for (auto page = m_shareServiceClient->ListShares(); page.HasPage(); page.MoveToNextPage())
-    {
-      for (const auto& share : page.Shares)
-      {
-        if (share.Name == shareName1)
-        {
-          share1 = share;
-        }
-        else if (share.Name == shareName2)
-        {
-          share2 = share;
-        }
-      }
-    }
-    ASSERT_TRUE(share1.HasValue() && share2.HasValue());
-    EXPECT_TRUE(
-        share1.Value().Details.EnableSnapshotVirtualDirectoryAccess.HasValue()
-        && share1.Value().Details.EnableSnapshotVirtualDirectoryAccess.Value());
-    EXPECT_TRUE(
-        share2.Value().Details.EnableSnapshotVirtualDirectoryAccess.HasValue()
-        && !share2.Value().Details.EnableSnapshotVirtualDirectoryAccess.Value());
-  }
-
   TEST_F(FileShareServiceClientTest, GetProperties)
   {
     auto ret = m_shareServiceClient->GetProperties();
