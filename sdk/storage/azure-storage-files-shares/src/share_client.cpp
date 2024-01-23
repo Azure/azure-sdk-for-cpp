@@ -149,8 +149,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.EnabledProtocols = options.EnabledProtocols;
     protocolLayerOptions.RootSquash = options.RootSquash;
-    protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
-        = options.EnableSnapshotVirtualDirectoryAccess;
     auto result
         = _detail::ShareClient::Create(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::CreateShareResult ret;
@@ -247,8 +245,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Quota = options.ShareQuotaInGiB;
     protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.RootSquash = options.RootSquash;
-    protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
-        = options.EnableSnapshotVirtualDirectoryAccess;
     return _detail::ShareClient::SetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
