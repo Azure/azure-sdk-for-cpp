@@ -48,6 +48,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     m_impl->End(condition_value, description);
   }
+  void Session::SendDetach(
+      _internal::LinkEndpoint const& linkEndpoint,
+      std::string const& errorDescription,
+      bool closeLink) const
+  {
+    m_impl->SendDetach(linkEndpoint, errorDescription, closeLink);
+  }
 
   MessageSender Session::CreateMessageSender(
       Models::_internal::MessageTarget const& target,
@@ -102,6 +109,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   SessionImpl::~SessionImpl() noexcept
   {
+    if (m_isBegun)
+    {
+      AZURE_ASSERT_MSG(false, "Session was not ended before destruction.");
+    }
+
+    // If we have a mismatched begin/end pair, we need to stop polling on the connection so it
+    // gets cleaned up properly.
+    if (m_connectionAsyncStarted)
+    {
+      m_connectionToPoll->EnableAsyncOperation(false);
+    }
+
     auto lock{m_connectionToPoll->Lock()};
     m_session.reset();
   }
@@ -209,9 +228,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not begin session");
     }
+
+    m_isBegun = true;
+
+    // Mark the connection as async so that we can use the async APIs.
+    GetConnection()->EnableAsyncOperation(true);
+    m_connectionAsyncStarted = true;
   }
   void SessionImpl::End(const std::string& condition, const std::string& description)
   {
+    if (!m_isBegun)
+    {
+      throw std::runtime_error("Session End without corresponding Begin.");
+    }
     // When we end the session, it clears all the links, so we need to ensure that the
     //    m_newLinkAttachedQueue.Clear();
     if (session_end(
@@ -221,6 +250,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not begin session");
     }
+    // Mark the connection as async so that we can use the async APIs.
+    GetConnection()->EnableAsyncOperation(false);
+    m_connectionAsyncStarted = false;
+    m_isBegun = false;
+  }
+
+  void SessionImpl::SendDetach(
+      _internal::LinkEndpoint const& linkEndpoint,
+      std::string const& errorDescription,
+      bool closeLink) const
+  {
+    throw std::runtime_error("Not yet implemented.");
+    linkEndpoint;
+    closeLink;
+    errorDescription;
   }
 
   bool SessionImpl::OnLinkAttachedFn(

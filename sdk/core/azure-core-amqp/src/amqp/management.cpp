@@ -319,7 +319,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ManagementClientImpl::OnMessageSenderDisconnected(Models::_internal::AmqpError const& error)
+  void ManagementClientImpl::OnMessageSenderDisconnected(
+      _internal::MessageSender const&,
+      Models::_internal::AmqpError const& error)
   {
     if (error)
     {
@@ -553,6 +555,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   void ManagementClientImpl::OnMessageReceiverDisconnected(
+      _internal::MessageReceiver const&,
       Models::_internal::AmqpError const& error)
   {
     if (error)

@@ -104,7 +104,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageReceiver const& receiver,
         std::shared_ptr<Models::AmqpMessage> const& message)
         = 0;
-    virtual void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) = 0;
+    virtual void OnMessageReceiverDisconnected(
+        MessageReceiver const& receiver,
+        Models::_internal::AmqpError const& error)
+        = 0;
   };
 
   /** @brief MessageReceiver

@@ -59,7 +59,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSenderState newState,
         MessageSenderState oldState)
         = 0;
-    virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) = 0;
+    virtual void OnMessageSenderDisconnected(
+        MessageSender const& sender,
+        Models::_internal::AmqpError const& error)
+        = 0;
   };
 
   struct MessageSenderOptions final
@@ -141,6 +144,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
     void Close(Context const& context = {});
+
+    /** @brief Gets the name of the underlying link.
+     *
+     * @return The name of the underlying link object.
+     */
+    std::string GetLinkName() const;
 
     /** @brief Returns the link negotiated maximum message size
      *

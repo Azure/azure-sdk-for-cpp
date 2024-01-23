@@ -27,6 +27,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestSessions_SimpleSession_Test;
   class TestSessions_SessionProperties_Test;
   class TestSessions_SessionBeginEnd_Test;
+  class TestSessions_MultipleSessionBeginEnd_Test;
 
   class TestSocketListenerEvents;
   class LinkSocketListenerEvents;
@@ -192,6 +193,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     void End(std::string const& condition_value = {}, std::string const& description = {});
 
+    /** @brief Sends a detach message on the specified link endpoint.
+     *
+     * @param linkEndpoint - Link endpoint to detach.
+     * @param errorDescription - Error description to send with the detach.
+     * @param closeLink - Whether to close the link after sending the detach.
+     *
+     * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
+     * use by AMQP listeners.
+     *
+     */
+    void SendDetach(
+        LinkEndpoint const& linkEndpoint,
+        std::string const& errorDescription = {},
+        bool closeLink = true) const;
+
     /** @brief Creates a MessageSender for use in a message listener.
      *
      * @param endpoint - Endpoint associated with this message sender.
@@ -237,6 +253,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestSessions_SimpleSession_Test;
     friend class Azure::Core::Amqp::Tests::TestSessions_SessionProperties_Test;
     friend class Azure::Core::Amqp::Tests::TestSessions_SessionBeginEnd_Test;
+    friend class Azure::Core::Amqp::Tests::TestSessions_MultipleSessionBeginEnd_Test;
+
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
 #endif // TESTING_BUILD
 #if SAMPLES_BUILD

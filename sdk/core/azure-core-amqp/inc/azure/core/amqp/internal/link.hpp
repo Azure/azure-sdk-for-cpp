@@ -3,9 +3,11 @@
 
 #pragma once
 
+#include "azure/core/amqp/internal/models/amqp_transfer.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include "azure/core/context.hpp"
 
 #include <chrono>
 #include <memory>
@@ -40,10 +42,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Invalid,
     Detached,
     HalfAttachedAttachSent,
-    HalfAttachAttachReceived,
+    HalfAttachedAttachReceived,
     Attached,
     Error,
   };
+
+  std::ostream& operator<<(std::ostream& stream, LinkState const& linkState);
 
   enum class LinkTransferResult
   {
@@ -58,9 +62,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     NotDelivered,
     Timeout,
     Cancelled,
+    Invalid
+  };
+
+  class Link;
+
+  class LinkEvents {
+  public:
+    virtual Models::AmqpValue OnTransferReceived(
+        Link const& link,
+        Models::_internal::AmqpTransfer transfer,
+        uint32_t payloadSize,
+        const unsigned char* payloadBytes)
+        = 0;
+    virtual void OnLinkStateChanged(Link const& link, LinkState newLinkState, LinkState previousLinkState) = 0;
+    virtual void OnLinkFlowOn(Link const& link) = 0;
   };
 
 #if defined(TESTING_BUILD)
+
   class Link final {
   public:
     Link(
@@ -68,14 +88,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& name,
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
-        Models::_internal::MessageTarget const& target);
+        Models::_internal::MessageTarget const& target,
+        LinkEvents* events = nullptr);
     Link(
         _internal::Session const& session,
         _internal::LinkEndpoint& linkEndpoint,
         std::string const& name,
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
-        Models::_internal::MessageTarget const& target);
+        Models::_internal::MessageTarget const& target,
+        LinkEvents* events = nullptr);
     ~Link() noexcept;
 
     Link(Link const&) = default;
@@ -109,13 +131,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void Attach();
 
+    std::tuple<uint32_t, LinkDeliverySettleReason, Models::AmqpValue> Transfer(
+        std::vector<uint8_t> const& payload,
+        Azure::Core::Context const& context);
+
     void Detach(
         bool close,
         std::string const& errorCondition,
         std::string const& errorDescription,
-        Models::AmqpValue& info);
+        const Models::AmqpValue& info);
 
   private:
+    friend class LinkImpl;
     Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
 
     std::shared_ptr<LinkImpl> m_impl;

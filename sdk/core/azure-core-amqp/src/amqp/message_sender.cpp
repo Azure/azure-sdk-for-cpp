@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
   std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
-
+  std::string MessageSender::GetLinkName() const { return m_impl->GetLinkName(); }
   MessageSender::~MessageSender() noexcept {}
   std::ostream& operator<<(std::ostream& stream, _internal::MessageSenderState const& state)
   {
@@ -144,7 +144,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.Name,
         _internal::SessionRole::Receiver, // This is the role of the link, not the endpoint.
         m_options.MessageSource,
-        m_target);
+        m_target,
+        nullptr);
     PopulateLinkProperties();
 
     m_link->SubscribeToDetachEvent(
@@ -158,7 +159,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.Name,
         _internal::SessionRole::Sender, // This is the role of the link, not the endpoint.
         m_options.MessageSource,
-        m_target);
+        m_target,
+        nullptr);
     PopulateLinkProperties();
 
     m_link->SubscribeToDetachEvent(
@@ -386,7 +388,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       if (m_events)
       {
-        m_events->OnMessageSenderDisconnected(error);
+        m_events->OnMessageSenderDisconnected(
+            MessageSenderFactory::CreateFromInternal(shared_from_this()), error);
       }
       // Log that an error occurred.
       Log::Stream(Logger::Level::Warning)
@@ -521,4 +524,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     throw std::runtime_error("Error sending message");
   }
+
+  std::string MessageSenderImpl::GetLinkName() const
+  {
+    return m_link->GetName();
+  }
+
 }}}} // namespace Azure::Core::Amqp::_detail

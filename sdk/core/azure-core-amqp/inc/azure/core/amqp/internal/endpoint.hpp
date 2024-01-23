@@ -58,6 +58,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
     ~LinkEndpoint(){};
 
+    LINK_ENDPOINT_INSTANCE_TAG* Get() const { return m_endpoint; }
+
   private:
     LINK_ENDPOINT_INSTANCE_TAG* m_endpoint;
 
@@ -68,6 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       m_endpoint = nullptr;
       return rv;
     }
+
 
     /* NOTE: We do *NOT* own a LinkEndpoint object, it is completely controlled by uAMQP-c. As
      * such, we are not allowed to free it.*/

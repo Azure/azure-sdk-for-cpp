@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ConnectionImpl;
   class ConnectionFactory;

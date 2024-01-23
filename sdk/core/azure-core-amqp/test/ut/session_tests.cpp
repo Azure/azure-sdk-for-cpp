@@ -10,6 +10,7 @@
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "mock_amqp_server.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
@@ -56,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session1{connection.CreateSession({})};
       Session session2{connection.CreateSession({})};
 
-      session1.End("", "");
+      EXPECT_ANY_THROW(session1.End("", ""));
     }
   }
 
@@ -201,6 +202,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session{connection.CreateSession()};
 
       session.Begin();
+      session.End();
     }
 
     {
@@ -211,6 +213,62 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
 
     listener.Stop();
+  }
+
+  TEST_F(TestSessions, MultipleSessionBeginEnd)
+  {
+
+    MessageTests::AmqpServerMock mockServer;
+
+    mockServer.StartListening();
+
+    // Create a connection
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
+
+    {
+      SessionOptions options;
+      Session session{connection.CreateSession()};
+
+      session.Begin();
+      session.End();
+    }
+
+    {
+      Session session{connection.CreateSession()};
+
+      session.Begin();
+      session.End("", "");
+    }
+
+    {
+      Session session{connection.CreateSession()};
+
+      session.Begin();
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      session.End("", "");
+    }
+
+    {
+      constexpr const size_t sessionCount = 256;
+      std::vector<Session> sessions;
+      for (int i = 0; i < sessionCount; i += 1)
+      {
+        sessions.push_back(connection.CreateSession());
+        sessions.back().Begin();
+      }
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+      for (auto& session : sessions)
+      {
+        session.End();
+      }
+    }
+
+    mockServer.StopListening();
   }
 #endif // !AZ_PLATFORM_MAC
 }}}} // namespace Azure::Core::Amqp::Tests

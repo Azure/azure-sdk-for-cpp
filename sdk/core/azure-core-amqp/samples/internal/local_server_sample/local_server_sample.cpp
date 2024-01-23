@@ -149,7 +149,7 @@ private:
     m_messageQueue.CompleteOperation(message);
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
-  virtual void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) override
+  virtual void OnMessageReceiverDisconnected(MessageReceiver const&, Models::_internal::AmqpError const& error) override
   {
     std::cerr << "Message receiver error: " << error << std::endl;
   }
