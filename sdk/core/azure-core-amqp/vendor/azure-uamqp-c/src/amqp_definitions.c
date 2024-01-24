@@ -7,7 +7,7 @@
 // The generator that produces it is located at /uamqp_generator/uamqp_generator.sln
 
 #include <stdlib.h>
-#include "azure_macro_utils/macro_utils.h"
+#include "azure_c_shared_utility/optimize_size.h"
 #include "azure_c_shared_utility/gballoc.h"
 #include "azure_uamqp_c/amqpvalue.h"
 #include "azure_uamqp_c/amqp_definitions.h"
@@ -146,7 +146,6 @@ ERROR_HANDLE error_create(const char* condition_value)
             }
 
             amqpvalue_destroy(condition_amqp_value);
-
             if (result != 0)
             {
                 error_destroy(error_instance);
@@ -679,7 +678,6 @@ OPEN_HANDLE open_create(const char* container_id_value)
             }
 
             amqpvalue_destroy(container_id_amqp_value);
-
             if (result != 0)
             {
                 open_destroy(open_instance);
@@ -1602,22 +1600,18 @@ int open_get_outgoing_locales(OPEN_HANDLE open, AMQP_VALUE* outgoing_locales_val
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_ietf_language_tag(outgoing_locales_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*outgoing_locales_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*outgoing_locales_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*outgoing_locales_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(open_instance->composite_value, 5, *outgoing_locales_value) != 0)
                                         {
-                                            amqpvalue_destroy(*outgoing_locales_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -1749,22 +1743,18 @@ int open_get_incoming_locales(OPEN_HANDLE open, AMQP_VALUE* incoming_locales_val
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_ietf_language_tag(incoming_locales_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*incoming_locales_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*incoming_locales_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*incoming_locales_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(open_instance->composite_value, 6, *incoming_locales_value) != 0)
                                         {
-                                            amqpvalue_destroy(*incoming_locales_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -1896,22 +1886,18 @@ int open_get_offered_capabilities(OPEN_HANDLE open, AMQP_VALUE* offered_capabili
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(offered_capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*offered_capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*offered_capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*offered_capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(open_instance->composite_value, 7, *offered_capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*offered_capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -2043,22 +2029,18 @@ int open_get_desired_capabilities(OPEN_HANDLE open, AMQP_VALUE* desired_capabili
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(desired_capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*desired_capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*desired_capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*desired_capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(open_instance->composite_value, 8, *desired_capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*desired_capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -2266,7 +2248,6 @@ BEGIN_HANDLE begin_create(transfer_number next_outgoing_id_value, uint32_t incom
             amqpvalue_destroy(next_outgoing_id_amqp_value);
             amqpvalue_destroy(incoming_window_amqp_value);
             amqpvalue_destroy(outgoing_window_amqp_value);
-
             if (result != 0)
             {
                 begin_destroy(begin_instance);
@@ -3141,22 +3122,18 @@ int begin_get_offered_capabilities(BEGIN_HANDLE begin, AMQP_VALUE* offered_capab
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(offered_capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*offered_capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*offered_capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*offered_capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(begin_instance->composite_value, 5, *offered_capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*offered_capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -3288,22 +3265,18 @@ int begin_get_desired_capabilities(BEGIN_HANDLE begin, AMQP_VALUE* desired_capab
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(desired_capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*desired_capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*desired_capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*desired_capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(begin_instance->composite_value, 6, *desired_capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*desired_capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -3511,7 +3484,6 @@ ATTACH_HANDLE attach_create(const char* name_value, handle handle_value, role ro
             amqpvalue_destroy(name_amqp_value);
             amqpvalue_destroy(handle_amqp_value);
             amqpvalue_destroy(role_amqp_value);
-
             if (result != 0)
             {
                 attach_destroy(attach_instance);
@@ -5056,22 +5028,18 @@ int attach_get_offered_capabilities(ATTACH_HANDLE attach, AMQP_VALUE* offered_ca
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(offered_capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*offered_capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*offered_capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*offered_capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(attach_instance->composite_value, 11, *offered_capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*offered_capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -5203,22 +5171,18 @@ int attach_get_desired_capabilities(ATTACH_HANDLE attach, AMQP_VALUE* desired_ca
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(desired_capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*desired_capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*desired_capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*desired_capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(attach_instance->composite_value, 12, *desired_capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*desired_capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -5426,7 +5390,6 @@ FLOW_HANDLE flow_create(uint32_t incoming_window_value, transfer_number next_out
             amqpvalue_destroy(incoming_window_amqp_value);
             amqpvalue_destroy(next_outgoing_id_amqp_value);
             amqpvalue_destroy(outgoing_window_amqp_value);
-
             if (result != 0)
             {
                 flow_destroy(flow_instance);
@@ -6871,7 +6834,6 @@ TRANSFER_HANDLE transfer_create(handle handle_value)
             }
 
             amqpvalue_destroy(handle_amqp_value);
-
             if (result != 0)
             {
                 transfer_destroy(transfer_instance);
@@ -8304,7 +8266,6 @@ DISPOSITION_HANDLE disposition_create(role role_value, delivery_number first_val
 
             amqpvalue_destroy(role_amqp_value);
             amqpvalue_destroy(first_amqp_value);
-
             if (result != 0)
             {
                 disposition_destroy(disposition_instance);
@@ -9162,7 +9123,6 @@ DETACH_HANDLE detach_create(handle handle_value)
             }
 
             amqpvalue_destroy(handle_amqp_value);
-
             if (result != 0)
             {
                 detach_destroy(detach_instance);
@@ -10196,10 +10156,9 @@ SASL_MECHANISMS_HANDLE sasl_mechanisms_create(AMQP_VALUE sasl_server_mechanisms_
             }
 
             amqpvalue_destroy(sasl_server_mechanisms_amqp_value);
-
             if (result != 0)
             {
-                sasl_mechanisms_destroy(sasl_mechanisms_instance); 
+                sasl_mechanisms_destroy(sasl_mechanisms_instance);
                 sasl_mechanisms_instance = NULL;
             }
         }
@@ -10417,22 +10376,18 @@ int sasl_mechanisms_get_sasl_server_mechanisms(SASL_MECHANISMS_HANDLE sasl_mecha
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(sasl_server_mechanisms_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*sasl_server_mechanisms_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*sasl_server_mechanisms_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*sasl_server_mechanisms_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(sasl_mechanisms_instance->composite_value, 0, *sasl_server_mechanisms_value) != 0)
                                         {
-                                            amqpvalue_destroy(*sasl_server_mechanisms_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -10543,7 +10498,6 @@ SASL_INIT_HANDLE sasl_init_create(const char* mechanism_value)
             }
 
             amqpvalue_destroy(mechanism_amqp_value);
-
             if (result != 0)
             {
                 sasl_init_destroy(sasl_init_instance);
@@ -11048,7 +11002,6 @@ SASL_CHALLENGE_HANDLE sasl_challenge_create(amqp_binary challenge_value)
             }
 
             amqpvalue_destroy(challenge_amqp_value);
-
             if (result != 0)
             {
                 sasl_challenge_destroy(sasl_challenge_instance);
@@ -11329,7 +11282,6 @@ SASL_RESPONSE_HANDLE sasl_response_create(amqp_binary response_value)
             }
 
             amqpvalue_destroy(response_amqp_value);
-
             if (result != 0)
             {
                 sasl_response_destroy(sasl_response_instance);
@@ -11610,7 +11562,6 @@ SASL_OUTCOME_HANDLE sasl_outcome_create(sasl_code code_value)
             }
 
             amqpvalue_destroy(code_amqp_value);
-
             if (result != 0)
             {
                 sasl_outcome_destroy(sasl_outcome_instance);
@@ -13270,22 +13221,18 @@ int source_get_outcomes(SOURCE_HANDLE source, AMQP_VALUE* outcomes_value)
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(outcomes_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*outcomes_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*outcomes_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*outcomes_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(source_instance->composite_value, 9, *outcomes_value) != 0)
                                         {
-                                            amqpvalue_destroy(*outcomes_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -13417,22 +13364,18 @@ int source_get_capabilities(SOURCE_HANDLE source, AMQP_VALUE* capabilities_value
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(source_instance->composite_value, 10, *capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -14430,22 +14373,18 @@ int target_get_capabilities(TARGET_HANDLE target, AMQP_VALUE* capabilities_value
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_symbol(capabilities_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*capabilities_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*capabilities_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*capabilities_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(target_instance->composite_value, 6, *capabilities_value) != 0)
                                         {
-                                            amqpvalue_destroy(*capabilities_value);
                                             result = MU_FAILURE;
                                         }
                                         else
@@ -17213,7 +17152,6 @@ RECEIVED_HANDLE received_create(uint32_t section_number_value, uint64_t section_
 
             amqpvalue_destroy(section_number_amqp_value);
             amqpvalue_destroy(section_offset_amqp_value);
-
             if (result != 0)
             {
                 received_destroy(received_instance);
