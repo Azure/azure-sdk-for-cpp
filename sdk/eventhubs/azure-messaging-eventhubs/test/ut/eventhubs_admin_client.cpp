@@ -406,8 +406,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string const& resourceGroup,
       std::string const& subscriptionId,
       Azure::Core::Context const& context)
-      : m_name(name), m_resourceGroup(resourceGroup), m_subscriptionId(subscriptionId),
-        m_pipeline{pipeline}
+      : m_name(name), m_resourceGroup(resourceGroup),
+        m_subscriptionId(subscriptionId), m_pipeline{pipeline}
   {
     Azure::Core::Url requestUrl(
         "https://management.azure.com/subscriptions/" + Azure::Core::Url::Encode(m_subscriptionId)
