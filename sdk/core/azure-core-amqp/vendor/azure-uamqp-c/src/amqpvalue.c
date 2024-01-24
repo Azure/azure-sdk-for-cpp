@@ -1072,17 +1072,18 @@ AMQP_VALUE amqpvalue_create_string(const char* value)
         size_t length = strlen(value);
         size_t malloc_size = length + 1;
 
-        // If the result of malloc_size is zero it means it had a type overflow (size_t is an unsigned
-        // type). It is very unlikely but could happen.
+        // If the result of malloc_size is zero it means it had a type overflow (size_t is an unsigned type).
+        // It is very unlikely but could happen.
         if (malloc_size == 0)
         {
-          LogError("Invalid string size exceeded max allocation");
-          result = NULL;
+            LogError("Invalid string size exceeded max allocation");
+            result = NULL;
         }
         else
         {
-          result = REFCOUNT_TYPE_CREATE(AMQP_VALUE_DATA);
+            result = REFCOUNT_TYPE_CREATE(AMQP_VALUE_DATA);
         }
+
         if (result == NULL)
         {
             /* Codes_SRS_AMQPVALUE_01_136: [If allocating the AMQP_VALUE fails then amqpvalue_create_string shall return NULL.] */
@@ -1091,7 +1092,7 @@ AMQP_VALUE amqpvalue_create_string(const char* value)
         else
         {
             result->type = AMQP_TYPE_STRING;
-          result->value.string_value.chars = (char*)malloc(malloc_size);
+            result->value.string_value.chars = (char*)malloc(malloc_size);
             if (result->value.string_value.chars == NULL)
             {
                 /* Codes_SRS_AMQPVALUE_01_136: [If allocating the AMQP_VALUE fails then amqpvalue_create_string shall return NULL.] */
@@ -5956,13 +5957,14 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                                 size_t malloc_size = (size_t)internal_decoder_data->decode_to_value->value.binary_value.length + 1;
                                 if (malloc_size == 0)
                                 {
-                                  internal_decoder_data->decode_to_value->value.binary_value.bytes = NULL;
-                                  LogError("Invalid binary_value size exceeded max allocation");
+                                    internal_decoder_data->decode_to_value->value.binary_value.bytes = NULL;
+                                    LogError("Invalid binary_value size exceeded max allocation");
                                 }
                                 else
                                 {
-                                  internal_decoder_data->decode_to_value->value.binary_value.bytes = (unsigned char*)malloc(malloc_size);
+                                    internal_decoder_data->decode_to_value->value.binary_value.bytes = (unsigned char*)malloc(malloc_size);
                                 }
+
                                 if (internal_decoder_data->decode_to_value->value.binary_value.bytes == NULL)
                                 {
                                     /* Codes_SRS_AMQPVALUE_01_326: [If any allocation failure occurs during decoding, amqpvalue_decode_bytes shall fail and return a non-zero value.] */
@@ -6027,6 +6029,7 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                         {
                             internal_decoder_data->decode_to_value->value.string_value.chars = (char*)malloc(malloc_size);
                         }
+                       
                         if (internal_decoder_data->decode_to_value->value.string_value.chars == NULL)
                         {
                             /* Codes_SRS_AMQPVALUE_01_326: [If any allocation failure occurs during decoding, amqpvalue_decode_bytes shall fail and return a non-zero value.] */
@@ -6089,21 +6092,20 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
 
                         if (internal_decoder_data->bytes_decoded == 4)
                         {
-                          size_t malloc_size = (size_t)internal_decoder_data->decode_value_state.string_value_state.length + 1;
+                            size_t malloc_size = (size_t)internal_decoder_data->decode_value_state.string_value_state.length + 1;
+                            // If the result of malloc_size is zero it means it had a type overflow (size_t is an unsigned type).
+                            // It is very unlikely but could happen.
+                            if (malloc_size == 0)
+                            {
+                                internal_decoder_data->decode_to_value->value.string_value.chars = NULL;
+                                LogError("Invalid string value size exceeded max allocation");
+                            }
+                            else
+                            {
+                                internal_decoder_data->decode_to_value->value.string_value.chars = (char*)malloc(malloc_size);
+                            }
 
-                          // If the result of malloc_size is zero it means it had a type overflow
-                          // (size_t is an unsigned type). It is very unlikely but could happen.
-                          if (malloc_size == 0)
-                          {
-                            internal_decoder_data->decode_to_value->value.string_value.chars = NULL;
-                            LogError("Invalid string value size exceeded max allocation");
-                          }
-                          else
-                          {
-                            internal_decoder_data->decode_to_value->value.string_value.chars = (char*)malloc(malloc_size);
-                          }
-                          if (internal_decoder_data->decode_to_value->value.string_value.chars
-                              == NULL)
+                            if (internal_decoder_data->decode_to_value->value.string_value.chars == NULL)
                             {
                                 /* Codes_SRS_AMQPVALUE_01_326: [If any allocation failure occurs during decoding, amqpvalue_decode_bytes shall fail and return a non-zero value.] */
                                 internal_decoder_data->decoder_state = DECODER_STATE_ERROR;
@@ -6169,16 +6171,16 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                         size--;
 
                         size_t malloc_size = (size_t)internal_decoder_data->decode_value_state.symbol_value_state.length + 1;
-                        // If the result of malloc_size is zero it means it had a type overflow
-                        // (size_t is an unsigned type). It is very unlikely but could happen.
+                        // If the result of malloc_size is zero it means it had a type overflow (size_t is an unsigned type).
+                        // It is very unlikely but could happen.
                         if (malloc_size == 0)
                         {
-                          internal_decoder_data->decode_to_value->value.symbol_value.chars = NULL;
-                          LogError("Invalid symbol_value size exceeded max allocation");
+                            internal_decoder_data->decode_to_value->value.symbol_value.chars = NULL;
+                            LogError("Invalid symbol_value size exceeded max allocation");
                         }
                         else
                         {
-                          internal_decoder_data->decode_to_value->value.symbol_value.chars = (char*)malloc(malloc_size);
+                            internal_decoder_data->decode_to_value->value.symbol_value.chars = (char*)malloc(malloc_size);
                         }
 
                         if (internal_decoder_data->decode_to_value->value.symbol_value.chars == NULL)
@@ -6243,19 +6245,20 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
 
                         if (internal_decoder_data->bytes_decoded == 4)
                         {
-                          size_t malloc_size = (size_t)internal_decoder_data->decode_value_state.symbol_value_state.length + 1;
-                          // If the result of malloc_size is zero it means it had a type overflow
-                          // (size_t is an unsigned type). It is very unlikely but could happen.
-                          if (malloc_size == 0)
-                          {
-                            internal_decoder_data->decode_to_value->value.symbol_value.chars = NULL;
-                            LogError("Invalid symbol value size exceeded max allocation");
-                          }
-                          else
-                          {
-                            internal_decoder_data->decode_to_value->value.symbol_value.chars = (char*)malloc(malloc_size);
-                          }
-                          if (internal_decoder_data->decode_to_value->value.symbol_value.chars == NULL)
+                            size_t malloc_size = (size_t)internal_decoder_data->decode_value_state.symbol_value_state.length + 1;
+                            // If the result of malloc_size is zero it means it had a type overflow (size_t is an unsigned type).
+                            // It is very unlikely but could happen.
+                            if (malloc_size == 0)
+                            {
+                                internal_decoder_data->decode_to_value->value.symbol_value.chars = NULL;
+                                LogError("Invalid symbol value size exceeded max allocation");
+                            }
+                            else
+                            {
+                                internal_decoder_data->decode_to_value->value.symbol_value.chars = (char*)malloc(malloc_size);
+                            }
+
+                            if (internal_decoder_data->decode_to_value->value.symbol_value.chars == NULL)
                             {
                                 /* Codes_SRS_AMQPVALUE_01_326: [If any allocation failure occurs during decoding, amqpvalue_decode_bytes shall fail and return a non-zero value.] */
                                 internal_decoder_data->decoder_state = DECODER_STATE_ERROR;
@@ -6598,7 +6601,6 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                                 uint32_t i;
 
                                 internal_decoder_data->decode_to_value->value.map_value.pair_count /= 2;
-
                                 size_t malloc_size = safe_multiply_size_t(sizeof(AMQP_MAP_KEY_VALUE_PAIR), (size_t)internal_decoder_data->decode_to_value->value.map_value.pair_count);
                                 malloc_size = safe_multiply_size_t(malloc_size, 2);
 
@@ -6611,6 +6613,7 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                                 {
                                     internal_decoder_data->decode_to_value->value.map_value.pairs = (AMQP_MAP_KEY_VALUE_PAIR*)malloc(malloc_size);
                                 }
+
                                 if (internal_decoder_data->decode_to_value->value.map_value.pairs == NULL)
                                 {
                                     LogError("Could not allocate memory for map value items");
@@ -6650,16 +6653,17 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                                     internal_decoder_data->decode_to_value->value.map_value.pair_count /= 2;
                                     size_t malloc_size = safe_multiply_size_t((size_t)internal_decoder_data->decode_to_value->value.map_value.pair_count, 2);
                                     malloc_size = safe_multiply_size_t(sizeof(AMQP_MAP_KEY_VALUE_PAIR), malloc_size);
+
                                     if (internal_decoder_data->decode_to_value->value.map_value.pair_count > MAX_AMQPVALUE_ITEM_COUNT)
                                     {
                                         LogError("AMQP list map count exceeded MAX_AMQPVALUE_ITEM_COUNT");
                                         result = MU_FAILURE;
                                     }
-									else if (malloc_size == SIZE_MAX)
-									{
-										LogError("Invalid map_value size exceeded max allocation");
+                                    else if (malloc_size == SIZE_MAX)
+                                    {
+                                        LogError("Invalid map_value size exceeded max allocation");
                                         result = MU_FAILURE;
-									}
+                                    }
                                     else if ((internal_decoder_data->decode_to_value->value.map_value.pairs = 
                                         (AMQP_MAP_KEY_VALUE_PAIR*)malloc(malloc_size))
                                         == NULL)
