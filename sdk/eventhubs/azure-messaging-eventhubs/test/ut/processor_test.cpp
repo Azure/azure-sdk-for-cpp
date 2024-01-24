@@ -581,12 +581,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     while (!partitionClients.empty())
     {
       auto partitionClientIterator = partitionClients.begin();
-      auto partitionClient = partitionClientIterator->second;
+      std::shared_ptr<ProcessorPartitionClient> partitionClient;
       if (partitionClientIterator != partitionClients.end())
       {
+        partitionClient = partitionClientIterator->second;
         partitionClients.erase(partitionClientIterator);
       }
-      partitionClient->Close(context);
+      // Don't re-use the context variable here, because it's been canceled.
+      if (partitionClient)
+      {
+        partitionClient->Close();
+      }
     }
 
     processor.Stop();
