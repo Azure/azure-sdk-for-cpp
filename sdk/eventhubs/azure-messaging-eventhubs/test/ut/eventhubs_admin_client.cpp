@@ -9,7 +9,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/response.hpp>
-#include <azure/identity/default_azure_credential.hpp>
+#include <azure/identity/azure_cli_credential.hpp>
 
 #include <memory>
 #include <sstream>
@@ -35,7 +35,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       tokenContext.Scopes = {"https://management.azure.com/.default"};
       perRetrypolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              std::make_unique<Azure::Identity::DefaultAzureCredential>(), tokenContext));
+              std::make_unique<Azure::Identity::AzureCliCredential>(), tokenContext));
     }
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
     options.Telemetry.ApplicationId = "eventhubs.test";
@@ -46,35 +46,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         "1.0.0",
         std::move(perRetrypolicies),
         std::move(perCallpolicies));
-  }
-
-  Azure::Core::Json::_internal::json ParseAzureCliOutput(std::string const& cliOutput)
-  {
-    GTEST_LOG_(INFO) << "Azure CLI output: " << cliOutput;
-    std::string jsonOutput = cliOutput;
-    if (jsonOutput.find("WARNING:") == 0)
-    {
-      // Erase the warning from the CLI.
-      jsonOutput = jsonOutput.erase(0, cliOutput.find('\n') + 1);
-    }
-    if (jsonOutput.find("DEBUG:") == 0)
-    {
-      // Erase the warning from the CLI.
-      GTEST_LOG_(WARNING) << "Azure CLI debug output: " << jsonOutput;
-      jsonOutput = jsonOutput.erase(0, cliOutput.find('\n') + 1);
-    }
-    if (jsonOutput.find("ERROR:") == 0)
-    {
-      throw std::runtime_error("Error processing Azure CLI: " + jsonOutput);
-    }
-    if (jsonOutput.empty())
-    {
-      return {};
-    }
-    else
-    {
-      return Azure::Core::Json::_internal::json::parse(jsonOutput);
-    }
   }
 
   EventHubsManagement::EventHubsCreateOrUpdateOperation EventHubsManagement::CreateNamespace(
@@ -435,8 +406,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string const& resourceGroup,
       std::string const& subscriptionId,
       Azure::Core::Context const& context)
-      : m_name(name), m_resourceGroup(resourceGroup),
-        m_subscriptionId(subscriptionId), m_pipeline{pipeline}
+      : m_name(name), m_resourceGroup(resourceGroup), m_subscriptionId(subscriptionId),
+        m_pipeline{pipeline}
   {
     Azure::Core::Url requestUrl(
         "https://management.azure.com/subscriptions/" + Azure::Core::Url::Encode(m_subscriptionId)
