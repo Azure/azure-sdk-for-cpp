@@ -60,6 +60,12 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     std::string TenantId;
+
+    /**
+     * @brief Use credentials cache.
+     *
+     */
+    bool CacheCredentials = true;
   };
 
   /**
@@ -82,7 +88,8 @@ namespace Azure { namespace Core { namespace Credentials {
      */
     virtual AccessToken GetToken(
         TokenRequestContext const& tokenRequestContext,
-        Context const& context) const = 0;
+        Context const& context) const
+        = 0;
 
     /**
      * @brief Gets the name of the credential.

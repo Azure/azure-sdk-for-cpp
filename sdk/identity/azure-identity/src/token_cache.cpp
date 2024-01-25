@@ -27,12 +27,13 @@ template <typename T> bool ShouldCleanUpCacheFromExpiredItems(T cacheSize);
 
 std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
     CacheKey const& key,
-    DateTime::duration minimumExpiration) const
+    DateTime::duration minimumExpiration,
+    bool useCaching) const
 {
   {
     std::shared_lock<std::shared_timed_mutex> cacheReadLock(m_cacheMutex);
 
-    auto const found = m_cache.find(key);
+    auto const found = useCaching ? m_cache.find(key) : TokenCache::m_cache.end();
     if (found != TokenCache::m_cache.end())
     {
       return found->second;
@@ -47,7 +48,7 @@ std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
 
   // Search cache for the second time, in case the item was inserted between releasing the read lock
   // and acquiring the write lock.
-  auto const found = m_cache.find(key);
+  auto const found = useCaching ? m_cache.find(key) : TokenCache::m_cache.end();
   if (found != m_cache.end())
   {
     return found->second;
@@ -88,9 +89,10 @@ AccessToken TokenCache::GetToken(
     std::string const& scopeString,
     std::string const& tenantId,
     DateTime::duration minimumExpiration,
-    std::function<AccessToken()> const& getNewToken) const
+    std::function<AccessToken()> const& getNewToken,
+    bool useCaching) const
 {
-  auto const item = GetOrCreateValue({scopeString, tenantId}, minimumExpiration);
+  auto const item = GetOrCreateValue({scopeString, tenantId}, minimumExpiration, useCaching);
 
   {
     std::shared_lock<std::shared_timed_mutex> itemReadLock(item->ElementMutex);

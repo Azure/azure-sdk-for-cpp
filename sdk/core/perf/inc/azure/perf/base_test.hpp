@@ -51,7 +51,14 @@ namespace Azure { namespace Perf {
      *
      * @param proxy A test-proxy server url.
      */
-    void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
+    void SetTestProxy(std::string const& proxy)
+    {
+      if (!proxy.empty())
+      {
+        m_isInsecureEnabled = true;
+        m_proxy = proxy;
+      }
+    }
 
     /**
      * @brief Set the performance test to run insecure.
