@@ -125,6 +125,8 @@ jobs:
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"
 
+  - template: /eng/pipelines/templates/steps/upload-failure-logs.yml
+
   - template: /eng/common/TestResources/build-test-resource-config.yml
     parameters:
       SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}

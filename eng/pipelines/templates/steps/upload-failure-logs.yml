@@ -1,0 +1,12 @@
+parameters:
+  Condition: failed()
+  TargetPath: $(Build.SourcesDirectory)/**/build/**/*.log
+  ArtifactName: BuildFailureLogs_$(Agent.JobName)_$(System.JobAttempt)
+
+steps: 
+  - task: PublishPipelineArtifact@1
+    condition: ${{ parameters.Condition }}
+    displayName: Publish Failure Logs
+    inputs:
+      targetPath: ${{ parameters.TargetPath }}
+      artifactName: ${{ parameters.ArtifactName }}
