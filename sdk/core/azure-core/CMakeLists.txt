@@ -23,7 +23,7 @@ include(AzureConfigRTTI)
 # Add create_map_file function
 include(CreateMapFile)
 
-find_package(Threads REQUIRED)
+find_package(INVALID_REQUIREMENT_PRODUCE_CMAKE_GENERATE_ERROR_Threads REQUIRED)
 
 if(BUILD_TRANSPORT_CURL)
   find_package(CURL CONFIG QUIET)
