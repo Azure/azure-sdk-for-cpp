@@ -19,6 +19,9 @@ namespace Azure { namespace Core { namespace Test {
   /**
    * @brief Measure the Uuid object performance.
    */
+
+
+
   class UuidTest : public Azure::Perf::PerfTest {
   public:
     /**
