@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto socketTransport{Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
           "localhost", Azure::Core::Amqp::_internal::AmqpPort)};
 
-      Azure::Core::Amqp::_internal::Connection connection(socketTransport, options);
+      Azure::Core::Amqp::_internal::Connection connection(socketTransport, options, nullptr, nullptr);
     }
   }
 

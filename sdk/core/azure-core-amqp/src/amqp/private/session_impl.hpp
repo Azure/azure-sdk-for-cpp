@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/core/amqp/internal/session.hpp"
+#include "azure/core/amqp/internal/models/amqp_error.hpp"
 #include "connection_impl.hpp"
 #include "unique_handle.hpp"
 
@@ -74,8 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void SendDetach(
         _internal::LinkEndpoint const& linkEndpoint,
-        std::string const& errorDescription = {},
-        bool closeLink = true) const;
+        bool closeLink, Models::_internal::AmqpError const& error) const;
 
   private:
     SessionImpl();

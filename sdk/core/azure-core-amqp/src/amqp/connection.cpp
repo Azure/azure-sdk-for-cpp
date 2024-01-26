@@ -39,9 +39,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Connection::Connection(
       Network::_internal::Transport const& transport,
       ConnectionOptions const& options,
-      ConnectionEvents* eventHandler)
-      : m_impl{
-          std::make_shared<_detail::ConnectionImpl>(transport.GetImpl(), options, eventHandler)}
+      ConnectionEvents* eventHandler,
+      ConnectionEndpointEvents* endpointEventHandler)
+      : m_impl{std::make_shared<_detail::ConnectionImpl>(
+          transport.GetImpl(),
+          options,
+          eventHandler,
+          endpointEventHandler)}
   {
     m_impl->FinishConstruction();
   }
@@ -157,11 +161,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 namespace {
 void EnsureGlobalStateInitialized()
 {
-  // Force the global instance to exist. This is required to ensure that uAMQP and
-  // azure-c-shared-utility is
-  auto globalInstance
-      = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
-  (void)globalInstance;
+// Force the global instance to exist. This is required to ensure that uAMQP and
+// azure-c-shared-utility is
+auto globalInstance = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
+(void)globalInstance;
 }
 } // namespace
 
@@ -171,8 +174,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   ConnectionImpl::ConnectionImpl(
       std::shared_ptr<Network::_detail::TransportImpl> transport,
       _internal::ConnectionOptions const& options,
-      _internal::ConnectionEvents* eventHandler)
-      : m_hostName{"localhost"}, m_options{options}, m_eventHandler{eventHandler}
+      _internal::ConnectionEvents* eventHandler,
+      _internal::ConnectionEndpointEvents* endpointEvents)
+      : m_hostName{"localhost"}, m_options{options}, m_eventHandler{eventHandler},
+        m_endpointEvents{endpointEvents}
   {
     EnsureGlobalStateInitialized();
     m_transport = transport;
@@ -247,7 +252,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         *m_transport,
         m_hostName.c_str(),
         containerId.c_str(),
-        OnNewEndpointFn,
+        (m_endpointEvents ? OnNewEndpointFn : nullptr),
         this,
         OnConnectionStateChangedFn,
         this,
@@ -397,9 +402,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
     _internal::Endpoint endpoint(EndpointFactory::CreateEndpoint(newEndpoint));
-    if (cn->m_eventHandler)
+    if (cn->m_endpointEvents)
     {
-      return cn->m_eventHandler->OnNewEndpoint(
+      return cn->m_endpointEvents->OnNewEndpoint(
           ConnectionFactory::CreateFromInternal(cn->shared_from_this()), endpoint);
     }
     return false;

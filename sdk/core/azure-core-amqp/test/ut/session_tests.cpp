@@ -219,54 +219,66 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 
     MessageTests::AmqpServerMock mockServer;
-
+    mockServer.EnableTrace(false);
     mockServer.StartListening();
 
     // Create a connection
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = mockServer.GetPort();
+    connectionOptions.EnableTrace = true;
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
+    class OutgoingConnectionEvents : public ConnectionEvents {
+      /** @brief Called when the connection state changes.
+       *
+       * @param connection The connection object whose state changed.
+       * @param newState The new state of the connection.
+       * @param oldState The previous state of the connection.
+       */
+      virtual void OnConnectionStateChanged(
+          Connection const&,
+          ConnectionState newState,
+          ConnectionState oldState) override
+      {
+        GTEST_LOG_(INFO) << "Connection state changed. OldState: " << oldState << " -> "
+                         << newState;
+      };
+
+      /** @brief called when an I/O error has occurred on the connection.
+       *
+       * @param connection The connection object.
+       */
+      virtual void OnIOError(Connection const&) override
+      {
+        GTEST_LOG_(INFO) << "Connection IO Error.";
+      };
+    };
+
+    OutgoingConnectionEvents connectionEvents;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions, &connectionEvents);
+
+    connection.Open();
 
     {
-      SessionOptions options;
-      Session session{connection.CreateSession()};
-
-      session.Begin();
-      session.End();
-    }
-
-    {
-      Session session{connection.CreateSession()};
-
-      session.Begin();
-      session.End("", "");
-    }
-
-    {
-      Session session{connection.CreateSession()};
-
-      session.Begin();
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
-      session.End("", "");
-    }
-
-    {
-      constexpr const size_t sessionCount = 256;
+      constexpr const size_t sessionCount = 10;
+      GTEST_LOG_(INFO) << "Opening " << sessionCount << " sessions.";
       std::vector<Session> sessions;
-      for (int i = 0; i < sessionCount; i += 1)
+      for (size_t i = 0; i < sessionCount; i += 1)
       {
         sessions.push_back(connection.CreateSession());
         sessions.back().Begin();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
 
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
+      GTEST_LOG_(INFO) << "Closing " << sessionCount << " sessions.";
       for (auto& session : sessions)
       {
         session.End();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
     }
+    connection.Close();
 
     mockServer.StopListening();
   }

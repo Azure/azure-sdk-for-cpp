@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "../../amqp/private/unique_handle.hpp"
-#include "azure/core/amqp/internal/models/amqp_transfer.hpp"
+#include "../../../amqp/private/unique_handle.hpp"
+#include "azure/core/amqp/internal/models/performatives/amqp_transfer.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
@@ -41,8 +41,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
     struct AmqpTransferFactory
     {
-      static _internal::AmqpTransfer FromUamqp(TRANSFER_HANDLE error);
-      static AmqpValue ToAmqp(_internal::AmqpTransfer const& error);
+      static _internal::Performatives::AmqpTransfer FromUamqp(TRANSFER_HANDLE error);
+      static AmqpValue ToAmqp(_internal::Performatives::AmqpTransfer const& error);
       AmqpTransferFactory() = delete;
     };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

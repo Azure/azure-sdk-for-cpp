@@ -97,7 +97,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           {
             GTEST_LOG_(INFO) << "Sender already created for link name " << linkName << " on target "
                              << target;
-            session.SendDetach(linkEndpoint, "Link already exists.", true);
+            Models::_internal::AmqpError error;
+            error.Condition = Models::_internal::AmqpErrorCondition::EntityAlreadyExists;
+            error.Description = "Link already exists.";
+            session.SendDetach(linkEndpoint, true, error);
             return false;
           }
         }
@@ -512,6 +515,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     class AmqpServerMock : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
                            public Azure::Core::Amqp::_internal::ConnectionEvents,
+                           public Azure::Core::Amqp::_internal::ConnectionEndpointEvents,
                            public Azure::Core::Amqp::_internal::SessionEvents {
     public:
       AmqpServerMock(
@@ -669,7 +673,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         options.IdleTimeout = std::chrono::minutes(2);
         options.EnableTrace = m_enableTrace;
         auto newConnection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
-            amqpTransport, options, this);
+            amqpTransport, options, this, this);
         m_connections.push_back(newConnection);
         newConnection->Listen();
       }

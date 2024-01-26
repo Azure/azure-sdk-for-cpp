@@ -1,11 +1,11 @@
 // Copyright(c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/core/amqp/internal/models/amqp_transfer.hpp"
+#include "azure/core/amqp/internal/models/performatives/amqp_transfer.hpp"
 
 #include "../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
-#include "private/transfer_impl.hpp"
+#include "private/performatives/transfer_impl.hpp"
 #include "private/value_impl.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_delivery_number.h>
@@ -30,9 +30,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP
      * code will NOT take ownership of the underlying ERROR_HANDLE object.
      */
-    _internal::AmqpTransfer AmqpTransferFactory::FromUamqp(TRANSFER_HANDLE transferHandle)
+    _internal::Performatives::AmqpTransfer AmqpTransferFactory::FromUamqp(
+        TRANSFER_HANDLE transferHandle)
     {
-      _internal::AmqpTransfer rv;
+      _internal::Performatives::AmqpTransfer rv;
       handle handle_value;
       if (!transfer_get_handle(transferHandle, &handle_value))
       {
@@ -90,7 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       return rv;
     }
 
-    AmqpValue AmqpTransferFactory::ToAmqp(_internal::AmqpTransfer const& transfer)
+    AmqpValue AmqpTransferFactory::ToAmqp(_internal::Performatives::AmqpTransfer const& transfer)
     {
       _detail::UniqueAmqpTransferHandle transferHandle(transfer_create(transfer.HandleValue));
 
@@ -104,24 +105,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-    std::ostream& operator<<(std::ostream& os, AmqpTransfer const& transfer)
-    {
-      os << "Transfer {";
-      os << "Handle =" << transfer.HandleValue;
-      if (transfer.DeliveryId.HasValue())
+    namespace Performatives {
+      std::ostream& operator<<(std::ostream& os, AmqpTransfer const& transfer)
       {
-        os << ", DeliveryId=" << transfer.DeliveryId.Value();
+        os << "Transfer {";
+        os << "Handle =" << transfer.HandleValue;
+        if (transfer.DeliveryId.HasValue())
+        {
+          os << ", DeliveryId=" << transfer.DeliveryId.Value();
+        }
+        os << ", DeliveryTag " << transfer.DeliveryTag;
+        os << ", MessageFormat=" << transfer.MessageFormat;
+        os << ", Settled=" << transfer.Settled;
+        os << ", More=" << transfer.More;
+        os << ", RcvSettleMode=" << transfer.ReceiverSettleMode;
+        os << ", State=" << transfer.State;
+        os << ", Resume=" << transfer.Resume;
+        os << ", Aborted=" << transfer.Aborted;
+        os << ", Batchable=" << transfer.Batchable;
+        os << "}";
+        return os;
       }
-      os << ", DeliveryTag " << transfer.DeliveryTag;
-      os << ", MessageFormat=" << transfer.MessageFormat;
-      os << ", Settled=" << transfer.Settled;
-      os << ", More=" << transfer.More;
-      os << ", RcvSettleMode=" << transfer.ReceiverSettleMode;
-      os << ", State=" << transfer.State;
-      os << ", Resume=" << transfer.Resume;
-      os << ", Aborted=" << transfer.Aborted;
-      os << ", Batchable=" << transfer.Batchable;
-      os << "}";
-      return os;
-    }
-}}}}} // namespace Azure::Core::Amqp::Models::_internal
+}}}}}} // namespace Azure::Core::Amqp::Models::_internal::Performatives

@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "azure/core/amqp/internal/models/amqp_transfer.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
+#include "azure/core/amqp/internal/models/performatives/amqp_transfer.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/context.hpp"
 
@@ -71,12 +71,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   public:
     virtual Models::AmqpValue OnTransferReceived(
         Link const& link,
-        Models::_internal::AmqpTransfer transfer,
+        Models::_internal::Performatives::AmqpTransfer transfer,
         uint32_t payloadSize,
         const unsigned char* payloadBytes)
         = 0;
-    virtual void OnLinkStateChanged(Link const& link, LinkState newLinkState, LinkState previousLinkState) = 0;
+    virtual void OnLinkStateChanged(
+        Link const& link,
+        LinkState newLinkState,
+        LinkState previousLinkState)
+        = 0;
     virtual void OnLinkFlowOn(Link const& link) = 0;
+    virtual ~LinkEvents() = default;
   };
 
 #if defined(TESTING_BUILD)

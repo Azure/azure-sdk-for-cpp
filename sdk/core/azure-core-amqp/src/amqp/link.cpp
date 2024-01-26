@@ -4,7 +4,7 @@
 #include "azure/core/amqp/internal/link.hpp"
 
 #include "../models/private/error_impl.hpp"
-#include "../models/private/transfer_impl.hpp"
+#include "../models/private/performatives/transfer_impl.hpp"
 #include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/common/completion_operation.hpp"
 #include "azure/core/amqp/internal/message_receiver.hpp"
@@ -443,7 +443,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       link->m_eventHandler->OnLinkStateChanged(
           Link{link->shared_from_this()},
-          LinkStateFromLINK_STATE(newState), LinkStateFromLINK_STATE(oldState));
+          LinkStateFromLINK_STATE(newState),
+          LinkStateFromLINK_STATE(oldState));
     }
   }
 
@@ -502,7 +503,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     // Mark the connection as async so that we can use the async APIs.
     m_session->GetConnection()->EnableAsyncOperation(true);
-
   }
   void LinkImpl::Detach(
       bool close,
@@ -523,7 +523,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
     m_session->GetConnection()->EnableAsyncOperation(false);
-
   }
 
   template <typename CompleteFn> struct RewriteTransferComplete
@@ -545,6 +544,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           break;
         case LINK_DELIVERY_SETTLE_REASON_NOT_DELIVERED:
           result = LinkDeliverySettleReason::NotDelivered;
+          break;
+        case LINK_DELIVERY_SETTLE_REASON_DISPOSITION_RECEIVED:
+          result = LinkDeliverySettleReason::DispositionReceived;
           break;
         case LINK_DELIVERY_SETTLE_REASON_SETTLED:
           result = LinkDeliverySettleReason::Settled;

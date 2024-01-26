@@ -4,8 +4,10 @@
 #include "azure/core/amqp/internal/session.hpp"
 
 #include "../models/private/value_impl.hpp"
+#include "../models/private/performatives/detach_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/link.hpp"
+#include "azure/core/amqp/internal/models/performatives/amqp_detach.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/management_impl.hpp"
@@ -50,10 +52,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
   void Session::SendDetach(
       _internal::LinkEndpoint const& linkEndpoint,
-      std::string const& errorDescription,
-      bool closeLink) const
+      bool closeLink,
+      Models::_internal::AmqpError const& error) const
   {
-    m_impl->SendDetach(linkEndpoint, errorDescription, closeLink);
+    m_impl->SendDetach(linkEndpoint, closeLink, error);
   }
 
   MessageSender Session::CreateMessageSender(
@@ -258,13 +260,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void SessionImpl::SendDetach(
       _internal::LinkEndpoint const& linkEndpoint,
-      std::string const& errorDescription,
-      bool closeLink) const
+      bool closeLink,
+      Models::_internal::AmqpError const& error) const
   {
-    throw std::runtime_error("Not yet implemented.");
-    linkEndpoint;
-    closeLink;
-    errorDescription;
+    Models::_internal::Performatives::AmqpDetach detach;
+
+    detach.Closed = closeLink;
+    detach.Error = error;
+    
+    if (session_send_detach(
+            linkEndpoint.Get(), Models::_detail::AmqpDetachFactory::ToAmqpDetach(detach).get()))
+    {
+      throw std::runtime_error("Failed to send detach performative.");
+    }
   }
 
   bool SessionImpl::OnLinkAttachedFn(

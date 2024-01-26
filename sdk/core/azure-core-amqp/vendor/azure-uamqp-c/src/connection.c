@@ -244,11 +244,11 @@ static int channel_table_set_incoming_channel(CHANNEL_TABLE* channel_table, uint
         LogError("Outgoing Channel is not allocated.");
         result = MU_FAILURE;
     }
-    else if (channel_table->channels[outgoing_channel].is_endpoint_live == false)
-    {
-        LogError("Outgoing Channel does not have an endpoint.");
-        result = MU_FAILURE;
-    }
+    //else if (channel_table->channels[outgoing_channel].is_endpoint_live == false)
+    //{
+    //    LogError("Outgoing Channel does not have an endpoint.");
+    //    result = MU_FAILURE;
+    //}
     else
 	{
 		channel_table->channels[outgoing_channel].incoming_channel = incoming_channel;
@@ -288,7 +288,7 @@ static int channel_table_release_endpoint(CHANNEL_TABLE* channel_table, uint16_t
 }
 
 
-static int channel_table_find_outgoing_channel_from_incoming_channel(CHANNEL_TABLE*channel_table, uint16_t incoming_channel, uint16_t *outgoing_channel)
+static int channel_table_find_outgoing_channel_from_incoming_channel(CHANNEL_TABLE*channel_table, uint16_t incoming_channel, uint16_t *outgoing_channel, bool*endpoint_is_live)
 {
     int result = 0;
 
@@ -298,6 +298,7 @@ static int channel_table_find_outgoing_channel_from_incoming_channel(CHANNEL_TAB
         if (channel_table->channels[i].incoming_channel == incoming_channel)
 		{
 			*outgoing_channel = channel_table->channels[i].outgoing_channel;
+            *endpoint_is_live = channel_table->channels[i].is_endpoint_live;
             result = 0;
             break;
 		}
@@ -454,7 +455,7 @@ static const char* get_frame_type_as_string(AMQP_VALUE descriptor)
 }
 #endif // NO_LOGGING
 
-static void log_incoming_frame(AMQP_VALUE performative)
+static void log_incoming_frame(uint16_t channel, AMQP_VALUE performative)
 {
 #ifdef NO_LOGGING
     UNUSED(performative);
@@ -467,6 +468,7 @@ static void log_incoming_frame(AMQP_VALUE performative)
     else
     {
         char* performative_as_string;
+        LOG(AZ_LOG_TRACE, 0, "%d:", channel)
         LOG(AZ_LOG_TRACE, 0, "<- ");
         LOG(AZ_LOG_TRACE, 0, "%s", (char*)get_frame_type_as_string(descriptor));
         performative_as_string = NULL;
@@ -479,7 +481,7 @@ static void log_incoming_frame(AMQP_VALUE performative)
 #endif
 }
 
-static void log_outgoing_frame(AMQP_VALUE performative)
+static void log_outgoing_frame(uint16_t channel, AMQP_VALUE performative)
 {
 #ifdef NO_LOGGING
     UNUSED(performative);
@@ -492,6 +494,7 @@ static void log_outgoing_frame(AMQP_VALUE performative)
     else
     {
         char* performative_as_string;
+        LOG(AZ_LOG_TRACE, 0, "%d:", channel)
         LOG(AZ_LOG_TRACE, 0, "-> ");
         LOG(AZ_LOG_TRACE, 0, "%s", (char*)get_frame_type_as_string(descriptor));
         performative_as_string = NULL;
@@ -675,7 +678,7 @@ static int send_open_frame(CONNECTION_HANDLE connection)
                     {
                         if (connection->is_trace_on == 1)
                         {
-                            log_outgoing_frame(open_performative_value);
+                            log_outgoing_frame(0xffff, open_performative_value);
                         }
 
                         /* Codes_S_R_S_CONNECTION_01_046: [OPEN SENT In this state the connection headers have been exchanged. An open frame has been sent to the peer but no open frame has yet been received.] */
@@ -738,7 +741,7 @@ static int send_close_frame(CONNECTION_HANDLE connection, ERROR_HANDLE error_han
                 {
                     if (connection->is_trace_on == 1)
                     {
-                        log_outgoing_frame(close_performative_value);
+                        log_outgoing_frame(0xffff, close_performative_value);
                     }
 
                     result = 0;
@@ -1086,7 +1089,7 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
 
                     if (connection->is_trace_on == 1)
                     {
-                        log_incoming_frame(performative);
+                        log_incoming_frame(channel, performative);
                     }
 
                     if (is_open_type_by_descriptor(descriptor))
@@ -1259,16 +1262,21 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                 }
                                 else
                                 {
-                                    uint16_t remote_channel;
+                                    uint16_t remote_channel = 0xffff;
                                     ENDPOINT_HANDLE new_endpoint = NULL;
                                     bool remote_begin = false;
 
+                                    // If there is no remote channel in the begin, this is an incoming session BEGIN operation on a listening
+                                    // connection.
                                     if (begin_get_remote_channel(begin, &remote_channel) != 0)
                                     {
                                         remote_begin = true;
+
                                         if (connection->on_new_endpoint != NULL)
                                         {
                                             new_endpoint = connection_create_endpoint(connection);
+                                            new_endpoint->incoming_channel = channel;
+                                            channel_table_set_incoming_channel(&connection->channel_table, new_endpoint->outgoing_channel, channel);
                                             if (!connection->on_new_endpoint(connection->on_new_endpoint_callback_context, new_endpoint))
                                             {
                                                 connection_destroy_endpoint(new_endpoint);
@@ -1282,7 +1290,7 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                         ENDPOINT_INSTANCE* session_endpoint = find_session_endpoint_by_outgoing_channel(connection, remote_channel);
                                         if (session_endpoint == NULL)
                                         {
-                                            LogError("Cannot create session endpoint");
+                                            LogError("Cannot find session endpoint corresponding to remote channel %d", remote_channel);
                                         }
                                         else
                                         {
@@ -1314,16 +1322,23 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                 // Once we find it, we need to update the channel table to reflect that the incoming and outgoing channel numbers is no
                                 // longer in use.
                                 uint16_t outgoing_channel;
-                                if (channel_table_find_outgoing_channel_from_incoming_channel(&connection->channel_table, channel, &outgoing_channel) != 0)
+                                bool endpoint_is_live = false;
+                                if (channel_table_find_outgoing_channel_from_incoming_channel(&connection->channel_table, channel, &outgoing_channel, &endpoint_is_live) != 0)
 								{
 									LogError("Cannot find outgoing channel for incoming channel %u", (unsigned int)channel);
 								}
 								else
 								{
                                     channel_table_free(&connection->channel_table, outgoing_channel);
+                                    // If the endpoint associated with the incoming endpoint is no longer live, we should ignore the END frame.
+                                    if (!endpoint_is_live)
+                                    {
+                                        LogInfo("END received, but endpoint is not live. Ignoring.");
+                                        break;
+                                    }
 								}
                             }
-                                // fallthrough
+                            // fallthrough
                             case AMQP_FLOW:
                             case AMQP_TRANSFER:
                             case AMQP_DISPOSITION:
@@ -2245,6 +2260,15 @@ int connection_start_endpoint(ENDPOINT_HANDLE endpoint, ON_ENDPOINT_FRAME_RECEIV
         endpoint->on_connection_state_changed = on_connection_state_changed;
         endpoint->callback_context = context;
 
+        /* If the connection is currently opened, tell the endpoint that the connection is open so that it can start processing the session. */
+        if (endpoint->connection->connection_state == CONNECTION_STATE_OPENED)
+        {
+            endpoint->on_connection_state_changed(
+                endpoint->callback_context,
+                endpoint->connection->connection_state,
+                CONNECTION_STATE_OPEN_SENT); // Fake the transition between "Open Sent" and "Opened" because session is only triggered on state changes.
+        }
+
         result = 0;
     }
 
@@ -2387,7 +2411,7 @@ int connection_encode_frame(ENDPOINT_HANDLE endpoint, AMQP_VALUE performative, P
             {
                 if (connection->is_trace_on == 1)
                 {
-                    log_outgoing_frame(performative);
+                    log_outgoing_frame(endpoint->outgoing_channel, performative);
                 }
 
                 if (tickcounter_get_current_ms(connection->tick_counter, &connection->last_frame_sent_time) != 0)

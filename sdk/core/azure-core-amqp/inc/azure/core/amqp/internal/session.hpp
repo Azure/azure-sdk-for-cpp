@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/amqp/internal/models/amqp_error.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
@@ -205,8 +206,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     void SendDetach(
         LinkEndpoint const& linkEndpoint,
-        std::string const& errorDescription = {},
-        bool closeLink = true) const;
+        bool closeLink,
+        Models::_internal::AmqpError const& error) const;
 
     /** @brief Creates a MessageSender for use in a message listener.
      *
