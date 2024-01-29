@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
        */
       bool Resume{};
 
-      /** @brief Indicates that the messgae is aborted.
+      /** @brief Indicates that the message is aborted.
        *
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
