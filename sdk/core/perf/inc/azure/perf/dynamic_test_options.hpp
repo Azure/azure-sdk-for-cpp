@@ -57,9 +57,8 @@ namespace Azure { namespace Perf {
       {
         return defaultValue;
       }
-      catch (std::exception const& e)
+      catch (std::exception const&)
       {
-        (void)e;
         throw;
       }
       return defaultValue;

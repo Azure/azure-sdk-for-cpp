@@ -30,13 +30,12 @@ std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
     DateTime::duration minimumExpiration,
     bool useCaching) const
 {
+  // not using caching, return new value;
+  if (!useCaching)
   {
-    // not using caching, return new value;
-    if (!useCaching)
-    {
-      return std::make_shared<CacheValue>();
-    }
+    return std::make_shared<CacheValue>();
   }
+  
   {
     std::shared_lock<std::shared_timed_mutex> cacheReadLock(m_cacheMutex);
 
