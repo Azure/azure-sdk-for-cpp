@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestSessions_SessionProperties_Test;
   class TestSessions_SessionBeginEnd_Test;
   class TestSessions_MultipleSessionBeginEnd_Test;
-
+  class TestLinks_LinkAttachDetach_Test;
   class TestSocketListenerEvents;
   class LinkSocketListenerEvents;
   class TestMessages_SenderSendAsync_Test;
@@ -255,6 +255,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestSessions_SessionProperties_Test;
     friend class Azure::Core::Amqp::Tests::TestSessions_SessionBeginEnd_Test;
     friend class Azure::Core::Amqp::Tests::TestSessions_MultipleSessionBeginEnd_Test;
+    friend class Azure::Core::Amqp::Tests::TestLinks_LinkAttachDetach_Test;
 
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
 #endif // TESTING_BUILD

@@ -54,7 +54,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link2(session, "MySession", SessionRole::Sender, "Source2", "Target2");
     }
 
-    GTEST_LOG_(INFO) << LinkState::Error << LinkState::Invalid << static_cast<LinkState>(92);
+    GTEST_LOG_(INFO) << LinkState::Error << LinkState::Invalid << static_cast<LinkState>(92)
+                     << LinkState::HalfAttachedAttachReceived;
   }
 
   TEST_F(TestLinks, LinkProperties)
@@ -121,14 +122,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         public Azure::Core::Amqp::_internal::ConnectionEvents,
         public Azure ::Core ::Amqp ::_internal ::ConnectionEndpointEvents,
         public Azure::Core::Amqp::_internal::SessionEvents {
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        std::shared_ptr<Azure::Core::Amqp::_internal::Connection>>
-        m_listeningQueue;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        std::unique_ptr<Azure::Core::Amqp::_internal::Session>>
-        m_listeningSessionQueue;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<Link>>
-        m_receiveLinkQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_listeningQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_listeningSessionQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_receiveLinkQueue;
+    std::shared_ptr<Azure::Core::Amqp::_detail::Link> m_link;
+    std::unique_ptr<Azure::Core::Amqp::_internal::Session> m_session;
     std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
 
     virtual void OnSocketAccepted(
@@ -144,7 +142,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       m_connection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
           amqpTransport, options, this, this);
       m_connection->Listen();
-      m_listeningQueue.CompleteOperation(m_connection);
+      m_listeningQueue.CompleteOperation(true);
     }
 
     virtual void OnConnectionStateChanged(
@@ -165,8 +163,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
           connection.CreateSession(endpoint, sessionOptions, this));
       listeningSession->Begin();
+      m_session = std::move(listeningSession);
 
-      m_listeningSessionQueue.CompleteOperation(std::move(listeningSession));
+      m_listeningSessionQueue.CompleteOperation(true);
 
       return true;
     }
@@ -176,43 +175,76 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_internal::Session const& session,
         Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
         std::string const& name,
-        Azure::Core::Amqp::_internal::SessionRole,
+        Azure::Core::Amqp::_internal::SessionRole sessionRole,
         Azure::Core::Amqp::Models::AmqpValue const& source,
         Azure::Core::Amqp::Models::AmqpValue const& target,
         Azure::Core::Amqp::Models::AmqpValue const&) override
     {
       GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
-      auto newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
-          session,
-          newLinkInstance,
-          name,
-          Azure::Core::Amqp::_internal::SessionRole::Receiver,
-          static_cast<std::string>(source),
-          static_cast<std::string>(target));
-      m_receiveLinkQueue.CompleteOperation(std::move(newLink));
+      std::unique_ptr<Azure::Core::Amqp::_detail::Link> newLink;
+      if (sessionRole == SessionRole::Sender)
+      {
+        newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
+            session,
+            newLinkInstance,
+            name,
+            Azure::Core::Amqp::_internal::SessionRole::Receiver,
+            source,
+            target);
+      }
+      else
+      {
+        newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
+            session,
+            newLinkInstance,
+            name,
+            Azure::Core::Amqp::_internal::SessionRole::Sender,
+            source,
+            target);
+      }
+      m_link = std::move(newLink);
+      m_receiveLinkQueue.CompleteOperation(true);
 
       return true;
     }
 
   public:
     LinkSocketListenerEvents() {}
-    std::shared_ptr<Connection> WaitForConnection(
+    bool WaitForConnection(
         Azure::Core::Amqp::Network::_detail::SocketListener const& listener,
         Azure::Core::Context const& context)
     {
       auto result = m_listeningQueue.WaitForPolledResult(context, listener);
-      return std::move(std::get<0>(*result));
+      return std::get<0>(*result);
     }
-    std::unique_ptr<Session> WaitForSession(Azure::Core::Context const& context)
+    bool WaitForSession(Azure::Core::Context const& context)
     {
       auto result = m_listeningSessionQueue.WaitForResult(context);
-      return std::move(std::get<0>(*result));
+      return std::get<0>(*result);
     }
-    std::unique_ptr<Azure::Core::Amqp::_detail::Link> WaitForLink(
-        Azure::Core::Context const& context)
+    bool WaitForLink(Azure::Core::Context const& context)
     {
       auto result = m_receiveLinkQueue.WaitForResult(context);
-      return std::move(std::get<0>(*result));
+      return std::get<0>(*result);
+    }
+
+    void Cleanup()
+    {
+      if (m_link)
+      {
+        //        m_link->Detach(true, {}, {}, {});
+        m_link.reset();
+      }
+      if (m_session)
+      {
+        m_session->End();
+        m_session.reset();
+      }
+      if (m_connection)
+      {
+        m_connection->Close();
+        m_connection.reset();
+      }
     }
   };
 
@@ -235,13 +267,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
       link.Attach();
 
-      Azure::Core::Amqp::Models::AmqpValue data;
-      link.Detach(false, {}, {}, data);
+      EXPECT_TRUE(events.WaitForConnection(listener, {}));
+      EXPECT_TRUE(events.WaitForSession({}));
 
-      //    auto listeningConnection = listener.WaitForConnection();
-      //    auto listeningSession = listeningConnection->WaitForSession();
-      //    auto listeningLink = listeningSession->WaitForLink();
+      EXPECT_TRUE(events.WaitForLink({}));
+      link.Detach(false, {}, {}, {});
     }
+    events.Cleanup();
     listener.Stop();
   }
 
