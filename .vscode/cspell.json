@@ -259,6 +259,12 @@
       ]
     },
     {
+      "filename": ".clang-format",
+      "words": [
+        "Dont"
+      ]
+    },
+    {
       "filename": "**/eng/pipelines/templates/**/*.yml",
       "words": [
         "lcov",
