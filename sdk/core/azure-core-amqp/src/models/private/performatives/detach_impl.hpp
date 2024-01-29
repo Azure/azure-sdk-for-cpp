@@ -6,11 +6,12 @@
 #include "../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/models/performatives/amqp_detach.hpp"
 
-#include <azure_uamqp_c/amqp_definitions_handle.h>
 #include <azure_uamqp_c/amqp_definitions_fields.h>
-#include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
 #include <azure_uamqp_c/amqp_definitions_error.h>
+#include <azure_uamqp_c/amqp_definitions_handle.h>
+#include <azure_uamqp_c/amqp_definitions_sequence_no.h>
+
 #include <azure_uamqp_c/amqp_definitions_detach.h>
 
 #include <type_traits>

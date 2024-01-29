@@ -47,7 +47,9 @@ IncludeCategories:
    Priority: 90
  - Regex: '<Azure/.*>'
    Priority: 50
- - Regex: '^<azure_uamqp_c.*/(amqp_definitions_sequence_no|amqp_definitions_milliseconds|amqp_definitions_terminus_expiry_policy|amqp_definitions_terminus_durability|amqp_definitions_fields|amqp_definitions_handle).h>$'
+ - Regex: '^<azure_uamqp_c.*/(amqp_definitions_fields).h>$'
+   Priority: 59
+ - Regex: '^<azure_uamqp_c.*/(amqp_definitions_sequence_no|amqp_definitions_milliseconds|amqp_definitions_terminus_expiry_policy|amqp_definitions_terminus_durability|amqp_definitions_number|amqp_definitions_error|amqp_definitions_handle).h>$'
    Priority: 60
  - Regex: '<azure_.*>'
    Priority: 70

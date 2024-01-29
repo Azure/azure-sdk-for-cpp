@@ -10,8 +10,9 @@
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
-#include <azure_uamqp_c/amqp_definitions_amqp_error.h>
 #include <azure_uamqp_c/amqp_definitions_error.h>
+
+#include <azure_uamqp_c/amqp_definitions_amqp_error.h>
 
 #include <iostream>
 

@@ -6,6 +6,7 @@
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
 #include <azure_uamqp_c/amqp_definitions_error.h>
+
 #include <azure_uamqp_c/connection.h>
 
 #include <gtest/gtest.h>

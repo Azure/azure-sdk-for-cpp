@@ -7,11 +7,12 @@
 #include "azure/core/amqp/internal/models/performatives/amqp_transfer.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
+
+#include <azure_uamqp_c/amqp_definitions_handle.h>
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
 #include <azure_uamqp_c/amqp_definitions_delivery_number.h>
 #include <azure_uamqp_c/amqp_definitions_delivery_tag.h>
-#include <azure_uamqp_c/amqp_definitions_handle.h>
 #include <azure_uamqp_c/amqp_definitions_message_format.h>
 #include <azure_uamqp_c/amqp_definitions_receiver_settle_mode.h>
 #include <azure_uamqp_c/amqp_definitions_transfer.h>

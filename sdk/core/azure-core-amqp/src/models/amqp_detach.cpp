@@ -9,10 +9,11 @@
 #include "private/performatives/detach_impl.hpp"
 #include "private/value_impl.hpp"
 
+#include <azure_uamqp_c/amqp_definitions_handle.h>
+
 #include <azure_uamqp_c/amqp_definitions_delivery_number.h>
 #include <azure_uamqp_c/amqp_definitions_delivery_tag.h>
 #include <azure_uamqp_c/amqp_definitions_detach.h>
-#include <azure_uamqp_c/amqp_definitions_handle.h>
 
 #include <iostream>
 
