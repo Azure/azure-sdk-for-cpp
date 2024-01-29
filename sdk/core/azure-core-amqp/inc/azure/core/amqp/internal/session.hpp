@@ -197,8 +197,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Sends a detach message on the specified link endpoint.
      *
      * @param linkEndpoint - Link endpoint to detach.
-     * @param errorDescription - Error description to send with the detach.
      * @param closeLink - Whether to close the link after sending the detach.
+     * @param error - Error description to send with the detach.
      *
      * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
      * use by AMQP listeners.

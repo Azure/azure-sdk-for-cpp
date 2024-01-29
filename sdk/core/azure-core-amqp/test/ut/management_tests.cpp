@@ -103,7 +103,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         return MockServiceEndpoint::OnMessageReceived(receiver, incomingMessage);
       }
-      void MessageReceived(std::string const&, std::shared_ptr<AmqpMessage> const& incomingMessage) override
+      void MessageReceived(std::string const&, std::shared_ptr<AmqpMessage> const& incomingMessage)
+          override
       {
         if (incomingMessage->ApplicationProperties.at("operation") == "Test")
         {
@@ -238,7 +239,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "NullResponseManagementServiceEndpoint::MessageReceived received on link " << linkName << ": " << *message;
+        GTEST_LOG_(INFO)
+            << "NullResponseManagementServiceEndpoint::MessageReceived received on link "
+            << linkName << ": " << *message;
       }
     };
   } // namespace

@@ -3,8 +3,8 @@
 
 #include "azure/core/amqp/internal/session.hpp"
 
-#include "../models/private/value_impl.hpp"
 #include "../models/private/performatives/detach_impl.hpp"
+#include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/link.hpp"
 #include "azure/core/amqp/internal/models/performatives/amqp_detach.hpp"
@@ -267,7 +267,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     detach.Closed = closeLink;
     detach.Error = error;
-    
+
     if (session_send_detach(
             linkEndpoint.Get(), Models::_detail::AmqpDetachFactory::ToAmqpDetach(detach).get()))
     {

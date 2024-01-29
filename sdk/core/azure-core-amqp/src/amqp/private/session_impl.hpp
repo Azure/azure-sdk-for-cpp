@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "azure/core/amqp/internal/session.hpp"
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
+#include "azure/core/amqp/internal/session.hpp"
 #include "connection_impl.hpp"
 #include "unique_handle.hpp"
 
@@ -50,8 +50,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
 
-
-
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::SessionOptions const& options,
@@ -75,7 +73,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void SendDetach(
         _internal::LinkEndpoint const& linkEndpoint,
-        bool closeLink, Models::_internal::AmqpError const& error) const;
+        bool closeLink,
+        Models::_internal::AmqpError const& error) const;
 
   private:
     SessionImpl();

@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       AmqpValue infoValue(error.Info.AsAmqpValue());
       error_set_info(errorHandle.get(), _detail::AmqpValueFactory::ToUamqp(infoValue));
     }
-	return errorHandle;
+    return errorHandle;
   }
 
   AmqpValue AmqpErrorFactory::ToAmqp(_internal::AmqpError const& error)

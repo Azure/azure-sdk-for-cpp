@@ -391,10 +391,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_events->OnMessageSenderDisconnected(
             MessageSenderFactory::CreateFromInternal(shared_from_this()), error);
       }
-      // Log that an error occurred.
-      Log::Stream(Logger::Level::Warning)
-          << "Message sender link detached: " << error.Condition.ToString() << ": "
-          << error.Description;
+
+      if (m_options.EnableTrace)
+      {
+        // Log that an error occurred.
+        Log::Stream(Logger::Level::Warning) << "Message sender link detached: " << error;
+      }
 
       // Cache the error we received in the OnDetach notification so we can return it to the user
       // on the next send which fails.
@@ -525,9 +527,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     throw std::runtime_error("Error sending message");
   }
 
-  std::string MessageSenderImpl::GetLinkName() const
-  {
-    return m_link->GetName();
-  }
+  std::string MessageSenderImpl::GetLinkName() const { return m_link->GetName(); }
 
 }}}} // namespace Azure::Core::Amqp::_detail

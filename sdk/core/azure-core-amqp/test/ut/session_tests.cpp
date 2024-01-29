@@ -230,11 +230,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     class OutgoingConnectionEvents : public ConnectionEvents {
       /** @brief Called when the connection state changes.
        *
-       * @param connection The connection object whose state changed.
        * @param newState The new state of the connection.
        * @param oldState The previous state of the connection.
        */
-      virtual void OnConnectionStateChanged(
+      void OnConnectionStateChanged(
           Connection const&,
           ConnectionState newState,
           ConnectionState oldState) override
@@ -245,16 +244,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       /** @brief called when an I/O error has occurred on the connection.
        *
-       * @param connection The connection object.
        */
-      virtual void OnIOError(Connection const&) override
-      {
-        GTEST_LOG_(INFO) << "Connection IO Error.";
-      };
+      void OnIOError(Connection const&) override { GTEST_LOG_(INFO) << "Connection IO Error."; };
     };
 
     OutgoingConnectionEvents connectionEvents;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions, &connectionEvents);
+    Azure::Core::Amqp::_internal::Connection connection(
+        "localhost", nullptr, connectionOptions, &connectionEvents);
 
     connection.Open();
 

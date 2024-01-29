@@ -74,7 +74,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       return rv;
     }
 
-
     /* NOTE: We do *NOT* own a LinkEndpoint object, it is completely controlled by uAMQP-c. As
      * such, we are not allowed to free it.*/
     LinkEndpoint(Endpoint const&) = delete;

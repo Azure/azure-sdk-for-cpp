@@ -29,20 +29,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-    using UniqueAmqpTransferHandle
-        = Amqp::_detail::UniqueHandle<std::remove_pointer<TRANSFER_HANDLE>::type>;
+  using UniqueAmqpTransferHandle
+      = Amqp::_detail::UniqueHandle<std::remove_pointer<TRANSFER_HANDLE>::type>;
 
-    /**
-     * @brief uAMQP interoperability functions to convert an AmqpTransfer to a uAMQP AMQP_TRANSFER
-     * and back.
-     *
-     * @remarks This class should not be used directly. It is used by the uAMQP interoperability
-     * layer.
-     */
-    struct AmqpTransferFactory
-    {
-      static _internal::Performatives::AmqpTransfer FromUamqp(TRANSFER_HANDLE error);
-      static AmqpValue ToAmqp(_internal::Performatives::AmqpTransfer const& error);
-      AmqpTransferFactory() = delete;
-    };
+  /**
+   * @brief uAMQP interoperability functions to convert an AmqpTransfer to a uAMQP AMQP_TRANSFER
+   * and back.
+   *
+   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+   * layer.
+   */
+  struct AmqpTransferFactory
+  {
+    static _internal::Performatives::AmqpTransfer FromUamqp(TRANSFER_HANDLE error);
+    static AmqpValue ToAmqp(_internal::Performatives::AmqpTransfer const& error);
+    AmqpTransferFactory() = delete;
+  };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

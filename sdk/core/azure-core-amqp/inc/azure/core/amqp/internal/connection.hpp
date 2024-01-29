@@ -16,7 +16,6 @@
 #include <memory>
 #include <string>
 
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ConnectionImpl;
   class ConnectionFactory;
@@ -196,14 +195,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   public:
     /** @brief Called when a new endpoint connects to the connection.
-                                    *
-                                    * @param connection The connection object.
-                                    * @param endpoint The endpoint that connected.
-                                    * @return true if the endpoint was accepted, false otherwise.
-                                    *
-                                    * @remarks Note that this function should only be overriden if
-                                    * the application is listening on the connection.
-                                    */
+     *
+     * @param connection The connection object.
+     * @param endpoint The endpoint that connected.
+     * @return true if the endpoint was accepted, false otherwise.
+     *
+     * @remarks Note that this function should only be overriden if
+     * the application is listening on the connection.
+     */
     virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint) = 0;
   };
 
