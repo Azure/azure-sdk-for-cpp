@@ -345,6 +345,16 @@
       }
     },
     {
+      "name": "x86-static-release",
+      "displayName": "x86 Release, static",
+      "description": "Windows x86 Release build",
+      "inherits": [
+        "x86-static",
+        "release-build"
+      ]
+
+    },
+    {
       "name": "x64-debug-tests",
       "displayName": "x64 Debug With Tests",
       "description": "Windows x64 Debug build with Tests configured",

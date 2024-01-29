@@ -412,7 +412,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_eventHandler)
     {
+#if defined(BUILD_TESTING)
       link->m_eventHandler->OnLinkFlowOn(Link{link->shared_from_this()});
+#else
+      link->m_eventHandler->OnLinkFlowOn(link->shared_from_this());
+#endif
     }
   }
   namespace {
@@ -442,7 +446,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (link->m_eventHandler)
     {
       link->m_eventHandler->OnLinkStateChanged(
+#if defined(BUILD_TESTING)
           Link{link->shared_from_this()},
+#else
+          link->shared_from_this(),
+#endif
           LinkStateFromLINK_STATE(newState),
           LinkStateFromLINK_STATE(oldState));
     }
@@ -459,7 +467,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
 
       return Models::_detail::AmqpValueFactory::ToUamqp(link->m_eventHandler->OnTransferReceived(
+#if defined(TESTING_BUILD)
           Link{link->shared_from_this()},
+#else
+          link->shared_from_this(),
+#endif
           Models::_detail::AmqpTransferFactory::FromUamqp(transfer),
           payload_size,
           payload_bytes));

@@ -70,17 +70,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class LinkEvents {
   public:
     virtual Models::AmqpValue OnTransferReceived(
+#if defined(TESTING_BUILD)
         Link const& link,
+#else
+        std::shared_ptr<LinkImpl> link,
+#endif
         Models::_internal::Performatives::AmqpTransfer transfer,
         uint32_t payloadSize,
         const unsigned char* payloadBytes)
         = 0;
     virtual void OnLinkStateChanged(
+#if defined(TESTING_BUILD)
         Link const& link,
+#else
+        std::shared_ptr<LinkImpl> link,
+#endif
         LinkState newLinkState,
         LinkState previousLinkState)
         = 0;
-    virtual void OnLinkFlowOn(Link const& link) = 0;
+    virtual void OnLinkFlowOn(
+#if defined(TESTING_BUILD)
+        Link const& link
+#else
+        std::shared_ptr<LinkImpl> link
+#endif
+        )
+        = 0;
     virtual ~LinkEvents() = default;
   };
 
