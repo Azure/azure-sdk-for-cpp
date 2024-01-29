@@ -53,6 +53,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link1(session, "MySession", SessionRole::Sender, "Source1", "Target1");
       Link link2(session, "MySession", SessionRole::Sender, "Source2", "Target2");
     }
+
+    GTEST_LOG_(INFO) << LinkState::Error << LinkState::Invalid << static_cast<LinkState>(92);
   }
 
   TEST_F(TestLinks, LinkProperties)
@@ -187,7 +189,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::_internal::SessionRole::Receiver,
           static_cast<std::string>(source),
           static_cast<std::string>(target));
-      //    newLink->SetReceiverSettleMode(Azure::Core::Amqp::ReceiverSettleMode::First);
       m_receiveLinkQueue.CompleteOperation(std::move(newLink));
 
       return true;
@@ -204,13 +205,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     std::unique_ptr<Session> WaitForSession(Azure::Core::Context const& context)
     {
-      auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connection);
+      auto result = m_listeningSessionQueue.WaitForResult(context);
       return std::move(std::get<0>(*result));
     }
     std::unique_ptr<Azure::Core::Amqp::_detail::Link> WaitForLink(
         Azure::Core::Context const& context)
     {
-      auto result = m_receiveLinkQueue.WaitForPolledResult(context, *m_connection);
+      auto result = m_receiveLinkQueue.WaitForResult(context);
       return std::move(std::get<0>(*result));
     }
   };
@@ -315,6 +316,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<LinkState> m_linkStateQueue;
     };
+
     Link keepAliveLink{
         session, "KeepConnectionAlive", SessionRole::Receiver, "MyTarget", "TestReceiver"};
     keepAliveLink.Attach();
