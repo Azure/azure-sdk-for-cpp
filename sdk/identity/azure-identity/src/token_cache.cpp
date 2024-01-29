@@ -31,9 +31,16 @@ std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
     bool useCaching) const
 {
   {
+    // not using caching, return new value;
+    if (!useCaching)
+    {
+      return std::make_shared<CacheValue>();
+    }
+  }
+  {
     std::shared_lock<std::shared_timed_mutex> cacheReadLock(m_cacheMutex);
 
-    auto const found = useCaching ? m_cache.find(key) : TokenCache::m_cache.end();
+    auto const found = m_cache.find(key);
     if (found != TokenCache::m_cache.end())
     {
       return found->second;
@@ -48,7 +55,7 @@ std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
 
   // Search cache for the second time, in case the item was inserted between releasing the read lock
   // and acquiring the write lock.
-  auto const found = useCaching ? m_cache.find(key) : TokenCache::m_cache.end();
+  auto const found = m_cache.find(key);
   if (found != m_cache.end())
   {
     return found->second;
