@@ -255,6 +255,7 @@
       "filename": "CMakePresets.json",
       "words": [
         "ASAN",
+        "asan",
         "fsanitize"
       ]
     },
