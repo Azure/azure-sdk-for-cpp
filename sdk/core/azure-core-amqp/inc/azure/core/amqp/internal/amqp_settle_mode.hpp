@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <iostream>
+
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   enum class SenderSettleMode

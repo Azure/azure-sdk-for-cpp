@@ -52,6 +52,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
 
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_FALSE(transfer.DeliveryId);
     ASSERT_FALSE(transfer.DeliveryTag);
@@ -69,6 +71,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     ASSERT_EQ(0, transfer_set_delivery_id(amqpTransfer.get(), 17));
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
+
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
 
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
@@ -93,6 +97,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
 
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
     ASSERT_EQ(17, transfer.DeliveryId.Value());
@@ -114,6 +120,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
 
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
     ASSERT_EQ(17, transfer.DeliveryId.Value());
@@ -134,6 +142,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     ASSERT_EQ(0, transfer_set_settled(amqpTransfer.get(), true));
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
+
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
 
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
@@ -157,6 +167,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
 
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
     ASSERT_EQ(17, transfer.DeliveryId.Value());
@@ -178,6 +190,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     ASSERT_EQ(0, transfer_set_rcv_settle_mode(amqpTransfer.get(), receiver_settle_mode_first));
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
+
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
 
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
@@ -201,6 +215,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     ASSERT_EQ(0, transfer_set_rcv_settle_mode(amqpTransfer.get(), receiver_settle_mode_second));
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
+
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
 
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
@@ -228,6 +244,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
 
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
     ASSERT_EQ(17, transfer.DeliveryId.Value());
@@ -253,6 +271,8 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
 
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
     ASSERT_EQ(17, transfer.DeliveryId.Value());
@@ -277,6 +297,9 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     transfer_set_aborted(amqpTransfer.get(), true);
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
+
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
     ASSERT_EQ(17, transfer.DeliveryId.Value());
@@ -301,6 +324,9 @@ TEST_F(TestPerformativesUamqp, AmqpTransferFactory)
     transfer_set_batchable(amqpTransfer.get(), false);
     Performatives::AmqpTransfer transfer{
         Azure::Core::Amqp::Models::_detail::AmqpTransferFactory::FromUamqp(amqpTransfer.get())};
+
+    GTEST_LOG_(INFO) << "Transfer: " << transfer;
+
     ASSERT_EQ(92, transfer.Handle);
     ASSERT_TRUE(transfer.DeliveryId);
     ASSERT_EQ(17, transfer.DeliveryId.Value());
@@ -328,6 +354,7 @@ TEST_F(TestPerformativesUamqp, AmqpDetachFactory)
   {
     Performatives::AmqpDetach detach{
         Azure::Core::Amqp::Models::_detail::AmqpDetachFactory::FromUamqp(amqpDetach.get())};
+    GTEST_LOG_(INFO) << "Detach: " << detach;
 
     ASSERT_EQ(343, detach.Handle);
     ASSERT_FALSE(detach.Closed);
@@ -338,6 +365,7 @@ TEST_F(TestPerformativesUamqp, AmqpDetachFactory)
     ASSERT_EQ(0, detach_set_closed(amqpDetach.get(), true));
     Performatives::AmqpDetach detach{
         Azure::Core::Amqp::Models::_detail::AmqpDetachFactory::FromUamqp(amqpDetach.get())};
+    GTEST_LOG_(INFO) << "Detach: " << detach;
 
     ASSERT_EQ(343, detach.Handle);
     ASSERT_TRUE(detach.Closed);
@@ -354,6 +382,7 @@ TEST_F(TestPerformativesUamqp, AmqpDetachFactory)
         0, detach_set_error(amqpDetach.get(), _detail::AmqpErrorFactory::ToAmqpError(error).get()));
     Performatives::AmqpDetach detach{
         Azure::Core::Amqp::Models::_detail::AmqpDetachFactory::FromUamqp(amqpDetach.get())};
+    GTEST_LOG_(INFO) << "Detach: " << detach;
 
     ASSERT_EQ(343, detach.Handle);
     ASSERT_TRUE(detach.Closed);

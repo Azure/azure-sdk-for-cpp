@@ -118,15 +118,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     std::ostream& operator<<(std::ostream& os, AmqpTransfer const& transfer)
     {
       os << "Transfer {";
-      os << "Handle =" << transfer.Handle;
-      if (transfer.DeliveryId.HasValue())
+      os << "Handle: " << transfer.Handle;
+      if (transfer.DeliveryId)
       {
-        os << ", DeliveryId=" << transfer.DeliveryId.Value();
+        os << ", DeliveryId: " << transfer.DeliveryId.Value();
       }
-      os << ", DeliveryTag " << transfer.DeliveryTag.Value();
-      os << ", MessageFormat=" << transfer.MessageFormat;
-      os << ", Settled=" << transfer.Settled.Value();
-      os << ", More=" << transfer.More;
+      if (transfer.DeliveryTag)
+      {
+        os << ", DeliveryTag: " << transfer.DeliveryTag.Value();
+      }
+      os << ", MessageFormat: " << transfer.MessageFormat;
+      if (transfer.Settled)
+      {
+        os << ", Settled, " << transfer.Settled.Value();
+      }
+      os << ", More: " << transfer.More;
       if (transfer.SettleMode)
       {
         os << ", RcvSettleMode=" << transfer.SettleMode.Value();

@@ -9,6 +9,7 @@
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
 
 #include <cstdint>
+#include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   namespace Performatives {
@@ -27,4 +28,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       bool Closed{};
       AmqpError Error;
     };
+    std::ostream& operator<<(std::ostream&, AmqpDetach const&);
+
 }}}}}} // namespace Azure::Core::Amqp::Models::_internal::Performatives
