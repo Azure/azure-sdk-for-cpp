@@ -35,6 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestSocketListenerEvents;
   class LinkSocketListenerEvents;
   class TestLinks_LinkAttachDetach_Test;
+  class TestSessions_MultipleSessionBeginEnd_Test;
   class TestMessages_SenderOpenClose_Test;
   class TestMessages_TestLocalhostVsTls_Test;
   class TestMessages_SenderSendAsync_Test;
@@ -166,7 +167,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    */
   class ConnectionEvents {
   protected:
-    ~ConnectionEvents(){};
+    virtual ~ConnectionEvents() = default;
 
   public:
     /** @brief Called when the connection state changes.
@@ -181,27 +182,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         ConnectionState oldState)
         = 0;
 
+    /** @brief called when an I/O error has occurred on the connection.
+     *
+     * @param connection The connection object.
+     */
+    virtual void OnIOError(Connection const& connection) = 0;
+  };
+
+  class ConnectionEndpointEvents {
+  protected:
+    virtual ~ConnectionEndpointEvents() = default;
+
+  public:
     /** @brief Called when a new endpoint connects to the connection.
      *
      * @param connection The connection object.
      * @param endpoint The endpoint that connected.
      * @return true if the endpoint was accepted, false otherwise.
      *
-     * @remarks Note that this function should only be overriden if the application is listening
-     * on the connection.
+     * @remarks Note that this function should only be overriden if
+     * the application is listening on the connection.
      */
-    virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint)
-    {
-      (void)connection;
-      (void)endpoint;
-      return false;
-    }
-
-    /** @brief called when an I/O error has occurred on the connection.
-     *
-     * @param connection The connection object.
-     */
-    virtual void OnIOError(Connection const& connection) = 0;
+    virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint) = 0;
   };
 
   /** @brief Options used to create a connection. */
@@ -299,7 +301,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Connection(
         Network::_internal::Transport const& transport,
         ConnectionOptions const& options,
-        ConnectionEvents* eventHandler = nullptr);
+        ConnectionEvents* eventHandler,
+        ConnectionEndpointEvents* endpointEvents);
 
     /** @brief Destroy an AMQP connection */
     ~Connection();
@@ -457,6 +460,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionAttributes_Test;
     friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionOpenClose_Test;
     friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionListenClose_Test;
+    friend class Azure::Core::Amqp::Tests::TestSessions_MultipleSessionBeginEnd_Test;
     friend class Azure::Core::Amqp::Tests::TestLinks_LinkAttachDetach_Test;
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
     friend class Azure::Core::Amqp::Tests::TestMessages_TestLocalhostVsTls_Test;

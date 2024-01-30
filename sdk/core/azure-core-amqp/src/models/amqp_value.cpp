@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return os;
     }
-    std::ostream& operator<<(std::ostream& os, AMQP_VALUE_DATA_TAG* const value)
+    std::ostream& operator<<(std::ostream& os, AMQP_VALUE const value)
     {
       if (value != nullptr)
       {

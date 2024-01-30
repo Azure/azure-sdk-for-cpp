@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/amqp/internal/models/amqp_error.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
@@ -27,7 +28,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestSessions_SimpleSession_Test;
   class TestSessions_SessionProperties_Test;
   class TestSessions_SessionBeginEnd_Test;
-
+  class TestSessions_MultipleSessionBeginEnd_Test;
+  class TestLinks_LinkAttachDetach_Test;
   class TestSocketListenerEvents;
   class LinkSocketListenerEvents;
   class TestMessages_SenderSendAsync_Test;
@@ -192,6 +194,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     void End(std::string const& condition_value = {}, std::string const& description = {});
 
+    /** @brief Sends a detach message on the specified link endpoint.
+     *
+     * @param linkEndpoint - Link endpoint to detach.
+     * @param closeLink - Whether to close the link after sending the detach.
+     * @param error - Error description to send with the detach.
+     *
+     * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
+     * use by AMQP listeners.
+     *
+     */
+    void SendDetach(
+        LinkEndpoint const& linkEndpoint,
+        bool closeLink,
+        Models::_internal::AmqpError const& error) const;
+
     /** @brief Creates a MessageSender for use in a message listener.
      *
      * @param endpoint - Endpoint associated with this message sender.
@@ -237,6 +254,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestSessions_SimpleSession_Test;
     friend class Azure::Core::Amqp::Tests::TestSessions_SessionProperties_Test;
     friend class Azure::Core::Amqp::Tests::TestSessions_SessionBeginEnd_Test;
+    friend class Azure::Core::Amqp::Tests::TestSessions_MultipleSessionBeginEnd_Test;
+    friend class Azure::Core::Amqp::Tests::TestLinks_LinkAttachDetach_Test;
+
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
 #endif // TESTING_BUILD
 #if SAMPLES_BUILD

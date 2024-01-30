@@ -61,6 +61,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::uint64_t GetMaxMessageSize() const;
 
+    std::string GetLinkName() const;
+
   private:
     static void OnMessageSenderStateChangedFn(
         void* context,

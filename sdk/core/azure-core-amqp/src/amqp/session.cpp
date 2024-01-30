@@ -3,9 +3,11 @@
 
 #include "azure/core/amqp/internal/session.hpp"
 
+#include "../models/private/performatives/detach_impl.hpp"
 #include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/link.hpp"
+#include "azure/core/amqp/internal/models/performatives/amqp_detach.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/management_impl.hpp"
@@ -47,6 +49,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   void Session::End(std::string const& condition_value, std::string const& description)
   {
     m_impl->End(condition_value, description);
+  }
+  void Session::SendDetach(
+      _internal::LinkEndpoint const& linkEndpoint,
+      bool closeLink,
+      Models::_internal::AmqpError const& error) const
+  {
+    m_impl->SendDetach(linkEndpoint, closeLink, error);
   }
 
   MessageSender Session::CreateMessageSender(
@@ -102,6 +111,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   SessionImpl::~SessionImpl() noexcept
   {
+    if (m_isBegun)
+    {
+      AZURE_ASSERT_MSG(false, "Session was not ended before destruction.");
+    }
+
+    // If we have a mismatched begin/end pair, we need to stop polling on the connection so it
+    // gets cleaned up properly.
+    if (m_connectionAsyncStarted)
+    {
+      m_connectionToPoll->EnableAsyncOperation(false);
+    }
+
     auto lock{m_connectionToPoll->Lock()};
     m_session.reset();
   }
@@ -209,9 +230,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not begin session");
     }
+
+    m_isBegun = true;
+
+    // Mark the connection as async so that we can use the async APIs.
+    GetConnection()->EnableAsyncOperation(true);
+    m_connectionAsyncStarted = true;
   }
   void SessionImpl::End(const std::string& condition, const std::string& description)
   {
+    if (!m_isBegun)
+    {
+      throw std::runtime_error("Session End without corresponding Begin.");
+    }
     // When we end the session, it clears all the links, so we need to ensure that the
     //    m_newLinkAttachedQueue.Clear();
     if (session_end(
@@ -220,6 +251,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             description.empty() ? nullptr : description.c_str()))
     {
       throw std::runtime_error("Could not begin session");
+    }
+    // Mark the connection as async so that we can use the async APIs.
+    GetConnection()->EnableAsyncOperation(false);
+    m_connectionAsyncStarted = false;
+    m_isBegun = false;
+  }
+
+  void SessionImpl::SendDetach(
+      _internal::LinkEndpoint const& linkEndpoint,
+      bool closeLink,
+      Models::_internal::AmqpError const& error) const
+  {
+    Models::_internal::Performatives::AmqpDetach detach;
+
+    detach.Closed = closeLink;
+    detach.Error = error;
+
+    if (session_send_detach(
+            linkEndpoint.Get(), Models::_detail::AmqpDetachFactory::ToAmqpDetach(detach).get()))
+    {
+      throw std::runtime_error("Failed to send detach performative.");
     }
   }
 

@@ -255,7 +255,14 @@
       "filename": "CMakePresets.json",
       "words": [
         "ASAN",
+        "asan",
         "fsanitize"
+      ]
+    },
+    {
+      "filename": ".clang-format",
+      "words": [
+        "Dont"
       ]
     },
     {

@@ -41,6 +41,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
+  std::ostream& operator<<(std::ostream& stream, ReceiverSettleMode const& settleMode)
+  {
+    switch (settleMode)
+    {
+      case ReceiverSettleMode::First:
+        stream << "First";
+        break;
+      case ReceiverSettleMode::Second:
+        stream << "Second";
+        break;
+    }
+    return stream;
+  }
+
   MessageReceiver::~MessageReceiver() noexcept {}
 
   void MessageReceiver::Open(Context const& context)
@@ -117,8 +131,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       case _internal::MessageReceiverState::Error:
         stream << "Error";
         break;
-      default:
-        throw std::runtime_error("Unknown message sender state operation type.");
     }
     return stream;
   }
@@ -166,7 +178,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.Name,
         SessionRole::Sender, // This is the role of the link, not the endpoint.
         m_source,
-        m_options.MessageTarget);
+        m_options.MessageTarget,
+        nullptr);
     PopulateLinkProperties();
 
     Log::Stream(Logger::Level::Verbose)
@@ -179,7 +192,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void MessageReceiverImpl::CreateLink()
   {
     m_link = std::make_shared<_detail::LinkImpl>(
-        m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.MessageTarget);
+        m_session,
+        m_options.Name,
+        SessionRole::Receiver,
+        m_source,
+        m_options.MessageTarget,
+        nullptr);
     PopulateLinkProperties();
 
     Log::Stream(Logger::Level::Verbose)
@@ -253,7 +271,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       if (m_eventHandler)
       {
-        m_eventHandler->OnMessageReceiverDisconnected(error);
+        m_eventHandler->OnMessageReceiverDisconnected(
+            MessageReceiverFactory::CreateFromInternal(shared_from_this()), error);
       }
 
       // Log that an error occurred.
@@ -382,7 +401,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::ostream& operator<<(std::ostream& stream, MESSAGE_RECEIVER_STATE const& state)
   {
-    stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
+    if (state < sizeof(MESSAGE_RECEIVER_STATEStrings) / sizeof(MESSAGE_RECEIVER_STATEStrings[0]))
+    {
+      stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
+    }
+    else
+    {
+      stream << "Unknown MESSAGE_RECEIVER_STATE value: " << state;
+    }
     return stream;
   }
 

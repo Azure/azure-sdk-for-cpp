@@ -176,6 +176,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         sasKeyName,
         std::chrono::duration_cast<std::chrono::seconds>(expirationTime.time_since_epoch())
             .count());
+    if (sasToken == nullptr)
+    {
+      throw std::runtime_error("Could not create SAS token.");
+    }
     std::string rv(STRING_c_str(sasToken));
     STRING_delete(sasToken);
     STRING_delete(sasKeyValue);

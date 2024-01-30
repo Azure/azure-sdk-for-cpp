@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                      << _internal::MessageReceiverState::Opening
                      << _internal::MessageReceiverState::Open
                      << _internal::MessageReceiverState::Error;
-    EXPECT_ANY_THROW(GTEST_LOG_(INFO) << static_cast<_internal::MessageReceiverState>(5993));
+    GTEST_LOG_(INFO) << static_cast<_internal::MessageReceiverState>(5993);
   }
   TEST_F(TestMessageSendReceive, ReceiverProperties)
   { // Create a connection
@@ -100,7 +100,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                      << _internal::MessageSenderState::Idle
                      << _internal::MessageSenderState::Opening
                      << _internal::MessageSenderState::Open << _internal::MessageSenderState::Error;
-    EXPECT_ANY_THROW(GTEST_LOG_(INFO) << static_cast<_internal::MessageSenderState>(5993));
+    GTEST_LOG_(INFO) << static_cast<_internal::MessageSenderState>(5993);
   }
   TEST_F(TestMessageSendReceive, SenderProperties)
   { // Create a connection
@@ -137,7 +137,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             MessageReceiverState newState,
             MessageReceiverState oldState) override
         {
-          GTEST_LOG_(INFO) << "MessageReceiverEvents::OnMessageReceiverSTateChanged.";
+          GTEST_LOG_(INFO) << "MessageReceiverEvents::OnMessageReceiverStateChanged: " << newState
+                           << "->" << oldState;
           (void)receiver;
           (void)newState;
           (void)oldState;
@@ -150,6 +151,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           return Models::AmqpValue();
         }
         void OnMessageReceiverDisconnected(
+            Azure::Core::Amqp::_internal::MessageReceiver const&,
             Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
         {
           GTEST_LOG_(INFO) << "Message receiver disconnected: " << error;
@@ -222,7 +224,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                            << " NewState: " << std::to_string(static_cast<uint32_t>(newState));
           (void)sender;
         }
-        virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
+        virtual void OnMessageSenderDisconnected(
+            MessageSender const&,
+            Models::_internal::AmqpError const& error) override
         {
           GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
         };
@@ -281,9 +285,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     private:
       void MessageReceived(
+          std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "Message received: " << *message;
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
 
@@ -321,7 +326,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Old State: "
                            << oldState << " New State: " << newState;
         }
-        virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
+        virtual void OnMessageSenderDisconnected(
+            MessageSender const&,
+            Models::_internal::AmqpError const& error) override
         {
           GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
         };
@@ -365,9 +372,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     private:
       void MessageReceived(
+          std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "Message received: " << *message;
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
 
@@ -432,9 +440,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     private:
       void MessageReceived(
+          std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "Message received: " << *message;
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
     MessageTests::AmqpServerMock server;
@@ -511,9 +520,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     private:
       void MessageReceived(
+          std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "Message received: " << *message;
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
     MessageTests::AmqpServerMock server;
@@ -599,9 +609,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
 
       void MessageReceived(
+          std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "Message received: " << *message;
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
 
@@ -718,9 +729,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
       }
       void MessageReceived(
+          std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "Message received: " << *message;
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
 
@@ -845,9 +857,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
       }
       void MessageReceived(
+          std::string const& linkName,
           std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
       {
-        GTEST_LOG_(INFO) << "Message received: " << *message;
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
 

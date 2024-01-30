@@ -37,6 +37,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+  std::ostream& operator<<(std::ostream& stream, SenderSettleMode const& settleMode)
+  {
+    switch (settleMode)
+    {
+      case SenderSettleMode::Settled:
+        stream << "Settled";
+        break;
+      case SenderSettleMode::Unsettled:
+        stream << "Unsettled";
+        break;
+      case SenderSettleMode::Mixed:
+        stream << "Mixed";
+        break;
+    }
+    return stream;
+  }
 
   void MessageSender::Open(Context const& context) { m_impl->Open(context); }
   void MessageSender::Close(Context const& context) { m_impl->Close(context); }
@@ -48,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
   std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
-
+  std::string MessageSender::GetLinkName() const { return m_impl->GetLinkName(); }
   MessageSender::~MessageSender() noexcept {}
   std::ostream& operator<<(std::ostream& stream, _internal::MessageSenderState const& state)
   {
@@ -72,8 +88,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       case _internal::MessageSenderState::Error:
         stream << "Error";
         break;
-      default:
-        throw std::runtime_error("Unknown message sender state operation type.");
     }
     return stream;
   }
@@ -144,7 +158,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.Name,
         _internal::SessionRole::Receiver, // This is the role of the link, not the endpoint.
         m_options.MessageSource,
-        m_target);
+        m_target,
+        nullptr);
     PopulateLinkProperties();
 
     m_link->SubscribeToDetachEvent(
@@ -158,7 +173,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.Name,
         _internal::SessionRole::Sender, // This is the role of the link, not the endpoint.
         m_options.MessageSource,
-        m_target);
+        m_target,
+        nullptr);
     PopulateLinkProperties();
 
     m_link->SubscribeToDetachEvent(
@@ -386,12 +402,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       if (m_events)
       {
-        m_events->OnMessageSenderDisconnected(error);
+        m_events->OnMessageSenderDisconnected(
+            MessageSenderFactory::CreateFromInternal(shared_from_this()), error);
       }
-      // Log that an error occurred.
-      Log::Stream(Logger::Level::Warning)
-          << "Message sender link detached: " << error.Condition.ToString() << ": "
-          << error.Description;
+
+      if (m_options.EnableTrace)
+      {
+        // Log that an error occurred.
+        Log::Stream(Logger::Level::Warning) << "Message sender link detached: " << error;
+      }
 
       // Cache the error we received in the OnDetach notification so we can return it to the user
       // on the next send which fails.
@@ -521,4 +540,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     throw std::runtime_error("Error sending message");
   }
+
+  std::string MessageSenderImpl::GetLinkName() const { return m_link->GetName(); }
+
 }}}} // namespace Azure::Core::Amqp::_detail
