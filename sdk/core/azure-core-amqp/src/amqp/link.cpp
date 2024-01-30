@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       bool close,
       std::string const& errorCondition,
       std::string const& errorDescription,
-      const Models::AmqpValue& info)
+      Models::AmqpValue const& info)
   {
     return m_impl->Detach(close, errorCondition, errorDescription, info);
   }

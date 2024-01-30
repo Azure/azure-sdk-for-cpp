@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    */
   class ConnectionEvents {
   protected:
-    virtual ~ConnectionEvents(){};
+    virtual ~ConnectionEvents() = default;
 
   public:
     /** @brief Called when the connection state changes.
@@ -191,7 +191,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class ConnectionEndpointEvents {
   protected:
-    virtual ~ConnectionEndpointEvents(){};
+    virtual ~ConnectionEndpointEvents() = default;
 
   public:
     /** @brief Called when a new endpoint connects to the connection.
