@@ -103,10 +103,6 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
       options.TestProxies.push_back(proxy);
     }
   }
-  if (parsedArgs["TestProxy"])
-  {
-    options.TestProxies.push_back(parsedArgs["TestProxy"].as<std::string>());
-  }
 
   return options;
 }

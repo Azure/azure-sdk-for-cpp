@@ -59,7 +59,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
     [Option("sync", HelpText = "Runs sync version of test")]  -- Not supported
     [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")]
     [Option('x', "proxy", Default = "", HelpText = "Proxy server")]
-    [Option("test-proxy", HelpText = "URI of TestProxy Server")]
   */
   return {
       {"Duration",
@@ -88,7 +87,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       
       {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
-      {"TestProxy", {"--test-proxy"}, "URI of TestProxy Server", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
   };
       
