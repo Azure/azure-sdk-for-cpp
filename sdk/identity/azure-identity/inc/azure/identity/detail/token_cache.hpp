@@ -76,8 +76,7 @@ namespace Azure { namespace Identity { namespace _detail {
     // Gets item from cache, or creates it, puts into cache, and returns.
     std::shared_ptr<CacheValue> GetOrCreateValue(
         CacheKey const& key,
-        DateTime::duration minimumExpiration, 
-        bool useCaching) const;
+        DateTime::duration minimumExpiration) const;
 
   public:
     TokenCache() = default;
@@ -92,7 +91,6 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param minimumExpiration Minimum token lifetime for the cached value to be returned.
      * @param getNewToken Function to get the new token for the given \p scopeString, in case when
      * cache does not have it, or if its remaining lifetime is less than \p minimumExpiration.
-     * @param useCaching If set to false, the token will not be cached.
      * @return Authentication token.
      *
      */
@@ -100,7 +98,6 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& scopeString,
         std::string const& tenantId,
         DateTime::duration minimumExpiration,
-        std::function<Core::Credentials::AccessToken()> const& getNewToken,
-        bool useCaching = true) const;
+        std::function<Core::Credentials::AccessToken()> const& getNewToken) const;
   };
 }}} // namespace Azure::Identity::_detail

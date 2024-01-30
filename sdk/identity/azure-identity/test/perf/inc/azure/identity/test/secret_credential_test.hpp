@@ -41,7 +41,10 @@ namespace Azure { namespace Identity { namespace Test {
       m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
       m_secret = m_options.GetMandatoryOption<std::string>("Secret");
       m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
-      m_tokenRequestContext.CacheCredentials = m_options.GetOptionOrDefault<bool>("Cache", false);
+      if (m_options.GetOptionOrDefault<bool>("Cache", false) == false)
+      {
+        m_tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
+      }
       m_credential = std::make_unique<Azure::Identity::ClientSecretCredential>(
           m_tenantId,
           m_clientId,

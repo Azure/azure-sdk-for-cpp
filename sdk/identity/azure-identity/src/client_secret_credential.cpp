@@ -104,6 +104,5 @@ AccessToken ClientSecretCredential::GetToken(
 
           return request;
         });
-      },
-      tokenRequestContext.CacheCredentials);
+      });
 }
