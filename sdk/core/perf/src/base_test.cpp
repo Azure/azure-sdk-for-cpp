@@ -112,7 +112,6 @@ namespace Azure { namespace Perf {
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
       Azure::Core::Http::CurlTransportOptions curlOptions;
       curlOptions.SslVerifyPeer = false;
-      curlOptions.SslOptions.AllowFailedCrlRetrieval = true;
       clientOptions.Transport.Transport
           = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
@@ -195,7 +194,6 @@ namespace Azure { namespace Perf {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
         request.SetHeader("x-recording-id", m_recordId);
         auto response = pipeline.Send(request, ctx);
-        
         auto const& headers = response->GetHeaders();
         auto findHeader = std::find_if(
             headers.begin(),

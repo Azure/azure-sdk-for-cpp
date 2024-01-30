@@ -82,28 +82,23 @@ AccessToken ClientSecretCredential::GetToken(
   // when they are being executed. They are not supposed to keep a reference to lambda argument to
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
-  return m_tokenCache.GetToken(
-      scopesStr,
-      tenantId,
-      tokenRequestContext.MinimumExpiration,
-      [&]() {
-        return m_tokenCredentialImpl->GetToken(context, [&]() {
-          auto body = m_requestBody;
+  return m_tokenCache.GetToken(scopesStr, tenantId, tokenRequestContext.MinimumExpiration, [&]() {
+    return m_tokenCredentialImpl->GetToken(context, [&]() {
+      auto body = m_requestBody;
 
-          if (!scopesStr.empty())
-          {
-            body += "&scope=" + scopesStr;
-          }
+      if (!scopesStr.empty())
+      {
+        body += "&scope=" + scopesStr;
+      }
 
-          auto const requestUrl = m_clientCredentialCore.GetRequestUrl(tenantId);
+      auto const requestUrl = m_clientCredentialCore.GetRequestUrl(tenantId);
 
-          auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
-              HttpMethod::Post, requestUrl, body);
+      auto request
+          = std::make_unique<TokenCredentialImpl::TokenRequest>(HttpMethod::Post, requestUrl, body);
 
-          request->HttpRequest.SetHeader("Host", requestUrl.GetHost());
+      request->HttpRequest.SetHeader("Host", requestUrl.GetHost());
 
-          return request;
-        });
-      },
-      tokenRequestContext.CacheCredentials);
+      return request;
+    });
+  });
 }

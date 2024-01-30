@@ -60,12 +60,6 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     std::string TenantId;
-
-    /**
-     * @brief Use credentials cache.
-     *
-     */
-    bool CacheCredentials = true;
   };
 
   /**
