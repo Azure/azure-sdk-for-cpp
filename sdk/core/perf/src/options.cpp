@@ -84,10 +84,9 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
        1},
       {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
       {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
-      
+
       {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
   };
-      
 }

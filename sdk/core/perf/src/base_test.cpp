@@ -147,7 +147,7 @@ namespace Azure { namespace Perf {
       Azure::Core::Http::_internal::HttpPipeline pipeline(
           clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
       Azure::Core::Context ctx;
-      
+
       //  Make one call to Run() before starting recording, to avoid capturing one-time setup
       //  like authorization requests.
       if (!m_options.ShouldSkipInitial())
