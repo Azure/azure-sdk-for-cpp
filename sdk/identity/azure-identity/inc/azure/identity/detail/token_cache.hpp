@@ -91,7 +91,7 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param minimumExpiration Minimum token lifetime for the cached value to be returned.
      * @param getNewToken Function to get the new token for the given \p scopeString, in case when
      * cache does not have it, or if its remaining lifetime is less than \p minimumExpiration.
-     * 
+     *
      * @return Authentication token.
      *
      */
