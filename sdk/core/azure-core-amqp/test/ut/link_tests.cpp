@@ -106,11 +106,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       link.SetDesiredCapabilities("DesiredCapabilities");
       auto val = link.GetDesiredCapabilities();
 
-      link.ResetLinkCredit(92, true);
+      EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
     }
 
     {
-      Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+      Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
       Link link2(link);
 
       EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
@@ -122,6 +122,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MySource"}, link.GetSource().GetAddress());
       EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MyTarget"}, link.GetTarget().GetAddress());
+
+      EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
+
     }
   }
 
