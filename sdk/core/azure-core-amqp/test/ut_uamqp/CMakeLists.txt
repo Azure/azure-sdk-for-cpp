@@ -32,6 +32,7 @@ add_executable(azure-core-amqp-uamqp-tests
   uamqp_message_tests.cpp
   uamqp_properties_tests.cpp
   uamqp_performatives_tests.cpp
+  uamqp_value_tests.cpp
 )
 
 add_dependencies(azure-core-amqp-uamqp-tests Azure::azure-core-amqp uamqp)
