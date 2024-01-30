@@ -195,7 +195,6 @@ namespace Azure { namespace Perf {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
         request.SetHeader("x-recording-id", m_recordId);
         auto response = pipeline.Send(request, ctx);
-        
         auto const& headers = response->GetHeaders();
         auto findHeader = std::find_if(
             headers.begin(),
