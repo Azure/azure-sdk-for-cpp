@@ -405,10 +405,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
     }
-	else
-	{
-	  stream << "Unknown MESSAGE_RECEIVER_STATE value: " << state;
-	}
+    else
+    {
+      stream << "Unknown MESSAGE_RECEIVER_STATE value: " << state;
+    }
     return stream;
   }
 
