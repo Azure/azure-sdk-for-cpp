@@ -10,6 +10,7 @@
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
 #include "link.hpp"
+#include "amqp_settle_mode.hpp"
 #include "session.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -33,12 +34,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Error,
   };
   std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState const& state);
-
-  enum class ReceiverSettleMode
-  {
-    First,
-    Second,
-  };
 
   class MessageReceiver;
 

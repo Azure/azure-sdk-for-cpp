@@ -61,6 +61,7 @@ find_package(azure_c_shared_utility CONFIG REQUIRED)
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp.hpp
     inc/azure/core/amqp/dll_import_export.hpp
+    inc/azure/core/amqp/internal/amqp_settle_mode.hpp
     inc/azure/core/amqp/internal/cancellable.hpp
     inc/azure/core/amqp/internal/claims_based_security.hpp
     inc/azure/core/amqp/internal/common/async_operation_queue.hpp

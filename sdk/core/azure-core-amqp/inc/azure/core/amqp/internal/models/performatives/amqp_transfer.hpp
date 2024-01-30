@@ -5,6 +5,8 @@
 
 #include "azure/core/amqp/dll_import_export.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include "azure/core/amqp/internal/amqp_settle_mode.hpp"
+#include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -32,12 +34,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       /** @brief Move assignment operator */
       AmqpTransfer& operator=(AmqpTransfer&&) = default;
 
-      /** @brief The link on which the message is transferred.
+      /** @brief The link channel on which the message is transferred.
        *
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        */
-      std::uint32_t HandleValue{};
+      std::uint32_t Handle{};
 
       /** @brief The Delivery ID for the message.
        *
@@ -52,34 +54,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        */
-      AmqpBinaryData DeliveryTag{};
+      Azure::Nullable < AmqpBinaryData> DeliveryTag{};
 
       /** @brief The message format code.
        *
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        */
-      std::uint32_t MessageFormat{};
+      std::uint32_t MessageFormat{Models::AmqpDefaultMessageFormatValue};
 
       /** @brief The settled state on the message.
        *
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        */
-      bool Settled{};
+      Azure::Nullable<bool> Settled{};
+
       /** @brief Indicates that the message has more content.
        *
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        */
-      bool More{};
+      bool More{false};
 
       /** @brief Indicates the settle mode for the message.
        *
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        */
-      std::uint32_t ReceiverSettleMode{};
+      Azure::Nullable<Azure::Core::Amqp::_internal::ReceiverSettleMode> SettleMode{};
 
       /** @brief The state of the delivery at the sender.
        *
@@ -94,7 +97,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        *
        */
-      bool Resume{};
+      bool Resume{false};
 
       /** @brief Indicates that the message is aborted.
        *
@@ -102,7 +105,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        *
        */
-      bool Aborted{};
+      bool Aborted{false};
 
       /** @brief Batchable hint..
        *
@@ -110,8 +113,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        *
        */
-
-      bool Batchable{};
+      bool Batchable{false};
     };
     std::ostream& operator<<(std::ostream&, AmqpTransfer const&);
 

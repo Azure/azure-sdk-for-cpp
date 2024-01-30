@@ -41,6 +41,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
+  std::ostream &operator<<(std::ostream& stream, ReceiverSettleMode const& settleMode)
+  {
+    switch (settleMode)
+    {
+      case ReceiverSettleMode::First:
+        stream << "First";
+        break;
+      case ReceiverSettleMode::Second:
+        stream << "Second";
+        break;
+      default:
+        throw std::runtime_error("Unknown message receiver settle state.");
+    }
+    return stream;
+  }
+
   MessageReceiver::~MessageReceiver() noexcept {}
 
   void MessageReceiver::Open(Context const& context)

@@ -37,6 +37,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+  std::ostream& operator<<(std::ostream& stream, SenderSettleMode const& settleMode)
+  {
+    switch (settleMode)
+    {
+      case SenderSettleMode::Settled:
+        stream << "Settled";
+        break;
+      case SenderSettleMode::Unsettled:
+        stream << "Unsettled";
+        break;
+      case SenderSettleMode::Mixed:
+        stream << "Mixed";
+        break;
+      default:
+        throw std::runtime_error("Unknown message sender settle state.");
+    }
+    return stream;
+  }
 
   void MessageSender::Open(Context const& context) { m_impl->Open(context); }
   void MessageSender::Close(Context const& context) { m_impl->Close(context); }

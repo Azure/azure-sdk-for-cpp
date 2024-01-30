@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "amqp_settle_mode.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "cancellable.hpp"
@@ -40,13 +41,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Error,
   };
   std::ostream& operator<<(std::ostream& stream, MessageSenderState const& state);
-
-  enum class SenderSettleMode
-  {
-    Unsettled,
-    Settled,
-    Mixed,
-  };
 
   class MessageSender;
   class MessageSenderEvents {
