@@ -26,6 +26,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::string m_target;
     std::shared_ptr<Azure::Core::Http::HttpTransport> m_Transport;
+    Azure::Core::Http::HttpMethod m_httpMethod = Azure::Core::Http::HttpMethod::Get;
 
   public:
     /**
@@ -37,19 +38,30 @@ namespace Azure { namespace Core { namespace Test {
 
     void Setup() override
     {
-      m_target = GetTestProxy() + "/Admin/isAlive";
       if ("winhttp" == m_options.GetMandatoryOption<std::string>("Transport"))
       {
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
         Azure::Core::Http::WinHttpTransportOptions transportOptions;
         transportOptions.IgnoreInvalidCertificateCommonName = true;
         transportOptions.IgnoreUnknownCertificateAuthority = true;
         m_Transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(transportOptions);
+#endif
       }
       else
       {
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
         Azure::Core::Http::CurlTransportOptions transportOptions;
         transportOptions.SslVerifyPeer = false;
         m_Transport = std::make_shared<Azure::Core::Http::CurlTransport>(transportOptions);
+#endif
+      }
+
+      m_httpMethod
+          = Azure::Core::Http::HttpMethod(m_options.GetMandatoryOption<std::string>("Method"));
+
+      if (m_httpMethod == Azure::Core::Http::HttpMethod::Get)
+      {
+        m_target = GetTestProxy() + "/Admin/isAlive";
       }
     }
 
@@ -63,7 +75,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         Azure::Core::Context context;
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(m_target));
+            m_httpMethod, Azure::Core::Url(m_target));
         auto response = m_Transport->Send(request, context);
         // Make sure to pull all bytes from network.
         auto body = response->ExtractBodyStream()->ReadToEnd();
@@ -74,14 +86,15 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
-     /**
+    /**
      * @brief Define the test options for the test.
      *
      * @return The list of test options.
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"Transport", {"--transport"}, "The HTTP Transport curl/winhttp.", 1, true}};
+      return {{"Transport", {"--transport"}, "The HTTP Transport curl/winhttp.", 1, true},
+      {"Method", {"--method"}, "The HTTP method e.g. GET, POST etc.", 1, true}};
     }
 
     /**
@@ -91,10 +104,9 @@ namespace Azure { namespace Core { namespace Test {
      */
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
-      return {
-          "HTTPGetTest", "Measures HTTP Get performance", [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Core::Test::HTTPGetTest>(options);
-          }};
+      return {"HTTPGetTest", "Measures HTTP Get performance", [](Azure::Perf::TestOptions options) {
+                return std::make_unique<Azure::Core::Test::HTTPGetTest>(options);
+              }};
     }
   };
 
