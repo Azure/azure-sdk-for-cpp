@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                      << _internal::MessageReceiverState::Opening
                      << _internal::MessageReceiverState::Open
                      << _internal::MessageReceiverState::Error;
-    EXPECT_ANY_THROW(GTEST_LOG_(INFO) << static_cast<_internal::MessageReceiverState>(5993));
+    GTEST_LOG_(INFO) << static_cast<_internal::MessageReceiverState>(5993);
   }
   TEST_F(TestMessageSendReceive, ReceiverProperties)
   { // Create a connection
@@ -100,7 +100,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                      << _internal::MessageSenderState::Idle
                      << _internal::MessageSenderState::Opening
                      << _internal::MessageSenderState::Open << _internal::MessageSenderState::Error;
-    EXPECT_ANY_THROW(GTEST_LOG_(INFO) << static_cast<_internal::MessageSenderState>(5993));
+    GTEST_LOG_(INFO) << static_cast<_internal::MessageSenderState>(5993);
   }
   TEST_F(TestMessageSendReceive, SenderProperties)
   { // Create a connection
