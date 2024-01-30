@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "amqp_settle_mode.hpp"
+#include "azure/core/amqp/internal/amqp_settle_mode.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "cancellable.hpp"
