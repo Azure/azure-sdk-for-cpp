@@ -89,16 +89,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       link.SetReceiverSettleMode(ReceiverSettleMode::First);
       EXPECT_EQ(ReceiverSettleMode::First, link.GetReceiverSettleMode());
 
+      EXPECT_ANY_THROW(link.SetReceiverSettleMode(static_cast<ReceiverSettleMode>(023)));
+
       link.SetSenderSettleMode(SenderSettleMode::Settled);
       EXPECT_EQ(SenderSettleMode::Settled, link.GetSenderSettleMode());
       link.SetSenderSettleMode(SenderSettleMode::Unsettled);
       EXPECT_EQ(SenderSettleMode::Unsettled, link.GetSenderSettleMode());
       link.SetSenderSettleMode(SenderSettleMode::Mixed);
       EXPECT_EQ(SenderSettleMode::Mixed, link.GetSenderSettleMode());
+      EXPECT_ANY_THROW(link.SetSenderSettleMode(static_cast<SenderSettleMode>(023)));
 
       link.SetMaxLinkCredit(95);
 
       link.SetAttachProperties("Attach Properties");
+
+      link.SetDesiredCapabilities("DesiredCapabilities");
+      auto val = link.GetDesiredCapabilities();
+
+      link.ResetLinkCredit(92, true);
     }
 
     {

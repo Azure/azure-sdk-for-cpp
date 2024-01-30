@@ -84,9 +84,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   uint64_t Link::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
   uint64_t Link::GetPeerMaxMessageSize() const { return m_impl->GetPeerMaxMessageSize(); }
-  void Link::SetAttachProperties(Models::AmqpValue attachProperties)
+  void Link::SetAttachProperties(Models::AmqpValue const& attachProperties)
   {
     m_impl->SetAttachProperties(attachProperties);
+  }
+
+  Models::AmqpValue Link::GetDesiredCapabilities() const
+  {
+    return m_impl->GetDesiredCapabilities();
+  }
+  void Link::SetDesiredCapabilities(Models::AmqpValue const& desiredCapabilities)
+  {
+    m_impl->SetDesiredCapabilities(desiredCapabilities);
+  }
+
+  void Link::ResetLinkCredit(std::uint32_t linkCredit, bool drain)
+  {
+    m_impl->ResetLinkCredit(linkCredit, drain);
   }
   void Link::SetMaxLinkCredit(uint32_t credit) { m_impl->SetMaxLinkCredit(credit); }
   std::string Link::GetName() const { return m_impl->GetName(); }
