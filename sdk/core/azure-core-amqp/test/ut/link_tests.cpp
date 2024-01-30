@@ -242,7 +242,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
       if (m_link)
       {
-        //        m_link->Detach(true, {}, {}, {});
         m_link.reset();
       }
       if (m_session)
@@ -427,13 +426,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             "MySource",
             "MyTarget",
             linkEvents.back().get()});
-        links.back().Attach(); // Iterate until the state changes to Attached.
+      }
+      for (size_t i = 0; i < linkCount; i += 1)
+      {
+        links[i].Attach(); // Iterate until the state changes to Attached.
         LinkState linkState;
 
         // Wait for the links to attach.
         do
         {
-          linkState = linkEvents.back()->WaitForLink({});
+          linkState = linkEvents[i]->WaitForLink({});
         } while (linkState != LinkState::Attached);
       }
       for (size_t i = 0; i < linkCount; i += 1)

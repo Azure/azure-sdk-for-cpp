@@ -50,8 +50,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       case SenderSettleMode::Mixed:
         stream << "Mixed";
         break;
-      default:
-        throw std::runtime_error("Unknown message sender settle state.");
     }
     return stream;
   }
@@ -90,8 +88,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       case _internal::MessageSenderState::Error:
         stream << "Error";
         break;
-      default:
-        throw std::runtime_error("Unknown message sender state operation type.");
     }
     return stream;
   }

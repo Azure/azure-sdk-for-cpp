@@ -51,8 +51,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       case ReceiverSettleMode::Second:
         stream << "Second";
         break;
-      default:
-        throw std::runtime_error("Unknown message receiver settle state.");
     }
     return stream;
   }
@@ -133,8 +131,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       case _internal::MessageReceiverState::Error:
         stream << "Error";
         break;
-      default:
-        throw std::runtime_error("Unknown message sender state operation type.");
     }
     return stream;
   }
@@ -405,7 +401,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::ostream& operator<<(std::ostream& stream, MESSAGE_RECEIVER_STATE const& state)
   {
-    stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
+    if (state < sizeof(MESSAGE_RECEIVER_STATEStrings) / sizeof(MESSAGE_RECEIVER_STATEStrings[0]))
+    {
+      stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
+    }
+	else
+	{
+	  stream << "Unknown MESSAGE_RECEIVER_STATE value: " << state;
+	}
     return stream;
   }
 
