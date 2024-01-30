@@ -169,5 +169,10 @@ namespace Azure { namespace Perf {
       ConfigureClientOptions(options);
       return options;
     }
+
+    /**
+    * @brief Returns the test proxy.
+    */
+    std::string GetTestProxy() { return m_proxy; }
   };
 }} // namespace Azure::Perf
