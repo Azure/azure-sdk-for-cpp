@@ -124,7 +124,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MyTarget"}, link.GetTarget().GetAddress());
 
       EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
-
     }
   }
 

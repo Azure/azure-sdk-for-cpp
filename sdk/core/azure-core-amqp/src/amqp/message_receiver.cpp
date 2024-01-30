@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
-  std::ostream &operator<<(std::ostream& stream, ReceiverSettleMode const& settleMode)
+  std::ostream& operator<<(std::ostream& stream, ReceiverSettleMode const& settleMode)
   {
     switch (settleMode)
     {

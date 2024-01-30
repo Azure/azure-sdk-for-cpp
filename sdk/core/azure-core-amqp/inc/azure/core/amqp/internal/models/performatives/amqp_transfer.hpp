@@ -4,9 +4,9 @@
 #pragma once
 
 #include "azure/core/amqp/dll_import_export.hpp"
-#include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/internal/amqp_settle_mode.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
        * @remarks For more information, see [AMQP
        * Section 2.7.5](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer).
        */
-      Azure::Nullable < AmqpBinaryData> DeliveryTag{};
+      Azure::Nullable<AmqpBinaryData> DeliveryTag{};
 
       /** @brief The message format code.
        *

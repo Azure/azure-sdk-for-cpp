@@ -12,13 +12,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Mixed,
   };
 
-  std::ostream &operator<<(std::ostream& os, SenderSettleMode const& mode);
+  std::ostream& operator<<(std::ostream& os, SenderSettleMode const& mode);
 
   enum class ReceiverSettleMode
   {
     First,
     Second,
   };
-  std::ostream &operator<<(std::ostream& os, ReceiverSettleMode const& mode);
+  std::ostream& operator<<(std::ostream& os, ReceiverSettleMode const& mode);
 
 }}}} // namespace Azure::Core::Amqp::_internal

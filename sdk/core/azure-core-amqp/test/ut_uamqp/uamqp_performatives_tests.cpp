@@ -350,7 +350,8 @@ TEST_F(TestPerformativesUamqp, AmqpDetachFactory)
     error.Condition = AmqpErrorCondition::DecodeError;
     error.Description = "A Description of the error";
 
-    ASSERT_EQ(0, detach_set_error(amqpDetach.get(), _detail::AmqpErrorFactory::ToAmqpError(error).get()));
+    ASSERT_EQ(
+        0, detach_set_error(amqpDetach.get(), _detail::AmqpErrorFactory::ToAmqpError(error).get()));
     Performatives::AmqpDetach detach{
         Azure::Core::Amqp::Models::_detail::AmqpDetachFactory::FromUamqp(amqpDetach.get())};
 
