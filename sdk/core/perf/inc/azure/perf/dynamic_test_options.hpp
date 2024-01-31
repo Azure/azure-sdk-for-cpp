@@ -77,6 +77,6 @@ namespace Azure { namespace Perf {
       return m_results[optionName].as<T>();
     }
 
-    bool ShouldSkipInitial() { return m_skipInitial; }
+    bool ShouldSkipInitial() const { return m_skipInitial; }
   };
 }} // namespace Azure::Perf
