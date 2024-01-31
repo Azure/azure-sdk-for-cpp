@@ -22,17 +22,14 @@ namespace Azure { namespace Perf {
   class TestOptions {
   private:
     argagg::parser_results m_results;
-    
+
   public:
     /**
      * @brief Create the test options component from the command line parsed results.
      *
      * @param results The command line parsed results.
      */
-    explicit TestOptions(argagg::parser_results results)
-        : m_results(results)
-    {
-    }
+    explicit TestOptions(argagg::parser_results results) : m_results(results) {}
 
     /**
      * @brief Get the option value from the option name. If the option is not found, it returns \p
