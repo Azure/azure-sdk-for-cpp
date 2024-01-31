@@ -22,11 +22,12 @@ namespace Azure { namespace Core { namespace Test {
   /**
    * @brief Measure the Curl performance.
    */
-  class HTTPGetTest : public Azure::Perf::PerfTest {
+  class HTTPTransportTest : public Azure::Perf::PerfTest {
 
     std::string m_target;
     std::shared_ptr<Azure::Core::Http::HttpTransport> m_Transport;
     Azure::Core::Http::HttpMethod m_httpMethod = Azure::Core::Http::HttpMethod::Get;
+    std::shared_ptr<Azure::Core::Http::Request> m_httpRequest;
 
   public:
     /**
@@ -34,7 +35,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @param options The test options.
      */
-    HTTPGetTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
+    HTTPTransportTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
     void Setup() override
     {
@@ -63,20 +64,36 @@ namespace Azure { namespace Core { namespace Test {
       {
         m_target = GetTestProxy() + "/Admin/isAlive";
       }
+      else if (m_httpMethod == Azure::Core::Http::HttpMethod::Post)
+      {
+        m_target = GetTestProxy() + "/Admin/setRecordingOptions";
+      }
     }
 
     /**
-     * @brief Use HTTPCurlTest to call test proxy endpoint.
+     * @brief Use HTTPTransportTest to call test proxy endpoint.
      *
      */
     void Run(Azure::Core::Context const&) override
     {
       try
       {
+        if (m_httpMethod == Azure::Core::Http::HttpMethod::Get)
+        {
+          m_httpRequest = std::make_shared<Azure::Core::Http::Request>(
+              m_httpMethod, Azure::Core::Url(m_target));
+        }
+        else if (m_httpMethod == Azure::Core::Http::HttpMethod::Post)
+        {
+          std::string payload = "{}";
+          Azure::Core::IO::MemoryBodyStream payloadStream(
+              reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+          m_httpRequest = std::make_shared<Azure::Core::Http::Request>(
+              m_httpMethod, Azure::Core::Url(m_target), &payloadStream);
+        }
+
         Azure::Core::Context context;
-        auto request = Azure::Core::Http::Request(
-            m_httpMethod, Azure::Core::Url(m_target));
-        auto response = m_Transport->Send(request, context);
+        auto response = m_Transport->Send(*m_httpRequest, context);
         // Make sure to pull all bytes from network.
         auto body = response->ExtractBodyStream()->ReadToEnd();
       }
@@ -93,8 +110,9 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"Transport", {"--transport"}, "The HTTP Transport curl/winhttp.", 1, true},
-      {"Method", {"--method"}, "The HTTP method e.g. GET, POST etc.", 1, true}};
+      return {
+          {"Transport", {"--transport"}, "The HTTP Transport curl/winhttp.", 1, true},
+          {"Method", {"--method"}, "The HTTP method e.g. GET, POST etc.", 1, true}};
     }
 
     /**
@@ -104,9 +122,12 @@ namespace Azure { namespace Core { namespace Test {
      */
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
-      return {"HTTPGetTest", "Measures HTTP Get performance", [](Azure::Perf::TestOptions options) {
-                return std::make_unique<Azure::Core::Test::HTTPGetTest>(options);
-              }};
+      return {
+          "HTTPTransportTest",
+          "Measures HTTP transport performance",
+          [](Azure::Perf::TestOptions options) {
+            return std::make_unique<Azure::Core::Test::HTTPTransportTest>(options);
+          }};
     }
   };
 
