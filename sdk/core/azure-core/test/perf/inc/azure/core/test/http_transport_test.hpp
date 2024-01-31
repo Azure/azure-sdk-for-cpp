@@ -27,7 +27,28 @@ namespace Azure { namespace Core { namespace Test {
     std::string m_target;
     std::shared_ptr<Azure::Core::Http::HttpTransport> m_Transport;
     Azure::Core::Http::HttpMethod m_httpMethod = Azure::Core::Http::HttpMethod::Get;
-    std::shared_ptr<Azure::Core::Http::Request> m_httpRequest;
+
+    void GetRequest()
+    {
+      auto httpRequest = Azure::Core::Http::Request(m_httpMethod, Azure::Core::Url(m_target));
+      Azure::Core::Context context;
+      auto response = m_Transport->Send(httpRequest, context);
+      // Make sure to pull all bytes from network.
+      auto body = response->ExtractBodyStream()->ReadToEnd();
+    }
+
+    void PostRequest()
+    {
+      std::string payload = "{}";
+      Azure::Core::IO::MemoryBodyStream payloadStream(
+          reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+      auto httpRequest
+          = Azure::Core::Http::Request(m_httpMethod, Azure::Core::Url(m_target), &payloadStream);
+      Azure::Core::Context context;
+      auto response = m_Transport->Send(httpRequest, context);
+      // Make sure to pull all bytes from network.
+      auto body = response->ExtractBodyStream()->ReadToEnd();
+    }
 
   public:
     /**
@@ -69,7 +90,7 @@ namespace Azure { namespace Core { namespace Test {
         m_target = GetTestProxy() + "/Admin/setRecordingOptions";
       }
     }
-
+    
     /**
      * @brief Use HTTPTransportTest to call test proxy endpoint.
      *
@@ -80,22 +101,12 @@ namespace Azure { namespace Core { namespace Test {
       {
         if (m_httpMethod == Azure::Core::Http::HttpMethod::Get)
         {
-          m_httpRequest = std::make_shared<Azure::Core::Http::Request>(
-              m_httpMethod, Azure::Core::Url(m_target));
+          GetRequest();
         }
         else if (m_httpMethod == Azure::Core::Http::HttpMethod::Post)
         {
-          std::string payload = "{}";
-          Azure::Core::IO::MemoryBodyStream payloadStream(
-              reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-          m_httpRequest = std::make_shared<Azure::Core::Http::Request>(
-              m_httpMethod, Azure::Core::Url(m_target), &payloadStream);
+          PostRequest();
         }
-
-        Azure::Core::Context context;
-        auto response = m_Transport->Send(*m_httpRequest, context);
-        // Make sure to pull all bytes from network.
-        auto body = response->ExtractBodyStream()->ReadToEnd();
       }
       catch (std::exception const&)
       {
