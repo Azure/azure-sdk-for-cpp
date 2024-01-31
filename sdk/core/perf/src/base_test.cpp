@@ -150,10 +150,7 @@ namespace Azure { namespace Perf {
 
       //  Make one call to Run() before starting recording, to avoid capturing one-time setup
       //  like authorization requests.
-      if (!m_options.ShouldSkipInitial())
-      {
-        this->Run(ctx);
-      }
+      this->Run(ctx);
 
       // Send start-record call
       {

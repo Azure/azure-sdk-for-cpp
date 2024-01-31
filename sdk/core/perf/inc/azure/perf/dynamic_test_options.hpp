@@ -22,16 +22,15 @@ namespace Azure { namespace Perf {
   class TestOptions {
   private:
     argagg::parser_results m_results;
-    bool m_skipInitial = true;
-
+    
   public:
     /**
      * @brief Create the test options component from the command line parsed results.
      *
      * @param results The command line parsed results.
      */
-    explicit TestOptions(argagg::parser_results results, bool skipInitial = true)
-        : m_results(results), m_skipInitial(skipInitial)
+    explicit TestOptions(argagg::parser_results results)
+        : m_results(results)
     {
     }
 
@@ -76,7 +75,5 @@ namespace Azure { namespace Perf {
     {
       return m_results[optionName].as<T>();
     }
-
-    bool ShouldSkipInitial() { return m_skipInitial; }
   };
 }} // namespace Azure::Perf
