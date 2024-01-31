@@ -22,7 +22,6 @@ namespace Azure { namespace Perf {
   class TestOptions {
   private:
     argagg::parser_results m_results;
-    bool m_skipInitial = true;
 
   public:
     /**
@@ -30,10 +29,7 @@ namespace Azure { namespace Perf {
      *
      * @param results The command line parsed results.
      */
-    explicit TestOptions(argagg::parser_results results, bool skipInitial = true)
-        : m_results(results), m_skipInitial(skipInitial)
-    {
-    }
+    explicit TestOptions(argagg::parser_results results) : m_results(results) {}
 
     /**
      * @brief Get the option value from the option name. If the option is not found, it returns \p
@@ -76,7 +72,5 @@ namespace Azure { namespace Perf {
     {
       return m_results[optionName].as<T>();
     }
-
-    bool ShouldSkipInitial() { return m_skipInitial; }
   };
 }} // namespace Azure::Perf
