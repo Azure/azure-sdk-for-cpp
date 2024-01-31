@@ -55,6 +55,7 @@ namespace Azure { namespace Perf {
     {
       if (!proxy.empty())
       {
+        // we need to allow for certificate verification failures due to presence of test proxy.
         m_isInsecureEnabled = true;
         m_proxy = proxy;
       }
