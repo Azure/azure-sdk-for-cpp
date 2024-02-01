@@ -68,7 +68,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
 
   Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection(
-      std::string const& partitionId)
+      std::string const& partitionId) const
   {
     ConnectionOptions connectOptions;
     connectOptions.ContainerId

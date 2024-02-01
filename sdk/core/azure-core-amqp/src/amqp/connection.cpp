@@ -39,9 +39,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Connection::Connection(
       Network::_internal::Transport const& transport,
       ConnectionOptions const& options,
-      ConnectionEvents* eventHandler)
-      : m_impl{
-          std::make_shared<_detail::ConnectionImpl>(transport.GetImpl(), options, eventHandler)}
+      ConnectionEvents* eventHandler,
+      ConnectionEndpointEvents* endpointEventHandler)
+      : m_impl{std::make_shared<_detail::ConnectionImpl>(
+          transport.GetImpl(),
+          options,
+          eventHandler,
+          endpointEventHandler)}
   {
     m_impl->FinishConstruction();
   }
@@ -171,8 +175,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   ConnectionImpl::ConnectionImpl(
       std::shared_ptr<Network::_detail::TransportImpl> transport,
       _internal::ConnectionOptions const& options,
-      _internal::ConnectionEvents* eventHandler)
-      : m_hostName{"localhost"}, m_options{options}, m_eventHandler{eventHandler}
+      _internal::ConnectionEvents* eventHandler,
+      _internal::ConnectionEndpointEvents* endpointEvents)
+      : m_hostName{"localhost"}, m_options{options}, m_eventHandler{eventHandler},
+        m_endpointEvents{endpointEvents}
   {
     EnsureGlobalStateInitialized();
     m_transport = transport;
@@ -247,7 +253,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         *m_transport,
         m_hostName.c_str(),
         containerId.c_str(),
-        OnNewEndpointFn,
+        (m_endpointEvents ? OnNewEndpointFn : nullptr),
         this,
         OnConnectionStateChangedFn,
         this,
@@ -387,8 +393,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (newState == CONNECTION_STATE_ERROR || newState == CONNECTION_STATE_END)
     {
       // When the connection transitions into the error or end state, it is no longer pollable.
-      Log::Stream(Logger::Level::Verbose)
-          << "Connection " << connection->m_containerId << " state changed to " << newState;
+      if (connection->m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Connection " << connection->m_containerId << " state changed to " << newState;
+      }
     }
     connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
   }
@@ -397,9 +406,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
     _internal::Endpoint endpoint(EndpointFactory::CreateEndpoint(newEndpoint));
-    if (cn->m_eventHandler)
+    if (cn->m_endpointEvents)
     {
-      return cn->m_eventHandler->OnNewEndpoint(
+      return cn->m_endpointEvents->OnNewEndpoint(
           ConnectionFactory::CreateFromInternal(cn->shared_from_this()), endpoint);
     }
     return false;
@@ -642,15 +651,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Log::Stream(Logger::Level::Verbose)
             << "No cached token for " << audienceUrl << ", Authenticating.";
       }
-      // Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-      // sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
-      // sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
 
-      // auto authenticationSession{std::make_shared<SessionImpl>(
-      //     shared_from_this(), sessionOptions, nullptr)};
-
-      auto claimsBasedSecurity
-          = std::make_shared<ClaimsBasedSecurityImpl>(session /*authenticationSession*/);
+      auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
       auto cbsOpenStatus = claimsBasedSecurity->Open(context);
       if (cbsOpenStatus != CbsOpenResult::Ok)
       {
@@ -677,7 +679,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {
           throw std::runtime_error("Could not put Claims Based Security token.");
         }
-        claimsBasedSecurity->Close();
+        Log::Stream(Logger::Level::Verbose) << "Close CBS object";
+        claimsBasedSecurity->Close(context);
         if (m_options.EnableTrace)
         {
           Log::Stream(Logger::Level::Verbose)
@@ -690,7 +693,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       catch (std::runtime_error const&)
       {
         // Ensure that the claims based security object is closed before we leave this scope.
-        claimsBasedSecurity->Close();
+        claimsBasedSecurity->Close(context);
         throw;
       }
     }

@@ -37,6 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
     static _internal::AmqpError FromUamqp(ERROR_HANDLE error);
     static AmqpValue ToAmqp(_internal::AmqpError const& error);
+    static UniqueAmqpErrorHandle ToAmqpError(_internal::AmqpError const& error);
     AmqpErrorFactory() = delete;
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

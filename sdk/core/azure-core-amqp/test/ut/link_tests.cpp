@@ -6,14 +6,17 @@
 #include "azure/core/amqp/internal/message_receiver.hpp"
 #include "azure/core/amqp/internal/message_sender.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
+#include "azure/core/amqp/internal/models/performatives/amqp_transfer.hpp"
 #include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "mock_amqp_server.hpp"
 
 #include <azure/core/platform.hpp>
 
 #include <functional>
+#include <memory>
 #include <random>
 
 #include <gtest/gtest.h>
@@ -50,6 +53,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link1(session, "MySession", SessionRole::Sender, "Source1", "Target1");
       Link link2(session, "MySession", SessionRole::Sender, "Source2", "Target2");
     }
+
+    GTEST_LOG_(INFO) << LinkState::Error << LinkState::Invalid << static_cast<LinkState>(92)
+                     << LinkState::HalfAttachedAttachReceived;
   }
 
   TEST_F(TestLinks, LinkProperties)
@@ -83,20 +89,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       link.SetReceiverSettleMode(ReceiverSettleMode::First);
       EXPECT_EQ(ReceiverSettleMode::First, link.GetReceiverSettleMode());
 
+      EXPECT_ANY_THROW(link.SetReceiverSettleMode(static_cast<ReceiverSettleMode>(023)));
+
       link.SetSenderSettleMode(SenderSettleMode::Settled);
       EXPECT_EQ(SenderSettleMode::Settled, link.GetSenderSettleMode());
       link.SetSenderSettleMode(SenderSettleMode::Unsettled);
       EXPECT_EQ(SenderSettleMode::Unsettled, link.GetSenderSettleMode());
       link.SetSenderSettleMode(SenderSettleMode::Mixed);
       EXPECT_EQ(SenderSettleMode::Mixed, link.GetSenderSettleMode());
+      EXPECT_ANY_THROW(link.SetSenderSettleMode(static_cast<SenderSettleMode>(023)));
 
       link.SetMaxLinkCredit(95);
 
       link.SetAttachProperties("Attach Properties");
+
+      link.SetDesiredCapabilities("DesiredCapabilities");
+      auto val = link.GetDesiredCapabilities();
+
+      EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
     }
 
     {
-      Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+      Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
       Link link2(link);
 
       EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
@@ -108,20 +122,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MySource"}, link.GetSource().GetAddress());
       EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MyTarget"}, link.GetTarget().GetAddress());
+
+      EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
     }
   }
 
-  class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
-                                   public Azure::Core::Amqp::_internal::ConnectionEvents,
-                                   public Azure::Core::Amqp::_internal::SessionEvents {
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        std::shared_ptr<Azure::Core::Amqp::_internal::Connection>>
-        m_listeningQueue;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        std::unique_ptr<Azure::Core::Amqp::_internal::Session>>
-        m_listeningSessionQueue;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<Link>>
-        m_receiveLinkQueue;
+  class LinkSocketListenerEvents
+      : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
+        public Azure::Core::Amqp::_internal::ConnectionEvents,
+        public Azure ::Core ::Amqp ::_internal ::ConnectionEndpointEvents,
+        public Azure::Core::Amqp::_internal::SessionEvents {
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_listeningQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_listeningSessionQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_receiveLinkQueue;
+    std::shared_ptr<Azure::Core::Amqp::_detail::Link> m_link;
+    std::unique_ptr<Azure::Core::Amqp::_internal::Session> m_session;
     std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
 
     virtual void OnSocketAccepted(
@@ -135,9 +150,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.ContainerId = "connectionId";
       options.EnableTrace = true;
       m_connection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
-          amqpTransport, options, this);
+          amqpTransport, options, this, this);
       m_connection->Listen();
-      m_listeningQueue.CompleteOperation(m_connection);
+      m_listeningQueue.CompleteOperation(true);
     }
 
     virtual void OnConnectionStateChanged(
@@ -158,8 +173,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
           connection.CreateSession(endpoint, sessionOptions, this));
       listeningSession->Begin();
+      m_session = std::move(listeningSession);
 
-      m_listeningSessionQueue.CompleteOperation(std::move(listeningSession));
+      m_listeningSessionQueue.CompleteOperation(true);
 
       return true;
     }
@@ -169,44 +185,75 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_internal::Session const& session,
         Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
         std::string const& name,
-        Azure::Core::Amqp::_internal::SessionRole,
+        Azure::Core::Amqp::_internal::SessionRole sessionRole,
         Azure::Core::Amqp::Models::AmqpValue const& source,
         Azure::Core::Amqp::Models::AmqpValue const& target,
         Azure::Core::Amqp::Models::AmqpValue const&) override
     {
       GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
-      auto newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
-          session,
-          newLinkInstance,
-          name,
-          Azure::Core::Amqp::_internal::SessionRole::Receiver,
-          static_cast<std::string>(source),
-          static_cast<std::string>(target));
-      //    newLink->SetReceiverSettleMode(Azure::Core::Amqp::ReceiverSettleMode::First);
-      m_receiveLinkQueue.CompleteOperation(std::move(newLink));
+      std::unique_ptr<Azure::Core::Amqp::_detail::Link> newLink;
+      if (sessionRole == SessionRole::Sender)
+      {
+        newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
+            session,
+            newLinkInstance,
+            name,
+            Azure::Core::Amqp::_internal::SessionRole::Receiver,
+            source,
+            target);
+      }
+      else
+      {
+        newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
+            session,
+            newLinkInstance,
+            name,
+            Azure::Core::Amqp::_internal::SessionRole::Sender,
+            source,
+            target);
+      }
+      m_link = std::move(newLink);
+      m_receiveLinkQueue.CompleteOperation(true);
 
       return true;
     }
 
   public:
     LinkSocketListenerEvents() {}
-    std::shared_ptr<Connection> WaitForConnection(
+    bool WaitForConnection(
         Azure::Core::Amqp::Network::_detail::SocketListener const& listener,
         Azure::Core::Context const& context)
     {
       auto result = m_listeningQueue.WaitForPolledResult(context, listener);
-      return std::move(std::get<0>(*result));
+      return std::get<0>(*result);
     }
-    std::unique_ptr<Session> WaitForSession(Azure::Core::Context const& context)
+    bool WaitForSession(Azure::Core::Context const& context)
     {
-      auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connection);
-      return std::move(std::get<0>(*result));
+      auto result = m_listeningSessionQueue.WaitForResult(context);
+      return std::get<0>(*result);
     }
-    std::unique_ptr<Azure::Core::Amqp::_detail::Link> WaitForLink(
-        Azure::Core::Context const& context)
+    bool WaitForLink(Azure::Core::Context const& context)
     {
-      auto result = m_receiveLinkQueue.WaitForPolledResult(context, *m_connection);
-      return std::move(std::get<0>(*result));
+      auto result = m_receiveLinkQueue.WaitForResult(context);
+      return std::get<0>(*result);
+    }
+
+    void Cleanup()
+    {
+      if (m_link)
+      {
+        m_link.reset();
+      }
+      if (m_session)
+      {
+        m_session->End();
+        m_session.reset();
+      }
+      if (m_connection)
+      {
+        m_connection->Close();
+        m_connection.reset();
+      }
     }
   };
 
@@ -229,14 +276,183 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
       link.Attach();
 
-      Azure::Core::Amqp::Models::AmqpValue data;
-      link.Detach(false, {}, {}, data);
+      EXPECT_TRUE(events.WaitForConnection(listener, {}));
+      EXPECT_TRUE(events.WaitForSession({}));
 
-      //    auto listeningConnection = listener.WaitForConnection();
-      //    auto listeningSession = listeningConnection->WaitForSession();
-      //    auto listeningLink = listeningSession->WaitForLink();
+      EXPECT_TRUE(events.WaitForLink({}));
+      link.Detach(false, {}, {}, {});
     }
+    events.Cleanup();
     listener.Stop();
+  }
+
+  TEST_F(TestLinks, LinkAttachDetachMultipleOneSession)
+  {
+    class MySessionListener final : public MessageTests::MockServiceEndpoint {
+    public:
+      MySessionListener(MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint("MyTarget", options)
+      {
+      }
+      void MessageReceived(
+          std::string const& linkName,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
+      }
+    };
+
+    MessageTests::AmqpServerMock server;
+    auto sessionListener{
+        std::make_shared<MySessionListener>(MessageTests::MockServiceEndpointOptions{})};
+    server.AddServiceEndpoint(sessionListener);
+    server.EnableTrace(false);
+
+    // Create a connection
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = server.GetPort();
+    connectionOptions.EnableTrace = true;
+    Connection connection("localhost", nullptr, connectionOptions);
+    server.StartListening();
+
+    Session session{connection.CreateSession()};
+
+    class ClientLinkEvents : public Azure::Core::Amqp::_detail::LinkEvents {
+    public:
+      LinkState WaitForLink(Azure::Core::Context const& context)
+      {
+        auto result = m_linkStateQueue.WaitForResult(context);
+        if (!result)
+        {
+          throw Azure::Core::OperationCancelledException("Canceled link wait.");
+        }
+        return std::get<0>(*result);
+      }
+
+    private:
+      void OnLinkFlowOn(Link const& link) override
+      {
+        GTEST_LOG_(INFO) << "Link Flow On on link " << link.GetName();
+      }
+      Models::AmqpValue OnTransferReceived(
+          Link const& link,
+          Azure::Core::Amqp::Models::_internal::Performatives::AmqpTransfer transfer,
+          uint32_t payloadSize,
+          const unsigned char*) override
+      {
+        GTEST_LOG_(INFO) << "OnTransferReceived(" << link.GetName() << "). Transfer : " << transfer
+                         << "Payload size: " << payloadSize;
+        return Azure::Core::Amqp::Models::AmqpValue{};
+      }
+      void OnLinkStateChanged(
+          Azure::Core::Amqp::_detail::Link const& link,
+          LinkState newLinkState,
+          LinkState previousLinkState) override
+      {
+        GTEST_LOG_(INFO) << "Link " << link.GetName()
+                         << ", State Changed. OldState: " << previousLinkState
+                         << " NewState: " << newLinkState;
+        m_linkStateQueue.CompleteOperation(newLinkState);
+      }
+
+      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<LinkState> m_linkStateQueue;
+    };
+
+    Link keepAliveLink{
+        session, "KeepConnectionAlive", SessionRole::Receiver, "MyTarget", "TestReceiver"};
+    keepAliveLink.Attach();
+
+    {
+      ClientLinkEvents linkEvents;
+      Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget", &linkEvents);
+      link.Attach();
+
+      LinkState linkState;
+
+      // Iterate until the state changes to Attached.
+      do
+      {
+        linkState = linkEvents.WaitForLink({});
+      } while (linkState != LinkState::Attached);
+
+      Models::AmqpMessage message;
+      message.SetBody("Hello");
+
+      link.Transfer(Models::AmqpMessage::Serialize(message), {});
+
+      Azure::Core::Amqp::Models::AmqpValue data;
+      link.Detach(true, {}, {}, data);
+
+      // Iterate until the state changes to Detached.
+      do
+      {
+        linkState = linkEvents.WaitForLink({});
+      } while (linkState != LinkState::Detached);
+    }
+    {
+      ClientLinkEvents linkEvents;
+      Link link(session, "MySession2", SessionRole::Sender, "MySource", "MyTarget", &linkEvents);
+      link.Attach();
+
+      LinkState linkState;
+
+      // Iterate until the state changes to Attached.
+      do
+      {
+        linkState = linkEvents.WaitForLink({});
+      } while (linkState != LinkState::Attached);
+
+      Azure::Core::Amqp::Models::AmqpValue data;
+      link.Detach(true, {}, {}, data);
+      // Iterate until the state changes to Attached.
+      do
+      {
+        linkState = linkEvents.WaitForLink({});
+      } while (linkState != LinkState::Detached);
+    }
+    {
+      constexpr const size_t linkCount = 20;
+
+      std::vector<Link> links;
+      std::vector<std::unique_ptr<ClientLinkEvents>> linkEvents;
+      for (size_t i = 0; i < linkCount; i += 1)
+      {
+        // Create 100 links on the session.
+        linkEvents.push_back(std::make_unique<ClientLinkEvents>());
+        links.push_back(Link{
+            session,
+            "MySession " + std::to_string(i),
+            SessionRole::Sender,
+            "MySource",
+            "MyTarget",
+            linkEvents.back().get()});
+      }
+      for (size_t i = 0; i < linkCount; i += 1)
+      {
+        links[i].Attach(); // Iterate until the state changes to Attached.
+        LinkState linkState;
+
+        // Wait for the links to attach.
+        do
+        {
+          linkState = linkEvents[i]->WaitForLink({});
+        } while (linkState != LinkState::Attached);
+      }
+      for (size_t i = 0; i < linkCount; i += 1)
+      {
+        links[i].Detach(true, "", "", Models::AmqpValue{});
+        // Iterate until the state changes to Detached.
+        LinkState linkState;
+        do
+        {
+          linkState = linkEvents[i]->WaitForLink({});
+        } while (linkState != LinkState::Detached);
+      }
+    }
+
+    keepAliveLink.Detach(true, "", "", {});
+
+    server.StopListening();
   }
 #endif // defined(AZ_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests

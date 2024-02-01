@@ -10,8 +10,9 @@
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
-#include <azure_uamqp_c/amqp_definitions_amqp_error.h>
 #include <azure_uamqp_c/amqp_definitions_error.h>
+
+#include <azure_uamqp_c/amqp_definitions_amqp_error.h>
 
 #include <iostream>
 
@@ -57,7 +58,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return rv;
   }
 
-  AmqpValue AmqpErrorFactory::ToAmqp(_internal::AmqpError const& error)
+  UniqueAmqpErrorHandle AmqpErrorFactory::ToAmqpError(_internal::AmqpError const& error)
   {
     _detail::UniqueAmqpErrorHandle errorHandle(error_create(error.Condition.ToString().data()));
     if (!error.Description.empty())
@@ -69,6 +70,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       AmqpValue infoValue(error.Info.AsAmqpValue());
       error_set_info(errorHandle.get(), _detail::AmqpValueFactory::ToUamqp(infoValue));
     }
+    return errorHandle;
+  }
+
+  AmqpValue AmqpErrorFactory::ToAmqp(_internal::AmqpError const& error)
+  {
+    _detail::UniqueAmqpErrorHandle errorHandle(ToAmqpError(error));
+
     // amqpvalue_create_error clones the error handle, so we remember it separately.
     _detail::UniqueAmqpValueHandle handleAsValue{amqpvalue_create_error(errorHandle.get())};
 
@@ -81,11 +89,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   std::ostream& operator<<(std::ostream& os, AmqpError const& error)
   {
-    os << "Error {";
-    os << "Condition =" << error.Condition.ToString();
-    os << ", Description=" << error.Description;
-    os << ", Info=" << error.Info;
-    os << "}";
+    if (error)
+    {
+      os << "Error {";
+      os << "Condition =" << error.Condition.ToString();
+      os << ", Description=" << error.Description;
+      os << ", Info=" << error.Info;
+      os << "}";
+    }
+    else
+    {
+      os << "Error {null}";
+    }
     return os;
   }
 

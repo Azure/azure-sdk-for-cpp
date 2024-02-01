@@ -30,7 +30,7 @@ add_executable(azure-core-amqp-tests
   mock_amqp_server.hpp
   session_tests.cpp
   transport_tests.cpp
-)
+ "amqp_performative_tests.cpp")
 add_dependencies(azure-core-amqp-tests Azure::azure-core-amqp)
 
 if (MSVC)

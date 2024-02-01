@@ -7,6 +7,7 @@
 #include "private/value_impl.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
+
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
 
@@ -516,7 +517,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       AMQP_VALUE value;
       if (!source_get_address(source, &value))
       {
-        os << "Address: " << source.GetAddress() << std::endl;
+        os << "Address: " << source.GetAddress();
       }
     }
     {

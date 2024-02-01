@@ -22,6 +22,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class LinkEndpointFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+  class ConnectionEvents;
 
   // An "Endpoint" is an intermediate type used to create sessions in an OnNewSession callback.
   class Endpoint final {
@@ -43,6 +44,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       return rv;
     }
     friend class _detail::EndpointFactory;
+    friend class _internal::ConnectionEvents;
   };
 
   // A "Link Endpoint" is an intermediate type used to create new Links in an OnLinkAttached
@@ -57,6 +59,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       that.m_endpoint = nullptr;
     }
     ~LinkEndpoint(){};
+
+    LINK_ENDPOINT_INSTANCE_TAG* Get() const { return m_endpoint; }
+    std::uint32_t GetHandle() const;
 
   private:
     LINK_ENDPOINT_INSTANCE_TAG* m_endpoint;

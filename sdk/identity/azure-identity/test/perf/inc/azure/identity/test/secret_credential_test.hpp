@@ -41,6 +41,10 @@ namespace Azure { namespace Identity { namespace Test {
       m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
       m_secret = m_options.GetMandatoryOption<std::string>("Secret");
       m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
+      if (!m_options.GetOptionOrDefault<bool>("Cache", false))
+      {
+        m_tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
+      }
       m_credential = std::make_unique<Azure::Identity::ClientSecretCredential>(
           m_tenantId,
           m_clientId,
@@ -73,10 +77,11 @@ namespace Azure { namespace Identity { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       return {
-          {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, true},
+          {"Cache", {"--cache"}, "Use credential cache.", 1, false},
           {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, true},
+          {"Scope", {"--scope"}, "One scope to request access to.", 1, true},
           {"Secret", {"--secret"}, "The secret for authentication.", 1, true, true},
-          {"Scope", {"--scope"}, "One scope to request access to.", 1, true}};
+          {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, true}};
     }
 
     /**

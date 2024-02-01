@@ -107,7 +107,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Send(batch, context);
   }
 
-  Azure::Core::Amqp::_internal::Connection ProducerClient::CreateConnection()
+  Azure::Core::Amqp::_internal::Connection ProducerClient::CreateConnection() const
   {
     Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
     connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
