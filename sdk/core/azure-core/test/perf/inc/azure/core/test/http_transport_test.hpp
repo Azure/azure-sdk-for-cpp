@@ -20,7 +20,7 @@
 namespace Azure { namespace Core { namespace Test {
 
   /**
-   * @brief Measure the Curl performance.
+   * @brief Measure the HTTP transport performance.
    */
   class HTTPTransportTest : public Azure::Perf::PerfTest {
 
@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Test {
 
   public:
     /**
-     * @brief Construct a new HTTPGetTest test.
+     * @brief Construct a new HTTPTransportTest test.
      *
      * @param options The test options.
      */
@@ -122,8 +122,8 @@ namespace Azure { namespace Core { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       return {
-          {"Transport", {"--transport"}, "The HTTP Transport curl/winhttp.", 1, true},
-          {"Method", {"--method"}, "The HTTP method e.g. GET, POST etc.", 1, true}};
+          {"Method", {"--method"}, "The HTTP method e.g. GET, POST etc.", 1, true},
+          {"Transport", {"--transport"}, "The HTTP Transport curl/winhttp.", 1, true}};
     }
 
     /**
