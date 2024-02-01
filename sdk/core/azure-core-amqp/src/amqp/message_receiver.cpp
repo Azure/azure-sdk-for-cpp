@@ -41,9 +41,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
+  std::ostream& operator<<(std::ostream& stream, ReceiverSettleMode const& settleMode)
+  {
+    switch (settleMode)
+    {
+      case ReceiverSettleMode::First:
+        stream << "First";
+        break;
+      case ReceiverSettleMode::Second:
+        stream << "Second";
+        break;
+    }
+    return stream;
+  }
+
   MessageReceiver::~MessageReceiver() noexcept {}
 
-  void MessageReceiver::Open(Azure::Core::Context const& context)
+  void MessageReceiver::Open(Context const& context)
   {
     if (m_impl)
     {
@@ -54,11 +68,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       AZURE_ASSERT_FALSE("MessageReceiver::Open called on moved message receiver.");
     }
   }
-  void MessageReceiver::Close()
+  void MessageReceiver::Close(Context const& context)
   {
     if (m_impl)
     {
-      m_impl->Close();
+      m_impl->Close(context);
     }
   }
   std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
@@ -117,8 +131,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       case _internal::MessageReceiverState::Error:
         stream << "Error";
         break;
-      default:
-        throw std::runtime_error("Unknown message sender state operation type.");
     }
     return stream;
   }
@@ -166,33 +178,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.Name,
         SessionRole::Sender, // This is the role of the link, not the endpoint.
         m_source,
-        m_options.MessageTarget);
+        m_options.MessageTarget,
+        nullptr);
     PopulateLinkProperties();
+
+    Log::Stream(Logger::Level::Verbose)
+        << "MessageReceiver: Subscribe to link detach on:" << m_link->GetUnderlyingLink();
+
+    m_link->SubscribeToDetachEvent(
+        [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
   }
 
   void MessageReceiverImpl::CreateLink()
   {
     m_link = std::make_shared<_detail::LinkImpl>(
-        m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.MessageTarget);
+        m_session,
+        m_options.Name,
+        SessionRole::Receiver,
+        m_source,
+        m_options.MessageTarget,
+        nullptr);
     PopulateLinkProperties();
 
-    m_link->SubscribeToDetachEvent([this](Models::_internal::AmqpError const& error) {
-      if (m_receiverOpen)
-      {
-        if (m_eventHandler)
-        {
-          m_eventHandler->OnMessageReceiverDisconnected(error);
-        }
-        // Log that an error occurred.
-        Log::Stream(Logger::Level::Warning)
-            << "Message receiver link detached: " + error.Condition.ToString() << ": "
-            << error.Description;
+    Log::Stream(Logger::Level::Verbose)
+        << "MessageReceiver: Subscribe to link detach on:" << m_link->GetUnderlyingLink();
 
-        // Cache the error we received in the OnDetach notification so we can return it to the
-        // user on the next receive which fails.
-        m_savedMessageError = error;
-      }
-    });
+    m_link->SubscribeToDetachEvent(
+        [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
   }
 
   void MessageReceiverImpl::PopulateLinkProperties()
@@ -251,6 +263,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     m_messageQueue.CompleteOperation(message, Models::_internal::AmqpError{});
     return Models::_internal::Messaging::DeliveryAccepted();
+  }
+
+  void MessageReceiverImpl::OnLinkDetached(Models::_internal::AmqpError const& error)
+  {
+    if (m_receiverOpen)
+    {
+      if (m_eventHandler)
+      {
+        m_eventHandler->OnMessageReceiverDisconnected(
+            MessageReceiverFactory::CreateFromInternal(shared_from_this()), error);
+      }
+
+      // Log that an error occurred.
+      Log::Stream(Logger::Level::Warning)
+          << "Message receiver link detached: " + error.Condition.ToString() << ": "
+          << error.Description;
+
+      // Cache the error we received in the OnDetach notification so we can return it to the
+      // user on the next receive which fails.
+      m_savedMessageError = error;
+
+      // When we've received a link detached, we can complete the close.
+      m_closeQueue.CompleteOperation(error);
+    }
   }
 
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
@@ -365,7 +401,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::ostream& operator<<(std::ostream& stream, MESSAGE_RECEIVER_STATE const& state)
   {
-    stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
+    if (state < sizeof(MESSAGE_RECEIVER_STATEStrings) / sizeof(MESSAGE_RECEIVER_STATEStrings[0]))
+    {
+      stream << MESSAGE_RECEIVER_STATEStrings[static_cast<int>(state)];
+    }
+    else
+    {
+      stream << "Unknown MESSAGE_RECEIVER_STATE value: " << state;
+    }
     return stream;
   }
 
@@ -419,7 +462,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
       }
 
-#if RECEIVER_SYNCHRONOUS_CLOSE
       // When we transition from the closing to idle state, we can return from the close
       // operation.
       if (oldState == MESSAGE_RECEIVER_STATE_CLOSING && newState == MESSAGE_RECEIVER_STATE_IDLE)
@@ -428,7 +470,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             << "Message receiver state changed from closing to idle. Receiver closed.";
         receiver->m_closeQueue.CompleteOperation(Models::_internal::AmqpError{});
       }
-#endif
     }
   }
 
@@ -483,77 +524,85 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
   }
 
-  void MessageReceiverImpl::Close()
+  void MessageReceiverImpl::Close(Context const& context)
   {
     if (m_receiverOpen)
     {
       if (m_options.EnableTrace)
       {
-
         Log::Stream(Logger::Level::Verbose) << "Lock for Closing message receiver.";
       }
 
       AZURE_ASSERT(m_link);
-      if (m_options.EnableTrace)
-      {
-        Log::Stream(Logger::Level::Verbose) << "Receiver unsubscribe from link detach event.";
-      }
-      m_link->UnsubscribeFromDetachEvent();
-      if (m_options.EnableTrace)
-      {
-        Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
-      }
+
+      bool shouldWaitForClose = m_currentState == _internal::MessageReceiverState::Closing
+          || m_currentState == _internal::MessageReceiverState::Open;
 
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
           m_link); // This will ensure that the link is cleaned up on the next poll()
 
+      {
+        auto lock{m_session->GetConnection()->Lock()};
+
+        // Clear messages from the queue.
+        m_messageQueue.Clear();
+        if (messagereceiver_close(m_messageReceiver.get()))
+        {
+          throw std::runtime_error("Could not close message receiver");
+        }
+      }
+
+      // Release the lock so that the polling thread can make forward progress delivering the
+      // detach notification.
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Wait for receiver detach to complete. Current state: " << m_currentState;
+      }
+
+      if (shouldWaitForClose)
+      {
+        // At this point, the underlying link is in the "half closed" state.
+        // We need to wait for the link to be fully closed before we can destroy it.
+        auto closeResult = m_closeQueue.WaitForResult(context);
+        if (!closeResult)
+        {
+          throw Azure::Core::OperationCancelledException(
+              "MessageReceiver close operation was cancelled.");
+        }
+      }
+      {
+        auto lock{m_session->GetConnection()->Lock()};
+
+        // We've received the close, we don't care about the detach event any more.
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Receiver unsubscribe from link detach event on " << m_link->GetUnderlyingLink();
+        }
+        m_link->UnsubscribeFromDetachEvent();
+
+        // Now that the connection is closed, the link is no longer needed. This will free the link
+        m_link.reset();
+      }
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
+      }
       m_session->GetConnection()->EnableAsyncOperation(false);
 
-      auto lock{m_session->GetConnection()->Lock()};
+      m_receiverOpen = false;
+    }
+  }
 
-      // Clear messages from the queue.
-      m_messageQueue.Clear();
-      if (messagereceiver_close(m_messageReceiver.get()))
-      {
-        throw std::runtime_error("Could not close message receiver");
-      }
-
-// Release the lock so that the polling thread can make forward progress delivering the
-// detach notification.
-#if RECEIVER_SYNCHRONOUS_CLOSE
-          if (m_options.EnableTrace)
-          {
-            Log::Stream(Logger::Level::Verbose)
-                << "Wait for receiver detach to complete. Current state: " << m_currentState;
-          }
-
-          if (m_currentState == MessageReceiverState::Open
-              || m_currentState == MessageReceiverState::Closing)
-          {
-            lock.unlock();
-            // At this point, the underlying link is in the "half closed" state.
-            // We need to wait for the link to be fully closed before we can destroy it.
-            auto closeResult = m_closeQueue.WaitForResult(context);
-            if (!closeResult)
-            {
-              throw Azure::Core::OperationCancelledException(
-                  "MessageReceiver close operation was cancelled.");
-            }
-          }
-#endif
-
-          m_receiverOpen = false;
-        }
-      }
-
-      std::string MessageReceiverImpl::GetLinkName() const
-      {
-        const char* linkName;
-        if (messagereceiver_get_link_name(m_messageReceiver.get(), &linkName))
-        {
-          throw std::runtime_error("Could not get link name");
-        }
-        return std::string(linkName);
-      }
+  std::string MessageReceiverImpl::GetLinkName() const
+  {
+    const char* linkName;
+    if (messagereceiver_get_link_name(m_messageReceiver.get(), &linkName))
+    {
+      throw std::runtime_error("Could not get link name");
+    }
+    return std::string(linkName);
+  }
 
 }}}} // namespace Azure::Core::Amqp::_detail

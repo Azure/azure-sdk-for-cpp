@@ -4,7 +4,9 @@
 #include "azure/core/amqp/internal/link.hpp"
 
 #include "../models/private/error_impl.hpp"
+#include "../models/private/performatives/transfer_impl.hpp"
 #include "../models/private/value_impl.hpp"
+#include "azure/core/amqp/internal/common/completion_operation.hpp"
 #include "azure/core/amqp/internal/message_receiver.hpp"
 #include "azure/core/amqp/internal/message_sender.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
@@ -25,9 +27,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole role,
       Models::_internal::MessageSource const& source,
-      Models::_internal::MessageTarget const& target)
-      : m_impl{
-          std::make_shared<LinkImpl>(SessionFactory::GetImpl(session), name, role, source, target)}
+      Models::_internal::MessageTarget const& target,
+      LinkEvents* linkEvents)
+      : m_impl{std::make_shared<
+          LinkImpl>(SessionFactory::GetImpl(session), name, role, source, target, linkEvents)}
   {
   }
 
@@ -37,9 +40,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& name,
       _internal::SessionRole role,
       Models::_internal::MessageSource const& source,
-      Models::_internal::MessageTarget const& target)
-      : m_impl{std::make_shared<
-          LinkImpl>(SessionFactory::GetImpl(session), linkEndpoint, name, role, source, target)}
+      Models::_internal::MessageTarget const& target,
+      LinkEvents* linkEvents)
+      : m_impl{std::make_shared<LinkImpl>(
+          SessionFactory::GetImpl(session),
+          linkEndpoint,
+          name,
+          role,
+          source,
+          target,
+          linkEvents)}
   {
   }
 
@@ -74,9 +84,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   uint64_t Link::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
   uint64_t Link::GetPeerMaxMessageSize() const { return m_impl->GetPeerMaxMessageSize(); }
-  void Link::SetAttachProperties(Models::AmqpValue attachProperties)
+  void Link::SetAttachProperties(Models::AmqpValue const& attachProperties)
   {
     m_impl->SetAttachProperties(attachProperties);
+  }
+
+  Models::AmqpValue Link::GetDesiredCapabilities() const
+  {
+    return m_impl->GetDesiredCapabilities();
+  }
+  void Link::SetDesiredCapabilities(Models::AmqpValue const& desiredCapabilities)
+  {
+    m_impl->SetDesiredCapabilities(desiredCapabilities);
+  }
+
+  void Link::ResetLinkCredit(std::uint32_t linkCredit, bool drain)
+  {
+    m_impl->ResetLinkCredit(linkCredit, drain);
   }
   void Link::SetMaxLinkCredit(uint32_t credit) { m_impl->SetMaxLinkCredit(credit); }
   std::string Link::GetName() const { return m_impl->GetName(); }
@@ -85,15 +109,52 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void Link::Attach() { return m_impl->Attach(); }
 
+  std::tuple<uint32_t, LinkDeliverySettleReason, Models::AmqpValue> Link::Transfer(
+      std::vector<uint8_t> const& payload,
+      Azure::Core::Context const& context)
+  {
+    return m_impl->Transfer(payload, context);
+  }
+
   void Link::Detach(
       bool close,
       std::string const& errorCondition,
       std::string const& errorDescription,
-      Models::AmqpValue& info)
+      Models::AmqpValue const& info)
   {
     return m_impl->Detach(close, errorCondition, errorDescription, info);
   }
 #endif
+
+  std::ostream& operator<<(std::ostream& os, LinkState const& linkState)
+  {
+    switch (linkState)
+    {
+      case LinkState::Attached:
+        os << "Attached";
+        break;
+      case LinkState::Detached:
+        os << "Detached";
+        break;
+      case LinkState::Error:
+        os << "Error";
+        break;
+      case LinkState::HalfAttachedAttachReceived:
+        os << "HalfAttachedAttachReceived";
+        break;
+      case LinkState::HalfAttachedAttachSent:
+        os << "HalfAttachedAttachSent";
+        break;
+      case LinkState::Invalid:
+        os << "Invalid";
+        break;
+      default:
+        os << "Unknown";
+        break;
+    }
+
+    return os;
+  }
 
   /****/
   /* LINK Implementation */
@@ -103,8 +164,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& name,
       _internal::SessionRole role,
       Models::_internal::MessageSource const& source,
-      Models::_internal::MessageTarget const& target)
-      : m_session{session}, m_source(source), m_target(target)
+      Models::_internal::MessageTarget const& target,
+      LinkEvents* events)
+      : m_session{session}, m_source(source), m_target(target), m_eventHandler{events}
   {
     Models::AmqpValue sourceValue{source.AsAmqpValue()};
     Models::AmqpValue targetValue(target.AsAmqpValue());
@@ -122,8 +184,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& name,
       _internal::SessionRole role,
       Models::_internal::MessageSource const& source,
-      Models::_internal::MessageTarget const& target)
-      : m_session{session}, m_source(source), m_target(target)
+      Models::_internal::MessageTarget const& target,
+      LinkEvents* events)
+      : m_session{session}, m_source(source), m_target(target), m_eventHandler{events}
   {
     Models::AmqpValue sourceValue(source.AsAmqpValue());
     Models::AmqpValue targetValue(target.AsAmqpValue());
@@ -358,6 +421,78 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
+  void LinkImpl::OnLinkFlowOnFn(void* context)
+  {
+    LinkImpl* link = static_cast<LinkImpl*>(context);
+    if (link->m_eventHandler)
+    {
+#if defined(BUILD_TESTING)
+      link->m_eventHandler->OnLinkFlowOn(Link{link->shared_from_this()});
+#else
+      link->m_eventHandler->OnLinkFlowOn(link->shared_from_this());
+#endif
+    }
+  }
+  namespace {
+    LinkState LinkStateFromLINK_STATE(LINK_STATE state)
+    {
+      switch (state)
+      {
+        case LINK_STATE_ATTACHED:
+          return LinkState::Attached;
+        case LINK_STATE_DETACHED:
+          return LinkState::Detached;
+        case LINK_STATE_ERROR:
+          return LinkState::Error;
+        case LINK_STATE_HALF_ATTACHED_ATTACH_RECEIVED:
+          return LinkState::HalfAttachedAttachReceived;
+        case LINK_STATE_HALF_ATTACHED_ATTACH_SENT:
+          return LinkState::HalfAttachedAttachSent;
+        case LINK_STATE_INVALID:
+        default:
+          return LinkState::Invalid;
+      }
+    }
+  } // namespace
+  void LinkImpl::OnLinkStateChangedFn(void* context, LINK_STATE newState, LINK_STATE oldState)
+  {
+    LinkImpl* link = static_cast<LinkImpl*>(context);
+    if (link->m_eventHandler)
+    {
+      link->m_eventHandler->OnLinkStateChanged(
+#if defined(BUILD_TESTING)
+          Link{link->shared_from_this()},
+#else
+          link->shared_from_this(),
+#endif
+          LinkStateFromLINK_STATE(newState),
+          LinkStateFromLINK_STATE(oldState));
+    }
+  }
+
+  AMQP_VALUE LinkImpl::OnTransferReceivedFn(
+      void* context,
+      TRANSFER_HANDLE transfer,
+      uint32_t payload_size,
+      const unsigned char* payload_bytes)
+  {
+    LinkImpl* link = static_cast<LinkImpl*>(context);
+    if (link->m_eventHandler)
+    {
+
+      return Models::_detail::AmqpValueFactory::ToUamqp(link->m_eventHandler->OnTransferReceived(
+#if defined(TESTING_BUILD)
+          Link{link->shared_from_this()},
+#else
+          link->shared_from_this(),
+#endif
+          Models::_detail::AmqpTransferFactory::FromUamqp(transfer),
+          payload_size,
+          payload_bytes));
+    }
+    return nullptr;
+  }
+
   void LinkImpl::Poll()
   {
     // Ensure that the connection hierarchy's state is not modified while polling on the link.
@@ -375,25 +510,132 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void LinkImpl::Attach()
   {
-    if (link_attach(m_link, nullptr, nullptr, nullptr, this))
     {
-      throw std::runtime_error("Could not set attach properties.");
+      auto lock{m_session->GetConnection()->Lock()};
+      if (m_eventHandler)
+      {
+        if (link_attach(m_link, OnTransferReceivedFn, OnLinkStateChangedFn, OnLinkFlowOnFn, this))
+        {
+          throw std::runtime_error("Could not set attach properties.");
+        }
+      }
+      else
+      {
+        if (link_attach(m_link, nullptr, nullptr, nullptr, this))
+        {
+          throw std::runtime_error("Could not set attach properties.");
+        }
+      }
     }
+    // Mark the connection as async so that we can use the async APIs.
+    m_session->GetConnection()->EnableAsyncOperation(true);
   }
   void LinkImpl::Detach(
       bool close,
       std::string const& condition,
       std::string const& description,
-      Models::AmqpValue& info)
+      Models::AmqpValue const& info)
   {
-    if (link_detach(
-            m_link,
-            close,
-            (condition.empty() ? nullptr : condition.c_str()),
-            (description.empty() ? nullptr : description.c_str()),
-            Models::_detail::AmqpValueFactory::ToUamqp(info)))
     {
-      throw std::runtime_error("Could not set attach properties.");
+      auto lock{m_session->GetConnection()->Lock()};
+      if (link_detach(
+              m_link,
+              close,
+              (condition.empty() ? nullptr : condition.c_str()),
+              (description.empty() ? nullptr : description.c_str()),
+              Models::_detail::AmqpValueFactory::ToUamqp(info)))
+      {
+        throw std::runtime_error("Could not set attach properties.");
+      }
     }
+    m_session->GetConnection()->EnableAsyncOperation(false);
+  }
+
+  template <typename CompleteFn> struct RewriteTransferComplete
+  {
+    static void OnOperation(
+        CompleteFn onComplete,
+        delivery_number deliveryId,
+        LINK_DELIVERY_SETTLE_REASON reason,
+        AMQP_VALUE disposition)
+    {
+      LinkDeliverySettleReason result{};
+      switch (reason)
+      {
+        case LINK_DELIVERY_SETTLE_REASON_CANCELLED:
+          result = LinkDeliverySettleReason::Cancelled;
+          break;
+        case LINK_DELIVERY_SETTLE_REASON_INVALID:
+          result = LinkDeliverySettleReason::Invalid;
+          break;
+        case LINK_DELIVERY_SETTLE_REASON_NOT_DELIVERED:
+          result = LinkDeliverySettleReason::NotDelivered;
+          break;
+        case LINK_DELIVERY_SETTLE_REASON_DISPOSITION_RECEIVED:
+          result = LinkDeliverySettleReason::DispositionReceived;
+          break;
+        case LINK_DELIVERY_SETTLE_REASON_SETTLED:
+          result = LinkDeliverySettleReason::Settled;
+          break;
+        case LINK_DELIVERY_SETTLE_REASON_TIMEOUT:
+          result = LinkDeliverySettleReason::Timeout;
+          break;
+      }
+
+      // Reference disposition so that we don't over-release when the AmqpValue passed to OnComplete
+      // is destroyed.
+      onComplete(
+          static_cast<uint32_t>(deliveryId),
+          result,
+          Models::_detail::AmqpValueFactory::FromUamqp(
+              Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(disposition)}));
+    }
+  };
+
+  std::tuple<uint32_t, LinkDeliverySettleReason, Models::AmqpValue> LinkImpl::Transfer(
+      std::vector<uint8_t> const& payload,
+      Azure::Core::Context const& context)
+  {
+    {
+
+      auto lock{m_session->GetConnection()->Lock()};
+
+      auto onTransferComplete =
+          [this](
+              uint32_t deliveryId, LinkDeliverySettleReason settleReason, Models::AmqpValue value) {
+            m_transferCompleteQueue.CompleteOperation(deliveryId, settleReason, value);
+          };
+      using MessageSendCompleteCallback = std::function<void(
+          uint32_t deliveryId,
+          LinkDeliverySettleReason reason,
+          Models::AmqpValue const& deliveryState)>;
+
+      auto operation(
+          std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
+              MessageSendCompleteCallback,
+              RewriteTransferComplete<MessageSendCompleteCallback>>>(onTransferComplete));
+      PAYLOAD payloadToSend{payload.data(), payload.size()};
+      LINK_TRANSFER_RESULT transferResult;
+      auto asyncResult = link_transfer_async(
+          m_link,
+          0,
+          &payloadToSend,
+          1,
+          std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
+          operation.release(),
+          &transferResult,
+          0 /*timeout*/);
+      if (asyncResult == nullptr)
+      {
+        throw std::runtime_error("Could not send message");
+      }
+    }
+
+    auto result = m_transferCompleteQueue.WaitForResult(context);
+    if (result)
+    {
+      return std::move(*result);
+    }
+    throw std::runtime_error("Error transferring data");
   }
 }}}} // namespace Azure::Core::Amqp::_detail

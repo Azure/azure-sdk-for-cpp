@@ -449,22 +449,18 @@ int <#= type_name #>_get_<#= field_name #>(<#= type_name.ToUpper() #>_HANDLE <#=
                                 AMQP_VALUE single_amqp_value = amqpvalue_create_<#= field.type.ToLower().Replace('-', '_').Replace(':', '_') #>(<#= field_name #>_single_value);
                                 if (single_amqp_value == NULL)
                                 {
-                                    amqpvalue_destroy(*<#= field_name #>_value);
                                     result = MU_FAILURE;
                                 }
                                 else
                                 {
                                     if (amqpvalue_add_array_item(*<#= field_name #>_value, single_amqp_value) != 0)
                                     {
-                                        amqpvalue_destroy(*<#= field_name #>_value);
-                                        amqpvalue_destroy(single_amqp_value);
                                         result = MU_FAILURE;
                                     }
                                     else
                                     {
                                         if (amqpvalue_set_composite_item(<#= type_name #>_instance->composite_value, <#= j #>, *<#= field_name #>_value) != 0)
                                         {
-                                            amqpvalue_destroy(*<#= field_name #>_value);
                                             result = MU_FAILURE;
                                         }
                                         else

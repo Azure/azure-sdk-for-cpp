@@ -48,35 +48,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         std::move(perCallpolicies));
   }
 
-  Azure::Core::Json::_internal::json ParseAzureCliOutput(std::string const& cliOutput)
-  {
-    GTEST_LOG_(INFO) << "Azure CLI output: " << cliOutput;
-    std::string jsonOutput = cliOutput;
-    if (jsonOutput.find("WARNING:") == 0)
-    {
-      // Erase the warning from the CLI.
-      jsonOutput = jsonOutput.erase(0, cliOutput.find('\n') + 1);
-    }
-    if (jsonOutput.find("DEBUG:") == 0)
-    {
-      // Erase the warning from the CLI.
-      GTEST_LOG_(WARNING) << "Azure CLI debug output: " << jsonOutput;
-      jsonOutput = jsonOutput.erase(0, cliOutput.find('\n') + 1);
-    }
-    if (jsonOutput.find("ERROR:") == 0)
-    {
-      throw std::runtime_error("Error processing Azure CLI: " + jsonOutput);
-    }
-    if (jsonOutput.empty())
-    {
-      return {};
-    }
-    else
-    {
-      return Azure::Core::Json::_internal::json::parse(jsonOutput);
-    }
-  }
-
   EventHubsManagement::EventHubsCreateOrUpdateOperation EventHubsManagement::CreateNamespace(
       std::string const& namespaceName,
       EventHubsPricingTier pricingTier,

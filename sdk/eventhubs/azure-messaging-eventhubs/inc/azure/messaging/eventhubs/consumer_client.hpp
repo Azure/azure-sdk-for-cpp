@@ -91,7 +91,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @returns Retry options for client
      */
-    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions()
+    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() const
     {
       return m_consumerClientOptions.RetryOptions;
     }
@@ -196,7 +196,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     void EnsureConnection(std::string const& partitionId);
     void EnsureSession(std::string const& partitionId);
-    Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId) const;
     Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
   };

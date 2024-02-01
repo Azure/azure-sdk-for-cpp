@@ -49,7 +49,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string const& GetEventHubName() { return m_eventHub; }
 
     /** Get Retry options for this ProducerClient */
-    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions()
+    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() const
     {
       return m_producerClientOptions.RetryOptions;
     }
@@ -181,7 +181,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
-    Azure::Core::Amqp::_internal::Connection CreateConnection();
+    Azure::Core::Amqp::_internal::Connection CreateConnection() const;
     Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
 
     // Ensure that the connection for this producer has been established.

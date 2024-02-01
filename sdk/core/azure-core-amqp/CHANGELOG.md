@@ -4,9 +4,16 @@
 
 ### Features Added
 
+The `Close` method on AMQP Message Sender and Message Receiver now blocks until the client receives a `DETACH` response from the remote node.
+
 ### Breaking Changes
 
+- The `Close` method on AMQP Message Sender and Message Receiver now accepts an `Azure::Core::Context` parameter. This parameter is defaulted so this change should not affect existing code.
+
 ### Bugs Fixed
+
+- Fixed uAMQP connection channel so that a channel is released when an END performative is received from the remote node instead of when the END performative is sent to the remote node.
+- Enabled more than one uAMQP session to be created on a single connection.
 
 ### Other Changes
 

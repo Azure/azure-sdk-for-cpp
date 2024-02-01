@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     /**
      * @brief Close the management instance.
      */
-    void Close();
+    void Close(Context const& context);
 
     _internal::ManagementOperationResult ExecuteOperation(
         std::string const& operationToPerform,
@@ -118,7 +118,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::MessageSender const& sender,
         _internal::MessageSenderState newState,
         _internal::MessageSenderState oldState) override;
-    void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override;
+    void OnMessageSenderDisconnected(
+        _internal::MessageSender const&,
+        Models::_internal::AmqpError const& error) override;
 
     // Inherited via MessageReceiverEvents
     void OnMessageReceiverStateChanged(
@@ -128,6 +130,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Models::AmqpValue OnMessageReceived(
         _internal::MessageReceiver const& receiver,
         std::shared_ptr<Models::AmqpMessage> const& message) override;
-    void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) override;
+    void OnMessageReceiverDisconnected(
+        _internal::MessageReceiver const&,
+        Models::_internal::AmqpError const& error) override;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
