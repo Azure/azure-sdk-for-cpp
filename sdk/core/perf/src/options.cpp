@@ -65,6 +65,7 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
        {"-d", "--duration"},
        "Duration of the test in seconds. Default to 10 seconds.",
        1},
+      {"help", {"-h", "--help"}, "Display help information.", 0},
       {"Host", {"--host"}, "Host to redirect HTTP requests. No redirection by default.", 1},
       {"Insecure", {"--insecure"}, "Allow untrusted SSL certs. Default to false.", 0},
       {"Iterations",
@@ -83,8 +84,9 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
        1},
       {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
       {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
-      {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
+
+      {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
-      {"help", {"-h", "--help"}, "Display help information.", 0},
-      {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0}};
+      {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
+  };
 }
