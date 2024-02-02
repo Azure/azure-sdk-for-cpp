@@ -548,10 +548,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::MessageReceiver const&,
       std::shared_ptr<Models::AmqpMessage> const& message)
   {
-    if (m_options.EnableTrace)
-    {
-      Log::Stream(Logger::Level::Informational) << "Received message: " << *message;
-    }
     if (!message->Properties.CorrelationId.HasValue())
     {
       return IndicateError(
