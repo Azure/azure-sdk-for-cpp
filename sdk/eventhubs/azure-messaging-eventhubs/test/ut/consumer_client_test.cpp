@@ -226,7 +226,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         {
           std::vector<std::thread> partitionThreads;
           partitionThreads.emplace_back(
-              [&client, &partition, i, eventHubName, &iterationsPerThread]() {
+              [&client, &partition, eventHubName, &iterationsPerThread]() {
                 size_t iterations = 0;
                 std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
                 std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
