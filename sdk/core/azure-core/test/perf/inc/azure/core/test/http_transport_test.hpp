@@ -12,8 +12,12 @@
 #include "../../../core/perf/inc/azure/perf.hpp"
 
 #include <azure/core.hpp>
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include <azure/core/http/curl_transport.hpp>
+#endif
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 #include <azure/core/http/win_http_transport.hpp>
+#endif
 
 #include <memory>
 
@@ -25,19 +29,19 @@ namespace Azure { namespace Core { namespace Test {
   class HTTPTransportTest : public Azure::Perf::PerfTest {
 
     std::string m_target;
-    std::shared_ptr<Azure::Core::Http::HttpTransport> m_Transport;
+    std::shared_ptr<Azure::Core::Http::HttpTransport> m_transport;
     Azure::Core::Http::HttpMethod m_httpMethod = Azure::Core::Http::HttpMethod::Get;
 
-    void GetRequest()
+    void GetRequest() const
     {
       auto httpRequest = Azure::Core::Http::Request(m_httpMethod, Azure::Core::Url(m_target));
       Azure::Core::Context context;
-      auto response = m_Transport->Send(httpRequest, context);
+      auto response = m_transport->Send(httpRequest, context);
       // Make sure to pull all bytes from network.
       auto body = response->ExtractBodyStream()->ReadToEnd();
     }
 
-    void PostRequest()
+    void PostRequest() const
     {
       std::string payload = "{}";
       Azure::Core::IO::MemoryBodyStream payloadStream(
@@ -45,7 +49,7 @@ namespace Azure { namespace Core { namespace Test {
       auto httpRequest
           = Azure::Core::Http::Request(m_httpMethod, Azure::Core::Url(m_target), &payloadStream);
       Azure::Core::Context context;
-      auto response = m_Transport->Send(httpRequest, context);
+      auto response = m_transport->Send(httpRequest, context);
       // Make sure to pull all bytes from network.
       auto body = response->ExtractBodyStream()->ReadToEnd();
     }
@@ -60,24 +64,26 @@ namespace Azure { namespace Core { namespace Test {
 
     void Setup() override
     {
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
       if ("winhttp" == m_options.GetMandatoryOption<std::string>("Transport"))
       {
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+
         Azure::Core::Http::WinHttpTransportOptions transportOptions;
         transportOptions.IgnoreInvalidCertificateCommonName = true;
         transportOptions.IgnoreUnknownCertificateAuthority = true;
-        m_Transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(transportOptions);
-#endif
+        m_transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(transportOptions);
       }
-      else
-      {
+#endif
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+      if ("curl" == m_options.GetMandatoryOption<std::string>("Transport"))
+      {
+
         Azure::Core::Http::CurlTransportOptions transportOptions;
         transportOptions.SslVerifyPeer = false;
-        m_Transport = std::make_shared<Azure::Core::Http::CurlTransport>(transportOptions);
-#endif
-      }
+        m_transport = std::make_shared<Azure::Core::Http::CurlTransport>(transportOptions);
 
+      }
+#endif
       m_httpMethod
           = Azure::Core::Http::HttpMethod(m_options.GetMandatoryOption<std::string>("Method"));
 
