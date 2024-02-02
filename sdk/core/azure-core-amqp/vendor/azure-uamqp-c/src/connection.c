@@ -320,7 +320,7 @@ static int channel_table_find_outgoing_channel_from_incoming_channel(CHANNEL_TAB
     }
     if (i == channel_table->size)
     {
-        LogError("Could not find incoming channel %d", incoming_channel);
+        LogError("Could not find incoming channel %hu", incoming_channel);
         result = MU_FAILURE;
 	}
 
@@ -1305,7 +1305,7 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                         ENDPOINT_INSTANCE* session_endpoint = find_session_endpoint_by_outgoing_channel(connection, remote_channel);
                                         if (session_endpoint == NULL)
                                         {
-                                            LogError("Cannot find session endpoint corresponding to remote channel %d", remote_channel);
+                                            LogError("Cannot find session endpoint corresponding to remote channel %hu", remote_channel);
                                         }
                                         else
                                         {
