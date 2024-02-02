@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Test {
   class PipelineTest : public Azure::Perf::PerfTest {
     std::unique_ptr<HttpPipeline> m_pipeline;
 
-    std::vector<std::string> SplitString(const std::string& s, char separator)
+    static std::vector<std::string> SplitString(const std::string& s, char separator)
     {
       std::vector<std::string> result;
 
@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Test {
       // since in each loop we add the whole set of desired policies
       // we also get stack overflow with lots of policies since the pipeline is a two level
       // recursion
-      for (int i = 0; i < total / policyNames.size(); i++)
+      for (int i = 0; i < (int)(total / policyNames.size()); i++)
       {
         if (std::find(policyNames.begin(), policyNames.end(), testPolicyName) != policyNames.end())
         {
