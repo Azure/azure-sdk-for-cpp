@@ -169,14 +169,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 
-    Azure::Messaging::EventHubs::PartitionClient partitionClient
-        = client.CreatePartitionClient("0", partitionOptions);
-
     std::vector<std::thread> threads;
     std::vector<size_t> iterationsPerThread;
     for (int i = 0; i < 20; i++)
     {
-      threads.emplace_back([&client, &partitionClient, i, eventHubName, &iterationsPerThread]() {
+      threads.emplace_back([&client, i, eventHubName, &iterationsPerThread]() {
         size_t iterations = 0;
         std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
@@ -217,11 +214,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
     Azure::Messaging::EventHubs::ConsumerClient client(connString, eventHubName);
-    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
-    partitionOptions.StartPosition.Inclusive = true;
-
-    Azure::Messaging::EventHubs::PartitionClient partitionClient
-        = client.CreatePartitionClient("0", partitionOptions);
 
     auto ehProperties = client.GetEventHubProperties();
     std::vector<std::thread> threads;
