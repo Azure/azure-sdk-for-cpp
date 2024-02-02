@@ -81,7 +81,6 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::CurlTransportOptions transportOptions;
         transportOptions.SslVerifyPeer = false;
         m_transport = std::make_shared<Azure::Core::Http::CurlTransport>(transportOptions);
-
       }
 #endif
       m_httpMethod
@@ -96,7 +95,7 @@ namespace Azure { namespace Core { namespace Test {
         m_target = GetTestProxy() + "/Admin/setRecordingOptions";
       }
     }
-    
+
     /**
      * @brief Use HTTPTransportTest to call test proxy endpoint.
      *
