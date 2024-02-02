@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.7 (Unreleased)
+## 1.0.0-beta.7 (2024-02-02)
 
 ### Features Added
 
@@ -14,8 +14,6 @@ The `Close` method on AMQP Message Sender and Message Receiver now blocks until 
 
 - Fixed uAMQP connection channel so that a channel is released when an END performative is received from the remote node instead of when the END performative is sent to the remote node.
 - Enabled more than one uAMQP session to be created on a single connection.
-
-### Other Changes
 
 ## 1.0.0-beta.6 (2024-01-11)
 
