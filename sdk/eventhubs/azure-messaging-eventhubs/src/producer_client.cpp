@@ -189,49 +189,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
     return m_connections.at(partitionId).CreateSession(sessionOptions);
   }
-
-  void ProducerClient::EnsureManagementClient(Azure::Core::Context const& context)
+  std::shared_ptr<_detail::EventHubsPropertiesClient> ProducerClient::GetPropertiesClient()
   {
-    EnsureSession({});
-
-    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
-    if (!m_managementClient)
+    std::lock_guard<std::mutex> lock(m_propertiesClientLock);
+    EnsureConnection({});
+    if (!m_propertiesClient)
     {
-      // Create a management client off the session.
-      // Eventhubs management APIs return a status code in the "status-code" application properties.
-      Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
-      managementClientOptions.EnableTrace = _detail::EnableAmqpTrace;
-      managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-      m_managementClient = std::make_unique<Azure::Core::Amqp::_internal::ManagementClient>(
-          GetSession({}).CreateManagementClient(m_eventHub, managementClientOptions));
-
-      m_managementClient->Open(context);
-      m_isManagementClientOpen = true;
+      m_propertiesClient
+          = std::make_shared<_detail::EventHubsPropertiesClient>(m_connections.at(""), m_eventHub);
     }
-  }
-
-  std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> const&
-  ProducerClient::GetManagementClient()
-  {
-    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
-    return m_managementClient;
+    return m_propertiesClient;
   }
 
   Models::EventHubProperties ProducerClient::GetEventHubProperties(Core::Context const& context)
   {
-    EnsureManagementClient(context);
-
-    return _detail::EventHubsUtilities::GetEventHubsProperties(
-        GetManagementClient(), m_eventHub, context);
+    return GetPropertiesClient()->GetEventHubsProperties(m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ProducerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    EnsureManagementClient(context);
-
-    return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        GetManagementClient(), m_eventHub, partitionId, context);
+    return GetPropertiesClient()->GetEventHubsPartitionProperties(m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

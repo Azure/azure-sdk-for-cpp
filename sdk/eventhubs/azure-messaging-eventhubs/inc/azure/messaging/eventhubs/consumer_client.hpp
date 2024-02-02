@@ -10,13 +10,15 @@
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/internal/connection.hpp>
-#include <azure/core/amqp/internal/management.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
+  namespace _detail {
+    class EventHubsPropertiesClient;
+  }
 
   /// @brief The default consumer group name.
   constexpr const char* DefaultConsumerGroup = "$Default";
@@ -192,19 +194,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions;
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections;
 
-    // Management client used for GetProperty operations.
-    bool m_managementClientIsOpen{false};
-    std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> m_managementClient;
+    // Client used for GetProperty operations.
+    std::mutex m_propertiesClientLock;
+    std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
 
     void EnsureConnection(std::string const& partitionId);
     void EnsureSession(std::string const& partitionId);
-    void EnsureManagementClient(const Azure::Core::Context& context = {});
     Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId) const;
     Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId) const;
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
-    std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> const& GetManagementClient();
+    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient();
   };
 }}} // namespace Azure::Messaging::EventHubs

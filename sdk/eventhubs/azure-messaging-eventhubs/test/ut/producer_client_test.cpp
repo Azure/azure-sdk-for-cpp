@@ -147,7 +147,7 @@ TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
   }());
 }
 
-  TEST_F(ProducerClientTest, GetEventHubProperties_Multithreaded_LIVEONLY_)
+TEST_F(ProducerClientTest, GetEventHubProperties_Multithreaded_LIVEONLY_)
 {
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
   std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");

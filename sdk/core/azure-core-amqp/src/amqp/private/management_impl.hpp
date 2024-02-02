@@ -16,8 +16,8 @@
 #include <azure_uamqp_c/amqp_management.h>
 
 #include <memory>
-#include <queue>
 #include <mutex>
+#include <queue>
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
