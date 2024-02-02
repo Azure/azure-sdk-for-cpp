@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Test {
       // since in each loop we add the whole set of desired policies
       // we also get stack overflow with lots of policies since the pipeline is a two level
       // recursion
-      for (int i = 0; i < (int)(total / policyNames.size()); i++)
+      for (int i = 0; i < static_cast<int>(total / policyNames.size()); i++)
       {
         if (std::find(policyNames.begin(), policyNames.end(), testPolicyName) != policyNames.end())
         {
