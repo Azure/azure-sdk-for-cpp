@@ -255,7 +255,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     connection.Open();
 
     {
-      constexpr const size_t sessionCount = 10;
+      constexpr const size_t sessionCount = 30;
       GTEST_LOG_(INFO) << "Opening " << sessionCount << " sessions.";
       std::vector<Session> sessions;
       for (size_t i = 0; i < sessionCount; i += 1)
