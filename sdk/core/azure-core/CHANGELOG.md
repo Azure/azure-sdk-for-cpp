@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+- Move the connection back to the connection pool when HTTP error 404 was received. This may improve the performance of a multithreaded application when libcurl transport adapter is being used. (A community contribution, courtesy of _[mchelnokov](https://github.com/mchelnokov)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Mykhailo Chelnokov _([GitHub](https://github.com/mchelnokov))_
+
 ## 1.11.1 (2024-02-02)
 
 ### Bugs Fixed
