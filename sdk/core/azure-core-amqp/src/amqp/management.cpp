@@ -75,7 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
-    /** Authentication needs to happen *before* the management object is created.
+    /** Authentication needs to happen *before* the links are created.
      *
      * Note that we ONLY enable authentication if we know we're talking to the management node.
      * Other nodes require their own authentication.
@@ -101,6 +101,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       messageReceiverOptions.MessageTarget = m_options.ManagementNodeName;
       messageReceiverOptions.Name = m_options.ManagementNodeName + "-receiver";
       messageReceiverOptions.AuthenticationRequired = false;
+      messageReceiverOptions.SettleMode = _internal::ReceiverSettleMode::First;
 
       m_messageReceiver = std::make_shared<MessageReceiverImpl>(
           m_session, m_options.ManagementNodeName, messageReceiverOptions, this);
@@ -165,10 +166,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       messageToSend.ApplicationProperties.emplace("locales", locales);
     }
-    messageToSend.Properties.MessageId = m_nextMessageId;
-    m_expectedMessageId = m_nextMessageId;
-    m_sendCompleted = false;
-    m_nextMessageId++;
+
+    // Set the message ID and remember it for later.
+    auto requestId = Azure::Core::Uuid::CreateUuid().ToString();
+
+    messageToSend.Properties.MessageId
+        = static_cast<Azure::Core::Amqp::Models::AmqpValue>(requestId);
+    {
+      std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+
+      Log::Stream(Logger::Level::Verbose)
+          << "ManagementClient::ExecuteOperation: " << requestId << ". Create Queue for request.";
+      m_messageQueues.emplace(requestId, std::make_unique<ManagementOperationQueue>());
+      m_sendCompleted = false;
+    }
 
     auto sendResult = m_messageSender->Send(messageToSend, context);
     if (std::get<0>(sendResult) != _internal::MessageSendStatus::Ok)
@@ -178,9 +189,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       rv.StatusCode = 500;
       rv.Error = std::get<1>(sendResult);
       rv.Message = nullptr;
+      {
+        std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+        // Remove the queue from the map, we don't need it anymore.
+        m_messageQueues.erase(requestId);
+      }
       return rv;
     }
-    auto result = m_messageQueue.WaitForResult(context);
+
+    auto result = m_messageQueues.at(requestId)->WaitForResult(context);
     if (result)
     {
       _internal::ManagementOperationResult rv;
@@ -188,6 +205,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       rv.StatusCode = std::get<1>(*result);
       rv.Error = std::get<2>(*result);
       rv.Message = std::get<3>(*result);
+
+      {
+        std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+        // Remove the queue from the map, we don't need it anymore.
+        m_messageQueues.erase(requestId);
+      }
       return rv;
     }
     else
@@ -452,6 +475,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   Models::AmqpValue ManagementClientImpl::IndicateError(
+      std::string const& correlationId,
       std::string const& condition,
       std::string const& description)
   {
@@ -466,11 +490,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Let external callers know that the error was triggered.
       m_eventHandler->OnError(error);
     }
+    if (!correlationId.empty())
+    {
+      // Ensure nobody else is messing with the message queues right now.
+      std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
 
-    // Complete any outstanding receives with an error.
-    m_messageQueue.CompleteOperation(
-        _internal::ManagementOperationStatus::Error, 500, error, nullptr);
-
+      // Remove the queue from the map, we don't need it anymore.
+      if (m_messageQueues.find(correlationId) != m_messageQueues.end())
+      {
+        // Complete any outstanding receives with an error.
+        m_messageQueues.at(correlationId)
+            ->CompleteOperation(_internal::ManagementOperationStatus::Error, 500, error, nullptr);
+      }
+    }
     return Models::_internal::Messaging::DeliveryRejected(condition, description, {});
   }
 
@@ -478,30 +510,50 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::MessageReceiver const&,
       std::shared_ptr<Models::AmqpMessage> const& message)
   {
-    if (message->ApplicationProperties.empty())
+    if (m_options.EnableTrace)
     {
-      return IndicateError(
-          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
-          "Received message does not have application properties.");
+      Log::Stream(Logger::Level::Informational) << "Received message: " << *message;
     }
     if (!message->Properties.CorrelationId.HasValue())
     {
       return IndicateError(
+          "",
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID not found.");
     }
-    else if (message->Properties.CorrelationId.Value().GetType() != Models::AmqpValueType::Ulong)
+    else if (message->Properties.CorrelationId.Value().GetType() != Models::AmqpValueType::String)
     {
       return IndicateError(
+          "",
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID is not a ulong.");
     }
-    uint64_t correlationId = message->Properties.CorrelationId.Value();
+    std::string requestId = static_cast<std::string>(message->Properties.CorrelationId.Value());
+
+    // Ensure nobody else is messing with the message queues right now.
+    std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+    auto messageQueue = m_messageQueues.find(requestId);
+    if (messageQueue == m_messageQueues.end())
+    {
+      return IndicateError(
+          requestId,
+          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
+          "Received message correlation ID does not match request ID.");
+    }
+
+    if (message->ApplicationProperties.empty())
+    {
+      return IndicateError(
+          requestId,
+          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
+          "Received message does not have application properties.");
+    }
 
     auto statusCodeMap = message->ApplicationProperties.find(m_options.ExpectedStatusCodeKeyName);
     if (statusCodeMap == message->ApplicationProperties.end())
     {
       return IndicateError(
+          requestId,
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message does not have a " + m_options.ExpectedStatusCodeKeyName
               + " status code key.");
@@ -509,6 +561,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     else if (statusCodeMap->second.GetType() != Models::AmqpValueType::Int)
     {
       return IndicateError(
+          requestId,
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message " + m_options.ExpectedStatusCodeKeyName + " value is not an int.");
     }
@@ -523,6 +576,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       if (statusDescription->second.GetType() != Models::AmqpValueType::String)
       {
         return IndicateError(
+            requestId,
             Models::_internal::AmqpErrorCondition::InternalError.ToString(),
             "Received message " + m_options.ExpectedStatusDescriptionKeyName
                 + " value is not a string.");
@@ -530,12 +584,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       description = static_cast<std::string>(statusDescription->second);
     }
 
-    if (correlationId != m_expectedMessageId)
-    {
-      return IndicateError(
-          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
-          "Received message correlation ID does not match request ID.");
-    }
     if (!m_sendCompleted)
     {
       if (m_options.EnableTrace)
@@ -552,12 +600,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // 2616](https://www.rfc-editor.org/rfc/rfc2616#section-6.1.1) status codes.
     if ((statusCode < 200) || (statusCode > 299))
     {
-      m_messageQueue.CompleteOperation(
+      m_messageQueues.at(requestId)->CompleteOperation(
           _internal::ManagementOperationStatus::FailedBadStatus, statusCode, messageError, message);
     }
     else
     {
-      m_messageQueue.CompleteOperation(
+      m_messageQueues.at(requestId)->CompleteOperation(
           _internal::ManagementOperationStatus::Ok, statusCode, messageError, message);
     }
     return Models::_internal::Messaging::DeliveryAccepted();

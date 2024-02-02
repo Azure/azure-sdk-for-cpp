@@ -123,7 +123,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
   void ProducerClient::EnsureConnection(std::string const& partitionId)
   {
-    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_connections.find(partitionId) == m_connections.end())
     {
       m_connections.emplace(partitionId, CreateConnection());
@@ -136,7 +136,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     EnsureConnection(partitionId);
 
     // Ensure that a session has been created for this partition.
-    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
       m_sessions.emplace(partitionId, CreateSession(partitionId));
@@ -145,7 +145,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   Azure::Core::Amqp::_internal::Session ProducerClient::GetSession(std::string const& partitionId)
   {
-    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     return m_sessions.at(partitionId);
   }
 
@@ -190,24 +190,48 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return m_connections.at(partitionId).CreateSession(sessionOptions);
   }
 
+  void ProducerClient::EnsureManagementClient(Azure::Core::Context const& context)
+  {
+    EnsureSession({});
+
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
+    if (!m_managementClient)
+    {
+      // Create a management client off the session.
+      // Eventhubs management APIs return a status code in the "status-code" application properties.
+      Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
+      managementClientOptions.EnableTrace = _detail::EnableAmqpTrace;
+      managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
+      m_managementClient = std::make_unique<Azure::Core::Amqp::_internal::ManagementClient>(
+          GetSession({}).CreateManagementClient(m_eventHub, managementClientOptions));
+
+      m_managementClient->Open(context);
+      m_isManagementClientOpen = true;
+    }
+  }
+
+  std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> const&
+  ProducerClient::GetManagementClient()
+  {
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
+    return m_managementClient;
+  }
+
   Models::EventHubProperties ProducerClient::GetEventHubProperties(Core::Context const& context)
   {
-    EnsureConnection({});
+    EnsureManagementClient(context);
 
-    EnsureSession({});
-    auto session{GetSession({})};
-    return _detail::EventHubsUtilities::GetEventHubsProperties(session, m_eventHub, context);
+    return _detail::EventHubsUtilities::GetEventHubsProperties(
+        GetManagementClient(), m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ProducerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    EnsureConnection(partitionId);
-    EnsureSession(partitionId);
-    Azure::Core::Amqp::_internal::Session session{GetSession(partitionId)};
+    EnsureManagementClient(context);
 
     return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        session, m_eventHub, partitionId, context);
+        GetManagementClient(), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

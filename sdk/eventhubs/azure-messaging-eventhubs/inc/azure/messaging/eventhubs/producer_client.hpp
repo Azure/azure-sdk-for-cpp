@@ -92,6 +92,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ~ProducerClient()
     {
+      if (m_managementClient && m_isManagementClientOpen)
+      {
+        m_managementClient->Close();
+      }
+
       for (auto& sender : m_senders)
       {
         sender.second.Close();
@@ -177,8 +182,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::mutex m_sendersLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
+    std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> m_managementClient;
+    bool m_isManagementClientOpen{false};
 
-    std::mutex m_sessionsLock;
+    std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
     Azure::Core::Amqp::_internal::Connection CreateConnection() const;
@@ -193,7 +200,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context = {});
 
+    void EnsureManagementClient(Azure::Core::Context const& context = {});
+
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
+    std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> const& GetManagementClient();
   };
 }}} // namespace Azure::Messaging::EventHubs

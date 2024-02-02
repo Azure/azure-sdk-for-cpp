@@ -20,7 +20,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
-  constexpr bool EnableAmqpTrace = false;
+  constexpr bool EnableAmqpTrace = true;
 
   class EventHubsExceptionFactory {
   public:
@@ -106,27 +106,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     }
 
     static Models::EventHubProperties GetEventHubsProperties(
-        Azure::Core::Amqp::_internal::Session const& session,
+        std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> const& managementClient,
         std::string const& eventHubName,
         Core::Context const& context)
     {
-
-      // Create a management client off the session.
-      // Eventhubs management APIs return a status code in the "status-code" application properties.
-      Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
-      managementClientOptions.EnableTrace = EnableAmqpTrace;
-      managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-      Azure::Core::Amqp::_internal::ManagementClient managementClient{
-          session.CreateManagementClient(eventHubName, managementClientOptions)};
-
-      managementClient.Open(context);
-
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.ApplicationProperties["name"]
           = static_cast<Azure::Core::Amqp::Models::AmqpValue>(eventHubName);
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-      auto result = managementClient.ExecuteOperation(
+      auto result = managementClient->ExecuteOperation(
           "READ" /* operation */,
           "com.microsoft:eventhub" /* type of operation */,
           "" /* locales */,
@@ -167,27 +156,15 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
           properties.PartitionIds.push_back(static_cast<std::string>(partition));
         }
       }
-      managementClient.Close(context);
-
       return properties;
     }
 
     static Models::EventHubPartitionProperties GetEventHubsPartitionProperties(
-        Azure::Core::Amqp::_internal::Session const& session,
+        std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> const& managementClient,
         std::string const& eventHubName,
         std::string const& partitionId,
         Core::Context const& context)
     {
-      // Create a management client off the session.
-      // Eventhubs management APIs return a status code in the "status-code" application properties.
-      Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
-      managementClientOptions.EnableTrace = EnableAmqpTrace;
-      managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-      Azure::Core::Amqp::_internal::ManagementClient managementClient{
-          session.CreateManagementClient(eventHubName, managementClientOptions)};
-
-      managementClient.Open(context);
-
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.ApplicationProperties["name"]
@@ -195,7 +172,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       message.ApplicationProperties["partition"]
           = Azure::Core::Amqp::Models::AmqpValue{partitionId};
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-      auto result = managementClient.ExecuteOperation(
+      auto result = managementClient->ExecuteOperation(
           "READ" /* operation */,
           "com.microsoft:partition" /* type of operation */,
           "" /* locales */,
@@ -259,8 +236,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
                 .count()));
         properties.IsEmpty = bodyMap["is_partition_empty"];
       }
-      managementClient.Close(context);
-
       return properties;
     }
 

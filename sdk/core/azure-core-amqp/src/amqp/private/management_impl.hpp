@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <queue>
+#include <mutex>
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -87,15 +88,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::ManagementOpenStatus>
         m_openCompleteQueue;
 
-    uint64_t m_nextMessageId{0};
-
-    // What is the message ID expected for the current outstanding operation?
-    uint64_t m_expectedMessageId{};
     bool m_sendCompleted{false};
 
     void SetState(ManagementState newState);
     // Reflect the error state to the OnError callback and return a delivery rejected status.
     Models::AmqpValue IndicateError(
+        std::string const& correlationId,
         std::string const& errorCondition,
         std::string const& errorDescription);
 
@@ -106,12 +104,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string m_managementEntityPath;
     Azure::Core::Credentials::AccessToken m_accessToken;
 
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+    using ManagementOperationQueue = Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         _internal::ManagementOperationStatus,
         std::uint32_t,
         Models::_internal::AmqpError,
-        std::shared_ptr<Models::AmqpMessage>>
-        m_messageQueue;
+        std::shared_ptr<Models::AmqpMessage>>;
+
+    std::recursive_mutex m_messageQueuesLock;
+    std::map<std::string, std::unique_ptr<ManagementOperationQueue>> m_messageQueues;
 
     // Inherited via MessageSenderEvents
     void OnMessageSenderStateChanged(
