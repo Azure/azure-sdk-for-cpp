@@ -173,7 +173,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::vector<size_t> iterationsPerThread;
     for (int i = 0; i < 20; i++)
     {
-      threads.emplace_back([&client, i, eventHubName, &iterationsPerThread]() {
+      threads.emplace_back([&client, eventHubName, &iterationsPerThread]() {
         size_t iterations = 0;
         std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
