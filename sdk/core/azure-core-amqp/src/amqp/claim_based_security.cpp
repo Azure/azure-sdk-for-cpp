@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         context);
     if (result.Status != ManagementOperationStatus::Ok)
     {
-      throw std::runtime_error(
+      throw Azure::Core::Credentials::AuthenticationException(
           "Could not authenticate to client. Error Status: " + std::to_string(result.StatusCode)
           + " condition: " + result.Error.Condition.ToString()
           + " reason: " + result.Error.Description);

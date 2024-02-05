@@ -196,6 +196,47 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
   }
 
+  TEST_F(TestManagement, ManagementOpenCloseAuthenticatedFail)
+  {
+    MessageTests::AmqpServerMock mockServer;
+    MessageTests::MockServiceEndpointOptions managementEndpointOptions;
+    managementEndpointOptions.EnableTrace = true;
+    auto endpoint = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
+    mockServer.AddServiceEndpoint(endpoint);
+
+    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+        "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
+        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    connectionOptions.EnableTrace = true;
+    Connection connection("localhost", sasCredential, connectionOptions);
+
+    Session session{connection.CreateSession({})};
+    ManagementClientOptions options;
+    options.EnableTrace = 1;
+    ManagementClient management(session.CreateManagementClient("Test", options));
+
+    // Force an authentication error.
+    mockServer.ForceCbsError(true);
+
+    mockServer.StartListening();
+
+    try
+    {
+      EXPECT_THROW(management.Open(), Azure::Core::Credentials::AuthenticationException);
+
+      management.Close();
+    }
+    catch (std::exception const& e)
+    {
+	  GTEST_LOG_(INFO) << "Caught exception: " << e.what();
+	}
+    mockServer.StopListening();
+
+  }
+
   TEST_F(TestManagement, ManagementOpenCloseError)
   {
     MessageTests::AmqpServerMock mockServer;

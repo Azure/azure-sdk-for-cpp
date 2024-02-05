@@ -156,6 +156,64 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(result.PartitionId, "0");
   }
 
+  TEST_F(ConsumerClientTest, GetPartitionPropertiesClientSecret_LIVEONLY_)
+  {
+    auto credentials
+    {
+#if 0
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnv("EVENTHUBS_TENANT_ID"),
+        GetEnv("EVENTHUBS_CLIENT_ID"),
+        GetEnv("EVENTHUBS_CLIENT_SECRET"))
+#else
+      std::make_shared<Azure::Identity::DefaultAzureCredential>()
+#endif
+    };
+    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+    std::string hostName{GetEnv("EVENTHUBS_HOST")};
+    std::string consumerGroup{GetEnv("EVENTHUB_CONSUMER_GROUP")};
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+
+    Azure::Messaging::EventHubs::ConsumerClient client(
+        hostName, eventHubName, credentials, consumerGroup);
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Inclusive = true;
+
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client.CreatePartitionClient("0", partitionOptions);
+
+    auto result = client.GetPartitionProperties("0");
+    EXPECT_EQ(result.Name, eventHubName);
+    EXPECT_EQ(result.PartitionId, "0");
+  }
+
+  TEST_F(ConsumerClientTest, GetPartitionPropertiesAuthError_LIVEONLY_)
+  {
+    auto credentials{
+        std::make_shared<Azure::Identity::ClientSecretCredential>("abc", "def", "ghi")};
+    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+    std::string hostName{GetEnv("EVENTHUBS_HOST")};
+    std::string consumerGroup{GetEnv("EVENTHUB_CONSUMER_GROUP")};
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+
+    Azure::Messaging::EventHubs::ConsumerClient client(
+        hostName, eventHubName, credentials, consumerGroup);
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Inclusive = true;
+
+    EXPECT_THROW(
+        client.CreatePartitionClient("0", partitionOptions),
+        Azure::Core::Credentials::AuthenticationException);
+  }
+
   TEST_F(ConsumerClientTest, GetEventHubProperties_Multithreaded_LIVEONLY_)
   {
     std::string eventHubName{GetEnv("EVENTHUB_NAME")};

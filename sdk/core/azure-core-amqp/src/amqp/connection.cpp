@@ -690,7 +690,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_tokenStore.emplace(audienceUrl, accessToken);
         return accessToken;
       }
-      catch (std::runtime_error const&)
+      catch (...)
       {
         // Ensure that the claims based security object is closed before we leave this scope.
         claimsBasedSecurity->Close(context);
