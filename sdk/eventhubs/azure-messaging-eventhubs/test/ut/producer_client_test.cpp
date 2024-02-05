@@ -214,22 +214,21 @@ TEST_F(ProducerClientTest, GetPartitionProperties_Multithreaded_LIVEONLY_)
       for (int i = 0; i < 20; i++)
       {
         std::vector<std::thread> partitionThreads;
-        partitionThreads.emplace_back(
-            [&client, &partition, eventHubName, &iterationsPerThread]() {
-              size_t iterations = 0;
-              std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
-              std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
-              while ((std::chrono::system_clock::now() - start) <= timeout)
-              {
-                Azure::Messaging::EventHubs::Models::EventHubPartitionProperties result;
-                ASSERT_NO_THROW(result = client.GetPartitionProperties(partition));
-                EXPECT_EQ(result.Name, eventHubName);
-                EXPECT_EQ(result.PartitionId, partition);
-                std::this_thread::yield();
-                iterations++;
-              }
-              iterationsPerThread.push_back(iterations);
-            });
+        partitionThreads.emplace_back([&client, &partition, eventHubName, &iterationsPerThread]() {
+          size_t iterations = 0;
+          std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
+          std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+          while ((std::chrono::system_clock::now() - start) <= timeout)
+          {
+            Azure::Messaging::EventHubs::Models::EventHubPartitionProperties result;
+            ASSERT_NO_THROW(result = client.GetPartitionProperties(partition));
+            EXPECT_EQ(result.Name, eventHubName);
+            EXPECT_EQ(result.PartitionId, partition);
+            std::this_thread::yield();
+            iterations++;
+          }
+          iterationsPerThread.push_back(iterations);
+        });
         for (auto& t : partitionThreads)
         {
           if (t.joinable())

@@ -231,10 +231,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     catch (std::exception const& e)
     {
-	  GTEST_LOG_(INFO) << "Caught exception: " << e.what();
-	}
+      GTEST_LOG_(INFO) << "Caught exception: " << e.what();
+    }
     mockServer.StopListening();
-
   }
 
   TEST_F(TestManagement, ManagementOpenCloseError)
