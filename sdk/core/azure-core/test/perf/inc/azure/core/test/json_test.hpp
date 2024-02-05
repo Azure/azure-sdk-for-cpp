@@ -187,29 +187,29 @@ namespace Azure { namespace Core { namespace Test {
     JsonTestObject(size_t const& vectorSize)
     {
       Boolean = true;
-      Int8 = (int8_t)1;
-      Int16 = (int16_t)2;
-      Int32 = (int32_t)3;
-      Int64 = (int64_t)4;
-      Uint8 = (uint8_t)5;
-      Uint16 = (uint16_t)6;
-      Uint32 = (uint32_t)7;
-      Uint64 = (uint64_t)8;
-      Float = (float)9.0;
-      Double = (double)10.0;
+      Int8 = static_cast<int8_t>(1);
+      Int16 = static_cast<int16_t>(2);
+      Int32 = static_cast<int32_t>(3);
+      Int64 = static_cast<int64_t>(4);
+      Uint8 = static_cast<uint8_t>(5);
+      Uint16 = static_cast<uint16_t>(6);
+      Uint32 = static_cast<uint32_t>(7);
+      Uint64 = static_cast<uint64_t>(8);
+      Float = static_cast<float>(9.0);
+      Double = static_cast<double>(10.0);
       String = "string";
 
       NullableBoolean = true;
-      NullableInt8 = (int8_t)1;
-      NullableInt16 = (int16_t)2;
-      NullableInt32 = (int32_t)3;
-      NullableInt64 = (int64_t)4;
-      NullableUint8 = (uint8_t)5;
-      NullableUint16 = (uint16_t)6;
-      NullableUint32 = (uint32_t)7;
-      NullableUint64 = (uint64_t)8;
-      NullableFloat = (float)9.0;
-      NullableDouble = (double)10.0;
+      NullableInt8 = static_cast<int8_t>(1);
+      NullableInt16 = static_cast<int16_t>(2);
+      NullableInt32 = static_cast<int32_t>(3);
+      NullableInt64 = static_cast<int64_t>(4);
+      NullableUint8 = static_cast<uint8_t>(5);
+      NullableUint16 = static_cast<uint16_t>(6);
+      NullableUint32 = static_cast<uint32_t>(7);
+      NullableUint64 = static_cast<uint64_t>(8);
+      NullableFloat = static_cast<float>(9.0);
+      NullableDouble = static_cast<double>(10.0);
       NullableString = "string";
 
       Booleans = std::vector<bool>(vectorSize, true);
@@ -221,8 +221,8 @@ namespace Azure { namespace Core { namespace Test {
       Uint16s = std::vector<uint16_t>(vectorSize, (uint16_t)6);
       Uint32s = std::vector<uint32_t>(vectorSize, (uint32_t)7);
       Uint64s = std::vector<uint64_t>(vectorSize, (uint64_t)8);
-      Floats = std::vector<float>(vectorSize, (float)9.0);
-      Doubles = std::vector<double>(vectorSize, (double)10.0);
+      Floats = std::vector<float>(vectorSize, static_cast<float> (9.0));
+      Doubles = std::vector<double>(vectorSize, static_cast<float> (10.0));
       Strings = std::vector<std::string>(vectorSize, "string");
 
       Map = std::map<std::string, std::string>();
