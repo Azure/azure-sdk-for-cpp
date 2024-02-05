@@ -213,16 +213,16 @@ namespace Azure { namespace Core { namespace Test {
       NullableString = "string";
 
       Booleans = std::vector<bool>(vectorSize, true);
-      Int8s = std::vector<int8_t>(vectorSize, (int8_t)1);
-      Int16s = std::vector<int16_t>(vectorSize, (int16_t)2);
-      Int32s = std::vector<int32_t>(vectorSize, (int32_t)3);
-      Int64s = std::vector<int64_t>(vectorSize, (int64_t)4);
-      Uint8s = std::vector<uint8_t>(vectorSize, (uint8_t)5);
-      Uint16s = std::vector<uint16_t>(vectorSize, (uint16_t)6);
-      Uint32s = std::vector<uint32_t>(vectorSize, (uint32_t)7);
-      Uint64s = std::vector<uint64_t>(vectorSize, (uint64_t)8);
-      Floats = std::vector<float>(vectorSize, static_cast<float> (9.0));
-      Doubles = std::vector<double>(vectorSize, static_cast<float> (10.0));
+      Int8s = std::vector<int8_t>(vectorSize, static_cast<int8_t>(1));
+      Int16s = std::vector<int16_t>(vectorSize, static_cast<int16_t>(2));
+      Int32s = std::vector<int32_t>(vectorSize, static_cast<int32_t>(3));
+      Int64s = std::vector<int64_t>(vectorSize, static_cast<int64_t>(4));
+      Uint8s = std::vector<uint8_t>(vectorSize, static_cast<uint8_t>(5));
+      Uint16s = std::vector<uint16_t>(vectorSize, static_cast<uint16_t>(6));
+      Uint32s = std::vector<uint32_t>(vectorSize, static_cast<uint32_t>(7));
+      Uint64s = std::vector<uint64_t>(vectorSize, static_cast<uint64_t>(8));
+      Floats = std::vector<float>(vectorSize, static_cast<float>(9.0));
+      Doubles = std::vector<double>(vectorSize, static_cast<double>(10.0));
       Strings = std::vector<std::string>(vectorSize, "string");
 
       Map = std::map<std::string, std::string>();
