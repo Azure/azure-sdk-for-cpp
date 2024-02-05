@@ -305,7 +305,7 @@ namespace Azure { namespace Core { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       return {
-          {"Action", {"--action"}, "Serialize/deserialize, default Serialize", 1, false},
+          {"Action", {"--action"}, "Serialize/deserialize, default serialize", 1, false},
           {"Size", {"--size"}, "The vector size, default 1000", 1, false}};
     }
 
