@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
-  std::ostream& operator<<(std::ostream& stream, SenderSettleMode const& settleMode)
+  std::ostream& operator<<(std::ostream& stream, SenderSettleMode const settleMode)
   {
     switch (settleMode)
     {
@@ -66,7 +66,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
   std::string MessageSender::GetLinkName() const { return m_impl->GetLinkName(); }
   MessageSender::~MessageSender() noexcept {}
-  std::ostream& operator<<(std::ostream& stream, _internal::MessageSenderState const& state)
+  std::ostream& operator<<(std::ostream& stream, _internal::MessageSenderState const state)
   {
     switch (state)
     {

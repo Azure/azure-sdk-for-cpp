@@ -126,7 +126,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 #endif
 
-  std::ostream& operator<<(std::ostream& os, LinkState const& linkState)
+  std::ostream& operator<<(std::ostream& os, LinkState const linkState)
   {
     switch (linkState)
     {

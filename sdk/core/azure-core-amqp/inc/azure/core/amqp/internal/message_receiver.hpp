@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Closing,
     Error,
   };
-  std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState const& state);
+  std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState const state);
 
   class MessageReceiver;
 
