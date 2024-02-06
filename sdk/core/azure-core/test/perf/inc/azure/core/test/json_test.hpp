@@ -277,23 +277,17 @@ namespace Azure { namespace Core { namespace Test {
      */
     void Run(Azure::Core::Context const&) override
     {
-      try
+
+      switch (m_action)
       {
-        switch (m_action)
-        {
-          case Action::Serialize: {
-            m_testObject.Serialize();
-            break;
-          }
-          case Action::Deserialize: {
-            m_testObject.Deserialize(m_jsonBody);
-            break;
-          }
+        case Action::Serialize: {
+          m_testObject.Serialize();
+          break;
         }
-      }
-      catch (std::exception const&)
-      {
-        // don't print exceptions, they are happening at each request, this is the point of the test
+        case Action::Deserialize: {
+          m_testObject.Deserialize(m_jsonBody);
+          break;
+        }
       }
     }
 
