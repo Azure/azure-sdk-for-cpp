@@ -277,7 +277,6 @@ namespace Azure { namespace Core { namespace Test {
      */
     void Run(Azure::Core::Context const&) override
     {
-
       switch (m_action)
       {
         case Action::Serialize: {
