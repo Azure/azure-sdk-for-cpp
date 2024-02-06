@@ -78,7 +78,7 @@ jobs:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
       AgentImage: $(OSVmImage)
-          
+
   - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
   # Add g++5 repo to ubuntu
@@ -125,7 +125,7 @@ jobs:
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"
 
-  - template: /eng/pipelines/templates/steps/upload-failure-logs.yml
+  - template: /eng/pipelines/templates/steps/show-failure-logs.yml
 
   - template: /eng/common/TestResources/build-test-resource-config.yml
     parameters:

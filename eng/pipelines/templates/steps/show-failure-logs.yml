@@ -1,0 +1,9 @@
+parameters:
+  Condition: failed()
+
+steps:
+  - task: PowerShell@2
+    condition: failed()
+    displayName: Show build failure logs
+    inputs:
+      filePath: eng/scripts/Show-FailureLogs.ps1

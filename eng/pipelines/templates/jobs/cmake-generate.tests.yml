@@ -64,7 +64,7 @@ jobs:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
       AgentImage: $(OSVmImage)
-          
+
   - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
   - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
@@ -93,4 +93,4 @@ jobs:
           Env: "$(CmakeEnvArg)"
           PackageName: ${{ artifact.Name }}
 
-  - template: /eng/pipelines/templates/steps/upload-failure-logs.yml
+  - template: /eng/pipelines/templates/steps/show-failure-logs.yml
