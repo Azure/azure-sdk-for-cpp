@@ -533,7 +533,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Ensure nobody else is messing with the message queues right now.
       std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
 
-      // Remove the queue from the map, we don't need it anymore.
+      // If the correlation ID is found locally, complete the operation with an error.
       if (m_messageQueues.find(correlationId) != m_messageQueues.end())
       {
         // Complete any outstanding receives with an error.

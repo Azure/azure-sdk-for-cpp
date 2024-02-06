@@ -6,9 +6,20 @@
 
 ### Breaking Changes
 
+- `ClaimBasedSecurity::PutToken` throws `Azure::Core::Credentials::AuthenticationException` instead of `std::runtime_error`.
+
 ### Bugs Fixed
 
+- Fixed [#5284](https://github.com/Azure/azure-sdk-for-cpp/issues/5284).
+- Fixed [#5297](https://github.com/Azure/azure-sdk-for-cpp/issues/5297). Enabled multiple simultaneous `ExecuteOperation` calls.
+- Fixed crash when Link Detach message is received while link is being destroyed.
+
 ### Other Changes
+
+- `std::ostream` inserter for message body no longer prints the body of the message.
+- Tidied up the output of the `AmqpMessage` `std::ostream` inserter.
+- Added several `std::ostream` inserters.
+- Pass numeric values to `std::ostream` inserters by value not by reference.
 
 ## 1.0.0-beta.7 (2024-02-02)
 
