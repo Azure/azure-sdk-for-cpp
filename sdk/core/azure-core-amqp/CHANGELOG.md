@@ -1,10 +1,20 @@
 # Release History
 
-## 1.0.0-beta.7 (2024-02-01)
+## 1.0.0-beta.8 (Unreleased)
 
 ### Features Added
 
-The `Close` method on AMQP Message Sender and Message Receiver now blocks until the client receives a `DETACH` response from the remote node.
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0-beta.7 (2024-02-02)
+
+### Features Added
+
+- The `Close` method on AMQP Message Sender and Message Receiver now blocks until the client receives a `DETACH` response from the remote node.
 
 ### Breaking Changes
 

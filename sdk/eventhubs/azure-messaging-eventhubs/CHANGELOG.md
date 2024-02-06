@@ -1,17 +1,11 @@
 # Release History
 
-## 1.0.0-beta.6 (Unreleased)
-
-### Features Added
+## 1.0.0-beta.6 (2024-02-06)
 
 ### Breaking Changes
 
 - `PartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed. This should not affect existing clients.
 - `ProcessorPartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed. This should not affect existing clients.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0-beta.5 (2024-01-11)
 
