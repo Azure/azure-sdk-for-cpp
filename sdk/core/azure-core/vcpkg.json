@@ -3,7 +3,7 @@
   "version-string": "1.4.0-beta.1",
   "dependencies": [
     {
-      "name": "DOESNOTEXIST",
+      "name": "openssl",
       "platform": "!windows & !uwp"
     },
     {
