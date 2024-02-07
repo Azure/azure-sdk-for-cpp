@@ -32,7 +32,7 @@ parameters:
     default: 70
   - name: TestEnv
     type: object
-    default: []
+    default: []    
   # Supplied by archetype-sdk-tests-generate.yml dynamic matrix generator
   - name: CloudConfig
     type: object
@@ -86,9 +86,9 @@ jobs:
       value: "PLAYBACK"
     - name: AZURE_LOG_LEVEL
       value: "verbose"
-    - name: Codeql.Enabled
+    - name: Codeql.Enabled 
       value: true
-    - name: Codeql.BuildIdentifier
+    - name: Codeql.BuildIdentifier 
       value: ${{ parameters.ServiceDirectory }}
     - name: Codeql.SkipTaskAutoInjection
       value: false
@@ -150,22 +150,22 @@ jobs:
 
           # Run grep recursive excluding git folder and known expected files and save a file with results.
           grep -I -P -n "[^\x00-\x7F]" -r --exclude-dir ".git" --exclude-dir ".github" --exclude-dir "vcpkg_installed" --exclude-dir "_deps" --exclude-dir "vendor" --exclude-dir "nlohmann-json-test" --exclude "grepResults" . > grepResults
-
+          
           # Display results to console.
           cat grepResults
-
+          
           # Each result will produce one line, count how many lines were found.
           files_with_non_ascii=($(wc -l < grepResults))
-
+          
           # Show info about the total files that needs attention.
           echo Files found with non-ASCII characters: $files_with_non_ascii
-
+          
           # Remove the grepResults file.
           rm grepResults
-
+          
           # Return the count. When greater than 0, the step will fail.
           exit $files_with_non_ascii
-
+        
         displayName: Validate Characters are ASCII
         condition: and(succeededOrFailed(), eq(variables['CHECK_ASCII_CHARACTERS'], 1))
 
@@ -192,9 +192,9 @@ jobs:
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
-
+        
       - ${{ parameters.PreTestSteps }}
-
+      
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
@@ -212,10 +212,10 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
-
+        
       - ${{ parameters.PostTestSteps }}
-
-
+            
+     
       - pwsh: |
           $ErrorActionPreference = 'SilentlyContinue'
           get-content test-proxy.log
@@ -326,7 +326,7 @@ jobs:
           path: $(Build.ArtifactStagingDirectory)
         condition: eq(variables['PublishMapFiles'], 'true')
         displayName : Publish map file artifacts
-
+        
       - pwsh: |
           $artifactName = "$(Agent.JobName)"
           $parts = $artifactName -split ' '
