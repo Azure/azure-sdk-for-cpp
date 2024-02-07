@@ -1,6 +1,3 @@
-parameters:
-  Condition: failed()
-
 steps:
   - task: PowerShell@2
     condition: failed()
