@@ -84,7 +84,7 @@ namespace Azure { namespace Identity { namespace Test {
           "EnvironmentCredential",
           "Get a token using a secret client token credential.",
           [](Azure::Perf::TestOptions options) {
-              return std::make_unique<Azure::Identity::Test::EnvironmentCredentialTest>(options);
+            return std::make_unique<Azure::Identity::Test::EnvironmentCredentialTest>(options);
           }};
     }
   };
