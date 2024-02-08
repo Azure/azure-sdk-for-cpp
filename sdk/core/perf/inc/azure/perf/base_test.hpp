@@ -51,7 +51,15 @@ namespace Azure { namespace Perf {
      *
      * @param proxy A test-proxy server url.
      */
-    void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
+    void SetTestProxy(std::string const& proxy)
+    {
+      if (!proxy.empty())
+      {
+        // we need to allow for certificate verification failures due to presence of test proxy.
+        m_isInsecureEnabled = true;
+        m_proxy = proxy;
+      }
+    }
 
     /**
      * @brief Set the performance test to run insecure.
@@ -162,5 +170,10 @@ namespace Azure { namespace Perf {
       ConfigureClientOptions(options);
       return options;
     }
+
+    /**
+     * @brief Returns the test proxy.
+     */
+    std::string GetTestProxy() const { return m_proxy; }
   };
 }} // namespace Azure::Perf
