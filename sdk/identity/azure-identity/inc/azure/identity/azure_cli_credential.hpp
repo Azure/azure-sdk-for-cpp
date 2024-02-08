@@ -112,7 +112,14 @@ namespace Azure { namespace Identity {
   protected:
 #endif
     virtual std::string GetAzCommand(std::string const& scopes, std::string const& tenantId) const;
-    virtual int GetLocalTimeToUtcDiffSeconds() const;
+
+#if !defined(TESTING_BUILD)
+  private:
+#else
+  protected:
+    virtual
+#endif
+    int GetLocalTimeToUtcDiffSeconds() const;
   };
 
 }} // namespace Azure::Identity
