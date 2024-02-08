@@ -34,11 +34,20 @@ namespace Azure { namespace Identity { namespace _detail {
 #else
   protected:
 #endif
-    // A test hook that gets invoked before cache write lock gets acquired.
-    virtual void OnBeforeCacheWriteLock() const {};
 
-    // A test hook that gets invoked before item write lock gets acquired.
-    virtual void OnBeforeItemWriteLock() const {};
+#if defined(TESTING_BUILD)
+    virtual
+#endif
+        // A test hook that gets invoked before cache write lock gets acquired.
+        void
+        OnBeforeCacheWriteLock() const {};
+
+#if defined(TESTING_BUILD)
+    virtual
+#endif
+        // A test hook that gets invoked before item write lock gets acquired.
+        void
+        OnBeforeItemWriteLock() const {};
 
     struct CacheKey
     {

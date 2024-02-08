@@ -110,8 +110,9 @@ namespace Azure { namespace Identity {
   private:
 #else
   protected:
+    virtual
 #endif
-    virtual std::string GetAzCommand(std::string const& scopes, std::string const& tenantId) const;
+    std::string GetAzCommand(std::string const& scopes, std::string const& tenantId) const;
     virtual int GetLocalTimeToUtcDiffSeconds() const;
   };
 
