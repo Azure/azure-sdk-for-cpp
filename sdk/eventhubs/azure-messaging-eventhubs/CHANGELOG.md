@@ -12,7 +12,6 @@
 
 ### Other Changes
 
-
 ## 1.0.0-beta.6 (2024-02-06)
 
 ### Breaking Changes

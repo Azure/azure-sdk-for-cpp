@@ -121,7 +121,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       producerOptions.Name = "Producer for LoadBalancerTest";
       ProducerClient producerClient{connectionString, eventHubName, producerOptions};
 
-#if TRUE
       std::thread processEventsThread([&]() {
         std::set<std::string> partitionsAcquired;
         std::vector<std::thread> processEventsThreads;
@@ -160,43 +159,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       processor.Run(context);
 
       processEventsThread.join();
-#else
-      // Run the processor on a background thread and the test on the foreground.
-      processor.Start(context);
-
-      std::set<std::string> partitionsAcquired;
-      std::vector<std::thread> processEventsThreads;
-      // When we exit the process thread, cancel the context to unblock the processor.
-      //      scope_guard onExit([&context] { context.Cancel(); });
-
-      WaitGroup waitGroup;
-      for (auto const& partitionId : eventHubProperties.PartitionIds)
-      {
-        std::shared_ptr<ProcessorPartitionClient> partitionClient
-            = processor.NextPartitionClient(context);
-        waitGroup.AddWaiter();
-        ASSERT_EQ(partitionsAcquired.find(partitionId), partitionsAcquired.end())
-            << "No previous client for " << partitionClient->PartitionId();
-        processEventsThreads.push_back(
-            std::thread([&waitGroup, &producerClient, partitionClient, &context, this] {
-              scope_guard onExit([&] { waitGroup.CompleteWaiter(); });
-              ProcessEventsForLoadBalancerTest(producerClient, partitionClient, context);
-            }));
-      }
-      // Block until all the events have been processed.
-      waitGroup.Wait();
-
-      // And wait until all the threads have completed.
-      for (auto& thread : processEventsThreads)
-      {
-        if (thread.joinable())
-        {
-          thread.join();
-        }
-      }
-      // Stop the processor, we're done with the test.
-      processor.Stop();
-#endif
     }
 
     void TestWithLoadBalancerSingleThreaded(Models::ProcessorStrategy processorStrategy)

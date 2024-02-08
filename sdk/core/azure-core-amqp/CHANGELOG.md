@@ -6,12 +6,12 @@
 
 ### Breaking Changes
 
-- `ClaimBasedSecurity::PutToken` throws `Azure::Core::Credentials::AuthenticationException` instead of `std::runtime_error`.
+- Claims Based Security authentication now throws `Azure::Core::Credentials::AuthenticationException` instead of `std::runtime_error`.
 
 ### Bugs Fixed
 
-- Fixed [#5284](https://github.com/Azure/azure-sdk-for-cpp/issues/5284).
-- Fixed [#5297](https://github.com/Azure/azure-sdk-for-cpp/issues/5297). Enabled multiple simultaneous `ExecuteOperation` calls.
+- [#5284](https://github.com/Azure/azure-sdk-for-cpp/issues/5284): [azure-identity][azure-messaging-eventhubs] Impossible to catch exception resulting in SIGABRT signal.
+- [#5297](https://github.com/Azure/azure-sdk-for-cpp/issues/5297): Enabled multiple simultaneous `ExecuteOperation` calls.
 - Fixed crash when Link Detach message is received while link is being destroyed.
 
 ### Other Changes

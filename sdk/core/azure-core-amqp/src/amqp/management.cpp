@@ -75,6 +75,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
+    std::unique_lock<std::mutex> lock(m_openCloseLock);
+    if (m_isOpen)
+    {
+      throw std::runtime_error("Management object is already open.");
+    }
+
     try
     {
       /** Authentication needs to happen *before* the links are created.
@@ -261,7 +267,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ManagementClientImpl::Close(Context const& context)
   {
+    std::unique_lock<std::mutex> lock(m_openCloseLock);
     Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close" << std::endl;
+    if (!m_isOpen)
+    {
+      throw std::runtime_error("Management object is not open.");
+    }
+
     SetState(ManagementState::Closing);
     if (m_messageSender && m_messageSenderOpen)
     {

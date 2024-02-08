@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    *
    * @returns the input ostream.
    */
-  std::ostream& operator<<(std::ostream& os, AmqpValueType const value);
+  std::ostream& operator<<(std::ostream& os, AmqpValueType value);
 
   class AmqpArray;
   class AmqpMap;

@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return std::make_tuple(cbsResult, result.StatusCode, result.Error.Description);
     }
   }
-  std::ostream& operator<<(std::ostream& os, CbsOperationResult const operationResult)
+  std::ostream& operator<<(std::ostream& os, CbsOperationResult operationResult)
   {
     switch (operationResult)
     {
@@ -163,7 +163,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return os;
   }
 
-  std::ostream& operator<<(std::ostream& os, CbsOpenResult const openResult)
+  std::ostream& operator<<(std::ostream& os, CbsOpenResult openResult)
   {
     switch (openResult)
     {

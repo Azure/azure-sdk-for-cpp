@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   namespace _detail {
 
-    std::ostream& operator<<(std::ostream& os, AMQP_TYPE const value)
+    std::ostream& operator<<(std::ostream& os, AMQP_TYPE value)
     {
       switch (value)
       {
@@ -146,7 +146,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   } // namespace _detail
 
-  std::ostream& operator<<(std::ostream& os, AmqpValueType const value)
+  std::ostream& operator<<(std::ostream& os, AmqpValueType value)
   {
 
     switch (value)

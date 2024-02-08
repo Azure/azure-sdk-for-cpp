@@ -82,6 +82,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<MessageSenderImpl> m_messageSender;
     std::shared_ptr<MessageReceiverImpl> m_messageReceiver;
     ManagementState m_state = ManagementState::Idle;
+    std::mutex m_openCloseLock;
     bool m_isOpen{false};
     bool m_messageSenderOpen{false};
     bool m_messageReceiverOpen{false};
