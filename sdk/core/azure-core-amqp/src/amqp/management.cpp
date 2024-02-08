@@ -151,7 +151,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         return rv;
       }
-      // If result is null, then it means that the context was cancelled.
+
+      // If result is null, then it means that the context was cancelled. Close the things we opened earlier (if any)
+      // and return the error.
+      m_messageSender->Close({});
+      m_messageSenderOpen = false;
+      m_messageReceiver->Close({});
+      m_messageReceiverOpen = false;
       return _internal::ManagementOpenStatus::Cancelled;
     }
     catch (...)

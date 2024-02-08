@@ -258,7 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     context.Cancel();
     EXPECT_EQ(management.Open(context), ManagementOpenStatus::Cancelled);
 
-    management.Close();
+    EXPECT_THROW(management.Close(), std::runtime_error);
 
     mockServer.StopListening();
   }
