@@ -24,6 +24,11 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value;
   }
 
+  GTEST_LOG_(INFO) << AMQP_TYPE_INVALID;
+  GTEST_LOG_(INFO) << AMQP_TYPE_UNKNOWN;
+  GTEST_LOG_(INFO) << static_cast<AMQP_VALUE>(nullptr);
+
+
   {
     _detail::UniqueAmqpValueHandle handle{amqpvalue_create_null()};
 
@@ -213,6 +218,28 @@ TEST_F(TestValue, SimpleCreate)
 
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
+                     << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+  }
+
+  {
+    AmqpValue descriptor(235ll);
+    AmqpValue descriptorValue("Value");
+    _detail::UniqueAmqpValueHandle handle{amqpvalue_create_described(
+        _detail::AmqpValueFactory::ToUamqp(descriptor), _detail::AmqpValueFactory::ToUamqp(descriptorValue))};
+
+    AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
+    GTEST_LOG_(INFO) << "Handle Type: "
+                     << amqpvalue_get_type(amqpvalue_get_inplace_descriptor(handle.get()))
+                     << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+  }
+  {
+    AmqpValue descriptor(235ll);
+    _detail::UniqueAmqpValueHandle handle{
+        amqpvalue_create_composite(_detail::AmqpValueFactory::ToUamqp(descriptor), 21)};
+
+    AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
+    GTEST_LOG_(INFO) << "Handle Type: "
+                     << amqpvalue_get_type(amqpvalue_get_inplace_descriptor(handle.get()))
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
   }
 }

@@ -47,6 +47,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Invalid;
       GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Failed;
       GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::InstanceClosed;
+      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Cancelled;
+      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Ok;
       GTEST_LOG_(INFO) << "CbsOperations" << static_cast<CbsOperationResult>(32768);
     }
     {
