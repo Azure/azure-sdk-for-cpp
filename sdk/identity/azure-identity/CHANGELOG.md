@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Classes marked as final no longer have virtual methods.
+
 ## 1.7.0-beta.1 (2024-01-11)
 
 ### Features Added
