@@ -678,8 +678,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         if (std::get<0>(result) != CbsOperationResult::Ok)
         {
           throw Azure::Core::Credentials::AuthenticationException(
-              "Could not authenticate client. Error Status: "
-              + std::to_string(std::get<1>(result)) + " reason: " + std::get<2>(result));
+              "Could not authenticate client. Error Status: " + std::to_string(std::get<1>(result))
+              + " reason: " + std::get<2>(result));
         }
         Log::Stream(Logger::Level::Verbose) << "Close CBS object";
         claimsBasedSecurity->Close(context);
