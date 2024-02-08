@@ -28,7 +28,6 @@ TEST_F(TestValue, SimpleCreate)
   GTEST_LOG_(INFO) << AMQP_TYPE_UNKNOWN;
   GTEST_LOG_(INFO) << static_cast<AMQP_VALUE>(nullptr);
 
-
   {
     _detail::UniqueAmqpValueHandle handle{amqpvalue_create_null()};
 
@@ -222,10 +221,11 @@ TEST_F(TestValue, SimpleCreate)
   }
 
   {
-    AmqpValue descriptor(235ll);
+    AmqpValue descriptor(static_cast<uint64_t>(237ll));
     AmqpValue descriptorValue("Value");
     _detail::UniqueAmqpValueHandle handle{amqpvalue_create_described(
-        _detail::AmqpValueFactory::ToUamqp(descriptor), _detail::AmqpValueFactory::ToUamqp(descriptorValue))};
+        _detail::AmqpValueFactory::ToUamqp(descriptor),
+        _detail::AmqpValueFactory::ToUamqp(descriptorValue))};
 
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: "
@@ -233,7 +233,7 @@ TEST_F(TestValue, SimpleCreate)
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
   }
   {
-    AmqpValue descriptor(235ll);
+    AmqpValue descriptor(static_cast<uint64_t>(235ll));
     _detail::UniqueAmqpValueHandle handle{
         amqpvalue_create_composite(_detail::AmqpValueFactory::ToUamqp(descriptor), 21)};
 

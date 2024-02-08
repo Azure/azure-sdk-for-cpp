@@ -37,7 +37,6 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Bool, value.GetType());
     EXPECT_TRUE(value);
     GTEST_LOG_(INFO) << "Value Type: " << value.GetType();
-
   }
   {
     AmqpValue value{false};
