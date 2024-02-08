@@ -103,13 +103,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         context);
     if (result.Status != ManagementOperationStatus::Ok)
     {
-      throw Azure::Core::Credentials::AuthenticationException(
-          "Could not authenticate to client. Error Status: " + std::to_string(result.StatusCode)
-          + " condition: " + result.Error.Condition.ToString()
-          + " reason: " + result.Error.Description);
-    }
-    else
-    {
       CbsOperationResult cbsResult;
       switch (result.Status)
       {
@@ -128,13 +121,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         case ManagementOperationStatus::InstanceClosed:
           cbsResult = CbsOperationResult::InstanceClosed;
           break;
+        case ManagementOperationStatus::Cancelled:
+          cbsResult = CbsOperationResult::Cancelled;
+          break;
         default:
           throw std::runtime_error("Unknown management operation status.");
       }
       Log::Stream(Logger::Level::Informational)
           << "CBS PutToken result: " << cbsResult << " status code: " << result.StatusCode
-          << " Error: " << result.Error.Description << ".";
+          << " Error: " << result.Error << ".";
       return std::make_tuple(cbsResult, result.StatusCode, result.Error.Description);
+    }
+    else
+    {
+      return std::make_tuple(CbsOperationResult::Ok, result.StatusCode, result.Error.Description);
     }
   }
   std::ostream& operator<<(std::ostream& os, CbsOperationResult operationResult)
@@ -156,9 +156,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       case CbsOperationResult::InstanceClosed:
         os << "InstanceClosed";
         break;
-      default:
-        os << "Unknown CbsOperationResult."
-           << static_cast<std::underlying_type<CbsOperationResult>::type>(operationResult);
+      case CbsOperationResult::Cancelled:
+        os << "Cancelled";
+        break;
     }
     return os;
   }
@@ -179,9 +179,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       case CbsOpenResult::Cancelled:
         os << "Cancelled";
         break;
-      default:
-        os << "Unknown CbsOpenResult."
-           << static_cast<std::underlying_type<CbsOpenResult>::type>(openResult);
     }
     return os;
   }

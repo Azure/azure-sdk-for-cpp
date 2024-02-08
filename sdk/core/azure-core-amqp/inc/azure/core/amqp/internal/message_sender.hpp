@@ -31,6 +31,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Timeout,
     Cancelled,
   };
+  std::ostream& operator<<(std::ostream& stream, MessageSendStatus status);
+
   enum class MessageSenderState
   {
     Invalid,

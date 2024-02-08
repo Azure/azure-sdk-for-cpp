@@ -17,6 +17,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Error,
     Failed,
     InstanceClosed,
+    Cancelled,
   };
   std::ostream& operator<<(std::ostream& os, CbsOperationResult operationResult);
 

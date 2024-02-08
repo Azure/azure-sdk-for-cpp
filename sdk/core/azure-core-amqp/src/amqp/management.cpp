@@ -217,10 +217,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto sendResult = m_messageSender->Send(messageToSend, context);
       if (std::get<0>(sendResult) != _internal::MessageSendStatus::Ok)
       {
+        auto sendStatus = std::get<0>(sendResult);
+        const auto& sendError = std::get<1>(sendResult);
+        Log::Stream(Logger::Level::Error)
+            << "ManagementClient::ExecuteOperation, send failed" << sendStatus;
         _internal::ManagementOperationResult rv;
-        rv.Status = _internal::ManagementOperationStatus::Error;
+        switch (sendStatus)
+        {
+          case _internal::MessageSendStatus::Error:
+            rv.Status = _internal::ManagementOperationStatus::Error;
+            break;
+          case _internal::MessageSendStatus::Cancelled:
+            rv.Status = _internal::ManagementOperationStatus::Cancelled;
+            break;
+          case _internal::MessageSendStatus::Invalid:
+            rv.Status = _internal::ManagementOperationStatus::Invalid;
+            break;
+          case _internal::MessageSendStatus::Timeout:
+            rv.Status = _internal::ManagementOperationStatus::Error;
+            break;
+        }
         rv.StatusCode = 500;
-        rv.Error = std::get<1>(sendResult);
+        rv.Error = sendError;
         rv.Message = nullptr;
         {
           std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
