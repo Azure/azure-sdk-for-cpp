@@ -236,6 +236,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSendStatus::Timeout:
             rv.Status = _internal::ManagementOperationStatus::Error;
             break;
+          case _internal::MessageSendStatus::Ok:
+            AZURE_ASSERT_MSG(false, "MessageSendStatus::Ok is not a failure status.");
+            break;
         }
         rv.StatusCode = 500;
         rv.Error = sendError;
