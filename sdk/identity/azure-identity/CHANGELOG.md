@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Enable proactive renewal of Managed Identity tokens.
+- [[#4474]](https://github.com/Azure/azure-sdk-for-cpp/issues/4474) Enable proactive renewal of Managed Identity tokens.
 
 ### Breaking Changes
 
