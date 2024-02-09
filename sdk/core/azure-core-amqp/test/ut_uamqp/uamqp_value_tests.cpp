@@ -224,8 +224,8 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue descriptor(static_cast<uint64_t>(237ll));
     AmqpValue descriptorValue("Value");
     _detail::UniqueAmqpValueHandle handle{amqpvalue_create_described(
-        _detail::AmqpValueFactory::ToUamqp(descriptor),
-        _detail::AmqpValueFactory::ToUamqp(descriptorValue))};
+        amqpvalue_clone(_detail::AmqpValueFactory::ToUamqp(descriptor)),
+        amqpvalue_clone(_detail::AmqpValueFactory::ToUamqp(descriptorValue)))};
 
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: "
