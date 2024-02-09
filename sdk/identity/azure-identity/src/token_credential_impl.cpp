@@ -35,6 +35,8 @@ using Azure::Core::Http::HttpStatusCode;
 using Azure::Core::Http::RawResponse;
 using Azure::Core::Json::_internal::json;
 
+using namespace std::chrono_literals;
+
 TokenCredentialImpl::TokenCredentialImpl(TokenCredentialOptions const& options)
     : m_httpPipeline(options, "identity", PackageVersion::ToString(), {}, {})
 {
@@ -91,6 +93,7 @@ std::string TokenCredentialImpl::FormatScopes(
 
 AccessToken TokenCredentialImpl::GetToken(
     Context const& context,
+    bool proactiveRenewal,
     std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>()> const& createRequest,
     std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>(
         HttpStatusCode statusCode,
@@ -140,7 +143,9 @@ AccessToken TokenCredentialImpl::GetToken(
         std::string(responseBodyVector.begin(), responseBodyVector.end()),
         "access_token",
         "expires_in",
-        "expires_on");
+        "expires_on",
+        "refresh_in",
+        proactiveRenewal);
   }
   catch (AuthenticationException const&)
   {
@@ -226,11 +231,36 @@ std::string TimeZoneOffsetAsString(int utcDiffSeconds)
 
 } // namespace
 
+// Proactive renewal by cutting the refresh time in half if the token expires in more than
+// 2 hours.
+static int64_t ProactiveRenewal(int64_t value)
+{
+  if (value >= std::chrono::seconds(2h).count())
+  {
+    return value / 2;
+  }
+  else
+  {
+    return value;
+  }
+}
+
+static DateTime ProactiveRenewalDateTime(int64_t value)
+{
+  std::int64_t curentSecondsSinceEpoch = std::chrono::seconds(std::time(NULL)).count();
+  std::int64_t duration = value - curentSecondsSinceEpoch;
+
+  return PosixTimeConverter::PosixTimeToDateTime(
+      ProactiveRenewal(duration) + curentSecondsSinceEpoch);
+}
+
 AccessToken TokenCredentialImpl::ParseToken(
     std::string const& jsonString,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
     std::vector<std::string> const& expiresOnPropertyNames,
+    std::string const& refreshInPropertyName,
+    bool proactiveRenewal,
     int utcDiffSeconds)
 {
   json parsedJson;
@@ -262,6 +292,35 @@ AccessToken TokenCredentialImpl::ParseToken(
   accessToken.Token = parsedJson[accessTokenPropertyName].get<std::string>();
   accessToken.ExpiresOn = std::chrono::system_clock::now();
 
+  // expiresIn = number of seconds until refresh.
+  // expiresOn = timestamp of refresh expressed as seconds since epoch.
+
+  if (!refreshInPropertyName.empty() && parsedJson.contains(refreshInPropertyName))
+  {
+    auto const& refreshIn = parsedJson[refreshInPropertyName];
+    if (refreshIn.is_number_unsigned())
+    {
+      try
+      {
+        // 'refresh_in' as number (seconds until refresh)
+        auto const value = refreshIn.get<std::int64_t>();
+        if (value <= MaxExpirationInSeconds)
+        {
+          static_assert(
+              MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
+              "Can safely cast to int32");
+
+          accessToken.ExpiresOn += std::chrono::seconds(static_cast<std::int32_t>(value));
+          return accessToken;
+        }
+      }
+      catch (std::exception const&)
+      {
+        // refreshIn.get<std::int64_t>() has thrown, we may throw later.
+      }
+    }
+  }
+
   if (parsedJson.contains(expiresInPropertyName))
   {
     auto const& expiresIn = parsedJson[expiresInPropertyName];
@@ -278,7 +337,9 @@ AccessToken TokenCredentialImpl::ParseToken(
               MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
               "Can safely cast to int32");
 
-          accessToken.ExpiresOn += std::chrono::seconds(static_cast<std::int32_t>(value));
+          accessToken.ExpiresOn += std::chrono::seconds(
+              proactiveRenewal ? ProactiveRenewal(static_cast<std::int32_t>(value))
+                               : static_cast<std::int32_t>(value));
           return accessToken;
         }
       }
@@ -297,8 +358,10 @@ AccessToken TokenCredentialImpl::ParseToken(
             MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
             "Can safely cast to int32");
 
-        accessToken.ExpiresOn += std::chrono::seconds(static_cast<std::int32_t>(
-            ParseNumericExpiration(expiresIn.get<std::string>(), MaxExpirationInSeconds)));
+        auto value = static_cast<std::int32_t>(
+            ParseNumericExpiration(expiresIn.get<std::string>(), MaxExpirationInSeconds));
+        accessToken.ExpiresOn
+            += std::chrono::seconds(proactiveRenewal ? ProactiveRenewal(value) : value);
 
         return accessToken;
       }
@@ -342,7 +405,9 @@ AccessToken TokenCredentialImpl::ParseToken(
           auto const value = expiresOn.get<std::int64_t>();
           if (value <= MaxPosixTimestamp)
           {
-            accessToken.ExpiresOn = PosixTimeConverter::PosixTimeToDateTime(value);
+            accessToken.ExpiresOn = proactiveRenewal
+                ? ProactiveRenewalDateTime(value)
+                : PosixTimeConverter::PosixTimeToDateTime(value);
             return accessToken;
           }
         }
@@ -359,16 +424,23 @@ AccessToken TokenCredentialImpl::ParseToken(
         for (auto const& parse : {
                  std::function<DateTime(std::string const&)>([&](auto const& s) {
                    // 'expires_on' as RFC3339 date string (absolute timestamp)
-                   return DateTime::Parse(s + tzOffsetStr, DateTime::DateFormat::Rfc3339);
+                   auto dateTime = DateTime::Parse(s + tzOffsetStr, DateTime::DateFormat::Rfc3339);
+                   return proactiveRenewal
+                       ? ProactiveRenewalDateTime(PosixTimeConverter::DateTimeToPosixTime(dateTime))
+                       : dateTime;
                  }),
-                 std::function<DateTime(std::string const&)>([](auto const& s) {
+                 std::function<DateTime(std::string const&)>([&](auto const& s) {
                    // 'expires_on' as numeric string (posix time representing an absolute timestamp)
-                   return PosixTimeConverter::PosixTimeToDateTime(
-                       ParseNumericExpiration(s, MaxPosixTimestamp));
+                   auto value = ParseNumericExpiration(s, MaxPosixTimestamp);
+                   return proactiveRenewal ? ProactiveRenewalDateTime(value)
+                                           : PosixTimeConverter::PosixTimeToDateTime(value);
                  }),
-                 std::function<DateTime(std::string const&)>([](auto const& s) {
+                 std::function<DateTime(std::string const&)>([&](auto const& s) {
                    // 'expires_on' as RFC1123 date string (absolute timestamp)
-                   return DateTime::Parse(s, DateTime::DateFormat::Rfc1123);
+                   auto dateTime = DateTime::Parse(s, DateTime::DateFormat::Rfc1123);
+                   return proactiveRenewal
+                       ? ProactiveRenewalDateTime(PosixTimeConverter::DateTimeToPosixTime(dateTime))
+                       : dateTime;
                  }),
              })
         {

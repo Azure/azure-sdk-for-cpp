@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Enable proactive renewal of Managed Identity tokens.
+
 ### Breaking Changes
 
 ### Bugs Fixed
