@@ -23,8 +23,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief Options for configuring the #Azure::Identity::AzureCliCredential.
    */
-  struct AzureCliCredentialOptions _azure_NON_FINAL_FOR_TESTS
-      : public Core::Credentials::TokenCredentialOptions
+  struct AzureCliCredentialOptions final : public Core::Credentials::TokenCredentialOptions
   {
     /**
      * @brief The ID of the tenant to which the credential will authenticate by default. If not
