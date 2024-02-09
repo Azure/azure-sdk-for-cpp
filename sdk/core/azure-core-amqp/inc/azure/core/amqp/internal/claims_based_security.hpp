@@ -17,8 +17,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Error,
     Failed,
     InstanceClosed,
+    Cancelled,
   };
-  std::ostream& operator<<(std::ostream& os, CbsOperationResult const& operationResult);
+  std::ostream& operator<<(std::ostream& os, CbsOperationResult operationResult);
 
   enum class CbsOpenResult
   {
@@ -27,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Error,
     Cancelled,
   };
-  std::ostream& operator<<(std::ostream& os, CbsOpenResult const& operationResult);
+  std::ostream& operator<<(std::ostream& os, CbsOpenResult operationResult);
 
   enum class CbsTokenType
   {

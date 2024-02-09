@@ -6,9 +6,22 @@
 
 ### Breaking Changes
 
+- Claims Based Security authentication now longer throws a `std::runtime_error`, and instead follows the pattern of the rest of the AMQP library and returns an error.
+- Authentication now throws `Azure::Core::Credentials::AuthenticationException` instead of `std::runtime_error`.
+- Added `Cancelled` status to `CbsOperationResult` and `ManagementOperationStatus`.
+
 ### Bugs Fixed
 
+- [[#5284]](https://github.com/Azure/azure-sdk-for-cpp/issues/5284) [azure-identity][azure-messaging-eventhubs] Impossible to catch exception resulting in SIGABRT signal.
+- [[#5297]](https://github.com/Azure/azure-sdk-for-cpp/issues/5297): Enabled multiple simultaneous `ExecuteOperation` calls.
+- Fixed crash when Link Detach message is received while link is being destroyed.
+
 ### Other Changes
+
+- `std::ostream` inserter for message body no longer prints the body of the message.
+- Tidied up the output of the `AmqpMessage` `std::ostream` inserter.
+- Added several `std::ostream` inserters.
+- Pass numeric values to `std::ostream` inserters by value not by reference.
 
 ## 1.0.0-beta.7 (2024-02-02)
 

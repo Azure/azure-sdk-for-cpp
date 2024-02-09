@@ -18,11 +18,22 @@ protected:
   void TearDown() override {}
 };
 
+#define TEST_C_INSERTER(VALUE, ENUMERATOR) \
+  { \
+    std::stringstream ss; \
+    ss << amqpvalue_get_type(VALUE); \
+    EXPECT_EQ(#ENUMERATOR, ss.str()); \
+  }
+
 TEST_F(TestValue, SimpleCreate)
 {
   {
     AmqpValue value;
   }
+
+  GTEST_LOG_(INFO) << AMQP_TYPE_INVALID;
+  GTEST_LOG_(INFO) << AMQP_TYPE_UNKNOWN;
+  GTEST_LOG_(INFO) << static_cast<AMQP_VALUE>(nullptr);
 
   {
     _detail::UniqueAmqpValueHandle handle{amqpvalue_create_null()};
@@ -30,6 +41,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_NULL);
   }
 
   {
@@ -38,6 +50,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_BYTE);
   }
 
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_boolean, bool, bool_value);
@@ -47,6 +60,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_BOOL);
   }
   {
     _detail::UniqueAmqpValueHandle handle{amqpvalue_create_boolean(false)};
@@ -54,6 +68,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_BOOL);
   }
 
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_ubyte, unsigned char, ubyte_value);
@@ -63,6 +78,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_UBYTE);
   }
 
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_ushort, uint16_t, ushort_value);
@@ -72,6 +88,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_USHORT);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_uint, uint32_t, uint_value);
   {
@@ -80,6 +97,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_UINT);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_ulong, uint64_t, ulong_value);
   {
@@ -88,6 +106,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_ULONG);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_byte, char, byte_value);
   {
@@ -96,6 +115,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_BYTE);
   }
 
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_short, int16_t, short_value);
@@ -105,6 +125,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_SHORT);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_int, int32_t, int_value);
   {
@@ -113,6 +134,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_INT);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_long, int64_t, long_value);
   {
@@ -121,6 +143,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_LONG);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_float, float, float_value);
   {
@@ -129,6 +152,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_FLOAT);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_double, double, double_value);
   {
@@ -137,6 +161,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_DOUBLE);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_char, uint32_t, char_value);
   {
@@ -145,6 +170,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_CHAR);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_timestamp, int64_t, timestamp_value);
   {
@@ -153,6 +179,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_TIMESTAMP);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_uuid, uuid, uuid_value);
   {
@@ -163,6 +190,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_UUID);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_binary, amqp_binary, binary_value);
   {
@@ -174,6 +202,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_BINARY);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_string, const char*, string_value);
   {
@@ -182,6 +211,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_STRING);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_symbol, const char*, symbol_value);
   {
@@ -190,6 +220,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_SYMBOL);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_list);
   {
@@ -198,6 +229,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_LIST);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_map);
   {
@@ -206,6 +238,7 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_MAP);
   }
   // MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_array);
   {
@@ -214,5 +247,31 @@ TEST_F(TestValue, SimpleCreate)
     AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
     GTEST_LOG_(INFO) << "Handle Type: " << amqpvalue_get_type(handle.get())
                      << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_ARRAY);
+  }
+
+  {
+    AmqpValue descriptor(static_cast<uint64_t>(237ll));
+    AmqpValue descriptorValue("Value");
+    _detail::UniqueAmqpValueHandle handle{amqpvalue_create_described(
+        amqpvalue_clone(_detail::AmqpValueFactory::ToUamqp(descriptor)),
+        amqpvalue_clone(_detail::AmqpValueFactory::ToUamqp(descriptorValue)))};
+
+    AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
+    GTEST_LOG_(INFO) << "Handle Type: "
+                     << amqpvalue_get_type(amqpvalue_get_inplace_descriptor(handle.get()))
+                     << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_DESCRIBED);
+  }
+  {
+    AmqpValue descriptor(static_cast<uint64_t>(235ll));
+    _detail::UniqueAmqpValueHandle handle{
+        amqpvalue_create_composite(_detail::AmqpValueFactory::ToUamqp(descriptor), 21)};
+
+    AmqpValue value{_detail::AmqpValueFactory::FromUamqp(handle)};
+    GTEST_LOG_(INFO) << "Handle Type: "
+                     << amqpvalue_get_type(amqpvalue_get_inplace_descriptor(handle.get()))
+                     << " Value: " << static_cast<AMQP_VALUE>(handle.get());
+    TEST_C_INSERTER(handle.get(), AMQP_TYPE_COMPOSITE);
   }
 }

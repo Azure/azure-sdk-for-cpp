@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
-  std::ostream& operator<<(std::ostream& stream, SenderSettleMode const& settleMode)
+  std::ostream& operator<<(std::ostream& stream, SenderSettleMode settleMode)
   {
     switch (settleMode)
     {
@@ -66,7 +66,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
   std::string MessageSender::GetLinkName() const { return m_impl->GetLinkName(); }
   MessageSender::~MessageSender() noexcept {}
-  std::ostream& operator<<(std::ostream& stream, _internal::MessageSenderState const& state)
+  std::ostream& operator<<(std::ostream& stream, _internal::MessageSenderState state)
   {
     switch (state)
     {
@@ -91,6 +91,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
     return stream;
   }
+
+  std::ostream& operator<<(std::ostream& stream, _internal::MessageSendStatus status)
+  {
+    switch (status)
+    {
+      case _internal::MessageSendStatus::Invalid:
+        stream << "Invalid";
+        break;
+      case _internal::MessageSendStatus::Cancelled:
+        stream << "Cancelled";
+        break;
+      case _internal::MessageSendStatus::Error:
+        stream << "Error";
+        break;
+      case _internal::MessageSendStatus::Ok:
+        stream << "Ok";
+        break;
+      case _internal::MessageSendStatus::Timeout:
+        stream << "Timeout";
+        break;
+    }
+    return stream;
+  }
+
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -461,20 +485,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
       Context const& context)
   {
-    auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
-                       decltype(onSendComplete),
-                       RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
-    auto result = messagesender_send_async(
-        m_messageSender.get(),
-        Models::_detail::AmqpMessageFactory::ToUamqp(message).get(),
-        std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
-        operation.release(),
-        0 /*timeout*/);
-    if (result == nullptr)
+    // If the context is canceled, don't queue the operation.
+    // Note that normally this would be handled via uAMQP's async operation cancellation, but if the
+    // remote node sends an incoming frame, the async operation completion handler will be called
+    // twice, which results in a double free of the underlying operation.
+    if (!context.IsCancelled())
     {
-      throw std::runtime_error("Could not send message");
+      auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
+                         decltype(onSendComplete),
+                         RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
+      auto result = messagesender_send_async(
+          m_messageSender.get(),
+          Models::_detail::AmqpMessageFactory::ToUamqp(message).get(),
+          std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
+          operation.release(),
+          0 /*timeout*/);
+      if (result == nullptr)
+      {
+        throw std::runtime_error("Could not send message");
+      }
     }
-    (void)context;
   }
 
   std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> MessageSenderImpl::Send(
@@ -538,7 +568,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       return std::move(*result);
     }
-    throw std::runtime_error("Error sending message");
+    else
+    {
+      Models::_internal::AmqpError error{
+          Models::_internal::AmqpErrorCondition::OperationCancelled,
+          "Message send operation cancelled.",
+          {}};
+      return std::make_tuple(_internal::MessageSendStatus::Cancelled, error);
+    }
   }
 
   std::string MessageSenderImpl::GetLinkName() const { return m_link->GetName(); }

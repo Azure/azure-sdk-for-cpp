@@ -907,7 +907,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
       GTEST_LOG_(INFO) << "Trigger message send for polling.";
       serviceEndpoint->ShouldSendMessage(true);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      std::this_thread::sleep_for(std::chrono::seconds(2));
       GTEST_LOG_(INFO) << "Message should have been sent and processed.";
       auto result = receiver.TryWaitForIncomingMessage();
       EXPECT_TRUE(result.first);
