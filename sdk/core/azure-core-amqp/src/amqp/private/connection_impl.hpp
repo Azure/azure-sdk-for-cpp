@@ -35,6 +35,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpConnection = UniqueHandle<CONNECTION_INSTANCE_TAG>;
 
+  std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state);
+
   class ClaimsBasedSecurity;
 
   class ConnectionFactory final {

@@ -51,79 +51,79 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       switch (value)
       {
         case AMQP_TYPE_INVALID:
-          os << "INVALID";
+          os << "AMQP_TYPE_INVALID";
           break;
         case AMQP_TYPE_NULL:
-          os << "NULL";
+          os << "AMQP_TYPE_NULL";
           break;
         case AMQP_TYPE_BOOL:
-          os << "BOOL";
+          os << "AMQP_TYPE_BOOL";
           break;
         case AMQP_TYPE_UBYTE:
-          os << "UBYTE";
+          os << "AMQP_TYPE_UBYTE";
           break;
         case AMQP_TYPE_USHORT:
-          os << "USHORT";
+          os << "AMQP_TYPE_USHORT";
           break;
         case AMQP_TYPE_UINT:
-          os << "UINT";
+          os << "AMQP_TYPE_UINT";
           break;
         case AMQP_TYPE_ULONG:
-          os << "ULONG";
+          os << "AMQP_TYPE_ULONG";
           break;
         case AMQP_TYPE_BYTE:
-          os << "BYTE";
+          os << "AMQP_TYPE_BYTE";
           break;
         case AMQP_TYPE_SHORT:
-          os << "SHORT";
+          os << "AMQP_TYPE_SHORT";
           break;
         case AMQP_TYPE_INT:
-          os << "INT";
+          os << "AMQP_TYPE_INT";
           break;
         case AMQP_TYPE_LONG:
-          os << "LONG";
+          os << "AMQP_TYPE_LONG";
           break;
         case AMQP_TYPE_FLOAT:
-          os << "FLOAT";
+          os << "AMQP_TYPE_FLOAT";
           break;
         case AMQP_TYPE_DOUBLE:
-          os << "DOUBLE";
+          os << "AMQP_TYPE_DOUBLE";
           break;
         case AMQP_TYPE_CHAR:
-          os << "CHAR";
+          os << "AMQP_TYPE_CHAR";
           break;
         case AMQP_TYPE_TIMESTAMP:
-          os << "TIMESTAMP";
+          os << "AMQP_TYPE_TIMESTAMP";
           break;
         case AMQP_TYPE_UUID:
-          os << "UUID";
+          os << "AMQP_TYPE_UUID";
           break;
         case AMQP_TYPE_BINARY:
-          os << "BINARY";
+          os << "AMQP_TYPE_BINARY";
           break;
         case AMQP_TYPE_STRING:
-          os << "STRING";
+          os << "AMQP_TYPE_STRING";
           break;
         case AMQP_TYPE_SYMBOL:
-          os << "SYMBOL";
+          os << "AMQP_TYPE_SYMBOL";
           break;
         case AMQP_TYPE_LIST:
-          os << "LIST";
+          os << "AMQP_TYPE_LIST";
           break;
         case AMQP_TYPE_MAP:
-          os << "MAP";
+          os << "AMQP_TYPE_MAP";
           break;
         case AMQP_TYPE_ARRAY:
-          os << "ARRAY";
+          os << "AMQP_TYPE_ARRAY";
           break;
         case AMQP_TYPE_DESCRIBED:
-          os << "DESCRIBED";
+          os << "AMQP_TYPE_DESCRIBED";
           break;
         case AMQP_TYPE_COMPOSITE:
-          os << "COMPOSITE";
+          os << "AMQP_TYPE_COMPOSITE";
           break;
         case AMQP_TYPE_UNKNOWN:
-          os << "UNKNOWN";
+          os << "AMQP_TYPE_UNKNOWN";
           break;
       }
       return os;

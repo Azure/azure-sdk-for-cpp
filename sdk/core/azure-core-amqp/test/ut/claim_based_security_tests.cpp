@@ -24,6 +24,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp::_detail;
 
 #if !defined(AZ_PLATFORM_MAC)
+
+#define TEST_OSTREAM_INSERTER(ENUMERATION, ENUMERATOR) \
+  { \
+    std::stringstream ss; \
+    ss << ENUMERATION::ENUMERATOR; \
+    EXPECT_EQ(#ENUMERATOR, ss.str()); \
+  }
+
   TEST_F(TestCbs, SimpleCbs)
   {
 
@@ -43,19 +51,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
 
     {
-      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Error;
-      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Invalid;
-      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Failed;
-      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::InstanceClosed;
-      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Cancelled;
-      GTEST_LOG_(INFO) << "CbsOperations" << CbsOperationResult::Ok;
+      TEST_OSTREAM_INSERTER(CbsOperationResult, Failed);
+      TEST_OSTREAM_INSERTER(CbsOperationResult, Ok);
+      TEST_OSTREAM_INSERTER(CbsOperationResult, Cancelled);
+      TEST_OSTREAM_INSERTER(CbsOperationResult, InstanceClosed);
+      TEST_OSTREAM_INSERTER(CbsOperationResult, Invalid);
+      TEST_OSTREAM_INSERTER(CbsOperationResult, Error);
       GTEST_LOG_(INFO) << "CbsOperations" << static_cast<CbsOperationResult>(32768);
     }
     {
-      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Cancelled;
-      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Error;
-      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Ok;
-      GTEST_LOG_(INFO) << "CbsOpens" << CbsOpenResult::Invalid;
+      TEST_OSTREAM_INSERTER(CbsOpenResult, Ok);
+      TEST_OSTREAM_INSERTER(CbsOpenResult, Cancelled);
+      TEST_OSTREAM_INSERTER(CbsOpenResult, Invalid);
+      TEST_OSTREAM_INSERTER(CbsOpenResult, Error);
+
       GTEST_LOG_(INFO) << "CbsOpens" << static_cast<CbsOpenResult>(32768);
     }
   }

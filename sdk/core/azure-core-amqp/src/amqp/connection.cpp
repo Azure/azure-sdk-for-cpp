@@ -340,22 +340,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {CONNECTION_STATE_ERROR, "CONNECTION_STATE_ERROR"},
 
     };
-    std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state)
-    {
-      auto val{UamqpConnectionStateToStringMap.find(state)};
-      if (val == UamqpConnectionStateToStringMap.end())
-      {
-        os << "Unknown connection state: "
-           << static_cast<std::underlying_type<decltype(state)>::type>(state);
-      }
-      else
-      {
-        os << val->second << "(" << static_cast<std::underlying_type<CONNECTION_STATE>::type>(state)
-           << ")";
-      }
-      return os;
-    }
   } // namespace
+
+  std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state)
+  {
+    auto val{UamqpConnectionStateToStringMap.find(state)};
+    if (val == UamqpConnectionStateToStringMap.end())
+    {
+      os << "Unknown connection state: "
+         << static_cast<std::underlying_type<decltype(state)>::type>(state);
+    }
+    else
+    {
+      os << val->second;
+    }
+    return os;
+  }
 
   _internal::ConnectionState ConnectionStateFromCONNECTION_STATE(CONNECTION_STATE state)
   {
