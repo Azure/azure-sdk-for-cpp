@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "azure/identity/dll_import_export.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 
 #include <chrono>
@@ -24,30 +26,15 @@ namespace Azure { namespace Identity { namespace _detail {
    * @brief Access token cache.
    *
    */
-  class TokenCache
-#if !defined(TESTING_BUILD)
-      final
-#endif
-  {
-#if !defined(TESTING_BUILD)
+  class TokenCache _azure_NON_FINAL_FOR_TESTS {
   private:
-#else
-  protected:
-#endif
-
-#if defined(TESTING_BUILD)
-    virtual
-#endif
+    _azure_VIRTUAL_FOR_TESTS
         // A test hook that gets invoked before cache write lock gets acquired.
         void
         OnBeforeCacheWriteLock() const {};
 
-#if defined(TESTING_BUILD)
-    virtual
-#endif
-        // A test hook that gets invoked before item write lock gets acquired.
-        void
-        OnBeforeItemWriteLock() const {};
+    // A test hook that gets invoked before item write lock gets acquired.
+    _azure_VIRTUAL_FOR_TESTS void OnBeforeItemWriteLock() const {};
 
     struct CacheKey
     {
@@ -72,7 +59,6 @@ namespace Azure { namespace Identity { namespace _detail {
     mutable std::map<CacheKey, std::shared_ptr<CacheValue>, CacheKeyComparator> m_cache;
     mutable std::shared_timed_mutex m_cacheMutex;
 
-  private:
     TokenCache(TokenCache const&) = delete;
     TokenCache& operator=(TokenCache const&) = delete;
 
