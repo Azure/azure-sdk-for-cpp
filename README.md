@@ -6,6 +6,61 @@ This repository is for active development of the Azure SDK for C++. For consumer
 
 ## Getting started
 
+The Azure SDK for C++ is compatible with a number of different development environments and tools. The following instructions will utilize [Visual Studio](https://visualstudio.microsoft.com/) or [VSCode](https://code.visualstudio.com/) as the IDE, [CMake](https://cmake.org/) for build automation, and [vcpkg](https://vcpkg.io/) as our package manager.
+
+### Development environment and tools set up
+
+- [Visual Studio, CMake and vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-vs)
+- [VS Code, CMake and vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-vscode)
+
+### Install libraries
+
+- Open a terminal
+  - **Visual Studio:** Open the Developer Command Prompt: **Tools > Commandline > Developer Command Prompt**
+  - **VSCode:** Open a new Terminal in VSCode: **Terminal > New Terminal**
+- Add the `azure-identity-cpp` and `azure-stroage-blobs-cpp` libraries with the following command:
+
+```console
+vcpkg add port azure-identity-cpp azure-storage-blobs-cpp
+```
+
+- Your `vcpkg.json` should now contain:
+
+```json
+{
+    "name": "your-app-name",
+    "version-string": "<Your app version like 1.0.0>", 
+    "dependencies": [
+        "azure-identity-cpp",
+        "azure-storage-blobs-cpp"
+    ]
+}
+```
+
+### Configure project files
+
+- Replace the contents of `CMakeLists.txt` with the following:
+
+```cmake
+cmake_minimum_required(VERSION 3.10)
+
+project(HelloWorld)
+
+find_package(azure-identity-cpp CONFIG REQUIRED)
+find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
+
+add_executable(HelloWorld helloworld.cpp)
+
+target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
+```
+
+### Additional methods for installing and configuring
+
+- [CMake project and fetch content]()
+
+
+## Getting started
+
 For the best development experience, we recommend developers use [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as [VS Code](https://code.visualstudio.com/), along with the command line for building your application with the SDK.
 
 You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder, for example, the [Azure Storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage#azure-storage-libraries-for-c).
