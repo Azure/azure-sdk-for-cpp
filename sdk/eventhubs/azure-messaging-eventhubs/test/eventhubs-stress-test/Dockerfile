@@ -32,7 +32,7 @@ RUN apt-get install -y valgrind
 WORKDIR /
 
 # copy the target binary
-COPY --from=build ./build/sdk/eventhubs/azure-messaging-eventhubs/test/eventhubs-stress-test/azure-messaging-eventhubs-stress-test ./azure-messaging-eventhubs-stress-test
+COPY --from=build ./build/sdk/eventhubs/azure-messaging-eventhubs/test/eventhubs-stress-test/scenarios/azure-messaging-eventhubs-stress-test ./azure-messaging-eventhubs-stress-test
 RUN chmod +x ./azure-messaging-eventhubs-stress-test
 
 CMD ./azure-messaging-eventhubs-stress-test

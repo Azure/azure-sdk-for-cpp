@@ -4,21 +4,15 @@
 #pragma once
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
-#include "claims_based_security_impl.hpp"
-#include "connection_impl.hpp"
 #include "link_impl.hpp"
-#include "message_receiver_impl.hpp"
 #include "session_impl.hpp"
 #include "unique_handle.hpp"
-
-#include <azure/core/credentials/credentials.hpp>
 
 #include <azure_uamqp_c/amqpvalue.h>
 #include <azure_uamqp_c/message.h>
 #include <azure_uamqp_c/message_receiver.h>
 
 #include <memory>
-#include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>

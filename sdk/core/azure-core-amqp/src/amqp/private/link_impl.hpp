@@ -13,7 +13,6 @@
 
 #include <azure_uamqp_c/link.h>
 
-#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>

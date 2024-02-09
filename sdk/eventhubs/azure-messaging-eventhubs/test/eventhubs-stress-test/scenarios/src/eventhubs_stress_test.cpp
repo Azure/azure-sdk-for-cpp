@@ -20,11 +20,14 @@
 #include <azure/messaging/eventhubs/consumer_client.hpp>
 #include <azure/messaging/eventhubs/producer_client.hpp>
 
+#include "argagg.hpp"
+#include "eventhubs_stress_scenarios.hpp"
+
 #include <iostream>
 
 using namespace Azure::Messaging::EventHubs;
 
-class EventHubsStress {
+class EventHubsStress : public EventHubsStressScenario {
 public:
   EventHubsStress()
   {
@@ -58,7 +61,7 @@ public:
     }
   }
 
-  void Warmup(int repetitions)
+  void Warmup(int repetitions) override
   {
     for (int i = 0; i < repetitions; i++)
     {
@@ -67,7 +70,7 @@ public:
       ReceiveMessages();
     }
   }
-  void Run(int repetitions)
+  void Run(int repetitions) override
   {
     for (int i = 0; i < repetitions; i++)
     {
@@ -76,7 +79,7 @@ public:
       ReceiveMessages();
     }
   }
-  void Cleanup() {}
+  void Cleanup() override {}
 
 private:
   std::string m_eventHubName;
@@ -196,8 +199,14 @@ private:
   }
 };
 
-int main(int argc, char**)
+int main(int argc, char**argv)
 {
+  argagg::parser argparser {{
+    { "scenario", {"-s", "--scenario"},
+      "Scenario to run", 1},
+    }};
+  argagg::parser_results args = argparser.parse(argc, argv);
+
   try
   {
 

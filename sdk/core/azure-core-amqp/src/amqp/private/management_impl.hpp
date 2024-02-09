@@ -3,21 +3,15 @@
 
 #pragma once
 
-#include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/management.hpp"
-#include "azure/core/amqp/internal/session.hpp"
-#include "connection_impl.hpp"
 #include "message_receiver_impl.hpp"
 #include "message_sender_impl.hpp"
 #include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 
-#include <azure_uamqp_c/amqp_management.h>
 
 #include <memory>
-#include <queue>
-#include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 

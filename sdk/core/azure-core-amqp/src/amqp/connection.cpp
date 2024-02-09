@@ -15,7 +15,6 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/url.hpp>
 #include <azure/core/uuid.hpp>
 
 #include <azure_uamqp_c/connection.h>
