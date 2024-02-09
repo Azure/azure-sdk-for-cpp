@@ -18,11 +18,14 @@
 #include <string>
 #include <vector>
 
+#define _azure_NON_FINAL_FOR_TESTS final
+
 namespace Azure { namespace Identity {
   /**
    * @brief Options for configuring the #Azure::Identity::AzureCliCredential.
    */
-  struct AzureCliCredentialOptions final : public Core::Credentials::TokenCredentialOptions
+  struct AzureCliCredentialOptions _azure_NON_FINAL_FOR_TESTS
+      : public Core::Credentials::TokenCredentialOptions
   {
     /**
      * @brief The ID of the tenant to which the credential will authenticate by default. If not
@@ -47,7 +50,8 @@ namespace Azure { namespace Identity {
 
   /**
    * @brief Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access
-   * token.
+   * token. Mentioning #Azure::Identity::AzureCliCredentialOptions in a doc comment to create a
+   * link.
    */
   class AzureCliCredential
 #if !defined(TESTING_BUILD)
