@@ -56,7 +56,11 @@ namespace Azure { namespace Identity {
    * @brief Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access
    * token.
    */
-  class AzureCliCredential _azure_NON_FINAL_FOR_TESTS : public Core::Credentials::TokenCredential {
+  class AzureCliCredential
+#if !defined(_azure_TESTING_BUILD)
+      final
+#endif
+      : public Core::Credentials::TokenCredential {
 
 #if defined(_azure_TESTING_BUILD)
     friend class Azure::Identity::Test::AzureCliTestCredential;
