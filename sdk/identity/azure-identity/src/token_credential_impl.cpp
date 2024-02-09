@@ -338,9 +338,9 @@ AccessToken TokenCredentialImpl::ParseToken(
               MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
               "Can safely cast to int32");
 
-          auto chronoSeconds = std::chrono::seconds(static_cast<std::int32_t>(value));
+          auto expiresInSeconds = std::chrono::seconds(static_cast<std::int32_t>(value));
           accessToken.ExpiresOn
-              += proactiveRenewal ? GetProactiveRenewalSeconds(chronoSeconds) : chronoSeconds;
+              += proactiveRenewal ? GetProactiveRenewalSeconds(expiresInSeconds) : expiresInSeconds;
           return accessToken;
         }
       }
@@ -359,10 +359,10 @@ AccessToken TokenCredentialImpl::ParseToken(
             MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
             "Can safely cast to int32");
 
-        auto chronoSeconds = std::chrono::seconds(static_cast<std::int32_t>(
+        auto expiresInSeconds = std::chrono::seconds(static_cast<std::int32_t>(
             ParseNumericExpiration(expiresIn.get<std::string>(), MaxExpirationInSeconds)));
         accessToken.ExpiresOn
-            += proactiveRenewal ? GetProactiveRenewalSeconds(chronoSeconds) : chronoSeconds;
+            += proactiveRenewal ? GetProactiveRenewalSeconds(expiresInSeconds) : expiresInSeconds;
 
         return accessToken;
       }
