@@ -19,6 +19,12 @@
 #include <string>
 #include <vector>
 
+#if defined(_azure_TESTING_BUILD)
+namespace Azure { namespace Identity { namespace Test {
+  class AzureCliTestCredential;
+}}} // namespace Azure::Identity::Test
+#endif
+
 namespace Azure { namespace Identity {
   /**
    * @brief Options for configuring the #Azure::Identity::AzureCliCredential.
@@ -51,6 +57,11 @@ namespace Azure { namespace Identity {
    * token.
    */
   class AzureCliCredential _azure_NON_FINAL_FOR_TESTS : public Core::Credentials::TokenCredential {
+
+#if defined(_azure_TESTING_BUILD)
+    friend class Azure::Identity::Test::AzureCliTestCredential;
+#endif
+
   protected:
     /** @brief The cache for the access token. */
     _detail::TokenCache m_tokenCache;
