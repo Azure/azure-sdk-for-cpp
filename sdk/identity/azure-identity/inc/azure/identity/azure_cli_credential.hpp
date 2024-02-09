@@ -9,6 +9,7 @@
 #pragma once
 
 #include "azure/identity/detail/token_cache.hpp"
+#include "azure/identity/dll_import_export.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
@@ -22,7 +23,8 @@ namespace Azure { namespace Identity {
   /**
    * @brief Options for configuring the #Azure::Identity::AzureCliCredential.
    */
-  struct AzureCliCredentialOptions final : public Core::Credentials::TokenCredentialOptions
+  struct AzureCliCredentialOptions _azure_NON_FINAL_FOR_TESTS
+      : public Core::Credentials::TokenCredentialOptions
   {
     /**
      * @brief The ID of the tenant to which the credential will authenticate by default. If not
@@ -49,11 +51,7 @@ namespace Azure { namespace Identity {
    * @brief Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access
    * token.
    */
-  class AzureCliCredential
-#if !defined(TESTING_BUILD)
-      final
-#endif
-      : public Core::Credentials::TokenCredential {
+  class AzureCliCredential _azure_NON_FINAL_FOR_TESTS : public Core::Credentials::TokenCredential {
   protected:
     /** @brief The cache for the access token. */
     _detail::TokenCache m_tokenCache;
@@ -106,20 +104,12 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
 
-#if !defined(TESTING_BUILD)
   private:
-#else
-  protected:
-#endif
-    virtual std::string GetAzCommand(std::string const& scopes, std::string const& tenantId) const;
+    _azure_VIRTUAL_FOR_TESTS std::string GetAzCommand(
+        std::string const& scopes,
+        std::string const& tenantId) const;
 
-#if !defined(TESTING_BUILD)
-  private:
-#else
-  protected:
-    virtual
-#endif
-    int GetLocalTimeToUtcDiffSeconds() const;
+    _azure_VIRTUAL_FOR_TESTS int GetLocalTimeToUtcDiffSeconds() const;
   };
 
 }} // namespace Azure::Identity
