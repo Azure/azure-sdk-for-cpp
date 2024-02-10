@@ -76,6 +76,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Unknown,
   };
 
+  /**
+   * @brief ostream insertion operator for AmqpValueType.
+   *
+   * @param os - stream to insert to.
+   * @param value - value to insert.
+   *
+   * @returns the input ostream.
+   */
+  std::ostream& operator<<(std::ostream& os, AmqpValueType value);
+
   class AmqpArray;
   class AmqpMap;
   class AmqpList;

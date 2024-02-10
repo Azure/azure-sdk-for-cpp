@@ -26,6 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Error,
     FailedBadStatus,
     InstanceClosed,
+    Cancelled,
   };
 
   enum class ManagementOpenStatus

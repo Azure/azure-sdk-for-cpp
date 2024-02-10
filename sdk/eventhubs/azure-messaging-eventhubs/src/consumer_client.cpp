@@ -87,7 +87,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void ConsumerClient::EnsureConnection(std::string const& partitionId)
   {
-    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_connections.find(partitionId) == m_connections.end())
     {
       m_connections.emplace(partitionId, CreateConnection(partitionId));
@@ -95,7 +95,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
 
   Azure::Core::Amqp::_internal::Session ConsumerClient::CreateSession(
-      std::string const& partitionId)
+      std::string const& partitionId) const
   {
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize
@@ -107,7 +107,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ConsumerClient::EnsureSession(std::string const& partitionId)
   {
     EnsureConnection(partitionId);
-    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
       m_sessions.emplace(partitionId, CreateSession(partitionId));
@@ -117,8 +117,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   Azure::Core::Amqp::_internal::Session ConsumerClient::GetSession(
       std::string const& partitionId = {})
   {
-    std::unique_lock<std::mutex> lock(m_sessionsLock);
+    std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     return m_sessions.at(partitionId);
+  }
+
+  std::shared_ptr<_detail::EventHubsPropertiesClient> ConsumerClient::GetPropertiesClient()
+  {
+    std::lock_guard<std::mutex> lock(m_propertiesClientLock);
+    EnsureConnection({});
+    if (!m_propertiesClient)
+    {
+      m_propertiesClient
+          = std::make_shared<_detail::EventHubsPropertiesClient>(m_connections.at(""), m_eventHub);
+    }
+    return m_propertiesClient;
   }
 
   PartitionClient ConsumerClient::CreatePartitionClient(
@@ -142,19 +154,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)
   {
-    // Since EventHub properties are not tied to a partition, we don't specify a partition ID.
-    EnsureSession({});
-
-    return _detail::EventHubsUtilities::GetEventHubsProperties(GetSession(), m_eventHub, context);
+    return GetPropertiesClient()->GetEventHubsProperties(m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ConsumerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    EnsureSession({});
-
-    return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
-        GetSession({}), m_eventHub, partitionId, context);
+    return GetPropertiesClient()->GetEventHubsPartitionProperties(m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs
