@@ -19,8 +19,8 @@
 #include <vector>
 
 /**
-   * @brief Macro doc.
-   */
+ * @brief Macro doc.
+ */
 #define _azure_NON_FINAL_FOR_TESTS final
 
 namespace Azure { namespace Identity {
@@ -53,8 +53,7 @@ namespace Azure { namespace Identity {
 
   /**
    * @brief Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access
-   * token. Mentioning #Azure::Identity::AzureCliCredentialOptions in a doc comment to create a
-   * link.
+   * token.
    */
   class AzureCliCredential
 #if !defined(TESTING_BUILD)
