@@ -18,6 +18,9 @@
 #include <string>
 #include <vector>
 
+/**
+   * @brief Macro doc.
+   */
 #define _azure_NON_FINAL_FOR_TESTS final
 
 namespace Azure { namespace Identity {
