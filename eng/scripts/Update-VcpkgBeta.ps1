@@ -7,7 +7,7 @@ param(
     [string] $BuildIdentifier = $env:BUILD_BUILDID
 )
 
-."$PSSCriptRoot/../common/scripts/common.ps1"
+."$PSScriptRoot/../common/scripts/common.ps1"
 Set-StrictMode -Version 3
 
 # To ensure a clean synchronization remove all files at the destination.

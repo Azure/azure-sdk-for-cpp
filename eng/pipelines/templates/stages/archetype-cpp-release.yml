@@ -1,3 +1,5 @@
+#cspell: words gearama
+
 parameters:
   Artifacts: []
   ArtifactName: 'not-specified'
