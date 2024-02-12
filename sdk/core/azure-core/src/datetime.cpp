@@ -44,15 +44,15 @@ DateTime GetSystemClockEpoch()
 DateTime GetMaxDateTime()
 {
   auto const systemClockMax = std::chrono::duration_cast<DateTime::clock::duration>(
-                                  std::chrono::system_clock::time_point::max().time_since_epoch())
+                                  (std::chrono::system_clock::time_point::max)().time_since_epoch())
                                   .count();
 
   auto const systemClockEpoch = GetSystemClockEpoch().time_since_epoch().count();
 
-  constexpr auto repMax = std::numeric_limits<DateTime::clock::duration::rep>::max();
+  constexpr auto repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
 
   return DateTime(DateTime::time_point(
-      DateTime::duration(systemClockMax + std::min(systemClockEpoch, (repMax - systemClockMax)))));
+      DateTime::duration(systemClockMax + (std::min)(systemClockEpoch, (repMax - systemClockMax)))));
 }
 
 template <typename T>
@@ -315,7 +315,7 @@ T ParseNumber(
 {
   if (*cursor + minLength <= strLen)
   {
-    auto const MaxChars = std::min(static_cast<int>(strLen - *cursor), maxLength);
+    auto const MaxChars = (std::min)(static_cast<int>(strLen - *cursor), maxLength);
     int64_t value = 0;
     auto i = 0;
     for (; i < MaxChars; ++i)
@@ -335,7 +335,7 @@ T ParseNumber(
       break;
     }
 
-    if (value >= 0 && value <= std::numeric_limits<T>::max())
+    if (value >= 0 && value <= (std::numeric_limits<T>::max)())
     {
       *cursor += i;
       return static_cast<T>(value);
@@ -422,7 +422,7 @@ DateTime::DateTime(
 
 DateTime::operator std::chrono::system_clock::time_point() const
 {
-  static DateTime SystemClockMin(std::chrono::system_clock::time_point::min());
+  static DateTime SystemClockMin((std::chrono::system_clock::time_point::min)());
   static DateTime SystemClockMax(GetMaxDateTime());
 
   auto outOfRange = 0;

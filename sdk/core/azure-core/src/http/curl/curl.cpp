@@ -154,7 +154,7 @@ int pollSocketUntilEventOrTimeout(
     // Before doing any work, check to make sure that the context hasn't already been cancelled.
     context.ThrowIfCancelled();
     int pollTimeoutMs = static_cast<int>(
-        std::min(
+        (std::min)(
             pollInterval, std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now))
             .count());
 #if defined(AZ_PLATFORM_POSIX)

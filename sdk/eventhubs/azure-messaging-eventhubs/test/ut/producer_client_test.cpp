@@ -71,12 +71,12 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   message3.Body = {'H', 'e', 'l', 'l', 'o', '3'};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
-  edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
+  edboptions.MaxBytes = (std::numeric_limits<uint16_t>::max)();
   edboptions.PartitionId = "1";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch{client.CreateBatch(edboptions)};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
-  edboptions2.MaxBytes = std::numeric_limits<uint16_t>::max();
+  edboptions2.MaxBytes = (std::numeric_limits<uint16_t>::max)();
   ;
   edboptions2.PartitionId = "2";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch2{client.CreateBatch(edboptions2)};

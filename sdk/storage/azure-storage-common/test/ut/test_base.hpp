@@ -118,8 +118,8 @@ namespace Azure { namespace Storage {
        * `auto ret = function1(RandomInt()) + function2(RandomInt());`
        */
       uint64_t RandomInt(
-          uint64_t minNumber = std::numeric_limits<uint64_t>::min(),
-          uint64_t maxNumber = std::numeric_limits<uint64_t>::max());
+          uint64_t minNumber = (std::numeric_limits<uint64_t>::min)(),
+          uint64_t maxNumber = (std::numeric_limits<uint64_t>::max)());
       char RandomChar();
       std::string RandomString(size_t size = 10);
       std::string LowercaseRandomString(size_t size = 10);
