@@ -184,6 +184,8 @@ jobs:
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
 
+      - template: /eng/pipelines/templates/steps/show-failure-logs.yml
+
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true

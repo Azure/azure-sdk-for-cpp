@@ -24,6 +24,8 @@ steps:
     env:
       VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
 
+  # The calling job will attempt to upload logs on failure. To that end this
+  # step should ONLY run on success.
   - script: rm -rf build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
     displayName: clean build folder for ${{ parameters.PackageName }}

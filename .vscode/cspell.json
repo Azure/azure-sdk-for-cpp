@@ -75,6 +75,7 @@
     "azsdkengsys",
     "azurecr",
     "azuresdk",
+    "azuresdkdocs",
     "azuresdkforcpp",
     "azurl",
     "centralindia",
@@ -200,6 +201,7 @@
     "rtti",
     "rwxrw",
     "sasia",
+    "sbom",
     "Schonberger",
     "scus",
     "SDDL",
@@ -250,6 +252,7 @@
     "Wunused",
     "xbox",
     "Xclang",
+    "xcode",
     "XSMB",
     "zulu"
   ],

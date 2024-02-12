@@ -1,17 +1,23 @@
 # Release History
 
-## 1.0.0-beta.6 (Unreleased)
+## 1.0.0-beta.7 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-- `PartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed. This should not affect existing clients.
-- `ProcessorPartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed. This should not affect existing clients.
-
 ### Bugs Fixed
 
+- Fixed [#5297](https://github.com/Azure/azure-sdk-for-cpp/issues/5297). The actual fix for this was to use a single management client per connection.
+
 ### Other Changes
+
+## 1.0.0-beta.6 (2024-02-06)
+
+### Breaking Changes
+
+- `PartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed. This should not affect existing clients.
+- `ProcessorPartitionClient::Close` now takes an optional `Azure::Core::Context` parameter to reflect that it now waits until the `Close` verb has fully completed. This should not affect existing clients.
 
 ## 1.0.0-beta.5 (2024-01-11)
 

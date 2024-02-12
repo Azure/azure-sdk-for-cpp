@@ -16,6 +16,9 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
+  namespace _detail {
+    class EventHubsPropertiesClient;
+  }
 
   /// @brief The default consumer group name.
   constexpr const char* DefaultConsumerGroup = "$Default";
@@ -187,9 +190,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers;
 
     /// @brief The AMQP Sessions used to receive messages for a given partition.
-    std::mutex m_sessionsLock;
+    std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions;
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections;
+
+    // Client used for GetProperty operations.
+    std::mutex m_propertiesClientLock;
+    std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
@@ -197,7 +204,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     void EnsureConnection(std::string const& partitionId);
     void EnsureSession(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId) const;
-    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId) const;
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
+    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient();
   };
 }}} // namespace Azure::Messaging::EventHubs

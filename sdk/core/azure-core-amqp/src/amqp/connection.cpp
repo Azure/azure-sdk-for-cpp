@@ -340,22 +340,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {CONNECTION_STATE_ERROR, "CONNECTION_STATE_ERROR"},
 
     };
-    std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state)
-    {
-      auto val{UamqpConnectionStateToStringMap.find(state)};
-      if (val == UamqpConnectionStateToStringMap.end())
-      {
-        os << "Unknown connection state: "
-           << static_cast<std::underlying_type<decltype(state)>::type>(state);
-      }
-      else
-      {
-        os << val->second << "(" << static_cast<std::underlying_type<CONNECTION_STATE>::type>(state)
-           << ")";
-      }
-      return os;
-    }
   } // namespace
+
+  std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state)
+  {
+    auto val{UamqpConnectionStateToStringMap.find(state)};
+    if (val == UamqpConnectionStateToStringMap.end())
+    {
+      os << "Unknown connection state: "
+         << static_cast<std::underlying_type<decltype(state)>::type>(state);
+    }
+    else
+    {
+      os << val->second;
+    }
+    return os;
+  }
 
   _internal::ConnectionState ConnectionStateFromCONNECTION_STATE(CONNECTION_STATE state)
   {
@@ -677,7 +677,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             context);
         if (std::get<0>(result) != CbsOperationResult::Ok)
         {
-          throw std::runtime_error("Could not put Claims Based Security token.");
+          throw Azure::Core::Credentials::AuthenticationException(
+              "Could not authenticate client. Error Status: " + std::to_string(std::get<1>(result))
+              + " reason: " + std::get<2>(result));
         }
         Log::Stream(Logger::Level::Verbose) << "Close CBS object";
         claimsBasedSecurity->Close(context);
@@ -690,7 +692,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_tokenStore.emplace(audienceUrl, accessToken);
         return accessToken;
       }
-      catch (std::runtime_error const&)
+      catch (...)
       {
         // Ensure that the claims based security object is closed before we leave this scope.
         claimsBasedSecurity->Close(context);
