@@ -51,8 +51,8 @@ DateTime GetMaxDateTime()
 
   constexpr auto repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
 
-  return DateTime(DateTime::time_point(
-      DateTime::duration(systemClockMax + (std::min)(systemClockEpoch, (repMax - systemClockMax)))));
+  return DateTime(DateTime::time_point(DateTime::duration(
+      systemClockMax + (std::min)(systemClockEpoch, (repMax - systemClockMax)))));
 }
 
 template <typename T>

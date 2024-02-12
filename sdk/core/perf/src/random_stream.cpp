@@ -36,7 +36,8 @@ void RandomBuffer(uint8_t* buffer, size_t length)
     *(start_addr++) = RandomChar();
   }
 
-  std::uniform_int_distribution<uint64_t> distribution(0ULL, (std::numeric_limits<uint64_t>::max)());
+  std::uniform_int_distribution<uint64_t> distribution(
+      0ULL, (std::numeric_limits<uint64_t>::max)());
   while (start_addr + rand_int_size <= end_addr)
   {
     *reinterpret_cast<uint64_t*>(start_addr) = distribution(random_generator);

@@ -20,7 +20,10 @@
 #include <vector>
 
 #if defined(AZ_PLATFORM_WINDOWS)
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
+#include <wincrypt.h>
 
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 #pragma warning(push)
