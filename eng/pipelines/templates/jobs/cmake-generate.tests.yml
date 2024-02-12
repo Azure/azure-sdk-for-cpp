@@ -92,3 +92,5 @@ jobs:
           GenerateArgs: ${{ cmakeOption.Value }}
           Env: "$(CmakeEnvArg)"
           PackageName: ${{ artifact.Name }}
+
+  - template: /eng/pipelines/templates/steps/show-failure-logs.yml
