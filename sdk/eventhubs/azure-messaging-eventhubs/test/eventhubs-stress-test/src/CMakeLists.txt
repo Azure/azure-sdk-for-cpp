@@ -7,15 +7,23 @@ project(azure-messaging-eventhubs-stress-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(WITH_STL ON)
+
 find_package(opentelemetry-cpp CONFIG REQUIRED)
+find_package(protobuf)
+find_package(nlohmann_json)
+find_package(CURL)
+find_package(gRPC)
 
 set(INCLUDE_FILES 
   inc/eventhubs_stress_scenarios.hpp
+  scenarios/inc/produceconsumeevents.hpp
   )
 
 
 set(SOURCE_FILES
-  src/eventhubs_stress_test.cpp
+  eventhubs_stress_test.cpp
+  scenarios/src/produceconsumeevents.cpp
   )
 
 
@@ -29,8 +37,8 @@ target_include_directories(
   azure-messaging-eventhubs-stress-test
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/scenarios/inc>
 )
-
 
 target_link_libraries(azure-messaging-eventhubs-stress-test 
 PRIVATE
@@ -38,6 +46,8 @@ azure-messaging-eventhubs
 azure-identity
 opentelemetry-cpp::ostream_span_exporter
 opentelemetry-cpp::in_memory_span_exporter
+opentelemetry-cpp::otlp_http_exporter
+opentelemetry-cpp::otlp_http_log_record_exporter
 opentelemetry-cpp::sdk
 )
 

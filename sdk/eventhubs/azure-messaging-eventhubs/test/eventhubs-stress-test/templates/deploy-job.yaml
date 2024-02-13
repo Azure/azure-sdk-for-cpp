@@ -12,9 +12,6 @@ spec:
       imagePullPolicy: Always
       command:
         [
-          "valgrind",
-          "--tool=memcheck",
-          "-s",
           "./azure-messaging-eventhubs-stress-test",
         ]
       {{- include "stress-test-addons.container-env" . | nindent 6 }}

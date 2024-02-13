@@ -9,5 +9,5 @@ cmake_minimum_required (VERSION 3.13)
 # Include sub-projects.
 if (BUILD_TESTING)
 # stress tests are categorized as normal tests.
-add_subdirectory ("scenarios")
+add_subdirectory ("src")
 endif()
