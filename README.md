@@ -22,7 +22,7 @@ The Azure SDK for C++ is compatible with a number of different development envir
 - Open a terminal
   - **Visual Studio:** Open the Developer Command Prompt: **Tools > Commandline > Developer Command Prompt**
   - **VSCode:** Open a new Terminal in VSCode: **Terminal > New Terminal**
-- Add the `azure-identity-cpp` and `azure-stroage-blobs-cpp` libraries with the following command:
+- Add the `azure-identity-cpp` and `azure-storage-blobs-cpp` libraries with the following command:
 
 ```console
 vcpkg add port azure-identity-cpp azure-storage-blobs-cpp
