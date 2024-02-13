@@ -6,7 +6,7 @@ FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04 as build
 
 # install the mem check tool along side the other deps
 RUN apt-get update -y
-RUN apt-get install -y gcc cmake make g++ git zip unzip build-essential pkg-config wget curl valgrind
+RUN apt-get install -y gcc cmake make g++ git zip unzip build-essential pkg-config wget curl valgrind python3
 RUN wget -O vcpkg.tar.gz https://github.com/microsoft/vcpkg/archive/master.tar.gz
 RUN mkdir /opt/vcpkg
 RUN tar xf vcpkg.tar.gz --strip-components=1 -C /opt/vcpkg

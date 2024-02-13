@@ -16,7 +16,7 @@
     },
     {
       "name": "opentelemetry-cpp",
-      "features": ["otlp"],
+      "features": ["otlp-http"],
       "platform": "!(windows & !static)",
       "version>=": "1.3.0"
     },
