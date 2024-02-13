@@ -784,7 +784,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
+      firstChunkLength = (std::min)(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadFileOptions firstChunkOptions;
@@ -805,7 +805,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       fileRangeSize = fileSize - firstChunkOffset;
       if (options.Range.Value().Length.HasValue())
       {
-        fileRangeSize = std::min(fileRangeSize, options.Range.Value().Length.Value());
+        fileRangeSize = (std::min)(fileRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
@@ -813,9 +813,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       fileSize = firstChunk.Value.BodyStream->Length();
       fileRangeSize = fileSize;
     }
-    firstChunkLength = std::min(firstChunkLength, fileRangeSize);
+    firstChunkLength = (std::min)(firstChunkLength, fileRangeSize);
 
-    if (static_cast<uint64_t>(fileRangeSize) > std::numeric_limits<size_t>::max()
+    if (static_cast<uint64_t>(fileRangeSize) > (std::numeric_limits<size_t>::max)()
         || static_cast<size_t>(fileRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
@@ -894,7 +894,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
+      firstChunkLength = (std::min)(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadFileOptions firstChunkOptions;
@@ -915,7 +915,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       fileRangeSize = fileSize - firstChunkOffset;
       if (options.Range.Value().Length.HasValue())
       {
-        fileRangeSize = std::min(fileRangeSize, options.Range.Value().Length.Value());
+        fileRangeSize = (std::min)(fileRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
@@ -923,7 +923,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       fileSize = firstChunk.Value.BodyStream->Length();
       fileRangeSize = fileSize;
     }
-    firstChunkLength = std::min(firstChunkLength, fileRangeSize);
+    firstChunkLength = (std::min)(firstChunkLength, fileRangeSize);
 
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                _internal::FileWriter& fileWriter,

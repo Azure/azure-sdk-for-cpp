@@ -82,7 +82,7 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context)
 size_t MemoryBodyStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
   (void)context;
-  size_t copy_length = std::min(count, this->m_length - this->m_offset);
+  size_t copy_length = (std::min)(count, this->m_length - this->m_offset);
   // Copy what's left or just the count
   std::memcpy(buffer, this->m_data + m_offset, static_cast<size_t>(copy_length));
   // move position

@@ -38,7 +38,7 @@ size_t RandomAccessFileBodyStream::OnRead(
   auto numberOfBytesRead = pread(
       this->m_fileDescriptor,
       buffer,
-      std::min(static_cast<int64_t>(count), this->m_length - this->m_offset),
+      (std::min)(static_cast<int64_t>(count), this->m_length - this->m_offset),
       this->m_baseOffset + this->m_offset);
 
   if (numberOfBytesRead < 0)
@@ -59,10 +59,10 @@ size_t RandomAccessFileBodyStream::OnRead(
       fileHandle,
       buffer,
       // at most 4Gb to be read
-      static_cast<DWORD>(std::min(
+      static_cast<DWORD>((std::min)(
           static_cast<uint64_t>(0xFFFFFFFFUL),
           static_cast<uint64_t>(
-              std::min(static_cast<int64_t>(count), (this->m_length - this->m_offset))))),
+              (std::min)(static_cast<int64_t>(count), (this->m_length - this->m_offset))))),
       &numberOfBytesRead,
       &o);
 

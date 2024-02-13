@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       return availableBytes;
     }
     const size_t MinRead = 4096;
-    size_t tryReadSize = std::max(n, MinRead);
+    size_t tryReadSize = (std::max)(n, MinRead);
     size_t currSize = m_streambuffer.size();
     m_streambuffer.resize(m_streambuffer.size() + tryReadSize);
     size_t actualReadSize = m_stream->Read(m_streambuffer.data() + currSize, tryReadSize, context);
@@ -631,7 +631,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   {
     if (m_parserBuffer.Length != 0)
     {
-      size_t bytesToCopy = std::min(m_parserBuffer.Length, count);
+      size_t bytesToCopy = (std::min)(m_parserBuffer.Length, count);
       std::memcpy(buffer, m_parserBuffer.Data, bytesToCopy);
       m_parserBuffer.Data += bytesToCopy;
       m_parserBuffer.Length -= bytesToCopy;

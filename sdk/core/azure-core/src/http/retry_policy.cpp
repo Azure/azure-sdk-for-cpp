@@ -81,10 +81,10 @@ std::chrono::milliseconds CalculateExponentialDelay(
       = std::numeric_limits<int32_t>::digits - (std::numeric_limits<int32_t>::is_signed ? 1 : 0);
 
   // Scale exponentially: 1 x RetryDelay on 1st attempt, 2x on 2nd, 4x on 3rd, 8x on 4th ... all the
-  // way up to std::numeric_limits<int32_t>::max() * RetryDelay.
+  // way up to (std::numeric_limits<int32_t>::max()) * RetryDelay.
   auto exponentialRetryAfter = retryOptions.RetryDelay
       * (((attempt - 1) <= beforeLastBit) ? (1 << (attempt - 1))
-                                          : std::numeric_limits<int32_t>::max());
+                                          : (std::numeric_limits<int32_t>::max()));
 
   // Multiply exponentialRetryAfter by jitterFactor
   exponentialRetryAfter = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(
@@ -92,7 +92,7 @@ std::chrono::milliseconds CalculateExponentialDelay(
        * jitterFactor)
           .count()));
 
-  return std::min(exponentialRetryAfter, retryOptions.MaxRetryDelay);
+  return (std::min)(exponentialRetryAfter, retryOptions.MaxRetryDelay);
 }
 
 bool WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt)

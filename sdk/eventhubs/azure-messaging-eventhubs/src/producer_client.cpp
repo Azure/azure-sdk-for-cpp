@@ -185,8 +185,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& partitionId)
   {
     Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-    sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
-    sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+    sessionOptions.InitialIncomingWindowSize = (std::numeric_limits<int32_t>::max)();
+    sessionOptions.InitialOutgoingWindowSize = (std::numeric_limits<uint16_t>::max)();
     return m_connections.at(partitionId).CreateSession(sessionOptions);
   }
   std::shared_ptr<_detail::EventHubsPropertiesClient> ProducerClient::GetPropertiesClient()

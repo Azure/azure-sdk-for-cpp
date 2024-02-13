@@ -228,7 +228,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks The maximum frame size must be at least 512 bytes. The default value is the maximum
      * value for a uint32.
      */
-    uint32_t MaxFrameSize{std::numeric_limits<uint32_t>::max()};
+    uint32_t MaxFrameSize{(std::numeric_limits<uint32_t>::max)()};
 
     /** @brief The maximum number of channels supported.
      *
