@@ -14,8 +14,8 @@ The Azure SDK for C++ is compatible with a number of different development envir
 
 ### Development environment and tools set up
 
-- [Visual Studio, CMake and vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-vs)
-- [VS Code, CMake and vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-vscode)
+- [Visual Studio, CMake and vcpkg](https://learn.microsoft.com/vcpkg/get_started/get-started-vs/)
+- [VS Code, CMake and vcpkg](https://learn.microsoft.com/vcpkg/get_started/get-started-vscode/)
 
 ### Install libraries
 
@@ -61,8 +61,8 @@ target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-stor
 ### Additional methods for installing and configuring
 
 - [Get started by cloning a sample project](https://github.com/antkmsft/az-helloworld-cpp)
-- [CMake project and fetch content](https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration/cmake-fetch-content)
-- [How to use beta packages](./samples/integration/beta-packages-vcpkg/README.md)
+- [CMake project and fetch content](https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration/cmake-fetch-content/)
+- [How to use beta packages](https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration/beta-packages-vcpkg/)
 
 ### Using the SDK within your application
 
