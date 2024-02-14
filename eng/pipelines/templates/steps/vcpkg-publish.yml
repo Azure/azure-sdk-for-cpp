@@ -58,7 +58,6 @@ steps:
         targetType: filePath
         filePath: eng/scripts/Update-VcpkgBeta.ps1
         arguments: >-
-          -$AzSdkFolder $RepoRoot
           -VcpkgBetaFolder ${{ parameters.Workspace }}/azure-sdk-vcpkg-betas
           -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
           -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
