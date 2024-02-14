@@ -6,67 +6,33 @@ This repository is for active development of the Azure SDK for C++. For consumer
 
 ## Getting started
 
-For the best development experience, we recommend developers use [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as [VS Code](https://code.visualstudio.com/), along with the command line for building your application with the SDK.
+The Azure SDK for C++ is compatible with a number of different development environments and tools. The following instructions will utilize [Visual Studio](https://visualstudio.microsoft.com/) or [VSCode](https://code.visualstudio.com/) as the IDE, [CMake](https://cmake.org/) for build automation, and [vcpkg](https://vcpkg.io/) as our package manager.
 
-You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder, for example, the [Azure Storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage#azure-storage-libraries-for-c).
+### Prerequisites
 
-For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure SDK for C++ Developer Docs](https://azure.github.io/azure-sdk-for-cpp).
+- An Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
+- [A C++ compiler](https://code.visualstudio.com/docs/languages/cpp#_install-a-compiler).
 
-### Download & Install the SDK
+### Development environment and tools set up
 
-Here are some alternatives, from easiest to advanced, how you can get, build and integrate Azure SDK clients to your application.
+- [Visual Studio, CMake and vcpkg](https://learn.microsoft.com/vcpkg/get_started/get-started-vs/)
+- [VS Code, CMake and vcpkg](https://learn.microsoft.com/vcpkg/get_started/get-started-vscode/)
 
-#### CMake Project + Vcpkg - manifest mode
+### Install libraries
 
-The easiest way to acquire the C++ SDK is leveraging the [vcpkg](https://github.com/microsoft/vcpkg#getting-started) package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
+- Open a terminal
+  - **Visual Studio:** Open the Developer Command Prompt: **Tools > Commandline > Developer Command Prompt**
+  - **VSCode:** Open a new Terminal in VSCode: **Terminal > New Terminal**
+- Add the `azure-identity-cpp` and `azure-storage-blobs-cpp` libraries with the following command:
 
-##### 1. Create a [CMake](https://cmake.org/cmake/help/latest/) project
-
-CMake will take care of cross-operating system support.
-
-> Visual Studio installs CMake without adding it to the path. You need to [install CMake](https://cmake.org/download/) if you are not using Visual Studio or if you want to use a command line outside Visual Studio.
-
-Visual Studio:
-
-If you are using Visual Studio and you installed [support for CMake](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019), you can create a new CMake Project from Visual Studio, new project menu.
-
--IMAGE HERE Visual Studio-
-
-Visual Studio Code:
-
-Install the VSCode extensions: [CMake](https://marketplace.visualstudio.com/items?itemName=twxs.cmake) and [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools). Then, create folder for your project and open it with VSCode. Press `F1` and type _CMake: Quick Start_, follow the steps to give a name to your project, to select a compiler and any other initial configuration.
-
--IMAGE HERE VSCode-
-
-> You can also manually create the root `CMakeLists.txt` with your own initial configuration and source.
-
-##### 2. Link the Vcpkg toolchain file to your CMake project
-
-Azure SDK provides a CMake module that you can use for your application. You only need to create a folder called _cmake-modules_ on the top level of your CMake project and copy [AzureVcpkg.cmake](https://github.com/Azure/azure-sdk-for-cpp/blob/main/cmake-modules/AzureVcpkg.cmake) to this folder.
-
-The AzureVcpkg module supports three scenarios:
-
-1. Getting and setting up Vcpkg automatically (default case). You can set the env var `AZURE_SDK_DISABLE_AUTO_VCPKG` to disable this behavior.
-2. Automatically linking your application to an existing Vcpkg folder. Set the environment variable `VCPKG_ROOT` to the Vcpkg folder you want to link.
-3. Manually setting a toolchain file with cmake command option. `AzureVcpkg.cmake` module will respect the option.
-
-Add the next lines to your root `CMakeLists.txt` to use `AzureVcpkg.cmake` module:
-
-```cmake
-# Add this lines on the top, before the call to `project(name VERSION 0.0.0)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
-include(AzureVcpkg)
-az_vcpkg_integrate()
+```console
+vcpkg add port azure-identity-cpp azure-storage-blobs-cpp
 ```
 
-##### 3. Add Vcpkg manifest
-
-Add a new file called `vcpkg.json` on the root of your CMake project and add the Azure SDK clients you want to use in your application. For example, the next manifest defines Azure Identity and Blobs.
+- Your `vcpkg.json` should now contain:
 
 ```json
 {
-    "name": "your-app-name",
-    "version-string": "<Your app version like 1.0.0>", 
     "dependencies": [
         "azure-identity-cpp",
         "azure-storage-blobs-cpp"
@@ -74,87 +40,31 @@ Add a new file called `vcpkg.json` on the root of your CMake project and add the
 }
 ```
 
-##### 4. Link Azure SDK libraries to your application
+### Configure project files
 
-Add the next lines to your `CMakeLists.txt` file. It must be added after the cmake target name is defined.
+- Replace the contents of `CMakeLists.txt` with the following:
 
 ```cmake
+cmake_minimum_required(VERSION 3.10)
+
+project(HelloWorld)
+
 find_package(azure-identity-cpp CONFIG REQUIRED)
 find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
-target_link_libraries(quick-sample PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
+
+add_executable(HelloWorld helloworld.cpp)
+
+target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
 ```
 
-> See the list of available SDK clients for C++ [here](https://azure.github.io/azure-sdk/releases/latest/cpp.html)
+### Additional methods for installing and configuring
 
-##### 5. Generate project and compile
+<!-- Commenting out for now until we know if something similar already exists or if we have to create it. -->
+<!-- - [Get started by cloning a sample project]() -->
+- [CMake project and fetch content](https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration/cmake-fetch-content/)
+- [How to use beta packages](https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration/beta-packages-vcpkg/)
 
-At this point, you can press F7 on Visual Studio or VSCode to generate and build the project. Or you can also run the following commands from a command line:
-
-```bash
-# Create a build folder (if there's not one already there)
-mkdir build
-cd build
-cmake ..
-cmake --build .
-```
-
-> Using Vcpkg manifest makes easy to define multiple dependencies and delegate building them to Vcpkg.
-
-#### CMake Project + fetch content
-
-For this scenario, CMake will fetch the Azure SDK source code and make it part of your project. The SDK client libraries will be compiled at the same time as your application.
-
-Follow the step 1 from above to create a CMake project first.
-
-##### 2. Define CMake fetch content
-
-Add the following code to your root `CMakeLists.txt` file:
-
-```cmake
-# Add this code before creating and linking your application
-
-include(FetchContent)
-FetchContent_Declare(
-    azuresdk
-    GIT_REPOSITORY      https://github.com/Azure/azure-sdk-for-cpp.git
-    GIT_TAG             <Release Tag or Git-Commit-Here>
-)
-FetchContent_GetProperties(azuresdk)
-if(NOT azuresdk_POPULATED)
-    FetchContent_Populate(azuresdk)
-    # Adding all Azure SDK libraries
-    add_subdirectory(${azuresdk_SOURCE_DIR} ${azuresdk_BINARY_DIR} EXCLUDE_FROM_ALL)
-    # Adding one Azure SDK Library only (Storage blobs)
-    # add_subdirectory(${azuresdk_SOURCE_DIR}/sdk/storage/azure-storage-blobs ${azuresdk_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
-```
-
-##### 3. Link Azure SDK libraries to your application
-
-The only difference from the previous scenario is that you don't need to call `find_package()`, since the cmake targets are integrated to your project. So you only need:
-
-```cmake
-# After creating the cmake target
-target_link_libraries(quick-sample PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
-```
-
-> Note: You need to take care of getting the Azure SDK dependencies on your own. Either manually installing them or by integrating the source code to your project as well.
-
-Use step 5 from previous scenario to generate and build your project.
-
-> This scenario requires extra manual configuration to get dependencies, but it is useful as an alternative when Vcpkg is not available
-
-#### Other combinations
-
-It should be possible to create your application without a CMake project. For example, manually cloning Azure SDK, building libraries and finally linking them to your application. However, this is considered an advanced scenario and it is not either described or maintained (The other scenarios described below are validated with CI pipelines).
-
-#### Getting Beta Releases in Vcpkg
-
-Official vcpkg registry may have beta versions of Azure SDK client libraries, up until a given library gets released as stable. After that, we don't publish post-first-stable beta releases of that library in the official registry.
-
-If you are interested in both stable releases and post-first-stable beta releases, see [Azure SDK Beta Vcpkg Registry](https://github.com/Azure/azure-sdk-vcpkg-betas/). You can update the `AzureVcpkg.cmake` module to use the beta registry.
-
-#### Using the SDK within your Application
+### Using the SDK within your application
 
 The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP `Response<T>`.
 
@@ -212,7 +122,12 @@ int main()
 }
 ```
 
-#### Key Core concepts
+### Build and run the project
+
+- **Visual Studio:** Press `Ctrl+Shift+B` to build the project in Visual Studio. Then click the run play button.
+- **VSCode:** Open the Command Palette with `Ctrl+Shift+P` and run the `CMake: Build` command. Select the `default` CMake preset. Then launch the project.
+
+## Key Core concepts
 
 Understanding the key concepts from the `Azure Core` library, which is leveraged by all client libraries is helpful in getting started, regardless of which Azure service you want to use.
 
