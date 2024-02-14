@@ -86,7 +86,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
 
     /**
-     * Register/Unregister the WinHTTP Status callback used by the action.
+     * Register the WinHTTP Status callback used by the action.
      *
      * @param internetHandle HINTERNET to register the callback.
      * @returns The status of the operation.
