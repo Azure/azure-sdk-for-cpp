@@ -86,13 +86,15 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
 
     /**
-     * Register the WinHTTP Status callback used by the action.
+     * Register/Unregister the WinHTTP Status callback used by the action.
      *
      * @param internetHandle HINTERNET to register the callback.
+     * @param registerCallback If true, the callback is registered. If false, the callback is unregistered.
      * @returns The status of the operation.
      */
     bool RegisterWinHttpStatusCallback(
-        Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle);
+        Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle,
+        bool registerCallback = true);
 
     /**
      * @brief WaitForAction - Waits for an action to complete.
