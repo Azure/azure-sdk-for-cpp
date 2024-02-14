@@ -529,6 +529,12 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       // state before the lock is released.
       auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
     }
+    else
+    {
+      Log::Write(
+          Logger::Level::Verbose,
+          "Received error while closing: " + std::to_string(stowedError));
+    }
 
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     m_stowedErrorInformation = stowedErrorInformation;
