@@ -54,14 +54,14 @@ void ProduceConsumeEvents::Initialize()
   if (m_eventHubName.empty())
   {
     GetLogger()->Fatal("Could not find required environment variable EVENTHUB_NAME");
-    std::cerr << "Missing required environment variable EVENTHUB_NAME";
+    std::cerr << "Missing required environment variable EVENTHUB_NAME" << std::endl;
   }
 
   m_eventHubConnectionString
       = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
   if (m_eventHubConnectionString.empty())
   {
-    std::cerr << "Missing required environment variable EVENTHUB_NAME";
+    std::cerr << "Missing required environment variable EVENTHUB_CONNECTION_STRING" << std::endl;
     GetLogger()->Fatal("Could not find required environment variable EVENTHUB_NAME");
   }
   m_checkpointStoreConnectionString
