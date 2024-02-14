@@ -98,7 +98,7 @@ stages:
                 vmImage: windows-2022
 
               variables:
-                VcpkgPrRepoOwner: Microsoft
+                VcpkgPrRepoOwner: antkmsft
                 VcpkgPrRepoName: vcpkg
 
               strategy:
@@ -144,7 +144,7 @@ stages:
                       # Clone Vcpkg Betas
                       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                         parameters:
-                          RepoOwner: Azure
+                          RepoOwner: antkmsft
                           RepoName: azure-sdk-vcpkg-betas
                           SetVcpkgRoot: false
 
@@ -163,7 +163,7 @@ stages:
                         parameters:
                           WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
                           TargetRepoName: azure-sdk-vcpkg-betas
-                          BaseRepoOwner: Azure
+                          BaseRepoOwner: antkmsft
                           CommitMsg: Update vcpkg-configuration.json
                           BaseRepoBranch: $(DefaultBranch)
 
