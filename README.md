@@ -8,9 +8,10 @@ This repository is for active development of the Azure SDK for C++. For consumer
 
 The Azure SDK for C++ is compatible with a number of different development environments and tools. The following instructions will utilize [Visual Studio](https://visualstudio.microsoft.com/) or [VSCode](https://code.visualstudio.com/) as the IDE, [CMake](https://cmake.org/) for build automation, and [vcpkg](https://vcpkg.io/) as our package manager.
 
-### Requirements
+### Prerequisites
 
 - An Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
+- [A C++ compiler](https://code.visualstudio.com/docs/languages/cpp#_install-a-compiler).
 
 ### Development environment and tools set up
 
