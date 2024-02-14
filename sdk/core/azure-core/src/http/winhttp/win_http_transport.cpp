@@ -522,10 +522,14 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   }
   void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
   {
-    // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
-    // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
-    // state before the lock is released.
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+    if (m_expectedStatus != WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
+    {
+      // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
+      // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
+      // state before the lock is released.
+      auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+    }
+
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     m_stowedErrorInformation = stowedErrorInformation;
     m_stowedError = stowedError;
