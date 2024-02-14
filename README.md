@@ -60,7 +60,8 @@ target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-stor
 
 ### Additional methods for installing and configuring
 
-- [Get started by cloning a sample project](https://github.com/antkmsft/az-helloworld-cpp)
+<!-- Commenting out for now until we know if something similar already exists or if we have to create it. -->
+<!-- - [Get started by cloning a sample project]() -->
 - [CMake project and fetch content](https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration/cmake-fetch-content/)
 - [How to use beta packages](https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration/beta-packages-vcpkg/)
 
