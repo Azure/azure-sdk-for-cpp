@@ -1055,8 +1055,14 @@ _detail::WinHttpRequest::~WinHttpRequest()
         "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
 
     // Attempt to unregister the status callback. 
-    // if an operation was started the callback will be called regardless, 
-    // as it was initiated before we make the call to unregister
+    // If an operation was started before calling unregister, the callback will be called regardless.
+    // This is a best effort to unregister the callback. 
+    // 
+    // The documentation(https://learn.microsoft.com/windows/win32/api/winhttp/nf-winhttp-winhttpsetstatuscallback)
+    // states : "At the end of asynchronous processing, the application may set the
+    // callback function to NULL. This prevents the client application from receiving additional
+    // notifications." "At the end", not during the process, thus we can still receive notifications
+    // after the operation has timed out and we release the object.
     if (!m_httpAction->RegisterWinHttpStatusCallback(m_requestHandle,false))
     {
       Log::Write(
