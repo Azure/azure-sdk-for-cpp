@@ -439,12 +439,12 @@ std::string GetErrorMessage(DWORD error)
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
       bool WinHttpAction::RegisterWinHttpStatusCallback(
-          Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle, bool registerCallback)
+          Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle)
       {
         return (
             WinHttpSetStatusCallback(
                 internetHandle.get(),
-                registerCallback ? &WinHttpAction::StatusCallback : NULL,
+                &WinHttpAction::StatusCallback,
                 WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
                 0)
             != WINHTTP_INVALID_STATUS_CALLBACK);
@@ -522,10 +522,20 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       }
       void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
       {
-        // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
-        // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
-        // state before the lock is released.
-        auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+        if (m_expectedStatus != WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
+        {
+          // Note that the order of scope_exit and lock is important - this ensures that scope_exit
+          // is destroyed *after* lock is destroyed, ensuring that the event is not set to the
+          // signalled state before the lock is released.
+          auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+        }
+        else
+        {
+          Log::Write(
+              Logger::Level::Verbose,
+              "Received error while closing: " + std::to_string(stowedError));
+        }
+
         std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
         m_stowedErrorInformation = stowedErrorInformation;
         m_stowedError = stowedError;
@@ -562,19 +572,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         // status callback.
         if (dwContext == 0)
         {
-          return;
-        }
-
-        // If we are called while the handle is closing, from an operation that was initiated but timed out 
-        // before the response came back, the callback will be invoked, thus we ignore the status callback.
-        // 
-        // The documentation(https://learn.microsoft.com/windows/win32/api/winhttp/nf-winhttp-winhttpsetstatuscallback)
-        // states : "At the end of asynchronous processing, the application may set the 
-        // callback function to NULL. This prevents the client application from receiving additional notifications."
-        // "At the end", not during the process, thus we can still receive notifications after the operation has timed out and we release the object.
-        if (internetStatus == WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
-        {
-          Log::Write(Logger::Level::Informational, "Callback invoked while handle closing.");
           return;
         }
 
@@ -1053,29 +1050,6 @@ _detail::WinHttpRequest::~WinHttpRequest()
     Log::Write(
         Logger::Level::Informational,
         "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
-
-    // Attempt to unregister the status callback. 
-    // If an operation was started before calling unregister, the callback will be called regardless.
-    // This is a best effort to unregister the callback. 
-    // 
-    // The documentation(https://learn.microsoft.com/windows/win32/api/winhttp/nf-winhttp-winhttpsetstatuscallback)
-    // states : "At the end of asynchronous processing, the application may set the
-    // callback function to NULL. This prevents the client application from receiving additional
-    // notifications." "At the end", not during the process, thus we can still receive notifications
-    // after the operation has timed out and we release the object.
-    if (!m_httpAction->RegisterWinHttpStatusCallback(m_requestHandle,false))
-    {
-      Log::Write(
-          Logger::Level::Informational,
-          "WinHttpRequest::~WinHttpRequest. Error while unregistering the status callback: "
-              + GetErrorMessage(GetLastError()));
-    }
-    else
-    {
-      Log::Write(
-          Logger::Level::Informational,
-          "WinHttpRequest::~WinHttpRequest. Status callback unregistered.");
-    }
 
     // Close the outstanding request handle, waiting until the HANDLE_CLOSING status is received.
     if (!m_httpAction->WaitForAction(
