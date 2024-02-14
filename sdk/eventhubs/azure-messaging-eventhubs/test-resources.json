@@ -247,7 +247,7 @@
     },
     "EVENTHUB_CONNECTION_STRING": {
       "type": "string",
-      "value": "[listkeys(variables('eventHubsAuthRuleResourceId'), '2015-08-01').primaryConnectionString]"
+      "value": '"[listkeys(variables('eventHubsAuthRuleResourceId'), '2015-08-01').primaryConnectionString]"'
     },
     "EVENTHUB_CONSUMER_GROUP": {
       "type": "string",
