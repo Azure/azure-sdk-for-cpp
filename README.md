@@ -33,8 +33,6 @@ vcpkg add port azure-identity-cpp azure-storage-blobs-cpp
 
 ```json
 {
-    "name": "your-app-name",
-    "version-string": "<Your app version like 1.0.0>", 
     "dependencies": [
         "azure-identity-cpp",
         "azure-storage-blobs-cpp"
