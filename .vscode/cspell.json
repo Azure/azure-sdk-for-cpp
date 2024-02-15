@@ -117,6 +117,7 @@
     "fibonacci",
     "francecentral",
     "gcovr",
+    "gearama",
     "githubio",
     "gmock",
     "gtest",
@@ -282,6 +283,7 @@
     {
       "filename": "**/eng/**",
       "words": [
+        "azblob",
         "TEAMPROJECTID",
         "issecret",
         "PSScriptRoot",

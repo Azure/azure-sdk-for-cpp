@@ -38,7 +38,7 @@ namespace Azure { namespace Identity { namespace _detail {
     mutable std::mutex m_sourcesMutex;
     // Used as a sentinel value to indicate that the index of the source being used for future calls
     // hasn't been found yet.
-    constexpr static std::size_t SuccessfulSourceNotSet = std::numeric_limits<std::size_t>::max();
+    constexpr static std::size_t SuccessfulSourceNotSet = (std::numeric_limits<std::size_t>::max)();
     // This needs to be atomic so that sentinel comparison is thread safe.
     mutable std::atomic<std::size_t> m_successfulSourceIndex = {SuccessfulSourceNotSet};
     bool m_reuseSuccessfulSource;

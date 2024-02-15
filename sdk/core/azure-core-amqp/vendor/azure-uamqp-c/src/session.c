@@ -616,7 +616,10 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                     if (link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING)
                     {
                         link_endpoint->link_endpoint_state = LINK_ENDPOINT_STATE_DETACHING;
-                        link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
+                        if (link_endpoint->frame_received_callback)
+                        {
+                            link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
+                        }
                     }
                     else
                     {

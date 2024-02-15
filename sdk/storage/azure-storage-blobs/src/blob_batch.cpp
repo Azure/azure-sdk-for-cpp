@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       const char* AfterNext(const std::string& expect) const
       {
-        return std::min(endPos, FindNext(expect) + expect.length());
+        return (std::min)(endPos, FindNext(expect) + expect.length());
       }
 
       std::string GetBeforeNextAndConsume(const std::string& expect)
@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         // This moves currPos
         auto ePos = FindNext(expect);
         std::string ret(currPos, ePos);
-        currPos = std::min(endPos, ePos + expect.length());
+        currPos = (std::min)(endPos, ePos + expect.length());
         return ret;
       }
     };
@@ -486,7 +486,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Context const& context)
     {
       (void)context;
-      size_t copy_length = std::min(count, m_content.length() - m_offset);
+      size_t copy_length = (std::min)(count, m_content.length() - m_offset);
       std::memcpy(buffer, &m_content[0] + m_offset, static_cast<size_t>(copy_length));
       m_offset += copy_length;
       return copy_length;

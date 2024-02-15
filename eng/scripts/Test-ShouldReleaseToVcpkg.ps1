@@ -5,7 +5,7 @@ param(
     [switch] $DailyRelease
 )
 
-."$PSSCriptRoot/../common/scripts/common.ps1"
+."$PSScriptRoot/../common/scripts/common.ps1"
 
 Set-StrictMode -Version 3
 

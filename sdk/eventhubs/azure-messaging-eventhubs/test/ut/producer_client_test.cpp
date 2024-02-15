@@ -71,12 +71,12 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   message3.Body = {'H', 'e', 'l', 'l', 'o', '3'};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
-  edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
+  edboptions.MaxBytes = (std::numeric_limits<uint16_t>::max)();
   edboptions.PartitionId = "1";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch{client.CreateBatch(edboptions)};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
-  edboptions2.MaxBytes = std::numeric_limits<uint16_t>::max();
+  edboptions2.MaxBytes = (std::numeric_limits<uint16_t>::max)();
   ;
   edboptions2.PartitionId = "2";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch2{client.CreateBatch(edboptions2)};
@@ -145,4 +145,108 @@ TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
     EXPECT_EQ(result.Name, eventHubName);
     EXPECT_EQ(result.PartitionId, "0");
   }());
+}
+
+TEST_F(ProducerClientTest, GetEventHubProperties_Multithreaded_LIVEONLY_)
+{
+  std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+  std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
+
+  Azure::Messaging::EventHubs::ProducerClientOptions options;
+  options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+
+  options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+  Azure::Messaging::EventHubs::ProducerClient client(connString, eventHubName);
+
+  std::vector<std::thread> threads;
+  std::vector<size_t> iterationsPerThread;
+  for (int i = 0; i < 20; i++)
+  {
+    threads.emplace_back([&client, eventHubName, &iterationsPerThread]() {
+      size_t iterations = 0;
+      std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
+      std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+      while ((std::chrono::system_clock::now() - start) <= timeout)
+      {
+        Azure::Messaging::EventHubs::Models::EventHubProperties result;
+        ASSERT_NO_THROW(result = client.GetEventHubProperties());
+        EXPECT_EQ(result.Name, eventHubName);
+        EXPECT_TRUE(result.PartitionIds.size() > 0);
+        std::this_thread::yield();
+        iterations++;
+      }
+      iterationsPerThread.push_back(iterations);
+    });
+  }
+  GTEST_LOG_(INFO) << "Waiting for threads to finish.";
+  for (auto& t : threads)
+  {
+    if (t.joinable())
+    {
+      t.join();
+    }
+  }
+  GTEST_LOG_(INFO) << "Threads finished.";
+  for (const auto i : iterationsPerThread)
+  {
+    GTEST_LOG_(INFO) << "Thread iterations: " << i;
+  }
+}
+
+TEST_F(ProducerClientTest, GetPartitionProperties_Multithreaded_LIVEONLY_)
+{
+  std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+  std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
+
+  Azure::Messaging::EventHubs::ProducerClientOptions options;
+  options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+
+  options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+  Azure::Messaging::EventHubs::ProducerClient client(connString, eventHubName);
+
+  auto ehProperties = client.GetEventHubProperties();
+  std::vector<std::thread> threads;
+  std::vector<size_t> iterationsPerThread;
+  for (const auto& partition : ehProperties.PartitionIds)
+  {
+    threads.emplace_back(std::thread([&client, partition, eventHubName, &iterationsPerThread]() {
+      GTEST_LOG_(INFO) << "Thread started for partition: " << partition << ".\n";
+      for (int i = 0; i < 20; i++)
+      {
+        std::vector<std::thread> partitionThreads;
+        partitionThreads.emplace_back([&client, &partition, eventHubName, &iterationsPerThread]() {
+          size_t iterations = 0;
+          std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
+          std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+          while ((std::chrono::system_clock::now() - start) <= timeout)
+          {
+            Azure::Messaging::EventHubs::Models::EventHubPartitionProperties result;
+            ASSERT_NO_THROW(result = client.GetPartitionProperties(partition));
+            EXPECT_EQ(result.Name, eventHubName);
+            EXPECT_EQ(result.PartitionId, partition);
+            std::this_thread::yield();
+            iterations++;
+          }
+          iterationsPerThread.push_back(iterations);
+        });
+        for (auto& t : partitionThreads)
+        {
+          if (t.joinable())
+          {
+            t.join();
+          }
+        }
+      }
+      GTEST_LOG_(INFO) << "Thread finished for partition: " << partition << ".\n";
+    }));
+  }
+  GTEST_LOG_(INFO) << "Waiting for threads to finish.";
+  for (auto& t : threads)
+  {
+    if (t.joinable())
+    {
+      t.join();
+    }
+  }
+  GTEST_LOG_(INFO) << iterationsPerThread.size() << " threads finished.";
 }

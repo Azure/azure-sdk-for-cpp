@@ -27,7 +27,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
     }
 
     auto cancelTimepoint = context.GetDeadline();
-    if (cancelTimepoint == Azure::DateTime::max())
+    if (cancelTimepoint == (Azure::DateTime::max)())
     {
       request.GetUrl().RemoveQueryParameter(HttpQueryTimeout);
     }
@@ -39,7 +39,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
                 .count()
           : -1;
       request.GetUrl().AppendQueryParameter(
-          HttpQueryTimeout, std::to_string(std::max(numSeconds, int64_t(1))));
+          HttpQueryTimeout, std::to_string((std::max)(numSeconds, int64_t(1))));
     }
 
     return nextPolicy.Send(request, context);

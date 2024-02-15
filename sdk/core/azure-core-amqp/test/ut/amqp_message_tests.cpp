@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-//#include "../src/models/private/message_impl.hpp"
+// #include "../src/models/private/message_impl.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 
 #include <gtest/gtest.h>
@@ -182,6 +182,9 @@ TEST_F(TestMessage, TestBodyAmqpData)
 
   EXPECT_EQ(message2->BodyType, MessageBodyType::Data);
 
+  GTEST_LOG_(INFO) << message;
+
+  message.SetBody({AmqpBinaryData{1, 3, 5, 7, 9, 10}, AmqpBinaryData{2, 4, 6, 8}});
   GTEST_LOG_(INFO) << message;
 }
 

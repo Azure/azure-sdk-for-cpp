@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   private:
     UniqueAmqpValueHandle m_value;
   };
-  std::ostream& operator<<(std::ostream& os, AMQP_TYPE const value);
+  std::ostream& operator<<(std::ostream& os, AMQP_TYPE value);
   std::ostream& operator<<(std::ostream& os, AMQP_VALUE const value);
 
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

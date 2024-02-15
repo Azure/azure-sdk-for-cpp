@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Test {
       while (length < data.size())
       {
         size_t s = static_cast<size_t>(RandomInt(0, 4_MB));
-        s = std::min(s, data.size() - length);
+        s = (std::min)(s, data.size() - length);
         crc64Streaming.Append(&data[length], s);
         crc64Streaming.Append(&data[length], 0);
         length += s;

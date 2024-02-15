@@ -60,7 +60,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
 
   XmlReader::XmlReader(const char* data, size_t length)
   {
-    if (length > static_cast<size_t>(std::numeric_limits<ULONG>::max()))
+    if (length > static_cast<size_t>((std::numeric_limits<ULONG>::max)()))
     {
       throw std::runtime_error("Xml data too big.");
     }
@@ -411,7 +411,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
   {
     XmlGlobalInitialize();
 
-    if (length > static_cast<size_t>(std::numeric_limits<int>::max()))
+    if (length > static_cast<size_t>((std::numeric_limits<int>::max)()))
     {
       throw std::runtime_error("Xml data too big.");
     }
