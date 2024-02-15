@@ -26,6 +26,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         # classes and enums directly into the documentation.
         set(DOXYGEN_INLINE_SOURCES NO)
         set(DOXYGEN_MARKDOWN_ID_STYLE GITHUB)
+        set(DOXYGEN_MACRO_EXPANSION YES)
         # Skip generating docs for json, test, samples, and private files.
         set(DOXYGEN_EXCLUDE_PATTERNS
             json.hpp

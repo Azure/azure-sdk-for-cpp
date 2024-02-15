@@ -358,7 +358,7 @@
   <option  id='PERLMOD_PRETTY' default='yes' type='bool'><value>YES</value></option>
   <option  id='PERLMOD_MAKEVAR_PREFIX' default='yes' type='string'><value><![CDATA[]]></value></option>
   <option  id='ENABLE_PREPROCESSING' default='yes' type='bool'><value>YES</value></option>
-  <option  id='MACRO_EXPANSION' default='yes' type='bool'><value>NO</value></option>
+  <option  id='MACRO_EXPANSION' default='no' type='bool'><value>YES</value></option>
   <option  id='EXPAND_ONLY_PREDEF' default='yes' type='bool'><value>NO</value></option>
   <option  id='SEARCH_INCLUDES' default='yes' type='bool'><value>YES</value></option>
   <option  id='INCLUDE_PATH' default='yes' type='stringlist'>
