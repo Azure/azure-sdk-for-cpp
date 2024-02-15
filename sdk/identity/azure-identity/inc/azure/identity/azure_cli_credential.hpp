@@ -53,7 +53,8 @@ namespace Azure { namespace Identity {
 
   /**
    * @brief Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access
-   * token.
+   * token. Mentioning #Azure::Identity::AzureCliCredentialOptions in a doc comment to create a
+   * link.
    */
   class AzureCliCredential
 #if !defined(TESTING_BUILD)
