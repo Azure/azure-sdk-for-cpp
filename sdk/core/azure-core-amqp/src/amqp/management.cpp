@@ -72,75 +72,107 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
-    /** Authentication needs to happen *before* the management object is created.
-     *
-     * Note that we ONLY enable authentication if we know we're talking to the management node.
-     * Other nodes require their own authentication.
-     */
-    if (m_options.ManagementNodeName == "$management")
+    std::unique_lock<std::mutex> lock(m_openCloseLock);
+    if (m_isOpen)
     {
-      m_accessToken = m_session->GetConnection()->AuthenticateAudience(
-          m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
-    }
-    {
-      _internal::MessageSenderOptions messageSenderOptions;
-      messageSenderOptions.EnableTrace = m_options.EnableTrace;
-      messageSenderOptions.MessageSource = m_options.ManagementNodeName;
-      messageSenderOptions.Name = m_options.ManagementNodeName + "-sender";
-      messageSenderOptions.AuthenticationRequired = false;
-
-      m_messageSender = std::make_shared<MessageSenderImpl>(
-          m_session, m_options.ManagementNodeName, messageSenderOptions, this);
-    }
-    {
-      _internal::MessageReceiverOptions messageReceiverOptions;
-      messageReceiverOptions.EnableTrace = m_options.EnableTrace;
-      messageReceiverOptions.MessageTarget = m_options.ManagementNodeName;
-      messageReceiverOptions.Name = m_options.ManagementNodeName + "-receiver";
-      messageReceiverOptions.AuthenticationRequired = false;
-
-      m_messageReceiver = std::make_shared<MessageReceiverImpl>(
-          m_session, m_options.ManagementNodeName, messageReceiverOptions, this);
+      throw std::runtime_error("Management object is already open.");
     }
 
-    // Now open the message sender and receiver.
-    SetState(ManagementState::Opening);
     try
     {
-      m_messageSender->Open(context);
-      m_messageSenderOpen = true;
-      m_messageReceiver->Open(context);
-      m_messageReceiverOpen = true;
-    }
-    catch (std::runtime_error const& e)
-    {
-      Log::Stream(Logger::Level::Warning)
-          << "Exception thrown opening message sender and receiver." << e.what();
-      return _internal::ManagementOpenStatus::Error;
-    }
-
-    // And finally, wait for the message sender and receiver to finish opening before we return.
-    auto result = m_openCompleteQueue.WaitForResult(context);
-    if (result)
-    {
-      // If the message sender or receiver failed to open, we need to close them
-      _internal::ManagementOpenStatus rv = std::get<0>(*result);
-      if (rv != _internal::ManagementOpenStatus::Ok)
+      /** Authentication needs to happen *before* the links are created.
+       *
+       * Note that we ONLY enable authentication if we know we're talking to the management node.
+       * Other nodes require their own authentication.
+       */
+      if (m_options.ManagementNodeName == "$management")
       {
-        Log::Stream(Logger::Level::Warning) << "Management operation failed to open.";
-        m_messageSender->Close(context);
+        m_accessToken = m_session->GetConnection()->AuthenticateAudience(
+            m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
+      }
+      {
+        _internal::MessageSenderOptions messageSenderOptions;
+        messageSenderOptions.EnableTrace = m_options.EnableTrace;
+        messageSenderOptions.MessageSource = m_options.ManagementNodeName;
+        messageSenderOptions.Name = m_options.ManagementNodeName + "-sender";
+        messageSenderOptions.AuthenticationRequired = false;
+
+        m_messageSender = std::make_shared<MessageSenderImpl>(
+            m_session, m_options.ManagementNodeName, messageSenderOptions, this);
+      }
+      {
+        _internal::MessageReceiverOptions messageReceiverOptions;
+        messageReceiverOptions.EnableTrace = m_options.EnableTrace;
+        messageReceiverOptions.MessageTarget = m_options.ManagementNodeName;
+        messageReceiverOptions.Name = m_options.ManagementNodeName + "-receiver";
+        messageReceiverOptions.AuthenticationRequired = false;
+        messageReceiverOptions.SettleMode = _internal::ReceiverSettleMode::First;
+
+        m_messageReceiver = std::make_shared<MessageReceiverImpl>(
+            m_session, m_options.ManagementNodeName, messageReceiverOptions, this);
+      }
+
+      // Now open the message sender and receiver.
+      SetState(ManagementState::Opening);
+      try
+      {
+        m_messageSender->Open(context);
+        m_messageSenderOpen = true;
+        m_messageReceiver->Open(context);
+        m_messageReceiverOpen = true;
+      }
+      catch (std::runtime_error const& e)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception thrown opening message sender and receiver." << e.what();
+        return _internal::ManagementOpenStatus::Error;
+      }
+
+      // And finally, wait for the message sender and receiver to finish opening before we return.
+      auto result = m_openCompleteQueue.WaitForResult(context);
+      if (result)
+      {
+        // If the message sender or receiver failed to open, we need to close them
+        _internal::ManagementOpenStatus rv = std::get<0>(*result);
+        if (rv != _internal::ManagementOpenStatus::Ok)
+        {
+          Log::Stream(Logger::Level::Warning) << "Management operation failed to open.";
+          m_messageSender->Close(context);
+          m_messageSenderOpen = false;
+          m_messageReceiver->Close(context);
+          m_messageReceiverOpen = false;
+        }
+        else
+        {
+          m_isOpen = true;
+        }
+        return rv;
+      }
+
+      // If result is null, then it means that the context was cancelled. Close the things we opened
+      // earlier (if any) and return the error.
+      m_messageSender->Close({});
+      m_messageSenderOpen = false;
+      m_messageReceiver->Close({});
+      m_messageReceiverOpen = false;
+      return _internal::ManagementOpenStatus::Cancelled;
+    }
+    catch (...)
+    {
+      Log::Stream(Logger::Level::Warning) << "Exception thrown during management open.";
+      // If an exception is thrown, ensure that the message sender and receiver are closed.
+      if (m_messageSenderOpen)
+      {
+        m_messageSender->Close({});
         m_messageSenderOpen = false;
-        m_messageReceiver->Close(context);
+      }
+      if (m_messageReceiverOpen)
+      {
+        m_messageReceiver->Close({});
         m_messageReceiverOpen = false;
       }
-      else
-      {
-        m_isOpen = true;
-      }
-      return rv;
+      throw;
     }
-    // If result is null, then it means that the context was cancelled.
-    return _internal::ManagementOpenStatus::Cancelled;
   }
 
   _internal::ManagementOperationResult ManagementClientImpl::ExecuteOperation(
@@ -150,46 +182,108 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage messageToSend,
       Context const& context)
   {
-    // If the connection is authenticated, include the token in the message.
-    if (!m_accessToken.Token.empty())
+    try
     {
-      messageToSend.ApplicationProperties["security_token"]
-          = Models::AmqpValue{m_accessToken.Token};
-    }
-    messageToSend.ApplicationProperties.emplace("operation", operationToPerform);
-    messageToSend.ApplicationProperties.emplace("type", typeOfOperation);
-    if (!locales.empty())
-    {
-      messageToSend.ApplicationProperties.emplace("locales", locales);
-    }
-    messageToSend.Properties.MessageId = m_nextMessageId;
-    m_expectedMessageId = m_nextMessageId;
-    m_sendCompleted = false;
-    m_nextMessageId++;
+      // If the connection is authenticated, include the token in the message.
+      if (!m_accessToken.Token.empty())
+      {
+        messageToSend.ApplicationProperties["security_token"]
+            = Models::AmqpValue{m_accessToken.Token};
+      }
+      messageToSend.ApplicationProperties.emplace("operation", operationToPerform);
+      messageToSend.ApplicationProperties.emplace("type", typeOfOperation);
+      if (!locales.empty())
+      {
+        messageToSend.ApplicationProperties.emplace("locales", locales);
+      }
 
-    auto sendResult = m_messageSender->Send(messageToSend, context);
-    if (std::get<0>(sendResult) != _internal::MessageSendStatus::Ok)
-    {
-      _internal::ManagementOperationResult rv;
-      rv.Status = _internal::ManagementOperationStatus::Error;
-      rv.StatusCode = 500;
-      rv.Error = std::get<1>(sendResult);
-      rv.Message = nullptr;
-      return rv;
+      // Set the message ID and remember it for later.
+      auto requestId = Azure::Core::Uuid::CreateUuid().ToString();
+
+      messageToSend.Properties.MessageId
+          = static_cast<Azure::Core::Amqp::Models::AmqpValue>(requestId);
+      {
+        std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+
+        Log::Stream(Logger::Level::Verbose)
+            << "ManagementClient::ExecuteOperation: " << requestId << ". Create Queue for request.";
+        m_messageQueues.emplace(requestId, std::make_unique<ManagementOperationQueue>());
+        m_sendCompleted = false;
+      }
+
+      auto sendResult = m_messageSender->Send(messageToSend, context);
+      if (std::get<0>(sendResult) != _internal::MessageSendStatus::Ok)
+      {
+        auto sendStatus = std::get<0>(sendResult);
+        const auto& sendError = std::get<1>(sendResult);
+        Log::Stream(Logger::Level::Error)
+            << "ManagementClient::ExecuteOperation, send failed" << sendStatus;
+        _internal::ManagementOperationResult rv;
+        switch (sendStatus)
+        {
+          case _internal::MessageSendStatus::Error:
+            rv.Status = _internal::ManagementOperationStatus::Error;
+            break;
+          case _internal::MessageSendStatus::Cancelled:
+            rv.Status = _internal::ManagementOperationStatus::Cancelled;
+            break;
+          case _internal::MessageSendStatus::Invalid:
+            rv.Status = _internal::ManagementOperationStatus::Invalid;
+            break;
+          case _internal::MessageSendStatus::Timeout:
+            rv.Status = _internal::ManagementOperationStatus::Error;
+            break;
+          case _internal::MessageSendStatus::Ok:
+            AZURE_ASSERT_MSG(false, "MessageSendStatus::Ok is not a failure status.");
+            break;
+        }
+        rv.StatusCode = 500;
+        rv.Error = sendError;
+        rv.Message = nullptr;
+        {
+          std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+          // Remove the queue from the map, we don't need it anymore.
+          m_messageQueues.erase(requestId);
+        }
+        return rv;
+      }
+
+      auto result = m_messageQueues.at(requestId)->WaitForResult(context);
+      if (result)
+      {
+        _internal::ManagementOperationResult rv;
+        rv.Status = std::get<0>(*result);
+        rv.StatusCode = std::get<1>(*result);
+        rv.Error = std::get<2>(*result);
+        rv.Message = std::get<3>(*result);
+
+        {
+          std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+          // Remove the queue from the map, we don't need it anymore.
+          m_messageQueues.erase(requestId);
+        }
+        return rv;
+      }
+      else
+      {
+        throw Azure::Core::OperationCancelledException("Management operation cancelled.");
+      }
     }
-    auto result = m_messageQueue.WaitForResult(context);
-    if (result)
+    catch (...)
     {
-      _internal::ManagementOperationResult rv;
-      rv.Status = std::get<0>(*result);
-      rv.StatusCode = std::get<1>(*result);
-      rv.Error = std::get<2>(*result);
-      rv.Message = std::get<3>(*result);
-      return rv;
-    }
-    else
-    {
-      throw Azure::Core::OperationCancelledException("Management operation cancelled.");
+      Log::Stream(Logger::Level::Error) << "ManagementClient::ExecuteOperation: Exception thrown. "
+                                           "Closing message sender and receiver.";
+      if (m_messageSenderOpen)
+      {
+        m_messageSender->Close({});
+        m_messageSenderOpen = false;
+      }
+      if (m_messageReceiverOpen)
+      {
+        m_messageReceiver->Close({});
+        m_messageReceiverOpen = false;
+      }
+      throw;
     }
   }
 
@@ -197,7 +291,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ManagementClientImpl::Close(Context const& context)
   {
+    std::unique_lock<std::mutex> lock(m_openCloseLock);
     Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close" << std::endl;
+    if (!m_isOpen)
+    {
+      throw std::runtime_error("Management object is not open.");
+    }
+
     SetState(ManagementState::Closing);
     if (m_messageSender && m_messageSenderOpen)
     {
@@ -449,6 +549,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   Models::AmqpValue ManagementClientImpl::IndicateError(
+      std::string const& correlationId,
       std::string const& condition,
       std::string const& description)
   {
@@ -463,11 +564,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Let external callers know that the error was triggered.
       m_eventHandler->OnError(error);
     }
+    if (!correlationId.empty())
+    {
+      // Ensure nobody else is messing with the message queues right now.
+      std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
 
-    // Complete any outstanding receives with an error.
-    m_messageQueue.CompleteOperation(
-        _internal::ManagementOperationStatus::Error, 500, error, nullptr);
-
+      // If the correlation ID is found locally, complete the operation with an error.
+      if (m_messageQueues.find(correlationId) != m_messageQueues.end())
+      {
+        // Complete any outstanding receives with an error.
+        m_messageQueues.at(correlationId)
+            ->CompleteOperation(_internal::ManagementOperationStatus::Error, 500, error, nullptr);
+      }
+    }
     return Models::_internal::Messaging::DeliveryRejected(condition, description, {});
   }
 
@@ -475,30 +584,46 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::MessageReceiver const&,
       std::shared_ptr<Models::AmqpMessage> const& message)
   {
-    if (message->ApplicationProperties.empty())
-    {
-      return IndicateError(
-          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
-          "Received message does not have application properties.");
-    }
     if (!message->Properties.CorrelationId.HasValue())
     {
       return IndicateError(
+          "",
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID not found.");
     }
-    else if (message->Properties.CorrelationId.Value().GetType() != Models::AmqpValueType::Ulong)
+    else if (message->Properties.CorrelationId.Value().GetType() != Models::AmqpValueType::String)
     {
       return IndicateError(
+          "",
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID is not a ulong.");
     }
-    uint64_t correlationId = message->Properties.CorrelationId.Value();
+    std::string requestId = static_cast<std::string>(message->Properties.CorrelationId.Value());
+
+    // Ensure nobody else is messing with the message queues right now.
+    std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+    auto messageQueue = m_messageQueues.find(requestId);
+    if (messageQueue == m_messageQueues.end())
+    {
+      return IndicateError(
+          requestId,
+          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
+          "Received message correlation ID does not match request ID.");
+    }
+
+    if (message->ApplicationProperties.empty())
+    {
+      return IndicateError(
+          requestId,
+          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
+          "Received message does not have application properties.");
+    }
 
     auto statusCodeMap = message->ApplicationProperties.find(m_options.ExpectedStatusCodeKeyName);
     if (statusCodeMap == message->ApplicationProperties.end())
     {
       return IndicateError(
+          requestId,
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message does not have a " + m_options.ExpectedStatusCodeKeyName
               + " status code key.");
@@ -506,6 +631,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     else if (statusCodeMap->second.GetType() != Models::AmqpValueType::Int)
     {
       return IndicateError(
+          requestId,
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message " + m_options.ExpectedStatusCodeKeyName + " value is not an int.");
     }
@@ -520,6 +646,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       if (statusDescription->second.GetType() != Models::AmqpValueType::String)
       {
         return IndicateError(
+            requestId,
             Models::_internal::AmqpErrorCondition::InternalError.ToString(),
             "Received message " + m_options.ExpectedStatusDescriptionKeyName
                 + " value is not a string.");
@@ -527,12 +654,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       description = static_cast<std::string>(statusDescription->second);
     }
 
-    if (correlationId != m_expectedMessageId)
-    {
-      return IndicateError(
-          Models::_internal::AmqpErrorCondition::InternalError.ToString(),
-          "Received message correlation ID does not match request ID.");
-    }
     if (!m_sendCompleted)
     {
       if (m_options.EnableTrace)
@@ -549,12 +670,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // 2616](https://www.rfc-editor.org/rfc/rfc2616#section-6.1.1) status codes.
     if ((statusCode < 200) || (statusCode > 299))
     {
-      m_messageQueue.CompleteOperation(
+      m_messageQueues.at(requestId)->CompleteOperation(
           _internal::ManagementOperationStatus::FailedBadStatus, statusCode, messageError, message);
     }
     else
     {
-      m_messageQueue.CompleteOperation(
+      m_messageQueues.at(requestId)->CompleteOperation(
           _internal::ManagementOperationStatus::Ok, statusCode, messageError, message);
     }
     return Models::_internal::Messaging::DeliveryAccepted();

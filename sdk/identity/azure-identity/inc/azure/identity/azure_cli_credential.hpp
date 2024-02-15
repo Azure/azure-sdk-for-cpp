@@ -9,6 +9,7 @@
 #pragma once
 
 #include "azure/identity/detail/token_cache.hpp"
+#include "azure/identity/dll_import_export.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
@@ -17,6 +18,12 @@
 #include <chrono>
 #include <string>
 #include <vector>
+
+#if defined(_azure_TESTING_BUILD)
+namespace Azure { namespace Identity { namespace Test {
+  class AzureCliTestCredential;
+}}} // namespace Azure::Identity::Test
+#endif
 
 namespace Azure { namespace Identity {
   /**
@@ -50,10 +57,15 @@ namespace Azure { namespace Identity {
    * token.
    */
   class AzureCliCredential
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
       final
 #endif
       : public Core::Credentials::TokenCredential {
+
+#if defined(_azure_TESTING_BUILD)
+    friend class Azure::Identity::Test::AzureCliTestCredential;
+#endif
+
   protected:
     /** @brief The cache for the access token. */
     _detail::TokenCache m_tokenCache;
@@ -106,13 +118,12 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
 
-#if !defined(TESTING_BUILD)
   private:
-#else
-  protected:
-#endif
-    virtual std::string GetAzCommand(std::string const& scopes, std::string const& tenantId) const;
-    virtual int GetLocalTimeToUtcDiffSeconds() const;
+    _azure_VIRTUAL_FOR_TESTS std::string GetAzCommand(
+        std::string const& scopes,
+        std::string const& tenantId) const;
+
+    _azure_VIRTUAL_FOR_TESTS int GetLocalTimeToUtcDiffSeconds() const;
   };
 
 }} // namespace Azure::Identity

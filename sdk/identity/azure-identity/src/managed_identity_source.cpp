@@ -137,7 +137,7 @@ Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
   return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
-    return TokenCredentialImpl::GetToken(context, [&]() {
+    return TokenCredentialImpl::GetToken(context, true, [&]() {
       auto request = std::make_unique<TokenRequest>(m_request);
 
       if (!scopesStr.empty())
@@ -219,7 +219,7 @@ Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
   return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
-    return TokenCredentialImpl::GetToken(context, [&]() {
+    return TokenCredentialImpl::GetToken(context, true, [&]() {
       using Azure::Core::Url;
       using Azure::Core::Http::HttpMethod;
 
@@ -320,6 +320,7 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
   return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
     return TokenCredentialImpl::GetToken(
         context,
+        true,
         createRequest,
         [&](auto const statusCode, auto const& response) -> std::unique_ptr<TokenRequest> {
           using Core::Credentials::AuthenticationException;
@@ -418,7 +419,7 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
   return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
-    return TokenCredentialImpl::GetToken(context, [&]() {
+    return TokenCredentialImpl::GetToken(context, true, [&]() {
       auto request = std::make_unique<TokenRequest>(m_request);
 
       if (!scopesStr.empty())

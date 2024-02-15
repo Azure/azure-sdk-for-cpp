@@ -191,6 +191,8 @@ AccessToken AzureCliCredential::GetToken(
             "accessToken",
             "expiresIn",
             std::vector<std::string>{"expires_on", "expiresOn"},
+            "",
+            false,
             GetLocalTimeToUtcDiffSeconds());
       }
       catch (json::exception const&)

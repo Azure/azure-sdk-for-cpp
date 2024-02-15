@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Error,
   };
 
-  std::ostream& operator<<(std::ostream& stream, LinkState const& linkState);
+  std::ostream& operator<<(std::ostream& stream, LinkState linkState);
 
   enum class LinkTransferResult
   {

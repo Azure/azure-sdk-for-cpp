@@ -117,6 +117,7 @@
     "fibonacci",
     "francecentral",
     "gcovr",
+    "gearama",
     "githubio",
     "gmock",
     "gtest",
@@ -201,6 +202,7 @@
     "rtti",
     "rwxrw",
     "sasia",
+    "sbom",
     "Schonberger",
     "scus",
     "SDDL",
@@ -251,6 +253,7 @@
     "Wunused",
     "xbox",
     "Xclang",
+    "xcode",
     "XSMB",
     "zulu"
   ],
@@ -280,6 +283,7 @@
     {
       "filename": "**/eng/**",
       "words": [
+        "azblob",
         "TEAMPROJECTID",
         "issecret",
         "PSScriptRoot",

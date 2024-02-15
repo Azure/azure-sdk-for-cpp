@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
-  std::ostream& operator<<(std::ostream& stream, ReceiverSettleMode const& settleMode)
+  std::ostream& operator<<(std::ostream& stream, ReceiverSettleMode settleMode)
   {
     switch (settleMode)
     {
@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
   std::string MessageReceiver::GetLinkName() const { return m_impl->GetLinkName(); }
-  std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState const& state)
+  std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState state)
   {
     switch (state)
     {
@@ -393,7 +393,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       "MESSAGE_RECEIVER_STATE_ERROR",
   };
 
-  std::ostream& operator<<(std::ostream& stream, MESSAGE_RECEIVER_STATE const& state)
+  std::ostream& operator<<(std::ostream& stream, MESSAGE_RECEIVER_STATE state)
   {
     if (state < sizeof(MESSAGE_RECEIVER_STATEStrings) / sizeof(MESSAGE_RECEIVER_STATEStrings[0]))
     {

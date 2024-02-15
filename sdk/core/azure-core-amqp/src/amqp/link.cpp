@@ -121,7 +121,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 #endif
 
-  std::ostream& operator<<(std::ostream& os, LinkState const& linkState)
+  std::ostream& operator<<(std::ostream& os, LinkState linkState)
   {
     switch (linkState)
     {
@@ -204,7 +204,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::_internal::AzureNoReturnPath(
           "Destroying link while link detach subscription is still active.");
     }
-
+    auto lock{m_session->GetConnection()->Lock()};
     if (m_link)
     {
       link_destroy(m_link);
@@ -507,19 +507,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     {
       auto lock{m_session->GetConnection()->Lock()};
-      if (m_eventHandler)
+      if (link_attach(m_link, OnTransferReceivedFn, OnLinkStateChangedFn, OnLinkFlowOnFn, this))
       {
-        if (link_attach(m_link, OnTransferReceivedFn, OnLinkStateChangedFn, OnLinkFlowOnFn, this))
-        {
-          throw std::runtime_error("Could not set attach properties.");
-        }
-      }
-      else
-      {
-        if (link_attach(m_link, nullptr, nullptr, nullptr, this))
-        {
-          throw std::runtime_error("Could not set attach properties.");
-        }
+        throw std::runtime_error("Could not set attach properties.");
       }
     }
     // Mark the connection as async so that we can use the async APIs.
