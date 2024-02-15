@@ -31,15 +31,30 @@
 # PRLabel: %Attestation
 /sdk/attestation/        @gkostal @anilba06 @ahmadmsft @LarryOsterman @rickwinter
 
+# AzureSDKOwners: @LarryOsterman
+# ServiceLabel: %Tables
+# PRLabel: %Tables
+/sdk/eventhubs/           @LarryOsterman @antkmsft @ahsonkhan @gearama @RickWinter
+
 # AzureSDKOwners: @gearama
 # ServiceLabel:  %KeyVault
 # PRLabel: %KeyVault
 /sdk/keyvault/           @gearama @antkmsft @rickwinter @LarryOsterman
 
+# AzureSDKOwners: @LarryOsterman
+# ServiceLabel: %ServiceBus
+# PRLabel: %ServiceBus
+/sdk/servicebus/           @LarryOsterman @antkmsft @ahsonkhan @gearama @RickWinter
+
 # AzureSDKOwners: @gearama
 # ServiceLabel: %Storage
 # PRLabel: %Storage
 /sdk/storage/            @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @gearama @LarryOsterman @microzchang
+
+# AzureSDKOwners: @gearama
+# ServiceLabel: %Tables
+# PRLabel: %Tables
+/sdk/tables/            @gearama @LarryOsterman
 
 # AzureSDKOwners: @danieljurek
 # PRLabel: %EngSys
