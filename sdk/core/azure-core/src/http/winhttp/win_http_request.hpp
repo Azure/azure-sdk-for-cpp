@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         WinHttpTransportOptions const& options);
 
     ~WinHttpRequest();
-
+    void MarkRequestHandleClosed() { m_requestHandleClosed = true; };
     void Upload(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void SendRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void ReceiveResponse(Azure::Core::Context const& context);
