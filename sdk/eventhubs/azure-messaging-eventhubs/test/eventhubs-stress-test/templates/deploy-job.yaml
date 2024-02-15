@@ -9,14 +9,17 @@ spec:
   shareProcessNamespace: true
   containers:
     - name: otel-collector
-      image: mcr.microsoft.com/oss/otel/opentelemetry-collector-contrib:0.94.0
+#      image: mcr.microsoft.com/oss/otel/opentelemetry-collector-contrib:0.94.0
+      image: stresspgs7b6dif73rup6.azurecr.io/stress/opentelemetry-collector-contrib-shell:0.94.0
       imagePullPolicy: Always
       resources:
         limits:
           memory: 500Mi
           cpu: "0.5"
-      args:
-        --config=/etc/otel-collector-config.yml
+      env:
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+#          value: "InstrumentationKey=74b963eb-44c8-4d4d-987d-9a8b4cb2c787;IngestionEndpoint=https://westus3-1.in.applicationinsights.azure.com/"
+          value: "InstrumentationKey=92d986a9-78e2-41de-b25b-21bea2e1d7cc;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
     - name: main
       image: {{ .Stress.imageTag }}
       imagePullPolicy: Always
@@ -24,11 +27,9 @@ spec:
       args:
         - |
           set -a;
-          ps -a;
-          cat $ENV_FILE;
           source $ENV_FILE;
           ./azure-messaging-eventhubs-stress-test;
-          kill `pidof opentelemetry-collector-contrib`;
+          kill `pidof otelcol-contrib`;
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
       resources:
         limits:
