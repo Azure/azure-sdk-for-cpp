@@ -41,11 +41,6 @@
 # PRLabel: %KeyVault
 /sdk/keyvault/           @gearama @antkmsft @rickwinter @LarryOsterman
 
-# AzureSDKOwners: @LarryOsterman
-# ServiceLabel: %ServiceBus
-# PRLabel: %ServiceBus
-/sdk/servicebus/           @LarryOsterman @antkmsft @ahsonkhan @gearama @RickWinter
-
 # AzureSDKOwners: @gearama
 # ServiceLabel: %Storage
 # PRLabel: %Storage
