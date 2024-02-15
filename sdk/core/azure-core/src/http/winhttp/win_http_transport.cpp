@@ -532,8 +532,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     else
     {
       Log::Write(
-          Logger::Level::Verbose,
-          "Received error while closing: " + std::to_string(stowedError));
+          Logger::Level::Verbose, "Received error while closing: " + std::to_string(stowedError));
     }
 
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
