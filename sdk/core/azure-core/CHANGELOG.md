@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed and issue where WinHttp transport was not closing correctly in case of request timeout.
+
 ### Other Changes
 
 - Move the connection back to the connection pool when HTTP error 404 was received. This may improve the performance of a multithreaded application when libcurl transport adapter is being used. (A community contribution, courtesy of _[mchelnokov](https://github.com/mchelnokov)_)
