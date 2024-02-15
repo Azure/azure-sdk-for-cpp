@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed and issue where WinHttp transport was not closing correctly in case of request timeout.
+- [[5244](https://github.com/Azure/azure-sdk-for-cpp/issues/5244)] Fixed an issue where WinHttp transport was not closing correctly in case of request timeout.
 
 ### Other Changes
 
