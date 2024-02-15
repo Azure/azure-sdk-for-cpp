@@ -77,7 +77,7 @@ try {
     $rawVcpkgConfig = Get-Content -Raw -Path $vcpkgConfigPath
     $vcpkgConfig = ConvertFrom-Json $rawVcpkgConfig
 
-    $azSdkRepoBaseline = (Get-Content $RepoRoot/vcpkg.json -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json).'builtin-baseline'
+    $azSdkRepoBaseline = (Get-Content $PSScriptRoot/../../vcpkg.json -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json).'builtin-baseline'
     if ($azSdkRepoBaseline -and $vcpkgConfig.'default-registry'.baseline) {
         $vcpkgConfig.'default-registry'.baseline = $azSdkRepoBaseline
     }
