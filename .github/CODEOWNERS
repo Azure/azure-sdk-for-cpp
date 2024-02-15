@@ -32,8 +32,8 @@
 /sdk/attestation/        @gkostal @anilba06 @ahmadmsft @LarryOsterman @rickwinter
 
 # AzureSDKOwners: @LarryOsterman
-# ServiceLabel: %Tables
-# PRLabel: %Tables
+# ServiceLabel: %Event Hubs
+# PRLabel: %Event Hubs
 /sdk/eventhubs/           @LarryOsterman @antkmsft @ahsonkhan @gearama @RickWinter
 
 # AzureSDKOwners: @gearama
@@ -49,7 +49,7 @@
 # AzureSDKOwners: @gearama
 # ServiceLabel: %Tables
 # PRLabel: %Tables
-/sdk/tables/            @gearama @LarryOsterman
+/sdk/tables/            @gearama @LarryOsterman @antkmsft @ahsonkhan
 
 # AzureSDKOwners: @danieljurek
 # PRLabel: %EngSys
