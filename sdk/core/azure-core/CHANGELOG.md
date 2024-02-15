@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[5244]](https://github.com/Azure/azure-sdk-for-cpp/issues/5244) WinHTTP transport not closing correctly in case of a request timeout.
+
 ### Other Changes
 
 - Move the connection back to the connection pool when HTTP error 404 was received. This may improve the performance of a multithreaded application when libcurl transport adapter is being used. (A community contribution, courtesy of _[mchelnokov](https://github.com/mchelnokov)_)
