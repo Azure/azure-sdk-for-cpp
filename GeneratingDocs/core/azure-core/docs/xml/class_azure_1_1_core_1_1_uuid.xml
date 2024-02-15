@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_uuid" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Uuid</compoundname>
+    <includes refid="uuid_8hpp" local="no">uuid.hpp</includes>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_uuid_1aca736c92bc6e6914b1e0a4f2c5e571fb" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr size_t</type>
+        <definition>constexpr size_t Azure::Core::Uuid::UuidSize</definition>
+        <argsstring></argsstring>
+        <name>UuidSize</name>
+        <qualifiedname>Azure::Core::Uuid::UuidSize</qualifiedname>
+        <initializer>= 16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/uuid.hpp" line="26" column="29" bodyfile="inc/azure/core/uuid.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_uuid_1a40564655fd941d7f782796a84bc20321" prot="private" static="no" mutable="no">
+        <type>std::array&lt; uint8_t, UuidSize &gt;</type>
+        <definition>std::array&lt;uint8_t, UuidSize&gt; Azure::Core::Uuid::m_uuid</definition>
+        <argsstring></argsstring>
+        <name>m_uuid</name>
+        <qualifiedname>Azure::Core::Uuid::m_uuid</qualifiedname>
+        <initializer>{}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/uuid.hpp" line="28" column="16" bodyfile="inc/azure/core/uuid.hpp" bodystart="28" bodyend="28"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_uuid_1afab7ad47828399c8cbbce803846a25b7" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Uuid::Uuid</definition>
+        <argsstring>(uint8_t const uuid[UuidSize])</argsstring>
+        <name>Uuid</name>
+        <qualifiedname>Azure::Core::Uuid::Uuid</qualifiedname>
+        <param>
+          <type>uint8_t const</type>
+          <declname>uuid</declname>
+          <array>[UuidSize]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/uuid.hpp" line="31" column="5" bodyfile="inc/azure/core/uuid.hpp" bodystart="31" bodyend="31"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_uuid_1a711b5a31244382863c81000a7245f182" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Uuid::ToString</definition>
+        <argsstring>()</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Core::Uuid::ToString</qualifiedname>
+        <briefdescription>
+<para>Gets <ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref> as a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/uuid.hpp" line="38" column="17" bodyfile="src/uuid.cpp" bodystart="20" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_uuid_1a89f5d7ef27af38bbcd0676444a087269" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::array&lt; uint8_t, UuidSize &gt; const &amp;</type>
+        <definition>std::array&lt; uint8_t, UuidSize &gt; const  &amp; Azure::Core::Uuid::AsArray</definition>
+        <argsstring>() const</argsstring>
+        <name>AsArray</name>
+        <qualifiedname>Azure::Core::Uuid::AsArray</qualifiedname>
+        <briefdescription>
+<para>Returns the binary value of the <ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref> for consumption by clients who need non-string representation of the <ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>An array with the binary representation of the <ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/uuid.hpp" line="45" column="22" bodyfile="inc/azure/core/uuid.hpp" bodystart="45" bodyend="45"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_uuid_1a911dd11d09db4ed8ef0fd157a9de678f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref></type>
+        <definition>Uuid Azure::Core::Uuid::CreateUuid</definition>
+        <argsstring>()</argsstring>
+        <name>CreateUuid</name>
+        <qualifiedname>Azure::Core::Uuid::CreateUuid</qualifiedname>
+        <briefdescription>
+<para>Creates a new random UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/uuid.hpp" line="51" column="17" bodyfile="src/uuid.cpp" bodystart="50" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_uuid_1aee8d5f158b0e2721faefb2e7ad1d694b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref></type>
+        <definition>Uuid Azure::Core::Uuid::CreateFromArray</definition>
+        <argsstring>(std::array&lt; uint8_t, UuidSize &gt; const &amp;uuid)</argsstring>
+        <name>CreateFromArray</name>
+        <qualifiedname>Azure::Core::Uuid::CreateFromArray</qualifiedname>
+        <param>
+          <type>std::array&lt; uint8_t, UuidSize &gt; const &amp;</type>
+          <declname>uuid</declname>
+        </param>
+        <briefdescription>
+<para>Construct a <ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref> from an existing UUID represented as an array of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a <ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref> from a UUID created in an external scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/uuid.hpp" line="57" column="17" bodyfile="src/uuid.cpp" bodystart="87" bodyend="91"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Universally unique identifier. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/uuid.hpp" line="23" column="3" bodyfile="inc/azure/core/uuid.hpp" bodystart="23" bodyend="58"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_uuid_1a89f5d7ef27af38bbcd0676444a087269" prot="public" virt="non-virtual"><scope>Azure::Core::Uuid</scope><name>AsArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_uuid_1aee8d5f158b0e2721faefb2e7ad1d694b" prot="public" virt="non-virtual"><scope>Azure::Core::Uuid</scope><name>CreateFromArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_uuid_1a911dd11d09db4ed8ef0fd157a9de678f" prot="public" virt="non-virtual"><scope>Azure::Core::Uuid</scope><name>CreateUuid</name></member>
+      <member refid="class_azure_1_1_core_1_1_uuid_1a40564655fd941d7f782796a84bc20321" prot="private" virt="non-virtual"><scope>Azure::Core::Uuid</scope><name>m_uuid</name></member>
+      <member refid="class_azure_1_1_core_1_1_uuid_1a711b5a31244382863c81000a7245f182" prot="public" virt="non-virtual"><scope>Azure::Core::Uuid</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_core_1_1_uuid_1afab7ad47828399c8cbbce803846a25b7" prot="private" virt="non-virtual"><scope>Azure::Core::Uuid</scope><name>Uuid</name></member>
+      <member refid="class_azure_1_1_core_1_1_uuid_1aca736c92bc6e6914b1e0a4f2c5e571fb" prot="private" virt="non-virtual"><scope>Azure::Core::Uuid</scope><name>UuidSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

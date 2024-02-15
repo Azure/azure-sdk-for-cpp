@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpList</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; AmqpValue &gt;, AmqpList &gt;</basecompoundref>
+    <includes refid="amqp__value_8hpp" local="no">amqp_value.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a59be50e03a650d3f9e9e28b4783e535e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpList::AmqpList</definition>
+        <argsstring>()</argsstring>
+        <name>AmqpList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::AmqpList</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="746" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="746" bodyend="746"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a3034d8afb801b72bd14b9cfab36d1a88" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Amqp::Models::AmqpList::~AmqpList</definition>
+        <argsstring>()=default</argsstring>
+        <name>~AmqpList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::~AmqpList</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="747" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1ab50ee879994cadc52d2780343e0fd14d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpList::AmqpList</definition>
+        <argsstring>(std::initializer_list&lt; std::vector&lt; AmqpValue &gt;::value_type &gt; const &amp;values)</argsstring>
+        <name>AmqpList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::AmqpList</qualifiedname>
+        <param>
+          <type>std::initializer_list&lt; std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &gt;::value_type &gt; const &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> object with an initializer list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="749" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="749" bodyend="752"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a56a30f9ae6866b75075ca3c973bf4645" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpList::AmqpList</definition>
+        <argsstring>(const AmqpList &amp;other)=default</argsstring>
+        <name>AmqpList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::AmqpList</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="755" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a6adf47d8565feb7472ac3eaf9d69ad04" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &amp;</type>
+        <definition>AmqpList &amp; Azure::Core::Amqp::Models::AmqpList::operator=</definition>
+        <argsstring>(const AmqpList &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="758" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeccfcb032c46f1146762c124ad78b87b" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpList::AmqpList</definition>
+        <argsstring>(AmqpList &amp;&amp;other) noexcept=default</argsstring>
+        <name>AmqpList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::AmqpList</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="761" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a9bb512bd8561c05719ddda3cee4322c7" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &amp;</type>
+        <definition>AmqpList &amp; Azure::Core::Amqp::Models::AmqpList::operator=</definition>
+        <argsstring>(AmqpList &amp;&amp;other) noexcept=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="764" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeaff1db8f5af5b66e02ac815959d148b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpList::AmqpList</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>AmqpList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpList::AmqpList</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> object from an existing <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> item. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this does NOT capture the passed in AMQP_VALUE object, the caller is responsible for freeing that object.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP array value to capture. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="773" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="857" bodyend="874"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An AMQP List is a sequence of polymorphic values. It has the behavioral characteristics of an AMQP array, but allows the members to be polymorphic. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; AmqpValue &gt;, AmqpList &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpList</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; AmqpValue &gt;, AmqpList &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpList</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="744" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="744" bodyend="774"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a59be50e03a650d3f9e9e28b4783e535e" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>AmqpList</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1ab50ee879994cadc52d2780343e0fd14d" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>AmqpList</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a56a30f9ae6866b75075ca3c973bf4645" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>AmqpList</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeccfcb032c46f1146762c124ad78b87b" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>AmqpList</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeaff1db8f5af5b66e02ac815959d148b" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>AmqpList</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a6adf47d8565feb7472ac3eaf9d69ad04" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a9bb512bd8561c05719ddda3cee4322c7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a3034d8afb801b72bd14b9cfab36d1a88" prot="public" virt="virtual"><scope>Azure::Core::Amqp::Models::AmqpList</scope><name>~AmqpList</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,515 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_c_h_a_n_g_e_l_o_g_8md" kind="file" language="Markdown">
+    <compoundname>CHANGELOG.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Release<sp/>History</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.11.0-beta.1<sp/>(Unreleased)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.10.0<sp/>(2023-11-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Features<sp/>in<sp/>`12.10.0-beta.1`<sp/>are<sp/>now<sp/>generally<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.10.0-beta.1<sp/>(2023-10-17)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>new<sp/>extendable<sp/>enum<sp/>`BlobAudience`</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>new<sp/>field<sp/>`Audience`<sp/>in<sp/>`BlobClientOptions`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.9.0<sp/>(2023-09-12)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Features<sp/>in<sp/>`12.9.0-beta.1`<sp/>and<sp/>`12.9.0-beta.2`<sp/>are<sp/>now<sp/>generally<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.9.0-beta.2<sp/>(2023-08-12)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>TenantId<sp/>can<sp/>now<sp/>be<sp/>discovered<sp/>through<sp/>the<sp/>service<sp/>challenge<sp/>response,<sp/>when<sp/>using<sp/>a<sp/>TokenCredential<sp/>for<sp/>authorization.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>A<sp/>new<sp/>property<sp/>is<sp/>now<sp/>available<sp/>on<sp/>`BlobClientOptions`<sp/>called<sp/>`EnableTenantDiscovery`.<sp/>If<sp/>set<sp/>to<sp/>`true`,<sp/>the<sp/>client<sp/>will<sp/>attempt<sp/>an<sp/>initial<sp/>unauthorized<sp/>request<sp/>to<sp/>the<sp/>service<sp/>to<sp/>prompt<sp/>a<sp/>challenge<sp/>containing<sp/>the<sp/>tenantId<sp/>hint.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>a<sp/>new<sp/>field<sp/>`SourceAuthorization`<sp/>in<sp/>options<sp/>for<sp/>copy<sp/>operations,<sp/>which<sp/>can<sp/>be<sp/>used<sp/>to<sp/>specify<sp/>authorization<sp/>for<sp/>copy<sp/>source.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.9.0-beta.1<sp/>(2023-08-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`RehydratePendingToCold`<sp/>value<sp/>to<sp/>`ArchiveStatus`<sp/>enum.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>`PageBlobClient::GetPageRangesDiff`<sp/>and<sp/>`PageBlobClient::GetManagedDiskPageRangesDiff`<sp/>crash<sp/>when<sp/>getting<sp/>the<sp/>second<sp/>page.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.8.0<sp/>(2023-07-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Features<sp/>in<sp/>`12.8.0-beta.1`<sp/>are<sp/>now<sp/>generally<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.8.0-beta.1<sp/>(2023-05-31)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bumped<sp/>up<sp/>API<sp/>version<sp/>to<sp/>`2022-11-02`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Content<sp/>length<sp/>limit<sp/>for<sp/>`AppendBlobClient::AppendBlock()`<sp/>and<sp/>`AppendBlobClient::AppendBlockFromUri()`<sp/>was<sp/>raised<sp/>from<sp/>4<sp/>MiB<sp/>to<sp/>100<sp/>MiB.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.7.0<sp/>(2023-03-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Features<sp/>in<sp/>`12.7.0.beta.1`<sp/>are<sp/>now<sp/>generally<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.7.0-beta.1<sp/>(2023-02-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bumped<sp/>up<sp/>API<sp/>version<sp/>to<sp/>`2021-12-02`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>new<sp/>access<sp/>tier<sp/>`Cold`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>setting<sp/>premium<sp/>page<sp/>blob<sp/>tier<sp/>operations<sp/>always<sp/>fail.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.6.2<sp/>(2022-10-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>No<sp/>public<sp/>changes<sp/>in<sp/>this<sp/>release.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.6.1<sp/>(2022-09-16)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>No<sp/>public<sp/>changes<sp/>in<sp/>this<sp/>release.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.6.0<sp/>(2022-09-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Features<sp/>in<sp/>`12.6.0.beta.1`<sp/>are<sp/>now<sp/>generally<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Empty<sp/>file<sp/>or<sp/>existing<sp/>file<sp/>won&apos;t<sp/>be<sp/>created/overwritten<sp/>if<sp/>the<sp/>blob<sp/>to<sp/>be<sp/>downloaded<sp/>doesn&apos;t<sp/>exist.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.6.0-beta.1<sp/>(2022-08-09)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bumped<sp/>up<sp/>API<sp/>version<sp/>to<sp/>`2021-04-10`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>encryption<sp/>scope<sp/>SAS<sp/>(`ses`<sp/>query<sp/>parameter<sp/>in<sp/>SAS<sp/>token).</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>encryption<sp/>scope<sp/>support<sp/>for<sp/>`BlobClient::CopyFromUri()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>filtering<sp/>blobs<sp/>on<sp/>container<sp/>level.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>tags<sp/>copy<sp/>mode<sp/>(replace<sp/>or<sp/>copy<sp/>from<sp/>source)<sp/>when<sp/>copying<sp/>blobs<sp/>from<sp/>URL.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>permanent<sp/>delete<sp/>permission<sp/>in<sp/>SAS.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>listing<sp/>blobs<sp/>failure<sp/>when<sp/>blob<sp/>name<sp/>contains<sp/>invalid<sp/>characters<sp/>in<sp/>xml.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.5.0<sp/>(2022-08-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Features<sp/>in<sp/>`12.5.0.beta1`<sp/>and<sp/>`12.5.0.beta2`<sp/>are<sp/>now<sp/>generally<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.5.0-beta.2<sp/>(2022-07-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>Blob<sp/>Batch.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.5.0-beta.1<sp/>(2022-06-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bumped<sp/>up<sp/>API<sp/>version<sp/>to<sp/>`2020-10-02`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>new<sp/>API:<sp/>`BlockBlobClient::Query()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ContinuationToken`<sp/>and<sp/>`PageSizeHint`<sp/>in<sp/>`GetPageRangesOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>listing<sp/>system<sp/>containers.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>listing<sp/>deleted<sp/>root<sp/>blob<sp/>with<sp/>active<sp/>versions.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.4.0<sp/>(2022-04-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>No<sp/>public<sp/>changes<sp/>in<sp/>this<sp/>release.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.4.0-beta.1<sp/>(2022-03-09)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bumped<sp/>up<sp/>API<sp/>version<sp/>to<sp/>`2020-08-04`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Bumped<sp/>up<sp/>SAS<sp/>token<sp/>version<sp/>to<sp/>`2020-08-04`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>immutability<sp/>policy.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>New<sp/>API:<sp/>`BlobClient::CopyFromUri()`,<sp/>`BlobClient::SetImmutabilityPolicy()`,<sp/>`BlobClient::DeleteImmutabilityPolicy()`,<sp/>`BlobClient::SetLegalHold()`,<sp/>`BlockBlobClient::UploadFromUri()`<sp/>and<sp/>`BlobServiceClient::RenameBlobContainer()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>lease<sp/>access<sp/>condition<sp/>support<sp/>for<sp/>`BlobClient::SetTags()`<sp/>and<sp/>`BlobClient::GetTags()`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.3.0<sp/>(2022-02-14)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`VersionId`<sp/>in<sp/>`SetBlobMetadataResult`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.2.1<sp/>(2021-11-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>`DefaultEncryptionScope`<sp/>and<sp/>`PreventEncryptionScopeOverride`<sp/>in<sp/>`BlobContainerProperties`<sp/>were<sp/>changed<sp/>to<sp/>optional.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.2.0<sp/>(2021-09-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>`StartsOn`<sp/>and<sp/>`ExpiresOn`<sp/>in<sp/>`SignedIdentifier`<sp/>were<sp/>changed<sp/>to<sp/>nullable.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>prefix<sp/>cannot<sp/>contain<sp/>`&amp;`<sp/>when<sp/>listing<sp/>blobs.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Create<sp/>less<sp/>threads<sp/>if<sp/>there<sp/>isn&apos;t<sp/>too<sp/>much<sp/>data<sp/>to<sp/>transfer.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.1.0<sp/>(2021-08-10)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>lease<sp/>ID<sp/>access<sp/>condition<sp/>and<sp/>tags<sp/>access<sp/>condition<sp/>for<sp/>`BlobClient::SetAccessTier()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>source<sp/>ETag<sp/>access<sp/>conditions<sp/>and<sp/>last-modified<sp/>access<sp/>conditions<sp/>for<sp/>`PageBlobClient::UploadPagesFromUri()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>three<sp/>new<sp/>fields<sp/>`IsServerEncrypted`,<sp/>`EncryptionKeySha256`<sp/>and<sp/>`EncryptionScope`<sp/>into<sp/>`SetBlobMetadataResult`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>setting<sp/>blob<sp/>tags<sp/>when<sp/>creating<sp/>or<sp/>copying<sp/>blobs.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>new<sp/>fields<sp/>`AccessTierChangedOn`,<sp/>`ArchiveStatus`,<sp/>`RehydratePriority`,<sp/>`CopyId`,<sp/>`CopySource`,<sp/>`CopyStatus`,<sp/>`CopyStatusDescription`,<sp/>`IsIncrementalCopy`,<sp/>`IncrementalCopyDestinationSnapshot`,<sp/>`CopyProgress`,<sp/>`CopyCompletedOn`,<sp/>`Tags`,<sp/>`DeletedOn`<sp/>and<sp/>`RemainingRetentionDays`<sp/>into<sp/>`BlobItemDetails`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>including<sp/>blob<sp/>tags<sp/>when<sp/>listing<sp/>blobs.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>lease<sp/>ID<sp/>didn&apos;t<sp/>work<sp/>for<sp/>`BlobContainerClient::GetAccessPolicy()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>sequence<sp/>number<sp/>access<sp/>conditions<sp/>didn&apos;t<sp/>work<sp/>for<sp/>page<sp/>blob<sp/>operations.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>`BlobItemDetails::EncryptionKeySha256`<sp/>was<sp/>always<sp/>null<sp/>because<sp/>it<sp/>wasn&apos;t<sp/>correctly<sp/>parsed<sp/>from<sp/>xml.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>`BlockBlobClient::GetBlockList`<sp/>threw<sp/>exception<sp/>if<sp/>the<sp/>blob<sp/>is<sp/>not<sp/>committed.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.1<sp/>(2021-07-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>transactional<sp/>MD5<sp/>hash<sp/>was<sp/>treated<sp/>as<sp/>blob<sp/>MD5<sp/>hash<sp/>when<sp/>downloading<sp/>partial<sp/>blob.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0<sp/>(2021-06-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>and<sp/>updated<sp/>some<sp/>samples.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>read<sp/>consistency<sp/>issue.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0-beta.11<sp/>(2021-05-19)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`final`<sp/>specifier<sp/>to<sp/>classes<sp/>and<sp/>structures<sp/>that<sp/>are<sp/>are<sp/>not<sp/>expected<sp/>to<sp/>be<sp/>inheritable<sp/>at<sp/>the<sp/>moment.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`HasMorePages()`<sp/>in<sp/>paged<sp/>response<sp/>to<sp/>`HasPage()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Default<sp/>chunk<sp/>size<sp/>for<sp/>concurrent<sp/>upload<sp/>was<sp/>changed<sp/>to<sp/>nullable.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`BlobLeaseClient::Change()`<sp/>updates<sp/>internal<sp/>lease<sp/>id.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`ContentType`<sp/>from<sp/>`GetBlockListResult`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`GetPageRangesResult`<sp/>to<sp/>detail<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`BlobServiceClient::UndeleteBlobContainer`<sp/>doesn&apos;t<sp/>support<sp/>restoring<sp/>a<sp/>deleted<sp/>container<sp/>under<sp/>a<sp/>different<sp/>name<sp/>anymore.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>type<sp/>of<sp/>block<sp/>count<sp/>to<sp/>`int32_t`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0-beta.10<sp/>(2021-04-16)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Azure::Storage::Blobs::PackageVersion`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`GetUserDelegationKeyOptions::startsOn`<sp/>to<sp/>`StartsOn`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Replaced<sp/>all<sp/>paginated<sp/>collection<sp/>functions<sp/>that<sp/>have<sp/>the<sp/>SinglePage<sp/>suffix<sp/>with<sp/>pageable<sp/>functions<sp/>returning<sp/>a<sp/>`PagedResponse&lt;T&gt;`-derived<sp/>type.<sp/>The<sp/>options<sp/>are<sp/>also<sp/>renamed<sp/>accordingly.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobServiceClient::ListBlobContainers()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobServiceClient::FindBlobsByTags()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobContainerClient::ListBlobs()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobContainerClient::ListBlobsByHierarchy()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`PageBlobClient::GetPageRanges()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`PageBlobClient::GetPageRangesDiff()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`PageBlobClient::GetManagedDiskPageRangesDiff()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`FilterBlobItem`<sp/>to<sp/>`TaggedBlobItem`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`FindBlobsByTags()`<sp/>now<sp/>returns<sp/>`FindBlobsByTagsPagedResponse`<sp/>and<sp/>the<sp/>field<sp/>`FindBlobsByTagsSinglePageResult::Items`<sp/>was<sp/>renamed<sp/>to<sp/>`FindBlobsByTagsPagedResponse::TaggedBlobs`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0-beta.9<sp/>(2021-03-23)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>telemetry<sp/>options.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Storage::Blobs::PackageVersion`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ShareFileClient::GetRangeListDiff`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>return<sp/>type<sp/>of<sp/>`StartCopyFromUri`<sp/>and<sp/>`StartCopyIncremental`<sp/>API<sp/>from<sp/>a<sp/>`Response&lt;T&gt;`<sp/>to<sp/>the<sp/>particular<sp/>`Operation&lt;T&gt;`<sp/>type<sp/>called<sp/>`StartBlobCopyOperation`<sp/>directly.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>String<sp/>conversion<sp/>functions<sp/>of<sp/>extensible<sp/>enums<sp/>were<sp/>renamed<sp/>from<sp/>`Get()`<sp/>to<sp/>`ToString()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`SecondaryHostForRetryReads`<sp/>out<sp/>of<sp/>retry<sp/>options,<sp/>now<sp/>it&apos;s<sp/>under<sp/>`BlobClientOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>return<sp/>types<sp/>of<sp/>the<sp/>following<sp/>APIs:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobServiceClient::DeleteBlobContainer`<sp/>now<sp/>returns<sp/>`DeleteBlobContainerResult`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobServiceClient::GetUserDelegationKey`<sp/>now<sp/>returns<sp/>`UserDelegationKey`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobServiceClient::GetProperties`<sp/>now<sp/>returns<sp/>`BlobServiceProperties`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobServiceClient::GetAccountInfo`<sp/>now<sp/>returns<sp/>`AccountInfo`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobServiceClient::GetStatistics`<sp/>now<sp/>returns<sp/>`ServiceStatistics`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobContainerClient::DeleteBlob`<sp/>now<sp/>returns<sp/>`DeleteBlobResult`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobContainerClient::GetProperties`<sp/>now<sp/>returns<sp/>`BlobContainerProperties`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobContainerClient::GetAccessPolicy`<sp/>now<sp/>returns<sp/>`BlobContainerAccessPolicy`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobClient::GetProperties`<sp/>now<sp/>returns<sp/>`BlobProperties`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobClinet::GetTags`<sp/>now<sp/>returns<sp/>`std::map&lt;std::string,<sp/>std::string&gt;`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BlobClient::AbortCopyFromUri`<sp/>now<sp/>returns<sp/>`AbortBlobCopyFromUriResult`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`PageBlobClient::UploadPages`<sp/>now<sp/>returns<sp/>`UploadPagesResult`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`PageBlobClient::UploadPagesFromUri`<sp/>now<sp/>returns<sp/>`UploadPagesFromUriResult`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`PageBlobClient::ClearPages`<sp/>now<sp/>returns<sp/>`ClearPagesResult`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`PageBlobClient::GetPageRanges`,<sp/>`PageBlobClient::GetPageRangesDiff`<sp/>and<sp/>`PageBlobClient::GetManagedDiskPageRangesDiff`<sp/>now<sp/>return<sp/>`GetPageRangesResult`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>some<sp/>options:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`UploadPageBlobPagesOptions`<sp/>to<sp/>`UploadPagesOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`UploadPageBlobPagesFromUriOptions`<sp/>to<sp/>`UploadPagesFromUriOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`ClearPageBlobPagesOptions`<sp/>to<sp/>`ClearPagesOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`GetPageBlobPageRangesOptions`<sp/>to<sp/>`GetPageRangesOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`StartCopyBlobFromUriOptions`<sp/>to<sp/>`StartBlobCopyFromUriOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`StartCopyPageBlobIncrementalOptions`<sp/>to<sp/>`StartBlobCopyIncrementalOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Blob`<sp/>from<sp/>the<sp/>name<sp/>of<sp/>lease<sp/>options<sp/>and<sp/>return<sp/>types,<sp/>like<sp/>`AcquireBlobLeaseOptions`<sp/>was<sp/>renamed<sp/>to<sp/>`AcquireLeaseOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Blob`<sp/>prefix<sp/>from<sp/>the<sp/>name<sp/>of<sp/>structs<sp/>`BlobGeoReplication`,<sp/>`BlobLeaseStatus`,<sp/>`BlobLeaseState`,<sp/>`BlobLeaseDurationType`,<sp/>`BlobAnalyticsLogging`,<sp/>`BlobMetrics`,<sp/>`BlobCorsRule`,<sp/>`BlobRetentionPolicy`,<sp/>`BlobStaticWebsite`,<sp/>`BlobArchiveStatus`<sp/>and<sp/>`BlobGeoReplicationStatus`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`RequestId`<sp/>from<sp/>return<sp/>types.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>`BodyStream`<sp/>parameter<sp/>of<sp/>`UploadBlob`,<sp/>`Upload`,<sp/>`UploadPages`<sp/>and<sp/>`AppendBlock`functions<sp/>from<sp/>pointer<sp/>to<sp/>reference.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>access<sp/>tier<sp/>members<sp/>in<sp/>return<sp/>types<sp/>and<sp/>options<sp/>from<sp/>`Tier`<sp/>to<sp/>`AccessTier`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`BlockListTypeOption`<sp/>to<sp/>`BlockListType`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0-beta.8<sp/>(2021-02-12)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`BreakBlobLeaseResult::Leasetime`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`Azure::Core::Context`<sp/>out<sp/>of<sp/>options<sp/>bag<sp/>of<sp/>each<sp/>API,<sp/>and<sp/>make<sp/>it<sp/>the<sp/>last<sp/>optional<sp/>parameter.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0-beta.7<sp/>(2021-02-03)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`RequestId`<sp/>in<sp/>API<sp/>return<sp/>types.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>some<sp/>new<sp/>properties<sp/>in<sp/>`GetBlobPropertiesResult`,<sp/>`DownloadBlobResult`<sp/>and<sp/>`DownloadBlobToResult`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`RangeHashAlgorithm`<sp/>in<sp/>`DownloadBlobOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`UploadBlob`<sp/>in<sp/>`BlobContainerClient`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>`UserDelegationKey`<sp/>was<sp/>changed<sp/>to<sp/>a<sp/>member<sp/>of<sp/>`GetUserDelegationKeyResult`<sp/>rather<sp/>than<sp/>a<sp/>typedef<sp/>like<sp/>before.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`AccessType`<sp/>in<sp/>`CreateBlobContainerOptions`<sp/>was<sp/>changed<sp/>to<sp/>non-nullable.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ListType`<sp/>in<sp/>`GetBlockListOptions`<sp/>was<sp/>changed<sp/>to<sp/>non-nullable.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`BlobLeaseClient`,<sp/>all<sp/>lease<sp/>related<sp/>APIs<sp/>are<sp/>moved<sp/>to<sp/>`BlobLeaseClient`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Type<sp/>for<sp/>lease<sp/>duration<sp/>in<sp/>requests<sp/>was<sp/>changed<sp/>to<sp/>`std::chrono::seconds`,<sp/>in<sp/>response<sp/>was<sp/>changed<sp/>to<sp/>enum.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`PublicAccessType::Private`<sp/>was<sp/>renamed<sp/>to<sp/>`PublicAccessType::None`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`startsOn`<sp/>parameter<sp/>for<sp/>`GetUserDelegationKey`<sp/>was<sp/>changed<sp/>to<sp/>optional.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`IfUnmodifiedSince`<sp/>from<sp/>`SetBlobContainerMetadataOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Return<sp/>types<sp/>of<sp/>`BlobClient::StartCopyFromUri`<sp/>and<sp/>`PageBlobClient::StartCopyIncremental`<sp/>were<sp/>changed<sp/>to<sp/>`StartCopyBlobResult`,<sp/>supporting<sp/>poll<sp/>operations.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>typo<sp/>`Expiries`<sp/>in<sp/>model<sp/>types.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`PreviousContinuationToken`<sp/>from<sp/>`ListBlobContainersSinglePageResult`,<sp/>`ListBlobsByHierarchySinglePageResult`<sp/>and<sp/>`ListBlobsSinglePageResult`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ListBlobContainersIncludeItem`<sp/>was<sp/>renamed<sp/>to<sp/>`ListBlobContainersIncludeFlags`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ListBlobsIncludeItem`<sp/>was<sp/>renamed<sp/>to<sp/>`ListBlobsIncludeFlags`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`Concurrency`,<sp/>`ChunkSize`<sp/>and<sp/>`InitialChunkSize`<sp/>were<sp/>moved<sp/>into<sp/>`DownloadBlobToOptions::TansferOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`Concurrency`,<sp/>`ChunkSize`<sp/>and<sp/>`SingleUploadThreshold`<sp/>were<sp/>moved<sp/>into<sp/>`UploadBlockBlobFromOptions::TransferOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`TagValue`<sp/>from<sp/>`FilterBlobItem`,<sp/>removed<sp/>`Where`<sp/>from<sp/>`FindBlobsByTagsSinglePageResult`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Type<sp/>for<sp/>ETag<sp/>was<sp/>changed<sp/>to<sp/>`Azure::Core::ETag`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`BlobPrefix`<sp/>struct,<sp/>use<sp/>`std::string`<sp/>instead.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Refined<sp/>`BlobContainerItem`,<sp/>`BlobItem`,<sp/>`DownloadBlobResult`<sp/>and<sp/>`DownloadBlobToResult`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0-beta.6<sp/>(2021-01-14)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`CreateIfNotExists`<sp/>and<sp/>`DeleteIfExists`<sp/>for<sp/>blob<sp/>containers<sp/>and<sp/>blobs.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`IsHierarchicalNamespaceEnabled`<sp/>in<sp/>`GetAccountInfoResult`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`PageBlobClient::GetPageRangesDiff`<sp/>and<sp/>`PageBlobClient::GetManagedDiskPageRangesDiff`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`CreateBlobContainer`,<sp/>`DeleteBlobContainer`,<sp/>`UndeleteBlobContainer`<sp/>into<sp/>`BlobServiceClient`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`DeleteBlob`<sp/>to<sp/>`BlobContainerClient`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>setting<sp/>blob<sp/>SAS<sp/>permission<sp/>with<sp/>a<sp/>raw<sp/>string.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`AppendBlobAccessConditions::MaxSize`<sp/>to<sp/>`IfMaxSizeLessThanOrEqual`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`AppendBlobAccessConditions::AppendPosition`<sp/>to<sp/>`IfAppendPositionEqual`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`BlobServiceProperties.DefaultServiceVersion`<sp/>is<sp/>now<sp/>nullable.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`DeleteBlobSubRequest::containerName`<sp/>to<sp/>`blobContainerName`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`SetBlobAccessTierSubRequest::containerName`<sp/>to<sp/>`blobContainerName`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`BlobSasBuilder::ContainerName`<sp/>to<sp/>`BlobContainerName`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`BlobSasResource::Container`<sp/>to<sp/>`BlobContainer`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`AccountSasResource::Container`<sp/>to<sp/>`BlobContainer`</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>some<sp/>structs:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`CreateContainerResult`<sp/>to<sp/>`CreateBlobContainerOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`CreateContainerOptions`<sp/>to<sp/>`CreateBlobContainerOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`DeleteContainerResult`<sp/>to<sp/>`DeleteBlobContainerResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`DeleteContainerOptions`<sp/>to<sp/>`DeleteBlobContainerOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`GetContainerPropertiesResult`<sp/>to<sp/>`GetBlobContainerPropertiesResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`GetContainerPropertiesOptions`<sp/>to<sp/>`GetBlobContainerPropertiesOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`SetContainerMetadataResult`<sp/>to<sp/>`SetBlobContainerMetadataResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`SetContainerMetadataOptions`<sp/>to<sp/>`SetBlobContainerMetadataOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`GetContainerAccessPolicyResult`<sp/>to<sp/>`GetBlobContainerAccessPolicyResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`GetContainerAccessPolicyOptions`<sp/>to<sp/>`GetBlobContainerAccessPolicyOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`SetContainerAccessPolicyResult`<sp/>to<sp/>`SetBlobContainerAccessPolicyResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`SetContainerAccessPolicyOptions`<sp/>to<sp/>`SetBlobContainerAccessPolicyOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`AcquireContainerLeaseResult`<sp/>to<sp/>`AcquireBlobContainerLeaseResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`AcquireContainerLeaseOptions`<sp/>to<sp/>`AcquireBlobContainerLeaseOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`RenewContainerLeaseResult`<sp/>to<sp/>`RenewBlobContainerLeaseResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`RenewContainerLeaseOptions`<sp/>to<sp/>`RenewBlobContainerLeaseOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`ReleaseContainerLeaseResult`<sp/>to<sp/>`ReleaseBlobContainerLeaseResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`ReleaseContainerLeaseOptions`<sp/>to<sp/>`ReleaseBlobContainerLeaseOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`ChangeContainerLeaseResult`<sp/>to<sp/>`ChangeBlobContainerLeaseResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`ChangeContainerLeaseOptions`<sp/>to<sp/>`ChangeBlobContainerLeaseOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BreakContainerLeaseResult`<sp/>to<sp/>`BreakBlobContainerLeaseResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BreakContainerLeaseOptions`<sp/>to<sp/>`BreakBlobContainerLeaseOptions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`ContainerAccessConditions`<sp/>to<sp/>`BlobContainerAccessConditions`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`ListContainersSegmentResult`<sp/>to<sp/>`ListBlobContainersSegmentResult`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`ListContainersSegmentOptions`<sp/>to<sp/>`ListBlobContainersSegmentOptions`</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>API<sp/>signature<sp/>for<sp/>`CommitBlockList`<sp/>has<sp/>changed.<sp/>`BlockType`<sp/>doesn&apos;t<sp/>need<sp/>to<sp/>be<sp/>specified<sp/>anymore.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`PageBlobClient::GetPageRanges`<sp/>doesn&apos;t<sp/>support<sp/>getting<sp/>difference<sp/>between<sp/>current<sp/>blob<sp/>and<sp/>a<sp/>snapshot<sp/>anymore.<sp/>Use<sp/>`PageBlobClient::GetPageRangesDiff`<sp/>instead.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>Blob<sp/>SAS<sp/>into<sp/>`Azure::Storage::Sas`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Replaced<sp/>all<sp/>transactional<sp/>content<sp/>MD5/CRC64<sp/>with<sp/>the<sp/>`ContentHash`<sp/>struct.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`EncryptionKeySha256`<sp/>is<sp/>changed<sp/>to<sp/>binary<sp/>(`std::vector&lt;uint8_t&gt;`).</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ContentMd5`<sp/>HTTP<sp/>header<sp/>is<sp/>renamed<sp/>to<sp/>`ContentHash`,<sp/>the<sp/>type<sp/>is<sp/>also<sp/>changed<sp/>to<sp/>`ContentHash`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ServerEncrypted`<sp/>fields<sp/>are<sp/>renamed<sp/>to<sp/>`IsServerEncrypted`,<sp/>and<sp/>changed<sp/>to<sp/>non-nullable<sp/>type.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Is`<sp/>prefix<sp/>to<sp/>bool<sp/>variable<sp/>names.<sp/>Like<sp/>`IsAccessTierInferred`,<sp/>`IsDeleted`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`IsServerEncrypted`,<sp/>`EncryptionKeySha256`<sp/>and<sp/>`EncryptionScope`<sp/>are<sp/>removed<sp/>from<sp/>`ClearPageBlobPagesResult`,<sp/>since<sp/>they<sp/>are<sp/>never<sp/>returned<sp/>from<sp/>storage<sp/>server.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ListBlobsFlatSegment`<sp/>is<sp/>renamed<sp/>to<sp/>`ListBlobsSinglePage`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ListBlobsByHierarchySegment`<sp/>is<sp/>renamed<sp/>to<sp/>`ListBlobsByHierarchySinglePage`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ListBlobContainersSegment`<sp/>is<sp/>renamed<sp/>to<sp/>`ListBlobContainersSinglePage`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`FindBlobsByTags`<sp/>is<sp/>renamed<sp/>to<sp/>`FindBlobsByTagsSinglePage`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`MaxResults`<sp/>in<sp/>list<sp/>APIs<sp/>are<sp/>renamed<sp/>to<sp/>`PageSizeHint`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>All<sp/>date<sp/>time<sp/>related<sp/>strings<sp/>are<sp/>now<sp/>changed<sp/>to<sp/>`Azure::Core::DateTime`<sp/>type.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Replaced<sp/>`std::pair&lt;int64_t,<sp/>int64_t&gt;`<sp/>with<sp/>`Azure::Core::Http::Range`<sp/>to<sp/>denote<sp/>blob<sp/>ranges.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Made<sp/>version<sp/>strings<sp/>private<sp/>by<sp/>moving<sp/>them<sp/>into<sp/>the<sp/>`Details`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Replaced<sp/>scoped<sp/>enums<sp/>that<sp/>don&apos;t<sp/>support<sp/>bitwise<sp/>operations<sp/>with<sp/>extensible<sp/>enum.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Continuation<sp/>token<sp/>of<sp/>result<sp/>types<sp/>are<sp/>changed<sp/>to<sp/>nullable.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`Models::DeleteSnapshotsOption::Only`<sp/>to<sp/>`OnlySnapshots`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`SourceConditions`<sp/>in<sp/>API<sp/>options<sp/>to<sp/>`SourceAccessConditions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>Blob<sp/>Batch.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`DownloadBlobResult::Content-Range`<sp/>is<sp/>changed<sp/>to<sp/>an<sp/>`Azure::Core::Http::Range`,<sp/>an<sp/>extra<sp/>field<sp/>`BlobSize`<sp/>is<sp/>added.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Undelete`<sp/>from<sp/>`BlobContainerClient`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`BlobRetentionPolicy::Enabled`<sp/>is<sp/>renamed<sp/>to<sp/>`BlobRetentionPolicy::IsEnabled`,<sp/>`BlobStaticWebsite::Enabled`<sp/>is<sp/>renamed<sp/>to<sp/>`BlobStaticWebsite::IsEnabled`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>type<sp/>for<sp/>metadata<sp/>to<sp/>case-insensitive<sp/>`std::map`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>parameter<sp/>type<sp/>for<sp/>token<sp/>credential<sp/>from<sp/>`Azure::Identity::ClientSecretCredential`<sp/>to<sp/>`Azure::Core::TokenCredential`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>member<sp/>function<sp/>`GetUri`<sp/>of<sp/>client<sp/>types<sp/>to<sp/>`GetUrl`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`BlobClient::GetBlockBlobClient`,<sp/>`BlobClient::GetAppendBlobClient`<sp/>and<sp/>`BlobClient::GetPageBlobClient`<sp/>are<sp/>renamed<sp/>to<sp/>`BlobClient::AsBlockBlobClient`,<sp/>`BlobClient::AsAppendBlobClient`<sp/>and<sp/>`BlobClient::AsPageBlobClient`<sp/>respectively.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>12.0.0-beta.5<sp/>(2020-11-13)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>replaceable<sp/>HTTP<sp/>transport<sp/>layer.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>`version.hpp`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Move<sp/>header<sp/>`azure/storage/blobs/blob.hpp`<sp/>to<sp/>`azure/storage/blobs.hpp`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Service<sp/>API<sp/>return<sp/>types<sp/>which<sp/>are<sp/>typically<sp/>suffixed<sp/>with<sp/>`Result`<sp/>are<sp/>moved<sp/>to<sp/>the<sp/>`Models`<sp/>sub-namespaces<sp/>and<sp/>everything<sp/>else<sp/>from<sp/>the<sp/>protocol<sp/>layer<sp/>is<sp/>made<sp/>private<sp/>by<sp/>moving<sp/>to<sp/>the<sp/>`Details`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Make<sp/>XML<sp/>serializer<sp/>and<sp/>deserializer<sp/>private<sp/>by<sp/>moving<sp/>them<sp/>to<sp/>the<sp/>`Details`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Remove<sp/>`BlockBlobClientOptions`,<sp/>`AppendBlobClientOptions`<sp/>and<sp/>`PageBlobClientOptions`,<sp/>use<sp/>`BlobClientOptions`<sp/>instead.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Rename<sp/>`BlobSasBuilder::ToSasQueryParameters`<sp/>to<sp/>`BlobSasBuilder::GenerateSasToken`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Default<sp/>uploading/downloading<sp/>concurrency<sp/>is<sp/>changed<sp/>from<sp/>1<sp/>to<sp/>5.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Remove<sp/>support<sp/>for<sp/>specifying<sp/>SAS<sp/>version.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.4<sp/>(2020-10-16)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bump<sp/>up<sp/>API<sp/>version<sp/>to<sp/>2020-02-10.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>Last<sp/>Accessting<sp/>Time.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>TagCount<sp/>and<sp/>ExpiryTime<sp/>in<sp/>the<sp/>responses<sp/>of<sp/>getting<sp/>properties<sp/>and<sp/>downloading<sp/>blobs.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Variable<sp/>name<sp/>change:<sp/>BreakContainerLeaseOptions::breakPeriod<sp/>-&gt;<sp/>BreakContainerLeaseOptions::BreakPeriod.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Variable<sp/>name<sp/>change:<sp/>BreakBlobLeaseOptions::breakPeriod<sp/>-&gt;<sp/>BreakBlobLeaseOptions::BreakPeriod.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>CreateFromConnectionString<sp/>now<sp/>accepts<sp/>unencoded<sp/>blob<sp/>name.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>TagConditions<sp/>is<sp/>changed<sp/>to<sp/>nullable.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Variable<sp/>name<sp/>change:<sp/>`Marker`<sp/>is<sp/>renamed<sp/>to<sp/>`ContinuationToken`<sp/>for<sp/>`ListContainersSegmentOptions`,<sp/>`FindBlobsByTagsOptions`<sp/>and<sp/>`ListBlobsSegmentOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Variable<sp/>name<sp/>change:<sp/>`Marker`<sp/>is<sp/>renamed<sp/>to<sp/>`PreviousContinuationToken`,<sp/>`NextMarker`<sp/>is<sp/>renamed<sp/>to<sp/>`ContinuationToken`<sp/>for<sp/>`FilterBlobsSegmentResult`,<sp/>`ListContainersSegmentResult`,<sp/>`ListBlobsByHierarchySegmentResult`<sp/>and<sp/>`ListBlobsFlatSegmentResult`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Unencoded<sp/>Container/Blob<sp/>name<sp/>is<sp/>now<sp/>encoded.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.2<sp/>(2020-09-09)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>Blob<sp/>Batch.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>Blob<sp/>Index.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Release<sp/>based<sp/>on<sp/>azure-core_1.0.0-beta.1.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.1<sp/>(2020-08-28)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>Blob<sp/>features:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobServiceClient::ListBlobContainersSegment</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobServiceClient::GetUserDelegationKey</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobServiceClient::SetProperties</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobServiceClient::GetProperties</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobServiceClient::GetAccountInfo</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobServiceClient::GetStatistics</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::Create</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::Delete</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::GetProperties</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::SetMetadata</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::ListBlobsFlat</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::ListBlobsByHierarchy</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::Undelete</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::GetAccessPolicy</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobContainerClient::SetAccessPolicy</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::GetProperties</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::SetHttpHeaders</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::SetMetadata</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::SetAccessTier</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::StartCopyFromUri</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::AbortCopyFromUri</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::Download</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::DownloadToFile</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::DownloadToBuffer</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::CreateSnapshot</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::Delete</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlobClient::Undelete</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlockBlobClient::Upload</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlockBlobClient::UploadFromFile</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlockBlobClient::UploadFromBuffer</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlockBlobClient::StageBlock</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlockBlobClient::StageBlockFromUri</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlockBlobClient::CommitBlockList</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>BlockBlobClient::GetBlockList</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>AppendBlobClient::Create</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>AppendBlobClient::AppendBlock</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>AppendBlobClient::AppendBlockFromUri</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>AppendBlobClient::Seal</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>PageBlobClient::Create</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>PageBlobClient::UploadPages</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>PageBlobClient::UploadPagesFromUri</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>PageBlobClient::ClearPages</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>PageBlobClient::Resize</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>PageBlobClient::GetPageRanges</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>PageBlobClient::StartCopyIncremental</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>blob<sp/>versioning.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>blob<sp/>lease<sp/>and<sp/>container<sp/>lease.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>account<sp/>SAS<sp/>and<sp/>blob<sp/>SAS.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>transactional<sp/>checksum.</highlight></codeline>
+    </programlisting>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

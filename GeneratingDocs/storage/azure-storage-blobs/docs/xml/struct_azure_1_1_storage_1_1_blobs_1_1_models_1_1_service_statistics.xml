@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_service_statistics" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::ServiceStatistics</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_service_statistics_1a1d13b0dafea3127083400097d892639b" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication" kindref="compound">Models::GeoReplication</ref></type>
+        <definition>Models::GeoReplication Azure::Storage::Blobs::Models::ServiceStatistics::GeoReplication</definition>
+        <argsstring></argsstring>
+        <name>GeoReplication</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ServiceStatistics::GeoReplication</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Geo-Replication information for the Secondary Storage Service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="298" column="30" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="298" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Stats for the storage service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::GeoReplication</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Status</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::GeoReplicationStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Bootstrap</edgelabel>
+          <edgelabel>Live</edgelabel>
+          <edgelabel>Unavailable</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::ServiceStatistics</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_service_statistics"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>GeoReplication</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="293" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="294" bodyend="299"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_service_statistics_1a1d13b0dafea3127083400097d892639b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ServiceStatistics</scope><name>GeoReplication</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

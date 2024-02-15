@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::CreateBlobSnapshotOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options_1a86b29d6fa46001ca41c751decbcd0c88" prot="public" static="no" mutable="no">
+        <type>Storage::Metadata</type>
+        <definition>Storage::Metadata Azure::Storage::Blobs::CreateBlobSnapshotOptions::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::CreateBlobSnapshotOptions::Metadata</qualifiedname>
+        <briefdescription>
+<para>Specifies user-defined name-value pairs associated with the blob. If no name-value pairs are specified, the operation will copy the base blob metadata to the snapshot. If one or more name-value pairs are specified, the snapshot is created with the specified metadata, and metadata is not copied from the base blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="723" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="723" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options_1aefbb5ae5395858e26d207f61d768ca3c" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" kindref="compound">BlobAccessConditions</ref></type>
+        <definition>BlobAccessConditions Azure::Storage::Blobs::CreateBlobSnapshotOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::CreateBlobSnapshotOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="728" column="26" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="728" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a05131f0bfc5f8b6d32c98f18d6d450a7" kindref="member">Azure::Storage::Blobs::BlobClient::CreateSnapshot</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::CreateBlobSnapshotOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="5">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="715" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="716" bodyend="729"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options_1aefbb5ae5395858e26d207f61d768ca3c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CreateBlobSnapshotOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options_1a86b29d6fa46001ca41c751decbcd0c88" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CreateBlobSnapshotOptions</scope><name>Metadata</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

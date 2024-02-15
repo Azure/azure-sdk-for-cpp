@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="sasl__transport_8cpp" kind="file" language="C++">
+    <compoundname>sasl_transport.cpp</compoundname>
+    <includes refid="sasl__transport_8hpp" local="yes">azure/core/amqp/internal/network/sasl_transport.hpp</includes>
+    <includes refid="tls__transport_8hpp" local="yes">azure/core/amqp/internal/network/tls_transport.hpp</includes>
+    <includes refid="transport__impl_8hpp" local="yes">private/transport_impl.hpp</includes>
+    <includes local="no">azure_c_shared_utility/platform.h</includes>
+    <includes local="no">azure_c_shared_utility/socketio.h</includes>
+    <includes local="no">azure_c_shared_utility/tlsio.h</includes>
+    <includes local="no">azure_uamqp_c/sasl_anonymous.h</includes>
+    <includes local="no">azure_uamqp_c/sasl_plain.h</includes>
+    <includes local="no">azure_uamqp_c/saslclientio.h</includes>
+    <incdepgraph>
+      <node id="14">
+        <label>azure/core/amqp/internal/common/async_operation_queue.hpp</label>
+        <link refid="async__operation__queue_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>azure/core/amqp/internal/network/sasl_transport.hpp</label>
+        <link refid="sasl__transport_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>azure/core/amqp/internal/network/tls_transport.hpp</label>
+        <link refid="tls__transport_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>transport.hpp</label>
+        <link refid="transport_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>../../amqp/private/unique_handle.hpp</label>
+        <link refid="unique__handle_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>private/transport_impl.hpp</label>
+        <link refid="transport__impl_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>src/network/sasl_transport.cpp</label>
+        <link refid="sasl__transport_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>azure/core/context.hpp</label>
+      </node>
+      <node id="15">
+        <label>azure/core/diagnostics/logger.hpp</label>
+      </node>
+      <node id="16">
+        <label>azure/core/internal/diagnostics/log.hpp</label>
+      </node>
+      <node id="13">
+        <label>azure/core/internal/unique_handle.hpp</label>
+      </node>
+      <node id="23">
+        <label>azure_c_shared_utility/platform.h</label>
+      </node>
+      <node id="24">
+        <label>azure_c_shared_utility/socketio.h</label>
+      </node>
+      <node id="25">
+        <label>azure_c_shared_utility/tlsio.h</label>
+      </node>
+      <node id="22">
+        <label>azure_c_shared_utility/xio.h</label>
+      </node>
+      <node id="26">
+        <label>azure_uamqp_c/sasl_anonymous.h</label>
+      </node>
+      <node id="27">
+        <label>azure_uamqp_c/sasl_plain.h</label>
+      </node>
+      <node id="28">
+        <label>azure_uamqp_c/saslclientio.h</label>
+      </node>
+      <node id="17">
+        <label>condition_variable</label>
+      </node>
+      <node id="5">
+        <label>exception</label>
+      </node>
+      <node id="6">
+        <label>functional</label>
+      </node>
+      <node id="18">
+        <label>list</label>
+      </node>
+      <node id="7">
+        <label>memory</label>
+      </node>
+      <node id="19">
+        <label>mutex</label>
+      </node>
+      <node id="8">
+        <label>stdexcept</label>
+      </node>
+      <node id="9">
+        <label>string</label>
+      </node>
+      <node id="20">
+        <label>thread</label>
+      </node>
+      <node id="21">
+        <label>tuple</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/core/amqp/internal/network/sasl_transport.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/core/amqp/internal/network/tls_transport.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;private/transport_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_c_shared_utility/platform.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_c_shared_utility/socketio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_c_shared_utility/tlsio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_uamqp_c/sasl_anonymous.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_uamqp_c/sasl_plain.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_uamqp_c/saslclientio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">//<sp/>cspell:<sp/>ignore<sp/>saslclientio</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">Azure::Core::Amqp::Network::_internal::Transport</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>saslKeyName,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>saslKey,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>hostName,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>uint16_t<sp/>hostPort,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>TransportEvents*<sp/>eventHandler)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>XIO_HANDLE<sp/>underlying_io;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>assume<sp/>that<sp/>localhost<sp/>connections<sp/>will<sp/>be<sp/>using<sp/>raw<sp/>sockets,<sp/>not<sp/>TLS.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(hostName<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;localhost&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>SOCKETIO_CONFIG<sp/>socketConfig{hostName.c_str(),<sp/>hostPort,<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>underlying_io<sp/>=<sp/>xio_create(socketio_get_interface_description(),<sp/>&amp;socketConfig);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>tlsioConfig<sp/>=<sp/>platform_get_default_tlsio();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>TLSIO_CONFIG<sp/>tlsConfig{};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>tlsConfig.hostname<sp/>=<sp/>hostName.c_str();</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>tlsConfig.port<sp/>=<sp/>hostPort;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>underlying_io<sp/>=<sp/>xio_create(tlsioConfig,<sp/>&amp;tlsConfig);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>SASL_PLAIN_CONFIG<sp/>saslPlainConfig{};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>saslPlainConfig.authcid<sp/>=<sp/>saslKeyName.c_str();</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>saslPlainConfig.passwd<sp/>=<sp/>saslKey.c_str();</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>saslMechanism<sp/>=<sp/>saslmechanism_create(saslplain_get_interface(),<sp/>&amp;saslPlainConfig);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>SASLCLIENTIO_CONFIG<sp/>saslConfig;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>saslConfig.underlying_io<sp/>=<sp/>underlying_io;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>saslConfig.sasl_mechanism<sp/>=<sp/>saslMechanism;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_detail::TransportImpl::CreateFromXioHandle(</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>xio_create(saslclientio_get_interface_description(),<sp/>&amp;saslConfig),<sp/>eventHandler);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">Azure::Core::Amqp::Network::_internal::Transport</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>hostName,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>uint16_t<sp/>hostPort,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>TransportEvents*<sp/>eventHandler)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>XIO_HANDLE<sp/>underlying_io;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>assume<sp/>that<sp/>localhost<sp/>connections<sp/>will<sp/>be<sp/>using<sp/>raw<sp/>sockets,<sp/>not<sp/>TLS.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(hostName<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;localhost&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>SOCKETIO_CONFIG<sp/>socketConfig{hostName.c_str(),<sp/>hostPort,<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>underlying_io<sp/>=<sp/>xio_create(socketio_get_interface_description(),<sp/>&amp;socketConfig);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>tlsioConfig<sp/>=<sp/>platform_get_default_tlsio();</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>TLSIO_CONFIG<sp/>tlsConfig{};</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>tlsConfig.hostname<sp/>=<sp/>hostName.c_str();</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>tlsConfig.port<sp/>=<sp/>hostPort;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>underlying_io<sp/>=<sp/>xio_create(tlsioConfig,<sp/>&amp;tlsConfig);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>saslMechanism<sp/>=<sp/>saslmechanism_create(saslanonymous_get_interface(),<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>SASLCLIENTIO_CONFIG<sp/>saslConfig;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>saslConfig.underlying_io<sp/>=<sp/>underlying_io;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>saslConfig.sasl_mechanism<sp/>=<sp/>saslMechanism;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_detail::TransportImpl::CreateFromXioHandle(</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>xio_create(saslclientio_get_interface_description(),<sp/>&amp;saslConfig),<sp/>eventHandler);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="src/network/sasl_transport.cpp"/>
+  </compounddef>
+</doxygen>

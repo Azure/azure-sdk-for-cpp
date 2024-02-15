@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobHttpHeaders</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a45a0b639a7d555477e3c54cc755b7722" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentType</definition>
+        <argsstring></argsstring>
+        <name>ContentType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>MIME content type of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1146" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a4390cc418b5aed8265b0c7572889bbd8" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentEncoding</definition>
+        <argsstring></argsstring>
+        <name>ContentEncoding</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentEncoding</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Specifies which content encodings have been applied to the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1150" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a24c38e1fb88abe18587cdbccd76c9607" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentLanguage</definition>
+        <argsstring></argsstring>
+        <name>ContentLanguage</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentLanguage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Specifies the natural languages used by this blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1154" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1ac0324e40a69d57cc244f726a9f5bbe6b" prot="public" static="no" mutable="no">
+        <type>Storage::ContentHash</type>
+        <definition>Storage::ContentHash Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentHash</definition>
+        <argsstring></argsstring>
+        <name>ContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentHash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Hash of the blob content. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1158" column="28" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a7abeb64996b9209e25b0ca7877e45ea0" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentDisposition</definition>
+        <argsstring></argsstring>
+        <name>ContentDisposition</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobHttpHeaders::ContentDisposition</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Conveys additional information about how to process the resource payload, and also can be used to attach additional metadata. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1163" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a6a2fe25b4cf83903849d0cb009bf05ae" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobHttpHeaders::CacheControl</definition>
+        <argsstring></argsstring>
+        <name>CacheControl</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobHttpHeaders::CacheControl</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Specifies directives for caching mechanisms. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1167" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1167" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Standard HTTP properties supported by containers and blobs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1141" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1142" bodyend="1168"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a6a2fe25b4cf83903849d0cb009bf05ae" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobHttpHeaders</scope><name>CacheControl</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a7abeb64996b9209e25b0ca7877e45ea0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobHttpHeaders</scope><name>ContentDisposition</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a4390cc418b5aed8265b0c7572889bbd8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobHttpHeaders</scope><name>ContentEncoding</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1ac0324e40a69d57cc244f726a9f5bbe6b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobHttpHeaders</scope><name>ContentHash</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a24c38e1fb88abe18587cdbccd76c9607" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobHttpHeaders</scope><name>ContentLanguage</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers_1a45a0b639a7d555477e3c54cc755b7722" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobHttpHeaders</scope><name>ContentType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

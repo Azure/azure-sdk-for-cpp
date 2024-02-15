@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::AppendBlockResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a66fbcba314153ee7f38fd195e676e997" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::AppendBlockResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3013" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3013" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a7a5bf1e48ce99041a223d667f1304369" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::AppendBlockResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3019" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3019" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a18354ea48bc24f1cf1a7ef4617448234" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; ContentHash &gt;</type>
+        <definition>Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::Models::AppendBlockResult::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3024" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3024" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a82c17b4ace65c1a623ceb7bf26e6cb56" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::Models::AppendBlockResult::AppendOffset</definition>
+        <argsstring></argsstring>
+        <name>AppendOffset</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::AppendOffset</qualifiedname>
+        <initializer>= int64_t()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This response header is returned only for append operations. It returns the offset at which the block was committed, in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3029" column="15" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3029" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a4456dfe75f26df0f610f247c13b6e122" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t Azure::Storage::Blobs::Models::AppendBlockResult::CommittedBlockCount</definition>
+        <argsstring></argsstring>
+        <name>CommittedBlockCount</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::CommittedBlockCount</qualifiedname>
+        <initializer>= int32_t()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of committed blocks present in the blob. This header is returned only for append blobs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3034" column="15" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3034" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1ad1a2cea0c612182204395d60aa586a2c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::AppendBlockResult::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3039" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3039" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a0ffdac306939bd3b976063f5f1c836d4" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Storage::Blobs::Models::AppendBlockResult::EncryptionKeySha256</definition>
+        <argsstring></argsstring>
+        <name>EncryptionKeySha256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::EncryptionKeySha256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The SHA-256 hash of the encryption key used to encrypt the block. This header is only returned when the block was encrypted with a customer-provided key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3044" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3044" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1ab1ff52c0c904c8d20a01a120a60e54ef" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::AppendBlockResult::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AppendBlockResult::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the name of the encryption scope used to encrypt the blob contents and application metadata. Note that the absence of this header implies use of the default account encryption scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3050" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3050" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a6b6ed9864322ae13a3c569343801aa1c" kindref="member">Azure::Storage::Blobs::AppendBlobClient::AppendBlock</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="3007" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3008" bodyend="3051"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a82c17b4ace65c1a623ceb7bf26e6cb56" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>AppendOffset</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a4456dfe75f26df0f610f247c13b6e122" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>CommittedBlockCount</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a0ffdac306939bd3b976063f5f1c836d4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>EncryptionKeySha256</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1ab1ff52c0c904c8d20a01a120a60e54ef" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a66fbcba314153ee7f38fd195e676e997" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1ad1a2cea0c612182204395d60aa586a2c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a7a5bf1e48ce99041a223d667f1304369" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result_1a18354ea48bc24f1cf1a7ef4617448234" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AppendBlockResult</scope><name>TransactionalContentHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

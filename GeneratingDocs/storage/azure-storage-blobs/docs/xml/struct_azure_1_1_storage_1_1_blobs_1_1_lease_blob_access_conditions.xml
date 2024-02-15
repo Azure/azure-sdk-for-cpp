@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_lease_blob_access_conditions" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::LeaseBlobAccessConditions</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::ModifiedConditions</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">Azure::MatchConditions</basecompoundref>
+    <basecompoundref refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions" prot="public" virt="non-virtual">Azure::Storage::Blobs::TagAccessConditions</basecompoundref>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <briefdescription>
+<para>Specifies access conditions for blob lease operations. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::LeaseBlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_lease_blob_access_conditions"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::LeaseBlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_lease_blob_access_conditions"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="101" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="104" bodyend="105"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions_1ac41ede07d240f3ff98f4558ddc538823" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::LeaseBlobAccessConditions</scope><name>TagConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions_1a25058f85ab238c355e0b3f7575d7b201" prot="public" virt="virtual"><scope>Azure::Storage::Blobs::LeaseBlobAccessConditions</scope><name>~TagAccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

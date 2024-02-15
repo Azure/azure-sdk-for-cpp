@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a1f286aa73863123ef7b74ac1229b5876" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref></type>
+        <definition>const BlobQueryArrowFieldType Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Int64</definition>
+        <argsstring></argsstring>
+        <name>Int64</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Int64</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>: Int64 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2512" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2512" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a1623edd9912a8a3b40476fb204afcc51" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref></type>
+        <definition>const BlobQueryArrowFieldType Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Bool</definition>
+        <argsstring></argsstring>
+        <name>Bool</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Bool</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>: Bool </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2514" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2514" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1abc7e440d6aa2a2c8a981f0c68f64dd55" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref></type>
+        <definition>const BlobQueryArrowFieldType Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Timestamp</definition>
+        <argsstring></argsstring>
+        <name>Timestamp</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Timestamp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>: Timestamp </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2516" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2516" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a00f60d9a3c80c5de1bcf07a88aab8749" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref></type>
+        <definition>const BlobQueryArrowFieldType Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::String</definition>
+        <argsstring></argsstring>
+        <name>String</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::String</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>: String </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2518" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2518" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a8bd463fe68bfb77415eac0803af1d276" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref></type>
+        <definition>const BlobQueryArrowFieldType Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Double</definition>
+        <argsstring></argsstring>
+        <name>Double</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Double</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>: Double </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2520" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2520" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1ad35205a5d975e57bd7b4551c40c21f14" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref></type>
+        <definition>const BlobQueryArrowFieldType Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Decimal</definition>
+        <argsstring></argsstring>
+        <name>Decimal</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::Decimal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>: Decimal </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2522" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2522" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1af6d9ddcac5cbbe09d8c4bf60c9f82c12" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2525" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2525" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a35add22cc09df0de1a0147ca054fa5d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::BlobQueryArrowFieldType</definition>
+        <argsstring>()=default</argsstring>
+        <name>BlobQueryArrowFieldType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::BlobQueryArrowFieldType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2499" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a3dc132c1ecc5d06121fe1431644036a1" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::BlobQueryArrowFieldType</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>BlobQueryArrowFieldType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::BlobQueryArrowFieldType</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2501" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2501" bodyend="2501"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a666130c96e5830364a5874cda3526aa7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::operator==</definition>
+        <argsstring>(const BlobQueryArrowFieldType &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2503" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2503" bodyend="2506"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a113323d5e77f4ae18b5cae84a80e54b8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::operator!=</definition>
+        <argsstring>(const BlobQueryArrowFieldType &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2508" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2508" bodyend="2508"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a0803596a2a4f8e515b9b1caad7e65a17" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2510" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2510" bodyend="2510"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Type of blob query arrow field. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Bool</edgelabel>
+          <edgelabel>Decimal</edgelabel>
+          <edgelabel>Double</edgelabel>
+          <edgelabel>Int64</edgelabel>
+          <edgelabel>String</edgelabel>
+          <edgelabel>Timestamp</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2496" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2496" bodyend="2526"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a35add22cc09df0de1a0147ca054fa5d7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>BlobQueryArrowFieldType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a3dc132c1ecc5d06121fe1431644036a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>BlobQueryArrowFieldType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a1623edd9912a8a3b40476fb204afcc51" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>Bool</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1ad35205a5d975e57bd7b4551c40c21f14" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>Decimal</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a8bd463fe68bfb77415eac0803af1d276" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>Double</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a1f286aa73863123ef7b74ac1229b5876" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>Int64</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1af6d9ddcac5cbbe09d8c4bf60c9f82c12" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a113323d5e77f4ae18b5cae84a80e54b8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a666130c96e5830364a5874cda3526aa7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a00f60d9a3c80c5de1bcf07a88aab8749" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>String</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1abc7e440d6aa2a2c8a981f0c68f64dd55" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>Timestamp</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type_1a0803596a2a4f8e515b9b1caad7e65a17" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

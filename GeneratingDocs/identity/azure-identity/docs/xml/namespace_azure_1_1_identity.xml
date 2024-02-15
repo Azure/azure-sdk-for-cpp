@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_identity" kind="namespace" language="C++">
+    <compoundname>Azure::Identity</compoundname>
+    <innerclass refid="class_azure_1_1_identity_1_1_azure_cli_credential" prot="public">Azure::Identity::AzureCliCredential</innerclass>
+    <innerclass refid="struct_azure_1_1_identity_1_1_azure_cli_credential_options" prot="public">Azure::Identity::AzureCliCredentialOptions</innerclass>
+    <innerclass refid="class_azure_1_1_identity_1_1_chained_token_credential" prot="public">Azure::Identity::ChainedTokenCredential</innerclass>
+    <innerclass refid="class_azure_1_1_identity_1_1_client_certificate_credential" prot="public">Azure::Identity::ClientCertificateCredential</innerclass>
+    <innerclass refid="struct_azure_1_1_identity_1_1_client_certificate_credential_options" prot="public">Azure::Identity::ClientCertificateCredentialOptions</innerclass>
+    <innerclass refid="class_azure_1_1_identity_1_1_client_secret_credential" prot="public">Azure::Identity::ClientSecretCredential</innerclass>
+    <innerclass refid="struct_azure_1_1_identity_1_1_client_secret_credential_options" prot="public">Azure::Identity::ClientSecretCredentialOptions</innerclass>
+    <innerclass refid="class_azure_1_1_identity_1_1_default_azure_credential" prot="public">Azure::Identity::DefaultAzureCredential</innerclass>
+    <innerclass refid="class_azure_1_1_identity_1_1_environment_credential" prot="public">Azure::Identity::EnvironmentCredential</innerclass>
+    <innerclass refid="struct_azure_1_1_identity_1_1_environment_credential_options" prot="public">Azure::Identity::EnvironmentCredentialOptions</innerclass>
+    <innerclass refid="class_azure_1_1_identity_1_1_managed_identity_credential" prot="public">Azure::Identity::ManagedIdentityCredential</innerclass>
+    <innerclass refid="class_azure_1_1_identity_1_1_workload_identity_credential" prot="public">Azure::Identity::WorkloadIdentityCredential</innerclass>
+    <innerclass refid="struct_azure_1_1_identity_1_1_workload_identity_credential_options" prot="public">Azure::Identity::WorkloadIdentityCredentialOptions</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/identity/azure_cli_credential.hpp" line="28" column="15"/>
+  </compounddef>
+</doxygen>

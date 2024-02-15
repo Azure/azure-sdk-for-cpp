@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_06ad7f09ade60a1ced0a4e3dcb3d1625" kind="dir">
+    <compoundname>inc/azure/core</compoundname>
+    <innerdir refid="dir_a8cc8f7ff322334a2a50a34fe37fffca">inc/azure/core/credentials</innerdir>
+    <innerdir refid="dir_cd38344297a017debf1ad1e1976f1427">inc/azure/core/cryptography</innerdir>
+    <innerdir refid="dir_9f538fb3cd1d0d1419459089d67ff38b">inc/azure/core/diagnostics</innerdir>
+    <innerdir refid="dir_5aa8da9880e3aea594defbce06a314ae">inc/azure/core/http</innerdir>
+    <innerdir refid="dir_74d6d341cb4e7e7b4498e1cf6aa278fc">inc/azure/core/internal</innerdir>
+    <innerdir refid="dir_fbb34b4d8e97d2aef2890a91f35309b9">inc/azure/core/io</innerdir>
+    <innerdir refid="dir_3c286591724a5035eca77d120b9aff18">inc/azure/core/tracing</innerdir>
+    <innerfile refid="azure__assert_8hpp">azure_assert.hpp</innerfile>
+    <innerfile refid="base64_8hpp">base64.hpp</innerfile>
+    <innerfile refid="case__insensitive__containers_8hpp">case_insensitive_containers.hpp</innerfile>
+    <innerfile refid="context_8hpp">context.hpp</innerfile>
+    <innerfile refid="datetime_8hpp">datetime.hpp</innerfile>
+    <innerfile refid="etag_8hpp">etag.hpp</innerfile>
+    <innerfile refid="exception_8hpp">exception.hpp</innerfile>
+    <innerfile refid="match__conditions_8hpp">match_conditions.hpp</innerfile>
+    <innerfile refid="modified__conditions_8hpp">modified_conditions.hpp</innerfile>
+    <innerfile refid="nullable_8hpp">nullable.hpp</innerfile>
+    <innerfile refid="operation_8hpp">operation.hpp</innerfile>
+    <innerfile refid="operation__status_8hpp">operation_status.hpp</innerfile>
+    <innerfile refid="paged__response_8hpp">paged_response.hpp</innerfile>
+    <innerfile refid="platform_8hpp">platform.hpp</innerfile>
+    <innerfile refid="response_8hpp">response.hpp</innerfile>
+    <innerfile refid="url_8hpp">url.hpp</innerfile>
+    <innerfile refid="uuid_8hpp">uuid.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/"/>
+  </compounddef>
+</doxygen>

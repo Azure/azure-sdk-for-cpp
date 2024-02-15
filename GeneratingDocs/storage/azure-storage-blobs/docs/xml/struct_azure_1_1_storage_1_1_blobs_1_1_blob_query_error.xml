@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobQueryError</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1aab831348b1cec195c4a6a4818f64c14f" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryError::Name</definition>
+        <argsstring></argsstring>
+        <name>Name</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryError::Name</qualifiedname>
+        <briefdescription>
+<para>Error name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1243" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1243" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1a695796f50d876a4a2a370d7fcab990cd" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryError::Description</definition>
+        <argsstring></argsstring>
+        <name>Description</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryError::Description</qualifiedname>
+        <briefdescription>
+<para>Error description. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1247" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1a3963557f7eb067a4c3f7b64637ec46cd" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::BlobQueryError::IsFatal</definition>
+        <argsstring></argsstring>
+        <name>IsFatal</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryError::IsFatal</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>If the error is a fatal error. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1251" column="10" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1accfd76ddf0c7f8d7edd7cf9bb01478f1" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::BlobQueryError::Position</definition>
+        <argsstring></argsstring>
+        <name>Position</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryError::Position</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The position of the error.. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1255" column="13" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1255" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Blob Query Error. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1238" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1239" bodyend="1256"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1a695796f50d876a4a2a370d7fcab990cd" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryError</scope><name>Description</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1a3963557f7eb067a4c3f7b64637ec46cd" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryError</scope><name>IsFatal</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1aab831348b1cec195c4a6a4818f64c14f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryError</scope><name>Name</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error_1accfd76ddf0c7f8d7edd7cf9bb01478f1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryError</scope><name>Position</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

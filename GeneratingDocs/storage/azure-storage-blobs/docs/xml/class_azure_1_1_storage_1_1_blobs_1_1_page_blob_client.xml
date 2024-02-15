@@ -1,0 +1,1069 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::PageBlobClient</compoundname>
+    <basecompoundref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" prot="public" virt="non-virtual">Azure::Storage::Blobs::BlobClient</basecompoundref>
+    <includes refid="page__blob__client_8hpp" local="no">page_blob_client.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ae8d394bf44caeb3293234aee29f825ae" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobClient</definition>
+        <argsstring></argsstring>
+        <name>BlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::BlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="291" column="18" bodyfile="inc/azure/storage/blobs/page_blob_client.hpp" bodystart="291" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aa2fd1e2923e51c997337985b22e1013a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref></type>
+        <definition>PageBlobClient Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString</definition>
+        <argsstring>(const std::string &amp;connectionString, const std::string &amp;blobContainerName, const std::string &amp;blobName, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>CreateFromConnectionString</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>connectionString</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>connectionString</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A connection string includes the authentication information required for your application to access data in an Azure Storage account at runtime. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobContainerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the container containing this blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of this blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="36" column="27" bodyfile="src/page_blob_client.cpp" bodystart="16" bodyend="25"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ac20697cca6a1c98d193544e4eff86049" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, std::shared_ptr&lt; StorageSharedKeyCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>PageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; StorageSharedKeyCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A URL referencing the blob that includes the name of the account, the name of the container, and the name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared key credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="53" column="14" bodyfile="src/page_blob_client.cpp" bodystart="27" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ae0013e542306d9dec697c51a91bdb766" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, std::shared_ptr&lt; Core::Credentials::TokenCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>PageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; Core::Credentials::TokenCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A URL referencing the blob that includes the name of the account, the name of the container, and the name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The token credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="68" column="14" bodyfile="src/page_blob_client.cpp" bodystart="35" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a251eb643a78e9e64fa592a610f5b02ab" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>PageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A URL referencing the blob that includes the name of the account, the name of the container, and the name of the blob, and possibly also a SAS token. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="83" column="14" bodyfile="src/page_blob_client.cpp" bodystart="43" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a3aa5f8cbf81403e3bfb11eef7c010714" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref></type>
+        <definition>PageBlobClient Azure::Storage::Blobs::PageBlobClient::WithSnapshot</definition>
+        <argsstring>(const std::string &amp;snapshot) const</argsstring>
+        <name>WithSnapshot</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::WithSnapshot</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>snapshot</declname>
+        </param>
+        <briefdescription>
+<para>Initializes a new instance of the <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> class with an identical URL source but the specified snapshot timestamp. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>snapshot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The snapshot identifier. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> instance. </para>
+</simplesect>
+<simplesect kind="remark"><para>Pass empty string to remove the snapshot returning the base blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="96" column="20" bodyfile="src/page_blob_client.cpp" bodystart="50" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ad8c7f10bdfd3d8fb45634fe704fb94a3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref></type>
+        <definition>PageBlobClient Azure::Storage::Blobs::PageBlobClient::WithVersionId</definition>
+        <argsstring>(const std::string &amp;versionId) const</argsstring>
+        <name>WithVersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::WithVersionId</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>versionId</declname>
+        </param>
+        <briefdescription>
+<para>Creates a clone of this instance that references a version ID rather than the base blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>versionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The version ID returning a URL to the base blob. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> instance. </para>
+</simplesect>
+<simplesect kind="remark"><para>Pass empty string to remove the version ID returning the base blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="106" column="20" bodyfile="src/page_blob_client.cpp" bodystart="65" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aeabef65efdfb4fd8f2283205bd188c15" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result" kindref="compound">Models::CreatePageBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::CreatePageBlobResult &gt; Azure::Storage::Blobs::PageBlobClient::Create</definition>
+        <argsstring>(int64_t blobSize, const CreatePageBlobOptions &amp;options=CreatePageBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Create</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::Create</qualifiedname>
+        <param>
+          <type>int64_t</type>
+          <declname>blobSize</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_page_blob_options" kindref="compound">CreatePageBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_page_blob_options" kindref="compound">CreatePageBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new page blob of the specified size. The content of any existing blob is overwritten with the newly initialized page blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the maximum size for the page blob. The size must be aligned to a 512-byte boundary. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A CreatePageBlobResult describing the newly created page blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="118" column="21" bodyfile="src/page_blob_client.cpp" bodystart="80" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1adbe7c512afa1cd1b32ac432e0c1f966c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result" kindref="compound">Models::CreatePageBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::CreatePageBlobResult &gt; Azure::Storage::Blobs::PageBlobClient::CreateIfNotExists</definition>
+        <argsstring>(int64_t blobContentLength, const CreatePageBlobOptions &amp;options=CreatePageBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>CreateIfNotExists</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::CreateIfNotExists</qualifiedname>
+        <param>
+          <type>int64_t</type>
+          <declname>blobContentLength</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_page_blob_options" kindref="compound">CreatePageBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_page_blob_options" kindref="compound">CreatePageBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new page blob of the specified size. The content keeps unchanged if the blob already exists. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobContentLength</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the maximum size for the page blob. The size must be aligned to a 512-byte boundary. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A CreatePageBlobResult describing the newly created page blob. CreatePageBlobResult.Created is false if the blob already exists. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="134" column="21" bodyfile="src/page_blob_client.cpp" bodystart="121" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a2b8cdf4749fc82a7c43a4f07ef176819" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_pages_result" kindref="compound">Models::UploadPagesResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::UploadPagesResult &gt; Azure::Storage::Blobs::PageBlobClient::UploadPages</definition>
+        <argsstring>(int64_t offset, Azure::Core::IO::BodyStream &amp;content, const UploadPagesOptions &amp;options=UploadPagesOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>UploadPages</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::UploadPages</qualifiedname>
+        <param>
+          <type>int64_t</type>
+          <declname>offset</declname>
+        </param>
+        <param>
+          <type>Azure::Core::IO::BodyStream &amp;</type>
+          <declname>content</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_pages_options" kindref="compound">UploadPagesOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_pages_options" kindref="compound">UploadPagesOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Writes content to a range of pages in a page blob, starting at offset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the starting offset for the content to be written as a page. Given that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of 512. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>content</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A BodyStream containing the content of the pages to upload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A UploadPagesResult describing the state of the updated pages. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="150" column="21" bodyfile="src/page_blob_client.cpp" bodystart="146" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a9483bfbfe0885ad556f33957e9d90cb2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_pages_from_uri_result" kindref="compound">Models::UploadPagesFromUriResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::UploadPagesFromUriResult &gt; Azure::Storage::Blobs::PageBlobClient::UploadPagesFromUri</definition>
+        <argsstring>(int64_t destinationOffset, std::string sourceUri, Azure::Core::Http::HttpRange sourceRange, const UploadPagesFromUriOptions &amp;options=UploadPagesFromUriOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>UploadPagesFromUri</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::UploadPagesFromUri</qualifiedname>
+        <param>
+          <type>int64_t</type>
+          <declname>destinationOffset</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sourceUri</declname>
+        </param>
+        <param>
+          <type>Azure::Core::Http::HttpRange</type>
+          <declname>sourceRange</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_pages_from_uri_options" kindref="compound">UploadPagesFromUriOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_pages_from_uri_options" kindref="compound">UploadPagesFromUriOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Writes a range of pages to a page blob where the contents are read from a uri. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>destinationOffset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the starting offset for the content to be written. Given that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of 512. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sourceUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the uri of the source blob. The value may be a uri of up to 2 KB in length that specifies a blob. The source blob must either be public or must be authenticated via a shared access signature. If the source blob is public, no authentication is required to perform the operation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sourceRange</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Only upload the bytes of the blob in the sourceUri in the specified range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A UploadPagesFromUriResult describing the state of the updated pages. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="172" column="21" bodyfile="src/page_blob_client.cpp" bodystart="190" bodyend="242"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a8134979d990c48ad575e7988d63b4e0a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_clear_pages_result" kindref="compound">Models::ClearPagesResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::ClearPagesResult &gt; Azure::Storage::Blobs::PageBlobClient::ClearPages</definition>
+        <argsstring>(Azure::Core::Http::HttpRange range, const ClearPagesOptions &amp;options=ClearPagesOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>ClearPages</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::ClearPages</qualifiedname>
+        <param>
+          <type>Azure::Core::Http::HttpRange</type>
+          <declname>range</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_clear_pages_options" kindref="compound">ClearPagesOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_clear_pages_options" kindref="compound">ClearPagesOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Clears one or more pages from the page blob, as specificed by range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the range of bytes to be cleared. Both the start and end of the range must be specified. For a page clear operation, the page range can be up to the value of the blob&apos;s full size. Given that pages must be aligned with 512-byte boundaries, the start and length of the range must be a modulus of 512. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A ClearPagesResult describing the state of the updated pages. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="190" column="21" bodyfile="src/page_blob_client.cpp" bodystart="244" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a539cce739d07ec6b1a6e8c93278e4d5e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_resize_page_blob_result" kindref="compound">Models::ResizePageBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::ResizePageBlobResult &gt; Azure::Storage::Blobs::PageBlobClient::Resize</definition>
+        <argsstring>(int64_t blobSize, const ResizePageBlobOptions &amp;options=ResizePageBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Resize</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::Resize</qualifiedname>
+        <param>
+          <type>int64_t</type>
+          <declname>blobSize</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_resize_page_blob_options" kindref="compound">ResizePageBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_resize_page_blob_options" kindref="compound">ResizePageBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Resizes the page blob to the specified size (which must be a multiple of 512). If the specified value is less than the current size of the blob, then all pages above the specified value are cleared. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the maximum size for the page blob. The size must be aligned to a 512-byte boundary. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A ResizePageBlobResult describing the resized page blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="206" column="21" bodyfile="src/page_blob_client.cpp" bodystart="274" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ada82213c2f4eef5694fcd24234ef10bc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_update_sequence_number_result" kindref="compound">Models::UpdateSequenceNumberResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::UpdateSequenceNumberResult &gt; Azure::Storage::Blobs::PageBlobClient::UpdateSequenceNumber</definition>
+        <argsstring>(Models::SequenceNumberAction action, const UpdatePageBlobSequenceNumberOptions &amp;options=UpdatePageBlobSequenceNumberOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>UpdateSequenceNumber</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::UpdateSequenceNumber</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">Models::SequenceNumberAction</ref></type>
+          <declname>action</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options" kindref="compound">UpdatePageBlobSequenceNumberOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options" kindref="compound">UpdatePageBlobSequenceNumberOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Changes the sequence number for this page blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies how the service should modify the blob&apos;s sequence number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An UpdateSequenceNumberResult describing the updated page blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="219" column="21" bodyfile="src/page_blob_client.cpp" bodystart="290" bodyend="306"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a66ff58b911a581c07cfef2f980132551" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response" kindref="compound">GetPageRangesPagedResponse</ref></type>
+        <definition>GetPageRangesPagedResponse Azure::Storage::Blobs::PageBlobClient::GetPageRanges</definition>
+        <argsstring>(const GetPageRangesOptions &amp;options=GetPageRangesOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>GetPageRanges</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::GetPageRanges</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Returns the list of valid page ranges for a page blob or snapshot of a page blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A GetPageRangesResult describing the valid page ranges for this blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="231" column="32" bodyfile="src/page_blob_client.cpp" bodystart="308" bodyend="347"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a4740a1e4cac11f6c5db64c55074a6b7b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response" kindref="compound">GetPageRangesDiffPagedResponse</ref></type>
+        <definition>GetPageRangesDiffPagedResponse Azure::Storage::Blobs::PageBlobClient::GetPageRangesDiff</definition>
+        <argsstring>(const std::string &amp;previousSnapshot, const GetPageRangesOptions &amp;options=GetPageRangesOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>GetPageRangesDiff</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::GetPageRangesDiff</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>previousSnapshot</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Returns the list of page ranges that differ between a previous snapshot and this page blob. Changes include both updated and cleared pages. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>previousSnapshot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies that the response will contain only pages that were changed between target blob and previous snapshot. Changed pages include both updated and cleared pages. The target blob may be a snapshot, as long as the snapshot specified by previousSnapshot is the older of the two. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A GetPageRangesResult describing the valid page ranges for this blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="247" column="36" bodyfile="src/page_blob_client.cpp" bodystart="349" bodyend="392"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aee0bab24e7c3ba34e06955724819bf85" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response" kindref="compound">GetPageRangesDiffPagedResponse</ref></type>
+        <definition>GetPageRangesDiffPagedResponse Azure::Storage::Blobs::PageBlobClient::GetManagedDiskPageRangesDiff</definition>
+        <argsstring>(const std::string &amp;previousSnapshotUrl, const GetPageRangesOptions &amp;options=GetPageRangesOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>GetManagedDiskPageRangesDiff</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::GetManagedDiskPageRangesDiff</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>previousSnapshotUrl</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Returns the list of page ranges that differ between a previous snapshot URL and this page blob. Changes include both updated and cleared pages. This API only works with managed disk storage accounts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>previousSnapshotUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This parameter only works with managed disk storage accounts. Specifies that the response will contain only pages that were changed between target blob and previous snapshot. Changed pages include both updated and cleared pages. The target blob may be a snapshot, as long as the snapshot specified by previousSnapshotUrl is the older of the two. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A GetPageRangesResult describing the valid page ranges for this blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="266" column="36" bodyfile="src/page_blob_client.cpp" bodystart="394" bodyend="437"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aa763eb745ee9708716a2e13f7ac3aed9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref></type>
+        <definition>StartBlobCopyOperation Azure::Storage::Blobs::PageBlobClient::StartCopyIncremental</definition>
+        <argsstring>(const std::string &amp;sourceUri, const StartBlobCopyIncrementalOptions &amp;options=StartBlobCopyIncrementalOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>StartCopyIncremental</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::StartCopyIncremental</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>sourceUri</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_incremental_options" kindref="compound">StartBlobCopyIncrementalOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_incremental_options" kindref="compound">StartBlobCopyIncrementalOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Starts copying a snapshot of the sourceUri page blob to this page blob. The snapshot is copied such that only the differential changes between the previously copied snapshot are transferred to the destination. The copied snapshots are complete copies of the original snapshot and can be read or copied from as usual. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sourceUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the to the source page blob as a uri up to 2 KB in length. The source blob must either be public or must be authenticated via a shared access signature. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref> describing the state of the copy operation. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="283" column="28" bodyfile="src/page_blob_client.cpp" bodystart="439" bodyend="458"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a9f0c5b951135634146593f0ab2a6761f" prot="private" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</definition>
+        <argsstring>(BlobClient blobClient)</argsstring>
+        <name>PageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobClient::PageBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+          <declname>blobClient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="289" column="14" bodyfile="src/page_blob_client.cpp" bodystart="48" bodyend="48"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> allows you to manipulate Azure Storage page blobs.</para>
+<para>Page blobs are a collection of 512-byte pages optimized for random read and write operations. To create a page blob, you initialize the page blob and specify the maximum size the page blob will grow. To add or update the contents of a page blob, you write a page or pages by specifying an offset and a range that align to 512-byte page boundaries. Writes to page blobs happen in-place and are immediately committed to the blob. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::PageBlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::PageBlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/page_blob_client.hpp" line="23" column="3" bodyfile="inc/azure/storage/blobs/page_blob_client.hpp" bodystart="23" bodyend="292"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a128e9bdfdd7bd7b7125aada157b2734a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>AbortCopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a88846b9248a67b05abb25c791a8f9524" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>AsAppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1acea541c3a579cf4bd279c328c88d2cd6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>AsBlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a0b2c93bb3026f146c72bffcbccf32b54" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>AsPageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ae8d394bf44caeb3293234aee29f825ae" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a648f91be2338d9726c8145ba214ac978" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa96e47997fba9d786c78fb7d451f335e" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa224db3a62b18fe4636bafc40388e2b4" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a8134979d990c48ad575e7988d63b4e0a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>ClearPages</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a267904b7db1f9e53632dc551aaea037c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>CopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aeabef65efdfb4fd8f2283205bd188c15" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>Create</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aa2fd1e2923e51c997337985b22e1013a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>CreateFromConnectionString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1adbe7c512afa1cd1b32ac432e0c1f966c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>CreateIfNotExists</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a05131f0bfc5f8b6d32c98f18d6d450a7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>CreateSnapshot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ac121df9f5dfcdeb80f47b50543df0984" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>Delete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a17a5c20b7cee4478d5a33409440fea8d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>DeleteIfExists</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a13aefc1ffba111e1a40c6fab1b9e99e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>DeleteImmutabilityPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aee72db03143c80da4da4acb3e4c3673d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>Download</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa0bcbdbf6ebd17e4888cced4736420f7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>DownloadTo</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa7c42e08951121a5f683e3e93bdc17c1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>DownloadTo</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aee0bab24e7c3ba34e06955724819bf85" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>GetManagedDiskPageRangesDiff</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a66ff58b911a581c07cfef2f980132551" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>GetPageRanges</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a4740a1e4cac11f6c5db64c55074a6b7b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>GetPageRangesDiff</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a305bf8f65dc35944e706df2d2791a3a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>GetProperties</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a314dab2e7c92c0044045e2bcbae63f58" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>GetTags</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aebb3229526e303cc615aa69d78503063" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>GetUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa765e21c8d0527fa727999530bc562d7" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>m_blobUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a5231380a85d877a46b806a5ca316ef1f" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>m_customerProvidedKey</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a3a6762883174de1e74f4aa7f888ff2c2" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>m_encryptionScope</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1afc38d8187d60217d1e8143996ec7df90" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>m_pipeline</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ac20697cca6a1c98d193544e4eff86049" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>PageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ae0013e542306d9dec697c51a91bdb766" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>PageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a251eb643a78e9e64fa592a610f5b02ab" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>PageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a9f0c5b951135634146593f0ab2a6761f" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>PageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a539cce739d07ec6b1a6e8c93278e4d5e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>Resize</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ad9104f59eef0ef11d1599fa0de03d5bb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>SetAccessTier</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a913e1aca81833426ec8b621531c9b4a5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>SetHttpHeaders</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ade112c37b5858590349a2b5e46fd5709" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>SetImmutabilityPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a7617dfc40b61d67af2cb8cfd53771da1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>SetLegalHold</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a76301e79fa60cae85be9fca9072042a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>SetMetadata</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a9c0bed9f975d4462ac7cb28f24963a77" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>SetTags</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1af1c432cf82637be1c954b94ea57fee1a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>StartCopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aa763eb745ee9708716a2e13f7ac3aed9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>StartCopyIncremental</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1abbe7d6e85fe6945188e97eead63b1e7f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>Undelete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ada82213c2f4eef5694fcd24234ef10bc" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>UpdateSequenceNumber</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a2b8cdf4749fc82a7c43a4f07ef176819" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>UploadPages</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a9483bfbfe0885ad556f33957e9d90cb2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>UploadPagesFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a3aa5f8cbf81403e3bfb11eef7c010714" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>WithSnapshot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ad8c7f10bdfd3d8fb45634fe704fb94a3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>WithVersionId</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aba0c132a169d0dd59d6f69bd31381b0d" prot="public" virt="virtual"><scope>Azure::Storage::Blobs::PageBlobClient</scope><name>~BlobClient</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,302 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="http__status__code_8hpp" kind="file" language="C++">
+    <compoundname>http_status_code.hpp</compoundname>
+    <includes local="no">string</includes>
+    <includedby refid="core_8hpp" local="yes">inc/azure/core.hpp</includedby>
+    <includedby refid="exception_8hpp" local="yes">inc/azure/core/exception.hpp</includedby>
+    <includedby refid="http_8hpp" local="yes">inc/azure/core/http/http.hpp</includedby>
+    <includedby refid="raw__response_8hpp" local="yes">inc/azure/core/http/raw_response.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>inc/azure/core/http/http_status_code.hpp</label>
+        <link refid="http__status__code_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core.hpp</label>
+        <link refid="core_8hpp_source"/>
+      </node>
+      <node id="12">
+        <label>inc/azure/core/credentials/token_credential_options.hpp</label>
+        <link refid="token__credential__options_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/exception.hpp</label>
+        <link refid="exception_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>inc/azure/core/http/curl_transport.hpp</label>
+        <link refid="curl__transport_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>inc/azure/core/http/http.hpp</label>
+        <link refid="http_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/http/http_status_code.hpp</label>
+        <link refid="http__status__code_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>inc/azure/core/http/policies/policy.hpp</label>
+        <link refid="policy_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>inc/azure/core/http/raw_response.hpp</label>
+        <link refid="raw__response_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>inc/azure/core/http/transport.hpp</label>
+        <link refid="transport_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>inc/azure/core/http/win_http_transport.hpp</label>
+        <link refid="win__http__transport_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>inc/azure/core/internal/client_options.hpp</label>
+        <link refid="client__options_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>inc/azure/core/internal/credentials/authorization_challenge_parser.hpp</label>
+        <link refid="authorization__challenge__parser_8hpp"/>
+      </node>
+      <node id="13">
+        <label>inc/azure/core/internal/http/pipeline.hpp</label>
+        <link refid="pipeline_8hpp"/>
+      </node>
+      <node id="14">
+        <label>inc/azure/core/internal/tracing/service_tracing.hpp</label>
+        <link refid="service__tracing_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>inc/azure/core/operation.hpp</label>
+        <link refid="operation_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>inc/azure/core/paged_response.hpp</label>
+        <link refid="paged__response_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>inc/azure/core/response.hpp</label>
+        <link refid="response_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>src/http/curl/curl_connection_pool_private.hpp</label>
+        <link refid="curl__connection__pool__private_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>src/http/curl/curl_connection_private.hpp</label>
+        <link refid="curl__connection__private_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>src/http/curl/curl_session_private.hpp</label>
+        <link refid="curl__session__private_8hpp"/>
+      </node>
+      <node id="15">
+        <label>src/http/user_agent.cpp</label>
+        <link refid="user__agent_8cpp"/>
+      </node>
+      <node id="10">
+        <label>src/http/winhttp/win_http_request.hpp</label>
+        <link refid="win__http__request_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_http">Azure::Core::Http</innernamespace>
+    <briefdescription>
+<para>HTTP status code definition. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_azure" kindref="compound">Azure</ref><sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Http<sp/>{</highlight></codeline>
+<codeline lineno="17" refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">HttpStatusCode</ref></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da6adf97f83acf6453d4a6a4b1070f3754" kindref="member">None</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>===<sp/>1xx<sp/>(information)<sp/>Status<sp/>Codes:<sp/>===</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa0bfb8e59e6c13fc8d990781f77694fe" kindref="member">Continue</ref><sp/>=<sp/>100,<sp/></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da548c5a637eddf65132b21411aeafc6a1" kindref="member">SwitchingProtocols</ref><sp/>=<sp/>101,<sp/></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da643562a9ae7099c8aabfdc93478db117" kindref="member">Processing</ref><sp/>=<sp/>102,<sp/></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da7ff9f49506fe347fab32eb5ff72feda9" kindref="member">EarlyHints</ref><sp/>=<sp/>103,<sp/></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>===<sp/>2xx<sp/>(successful)<sp/>Status<sp/>Codes:<sp/>===</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa60852f204ed8028c1c58808b746d115" kindref="member">Ok</ref><sp/>=<sp/>200,<sp/></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0eceeb45861f9585dd7a97a3e36f85c6" kindref="member">Created</ref><sp/>=<sp/>201,<sp/></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da382ab522931673c11e398ead1b7b1678" kindref="member">Accepted</ref><sp/>=<sp/>202,<sp/></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da2d0ea43e788b779c0aec92366b711c2f" kindref="member">NonAuthoritativeInformation</ref><sp/>=<sp/>203,<sp/></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dacd447f1ec89f564ebac583d60087df12" kindref="member">NoContent</ref><sp/>=<sp/>204,<sp/></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4e9202c31896211f63be5b7345a897ed" kindref="member">ResetContent</ref><sp/>=<sp/>205,<sp/></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da750de7eda10d780b3bbaefb57128c24b" kindref="member">PartialContent</ref><sp/>=<sp/>206,<sp/></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0790a60654c0b2939299af967571e59b" kindref="member">MultiStatus</ref><sp/>=<sp/>207,<sp/></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac549fc73e09b412a8451b1648820acf2" kindref="member">AlreadyReported</ref><sp/>=<sp/>208,<sp/></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa3abca599dedd534e63c999418d70f45" kindref="member">IMUsed</ref><sp/>=<sp/>226,<sp/></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>===<sp/>3xx<sp/>(redirection)<sp/>Status<sp/>Codes:<sp/>===</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa589749d075c3423333bdc93e3b4e774" kindref="member">MultipleChoices</ref><sp/>=<sp/>300,<sp/></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da32638c25f4c913fce6214c2c4afff9dc" kindref="member">MovedPermanently</ref><sp/>=<sp/>301,<sp/></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da5d695cc28c6a7ea955162fbdd0ae42b9" kindref="member">Found</ref><sp/>=<sp/>302,<sp/></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da7843649eb3841f496a79303fd815029e" kindref="member">SeeOther</ref><sp/>=<sp/>303,<sp/></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac169e6d9a1b9442001384de8dcf49ab9" kindref="member">NotModified</ref><sp/>=<sp/>304,<sp/></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0a272f25fd5e8a06065ef8ee41a88bea" kindref="member">UseProxy</ref><sp/>=<sp/>305,<sp/></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da1b73a351faf2b550d06fae9cc6e0a894" kindref="member">TemporaryRedirect</ref><sp/>=<sp/>307,<sp/></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac13fb7996808b1abe56e3ae4da84fb4a" kindref="member">PermanentRedirect</ref><sp/>=<sp/>308,<sp/></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>===<sp/>4xx<sp/>(client<sp/>error)<sp/>Status<sp/>Codes:<sp/>===</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da9edf8fbf00a57d95a0af4923c9a1ec6f" kindref="member">BadRequest</ref><sp/>=<sp/>400,<sp/></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dae06d1ba70f1331e9f9a113cc2f887d3f" kindref="member">Unauthorized</ref><sp/>=<sp/>401,<sp/></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4c99006c75b53fe48865cdfa0ac065ba" kindref="member">PaymentRequired</ref><sp/>=<sp/>402,<sp/></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da722969577a96ca3953e84e3d949dee81" kindref="member">Forbidden</ref><sp/>=<sp/>403,<sp/></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da38c300f4fc9ce8a77aad4a30de05cad8" kindref="member">NotFound</ref><sp/>=<sp/>404,<sp/></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8ba68fee5542f5fd071aed140c39bd8e" kindref="member">MethodNotAllowed</ref><sp/>=<sp/>405,<sp/></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf83a928e6a3f3b502ffadd2a414ce48c" kindref="member">NotAcceptable</ref><sp/>=<sp/>406,<sp/></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da59a2898a8bf9da75a5855e76110f06f2" kindref="member">ProxyAuthenticationRequired</ref><sp/>=<sp/>407,<sp/></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3632c2e4e6225d4d9fcd2a6fd2c65048" kindref="member">RequestTimeout</ref><sp/>=<sp/>408,<sp/></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf1d4ac54357cc0932f385d56814ba7e4" kindref="member">Conflict</ref><sp/>=<sp/>409,<sp/></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0b497b33b1a05057bc1634e607170bf6" kindref="member">Gone</ref><sp/>=<sp/>410,<sp/></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8282fb93cb1cf45b135ea191668ca583" kindref="member">LengthRequired</ref><sp/>=<sp/>411,<sp/></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3542a02d18f11f46d53990d91752a6d4" kindref="member">PreconditionFailed</ref><sp/>=<sp/>412,<sp/></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0234a767e9c5c06cdaf290cc9b690b34" kindref="member">PayloadTooLarge</ref><sp/>=<sp/>413,<sp/></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf72866c1bbf28a47b9bb1c8846e03313" kindref="member">UriTooLong</ref><sp/>=<sp/>414,<sp/></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa3219a6843adbb23de79b4df9c307f5d" kindref="member">UnsupportedMediaType</ref><sp/>=<sp/>415,<sp/></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da9283ef01c36e7e4793b3e1395d764dfe" kindref="member">RangeNotSatisfiable</ref><sp/>=<sp/>416,<sp/></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da6af78095a2be4a230ba87f03dd131830" kindref="member">ExpectationFailed</ref><sp/>=<sp/>417,<sp/></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac110d06054539d0031cbefdf78d1fdd6" kindref="member">MisdirectedRequest</ref><sp/>=<sp/>421,<sp/></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dabcc63308f9773c816911ce819b314e2c" kindref="member">UnprocessableEntity</ref><sp/>=<sp/>422,<sp/></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dad0f2e5376298c880665077b565ffd7dd" kindref="member">Locked</ref><sp/>=<sp/>423,<sp/></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3e30483e6f8d532c08ac164aebf039fd" kindref="member">FailedDependency</ref><sp/>=<sp/>424,<sp/></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daed92d2533f798942f53b2033050f5ddd" kindref="member">TooEarly</ref><sp/>=<sp/>425,<sp/></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dae0eaea96be1ec038b859e02cc5330827" kindref="member">UpgradeRequired</ref><sp/>=<sp/>426,<sp/></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4dd7ee1fe9fa9f29e190b416122146df" kindref="member">PreconditionRequired</ref><sp/>=<sp/>428,<sp/></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dab00b00233255c3551697fe613001265d" kindref="member">TooManyRequests</ref><sp/>=<sp/>429,<sp/></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da01d50823ab04e988e893bc17c2d55f24" kindref="member">RequestHeaderFieldsTooLarge</ref><sp/>=<sp/>431,<sp/></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf7c925b24caa71cd7097be57c4de6130" kindref="member">UnavailableForLegalReasons</ref><sp/>=<sp/>451,<sp/></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>===<sp/>5xx<sp/>(server<sp/>error)<sp/>Status<sp/>Codes:<sp/>===</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daecbf01325f1c744e9d7bb586ac2eb5ed" kindref="member">InternalServerError</ref><sp/>=<sp/>500,<sp/></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da997ca4ce119685f40f03a9a8a6c5346e" kindref="member">NotImplemented</ref><sp/>=<sp/>501,<sp/></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0e7c9ad08be0653518bf456c9994ace5" kindref="member">BadGateway</ref><sp/>=<sp/>502,<sp/></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da2a4581043d849bcb0e4747970ef1489b" kindref="member">ServiceUnavailable</ref><sp/>=<sp/>503,<sp/></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dada405cbc74723dfdda615e3f679ef2be" kindref="member">GatewayTimeout</ref><sp/>=<sp/>504,<sp/></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da56a7a02e415f5bf106088218f646c04f" kindref="member">HttpVersionNotSupported</ref><sp/>=<sp/>505,<sp/></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0af1f043b1bc6980b5cffce0d83f4736" kindref="member">VariantAlsoNegotiates</ref><sp/>=<sp/>506,<sp/></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daead0064570e2f25592cd76e0e69565a5" kindref="member">InsufficientStorage</ref><sp/>=<sp/>507,<sp/></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa2d07eb3939ad55d4acd3ed81291c61a" kindref="member">LoopDetected</ref><sp/>=<sp/>508,<sp/></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8eff020959c41ba903e16d966855ce03" kindref="member">NotExtended</ref><sp/>=<sp/>510,<sp/></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da52066ff32b30f46d30b87007cacf8f79" kindref="member">NetworkAuthenticationRequired</ref><sp/>=<sp/>511,<sp/></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal">}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Http</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/http/http_status_code.hpp"/>
+  </compounddef>
+</doxygen>

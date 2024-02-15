@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobQueryOutputTextOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a6afed8a9f33b85646bafb0c5b7efe39f" prot="private" static="no" mutable="no">
+        <type>Models::_detail::QueryFormatType</type>
+        <definition>Models::_detail::QueryFormatType Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_format</definition>
+        <argsstring></argsstring>
+        <name>m_format</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_format</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1224" column="38" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a596d59e98d367bae2be1267321906abd" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_recordSeparator</definition>
+        <argsstring></argsstring>
+        <name>m_recordSeparator</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_recordSeparator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1225" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a3d47cb32b852beb802828d0669245ca6" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_columnSeparator</definition>
+        <argsstring></argsstring>
+        <name>m_columnSeparator</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_columnSeparator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1226" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1aa490c0a0ff732a99820b47f44ade80be" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_quotationCharacter</definition>
+        <argsstring></argsstring>
+        <name>m_quotationCharacter</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_quotationCharacter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1227" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a1b1a8dc3aecc8d0e3b1badf331d21b1f" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_escapeCharacter</definition>
+        <argsstring></argsstring>
+        <name>m_escapeCharacter</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_escapeCharacter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1228" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1abcc83543c94a09e5ee3e3bebfc774d86" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_hasHeaders</definition>
+        <argsstring></argsstring>
+        <name>m_hasHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_hasHeaders</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1229" column="10" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a2221b125fc18cab997426f1ed4c89030" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field" kindref="compound">Models::BlobQueryArrowField</ref> &gt;</type>
+        <definition>std::vector&lt;Models::BlobQueryArrowField&gt; Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_schema</definition>
+        <argsstring></argsstring>
+        <name>m_schema</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::m_schema</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1230" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1230" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a4be31ea5fc92e6f527748e209f0142a0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlockBlobClient</definition>
+        <argsstring></argsstring>
+        <name>BlockBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::BlockBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1232" column="18" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1232" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a543fd650f24c167017f5fcb217989ce6" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options" kindref="compound">BlobQueryOutputTextOptions</ref></type>
+        <definition>BlobQueryOutputTextOptions Azure::Storage::Blobs::BlobQueryOutputTextOptions::CreateCsvTextOptions</definition>
+        <argsstring>(const std::string &amp;recordSeparator=std::string(), const std::string &amp;columnSeparator=std::string(), const std::string &amp;quotationCharacter=std::string(), const std::string &amp;escapeCharacter=std::string(), bool hasHeaders=false)</argsstring>
+        <name>CreateCsvTextOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::CreateCsvTextOptions</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>recordSeparator</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>columnSeparator</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>quotationCharacter</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>escapeCharacter</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>hasHeaders</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Creates CSV text configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>recordSeparator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Record separator. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>columnSeparator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column separator. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>quotationCharacter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Field quote. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>escapeCharacter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Escape character. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hasHeaders</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If CSV file has headers. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>CSV text configuration. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1200" column="39" bodyfile="src/blob_options.cpp" bodystart="43" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a86f5b100b91159349208ec5b71077189" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options" kindref="compound">BlobQueryOutputTextOptions</ref></type>
+        <definition>BlobQueryOutputTextOptions Azure::Storage::Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions</definition>
+        <argsstring>(const std::string &amp;recordSeparator=std::string())</argsstring>
+        <name>CreateJsonTextOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>recordSeparator</declname>
+          <defval>std::string()</defval>
+        </param>
+        <briefdescription>
+<para>Creates Json text configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>recordSeparator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Record separator. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Json text configuration. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1212" column="39" bodyfile="src/blob_options.cpp" bodystart="60" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1adfb578eb69020b39daab859602390b47" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options" kindref="compound">BlobQueryOutputTextOptions</ref></type>
+        <definition>BlobQueryOutputTextOptions Azure::Storage::Blobs::BlobQueryOutputTextOptions::CreateArrowTextOptions</definition>
+        <argsstring>(std::vector&lt; Models::BlobQueryArrowField &gt; schema)</argsstring>
+        <name>CreateArrowTextOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryOutputTextOptions::CreateArrowTextOptions</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field" kindref="compound">Models::BlobQueryArrowField</ref> &gt;</type>
+          <declname>schema</declname>
+        </param>
+        <briefdescription>
+<para>Creates Arrow text configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>schema</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A list of fields describing the schema. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Arrow text configuration. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1220" column="39" bodyfile="src/blob_options.cpp" bodystart="69" bodyend="76"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Blob Query text configuration for output. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1188" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1188" bodyend="1233"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a4be31ea5fc92e6f527748e209f0142a0" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>BlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1adfb578eb69020b39daab859602390b47" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>CreateArrowTextOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a543fd650f24c167017f5fcb217989ce6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>CreateCsvTextOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a86f5b100b91159349208ec5b71077189" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>CreateJsonTextOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a3d47cb32b852beb802828d0669245ca6" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>m_columnSeparator</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a1b1a8dc3aecc8d0e3b1badf331d21b1f" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>m_escapeCharacter</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a6afed8a9f33b85646bafb0c5b7efe39f" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>m_format</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1abcc83543c94a09e5ee3e3bebfc774d86" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>m_hasHeaders</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1aa490c0a0ff732a99820b47f44ade80be" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>m_quotationCharacter</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a596d59e98d367bae2be1267321906abd" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>m_recordSeparator</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options_1a2221b125fc18cab997426f1ed4c89030" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryOutputTextOptions</scope><name>m_schema</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

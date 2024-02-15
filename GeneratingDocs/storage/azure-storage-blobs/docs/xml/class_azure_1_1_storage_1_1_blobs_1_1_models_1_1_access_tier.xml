@@ -1,0 +1,451 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::AccessTier</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1aceb50e4268ac2da3c06ba0147b712031" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P1</definition>
+        <argsstring></argsstring>
+        <name>P1</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P1 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1046" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1046" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1ae95aa98aa3a663d107b3aea35533b491" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P2</definition>
+        <argsstring></argsstring>
+        <name>P2</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P2 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1048" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1048" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1afb9ef121e5a11d716fa55a8d754b0cc3" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P3</definition>
+        <argsstring></argsstring>
+        <name>P3</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P3</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P3 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1050" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1050" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a6f4d0ab1096fe1d35483337451c5ab12" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P4</definition>
+        <argsstring></argsstring>
+        <name>P4</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P4</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P4 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1052" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1052" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1adb35395aa25455679453e986900322f2" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P6</definition>
+        <argsstring></argsstring>
+        <name>P6</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P6</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P6 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1054" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1054" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a6a80f9430b3036dd5d74fbc4f9905041" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P10</definition>
+        <argsstring></argsstring>
+        <name>P10</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P10</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P10 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1056" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1056" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1afc6e381490c56ae7866172fda17acb38" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P15</definition>
+        <argsstring></argsstring>
+        <name>P15</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P15</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P15 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1058" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1058" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a2b4928ada72278792b4015c4b8a191bc" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P20</definition>
+        <argsstring></argsstring>
+        <name>P20</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P20</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P20 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1060" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1060" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a83bcaf2c0b7096dbe989db13fe0e5f6e" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P30</definition>
+        <argsstring></argsstring>
+        <name>P30</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P30</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P30 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1062" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1062" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a653815d19a317f3784eae4ca24ffe6c1" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P40</definition>
+        <argsstring></argsstring>
+        <name>P40</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P40</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P40 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1064" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1064" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a5cdff46285783dc0418aa9fa415cd317" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P50</definition>
+        <argsstring></argsstring>
+        <name>P50</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P50</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P50 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1066" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1066" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a9abfe3b36205ec6d4adb69e3878a3d46" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P60</definition>
+        <argsstring></argsstring>
+        <name>P60</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P60</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P60 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1068" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1068" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a0e8da010c5f00915178107f85c4003a2" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P70</definition>
+        <argsstring></argsstring>
+        <name>P70</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P70</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P70 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1070" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1070" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1adb6bc3b77a870d7380baf4dedfcb7b9b" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::P80</definition>
+        <argsstring></argsstring>
+        <name>P80</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::P80</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: P80 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1072" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1072" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a66ff5d3fd9c33fa3dabeba28a6cd0cf2" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::Hot</definition>
+        <argsstring></argsstring>
+        <name>Hot</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::Hot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: Hot </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1074" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1074" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a9ca7cab1a2c304cab8e74be71cb455a1" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::Cool</definition>
+        <argsstring></argsstring>
+        <name>Cool</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::Cool</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: Cool </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1076" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1076" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a2023535144115561a0616ad7c562040f" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::Archive</definition>
+        <argsstring></argsstring>
+        <name>Archive</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::Archive</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: Archive </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1078" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1078" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1aa48627a879776e78e7cb926c65f0e840" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::Premium</definition>
+        <argsstring></argsstring>
+        <name>Premium</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::Premium</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: Premium </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1080" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1080" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a18112a1c2b435e3c483e1f6c54e12ad0" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref></type>
+        <definition>const AccessTier Azure::Storage::Blobs::Models::AccessTier::Cold</definition>
+        <argsstring></argsstring>
+        <name>Cold</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::Cold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>: Cold </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1082" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1082" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a76acbd8b4807063ae35d0a732a59635b" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::AccessTier::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1085" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1085" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1ab85ed6adf9ef0282cd674655aea99504" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::AccessTier::AccessTier</definition>
+        <argsstring>()=default</argsstring>
+        <name>AccessTier</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::AccessTier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1036" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a6ba2b3cc618293e6471e57fd4b337f91" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::AccessTier::AccessTier</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>AccessTier</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::AccessTier</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1038" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1038" bodyend="1038"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a25c9229bcf46fe197634f581de95876a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::AccessTier::operator==</definition>
+        <argsstring>(const AccessTier &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1040" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1040" bodyend="1040"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1adc8d5a4ca38fa0215e9ba1581d1d5056" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::AccessTier::operator!=</definition>
+        <argsstring>(const AccessTier &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">AccessTier</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1042" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1042" bodyend="1042"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1af1e50c79f2fd1c72c76d51718bc9d726" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::AccessTier::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccessTier::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1044" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1044" bodyend="1044"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional. Indicates the tier to be set on the blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::AccessTier</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Archive</edgelabel>
+          <edgelabel>Cold</edgelabel>
+          <edgelabel>Cool</edgelabel>
+          <edgelabel>Hot</edgelabel>
+          <edgelabel>P1</edgelabel>
+          <edgelabel>P10</edgelabel>
+          <edgelabel>P15</edgelabel>
+          <edgelabel>P2</edgelabel>
+          <edgelabel>P20</edgelabel>
+          <edgelabel>P3</edgelabel>
+          <edgelabel>...</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1033" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1033" bodyend="1086"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1ab85ed6adf9ef0282cd674655aea99504" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>AccessTier</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a6ba2b3cc618293e6471e57fd4b337f91" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>AccessTier</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a2023535144115561a0616ad7c562040f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>Archive</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a18112a1c2b435e3c483e1f6c54e12ad0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>Cold</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a9ca7cab1a2c304cab8e74be71cb455a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>Cool</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a66ff5d3fd9c33fa3dabeba28a6cd0cf2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>Hot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a76acbd8b4807063ae35d0a732a59635b" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1adc8d5a4ca38fa0215e9ba1581d1d5056" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a25c9229bcf46fe197634f581de95876a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1aceb50e4268ac2da3c06ba0147b712031" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P1</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a6a80f9430b3036dd5d74fbc4f9905041" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P10</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1afc6e381490c56ae7866172fda17acb38" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P15</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1ae95aa98aa3a663d107b3aea35533b491" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P2</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a2b4928ada72278792b4015c4b8a191bc" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P20</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1afb9ef121e5a11d716fa55a8d754b0cc3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P3</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a83bcaf2c0b7096dbe989db13fe0e5f6e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P30</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a6f4d0ab1096fe1d35483337451c5ab12" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P4</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a653815d19a317f3784eae4ca24ffe6c1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P40</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a5cdff46285783dc0418aa9fa415cd317" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P50</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1adb35395aa25455679453e986900322f2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P6</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a9abfe3b36205ec6d4adb69e3878a3d46" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P60</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1a0e8da010c5f00915178107f85c4003a2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P70</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1adb6bc3b77a870d7380baf4dedfcb7b9b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>P80</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1aa48627a879776e78e7cb926c65f0e840" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>Premium</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier_1af1e50c79f2fd1c72c76d51718bc9d726" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccessTier</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

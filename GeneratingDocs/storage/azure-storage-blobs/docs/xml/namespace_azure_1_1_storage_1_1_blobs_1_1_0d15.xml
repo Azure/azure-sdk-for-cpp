@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_storage_1_1_blobs_1_1_0d15" kind="namespace" language="C++">
+    <compoundname>Azure::Storage::Blobs</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/blob_batch.cpp" line="46" column="3"/>
+  </compounddef>
+</doxygen>

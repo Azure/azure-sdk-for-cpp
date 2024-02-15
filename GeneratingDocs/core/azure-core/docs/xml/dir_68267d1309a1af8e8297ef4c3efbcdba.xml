@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir">
+    <compoundname>src</compoundname>
+    <innerdir refid="dir_cfb14614ce6e90ad60ab940420bd67b4">src/credentials</innerdir>
+    <innerdir refid="dir_33d951cc4565d7cdca16056a0c6f7383">src/cryptography</innerdir>
+    <innerdir refid="dir_2d29d7dff7c7baf1180920f6796c23ae">src/http</innerdir>
+    <innerdir refid="dir_c184e51c84f2c3f0345bbc8a0d75d3e1">src/io</innerdir>
+    <innerdir refid="dir_d49b597d86ed44de6eb8a459f0ed40df">src/private</innerdir>
+    <innerdir refid="dir_8c27da8e777a7195961d7f24190c7014">src/tracing</innerdir>
+    <innerfile refid="azure__assert_8cpp">azure_assert.cpp</innerfile>
+    <innerfile refid="base64_8cpp">base64.cpp</innerfile>
+    <innerfile refid="context_8cpp">context.cpp</innerfile>
+    <innerfile refid="datetime_8cpp">datetime.cpp</innerfile>
+    <innerfile refid="environment_8cpp">environment.cpp</innerfile>
+    <innerfile refid="environment__log__level__listener_8cpp">environment_log_level_listener.cpp</innerfile>
+    <innerfile refid="etag_8cpp">etag.cpp</innerfile>
+    <innerfile refid="exception_8cpp">exception.cpp</innerfile>
+    <innerfile refid="logger_8cpp">logger.cpp</innerfile>
+    <innerfile refid="operation__status_8cpp">operation_status.cpp</innerfile>
+    <innerfile refid="uuid_8cpp">uuid.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_deferred_response" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::DeferredResponse</compoundname>
+    <includes refid="deferred__response_8hpp" local="no">deferred_response.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_deferred_response_1a1b09b39b4485a3a5f3f1693bf23e266f" prot="private" static="no" mutable="no">
+        <type>std::function&lt; Response&lt; T &gt;()&gt;</type>
+        <definition>std::function&lt;Response&lt;T&gt;()&gt; Azure::Storage::DeferredResponse&lt; T &gt;::m_func</definition>
+        <argsstring></argsstring>
+        <name>m_func</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::m_func</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="41" column="21" bodyfile="inc/azure/storage/blobs/deferred_response.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_deferred_response_1adcc3fc584430a972caaaa61046e4bdaa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Blobs::BlobServiceBatch</definition>
+        <argsstring></argsstring>
+        <name>Blobs::BlobServiceBatch</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::BlobServiceBatch</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch" kindref="compound">Blobs::BlobServiceBatch</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="43" column="18" bodyfile="inc/azure/storage/blobs/deferred_response.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_deferred_response_1a04377fb2bc0a3bfee82cdf3f4ee8c1d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Blobs::BlobContainerBatch</definition>
+        <argsstring></argsstring>
+        <name>Blobs::BlobContainerBatch</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::BlobContainerBatch</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_batch" kindref="compound">Blobs::BlobContainerBatch</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="44" column="18" bodyfile="inc/azure/storage/blobs/deferred_response.hpp" bodystart="44" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_deferred_response_1a1d437c14ae4639a1000afa2c98b05259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::DeferredResponse&lt; T &gt;::DeferredResponse</definition>
+        <argsstring>(const DeferredResponse &amp;)=delete</argsstring>
+        <name>DeferredResponse</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::DeferredResponse</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="20" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_deferred_response_1a55e55534cc7cbece26746d7d32bcb3f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::DeferredResponse&lt; T &gt;::DeferredResponse</definition>
+        <argsstring>(DeferredResponse &amp;&amp;)=default</argsstring>
+        <name>DeferredResponse</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::DeferredResponse</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>Construct a new deferred response, moving from an existing <ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="22" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_deferred_response_1ae3ee6e4e6e5f591b9068206551092b21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> &amp;</type>
+        <definition>DeferredResponse &amp; Azure::Storage::DeferredResponse&lt; T &gt;::operator=</definition>
+        <argsstring>(const DeferredResponse &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="23" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_deferred_response_1a50c39f1d247c6f4bde6d076d2456d8de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> &amp;</type>
+        <definition>DeferredResponse &amp; Azure::Storage::DeferredResponse&lt; T &gt;::operator=</definition>
+        <argsstring>(DeferredResponse &amp;&amp;)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Move a <ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> to another <ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref> object.. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="25" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_deferred_response_1a878e28905d252a18945cffe3584180e5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>Response&lt; T &gt;</type>
+        <definition>Response&lt; T &gt; Azure::Storage::DeferredResponse&lt; T &gt;::GetResponse</definition>
+        <argsstring>() const</argsstring>
+        <name>GetResponse</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::GetResponse</qualifiedname>
+        <briefdescription>
+<para>Gets the deferred response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>It&apos;s undefined behavior to call this function before the response or exception is available.</para>
+</simplesect>
+<simplesect kind="return"><para>The deferred response. An exception is thrown if error occurred. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="35" column="14" bodyfile="inc/azure/storage/blobs/deferred_response.hpp" bodystart="35" bodyend="35"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_deferred_response_1a7466d45c6cda9df78bbb3263238f0f9a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::DeferredResponse&lt; T &gt;::DeferredResponse</definition>
+        <argsstring>(std::function&lt; Response&lt; T &gt;()&gt; func)</argsstring>
+        <name>DeferredResponse</name>
+        <qualifiedname>Azure::Storage::DeferredResponse::DeferredResponse</qualifiedname>
+        <param>
+          <type>std::function&lt; Response&lt; T &gt;()&gt;</type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/deferred_response.hpp" line="38" column="5" bodyfile="inc/azure/storage/blobs/deferred_response.hpp" bodystart="38" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Base type for a deferred response. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/deferred_response.hpp" line="18" column="14" bodyfile="inc/azure/storage/blobs/deferred_response.hpp" bodystart="18" bodyend="45"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1a04377fb2bc0a3bfee82cdf3f4ee8c1d9" prot="public" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>Blobs::BlobContainerBatch</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1adcc3fc584430a972caaaa61046e4bdaa" prot="public" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>Blobs::BlobServiceBatch</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1a1d437c14ae4639a1000afa2c98b05259" prot="public" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>DeferredResponse</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1a55e55534cc7cbece26746d7d32bcb3f4" prot="public" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>DeferredResponse</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1a7466d45c6cda9df78bbb3263238f0f9a" prot="private" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>DeferredResponse</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1a878e28905d252a18945cffe3584180e5" prot="public" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>GetResponse</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1a1b09b39b4485a3a5f3f1693bf23e266f" prot="private" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>m_func</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1ae3ee6e4e6e5f591b9068206551092b21" prot="public" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_deferred_response_1a50c39f1d247c6f4bde6d076d2456d8de" prot="public" virt="non-virtual"><scope>Azure::Storage::DeferredResponse</scope><name>operator=</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

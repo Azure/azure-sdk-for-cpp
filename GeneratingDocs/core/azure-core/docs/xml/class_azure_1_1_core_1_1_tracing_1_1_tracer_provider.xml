@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_tracing_1_1_tracer_provider" kind="class" language="C++" prot="public">
+    <compoundname>Azure::Core::Tracing::TracerProvider</compoundname>
+    <basecompoundref prot="private" virt="non-virtual">Azure::Core::Tracing::_internal::TracerProviderImpl</basecompoundref>
+    <includes refid="tracing_8hpp" local="no">tracing.hpp</includes>
+    <briefdescription>
+<para>Trace Provider - factory for creating Tracer objects. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::Tracing::TracerProvider</label>
+        <link refid="class_azure_1_1_core_1_1_tracing_1_1_tracer_provider"/>
+        <childnode refid="2" relation="private-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Tracing::_internal::TracerProviderImpl</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Tracing::TracerProvider</label>
+        <link refid="class_azure_1_1_core_1_1_tracing_1_1_tracer_provider"/>
+        <childnode refid="2" relation="private-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Tracing::_internal::TracerProviderImpl</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/tracing/tracing.hpp" line="57" column="3" bodyfile="inc/azure/core/tracing/tracing.hpp" bodystart="57" bodyend="62"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

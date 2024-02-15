@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_388a9ce964fd6eb041890bd7fd6f8bc2" kind="dir">
+    <compoundname>inc/azure/core/tracing/opentelemetry</compoundname>
+    <innerfile refid="opentelemetry_8hpp">opentelemetry.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/tracing/opentelemetry/"/>
+  </compounddef>
+</doxygen>

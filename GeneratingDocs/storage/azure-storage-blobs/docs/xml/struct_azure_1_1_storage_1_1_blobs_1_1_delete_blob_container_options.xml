@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::DeleteBlobContainerOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options_1a04b3ec85f2b86779d95ff736b0ea3276" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions" kindref="compound">BlobContainerAccessConditions</ref></type>
+        <definition>BlobContainerAccessConditions Azure::Storage::Blobs::DeleteBlobContainerOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::DeleteBlobContainerOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="342" column="35" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="342" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ae7661b6d8f37213b409504c0e9a68d69" kindref="member">Azure::Storage::Blobs::BlobContainerClient::Delete</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobContainerAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::DeleteBlobContainerOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="337" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="338" bodyend="343"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options_1a04b3ec85f2b86779d95ff736b0ea3276" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::DeleteBlobContainerOptions</scope><name>AccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

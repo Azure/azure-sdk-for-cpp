@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_convert" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Convert</compoundname>
+    <includes refid="base64_8hpp" local="no">base64.hpp</includes>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_convert_1a2509eeb8935fcd948a3221c57b10b985" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Convert::Convert</definition>
+        <argsstring>()=default</argsstring>
+        <name>Convert</name>
+        <qualifiedname>Azure::Core::Convert::Convert</qualifiedname>
+        <briefdescription>
+<para>An instance of <computeroutput>Convert</computeroutput> class cannot be created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/base64.hpp" line="35" column="5"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_convert_1a234ed21aa82069684c1a6e0d9dff49fb" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Convert::Base64Encode</definition>
+        <argsstring>(const std::vector&lt; uint8_t &gt; &amp;data)</argsstring>
+        <name>Base64Encode</name>
+        <qualifiedname>Azure::Core::Convert::Base64Encode</qualifiedname>
+        <param>
+          <type>const std::vector&lt; uint8_t &gt; &amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encodes a vector of binary data using Base64. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input vector that contains binary data to be encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The Base64 encoded contents of the vector. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/base64.hpp" line="44" column="24" bodyfile="src/base64.cpp" bodystart="492" bodyend="495"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_convert_1acc0edb30faaee964913dd4497ba1748a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Convert::Base64Decode</definition>
+        <argsstring>(const std::string &amp;text)</argsstring>
+        <name>Base64Decode</name>
+        <qualifiedname>Azure::Core::Convert::Base64Decode</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Decodes a Base64 encoded data into a vector of binary data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base64 encoded data to be decoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The decoded binary data. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/base64.hpp" line="52" column="24" bodyfile="src/base64.cpp" bodystart="497" bodyend="500"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Used to convert one form of data into another, for example encoding binary data into Base64 encoded octets. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>Base64 encoded data is a subset of the ASCII encoding (characters 0-127). As such, it can be considered a subset of UTF-8. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/base64.hpp" line="28" column="3" bodyfile="inc/azure/core/base64.hpp" bodystart="28" bodyend="53"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_convert_1acc0edb30faaee964913dd4497ba1748a" prot="public" virt="non-virtual"><scope>Azure::Core::Convert</scope><name>Base64Decode</name></member>
+      <member refid="class_azure_1_1_core_1_1_convert_1a234ed21aa82069684c1a6e0d9dff49fb" prot="public" virt="non-virtual"><scope>Azure::Core::Convert</scope><name>Base64Encode</name></member>
+      <member refid="class_azure_1_1_core_1_1_convert_1a2509eeb8935fcd948a3221c57b10b985" prot="private" virt="non-virtual"><scope>Azure::Core::Convert</scope><name>Convert</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

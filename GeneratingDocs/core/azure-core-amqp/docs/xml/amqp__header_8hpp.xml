@@ -1,0 +1,443 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="amqp__header_8hpp" kind="file" language="C++">
+    <compoundname>amqp_header.hpp</compoundname>
+    <includes local="no">azure/core/nullable.hpp</includes>
+    <includes local="no">chrono</includes>
+    <includes local="no">cstddef</includes>
+    <includes local="no">cstdint</includes>
+    <includes local="no">exception</includes>
+    <includes local="no">stdexcept</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="amqp_8hpp" local="yes">inc/azure/core/amqp.hpp</includedby>
+    <includedby refid="amqp__error_8hpp" local="yes">inc/azure/core/amqp/internal/models/amqp_error.hpp</includedby>
+    <includedby refid="message__source_8hpp" local="yes">inc/azure/core/amqp/internal/models/message_source.hpp</includedby>
+    <includedby refid="message__target_8hpp" local="yes">inc/azure/core/amqp/internal/models/message_target.hpp</includedby>
+    <includedby refid="amqp__message_8hpp" local="yes">inc/azure/core/amqp/models/amqp_message.hpp</includedby>
+    <includedby refid="amqp__value_8hpp" local="yes">inc/azure/core/amqp/models/amqp_value.hpp</includedby>
+    <includedby refid="amqp__header_8cpp" local="yes">src/models/amqp_header.cpp</includedby>
+    <includedby refid="amqp__message_8cpp" local="yes">src/models/amqp_message.cpp</includedby>
+    <includedby refid="header__impl_8hpp" local="yes">src/models/private/header_impl.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>inc/azure/core/amqp/models/amqp_header.hpp</label>
+        <link refid="amqp__header_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>azure/core/nullable.hpp</label>
+      </node>
+      <node id="3">
+        <label>chrono</label>
+      </node>
+      <node id="4">
+        <label>cstddef</label>
+      </node>
+      <node id="5">
+        <label>cstdint</label>
+      </node>
+      <node id="6">
+        <label>exception</label>
+      </node>
+      <node id="7">
+        <label>stdexcept</label>
+      </node>
+      <node id="8">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core/amqp.hpp</label>
+        <link refid="amqp_8hpp_source"/>
+      </node>
+      <node id="14">
+        <label>inc/azure/core/amqp/internal/claims_based_security.hpp</label>
+        <link refid="claims__based__security_8hpp_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>inc/azure/core/amqp/internal/connection.hpp</label>
+        <link refid="connection_8hpp_source"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>inc/azure/core/amqp/internal/endpoint.hpp</label>
+        <link refid="endpoint_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>inc/azure/core/amqp/internal/link.hpp</label>
+        <link refid="link_8hpp_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>inc/azure/core/amqp/internal/management.hpp</label>
+        <link refid="management_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>inc/azure/core/amqp/internal/message_receiver.hpp</label>
+        <link refid="message__receiver_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>inc/azure/core/amqp/internal/message_sender.hpp</label>
+        <link refid="message__sender_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/amqp/internal/models/amqp_error.hpp</label>
+        <link refid="amqp__error_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>inc/azure/core/amqp/internal/models/message_source.hpp</label>
+        <link refid="message__source_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>inc/azure/core/amqp/internal/models/message_target.hpp</label>
+        <link refid="message__target_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>inc/azure/core/amqp/internal/models/messaging_values.hpp</label>
+        <link refid="messaging__values_8hpp_source"/>
+      </node>
+      <node id="11">
+        <label>inc/azure/core/amqp/internal/models/performatives/amqp_detach.hpp</label>
+        <link refid="amqp__detach_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>inc/azure/core/amqp/internal/models/performatives/amqp_transfer.hpp</label>
+        <link refid="amqp__transfer_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>inc/azure/core/amqp/internal/session.hpp</label>
+        <link refid="session_8hpp_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/amqp/models/amqp_header.hpp</label>
+        <link refid="amqp__header_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>inc/azure/core/amqp/models/amqp_message.hpp</label>
+        <link refid="amqp__message_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>inc/azure/core/amqp/models/amqp_properties.hpp</label>
+        <link refid="amqp__properties_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>inc/azure/core/amqp/models/amqp_value.hpp</label>
+        <link refid="amqp__value_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>src/amqp/private/claims_based_security_impl.hpp</label>
+        <link refid="claims__based__security__impl_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>src/amqp/private/connection_impl.hpp</label>
+        <link refid="connection__impl_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>src/amqp/private/link_impl.hpp</label>
+        <link refid="link__impl_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>src/amqp/private/management_impl.hpp</label>
+        <link refid="management__impl_8hpp_source"/>
+      </node>
+      <node id="6">
+        <label>src/amqp/private/message_receiver_impl.hpp</label>
+        <link refid="message__receiver__impl_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>src/amqp/private/message_sender_impl.hpp</label>
+        <link refid="message__sender__impl_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>src/amqp/private/session_impl.hpp</label>
+        <link refid="session__impl_8hpp_source"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>src/models/private/error_impl.hpp</label>
+        <link refid="error__impl_8hpp_source"/>
+      </node>
+      <node id="35">
+        <label>src/models/private/header_impl.hpp</label>
+        <link refid="header__impl_8hpp_source"/>
+      </node>
+      <node id="28">
+        <label>src/models/private/message_impl.hpp</label>
+        <link refid="message__impl_8hpp_source"/>
+      </node>
+      <node id="12">
+        <label>src/models/private/performatives/detach_impl.hpp</label>
+        <link refid="detach__impl_8hpp_source"/>
+      </node>
+      <node id="27">
+        <label>src/models/private/performatives/transfer_impl.hpp</label>
+        <link refid="transfer__impl_8hpp_source"/>
+      </node>
+      <node id="33">
+        <label>src/models/private/properties_impl.hpp</label>
+        <link refid="properties__impl_8hpp_source"/>
+      </node>
+      <node id="22">
+        <label>src/models/private/source_impl.hpp</label>
+        <link refid="source__impl_8hpp_source"/>
+      </node>
+      <node id="24">
+        <label>src/models/private/target_impl.hpp</label>
+        <link refid="target__impl_8hpp_source"/>
+      </node>
+      <node id="34">
+        <label>src/models/private/value_impl.hpp</label>
+        <link refid="value__impl_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" prot="public">Azure::Core::Amqp::Models::MessageHeader</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp">Azure::Core::Amqp</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp_1_1_models">Azure::Core::Amqp::Models</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/nullable.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;chrono&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstddef&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdint&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;exception&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdexcept&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{</highlight></codeline>
+<codeline lineno="23" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/>final</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="26" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aebd63a9a80a499519fc4a900f5521998" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aebd63a9a80a499519fc4a900f5521998" kindref="member">MessageHeader</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="28" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef6ecaac594401fb09f3d731b10b3f8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef6ecaac594401fb09f3d731b10b3f8" kindref="member">~MessageHeader</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a2997b8a720342bcf0ca3b88649746409" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a2997b8a720342bcf0ca3b88649746409" kindref="member">MessageHeader</ref>(<ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref>&amp;&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1afdc33564e1d03e866fb950ece6d75401" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref>&amp;<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1afdc33564e1d03e866fb950ece6d75401" kindref="member">operator=</ref>(<ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref>&amp;&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef7a7bd29e6a564e81885c631396a1e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef7a7bd29e6a564e81885c631396a1e" kindref="member">MessageHeader</ref>(<ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab2c9cd841e4123c1d1bd48d385ecb085" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref>&amp;<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab2c9cd841e4123c1d1bd48d385ecb085" kindref="member">operator=</ref>(<ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5431446cbd4e03f5de910d4d3733c221" kindref="member">operator==</ref>(<ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5f40f2afecd60bdb6c91981e59caa49b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5f40f2afecd60bdb6c91981e59caa49b" kindref="member">Durable</ref>{</highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab28f0903d806e5c1d38e9ace1dde2627" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::uint8_t<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab28f0903d806e5c1d38e9ace1dde2627" kindref="member">Priority</ref>{4};<sp/></highlight><highlight class="comment">//<sp/>Default<sp/>priority<sp/>is<sp/>4.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a720635f08ae0438a87b9b69fac3a3519" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Nullable&lt;std::chrono::milliseconds&gt;<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a720635f08ae0438a87b9b69fac3a3519" kindref="member">TimeToLive</ref>;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a8070e66fe6930ad138e3aec4f3dd29cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a8070e66fe6930ad138e3aec4f3dd29cb" kindref="member">IsFirstAcquirer</ref>{</highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a16c9479e3368ca97e70fa4de31bd39c1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::uint32_t<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a16c9479e3368ca97e70fa4de31bd39c1" kindref="member">DeliveryCount</ref>{0};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1af5339681b0757afcc2d82d424c3b059a" kindref="member">ShouldSerialize</ref>()<sp/>const<sp/>noexcept;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ac1ae94d1b15c36f8ba79da30d7bca133" kindref="member">GetSerializedSize</ref>(<ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/>const&amp;<sp/>messageHeader);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/>std::vector&lt;uint8_t&gt;<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5d98ecdc9b12e04a2dc04528b2dc2fb0" kindref="member">Serialize</ref>(<ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/>const&amp;<sp/>messageHeader);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aad697f201d5332c6c06d1b85bc79ea00" kindref="member">Deserialize</ref>(std::uint8_t<sp/>const*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;,<sp/><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref><sp/>const&amp;);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/amqp/models/amqp_header.hpp"/>
+  </compounddef>
+</doxygen>

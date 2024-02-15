@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_policy" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::ObjectReplicationPolicy</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_policy_1a39f78dfec9c27afda4115bab3f918eaf" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::ObjectReplicationPolicy::PolicyId</definition>
+        <argsstring></argsstring>
+        <name>PolicyId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationPolicy::PolicyId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Object replication policy ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1219" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_policy_1a80a52e28c137c8d30bf508e059f021f7" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule" kindref="compound">ObjectReplicationRule</ref> &gt;</type>
+        <definition>std::vector&lt;ObjectReplicationRule&gt; Azure::Storage::Blobs::Models::ObjectReplicationPolicy::Rules</definition>
+        <argsstring></argsstring>
+        <name>Rules</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationPolicy::Rules</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The Rule IDs and respective replication status that are under the policy ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1223" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1223" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Contains object replication policy ID and the respective list of <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule" kindref="compound">Azure::Storage::Blobs::Models::ObjectReplicationRule</ref> s. This is used when retrieving the object replication properties on the source blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1214" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1215" bodyend="1224"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_policy_1a39f78dfec9c27afda4115bab3f918eaf" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationPolicy</scope><name>PolicyId</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_policy_1a80a52e28c137c8d30bf508e059f021f7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationPolicy</scope><name>Rules</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

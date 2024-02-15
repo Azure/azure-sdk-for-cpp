@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options_1af4427e6e97118d2bbdabb00542fcb786" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; int64_t &gt;</type>
+        <definition>Azure::Nullable&lt;int64_t&gt; Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions::SequenceNumber</definition>
+        <argsstring></argsstring>
+        <name>SequenceNumber</name>
+        <qualifiedname>Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions::SequenceNumber</qualifiedname>
+        <briefdescription>
+<para>An updated sequence number of your choosing, if Action is Max or Update. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1512" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1512" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options_1a7087364c1aa1fd0fd809baed9c4d104a" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" kindref="compound">BlobAccessConditions</ref></type>
+        <definition>BlobAccessConditions Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1517" column="26" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1517" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1ada82213c2f4eef5694fcd24234ef10bc" kindref="member">Azure::Storage::Blobs::PageBlobClient::UpdateSequenceNumber</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1507" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1508" bodyend="1518"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options_1a7087364c1aa1fd0fd809baed9c4d104a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options_1af4427e6e97118d2bbdabb00542fcb786" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions</scope><name>SequenceNumber</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

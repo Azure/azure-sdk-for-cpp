@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a756035040995d06fdfc226a21f20563f" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref></type>
+        <definition>const DeleteSnapshotsOption Azure::Storage::Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots</definition>
+        <argsstring></argsstring>
+        <name>IncludeSnapshots</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref>: IncludeSnapshots </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1979" column="69" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1979" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1ac15d2f7c678cc30934f2181becd79a2b" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref></type>
+        <definition>const DeleteSnapshotsOption Azure::Storage::Blobs::Models::DeleteSnapshotsOption::OnlySnapshots</definition>
+        <argsstring></argsstring>
+        <name>OnlySnapshots</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::OnlySnapshots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref>: OnlySnapshots </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1981" column="69" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1981" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1adc777a3ca8a7b7996a39c800ae44b513" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::DeleteSnapshotsOption::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1984" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1984" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a05bf23d3256682a09fa394873e516845" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::DeleteSnapshotsOption</definition>
+        <argsstring>()=default</argsstring>
+        <name>DeleteSnapshotsOption</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::DeleteSnapshotsOption</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1969" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a3c25e281be6d558452fe5a91647339ba" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::DeleteSnapshotsOption</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>DeleteSnapshotsOption</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::DeleteSnapshotsOption</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1971" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1971" bodyend="1971"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1aa5698d5c5dcc554187112fed8f2140f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::DeleteSnapshotsOption::operator==</definition>
+        <argsstring>(const DeleteSnapshotsOption &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1973" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1973" bodyend="1973"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a4acc9773e53538933a23b3fff97153c2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::DeleteSnapshotsOption::operator!=</definition>
+        <argsstring>(const DeleteSnapshotsOption &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" kindref="compound">DeleteSnapshotsOption</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1975" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1975" bodyend="1975"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1ab226a6f9d9571ab1329284e573dd4d11" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::DeleteSnapshotsOption::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteSnapshotsOption::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1977" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1977" bodyend="1977"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Required if the blob has associated snapshots. Specify one of the following two options: include: Delete the base blob and all of its snapshots. only: Delete only the blob&apos;s snapshots and not the blob itself. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>IncludeSnapshots</edgelabel>
+          <edgelabel>OnlySnapshots</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1966" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1966" bodyend="1985"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a05bf23d3256682a09fa394873e516845" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>DeleteSnapshotsOption</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a3c25e281be6d558452fe5a91647339ba" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>DeleteSnapshotsOption</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a756035040995d06fdfc226a21f20563f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>IncludeSnapshots</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1adc777a3ca8a7b7996a39c800ae44b513" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1ac15d2f7c678cc30934f2181becd79a2b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>OnlySnapshots</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1a4acc9773e53538933a23b3fff97153c2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1aa5698d5c5dcc554187112fed8f2140f9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option_1ab226a6f9d9571ab1329284e573dd4d11" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteSnapshotsOption</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1aaac2bfc595b0b34286343705f35957b6" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3174" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a89aa0b92ef1b53b265567152241596da" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3180" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a29f6c0b85e921bb39fb147e8881a144f" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; ContentHash &gt;</type>
+        <definition>Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3185" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a65ae0f0562d427877d8a6e63cc421998" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3191" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3191" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1af0b5255ee94f97389337d1a9e9cfb317" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3196" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1aafd1dfda42d84ad1827c67a75e992eca" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::EncryptionKeySha256</definition>
+        <argsstring></argsstring>
+        <name>EncryptionKeySha256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::EncryptionKeySha256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The SHA-256 hash of the encryption key used to encrypt the blob. This header is only returned when the blob was encrypted with a customer-provided key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3201" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a0cbc227afc7e7cd1e1b2a8ce4be757b9" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the name of the encryption scope used to encrypt the blob contents and application metadata. Note that the absence of this header implies use of the default account encryption scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3207" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3207" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a64761feab5444ba8737f5a43267aaeb2" kindref="member">Azure::Storage::Blobs::BlockBlobClient::UploadFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="3168" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3169" bodyend="3208"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1aafd1dfda42d84ad1827c67a75e992eca" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</scope><name>EncryptionKeySha256</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a0cbc227afc7e7cd1e1b2a8ce4be757b9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1aaac2bfc595b0b34286343705f35957b6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1af0b5255ee94f97389337d1a9e9cfb317" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a89aa0b92ef1b53b265567152241596da" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a29f6c0b85e921bb39fb147e8881a144f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</scope><name>TransactionalContentHash</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result_1a65ae0f0562d427877d8a6e63cc421998" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

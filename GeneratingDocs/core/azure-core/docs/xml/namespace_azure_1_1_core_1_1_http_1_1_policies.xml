@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_http_1_1_policies" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Http::Policies</compoundname>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" prot="public">Azure::Core::Http::Policies::HttpPolicy</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options" prot="public">Azure::Core::Http::Policies::LogOptions</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy" prot="public">Azure::Core::Http::Policies::NextHttpPolicy</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options" prot="public">Azure::Core::Http::Policies::RetryOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options" prot="public">Azure::Core::Http::Policies::TelemetryOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options" prot="public">Azure::Core::Http::Policies::TransportOptions</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/http/http.hpp" line="172" column="3"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobClientOptions</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::_internal::ClientOptions</basecompoundref>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a9fb8ce9173472df602fe8c2f59d835a8" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key" kindref="compound">EncryptionKey</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;EncryptionKey&gt; Azure::Storage::Blobs::BlobClientOptions::CustomerProvidedKey</definition>
+        <argsstring></argsstring>
+        <name>CustomerProvidedKey</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobClientOptions::CustomerProvidedKey</qualifiedname>
+        <briefdescription>
+<para>Holds the customer provided key used when making requests. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="179" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1aec52aad18582bd0134500105c54f3514" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Blobs::BlobClientOptions::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobClientOptions::EncryptionScope</qualifiedname>
+        <briefdescription>
+<para>Holds the encryption scope used when making requests. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="184" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a9800cdc7a1c10129071305c877a9b5d7" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobClientOptions::SecondaryHostForRetryReads</definition>
+        <argsstring></argsstring>
+        <name>SecondaryHostForRetryReads</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobClientOptions::SecondaryHostForRetryReads</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SecondaryHostForRetryReads specifies whether the retry policy should retry a read operation against another host. If SecondaryHostForRetryReads is &quot;&quot; (the default) then operations are not retried against another host. NOTE: Before setting this field, make sure you understand the issues around reading stale &amp; potentially-inconsistent data at this webpage: <ulink url="https://docs.microsoft.com/azure/storage/common/geo-redundant-design">https://docs.microsoft.com/azure/storage/common/geo-redundant-design</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="193" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a19f05101fc3a0a1da3989ffa3ac0e33a" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobClientOptions::ApiVersion</definition>
+        <argsstring></argsstring>
+        <name>ApiVersion</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobClientOptions::ApiVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>API version used by this client. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="198" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1ad052fd7e685881f8336474f5b6c36b67" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::BlobClientOptions::EnableTenantDiscovery</definition>
+        <argsstring></argsstring>
+        <name>EnableTenantDiscovery</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobClientOptions::EnableTenantDiscovery</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Enables tenant discovery through the authorization challenge when the client is configured to use a TokenCredential. When enabled, the client will attempt an initial un-authorized request to prompt a challenge in order to discover the correct tenant for the resource. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="205" column="10" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a8c66d700e909fb436be895edc1c04c5a" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience" kindref="compound">BlobAudience</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;BlobAudience&gt; Azure::Storage::Blobs::BlobClientOptions::Audience</definition>
+        <argsstring></argsstring>
+        <name>Audience</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobClientOptions::Audience</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The Audience to use for authentication with Azure Active Directory (AAD). <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience_1a56d7257a2bfdad128db751c5e7a03e86" kindref="member">Azure::Storage::Blobs::BlobAudience::DefaultAudience</ref> will be assumed if Audience is not set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="212" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="212" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Client options used to initialize all kinds of blob clients. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::_internal::ClientOptions</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlobClientOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::_internal::ClientOptions</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlobClientOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="174" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="175" bodyend="213"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a19f05101fc3a0a1da3989ffa3ac0e33a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobClientOptions</scope><name>ApiVersion</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a8c66d700e909fb436be895edc1c04c5a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobClientOptions</scope><name>Audience</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a9fb8ce9173472df602fe8c2f59d835a8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobClientOptions</scope><name>CustomerProvidedKey</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1ad052fd7e685881f8336474f5b6c36b67" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobClientOptions</scope><name>EnableTenantDiscovery</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1aec52aad18582bd0134500105c54f3514" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobClientOptions</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options_1a9800cdc7a1c10129071305c877a9b5d7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobClientOptions</scope><name>SecondaryHostForRetryReads</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

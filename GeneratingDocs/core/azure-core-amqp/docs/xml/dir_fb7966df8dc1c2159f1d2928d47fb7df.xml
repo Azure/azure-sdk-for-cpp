@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_fb7966df8dc1c2159f1d2928d47fb7df" kind="dir">
+    <compoundname>inc/azure/core/amqp/internal/models</compoundname>
+    <innerdir refid="dir_47d404ee0e80b407a5dfff678745e934">inc/azure/core/amqp/internal/models/performatives</innerdir>
+    <innerfile refid="amqp__error_8hpp">amqp_error.hpp</innerfile>
+    <innerfile refid="amqp__protocol_8hpp">amqp_protocol.hpp</innerfile>
+    <innerfile refid="message__source_8hpp">message_source.hpp</innerfile>
+    <innerfile refid="message__target_8hpp">message_target.hpp</innerfile>
+    <innerfile refid="messaging__values_8hpp">messaging_values.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/internal/models/"/>
+  </compounddef>
+</doxygen>

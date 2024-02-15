@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir">
+    <compoundname>src</compoundname>
+    <innerdir refid="dir_d49b597d86ed44de6eb8a459f0ed40df">src/private</innerdir>
+    <innerfile refid="append__blob__client_8cpp">append_blob_client.cpp</innerfile>
+    <innerfile refid="blob__batch_8cpp">blob_batch.cpp</innerfile>
+    <innerfile refid="blob__client_8cpp">blob_client.cpp</innerfile>
+    <innerfile refid="blob__container__client_8cpp">blob_container_client.cpp</innerfile>
+    <innerfile refid="blob__lease__client_8cpp">blob_lease_client.cpp</innerfile>
+    <innerfile refid="blob__options_8cpp">blob_options.cpp</innerfile>
+    <innerfile refid="blob__responses_8cpp">blob_responses.cpp</innerfile>
+    <innerfile refid="blob__sas__builder_8cpp">blob_sas_builder.cpp</innerfile>
+    <innerfile refid="blob__service__client_8cpp">blob_service_client.cpp</innerfile>
+    <innerfile refid="block__blob__client_8cpp">block_blob_client.cpp</innerfile>
+    <innerfile refid="page__blob__client_8cpp">page_blob_client.cpp</innerfile>
+    <innerfile refid="rest__client_8cpp">rest_client.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/"/>
+  </compounddef>
+</doxygen>

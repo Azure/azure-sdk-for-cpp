@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SignedIdentifier</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1afa04bc69d440bfdcc5baa21f29938ab1" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::SignedIdentifier::Id</definition>
+        <argsstring></argsstring>
+        <name>Id</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SignedIdentifier::Id</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A unique id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="808" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="808" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1af079430e01771dcec86f2f9cf4deda0d" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; DateTime &gt;</type>
+        <definition>Nullable&lt;DateTime&gt; Azure::Storage::Blobs::Models::SignedIdentifier::StartsOn</definition>
+        <argsstring></argsstring>
+        <name>StartsOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SignedIdentifier::StartsOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date-time the policy is active. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="812" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="812" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1ab7819038e93956a3f54a9dc319581b9d" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; DateTime &gt;</type>
+        <definition>Nullable&lt;DateTime&gt; Azure::Storage::Blobs::Models::SignedIdentifier::ExpiresOn</definition>
+        <argsstring></argsstring>
+        <name>ExpiresOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SignedIdentifier::ExpiresOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date-time the policy expires. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="816" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="816" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1a2349c17d81f7ed956b217077a3afeeb1" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::SignedIdentifier::Permissions</definition>
+        <argsstring></argsstring>
+        <name>Permissions</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SignedIdentifier::Permissions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The permissions for the acl policy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="820" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="820" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Signed identifier. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="803" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="804" bodyend="821"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1ab7819038e93956a3f54a9dc319581b9d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SignedIdentifier</scope><name>ExpiresOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1afa04bc69d440bfdcc5baa21f29938ab1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SignedIdentifier</scope><name>Id</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1a2349c17d81f7ed956b217077a3afeeb1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SignedIdentifier</scope><name>Permissions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier_1af079430e01771dcec86f2f9cf4deda0d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SignedIdentifier</scope><name>StartsOn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

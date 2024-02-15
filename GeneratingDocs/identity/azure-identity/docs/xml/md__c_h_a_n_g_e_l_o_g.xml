@@ -1,0 +1,395 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="md__c_h_a_n_g_e_l_o_g" kind="page">
+    <compoundname>md__c_h_a_n_g_e_l_o_g</compoundname>
+    <title>Release History</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md__c_h_a_n_g_e_l_o_g_1release-history"/> </para>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md170-beta3-unreleased">
+<title>1.7.0-beta.3 (Unreleased)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added">
+<title>Features Added</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes">
+<title>Breaking Changes</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed">
+<title>Bugs Fixed</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes">
+<title>Other Changes</title></sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md170-beta2-2024-02-09">
+<title>1.7.0-beta.2 (2024-02-09)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-1">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4474">[#4474]</ulink> Enable proactive renewal of Managed Identity tokens.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md170-beta1-2024-01-11">
+<title>1.7.0-beta.1 (2024-01-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-2">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5116">[#5116]</ulink> <computeroutput>AzureCliCredential</computeroutput>: Added support for the new response field which represents token expiration timestamp as time zone agnostic value.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-1">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5075">[#5075]</ulink> <computeroutput>AzureCliCredential</computeroutput> assumes token expiration time without local time zone adjustment.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-1">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5141">[#5141]</ulink> Added error response details to the <computeroutput>AuthenticationException</computeroutput> thrown when the authority host returns error response.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md160-2023-11-10">
+<title>1.6.0 (2023-11-10)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-3">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>WorkloadIdentityCredential</computeroutput>.</para>
+</listitem><listitem><para>When one of the credentials within <computeroutput>DefaultAzureCredential</computeroutput> is successful, it gets re-used during all subsequent attempts to get the token.</para>
+</listitem><listitem><para>Updated <computeroutput>ClientSecretCredentialOptions</computeroutput> and <computeroutput>ClientCertificateCredentialOptions</computeroutput> to read the default value for the authority host option from the environment variable first.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-1">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Add <computeroutput>WorkloadIdentityCredential</computeroutput> to the <computeroutput>DefaultAzureCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-2">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Do not throw an exception during <computeroutput>AzureCliCredential</computeroutput> construction, but rather delay it to the <computeroutput>GetToken()</computeroutput> call.</para>
+</listitem><listitem><para>Harden checks for the tenant ID.</para>
+</listitem><listitem><para>Disallow space character when validating tenant id and scopes as input for <computeroutput>AzureCliCredential</computeroutput>.</para>
+</listitem><listitem><para>Add authority host url validation to reject non-HTTPS schemes.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4084">[#4084]</ulink> Remove OpenSSL dependency on Windows. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/teo-tsirpanis">teo-tsirpanis</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-2">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Add default values to some <computeroutput>WorkloadIdentityCredentialOptions</computeroutput> fields such as authority host by reading them from the environment.</para>
+</listitem><listitem><para>Add logging to <computeroutput>WorkloadIdentityCredential</computeroutput> to help with debugging.</para>
+</listitem><listitem><para>Create separate lists of characters that are allowed within tenant ids and scopes in <computeroutput>AzureCliCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Theodore Tsirpanis _(<ulink url="https://github.com/teo-tsirpanis">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md160-beta3-2023-10-12">
+<title>1.6.0-beta.3 (2023-10-12)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-3">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Change the default value for the authority host option to be read from the environment variable first.</para>
+</listitem><listitem><para>Do not throw an exception during <computeroutput>AzureCliCredential</computeroutput> construction, but rather delay it to the <computeroutput>GetToken()</computeroutput> call.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md160-beta2-2023-09-13">
+<title>1.6.0-beta.2 (2023-09-13)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-4">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Add support for reading the tenant id, client id, and the token file path for <computeroutput>WorkloadIdentityCredential</computeroutput> from the environment variables.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-2">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Modify the order of the credentials used within the <computeroutput>DefaultAzureCredential</computeroutput> to be consistent with other languages.</para>
+</listitem><listitem><para>Add <computeroutput>WorkloadIdentityCredential</computeroutput> to the <computeroutput>DefaultAzureCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-4">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4084">[#4084]</ulink> Remove OpenSSL dependency on Windows. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/teo-tsirpanis">teo-tsirpanis</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-1">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Theodore Tsirpanis _(<ulink url="https://github.com/teo-tsirpanis">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md160-beta1-2023-08-11">
+<title>1.6.0-beta.1 (2023-08-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-5">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added support for <computeroutput>WorkloadIdentityCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md151-2023-07-06">
+<title>1.5.1 (2023-07-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-5">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4723">[#4723]</ulink> Accept a wider variety of token responses.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md150-2023-05-04">
+<title>1.5.0 (2023-05-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-6">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added support for challenge-based and multi-tenant authentication.</para>
+</listitem><listitem><para>Added <computeroutput>DefaultAzureCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-6">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4443">[#4443]</ulink> Fixed potentially high CPU usage on Windows.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-3">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Improved diagnostics to utilize <computeroutput>Azure::Core::Credentials::TokenCredential::GetCredentialName()</computeroutput>.</para>
+</listitem><listitem><para>Improved log messages.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md150-beta2-2023-04-06">
+<title>1.5.0-beta.2 (2023-04-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-7">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added support for challenge-based and multi-tenant authentication.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-7">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4443">[#4443]</ulink> Fixed potentially high CPU usage on Windows.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-4">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Improved diagnostics to utilize <computeroutput>Azure::Core::Credentials::TokenCredential::GetCredentialName()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md150-beta1-2023-03-07">
+<title>1.5.0-beta.1 (2023-03-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-8">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>DefaultAzureCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-5">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Improved log messages.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md140-2023-02-07">
+<title>1.4.0 (2023-02-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-9">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added token caching. To benefit from it, share the <computeroutput>shared_ptr</computeroutput> to the same credential instance between multiple client instances.</para>
+</listitem><listitem><para>Added Azure CLI Credential.</para>
+</listitem><listitem><para>Added authority host overriding support for <computeroutput>ClientCertificateCredential</computeroutput>.</para>
+</listitem><listitem><para>Added Azure Stack support for <computeroutput>ClientCertificateCredential</computeroutput>.</para>
+</listitem><listitem><para>Added Azure App Service API version <computeroutput>2019-08-01</computeroutput> support for <computeroutput>ManagedIdentityCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md140-beta3-2023-01-10">
+<title>1.4.0-beta.3 (2023-01-10)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-10">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added Azure CLI Credential.</para>
+</listitem><listitem><para>Added authority host overriding support for <computeroutput>ClientCertificateCredential</computeroutput>.</para>
+</listitem><listitem><para>Added Azure Stack support for <computeroutput>ClientCertificateCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-8">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Changed token cache mode to per-credential-instance. In order to get benefits from token caching, share the same credential between multiple client instances.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-6">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Added token cache support to all credentials.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md140-beta2-2022-11-08">
+<title>1.4.0-beta.2 (2022-11-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-11">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added token caching.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md140-beta1-2022-06-30">
+<title>1.4.0-beta.1 (2022-06-30)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-12">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added Azure App Service API version <computeroutput>2019-08-01</computeroutput> support for <computeroutput>ManagedIdentityCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md130-2022-06-07">
+<title>1.3.0 (2022-06-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-13">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>ClientCertificateCredential</computeroutput>, and updated <computeroutput>EnvironmentCredential</computeroutput> to support client certificate authentication.</para>
+</listitem><listitem><para>Added <computeroutput>ChainedTokenCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md130-beta2-2022-05-10">
+<title>1.3.0-beta.2 (2022-05-10)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-14">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>ClientCertificateCredential</computeroutput>, and updated <computeroutput>EnvironmentCredential</computeroutput> to support client certificate authentication.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md130-beta1-2022-04-05">
+<title>1.3.0-beta.1 (2022-04-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-15">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>ChainedTokenCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md120-2022-03-08">
+<title>1.2.0 (2022-03-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-16">
+<title>Features Added</title><para>No changes since <computeroutput>1.2.0-beta.1</computeroutput>.</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md120-beta1-2022-02-08">
+<title>1.2.0-beta.1 (2022-02-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-17">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Enabled <computeroutput>EnvironmentCredential</computeroutput> and <computeroutput>ManagedIdentityCredential</computeroutput> to work on UWP.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md111-2022-01-11">
+<title>1.1.1 (2022-01-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-9">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/2741">2741</ulink> Fixed linking problem when Azure SDK is built as DLL.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md110-2021-08-10">
+<title>1.1.0 (2021-08-10)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-18">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>ManagedIdentityCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-10">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed minor memory leak when obtaining a token.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md110-beta1-2021-07-02">
+<title>1.1.0-beta.1 (2021-07-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-19">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>ManagedIdentityCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-11">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed minor memory leak when obtaining a token.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-2021-06-04">
+<title>1.0.0 (2021-06-04)</title><para>No API changes since <computeroutput>1.0.0-beta.6</computeroutput>.</para>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta6-2021-05-18">
+<title>1.0.0-beta.6 (2021-05-18)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-3">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>final</computeroutput> specifier to classes and structures that are are not expected to be inheritable at the moment.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta5-2021-04-07">
+<title>1.0.0-beta.5 (2021-04-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Add Active Directory Federation Service (ADFS) support to <computeroutput>ClientSecretCredential</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-4">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>Azure::Identity::PackageVersion</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta4-2021-03-11">
+<title>1.0.0-beta.4 (2021-03-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-1">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>Azure::Identity::PackageVersion</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-5">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>TransportPolicyOptions</computeroutput> from <computeroutput>ClientSecretCredentialOptions</computeroutput>. Updated the options to derive from <computeroutput>ClientOptions</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta3-2021-02-02">
+<title>1.0.0-beta.3 (2021-02-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-6">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para><computeroutput>ClientSecretCredential</computeroutput> constructor takes <computeroutput>ClientSecretCredentialOptions</computeroutput> struct instead of authority host string. <computeroutput>TokenCredentialOptions</computeroutput> struct has authority host string as data member.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta2-2021-01-13">
+<title>1.0.0-beta.2 (2021-01-13)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-7">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Moved <computeroutput>Azure::Identity::Version</computeroutput>, defined in <computeroutput>azure/identity/version.hpp</computeroutput> to the <computeroutput>Azure::Identity::Details</computeroutput> namespace.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Add high-level and simplified <ref refid="identity_8hpp_source" kindref="compound">identity.hpp</ref> file for simpler include experience for customers.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta1-2020-11-11">
+<title>1.0.0-beta.1 (2020-11-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-2">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Support for Client Secret Credential.</para>
+</listitem><listitem><para>Support for Environment Credential. </para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+    </detaileddescription>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

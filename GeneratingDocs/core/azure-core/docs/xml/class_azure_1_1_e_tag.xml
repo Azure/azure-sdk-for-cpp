@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_e_tag" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::ETag</compoundname>
+    <includes refid="etag_8hpp" local="no">etag.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="enum" id="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>ETagComparison</name>
+        <qualifiedname>Azure::ETag::ETagComparison</qualifiedname>
+        <enumvalue id="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2eac43e0fd449c758dab8f891d8e19eb1a9" prot="public">
+          <name>Strong</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2ea7324e3727807d95037eb19d304fd91ec" prot="public">
+          <name>Weak</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>The comparison type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="31" column="3" bodyfile="inc/azure/core/etag.hpp" bodystart="32" bodyend="35"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_e_tag_1a305e59369525f9916bc3bcaf941ac479" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::ETag::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::ETag::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="24" column="19" bodyfile="inc/azure/core/etag.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1a8a099159c1206da752cee1a13a5c5f07" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool Azure::ETag::Equals</definition>
+        <argsstring>(const ETag &amp;left, const ETag &amp;right, const ETagComparison comparisonKind=ETagComparison::Strong)</argsstring>
+        <name>Equals</name>
+        <qualifiedname>Azure::ETag::Equals</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref> &amp;</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref> &amp;</type>
+          <declname>right</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" kindref="member">ETagComparison</ref></type>
+          <declname>comparisonKind</declname>
+          <defval>ETagComparison::Strong</defval>
+        </param>
+        <briefdescription>
+<para>Indicates whether two <ref refid="class_azure_1_1_e_tag" kindref="compound">Azure::ETag</ref> values are equal. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>left</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_azure_1_1_e_tag" kindref="compound">Azure::ETag</ref> to compare. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>right</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_azure_1_1_e_tag" kindref="compound">Azure::ETag</ref> to compare. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>comparisonKind</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Determines what <ref refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" kindref="member">Azure::ETag::ETagComparison</ref> to perform, default is <ref refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" kindref="member">Azure::ETag::ETagComparison</ref> Strong. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if <computeroutput>ETag</computeroutput> matches; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="79" column="15" bodyfile="inc/azure/core/etag.hpp" bodystart="79" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1a5264a49bd00787f15735f3798537b3b2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref> &amp;</type>
+        <definition>const ETag &amp; ETag::Any</definition>
+        <argsstring>()</argsstring>
+        <name>Any</name>
+        <qualifiedname>Azure::ETag::Any</qualifiedname>
+        <briefdescription>
+<para><ref refid="class_azure_1_1_e_tag" kindref="compound">Azure::ETag</ref> representing everything. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The any <ref refid="class_azure_1_1_e_tag" kindref="compound">Azure::ETag</ref> is *, (unquoted). It is NOT the same as &quot;*&quot;. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="186" column="21" bodyfile="src/etag.cpp" bodystart="8" bodyend="12"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1a5f51ee1a9eaf64372d8cc1d00d1042a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::ETag::ETag</definition>
+        <argsstring>()=default</argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::ETag::ETag</qualifiedname>
+        <briefdescription>
+<para>Constructs an empty (null) <computeroutput>ETag</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="124" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1ae17064a85468c70b9ae5e1c739f29282" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::ETag::ETag</definition>
+        <argsstring>(std::string etag)</argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::ETag::ETag</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>etag</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an <computeroutput>ETag</computeroutput> with string representation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>etag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The string value representation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="130" column="12" bodyfile="inc/azure/core/etag.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1a36ae96279fde0e6c22585b15ccb340fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::ETag::HasValue</definition>
+        <argsstring>() const</argsstring>
+        <name>HasValue</name>
+        <qualifiedname>Azure::ETag::HasValue</qualifiedname>
+        <briefdescription>
+<para>Whether <computeroutput>ETag</computeroutput> is present. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><computeroutput>true</computeroutput> if <computeroutput>ETag</computeroutput> has a value; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="136" column="8" bodyfile="inc/azure/core/etag.hpp" bodystart="136" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1a9fc3b3c367ce24ee19b430c8cb36fe9c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::ETag::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::ETag::ToString</qualifiedname>
+        <briefdescription>
+<para>Returns the resource metadata represented as a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>std::string </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="142" column="21" bodyfile="inc/azure/core/etag.hpp" bodystart="142" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1aab47574005070ae685e98aa33427ebf6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::ETag::operator==</definition>
+        <argsstring>(const ETag &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::ETag::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Compare with <computeroutput>other</computeroutput> <computeroutput>ETag</computeroutput> for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other <computeroutput>ETag</computeroutput> to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if <computeroutput>ETag</computeroutput> instances are equal according to strong validation; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="154" column="8" bodyfile="inc/azure/core/etag.hpp" bodystart="154" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1a83cf243c393b71b92aebcf0eb8b9f786" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::ETag::operator!=</definition>
+        <argsstring>(const ETag &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::ETag::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Compare with <computeroutput>other</computeroutput> <computeroutput>ETag</computeroutput> for inequality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other <computeroutput>ETag</computeroutput> to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if <computeroutput>ETag</computeroutput> instances are not equal according to strong validation; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="162" column="8" bodyfile="inc/azure/core/etag.hpp" bodystart="162" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::ETag::IsWeak</definition>
+        <argsstring>() const</argsstring>
+        <name>IsWeak</name>
+        <qualifiedname>Azure::ETag::IsWeak</qualifiedname>
+        <briefdescription>
+<para>Specifies whether the <ref refid="class_azure_1_1_e_tag" kindref="compound">Azure::ETag</ref> is strong or weak. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><computeroutput>true</computeroutput> if <ref refid="class_azure_1_1_e_tag" kindref="compound">Azure::ETag</ref> is a weak validator; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/etag.hpp" line="168" column="8" bodyfile="inc/azure/core/etag.hpp" bodystart="168" bodyend="180"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents an HTTP validator. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/etag.hpp" line="21" column="1" bodyfile="inc/azure/core/etag.hpp" bodystart="21" bodyend="187"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_e_tag_1a5264a49bd00787f15735f3798537b3b2" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>Any</name></member>
+      <member refid="class_azure_1_1_e_tag_1a8a099159c1206da752cee1a13a5c5f07" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>Equals</name></member>
+      <member refid="class_azure_1_1_e_tag_1a5f51ee1a9eaf64372d8cc1d00d1042a6" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>ETag</name></member>
+      <member refid="class_azure_1_1_e_tag_1ae17064a85468c70b9ae5e1c739f29282" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>ETag</name></member>
+      <member refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>ETagComparison</name></member>
+      <member refid="class_azure_1_1_e_tag_1a36ae96279fde0e6c22585b15ccb340fe" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>HasValue</name></member>
+      <member refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>IsWeak</name></member>
+      <member refid="class_azure_1_1_e_tag_1a305e59369525f9916bc3bcaf941ac479" prot="private" virt="non-virtual"><scope>Azure::ETag</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_e_tag_1a83cf243c393b71b92aebcf0eb8b9f786" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_e_tag_1aab47574005070ae685e98aa33427ebf6" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_e_tag_1a9fc3b3c367ce24ee19b430c8cb36fe9c" prot="public" virt="non-virtual"><scope>Azure::ETag</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

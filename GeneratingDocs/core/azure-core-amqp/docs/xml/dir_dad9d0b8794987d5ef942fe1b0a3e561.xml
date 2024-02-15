@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_dad9d0b8794987d5ef942fe1b0a3e561" kind="dir">
+    <compoundname>inc/azure/core/amqp/internal</compoundname>
+    <innerdir refid="dir_9bccf4eff747aacd564532927fdc045d">inc/azure/core/amqp/internal/common</innerdir>
+    <innerdir refid="dir_fb7966df8dc1c2159f1d2928d47fb7df">inc/azure/core/amqp/internal/models</innerdir>
+    <innerdir refid="dir_9a79ce38d853107a82c84b1127eca39d">inc/azure/core/amqp/internal/network</innerdir>
+    <innerfile refid="amqp__settle__mode_8hpp">amqp_settle_mode.hpp</innerfile>
+    <innerfile refid="cancellable_8hpp">cancellable.hpp</innerfile>
+    <innerfile refid="claims__based__security_8hpp">claims_based_security.hpp</innerfile>
+    <innerfile refid="connection_8hpp">connection.hpp</innerfile>
+    <innerfile refid="connection__string__credential_8hpp">connection_string_credential.hpp</innerfile>
+    <innerfile refid="doxygen__pragma_8hpp">doxygen_pragma.hpp</innerfile>
+    <innerfile refid="endpoint_8hpp">endpoint.hpp</innerfile>
+    <innerfile refid="link_8hpp">link.hpp</innerfile>
+    <innerfile refid="management_8hpp">management.hpp</innerfile>
+    <innerfile refid="message__receiver_8hpp">message_receiver.hpp</innerfile>
+    <innerfile refid="message__sender_8hpp">message_sender.hpp</innerfile>
+    <innerfile refid="session_8hpp">session.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/internal/"/>
+  </compounddef>
+</doxygen>

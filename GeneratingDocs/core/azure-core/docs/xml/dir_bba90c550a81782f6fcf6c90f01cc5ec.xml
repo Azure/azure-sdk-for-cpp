@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_bba90c550a81782f6fcf6c90f01cc5ec" kind="dir">
+    <compoundname>inc/azure/core/internal/json</compoundname>
+    <innerfile refid="json__optional_8hpp">json_optional.hpp</innerfile>
+    <innerfile refid="json__serializable_8hpp">json_serializable.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/internal/json/"/>
+  </compounddef>
+</doxygen>

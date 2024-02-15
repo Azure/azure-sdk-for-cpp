@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_http_1_1_0d61" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Http</compoundname>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103" prot="public" static="no" strong="yes">
+        <type>int</type>
+        <name>CrlFormat</name>
+        <qualifiedname>Azure::Core::Http::CrlFormat</qualifiedname>
+        <enumvalue id="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103a9d4d43de68f0b3555d5a5ef5dc05bb95" prot="public">
+          <name>Http</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103a000005d77b9eb5d8c5bafd1e64ce3c11" prot="public">
+          <name>Asn1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103ac888957bb6d2fe3bdac6000656d3e2fe" prot="public">
+          <name>PEM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl.cpp" line="1606" column="7" bodyfile="src/http/curl/curl.cpp" bodystart="1607" bodyend="1611"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/http/curl/curl.cpp" line="1489" column="5"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a4d0000321e4f76c3cbe5522db043f9be" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref></type>
+        <definition>const BlobCopySourceTagsMode Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::Replace</definition>
+        <argsstring></argsstring>
+        <name>Replace</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::Replace</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref>: Replace </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2342" column="70" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2342" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a7e17d9f0483a1bd3c32b591047622e08" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref></type>
+        <definition>const BlobCopySourceTagsMode Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::Copy</definition>
+        <argsstring></argsstring>
+        <name>Copy</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::Copy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref>: Copy </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2344" column="70" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2344" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a5d506b93bc46b461c9f579d4246ae5c6" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2347" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2347" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a3a6ef68ea91c1a1324897e69dfaf332a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::BlobCopySourceTagsMode</definition>
+        <argsstring>()=default</argsstring>
+        <name>BlobCopySourceTagsMode</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::BlobCopySourceTagsMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2329" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a5986019f0bfedfbb8c4f094f05d97e5f" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::BlobCopySourceTagsMode</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>BlobCopySourceTagsMode</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::BlobCopySourceTagsMode</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2331" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2331" bodyend="2331"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a2e418bd61c3c4da25747ba562c96d600" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::operator==</definition>
+        <argsstring>(const BlobCopySourceTagsMode &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2333" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2333" bodyend="2336"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a5c75ae0b789956e246ffc9702a28f95b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::operator!=</definition>
+        <argsstring>(const BlobCopySourceTagsMode &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">BlobCopySourceTagsMode</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2338" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2338" bodyend="2338"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1aab3ca7ccace72838828f90a35ec46128" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2340" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2340" bodyend="2340"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional, default &apos;replace&apos;. Indicates if source tags should be copied or replaced with the tags specified by x-ms-tags. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Copy</edgelabel>
+          <edgelabel>Replace</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2326" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2326" bodyend="2348"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a3a6ef68ea91c1a1324897e69dfaf332a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>BlobCopySourceTagsMode</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a5986019f0bfedfbb8c4f094f05d97e5f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>BlobCopySourceTagsMode</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a7e17d9f0483a1bd3c32b591047622e08" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>Copy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a5d506b93bc46b461c9f579d4246ae5c6" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a5c75ae0b789956e246ffc9702a28f95b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a2e418bd61c3c4da25747ba562c96d600" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1a4d0000321e4f76c3cbe5522db043f9be" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>Replace</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode_1aab3ca7ccace72838828f90a35ec46128" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

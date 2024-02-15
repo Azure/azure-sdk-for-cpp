@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_70e06a81cd6de0943a2d3baaf7dff45c" kind="dir">
+    <compoundname>inc/azure/core/amqp/models</compoundname>
+    <innerfile refid="amqp__header_8hpp">amqp_header.hpp</innerfile>
+    <innerfile refid="amqp__message_8hpp">amqp_message.hpp</innerfile>
+    <innerfile refid="amqp__properties_8hpp">amqp_properties.hpp</innerfile>
+    <innerfile refid="amqp__value_8hpp">amqp_value.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/models/"/>
+  </compounddef>
+</doxygen>

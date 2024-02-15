@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_1bc691dfb177674896a497185f13bd11" kind="dir">
+    <compoundname>inc/azure/core/internal/diagnostics</compoundname>
+    <innerfile refid="global__exception_8hpp">global_exception.hpp</innerfile>
+    <innerfile refid="log_8hpp">log.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/internal/diagnostics/"/>
+  </compounddef>
+</doxygen>

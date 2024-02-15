@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::PagedResponse&lt; FindBlobsByTagsPagedResponse &gt;</basecompoundref>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a602e96a666fd608cbf1e1177f0c83bf0" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::ServiceEndpoint</definition>
+        <argsstring></argsstring>
+        <name>ServiceEndpoint</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::ServiceEndpoint</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Service endpoint. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="302" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="302" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a4b5059dba43f0b58cd30622f29c54107" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item" kindref="compound">Models::TaggedBlobItem</ref> &gt;</type>
+        <definition>std::vector&lt;Models::TaggedBlobItem&gt; Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::TaggedBlobs</definition>
+        <argsstring></argsstring>
+        <name>TaggedBlobs</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::TaggedBlobs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Blob items filtered by tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="307" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="307" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a79d03144d772e018b84dcd1375f62c09" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client" kindref="compound">BlobServiceClient</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;BlobServiceClient&gt; Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_blobServiceClient</definition>
+        <argsstring></argsstring>
+        <name>m_blobServiceClient</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_blobServiceClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="312" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1ac94e1d10d2616b0bc50682574fd235e6" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;BlobContainerClient&gt; Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_blobContainerClient</definition>
+        <argsstring></argsstring>
+        <name>m_blobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_blobContainerClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="313" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="313" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a0b4ae71862b6ce962aadac37295ee105" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_options" kindref="compound">FindBlobsByTagsOptions</ref></type>
+        <definition>FindBlobsByTagsOptions Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_operationOptions</definition>
+        <argsstring></argsstring>
+        <name>m_operationOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_operationOptions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="314" column="30" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="314" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a155d34e2ad81549ddacabbde8f79e2f0" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_tagFilterSqlExpression</definition>
+        <argsstring></argsstring>
+        <name>m_tagFilterSqlExpression</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::m_tagFilterSqlExpression</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="315" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="315" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1ae21f5317c43c381dea514877f4ae8ae4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobServiceClient</definition>
+        <argsstring></argsstring>
+        <name>BlobServiceClient</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::BlobServiceClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client" kindref="compound">BlobServiceClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="317" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="317" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a0015cd845dfb7d7d22613ccb9cbad865" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobContainerClient</definition>
+        <argsstring></argsstring>
+        <name>BlobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::BlobContainerClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="318" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a4972c8f35c89d58919f155957c1de0c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Azure::Core::PagedResponse&lt; FindBlobsByTagsPagedResponse &gt;</definition>
+        <argsstring></argsstring>
+        <name>Azure::Core::PagedResponse&lt; FindBlobsByTagsPagedResponse &gt;</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::PagedResponse&lt; FindBlobsByTagsPagedResponse &gt;</qualifiedname>
+        <param>
+          <type>Azure::Core::PagedResponse&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response" kindref="compound">FindBlobsByTagsPagedResponse</ref> &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="318" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="319" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1ad4abd268d36174b9924238acfe2ba24d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::OnNextPage</definition>
+        <argsstring>(const Azure::Core::Context &amp;context)</argsstring>
+        <name>OnNextPage</name>
+        <qualifiedname>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse::OnNextPage</qualifiedname>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="310" column="12" bodyfile="src/blob_responses.cpp" bodystart="70" bodyend="87"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client_1a1f9dee55ba02c4935824de8288b9f451" kindref="member">Azure::Storage::Blobs::BlobServiceClient::FindBlobsByTags</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; FindBlobsByTagsPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; FindBlobsByTagsPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="296" column="5" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="297" bodyend="320"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a4972c8f35c89d58919f155957c1de0c0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>Azure::Core::PagedResponse&lt; FindBlobsByTagsPagedResponse &gt;</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a0015cd845dfb7d7d22613ccb9cbad865" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>BlobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1ae21f5317c43c381dea514877f4ae8ae4" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>BlobServiceClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1ac94e1d10d2616b0bc50682574fd235e6" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>m_blobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a79d03144d772e018b84dcd1375f62c09" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>m_blobServiceClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a0b4ae71862b6ce962aadac37295ee105" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>m_operationOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a155d34e2ad81549ddacabbde8f79e2f0" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>m_tagFilterSqlExpression</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1ad4abd268d36174b9924238acfe2ba24d" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>OnNextPage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a602e96a666fd608cbf1e1177f0c83bf0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>ServiceEndpoint</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response_1a4b5059dba43f0b58cd30622f29c54107" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</scope><name>TaggedBlobs</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

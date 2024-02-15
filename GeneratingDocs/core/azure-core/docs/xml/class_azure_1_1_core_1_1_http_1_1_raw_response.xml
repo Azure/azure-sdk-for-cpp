@@ -1,0 +1,552 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_raw_response" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::RawResponse</compoundname>
+    <includes refid="raw__response_8hpp" local="no">raw_response.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a7294023bdb96b3d5a6ed2163fc6c6b54" prot="private" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t Azure::Core::Http::RawResponse::m_majorVersion</definition>
+        <argsstring></argsstring>
+        <name>m_majorVersion</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::m_majorVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="27" column="13" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a03939c24abdb1ac3b2ce660a76a0dfe7" prot="private" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t Azure::Core::Http::RawResponse::m_minorVersion</definition>
+        <argsstring></argsstring>
+        <name>m_minorVersion</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::m_minorVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="28" column="13" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1aafb9a91458d2f0f5767fd862536f27b7" prot="private" static="no" mutable="no">
+        <type><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">HttpStatusCode</ref></type>
+        <definition>HttpStatusCode Azure::Core::Http::RawResponse::m_statusCode</definition>
+        <argsstring></argsstring>
+        <name>m_statusCode</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::m_statusCode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="29" column="20" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a796167f6d9c3864027b24f832747e3b3" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::RawResponse::m_reasonPhrase</definition>
+        <argsstring></argsstring>
+        <name>m_reasonPhrase</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::m_reasonPhrase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="30" column="17" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a4b6783c003e8727310bebbefef715a4c" prot="private" static="no" mutable="no">
+        <type><ref refid="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" kindref="member">CaseInsensitiveMap</ref></type>
+        <definition>CaseInsensitiveMap Azure::Core::Http::RawResponse::m_headers</definition>
+        <argsstring></argsstring>
+        <name>m_headers</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::m_headers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="31" column="24" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a09aee6c81e3bd93e3cde0128a8d1ef11" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;Azure::Core::IO::BodyStream&gt; Azure::Core::Http::RawResponse::m_bodyStream</definition>
+        <argsstring></argsstring>
+        <name>m_bodyStream</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::m_bodyStream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="33" column="21" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1ac0a5c8f9063a80b4d96a011eea920c0e" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt;uint8_t&gt; Azure::Core::Http::RawResponse::m_body</definition>
+        <argsstring></argsstring>
+        <name>m_body</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::m_body</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="34" column="17" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a8cd153dda8fe9da55d96aebd395a4885" prot="private" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::RawResponse::RawResponse</definition>
+        <argsstring>(int32_t majorVersion, int32_t minorVersion, HttpStatusCode statusCode, std::string const &amp;reasonPhrase, std::unique_ptr&lt; Azure::Core::IO::BodyStream &gt; BodyStream)</argsstring>
+        <name>RawResponse</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::RawResponse</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>majorVersion</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>minorVersion</declname>
+        </param>
+        <param>
+          <type><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">HttpStatusCode</ref></type>
+          <declname>statusCode</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>reasonPhrase</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> &gt;</type>
+          <declname>BodyStream</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="36" column="14" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="36" bodyend="45"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1ac35fd1a5a2f42b386943a49e646a92b1" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::RawResponse::RawResponse</definition>
+        <argsstring>(int32_t majorVersion, int32_t minorVersion, HttpStatusCode statusCode, std::string const &amp;reasonPhrase)</argsstring>
+        <name>RawResponse</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::RawResponse</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>majorVersion</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>minorVersion</declname>
+        </param>
+        <param>
+          <type><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">HttpStatusCode</ref></type>
+          <declname>statusCode</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>reasonPhrase</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>RawResponse</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>majorVersion</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP protocol version major number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minorVersion</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP protocol version minor number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>statusCode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP status code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reasonPhrase</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP reason phrase. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="56" column="14" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="56" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1ab638b2dde4b0b9a26305c6ed2b40c737" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::RawResponse::RawResponse</definition>
+        <argsstring>(RawResponse const &amp;response)</argsstring>
+        <name>RawResponse</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::RawResponse</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> const &amp;</type>
+          <declname>response</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>RawResponse</computeroutput> from another. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>The body stream won&apos;t be copied.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>response</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference for copying the raw response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="72" column="5" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="72" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a5e6a91e4017e57653574ac4c63dea2a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::RawResponse::RawResponse</definition>
+        <argsstring>(RawResponse &amp;&amp;response)=default</argsstring>
+        <name>RawResponse</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::RawResponse</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &amp;&amp;</type>
+          <declname>response</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>RawResponse</computeroutput> by moving in another instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>response</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Another <computeroutput>RawResponse</computeroutput> to move in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="90" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1af3eadb243305d7f88764bc3f8e832074" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &amp;</type>
+        <definition>RawResponse &amp; Azure::Core::Http::RawResponse::operator=</definition>
+        <argsstring>(RawResponse const &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+<para><computeroutput>RawResponse</computeroutput> cannot be assigned. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="96" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1afa32efb2740edc35c4f9e1a9ea0d6e5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &amp;</type>
+        <definition>RawResponse &amp; Azure::Core::Http::RawResponse::operator=</definition>
+        <argsstring>(RawResponse &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para><computeroutput>RawResponse</computeroutput> cannot be moved into. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="102" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a9c26c70d38445a96462013029f57555a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::RawResponse::~RawResponse</definition>
+        <argsstring>()=default</argsstring>
+        <name>~RawResponse</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::~RawResponse</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>RawResponse</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="108" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a5265579e09f5254509c9aa40ff16ce7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawResponse::SetHeader</definition>
+        <argsstring>(std::string const &amp;name, std::string const &amp;value)</argsstring>
+        <name>SetHeader</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::SetHeader</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set an HTTP header to the <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>The <computeroutput>name</computeroutput> must contain valid header name characters (RFC 7230).</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name for the header to be set or added. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value for the header to be set or added.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>if</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><computeroutput>name</computeroutput> contains invalid characters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="122" column="10" bodyfile="src/http/raw_response.cpp" bodystart="17" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1af12357c369ecf7071416b97697868cfa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawResponse::SetBodyStream</definition>
+        <argsstring>(std::unique_ptr&lt; Azure::Core::IO::BodyStream &gt; stream)</argsstring>
+        <name>SetBodyStream</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::SetBodyStream</qualifiedname>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> &gt;</type>
+          <declname>stream</declname>
+        </param>
+        <briefdescription>
+<para>Set <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> for this HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>stream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="129" column="10" bodyfile="src/http/raw_response.cpp" bodystart="22" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a4669c61fbdd1916c7cb4951d990a91a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Http::RawResponse::SetBody</definition>
+        <argsstring>(std::vector&lt; uint8_t &gt; body)</argsstring>
+        <name>SetBody</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::SetBody</qualifiedname>
+        <param>
+          <type>std::vector&lt; uint8_t &gt;</type>
+          <declname>body</declname>
+        </param>
+        <briefdescription>
+<para>Set HTTP response body for this HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>body</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP response body bytes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="136" column="10" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="136" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a174ddd85ba65cfdbd7825122d95865ed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">HttpStatusCode</ref></type>
+        <definition>HttpStatusCode RawResponse::GetStatusCode</definition>
+        <argsstring>() const</argsstring>
+        <name>GetStatusCode</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::GetStatusCode</qualifiedname>
+        <briefdescription>
+<para>Get HTTP status code of the HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="145" column="20" bodyfile="src/http/raw_response.cpp" bodystart="11" bodyend="11"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a88fa464a1d143ba3bae4324ececb36e9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string const &amp;</type>
+        <definition>std::string const  &amp; RawResponse::GetReasonPhrase</definition>
+        <argsstring>() const</argsstring>
+        <name>GetReasonPhrase</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::GetReasonPhrase</qualifiedname>
+        <briefdescription>
+<para>Get HTTP reason phrase code of the HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="151" column="23" bodyfile="src/http/raw_response.cpp" bodystart="13" bodyend="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1aaceb17666be80a87f0789713ce70a8f3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" kindref="member">CaseInsensitiveMap</ref> const &amp;</type>
+        <definition>Azure::Core::CaseInsensitiveMap const  &amp; RawResponse::GetHeaders</definition>
+        <argsstring>() const</argsstring>
+        <name>GetHeaders</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::GetHeaders</qualifiedname>
+        <briefdescription>
+<para>Get HTTP response headers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="157" column="30" bodyfile="src/http/raw_response.cpp" bodystart="15" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a879d23bf6f97bba416f20154a84375ea" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; Azure::Core::IO::BodyStream &gt; Azure::Core::Http::RawResponse::ExtractBodyStream</definition>
+        <argsstring>()</argsstring>
+        <name>ExtractBodyStream</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::ExtractBodyStream</qualifiedname>
+        <briefdescription>
+<para>Get HTTP response body as <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="163" column="21" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="163" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1a0a311a484a0db448de034b8919644929" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt; &amp;</type>
+        <definition>std::vector&lt; uint8_t &gt; &amp; Azure::Core::Http::RawResponse::GetBody</definition>
+        <argsstring>()</argsstring>
+        <name>GetBody</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::GetBody</qualifiedname>
+        <briefdescription>
+<para>Get HTTP response body as vector of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="173" column="17" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="173" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_raw_response_1ad2fcb8d21da70fefbb620156ec957a15" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt; const &amp;</type>
+        <definition>std::vector&lt; uint8_t &gt; const  &amp; Azure::Core::Http::RawResponse::GetBody</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBody</name>
+        <qualifiedname>Azure::Core::Http::RawResponse::GetBody</qualifiedname>
+        <briefdescription>
+<para>Get HTTP response body as vector of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/raw_response.hpp" line="179" column="23" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="179" bodyend="179"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>After receiving and interpreting a request message, a server responds with an HTTP response message. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/http/raw_response.hpp" line="24" column="3" bodyfile="inc/azure/core/http/raw_response.hpp" bodystart="24" bodyend="180"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a879d23bf6f97bba416f20154a84375ea" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>ExtractBodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a0a311a484a0db448de034b8919644929" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>GetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ad2fcb8d21da70fefbb620156ec957a15" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>GetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1aaceb17666be80a87f0789713ce70a8f3" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>GetHeaders</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a88fa464a1d143ba3bae4324ececb36e9" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>GetReasonPhrase</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a174ddd85ba65cfdbd7825122d95865ed" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>GetStatusCode</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ac0a5c8f9063a80b4d96a011eea920c0e" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>m_body</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a09aee6c81e3bd93e3cde0128a8d1ef11" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>m_bodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a4b6783c003e8727310bebbefef715a4c" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>m_headers</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a7294023bdb96b3d5a6ed2163fc6c6b54" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>m_majorVersion</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a03939c24abdb1ac3b2ce660a76a0dfe7" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>m_minorVersion</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a796167f6d9c3864027b24f832747e3b3" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>m_reasonPhrase</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1aafb9a91458d2f0f5767fd862536f27b7" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>m_statusCode</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1af3eadb243305d7f88764bc3f8e832074" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1afa32efb2740edc35c4f9e1a9ea0d6e5a" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a8cd153dda8fe9da55d96aebd395a4885" prot="private" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>RawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ac35fd1a5a2f42b386943a49e646a92b1" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>RawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ab638b2dde4b0b9a26305c6ed2b40c737" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>RawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a5e6a91e4017e57653574ac4c63dea2a3" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>RawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a4669c61fbdd1916c7cb4951d990a91a5" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>SetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1af12357c369ecf7071416b97697868cfa" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>SetBodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a5265579e09f5254509c9aa40ff16ce7d" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>SetHeader</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a9c26c70d38445a96462013029f57555a" prot="public" virt="non-virtual"><scope>Azure::Core::Http::RawResponse</scope><name>~RawResponse</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

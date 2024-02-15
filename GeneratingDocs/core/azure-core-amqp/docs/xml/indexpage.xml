@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>Azure SDK AMQP Library for C++</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="index_1md__r_e_a_d_m_e"/> Azure::Core::Amqp (<computeroutput>azure-core-amqp</computeroutput>) provides an implementation to enable developers to create Azure SDKs which consume the AMQP protocol. Note that this is <emphasis>NOT</emphasis> a general purpose AMQP library, it is intended solely for the purposes of building Azure C++ SDK clients which communicate with Azure services over AMQP.</para>
+<sect1 id="index_1getting-started">
+<title>Getting started</title><sect2 id="index_1include-the-package">
+<title>Include the package</title><para>The easiest way to acquire the AMQP library is leveraging vcpkg package manager. See the corresponding <ulink url="https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk">Azure SDK for C++ readme section</ulink>.</para>
+<para>To install Azure Core AMQP package via vcpkg:</para>
+<para><programlisting filename=".cmd"><codeline><highlight class="normal">&gt;<sp/>vcpkg<sp/>install<sp/>azure-core-amqp-cpp</highlight></codeline>
+</programlisting></para>
+<para>Then, use in your CMake file:</para>
+<para><programlisting filename=".CMake"><codeline><highlight class="normal">find_package(azure-core-amqp-cpp<sp/>CONFIG<sp/>REQUIRED)</highlight></codeline>
+<codeline><highlight class="normal">target_link_libraries(&lt;your<sp/>project<sp/>name&gt;<sp/>PRIVATE<sp/>Azure::azure-core-amqp)</highlight></codeline>
+</programlisting></para>
+</sect2>
+</sect1>
+<sect1 id="index_1key-concepts">
+<title>Key concepts</title><para>The AMQP Protocol is a relatively complicated protocol which is used by Azure services to communicate with clients. This library provides a set of classes which can be used to build Azure SDK clients which communicate with Azure services over AMQP.</para>
+<para>The AMQP library provides the following classes:</para>
+<para><itemizedlist>
+<listitem><para>AmqpClient - The basic client used to communicate with the AMQP server.</para>
+</listitem><listitem><para>MessageSender - A class which is used to send messages to an AMQP server.</para>
+</listitem><listitem><para>MessageReceiver - A class which is used to receive messages from an AMQP server.</para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="index_1examples">
+<title>Examples</title><sect2 id="index_1create-an-amqp-message-sender">
+<title>Create an AMQP Message Sender</title><para>An AMQP Message Sender is responsible for sending messages to an AMQP server over an AMQP Session.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">Azure::Core::Amqp::_internal::MessageSenderOptions<sp/>senderOptions;</highlight></codeline>
+<codeline><highlight class="normal">senderOptions.Name<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;sender-link&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">senderOptions.MessageSource<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;source&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">senderOptions.SettleMode<sp/>=<sp/>Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;</highlight></codeline>
+<codeline><highlight class="normal">senderOptions.MaxMessageSize<sp/>=<sp/>(std::numeric_limits&lt;uint16_t&gt;::max)();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">Azure::Core::Amqp::_internal::MessageSender<sp/>sender(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>session,<sp/>credentials-&gt;GetEntityPath(),<sp/>senderOptions,<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+</programlisting></para>
+<para>Once the message sender has been created, it can be used to send messages to the remote server.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">Azure::Core::Amqp::Models::AmqpMessage</ref><sp/>message;</highlight></codeline>
+<codeline><highlight class="normal">message.<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a4bced73e14b9a0d5434a8d9dd1b48364" kindref="member">SetBody</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">Azure::Core::Amqp::Models::AmqpBinaryData</ref>{</highlight><highlight class="charliteral">&apos;H&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;e&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;l&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;l&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;o&apos;</highlight><highlight class="normal">});</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxMessageSendCount<sp/>=<sp/>5;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>messageSendCount<sp/>=<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(messageSendCount<sp/>&lt;<sp/>maxMessageSendCount)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>sender.Send(message);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>messageSendCount<sp/>+=<sp/>1;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+</sect2>
+</sect1>
+<sect1 id="index_1next-steps">
+<title>Next steps</title><para>You can build and run the tests locally by executing <computeroutput>azure-core-amqp-test</computeroutput>. Explore the <computeroutput>test</computeroutput> folder to see advanced usage and behavior of the public classes.</para>
+</sect1>
+<sect1 id="index_1troubleshooting">
+<title>Troubleshooting</title><para>If you run into issues while using this library, please feel free to <ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/new">file an issue</ulink>.</para>
+<sect2 id="index_1reporting-security-issues-and-security-bugs">
+<title>Reporting security issues and security bugs</title><para>Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <ulink url="mailto:secure@microsoft.com">secure@microsoft.com</ulink>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the <ulink url="https://www.microsoft.com/msrc/faqs-report-an-issue">Security TechCenter</ulink>.</para>
+</sect2>
+<sect2 id="index_1license">
+<title>License</title><para>Azure SDK for C++ is licensed under the <ulink url="https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt">MIT</ulink> license.</para>
+<para><image type="html" name="https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Fcore%2Fcore-opentelemetry%2FREADME.png" alt="Impressions" inline="yes"></image>
+ </para>
+</sect2>
+</sect1>
+    </detaileddescription>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>

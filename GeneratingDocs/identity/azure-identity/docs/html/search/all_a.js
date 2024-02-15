@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['c_0',['Azure Identity client library for C++',['../index.html',1,'']]],
+  ['certificate_1',['Service principal with certificate',['../index.html#service-principal-with-certificate',1,'']]],
+  ['chained_20token_20credential_2',['Chained Token Credential',['../index.html#chained-token-credential',1,'']]],
+  ['chained_5ftoken_5fcredential_2ehpp_3',['chained_token_credential.hpp',['../chained__token__credential_8hpp.html',1,'']]],
+  ['chainedtokencredential_4',['ChainedTokenCredential',['../class_azure_1_1_identity_1_1_chained_token_credential.html',1,'Azure::Identity::ChainedTokenCredential'],['../class_azure_1_1_identity_1_1_chained_token_credential.html#ad31aaad21e121a6459a3f6a581871ca1',1,'Azure::Identity::ChainedTokenCredential::ChainedTokenCredential()']]],
+  ['changes_5',['Changes',['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes-1',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes-2',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes-3',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes-4',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes-5',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes-6',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#breaking-changes-7',1,'Breaking Changes'],['../md__c_h_a_n_g_e_l_o_g.html#other-changes',1,'Other Changes'],['../md__c_h_a_n_g_e_l_o_g.html#other-changes-1',1,'Other Changes'],['../md__c_h_a_n_g_e_l_o_g.html#other-changes-2',1,'Other Changes'],['../md__c_h_a_n_g_e_l_o_g.html#other-changes-3',1,'Other Changes'],['../md__c_h_a_n_g_e_l_o_g.html#other-changes-4',1,'Other Changes'],['../md__c_h_a_n_g_e_l_o_g.html#other-changes-5',1,'Other Changes'],['../md__c_h_a_n_g_e_l_o_g.html#other-changes-6',1,'Other Changes']]],
+  ['changes_20and_20improvements_6',['Other Changes and Improvements',['../md__c_h_a_n_g_e_l_o_g.html#other-changes-and-improvements',1,'']]],
+  ['classes_7',['Credential classes',['../index.html#credential-classes',1,'']]],
+  ['cli_8',['Authenticate via the Azure CLI',['../index.html#authenticate-via-the-azure-cli',1,'']]],
+  ['client_9',['Authenticate the client',['../index.html#authenticate-the-client',1,'']]],
+  ['client_20library_20for_20c_10',['Azure Identity client library for C++',['../index.html',1,'']]],
+  ['client_5fcertificate_5fcredential_2ehpp_11',['client_certificate_credential.hpp',['../client__certificate__credential_8hpp.html',1,'']]],
+  ['client_5fsecret_5fcredential_2ehpp_12',['client_secret_credential.hpp',['../client__secret__credential_8hpp.html',1,'']]],
+  ['clientcertificatecredential_13',['ClientCertificateCredential',['../class_azure_1_1_identity_1_1_client_certificate_credential.html',1,'Azure::Identity::ClientCertificateCredential'],['../class_azure_1_1_identity_1_1_client_certificate_credential.html#a83daf2bd0feb7e2b127b06f0fc0e9372',1,'Azure::Identity::ClientCertificateCredential::ClientCertificateCredential(std::string tenantId, std::string const &amp;clientId, std::string const &amp;clientCertificatePath, Core::Credentials::TokenCredentialOptions const &amp;options=Core::Credentials::TokenCredentialOptions())'],['../class_azure_1_1_identity_1_1_client_certificate_credential.html#a8206da0cb1ffea0f2bf89f2fbd21d43c',1,'Azure::Identity::ClientCertificateCredential::ClientCertificateCredential(std::string tenantId, std::string const &amp;clientId, std::string const &amp;clientCertificatePath, ClientCertificateCredentialOptions const &amp;options)']]],
+  ['clientcertificatecredentialoptions_14',['ClientCertificateCredentialOptions',['../struct_azure_1_1_identity_1_1_client_certificate_credential_options.html',1,'Azure::Identity']]],
+  ['clientid_15',['ClientId',['../struct_azure_1_1_identity_1_1_workload_identity_credential_options.html#a31b87ec6b4bccb87ad37bf03ca146618',1,'Azure::Identity::WorkloadIdentityCredentialOptions']]],
+  ['clientsecretcredential_16',['ClientSecretCredential',['../class_azure_1_1_identity_1_1_client_secret_credential.html',1,'Azure::Identity::ClientSecretCredential'],['../class_azure_1_1_identity_1_1_client_secret_credential.html#a71a54333972678dcce0f504dbcc13a08',1,'Azure::Identity::ClientSecretCredential::ClientSecretCredential(std::string tenantId, std::string const &amp;clientId, std::string const &amp;clientSecret, ClientSecretCredentialOptions const &amp;options)'],['../class_azure_1_1_identity_1_1_client_secret_credential.html#a06c38429d6a46b5fb9a6be087fadbf97',1,'Azure::Identity::ClientSecretCredential::ClientSecretCredential(std::string tenantId, std::string const &amp;clientId, std::string const &amp;clientSecret, Core::Credentials::TokenCredentialOptions const &amp;options=Core::Credentials::TokenCredentialOptions())']]],
+  ['clientsecretcredentialoptions_17',['ClientSecretCredentialOptions',['../struct_azure_1_1_identity_1_1_client_secret_credential_options.html',1,'Azure::Identity']]],
+  ['cliprocesstimeout_18',['CliProcessTimeout',['../struct_azure_1_1_identity_1_1_azure_cli_credential_options.html#a7e5ad6d51fa64eba9aa3afe83271260e',1,'Azure::Identity::AzureCliCredentialOptions']]],
+  ['concepts_19',['Key concepts',['../index.html#key-concepts',1,'']]],
+  ['contributing_20',['Contributing',['../index.html#contributing',1,'']]],
+  ['contributors_21',['Additional Helpful Links for Contributors',['../index.html#additional-helpful-links-for-contributors',1,'']]],
+  ['credential_22',['Chained Token Credential',['../index.html#chained-token-credential',1,'']]],
+  ['credential_20classes_23',['Credential classes',['../index.html#credential-classes',1,'']]],
+  ['credentials_24',['Credentials',['../index.html#credentials',1,'']]]
+];

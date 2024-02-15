@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::WinHttpTransportOptions</compoundname>
+    <includes refid="win__http__transport_8hpp" local="no">win_http_transport.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a61b3b8519a98c64c6204ebab417c248b" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::WinHttpTransportOptions::IgnoreUnknownCertificateAuthority</definition>
+        <argsstring></argsstring>
+        <name>IgnoreUnknownCertificateAuthority</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::IgnoreUnknownCertificateAuthority</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>When <computeroutput>true</computeroutput>, allows an invalid certificate authority. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="71" column="12" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a8b9852962aaf01fdd50271ec945cd037" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::WinHttpTransportOptions::IgnoreInvalidCertificateCommonName</definition>
+        <argsstring></argsstring>
+        <name>IgnoreInvalidCertificateCommonName</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::IgnoreInvalidCertificateCommonName</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>When <computeroutput>true</computeroutput>, allows an invalid common name in a certificate. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="76" column="12" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a841ee45e1fa533932f96c4e59a21598f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::WinHttpTransportOptions::EnableSystemDefaultProxy</definition>
+        <argsstring></argsstring>
+        <name>EnableSystemDefaultProxy</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::EnableSystemDefaultProxy</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>If True, enables the use of the system default proxy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Proxy information. </para>
+<para><simplesect kind="remark"><para>Set this to &quot;true&quot; if you would like to use a local HTTP proxy like &quot;Fiddler&quot; to capture and analyze HTTP traffic.</para>
+</simplesect>
+Set to &quot;false&quot; by default because it is not recommended to use a proxy for production and Fiddler&apos;s proxy interferes with the HTTP functional tests. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="91" column="12" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a1d00f0e086279a56eb3135331d6d0ca1" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::WinHttpTransportOptions::EnableCertificateRevocationListCheck</definition>
+        <argsstring></argsstring>
+        <name>EnableCertificateRevocationListCheck</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::EnableCertificateRevocationListCheck</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>If True, enables checks for certificate revocation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="96" column="12" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aaee8369faa29d288f349fc88e04a1462" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::WinHttpTransportOptions::ProxyInformation</definition>
+        <argsstring></argsstring>
+        <name>ProxyInformation</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::ProxyInformation</qualifiedname>
+        <briefdescription>
+<para>Proxy information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>The Proxy Information string is composed of a set of elements formatted as follows:</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">(\[\&lt;scheme\&gt;=\]\[\&lt;scheme\&gt;</highlight><highlight class="stringliteral">&quot;://&quot;</highlight><highlight class="normal">\]\&lt;server\&gt;\[</highlight><highlight class="stringliteral">&quot;:&quot;</highlight><highlight class="normal">\&lt;port\&gt;\])</highlight></codeline>
+</programlisting></para>
+<para>Each element should be separated with semicolons or whitespace. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="110" column="19" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aa2b08dcb78deb040e044538ddfb20536" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Core::Http::WinHttpTransportOptions::ProxyUserName</definition>
+        <argsstring></argsstring>
+        <name>ProxyUserName</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::ProxyUserName</qualifiedname>
+        <briefdescription>
+<para>User name for proxy authentication. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="115" column="23" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1ab34db2c7c64b9e85b4e3b1e67816bacb" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Core::Http::WinHttpTransportOptions::ProxyPassword</definition>
+        <argsstring></argsstring>
+        <name>ProxyPassword</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::ProxyPassword</qualifiedname>
+        <briefdescription>
+<para>Password for proxy authentication. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="120" column="23" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a49e20549ca5ccd9dcbc0a7ac08c08976" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; std::string &gt;</type>
+        <definition>std::vector&lt;std::string&gt; Azure::Core::Http::WinHttpTransportOptions::ExpectedTlsRootCertificates</definition>
+        <argsstring></argsstring>
+        <name>ExpectedTlsRootCertificates</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransportOptions::ExpectedTlsRootCertificates</qualifiedname>
+        <briefdescription>
+<para>Array of Base64 encoded DER encoded X.509 certificate. These certificates should form a chain of certificates which will be used to validate the server certificate sent by the server. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="127" column="19" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="127" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Sets the WinHTTP session and connection options used to customize the behavior of the transport. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Http::WinHttpTransportOptions</label>
+        <link refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ProxyPassword</edgelabel>
+          <edgelabel>ProxyUserName</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::_detail::NontrivialEmptyType</label>
+      </node>
+      <node id="2">
+        <label>Azure::Nullable&lt; std::string &gt;</label>
+        <link refid="class_azure_1_1_nullable"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>m_disengaged</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/http/win_http_transport.hpp" line="66" column="5" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="67" bodyend="128"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a1d00f0e086279a56eb3135331d6d0ca1" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>EnableCertificateRevocationListCheck</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a841ee45e1fa533932f96c4e59a21598f" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>EnableSystemDefaultProxy</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a49e20549ca5ccd9dcbc0a7ac08c08976" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>ExpectedTlsRootCertificates</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a8b9852962aaf01fdd50271ec945cd037" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>IgnoreInvalidCertificateCommonName</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a61b3b8519a98c64c6204ebab417c248b" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>IgnoreUnknownCertificateAuthority</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aaee8369faa29d288f349fc88e04a1462" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>ProxyInformation</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1ab34db2c7c64b9e85b4e3b1e67816bacb" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>ProxyPassword</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aa2b08dcb78deb040e044538ddfb20536" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransportOptions</scope><name>ProxyUserName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1a8c7691280ab0bdc325864a0e7d7e9b30" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::EncryptionKeySha256</definition>
+        <argsstring></argsstring>
+        <name>EncryptionKeySha256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::EncryptionKeySha256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The field is deprecated and is always null. Use GetProperties() instead to get SHA256 of the encryption key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2253" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2253" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1abe6cd63056488062b9e4a0bc4b8e3d5c" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The field is deprecated and is always null. Use GetProperties() instead to check the encryption scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2258" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2258" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1ade44037d6cd1f67b4825117a29fa3964" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::Snapshot</definition>
+        <argsstring></argsstring>
+        <name>Snapshot</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::Snapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Uniquely identifies the snapshot and indicates the snapshot version. It may be used in subsequent requests to access the snapshot. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2263" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1a53c6b91670e78ebef50530184f4293e9" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2268" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2268" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1ad89bd9ef54fe30320116a778e1bb59f2" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2274" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1a051c4d4b42aa159e60da9b8fbad0bb89" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2280" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1ae6df19e697d5f8a2b44e64b4d16bca63" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise. For a snapshot request, this header is set to true when metadata was provided in the request and encrypted with a customer-provided key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2286" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2286" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a05131f0bfc5f8b6d32c98f18d6d450a7" kindref="member">Azure::Storage::Blobs::BlobClient::CreateSnapshot</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2247" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2248" bodyend="2287"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1a8c7691280ab0bdc325864a0e7d7e9b30" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</scope><name>EncryptionKeySha256</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1abe6cd63056488062b9e4a0bc4b8e3d5c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1a53c6b91670e78ebef50530184f4293e9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1ae6df19e697d5f8a2b44e64b4d16bca63" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1ad89bd9ef54fe30320116a778e1bb59f2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1ade44037d6cd1f67b4825117a29fa3964" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</scope><name>Snapshot</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result_1a051c4d4b42aa159e60da9b8fbad0bb89" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir">
+    <compoundname>src</compoundname>
+    <innerdir refid="dir_d49b597d86ed44de6eb8a459f0ed40df">src/private</innerdir>
+    <innerfile refid="azure__cli__credential_8cpp">azure_cli_credential.cpp</innerfile>
+    <innerfile refid="chained__token__credential_8cpp">chained_token_credential.cpp</innerfile>
+    <innerfile refid="client__certificate__credential_8cpp">client_certificate_credential.cpp</innerfile>
+    <innerfile refid="client__credential__core_8cpp">client_credential_core.cpp</innerfile>
+    <innerfile refid="client__secret__credential_8cpp">client_secret_credential.cpp</innerfile>
+    <innerfile refid="default__azure__credential_8cpp">default_azure_credential.cpp</innerfile>
+    <innerfile refid="environment__credential_8cpp">environment_credential.cpp</innerfile>
+    <innerfile refid="managed__identity__credential_8cpp">managed_identity_credential.cpp</innerfile>
+    <innerfile refid="managed__identity__source_8cpp">managed_identity_source.cpp</innerfile>
+    <innerfile refid="tenant__id__resolver_8cpp">tenant_id_resolver.cpp</innerfile>
+    <innerfile refid="token__cache_8cpp">token_cache.cpp</innerfile>
+    <innerfile refid="token__credential__impl_8cpp">token_credential_impl.cpp</innerfile>
+    <innerfile refid="workload__identity__credential_8cpp">workload_identity_credential.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_8c27da8e777a7195961d7f24190c7014" kind="dir">
+    <compoundname>src/tracing</compoundname>
+    <innerfile refid="tracing_8cpp">tracing.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/tracing/"/>
+  </compounddef>
+</doxygen>

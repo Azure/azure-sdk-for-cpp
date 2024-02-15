@@ -1,0 +1,541 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_amqp_1_1_models" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Amqp::Models</compoundname>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" prot="public">Azure::Core::Amqp::Models::AmqpArray</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" prot="public">Azure::Core::Amqp::Models::AmqpBinaryData</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" prot="public">Azure::Core::Amqp::Models::AmqpComposite</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" prot="public">Azure::Core::Amqp::Models::AmqpDescribed</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" prot="public">Azure::Core::Amqp::Models::AmqpList</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" prot="public">Azure::Core::Amqp::Models::AmqpMap</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" prot="public">Azure::Core::Amqp::Models::AmqpMessage</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" prot="public">Azure::Core::Amqp::Models::AmqpSymbol</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" prot="public">Azure::Core::Amqp::Models::AmqpTimestamp</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" prot="public">Azure::Core::Amqp::Models::AmqpValue</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" prot="public">Azure::Core::Amqp::Models::MessageHeader</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" prot="public">Azure::Core::Amqp::Models::MessageProperties</innerclass>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>MessageBodyType</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageBodyType</qualifiedname>
+        <enumvalue id="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a4bbb8f967da6d1a610596d7257179c2b" prot="public">
+          <name>Invalid</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a6adf97f83acf6453d4a6a4b1070f3754" prot="public">
+          <name>None</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7af6068daa29dbb05a7ead1e3b5a48bbee" prot="public">
+          <name>Data</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a3ff39d3acb327553070a64ef0cb321d5" prot="public">
+          <name>Sequence</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a689202409e48743b914713f96d93947c" prot="public">
+          <name>Value</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>The type of the body of an AMQP Message. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="24" column="3" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="25" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="enum" id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>AmqpValueType</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValueType</qualifiedname>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a4bbb8f967da6d1a610596d7257179c2b" prot="public">
+          <name>Invalid</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6abbb93ef26e3c101ff11cdd21cab08a94" prot="public">
+          <name>Null</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6ac26f15e86e3de4c398a8273272aba034" prot="public">
+          <name>Bool</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a65c90f108e2d8ec6fa8b9ba809e8af9a" prot="public">
+          <name>Ubyte</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6adba9e5ee771da57168d0ec2b3aede0b7" prot="public">
+          <name>Ushort</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6afa28cf323a8d44edbf80f68165f4f75b" prot="public">
+          <name>Uint</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a0814836ee4b68ba3373811f351e786e2" prot="public">
+          <name>Ulong</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6aa245c3230debe5c956484ecc6fa93877" prot="public">
+          <name>Byte</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a30bb747c98bccdd11b3f89e644c4d0ad" prot="public">
+          <name>Short</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a1686a6c336b71b36d77354cea19a8b52" prot="public">
+          <name>Int</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a8394f0347c184cf156ac5924dccb773b" prot="public">
+          <name>Long</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a22ae0e2b89e5e3d477f988cc36d3272b" prot="public">
+          <name>Float</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6ad909d38d705ce75386dd86e611a82f5b" prot="public">
+          <name>Double</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a8e95e84813830072b7516cfaa7dbc1a9" prot="public">
+          <name>Char</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6aa3d5de3eac8bb00ae86fd1a1005f1500" prot="public">
+          <name>Timestamp</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a755bf05a8e6c3925f7d7d779bc5cfddc" prot="public">
+          <name>Uuid</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a6ce976e8f061b2b5cfe4d0c50c3405dd" prot="public">
+          <name>Binary</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a27118326006d3829667a400ad23d5d98" prot="public">
+          <name>String</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a02c86eb2792f3262c21d030a87e19793" prot="public">
+          <name>Symbol</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a4ee29ca12c7d126654bd0e5275de6135" prot="public">
+          <name>List</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a46f3ea056caa3126b91f3f70beea068c" prot="public">
+          <name>Map</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a4410ec34d9e6c1a68100ca0ce033fb17" prot="public">
+          <name>Array</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6af452abc44352a90ee65e21736b85e2bd" prot="public">
+          <name>Described</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a141a5b46e2087dc7a80a43710c2dacfb" prot="public">
+          <name>Composite</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a88183b946cc5f0e8c96b2e66e1c74a7e" prot="public">
+          <name>Unknown</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="50" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="51" bodyend="77"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="amqp__message_8hpp_1a25d3a3409935d7e33b41ecf4e88c3003" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr int</type>
+        <definition>constexpr int Azure::Core::Amqp::Models::AmqpDefaultMessageFormatValue</definition>
+        <argsstring></argsstring>
+        <name>AmqpDefaultMessageFormatValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDefaultMessageFormatValue</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="33" column="17" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="amqp__header_8hpp_1aae007f5ebb2db1b25d9e686edda9b4ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;, MessageHeader const &amp;)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>os</defname>
+        </param>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> const &amp;</type>
+          <defname>header</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_header.cpp" line="115" column="3" bodyfile="src/models/amqp_header.cpp" bodystart="115" bodyend="128" declfile="inc/azure/core/amqp/models/amqp_header.hpp" declline="113" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__message_8hpp_1a070557bcd7e5113a0848278928cd72d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;, AmqpMessage const &amp;)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>os</defname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> const &amp;</type>
+          <defname>message</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_message.cpp" line="750" column="3" bodyfile="src/models/amqp_message.cpp" bodystart="750" bodyend="859" declfile="inc/azure/core/amqp/models/amqp_message.hpp" declline="288" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__properties_8hpp_1a64f726e864eebde8b4afc057ba6f4b68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;stream, MessageProperties const &amp;properties)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>stream</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> const &amp;</type>
+          <declname>properties</declname>
+        </param>
+        <briefdescription>
+<para>Stream a <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object to a std::ostream. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>stream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target stream. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>properties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object to serialize. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The input ostream object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_properties.cpp" line="367" column="3" bodyfile="src/models/amqp_properties.cpp" bodystart="367" bodyend="452" declfile="inc/azure/core/amqp/models/amqp_properties.hpp" declline="198" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__value_8hpp_1a8ab21f784dc18666d251ae46280c6c83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, AmqpValueType value)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type>AmqpValueType</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>ostream insertion operator for AmqpValueType. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>os</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- stream to insert to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- value to insert.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the input ostream. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_value.cpp" line="149" column="3" bodyfile="src/models/amqp_value.cpp" bodystart="149" bodyend="232" declfile="inc/azure/core/amqp/models/amqp_value.hpp" declline="87" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__value_8hpp_1a1d9127324bc9b30b56a1131ea3ec3e34" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, AmqpValue const &amp;value)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_value.cpp" line="704" column="3" bodyfile="src/models/amqp_value.cpp" bodystart="704" bodyend="710" declfile="inc/azure/core/amqp/models/amqp_value.hpp" declline="552" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__value_8hpp_1a6045fc081d16ca0363912a9bed6c296d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, AmqpArray const &amp;value)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_value.cpp" line="1181" column="3" bodyfile="src/models/amqp_value.cpp" bodystart="1181" bodyend="1187" declfile="inc/azure/core/amqp/models/amqp_value.hpp" declline="673" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__value_8hpp_1a153e18b7531d1e1e4118af8a3074db78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, AmqpMap const &amp;value)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_value.cpp" line="1197" column="3" bodyfile="src/models/amqp_value.cpp" bodystart="1197" bodyend="1203" declfile="inc/azure/core/amqp/models/amqp_value.hpp" declline="739" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__value_8hpp_1afaf53d051955ce532e92daa3651b0338" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, AmqpList const &amp;value)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_value.cpp" line="1189" column="3" bodyfile="src/models/amqp_value.cpp" bodystart="1189" bodyend="1195" declfile="inc/azure/core/amqp/models/amqp_value.hpp" declline="775" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__value_8hpp_1af3a8cc0610a2ac2db33e8bff9886e410" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, AmqpBinaryData const &amp;value)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_value.cpp" line="1162" column="3" bodyfile="src/models/amqp_value.cpp" bodystart="1162" bodyend="1179" declfile="inc/azure/core/amqp/models/amqp_value.hpp" declline="824" declcolumn="3"/>
+      </memberdef>
+      <memberdef kind="function" id="amqp__value_8hpp_1a6899d67fb8a50901d0e54cada4d5ee89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; Azure::Core::Amqp::Models::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, AmqpSymbol const &amp;value)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/models/amqp_value.cpp" line="1204" column="3" bodyfile="src/models/amqp_value.cpp" bodystart="1204" bodyend="1210" declfile="inc/azure/core/amqp/models/amqp_value.hpp" declline="887" declcolumn="3"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/internal/models/amqp_error.hpp" line="13" column="41"/>
+  </compounddef>
+</doxygen>

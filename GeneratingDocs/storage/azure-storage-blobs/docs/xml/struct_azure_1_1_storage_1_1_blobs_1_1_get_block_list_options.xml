@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::GetBlockListOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options_1a083b436bcb42f9af13eb9a28f8338709" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">Models::BlockListType</ref></type>
+        <definition>Models::BlockListType Azure::Storage::Blobs::GetBlockListOptions::ListType</definition>
+        <argsstring></argsstring>
+        <name>ListType</name>
+        <qualifiedname>Azure::Storage::Blobs::GetBlockListOptions::ListType</qualifiedname>
+        <initializer>= <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a516d83bd8683711daaed10a5938dffc0" kindref="member">Models::BlockListType::Committed</ref></initializer>
+        <briefdescription>
+<para>Specifies whether to return the list of committed blocks, the list of uncommitted blocks, or both lists together. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1128" column="27" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options_1a3ae03ca7465d568dc8bf06078b636bef" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>Azure::Storage::Blobs::GetBlockListOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::GetBlockListOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1135" column="21"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a32ca7784588c0bf6c7d739533be7b07f" kindref="member">Azure::Storage::Blobs::BlockBlobClient::GetBlockList</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::GetBlockListOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ListType</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlockListType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>All</edgelabel>
+          <edgelabel>Committed</edgelabel>
+          <edgelabel>Uncommitted</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1122" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1123" bodyend="1136"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options_1a3ae03ca7465d568dc8bf06078b636bef" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetBlockListOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options_1a083b436bcb42f9af13eb9a28f8338709" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetBlockListOptions</scope><name>ListType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

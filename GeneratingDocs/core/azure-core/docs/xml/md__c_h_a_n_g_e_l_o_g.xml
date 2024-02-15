@@ -1,0 +1,997 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="md__c_h_a_n_g_e_l_o_g" kind="page">
+    <compoundname>md__c_h_a_n_g_e_l_o_g</compoundname>
+    <title>Release History</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md__c_h_a_n_g_e_l_o_g_1release-history"/> </para>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1120-beta1-unreleased">
+<title>1.12.0-beta.1 (Unreleased)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added">
+<title>Features Added</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes">
+<title>Breaking Changes</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed">
+<title>Bugs Fixed</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Move the connection back to the connection pool when HTTP error 404 was received. This may improve the performance of a multithreaded application when libcurl transport adapter is being used. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/mchelnokov">mchelnokov</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Mykhailo Chelnokov _(<ulink url="https://github.com/mchelnokov">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1111-2024-02-02">
+<title>1.11.1 (2024-02-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-1">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5154">[#5154]</ulink> WinHTTP Transport logging (and exception strings) have dangling periods making it harder to read.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-1">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Improved log messages for WinHTTP Transport to help diagnose WinHTTP state machine related issues.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1110-2024-01-11">
+<title>1.11.0 (2024-01-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-1">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added &apos;OPTIONS&apos; HTTP method to <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">Azure::Core::Http::HttpMethod</ref></computeroutput> enum.</para>
+</listitem><listitem><para>Added TLS 1.3 support to WinHTTP transport.</para>
+</listitem><listitem><para>Environment Log Level Listener now logs the ThreadID for the thread originating the trace.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4983">[#4983]</ulink> Added support for setting <computeroutput>CURLOPT_CAPATH</computeroutput> libcurl option on Linux. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/phoebusm">phoebusm</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-2">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5172">[#5172]</ulink> <computeroutput><ref refid="class_azure_1_1_nullable_1ab8e5d08de8f40fd0edd53868c6c757a8" kindref="member">Azure::Nullable::Emplace()</ref></computeroutput> does not set <computeroutput>HasValue()</computeroutput> to <computeroutput>true</computeroutput>.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5130">[#5130]</ulink> <computeroutput>Url::AppendPath()</computeroutput> and <computeroutput>Url::SetPath()</computeroutput> may end up with a double slash at the beginning of a path.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5007">[#5007]</ulink> Some versions of GCC no longer include stdint.h in cstdint.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-2">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>[[#4756]] (<ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4756">https://github.com/Azure/azure-sdk-for-cpp/issues/4756</ulink>) <computeroutput>BearerTokenAuthenticationPolicy</computeroutput> now uses shared mutex lock for read operations.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-1">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Phoebus Mak _(<ulink url="https://github.com/phoebusm">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1110-beta2-2023-11-02">
+<title>1.11.0-beta.2 (2023-11-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-2">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added TLS 1.3 support to WinHTTP transport.</para>
+</listitem><listitem><para>Environment Log Level Listener now logs the ThreadID for the thread originating the trace.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-3">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5007">[#5007]</ulink> Some versions of GCC no longer include stdint.h in cstdint.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1110-beta1-2023-10-05">
+<title>1.11.0-beta.1 (2023-10-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-3">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4983">[#4983]</ulink> Added support for setting <computeroutput>CURLOPT_CAPATH</computeroutput> libcurl option on Linux. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/phoebusm">phoebusm</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-2">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Phoebus Mak _(<ulink url="https://github.com/phoebusm">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1103-2023-10-05">
+<title>1.10.3 (2023-10-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-4">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Concurrency issues in <computeroutput>Azure::Core::Diagnostics::_internal::Log::Stream</computeroutput> have been fixed.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-3">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>SDK consumption documentation improvement. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/kou">kou</ulink></emphasis>)</para>
+</listitem><listitem><para>Fixed GCC 13 compilation error. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/adamdebreceni">adamdebreceni</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-3">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Sutou Kouhei _(<ulink url="https://github.com/kou">GitHub</ulink>)_</para>
+</listitem><listitem><para>adamdebreceni _(<ulink url="https://github.com/adamdebreceni">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1102-2023-08-04">
+<title>1.10.2 (2023-08-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-5">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4792">[#4792]</ulink> Only support CURL&apos;s root cert validation when CURL version is &gt;= 7.77.0.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1101-2023-07-06">
+<title>1.10.1 (2023-07-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-1">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4662">[#4662]</ulink> <computeroutput><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Azure::Core::Operation</ref>&lt;T&gt;::GetRawResponseInternal()</computeroutput> is now deprecated and no longer requires an override.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-4">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Empty diagnostic messages will no longer be generated.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1100-2023-06-01">
+<title>1.10.0 (2023-06-01)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-4">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_uuid_1a89f5d7ef27af38bbcd0676444a087269" kindref="member">Azure::Core::Uuid::AsArray()</ref></computeroutput> and <computeroutput><ref refid="class_azure_1_1_core_1_1_uuid_1aee8d5f158b0e2721faefb2e7ad1d694b" kindref="member">Azure::Core::Uuid::CreateFromArray()</ref></computeroutput> to enable reading or writing from an existing UUID. This is useful when the UUID was generated outside the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK, or needs to be used from a component outside the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-5">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/3964">[#3964]</ulink> Ensuring some <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK types have the expected default operations. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/jnyfah">jnyfah</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-4">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Jennifer Chukwu _(<ulink url="https://github.com/jnyfah">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1100-beta1-2023-05-04">
+<title>1.10.0-beta.1 (2023-05-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-5">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_uuid_1a89f5d7ef27af38bbcd0676444a087269" kindref="member">Azure::Core::Uuid::AsArray()</ref></computeroutput> and <computeroutput><ref refid="class_azure_1_1_core_1_1_uuid_1aee8d5f158b0e2721faefb2e7ad1d694b" kindref="member">Azure::Core::Uuid::CreateFromArray()</ref></computeroutput> to enable reading or writing from an existing UUID. This is useful when the UUID was generated outside the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK, or needs to be used from a component outside the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md190-2023-05-04">
+<title>1.9.0 (2023-05-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-6">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.</para>
+</listitem><listitem><para>Added <computeroutput>DisableTlsCertificateValidation</computeroutput> in <computeroutput>TransportOptions</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>TokenCredential::GetCredentialName()</computeroutput> to be utilized in diagnostic messages. If you have any custom implementations of <computeroutput>TokenCredential</computeroutput>, it is recommended to pass the name of your credential to <computeroutput>TokenCredential</computeroutput> constructor. The old parameterless constructor is deprecated.</para>
+</listitem><listitem><para>Added support for challenge-based and multi-tenant authentication.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-6">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed the UUID generation so the variant is RFC 4122 conforming.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-6">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/pull/4352">[#4352]</ulink> Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/jorgen">jorgen</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-5">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Jorgen Lind _(<ulink url="https://github.com/jorgen">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md182-2023-04-24">
+<title>1.8.2 (2023-04-24)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-7">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4490">[#4490]</ulink> Fixed WinHTTP memory leak during failed requests.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md190-beta1-2023-04-06">
+<title>1.9.0-beta.1 (2023-04-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-7">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.</para>
+</listitem><listitem><para>Added <computeroutput>DisableTlsCertificateValidation</computeroutput> in <computeroutput>TransportOptions</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>TokenCredential::GetCredentialName()</computeroutput> to be utilized in diagnostic messages. If you have any custom implementations of <computeroutput>TokenCredential</computeroutput>, it is recommended to pass the name of your credential to <computeroutput>TokenCredential</computeroutput> constructor. The old parameterless constructor is deprecated.</para>
+</listitem><listitem><para>Added support for challenge-based and multi-tenant authentication.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-7">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/pull/4352">[#4352]</ulink> Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/jorgen">jorgen</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-6">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Jorgen Lind _(<ulink url="https://github.com/jorgen">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md181-2023-04-06">
+<title>1.8.1 (2023-04-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-8">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4213">[#4213]</ulink> Fixed a bug where <computeroutput>Host</computeroutput> request header is not set for non-default port (80, 443).</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4443">[#4443]</ulink> Fixed potentially high CPU usage on Windows.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-8">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Libcurl transport doesn&apos;t add <computeroutput>Content-Length</computeroutput> request header for GET/HEAD/DELETE requests anymore.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md180-2023-02-02">
+<title>1.8.0 (2023-02-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-8">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added support for parsing space character in place of &apos;T&apos; in RFC3339 DateTimes.</para>
+</listitem><listitem><para>Added support for HTTP proxy servers, both unauthenticated and with basic authentication.</para>
+</listitem><listitem><para>Added universal support for several TLS options:<itemizedlist>
+<listitem><para>Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).</para>
+</listitem><listitem><para>Added the ability to enable TLS certificate revocation list checks (off by default).<itemizedlist>
+<listitem><para>For libcurl only: Allow TLS connection to succeed if CRL retrieval fails.</para>
+</listitem><listitem><para><emphasis>NOTE</emphasis>: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-2">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Changed the name of several distributed tracing HTTP span attributes:<itemizedlist>
+<listitem><para><computeroutput>requestId</computeroutput> is renamed to <computeroutput>az.client_request_id</computeroutput></para>
+</listitem><listitem><para><computeroutput>serviceRequestId</computeroutput> is renamed to <computeroutput>az.service_request_id</computeroutput></para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Bearer token authentication will not work for endpoint URL protocol schemes other than <computeroutput>&quot;https&quot;</computeroutput>. This ensures token security and is consistent with the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDKs for other languages.</para>
+</listitem><listitem><para>Removed <computeroutput>noexcept</computeroutput> specification from <computeroutput>Azure::DateTime::clock::now()</computeroutput>.</para>
+</listitem><listitem><para>Updated retry policy timeouts to conform to <ref refid="namespace_azure" kindref="compound">Azure</ref> guidelines.<itemizedlist>
+<listitem><para>The default delay between retries is changed from 4 seconds to 800ms.</para>
+</listitem><listitem><para>The maximum retry delay is changed from 2 minutes to 60 seconds (one minute).</para>
+</listitem></itemizedlist>
+</para>
+<para>If the original behavior is desired, customers can adjust these timeouts by changing the <computeroutput>RetryDelay</computeroutput> and <computeroutput>MaxRetryDelay</computeroutput> fields in the <computeroutput>RetryOptions</computeroutput> structure.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-9">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed bug in WinHTTP client which caused the <computeroutput>IgnoreUnknownCertificateAuthority</computeroutput> and <computeroutput>EnableCertificateRevocationListCheck</computeroutput> fields to be ignored if they were passed in from <computeroutput>TransportOptions</computeroutput>.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/4206">[#4206]</ulink> Fixed connectivity issues in libcurl HTTP transport which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/ahojnnes">ahojnnes</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-9">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Update distributed tracing attributes to align with current <ref refid="namespace_azure" kindref="compound">Azure</ref> Distributed Tracing Conventions attributes and names.</para>
+</listitem><listitem><para>Added the ability to consume version 1.1.1n of OpenSSL.</para>
+</listitem><listitem><para>Added support for Identity token caching, and for configuring token refresh offset in <computeroutput>BearerTokenAuthenticationPolicy</computeroutput>.</para>
+</listitem><listitem><para>Improved cancellation support for WinHTTP transport.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-7">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Johannes Schonberger _(<ulink url="https://github.com/ahojnnes">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md180-beta3-2023-01-05">
+<title>1.8.0-beta.3 (2023-01-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-9">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added support for parsing space character in place of &apos;T&apos; in RFC3339 DateTimes.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-3">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Bearer token authentication will not work for endpoint URL protocol schemes other than <computeroutput>&quot;https&quot;</computeroutput>. This ensures token security and is consistent with the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDKs for other languages.</para>
+</listitem><listitem><para>Removed <computeroutput>noexcept</computeroutput> specification from <computeroutput>Azure::DateTime::clock::now()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md180-beta2-2022-11-03">
+<title>1.8.0-beta.2 (2022-11-03)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-10">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Added the ability to consume version 1.1.1n of OpenSSL.</para>
+</listitem><listitem><para>Added support for Identity token caching, and for configuring token refresh offset in <computeroutput>BearerTokenAuthenticationPolicy</computeroutput>.</para>
+</listitem><listitem><para>Improved cancellation support for WinHTTP transport.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md180-beta1-2022-10-06">
+<title>1.8.0-beta.1 (2022-10-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-10">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added support for HTTP proxy servers, both unauthenticated and with Plain authentication.</para>
+</listitem><listitem><para>Added universal support for several TLS options:<itemizedlist>
+<listitem><para>Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).</para>
+</listitem><listitem><para>Added the ability to enable TLS certificate revocation list checks (off by default).<itemizedlist>
+<listitem><para>For libcurl only: Allow TLS connection to succeed if CRL retrieval fails.</para>
+</listitem><listitem><para><emphasis>NOTE</emphasis>: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-4">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Updated retry policy timeouts to conform to <ref refid="namespace_azure" kindref="compound">Azure</ref> guidelines.<itemizedlist>
+<listitem><para>The default delay between retries is changed from 4 seconds to 800ms.</para>
+</listitem><listitem><para>The maximum retry delay is changed from 2 minutes to 60 seconds (one minute).</para>
+</listitem></itemizedlist>
+</para>
+<para>If the original behavior is desired, customers can adjust these timeouts by changing the <computeroutput>RetryDelay</computeroutput> and <computeroutput>MaxRetryDelay</computeroutput> fields in the <computeroutput>RetryOptions</computeroutput> structure.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md172-2022-09-01">
+<title>1.7.2 (2022-09-01)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-10">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>WinHTTP Transport Adapter: Fixed missing reason phrase handling for HTTP/2 responses.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md171-2022-08-04">
+<title>1.7.1 (2022-08-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-11">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/3794">[#3794]</ulink> Fix memory leak in <computeroutput>CurlTransport</computeroutput>.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/3692">[#3692]</ulink> Interrupted poll calls cause spurious HTTP request failures. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/johnwheffner">johnwheffner</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-8">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>John Heffner _(<ulink url="https://github.com/johnwheffner">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md170-2022-06-30">
+<title>1.7.0 (2022-06-30)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-11">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added prototypes and initial service support for Distributed Tracing.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md170-beta1-2022-06-02">
+<title>1.7.0-beta.1 (2022-06-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-12">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added prototypes and initial service support for Distributed Tracing.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-5">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>noexcept</computeroutput> specification from <computeroutput><ref refid="class_azure_1_1_core_1_1_context_1ada5850b1bb2ad455c4fc1595ae75d66f" kindref="member">Azure::Core::Context::IsCancelled()</ref></computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md160-2022-05-05">
+<title>1.6.0 (2022-05-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-13">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Add <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref></computeroutput> constructor overload to support payload and non-buffered response.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-12">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/3537">[#3537]</ulink> Updated field type <computeroutput>CurlTransportOptions.Proxy</computeroutput> from <computeroutput>std::string</computeroutput> to <computeroutput><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt;std::string&gt;</computeroutput>. This allows libcurl to ignore the proxy settings from the environment when the string is empty.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/3548">[#3548]</ulink>, <ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/1098">[#1098]</ulink> Improve performance of the Http transport on Windows by reusing the same session handle across all requests.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-11">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/3581">[#3581]</ulink> Update log level in retry policy from warning to informational.</para>
+</listitem><listitem><para>Updated the MD5 Hash implementation to work on top of OpenSSL 3.0. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/jepio">jepio</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-9">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Jeremi Piotrowski _(<ulink url="https://github.com/jepio">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md150-2022-03-31">
+<title>1.5.0 (2022-03-31)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-14">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>When a <computeroutput>RequestFailedException</computeroutput> exception is thrown, the <computeroutput>what()</computeroutput> method now includes information about the HTTP request which failed.</para>
+</listitem><listitem><para>Adding option <computeroutput>WinHttpTransportOptions.IgnoreUnknownCertificateAuthority</computeroutput>. It can be used to disable verifying server certificate for the <computeroutput>WinHttpTransport</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-6">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Enforce TLS 1.2 or greater for <computeroutput>CurlTransport</computeroutput> and <computeroutput>WinHttpTransport</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-12">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Improve output message for <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_transport_exception" kindref="compound">Azure::Core::Http::TransportException</ref></computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md140-2022-03-03">
+<title>1.4.0 (2022-03-03)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-15">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Stabilized the beta features and changes.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md140-beta1-2022-02-04">
+<title>1.4.0-beta.1 (2022-02-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-16">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Enabled environment-controlled console logging on UWP.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-7">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed the <computeroutput>AzureNoReturnPath()</computeroutput> function from the global namespace, and deprecated the associated macros, such as <computeroutput>AZURE_ASSERT</computeroutput> since they are meant for internal use only. If your code was using the <computeroutput>AZURE_ASSERT</computeroutput> macro, consider using the standard library&apos;s <computeroutput>assert</computeroutput> as an alternative.</para>
+</listitem><listitem><para>Removed the two parameter <computeroutput>RequestFailedException</computeroutput> ctor, it has no use case and wasn&apos;t intended for public use.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-13">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed <computeroutput><ref refid="class_azure_1_1_date_time_1abe9f1e977e70d30c8efada1f41b4b30f" kindref="member">Azure::DateTime::Parse()</ref></computeroutput> validation if the result is going to exceed <computeroutput>9999-12-31T23:59:59.9999999</computeroutput> due to time zone, leap second, or fractional digits rounding up adjustments.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/3224">[#3224]</ulink> Fixed intermittent crash on macOS when logging is turned on.</para>
+</listitem><listitem><para>The <computeroutput>Base64::Decode</computeroutput> API will throw a <computeroutput>std::runtime_error</computeroutput> exception if presented with invalid inputs.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-13">
+<title>Other Changes</title></sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md131-2021-11-05">
+<title>1.3.1 (2021-11-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-14">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed linking error when <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK is being built as DLL.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md130-2021-11-04">
+<title>1.3.0 (2021-11-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-17">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Add <computeroutput>NoSignal</computeroutput> option to the <computeroutput>CurlTransportAdapter</computeroutput>.</para>
+</listitem><listitem><para>Add <computeroutput>ConnectionTimeout</computeroutput> option to the <computeroutput>CurlTransportAdapter</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-15">
+<title>Bugs Fixed</title><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/2848">2848</ulink> Update the libcurl transport adapter to work with HTTP/1.1 only.</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-14">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Updated <computeroutput>base64</computeroutput> implementation to remove external dependency.</para>
+</listitem><listitem><para>Updated <computeroutput>Uuid</computeroutput> implementation for Linux to remove external dependency.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md121-2021-09-02">
+<title>1.2.1 (2021-09-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-16">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/2785">2785</ulink> Fix to build on g++ 5.5.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-15">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Fixed compilation error on POSIX platforms where OpenSSL was not available.</para>
+</listitem><listitem><para>Support CMake version 3.12</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md120-2021-08-05">
+<title>1.2.0 (2021-08-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-18">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream" kindref="compound">Azure::Core::IO::ProgressBodyStream</ref></computeroutput> type that wraps an existing BodyStream based type stream and reports progress via callback when the stream position is updated.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-17">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/2647">2647</ulink> Make the curl transport adapter to check the connection close header.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/2474">2474</ulink> Fix compiling with MSVC and <computeroutput>/analyze</computeroutput>.</para>
+</listitem><listitem><para>Make WinHTTP transport adapter to NOT use SSL/TLS for unsecured HTTP connections.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-16">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Updated source code to build with Clang 11. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/davidchisnall">davidchisnall</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-10">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>David Chisnall _(<ulink url="https://github.com/davidchisnall">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md110-2021-07-02">
+<title>1.1.0 (2021-07-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-18">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed a memory leak issue in <computeroutput>Base64Encode()</computeroutput>. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/jorgen">jorgen</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-17">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Made internal-only changes to support the <ref refid="namespace_azure" kindref="compound">Azure</ref> Key Vault client library.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-11">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Jorgen Lind _(<ulink url="https://github.com/jorgen">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-2021-06-04">
+<title>1.0.0 (2021-06-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Make <computeroutput>RequestFailedException</computeroutput> copiable so it can be propagated across thread.</para>
+</listitem><listitem><para>By default, add <computeroutput>x-ms-request-id</computeroutput> header to the allow list of headers to log.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta9-2021-05-18">
+<title>1.0.0-beta.9 (2021-05-18)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>Azure::PagedResponse&lt;T&gt;</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-8">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>final</computeroutput> specifier to classes and structures that are are not expected to be inheritable at the moment.</para>
+</listitem><listitem><para>Removed <computeroutput>Context::GetApplicationContext()</computeroutput> in favor of a new static data member <computeroutput>Context::ApplicationContext</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>Request::IsDownloadViaStream()</computeroutput> to <computeroutput>ShouldBufferResponse()</computeroutput>.</para>
+</listitem><listitem><para>Removed the <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref></computeroutput> ctor overload that takes both a <computeroutput>bodyStream</computeroutput> and a <computeroutput>bufferedDownload</computeroutput> boolean since it is not useful.</para>
+</listitem><listitem><para>Changed integer size parameters for buffers from <computeroutput>int64_t</computeroutput> to <computeroutput>size_t</computeroutput> in various places such as <computeroutput><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ab7c962004d984d3bd1d32f33e6aa485d" kindref="member">Azure::Core::IO::BodyStream::Read()</ref></computeroutput> APIs.</para>
+</listitem><listitem><para>Removed the <computeroutput>Azure::Core::Diagnostics::Logger::Listener</computeroutput> typedef.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-1">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Do not re-use a libcurl connection to same host but different port.</para>
+</listitem><listitem><para>Fixed curl transport issue to avoid crash at exit when curl connection pool cleanup thread is running.</para>
+</listitem><listitem><para>Ensure uniqueness of <computeroutput><ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Azure::Core::Uuid</ref></computeroutput> on POSIX platforms.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Modified precondition validation of function arguments to now result in assert failures rather than throwing an exception.</para>
+</listitem><listitem><para>Remove exposing windows.h header from our public headers.</para>
+</listitem><listitem><para>Improved performance of the WinHTTP transport layer on Windows for uploading large payloads.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta8-2021-04-07">
+<title>1.0.0-beta.8 (2021-04-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-1">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_url_1a92fd65dfc4bb0e0b1f418e519e7f7445" kindref="member">Azure::Core::Url::GetScheme()</ref></computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_context_1a44896de14f31ec4e45ba5f0beaa99326" kindref="member">Azure::Core::Context::TryGetValue()</ref></computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_context_1af27222eb504319f458057565af0c640f" kindref="member">Azure::Core::Context::GetDeadline()</ref></computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput><ref refid="struct_azure_1_1_core_1_1_credentials_1_1_token_credential_options" kindref="compound">Azure::Core::Credentials::TokenCredentialOptions</ref></computeroutput>.</para>
+</listitem><listitem><para>Added useful fields to the <computeroutput><ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">Azure::Core::RequestFailedException</ref></computeroutput> class such as <computeroutput>StatusCode</computeroutput>, <computeroutput>ReasonPhrase</computeroutput>, and the <computeroutput>RawResponse</computeroutput>, for better diagnosis of errors.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-9">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Simplified the <computeroutput>Response&lt;T&gt;</computeroutput> API surface to expose two public fields with direct access: <computeroutput>T Value</computeroutput> and a <computeroutput>unique_ptr</computeroutput> to an <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref></computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt;T&gt;::GetValue()</computeroutput> to <computeroutput>Value()</computeroutput>.</para>
+</listitem><listitem><para>Removed from <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref></computeroutput>:<itemizedlist>
+<listitem><para><computeroutput>SetUploadChunkSize()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>GetHTTPMessagePreBody()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>GetUploadChunkSize()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>GetHeadersAsString()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Changes to <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref></computeroutput>:<itemizedlist>
+<listitem><para>Removed <computeroutput>SetHeader(std::string const&amp; header)</computeroutput></para>
+</listitem><listitem><para>Removed <computeroutput>SetHeader(uint8_t const* const first, uint8_t const* const last)</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>GetMajorVersion()</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>GetMinorVersion()</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>GetBodyStream()</computeroutput> to <computeroutput>ExtractBodyStream()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Changes to <computeroutput><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref></computeroutput>:<itemizedlist>
+<listitem><para>Removed <computeroutput>Get()</computeroutput> and <computeroutput>HasKey()</computeroutput> in favor of a new method <computeroutput>TryGetValue()</computeroutput>.</para>
+</listitem><listitem><para>Changed input parameter type of <computeroutput>WithDeadline()</computeroutput> to <computeroutput><ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref></computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Removed <computeroutput>Azure::Core::PackageVersion</computeroutput>.</para>
+</listitem><listitem><para>Removed from <computeroutput>Azure::Core::Http::Policies</computeroutput> namespace: <computeroutput>HttpPolicyOrder</computeroutput>, <computeroutput>TransportPolicy</computeroutput>, <computeroutput>RetryPolicy</computeroutput>, <computeroutput>RequestIdPolicy</computeroutput>, <computeroutput>TelemetryPolicy</computeroutput>, <computeroutput>BearerTokenAuthenticationPolicy</computeroutput>, <computeroutput>LogPolicy</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>AppendQueryParameters()</computeroutput>, <computeroutput>GetUrlWithoutQuery()</computeroutput> and <computeroutput>GetUrlAuthorityWithScheme()</computeroutput> from <computeroutput><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Azure::Core::Url</ref></computeroutput>.</para>
+</listitem><listitem><para>Changed the <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">Azure::Core::Http::HttpMethod</ref></computeroutput> regular enum into an extensible enum class and removed the <computeroutput>HttpMethodToString()</computeroutput> helper method.</para>
+</listitem><listitem><para>Introduced <computeroutput><ref refid="class_azure_1_1_core_1_1_context_1_1_key" kindref="compound">Azure::Core::Context::Key</ref></computeroutput> class which takes place of <computeroutput>std::string</computeroutput> used for <computeroutput><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref></computeroutput> keys previously.</para>
+</listitem><listitem><para>Changed the casing of <computeroutput>SSL</computeroutput> in API names to <computeroutput>Ssl</computeroutput>:<itemizedlist>
+<listitem><para>Renamed type <computeroutput>Azure::Core::Http::CurlTransportSSLOptions</computeroutput> to <computeroutput>CurlTransportSslOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed member <computeroutput>Azure::Core::Http::CurlTransportOptions::SSLOptions</computeroutput> to <computeroutput>SslOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed member <computeroutput>Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer</computeroutput> to <computeroutput>SslVerifyPeer</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements-1">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Moved <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref></computeroutput> to its own header file from <computeroutput><ref refid="http_8hpp" kindref="compound">http.hpp</ref></computeroutput> to <computeroutput><ref refid="raw__response_8hpp" kindref="compound">inc/azure/core/http/raw_response.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Moved <computeroutput><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">Azure::Core::Http::HttpStatusCode</ref></computeroutput> to its own header file from <computeroutput><ref refid="http_8hpp" kindref="compound">http.hpp</ref></computeroutput> to <computeroutput><ref refid="http__status__code_8hpp" kindref="compound">inc/azure/core/http/http_status_code.hpp</ref></computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta7-2021-03-11">
+<title>1.0.0-beta.7 (2021-03-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-2">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>HttpPolicyOrder</computeroutput> for adding custom Http policies to SDK clients.</para>
+</listitem><listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Azure::Core::Operation</ref>&lt;T&gt;::GetRawResponse()</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>Azure::Core::PackageVersion</computeroutput>.</para>
+</listitem><listitem><para>Added support for logging to console when <computeroutput>AZURE_LOG_LEVEL</computeroutput> environment variable is set.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-10">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Changes to <computeroutput>Azure::Core</computeroutput> namespace:<itemizedlist>
+<listitem><para>Removed <computeroutput>Response&lt;void&gt;</computeroutput>, <computeroutput>ValueBase</computeroutput>, and <computeroutput>ContextValue</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>Context::operator[]</computeroutput>, <computeroutput>Get()</computeroutput> introduced instead.</para>
+</listitem><listitem><para>Renamed <computeroutput>Uuid::GetUuidString()</computeroutput> to <computeroutput>ToString()</computeroutput>.</para>
+</listitem><listitem><para>Changed return type of <computeroutput>Operation&lt;T&gt;::Poll()</computeroutput> from <computeroutput>std::unique_ptr&lt;RawResponse&gt;</computeroutput> to <computeroutput>RawResponse const&amp;</computeroutput>.</para>
+</listitem><listitem><para>Moved <computeroutput>GetApplicationContext()</computeroutput> to <computeroutput>Context::GetApplicationContext()</computeroutput></para>
+</listitem><listitem><para>Moved the <computeroutput>Base64Encode()</computeroutput> and <computeroutput>Base64Decode()</computeroutput> functions to be static members of a <computeroutput>Convert</computeroutput> class.</para>
+</listitem><listitem><para>Moved <computeroutput>Logging</computeroutput> namespace entities to <computeroutput>Diagnostics::Logger</computeroutput> class.</para>
+</listitem><listitem><para>Moved <computeroutput>AccessToken</computeroutput>, <computeroutput>TokenCredential</computeroutput>, and <computeroutput>AuthenticationException</computeroutput> to <computeroutput>Credentials</computeroutput> namespace.</para>
+</listitem><listitem><para>Moved <computeroutput>Context</computeroutput> to be the last parameter for consistency, instead of first in various azure-core types. For example:<itemizedlist>
+<listitem><para><computeroutput>BodyStream::Read(uint8_t* buffer, int64_t count, Context const&amp; context)</computeroutput></para>
+</listitem><listitem><para><computeroutput>BodyStream::ReadToEnd(BodyStream&amp; body, Context const&amp; context)</computeroutput></para>
+</listitem><listitem><para><computeroutput>HttpPolicy::Send(Request&amp; request, NextHttpPolicy policy, Context const&amp; context)</computeroutput></para>
+</listitem><listitem><para><computeroutput>Operation&lt;T&gt;::PollUntilDone(std::chrono::milliseconds period, Context&amp; context)</computeroutput></para>
+</listitem><listitem><para><computeroutput>TokenCredential::GetToken(Http::TokenRequestOptions const&amp; tokenRequestOptions, Context const&amp; context)</computeroutput></para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Moved from <computeroutput>Azure::Core</computeroutput> to <computeroutput><ref refid="namespace_azure" kindref="compound">Azure</ref></computeroutput> namespace:<itemizedlist>
+<listitem><para><computeroutput>Response&lt;T&gt;</computeroutput>, <computeroutput>ETag</computeroutput>, and <computeroutput>Nullable&lt;T&gt;</computeroutput>.</para>
+</listitem><listitem><para>Split <computeroutput>RequestConditions</computeroutput> into <computeroutput>MatchConditions</computeroutput> and <computeroutput>ModifiedConditions</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>DateTime::GetString()</computeroutput> to <computeroutput>ToString()</computeroutput>, and removed <computeroutput>DateTime::GetRfc3339String()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Changes to <computeroutput>Azure::Core::Http</computeroutput> namespace:<itemizedlist>
+<listitem><para>Removed <computeroutput>HttpPipeline</computeroutput>, <computeroutput>TransportKind</computeroutput>, <computeroutput>NullBodyStream</computeroutput>, and <computeroutput>LimitBodyStream</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>Request::StartTry()</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>InvalidHeaderException</computeroutput> and throw <computeroutput>std::invalid_argument</computeroutput> if the user provides invalid header arguments.</para>
+</listitem><listitem><para>Renamed <computeroutput>CurlTransportSSLOptions::NoRevoke</computeroutput> to <computeroutput>EnableCertificateRevocationListCheck</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>Range</computeroutput> to <computeroutput>HttpRange</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>TokenRequestOptions</computeroutput> to <computeroutput>TokenRequestContext</computeroutput>, and moved it to <computeroutput>Azure::Core::Credentials</computeroutput> namespace.</para>
+</listitem><listitem><para>Moved <computeroutput>Url</computeroutput> to <computeroutput>Azure::Core</computeroutput> namespace.</para>
+</listitem><listitem><para><computeroutput>Request</computeroutput> and <computeroutput>RawResponse</computeroutput>:<itemizedlist>
+<listitem><para>Renamed <computeroutput>AddHeader()</computeroutput> to <computeroutput>SetHeader()</computeroutput>.</para>
+</listitem><listitem><para>Introduced <computeroutput><ref refid="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" kindref="member">Azure::Core::CaseInsensitiveMap</ref></computeroutput> which is now used to store headers.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para><computeroutput>BodyStream</computeroutput> and the types that derive from it:<itemizedlist>
+<listitem><para>Moved to <computeroutput>Azure::Core::IO</computeroutput> namespace.</para>
+</listitem><listitem><para>Changed the static methods <computeroutput>BodyStream::ReadToCount()</computeroutput> and <computeroutput>BodyStream::ReadToEnd()</computeroutput> into instance methods.</para>
+</listitem><listitem><para>Changed the constructor of <computeroutput>FileBodyStream</computeroutput> to accept a file name directly and take ownership of opening/closing the file, instead of accepting a file descriptor, offset, and length.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>HTTP policies and their options:<itemizedlist>
+<listitem><para>Moved to <computeroutput>Policies</computeroutput> namespace.</para>
+</listitem><listitem><para>Renamed <computeroutput>TransportPolicyOptions</computeroutput> to <computeroutput>TransportOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>TelemetryPolicyOptions</computeroutput> to <computeroutput>TelemetryOptions</computeroutput>.</para>
+</listitem><listitem><para>Changed type of <computeroutput>RetryOptions::StatusCodes</computeroutput> from <computeroutput>std::vector</computeroutput> to <computeroutput>std::set</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>LoggingPolicy</computeroutput> to <computeroutput>LogPolicy</computeroutput>, and introduced <computeroutput>LogOptions</computeroutput> as mandatory parameter for the constructor.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Moved header files:<itemizedlist>
+<listitem><para>Renamed <computeroutput>azure/core/credentials.hpp</computeroutput> to <computeroutput><ref refid="credentials_8hpp" kindref="compound">azure/core/credentials/credentials.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>azure/core/logger.hpp</computeroutput> to <computeroutput><ref refid="logger_8hpp" kindref="compound">azure/core/diagnostics/logger.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>azure/core/http/body_stream.hpp</computeroutput> to <computeroutput><ref refid="body__stream_8hpp" kindref="compound">azure/core/io/body_stream.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>azure/core/http/policy.hpp</computeroutput> to <computeroutput><ref refid="policy_8hpp" kindref="compound">azure/core/http/policies/policy.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>azure/core/http/curl/curl.hpp</computeroutput> to <computeroutput><ref refid="curl__transport_8hpp" kindref="compound">azure/core/http/curl_transport.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>azure/core/http/winhttp/win_http_client.hpp</computeroutput> to <computeroutput><ref refid="win__http__transport_8hpp" kindref="compound">azure/core/http/win_http_transport.hpp</ref></computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-2">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Make sure to rewind the body stream at the start of each request retry attempt, including the first.</para>
+</listitem><listitem><para>Connection pool resets when all connections are closed.</para>
+</listitem><listitem><para>Fix <computeroutput>Azure::Context</computeroutput> to support <computeroutput>std::unique_ptr</computeroutput>.</para>
+</listitem><listitem><para>Throw <computeroutput>std::runtime_error</computeroutput> from <computeroutput>Response&lt;T&gt;::GetRawResponse()</computeroutput> if the response was already extracted.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta6-2021-02-09">
+<title>1.0.0-beta.6 (2021-02-09)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-3">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added support for HTTP conditional requests <computeroutput>MatchConditions</computeroutput> and <computeroutput>RequestConditions</computeroutput>.</para>
+</listitem><listitem><para>Added the <computeroutput>Hash</computeroutput> base class and MD5 hashing APIs to the <computeroutput>Azure::Core::Cryptography</computeroutput> namespace available from <computeroutput><ref refid="hash_8hpp" kindref="compound">azure/core/cryptography/hash.hpp</ref></computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-11">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>Context::CancelWhen()</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>LogClassification</computeroutput> and related functionality, added <computeroutput>LogLevel</computeroutput> instead.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-3">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Fixed computation of the token expiration time in <computeroutput>BearerTokenAuthenticationPolicy</computeroutput>. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/sjoubert">sjoubert</ulink></emphasis>)</para>
+</listitem><listitem><para>Fixed <computeroutput>Retry-After</computeroutput> HTTP header to be treated as case-insensitive. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/sjoubert">sjoubert</ulink></emphasis>)</para>
+</listitem><listitem><para>Fixed compilation dependency issue for MacOS when consuming the SDK from VcPkg.</para>
+</listitem><listitem><para>Fixed support for sending requests to endpoints with a custom port within the url on Windows when using the WinHttp transport.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-12">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Sylvain Joubert _(<ulink url="https://github.com/sjoubert">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta5-2021-02-02">
+<title>1.0.0-beta.5 (2021-02-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-4">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added support for HTTP validators <computeroutput>ETag</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-12">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Make <computeroutput>ToLower()</computeroutput> and <computeroutput>LocaleInvariantCaseInsensitiveEqual()</computeroutput> internal by moving them from <computeroutput>Azure::Core::Strings</computeroutput> to <computeroutput>Azure::Core::Internal::Strings</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BearerTokenAuthenticationPolicy</computeroutput> constructor takes <computeroutput>TokenRequestOptions</computeroutput> struct instead of scopes vector. <computeroutput>TokenRequestOptions</computeroutput> struct has scopes vector as data member.</para>
+</listitem><listitem><para><computeroutput>TokenCredential::GetToken()</computeroutput> takes <computeroutput>TokenRequestOptions</computeroutput> instead of scopes vector.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-4">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.</para>
+</listitem><listitem><para>Fixed reading the value from <computeroutput>retry-after</computeroutput> header in <computeroutput>RetryPolicy</computeroutput>.</para>
+</listitem><listitem><para>Fix link errors when producing a DLL and add UWP compilation support.</para>
+</listitem><listitem><para>Do not pass a placeholder user-agent string as a fallback when using WinHttp.</para>
+</listitem><listitem><para>Initialize local variables in implementation to fix warning within release builds on Linux.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta4-2021-01-13">
+<title>1.0.0-beta.4 (2021-01-13)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-5">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added a WinHTTP-based <computeroutput>HttpTransport</computeroutput> called <computeroutput>WinHttpTransport</computeroutput> and use that as the default <computeroutput>TransportPolicyOptions.Transport</computeroutput> on Windows when sending and receiving requests and responses over the wire.</para>
+</listitem><listitem><para>Added <computeroutput>Range</computeroutput> type to <computeroutput>Azure::Core::Http</computeroutput> namespace.</para>
+</listitem><listitem><para>Added support for long-running operations with <computeroutput>Operation&lt;T&gt;</computeroutput>.</para>
+</listitem><listitem><para>Added support for setting a custom transport adapter by implementing the method <computeroutput>std::shared_ptr&lt;HttpTransport&gt; <ref refid="policy_8hpp_1a8fdb3bdd9092e835bb253e12f13a5042" kindref="member">AzureSdkGetCustomHttpTransport()</ref></computeroutput>.</para>
+</listitem><listitem><para>Added interoperability between <computeroutput>std::chrono::system_clock</computeroutput> types and <computeroutput>DateTime</computeroutput>.</para>
+</listitem><listitem><para>Added default constructor to <computeroutput>DateTime</computeroutput> and support for dates since 0001.</para>
+</listitem><listitem><para>Added Base64 encoding and decoding utility APIs to the <computeroutput>Azure::Core</computeroutput> namespace available from <computeroutput><ref refid="base64_8hpp" kindref="compound">azure/core/base64.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>Http::Response&lt;void&gt;</computeroutput> template specialization.</para>
+</listitem><listitem><para>Added <computeroutput>GetHeadersAsString()</computeroutput> on the <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref></computeroutput> class.</para>
+</listitem><listitem><para>Added a <computeroutput><ref refid="platform_8hpp" kindref="compound">platform.hpp</ref></computeroutput> header file for defining commonly used OS-specific <computeroutput>#define</computeroutput> constants.</para>
+</listitem><listitem><para>Added <computeroutput>IsCancelled()</computeroutput> on the <computeroutput><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref></computeroutput> class.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-13">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>DateTime::operator Duration()</computeroutput>, <computeroutput>DateTime::Duration</computeroutput> typedef and <computeroutput>DateTime::Now()</computeroutput>.</para>
+</listitem><listitem><para>Moved <computeroutput>Azure::Core::BearerTokenAuthenticationPolicy</computeroutput>, defined in <computeroutput>azure/core/credentials.hpp</computeroutput> to <computeroutput>Azure::Core::Http</computeroutput> namespace in <computeroutput>azure/core/http/policy.hpp</computeroutput> header.</para>
+</listitem><listitem><para>Changed type of <computeroutput>Token::ExpiresOn</computeroutput> to <computeroutput>DateTime</computeroutput>.</para>
+</listitem><listitem><para>Renamed exception <computeroutput>OperationCanceledException</computeroutput> to <computeroutput>OperationCancelledException</computeroutput> and <computeroutput>ThrowIfCanceled()</computeroutput> to <computeroutput>ThrowIfCancelled()</computeroutput> on the <computeroutput>Context</computeroutput> class.</para>
+</listitem><listitem><para>Moved <computeroutput>Azure::Core::Version</computeroutput>, defined in <computeroutput>azure/core/version.hpp</computeroutput> to the <computeroutput>Azure::Core::Details</computeroutput> namespace.</para>
+</listitem><listitem><para>Changed <computeroutput>Azure::Core::AuthenticationException</computeroutput> to derive from <computeroutput>std::exception</computeroutput> instead of <computeroutput>std::runtime_error</computeroutput>.</para>
+</listitem><listitem><para>Changed the <computeroutput>BodyStream::Read</computeroutput> API from being a pure virtual function to non-virtual.</para>
+</listitem><listitem><para>Removed <computeroutput>CurlConnection</computeroutput>, <computeroutput>CurlConnectionPool</computeroutput>, <computeroutput>CurlSession</computeroutput>, and <computeroutput>CurlNetworkConnection</computeroutput> by making headers meant as implementation, private.</para>
+</listitem><listitem><para>Removed option <computeroutput>AllowBeast</computeroutput> from <computeroutput>CurlTransportSSLOptions</computeroutput> in <computeroutput>CurlTransportOptions</computeroutput>.</para>
+</listitem><listitem><para>Changed default option <computeroutput>NoRevoke</computeroutput> from <computeroutput>CurlTransportSSLOptions</computeroutput> for the <computeroutput>CurlTransportOptions</computeroutput> to <computeroutput>true</computeroutput>. This disables the revocation list checking by default.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-5">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Fixed the Curl transport adapter connection pooling when setting options.</para>
+</listitem><listitem><para>Fixed setting up the default transport adapter.</para>
+</listitem><listitem><para>Fixed linker error of missing pthread on Linux.</para>
+</listitem><listitem><para>Initialize class data members to avoid MSVC warning.</para>
+</listitem><listitem><para>Throw <computeroutput><ref refid="class_azure_1_1_core_1_1_http_1_1_transport_exception" kindref="compound">Azure::Core::Http::TransportException</ref></computeroutput> if <computeroutput>curl_easy_init()</computeroutput> returns a null handle. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/ku-sourav">ku-sourav</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements-2">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Added support for distributing the C++ SDK as a source package via vcpkg.</para>
+</listitem><listitem><para>Fixed installation error when the SDK is being installed under a non-standard prefix. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/juchem">juchem</ulink></emphasis>)</para>
+</listitem><listitem><para>Fixed linker error when pthread is missing on Linux. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/lordgamez">lordgamez</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-13">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para>Gabor Gyimesi _(<ulink url="https://github.com/lordgamez">GitHub</ulink>)_</para>
+</listitem><listitem><para>Marcelo Juchem _(<ulink url="https://github.com/juchem">GitHub</ulink>)_</para>
+</listitem><listitem><para><computeroutput>ku-sourav</computeroutput> _(<ulink url="https://github.com/ku-sourav">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta3-2020-11-11">
+<title>1.0.0-beta.3 (2020-11-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-6">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added <computeroutput><ref refid="strings_8hpp" kindref="compound">strings.hpp</ref></computeroutput> with <computeroutput>Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual</computeroutput> and <computeroutput>Azure::Core::Strings::ToLower</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>GetPort()</computeroutput> to <computeroutput>Url</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>TransportPolicyOptions</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>TelemetryPolicyOptions</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>RequestFailedException</computeroutput> deriving from <computeroutput>std::runtime_error</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>CurlTransportOptions</computeroutput> for the <computeroutput>CurlTransport</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>DateTime</computeroutput> supporting dates since 1601.</para>
+</listitem><listitem><para>Added <computeroutput>OperationCanceledException</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>Encode</computeroutput> and <computeroutput>Decode</computeroutput> to <computeroutput>Url</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-14">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>azure.hpp</computeroutput>.</para>
+</listitem><listitem><para>Removed macro <computeroutput>AZURE_UNREFERENCED_PARAMETER</computeroutput>.</para>
+</listitem><listitem><para>Bump CMake version from 3.12 to 3.13.</para>
+</listitem><listitem><para>Bump libcurl version from 7.4 to 7.44.</para>
+</listitem><listitem><para>Moved <computeroutput>ClientSecretCredential</computeroutput> and <computeroutput>EnvironmentCredential</computeroutput> to the Identity library.</para>
+</listitem><listitem><para><computeroutput>Url</computeroutput> class changes:<itemizedlist>
+<listitem><para><computeroutput>AppendPath</computeroutput> now does not encode the input by default.</para>
+</listitem><listitem><para>Signature updated for <computeroutput>SetHost</computeroutput>, <computeroutput>SetPath</computeroutput> and <computeroutput>AppendPath</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>SetFragment</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>AppendQueries</computeroutput> to <computeroutput>AppendQueryParameters</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>AppendQuery</computeroutput> to <computeroutput>AppendQueryParameter</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>RemoveQuery</computeroutput> to <computeroutput>RemoveQueryParameter</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>GetQuery</computeroutput> to <computeroutput>GetQueryParameters</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-6">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Prevent pipeline of length zero to be created.</para>
+</listitem><listitem><para>Avoid re-using a connection when a request to upload data fails while using the <computeroutput>CurlTransport</computeroutput>.</para>
+</listitem><listitem><para>Add entropy to <computeroutput>Uuid</computeroutput> generation.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements-3">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Add high-level and simplified <ref refid="core_8hpp_source" kindref="compound">core.hpp</ref> file for simpler include experience for customers.</para>
+</listitem><listitem><para>Add code coverage using gcov with gcc.</para>
+</listitem><listitem><para>Update SDK-defined exception types to be classes instead of structs.</para>
+</listitem><listitem><para>Updated <computeroutput>TransportException</computeroutput> and <computeroutput>InvalidHeaderException</computeroutput> to derive from <computeroutput>RequestFailedException</computeroutput>.</para>
+</listitem><listitem><para>Vcpkg dependency version updated to 2020.11.</para>
+</listitem><listitem><para>Make libcurl network requests cancelable by Context::Cancel().</para>
+</listitem><listitem><para>Validate HTTP headers for invalid characters.</para>
+</listitem><listitem><para>Calling <computeroutput>Cancel()</computeroutput> from context now throws <computeroutput>OperationCanceledException</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta2-2020-10-09">
+<title>1.0.0-beta.2 (2020-10-09)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-15">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Throw Azure::Http::TransportException if creating new connection fails.</para>
+</listitem><listitem><para>Response objects store Nullable&lt;T&gt;.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-7">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Switched to a more stable wait on sockets to address connection timeouts.</para>
+</listitem><listitem><para>Replace <computeroutput>Nullable(const T&amp;)</computeroutput> with <computeroutput>Nullable(T)</computeroutput> to avoid extra copy when initialized with an rvalue.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements-4">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Improved performance on windows when using libcurl.</para>
+</listitem><listitem><para>Pinned the version of package dependencies.</para>
+</listitem><listitem><para>Added NOTICE.txt for 3rd party dependencies.</para>
+</listitem><listitem><para>Added build instructions for running tests. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/ku-sourav">ku-sourav</ulink></emphasis>)</para>
+</listitem><listitem><para>Updated vcpkg build instructions. (A community contribution, courtesy of <emphasis><ulink url="https://github.com/ku-sourav">ku-sourav</ulink></emphasis>)</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1acknowledgments-14">
+<title>Acknowledgments</title><para>Thank you to our developer community members who helped to make <ref refid="namespace_azure" kindref="compound">Azure</ref> Core better with their contributions to this release:</para>
+<para><itemizedlist>
+<listitem><para><computeroutput>ku-sourav</computeroutput> _(<ulink url="https://github.com/ku-sourav">GitHub</ulink>)_</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta1-2020-09-09">
+<title>1.0.0-beta.1 (2020-09-09)</title><para><itemizedlist>
+<listitem><para>Initial release </para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+    </detaileddescription>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

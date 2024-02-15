@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_block" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobBlock</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_block_1a21bbada98a6a3e8e318fac7a1a2abb6f" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobBlock::Name</definition>
+        <argsstring></argsstring>
+        <name>Name</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobBlock::Name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The base64 encoded block ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3335" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_block_1a168c4d38f4ad53dea061a7df2cb28990" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::Models::BlobBlock::Size</definition>
+        <argsstring></argsstring>
+        <name>Size</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobBlock::Size</qualifiedname>
+        <initializer>= int64_t()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The block size in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3339" column="15" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3339" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents a single block in a block blob. It describes the block&apos;s ID and size. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="3330" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3331" bodyend="3340"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_block_1a21bbada98a6a3e8e318fac7a1a2abb6f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobBlock</scope><name>Name</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_block_1a168c4d38f4ad53dea061a7df2cb28990" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobBlock</scope><name>Size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

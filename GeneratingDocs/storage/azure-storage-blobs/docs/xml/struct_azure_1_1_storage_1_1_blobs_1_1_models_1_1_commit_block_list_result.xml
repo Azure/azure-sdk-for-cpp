@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::CommitBlockListResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a34122c15a425f842b4a305c109f98024" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::CommitBlockListResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CommitBlockListResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3291" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a70548842653ea69fc471abdc4a541d91" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::CommitBlockListResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CommitBlockListResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3297" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3297" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a19c42cbcad56114a0ba53b0ed934aa27" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; ContentHash &gt;</type>
+        <definition>Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::Models::CommitBlockListResult::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CommitBlockListResult::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This header is returned so that the client can check for message content integrity. This header refers to the content of the request, meaning, in this case, the list of blocks, and not the content of the blob itself. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3303" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3303" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a5c20078ef8793524a112c1795e4e2372" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CommitBlockListResult::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CommitBlockListResult::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3309" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3309" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a409cf00852e05402e6d38743255db869" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::CommitBlockListResult::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CommitBlockListResult::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3314" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3314" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1af763848a23a586e9ffbcfafdd6983539" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Storage::Blobs::Models::CommitBlockListResult::EncryptionKeySha256</definition>
+        <argsstring></argsstring>
+        <name>EncryptionKeySha256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CommitBlockListResult::EncryptionKeySha256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The SHA-256 hash of the encryption key used to encrypt the blob. This header is only returned when the blob was encrypted with a customer-provided key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3319" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3319" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a33abc024576e6ce51c3ef0b57a960632" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CommitBlockListResult::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CommitBlockListResult::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the name of the encryption scope used to encrypt the blob contents and application metadata. Note that the absence of this header implies use of the default account encryption scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3325" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3325" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a5e47df66b82d5832cf2268d9a991c924" kindref="member">Azure::Storage::Blobs::BlockBlobClient::CommitBlockList</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="3285" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3286" bodyend="3326"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1af763848a23a586e9ffbcfafdd6983539" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CommitBlockListResult</scope><name>EncryptionKeySha256</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a33abc024576e6ce51c3ef0b57a960632" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CommitBlockListResult</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a34122c15a425f842b4a305c109f98024" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CommitBlockListResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a409cf00852e05402e6d38743255db869" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CommitBlockListResult</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a70548842653ea69fc471abdc4a541d91" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CommitBlockListResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a19c42cbcad56114a0ba53b0ed934aa27" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CommitBlockListResult</scope><name>TransactionalContentHash</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result_1a5c20078ef8793524a112c1795e4e2372" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CommitBlockListResult</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

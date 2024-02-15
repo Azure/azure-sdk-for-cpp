@@ -349,7 +349,7 @@ build/
 /cmake-build-debug
 
 #Doxygen
-[Dd]ocs/
+#[Dd]ocs/
 
 # vscode
 .vscode/*

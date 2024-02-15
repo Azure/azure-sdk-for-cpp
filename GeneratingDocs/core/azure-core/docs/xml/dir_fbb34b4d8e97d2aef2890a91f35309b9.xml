@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_fbb34b4d8e97d2aef2890a91f35309b9" kind="dir">
+    <compoundname>inc/azure/core/io</compoundname>
+    <innerfile refid="body__stream_8hpp">body_stream.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/io/"/>
+  </compounddef>
+</doxygen>

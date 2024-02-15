@@ -1,0 +1,599 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_http" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Http</compoundname>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_curl_connection" prot="public">Azure::Core::Http::CurlConnection</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection" prot="public">Azure::Core::Http::CurlNetworkConnection</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_curl_session" prot="public">Azure::Core::Http::CurlSession</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_curl_transport" prot="public">Azure::Core::Http::CurlTransport</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options" prot="public">Azure::Core::Http::CurlTransportOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options" prot="public">Azure::Core::Http::CurlTransportSslOptions</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_http_method" prot="public">Azure::Core::Http::HttpMethod</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_http_range" prot="public">Azure::Core::Http::HttpRange</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_http_transport" prot="public">Azure::Core::Http::HttpTransport</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_raw_response" prot="public">Azure::Core::Http::RawResponse</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_request" prot="public">Azure::Core::Http::Request</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_transport_exception" prot="public">Azure::Core::Http::TransportException</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport" prot="public">Azure::Core::Http::WinHttpTransport</innerclass>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" prot="public">Azure::Core::Http::WinHttpTransportOptions</innerclass>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_http_1_1_policies">Azure::Core::Http::Policies</innernamespace>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>HttpStatusCode</name>
+        <qualifiedname>Azure::Core::Http::HttpStatusCode</qualifiedname>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da6adf97f83acf6453d4a6a4b1070f3754" prot="public">
+          <name>None</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+<para>No HTTP status code. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa0bfb8e59e6c13fc8d990781f77694fe" prot="public">
+          <name>Continue</name>
+          <initializer>= 100</initializer>
+          <briefdescription>
+<para>HTTP 100 Continue. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da548c5a637eddf65132b21411aeafc6a1" prot="public">
+          <name>SwitchingProtocols</name>
+          <initializer>= 101</initializer>
+          <briefdescription>
+<para>HTTP 101 Switching Protocols. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da643562a9ae7099c8aabfdc93478db117" prot="public">
+          <name>Processing</name>
+          <initializer>= 102</initializer>
+          <briefdescription>
+<para>HTTP 102 Processing. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da7ff9f49506fe347fab32eb5ff72feda9" prot="public">
+          <name>EarlyHints</name>
+          <initializer>= 103</initializer>
+          <briefdescription>
+<para>HTTP 103 Early Hints. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa60852f204ed8028c1c58808b746d115" prot="public">
+          <name>Ok</name>
+          <initializer>= 200</initializer>
+          <briefdescription>
+<para>HTTP 200 OK. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0eceeb45861f9585dd7a97a3e36f85c6" prot="public">
+          <name>Created</name>
+          <initializer>= 201</initializer>
+          <briefdescription>
+<para>HTTP 201 Created. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da382ab522931673c11e398ead1b7b1678" prot="public">
+          <name>Accepted</name>
+          <initializer>= 202</initializer>
+          <briefdescription>
+<para>HTTP 202 Accepted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da2d0ea43e788b779c0aec92366b711c2f" prot="public">
+          <name>NonAuthoritativeInformation</name>
+          <initializer>= 203</initializer>
+          <briefdescription>
+<para>HTTP 203 Non-Authoritative Information. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dacd447f1ec89f564ebac583d60087df12" prot="public">
+          <name>NoContent</name>
+          <initializer>= 204</initializer>
+          <briefdescription>
+<para>HTTP 204 No Content. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4e9202c31896211f63be5b7345a897ed" prot="public">
+          <name>ResetContent</name>
+          <initializer>= 205</initializer>
+          <briefdescription>
+<para>HTTP 205 Rest Content. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da750de7eda10d780b3bbaefb57128c24b" prot="public">
+          <name>PartialContent</name>
+          <initializer>= 206</initializer>
+          <briefdescription>
+<para>HTTP 206 Partial Content. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0790a60654c0b2939299af967571e59b" prot="public">
+          <name>MultiStatus</name>
+          <initializer>= 207</initializer>
+          <briefdescription>
+<para>HTTP 207 Multi-Status. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac549fc73e09b412a8451b1648820acf2" prot="public">
+          <name>AlreadyReported</name>
+          <initializer>= 208</initializer>
+          <briefdescription>
+<para>HTTP 208 Already Reported. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa3abca599dedd534e63c999418d70f45" prot="public">
+          <name>IMUsed</name>
+          <initializer>= 226</initializer>
+          <briefdescription>
+<para>HTTP 226 IM Used. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa589749d075c3423333bdc93e3b4e774" prot="public">
+          <name>MultipleChoices</name>
+          <initializer>= 300</initializer>
+          <briefdescription>
+<para>HTTP 300 Multiple Choices. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da32638c25f4c913fce6214c2c4afff9dc" prot="public">
+          <name>MovedPermanently</name>
+          <initializer>= 301</initializer>
+          <briefdescription>
+<para>HTTP 301 Moved Permanently. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da5d695cc28c6a7ea955162fbdd0ae42b9" prot="public">
+          <name>Found</name>
+          <initializer>= 302</initializer>
+          <briefdescription>
+<para>HTTP 302 Found. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da7843649eb3841f496a79303fd815029e" prot="public">
+          <name>SeeOther</name>
+          <initializer>= 303</initializer>
+          <briefdescription>
+<para>HTTP 303 See Other. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac169e6d9a1b9442001384de8dcf49ab9" prot="public">
+          <name>NotModified</name>
+          <initializer>= 304</initializer>
+          <briefdescription>
+<para>HTTP 304 Not Modified. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0a272f25fd5e8a06065ef8ee41a88bea" prot="public">
+          <name>UseProxy</name>
+          <initializer>= 305</initializer>
+          <briefdescription>
+<para>HTTP 305 Use Proxy. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da1b73a351faf2b550d06fae9cc6e0a894" prot="public">
+          <name>TemporaryRedirect</name>
+          <initializer>= 307</initializer>
+          <briefdescription>
+<para>HTTP 307 Temporary Redirect. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac13fb7996808b1abe56e3ae4da84fb4a" prot="public">
+          <name>PermanentRedirect</name>
+          <initializer>= 308</initializer>
+          <briefdescription>
+<para>HTTP 308 Permanent Redirect. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da9edf8fbf00a57d95a0af4923c9a1ec6f" prot="public">
+          <name>BadRequest</name>
+          <initializer>= 400</initializer>
+          <briefdescription>
+<para>HTTP 400 Bad <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref>. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dae06d1ba70f1331e9f9a113cc2f887d3f" prot="public">
+          <name>Unauthorized</name>
+          <initializer>= 401</initializer>
+          <briefdescription>
+<para>HTTP 401 Unauthorized. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4c99006c75b53fe48865cdfa0ac065ba" prot="public">
+          <name>PaymentRequired</name>
+          <initializer>= 402</initializer>
+          <briefdescription>
+<para>HTTP 402 Payment Required. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da722969577a96ca3953e84e3d949dee81" prot="public">
+          <name>Forbidden</name>
+          <initializer>= 403</initializer>
+          <briefdescription>
+<para>HTTP 403 Forbidden. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da38c300f4fc9ce8a77aad4a30de05cad8" prot="public">
+          <name>NotFound</name>
+          <initializer>= 404</initializer>
+          <briefdescription>
+<para>HTTP 404 Not Found. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8ba68fee5542f5fd071aed140c39bd8e" prot="public">
+          <name>MethodNotAllowed</name>
+          <initializer>= 405</initializer>
+          <briefdescription>
+<para>HTTP 405 Method Not Allowed. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf83a928e6a3f3b502ffadd2a414ce48c" prot="public">
+          <name>NotAcceptable</name>
+          <initializer>= 406</initializer>
+          <briefdescription>
+<para>HTTP 406 Not Acceptable. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da59a2898a8bf9da75a5855e76110f06f2" prot="public">
+          <name>ProxyAuthenticationRequired</name>
+          <initializer>= 407</initializer>
+          <briefdescription>
+<para>HTTP 407 Proxy Authentication Required. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3632c2e4e6225d4d9fcd2a6fd2c65048" prot="public">
+          <name>RequestTimeout</name>
+          <initializer>= 408</initializer>
+          <briefdescription>
+<para>HTTP 408 <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> Timeout. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf1d4ac54357cc0932f385d56814ba7e4" prot="public">
+          <name>Conflict</name>
+          <initializer>= 409</initializer>
+          <briefdescription>
+<para>HTTP 409 Conflict. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0b497b33b1a05057bc1634e607170bf6" prot="public">
+          <name>Gone</name>
+          <initializer>= 410</initializer>
+          <briefdescription>
+<para>HTTP 410 Gone. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8282fb93cb1cf45b135ea191668ca583" prot="public">
+          <name>LengthRequired</name>
+          <initializer>= 411</initializer>
+          <briefdescription>
+<para>HTTP 411 Length Required. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3542a02d18f11f46d53990d91752a6d4" prot="public">
+          <name>PreconditionFailed</name>
+          <initializer>= 412</initializer>
+          <briefdescription>
+<para>HTTP 412 Precondition Failed. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0234a767e9c5c06cdaf290cc9b690b34" prot="public">
+          <name>PayloadTooLarge</name>
+          <initializer>= 413</initializer>
+          <briefdescription>
+<para>HTTP 413 Payload Too Large. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf72866c1bbf28a47b9bb1c8846e03313" prot="public">
+          <name>UriTooLong</name>
+          <initializer>= 414</initializer>
+          <briefdescription>
+<para>HTTP 414 URI Too Long. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa3219a6843adbb23de79b4df9c307f5d" prot="public">
+          <name>UnsupportedMediaType</name>
+          <initializer>= 415</initializer>
+          <briefdescription>
+<para>HTTP 415 Unsupported Media Type. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da9283ef01c36e7e4793b3e1395d764dfe" prot="public">
+          <name>RangeNotSatisfiable</name>
+          <initializer>= 416</initializer>
+          <briefdescription>
+<para>HTTP 416 Range Not Satisfiable. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da6af78095a2be4a230ba87f03dd131830" prot="public">
+          <name>ExpectationFailed</name>
+          <initializer>= 417</initializer>
+          <briefdescription>
+<para>HTTP 417 Expectation Failed. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac110d06054539d0031cbefdf78d1fdd6" prot="public">
+          <name>MisdirectedRequest</name>
+          <initializer>= 421</initializer>
+          <briefdescription>
+<para>HTTP 421 Misdirected <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref>. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dabcc63308f9773c816911ce819b314e2c" prot="public">
+          <name>UnprocessableEntity</name>
+          <initializer>= 422</initializer>
+          <briefdescription>
+<para>HTTP 422 Unprocessable Entity. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dad0f2e5376298c880665077b565ffd7dd" prot="public">
+          <name>Locked</name>
+          <initializer>= 423</initializer>
+          <briefdescription>
+<para>HTTP 423 Locked. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3e30483e6f8d532c08ac164aebf039fd" prot="public">
+          <name>FailedDependency</name>
+          <initializer>= 424</initializer>
+          <briefdescription>
+<para>HTTP 424 Failed Dependency. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daed92d2533f798942f53b2033050f5ddd" prot="public">
+          <name>TooEarly</name>
+          <initializer>= 425</initializer>
+          <briefdescription>
+<para>HTTP 425 Too Early. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dae0eaea96be1ec038b859e02cc5330827" prot="public">
+          <name>UpgradeRequired</name>
+          <initializer>= 426</initializer>
+          <briefdescription>
+<para>HTTP 426 Upgrade Required. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4dd7ee1fe9fa9f29e190b416122146df" prot="public">
+          <name>PreconditionRequired</name>
+          <initializer>= 428</initializer>
+          <briefdescription>
+<para>HTTP 428 Precondition Required. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dab00b00233255c3551697fe613001265d" prot="public">
+          <name>TooManyRequests</name>
+          <initializer>= 429</initializer>
+          <briefdescription>
+<para>HTTP 429 Too Many Requests. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da01d50823ab04e988e893bc17c2d55f24" prot="public">
+          <name>RequestHeaderFieldsTooLarge</name>
+          <initializer>= 431</initializer>
+          <briefdescription>
+<para>HTTP 431 <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> Header Fields Too Large. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf7c925b24caa71cd7097be57c4de6130" prot="public">
+          <name>UnavailableForLegalReasons</name>
+          <initializer>= 451</initializer>
+          <briefdescription>
+<para>HTTP 451 Unavailable For Legal Reasons. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daecbf01325f1c744e9d7bb586ac2eb5ed" prot="public">
+          <name>InternalServerError</name>
+          <initializer>= 500</initializer>
+          <briefdescription>
+<para>HTTP 500 Internal Server Error. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da997ca4ce119685f40f03a9a8a6c5346e" prot="public">
+          <name>NotImplemented</name>
+          <initializer>= 501</initializer>
+          <briefdescription>
+<para>HTTP 501 Not Implemented. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0e7c9ad08be0653518bf456c9994ace5" prot="public">
+          <name>BadGateway</name>
+          <initializer>= 502</initializer>
+          <briefdescription>
+<para>HTTP 502 Bad Gateway. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da2a4581043d849bcb0e4747970ef1489b" prot="public">
+          <name>ServiceUnavailable</name>
+          <initializer>= 503</initializer>
+          <briefdescription>
+<para>HTTP 503 Unavailable. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dada405cbc74723dfdda615e3f679ef2be" prot="public">
+          <name>GatewayTimeout</name>
+          <initializer>= 504</initializer>
+          <briefdescription>
+<para>HTTP 504 Gateway Timeout. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da56a7a02e415f5bf106088218f646c04f" prot="public">
+          <name>HttpVersionNotSupported</name>
+          <initializer>= 505</initializer>
+          <briefdescription>
+<para>HTTP 505 HTTP Version Not Supported. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0af1f043b1bc6980b5cffce0d83f4736" prot="public">
+          <name>VariantAlsoNegotiates</name>
+          <initializer>= 506</initializer>
+          <briefdescription>
+<para>HTTP 506 Variant Also Negotiates. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daead0064570e2f25592cd76e0e69565a5" prot="public">
+          <name>InsufficientStorage</name>
+          <initializer>= 507</initializer>
+          <briefdescription>
+<para>HTTP 507 Insufficient Storage. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa2d07eb3939ad55d4acd3ed81291c61a" prot="public">
+          <name>LoopDetected</name>
+          <initializer>= 508</initializer>
+          <briefdescription>
+<para>HTTP 508 Loop Detected. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8eff020959c41ba903e16d966855ce03" prot="public">
+          <name>NotExtended</name>
+          <initializer>= 510</initializer>
+          <briefdescription>
+<para>HTTP 510 Not Extended. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da52066ff32b30f46d30b87007cacf8f79" prot="public">
+          <name>NetworkAuthenticationRequired</name>
+          <initializer>= 511</initializer>
+          <briefdescription>
+<para>HTTP 511 Network Authentication Required. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Defines the possible HTTP status codes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http_status_code.hpp" line="17" column="3" bodyfile="inc/azure/core/http/http_status_code.hpp" bodystart="18" bodyend="92"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/http/curl_transport.hpp" line="17" column="28"/>
+  </compounddef>
+</doxygen>

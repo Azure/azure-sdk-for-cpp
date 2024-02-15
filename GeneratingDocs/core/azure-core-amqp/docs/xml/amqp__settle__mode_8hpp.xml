@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="amqp__settle__mode_8hpp" kind="file" language="C++">
+    <compoundname>amqp_settle_mode.hpp</compoundname>
+    <includes local="no">iostream</includes>
+    <includedby refid="message__receiver_8hpp" local="yes">inc/azure/core/amqp/internal/message_receiver.hpp</includedby>
+    <includedby refid="message__sender_8hpp" local="yes">inc/azure/core/amqp/internal/message_sender.hpp</includedby>
+    <includedby refid="amqp__transfer_8hpp" local="yes">inc/azure/core/amqp/internal/models/performatives/amqp_transfer.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>inc/azure/core/amqp/internal/amqp_settle_mode.hpp</label>
+        <link refid="amqp__settle__mode_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>iostream</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>inc/azure/core/amqp/internal/amqp_settle_mode.hpp</label>
+        <link refid="amqp__settle__mode_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>inc/azure/core/amqp/internal/link.hpp</label>
+        <link refid="link_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>inc/azure/core/amqp/internal/message_receiver.hpp</label>
+        <link refid="message__receiver_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>inc/azure/core/amqp/internal/message_sender.hpp</label>
+        <link refid="message__sender_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>inc/azure/core/amqp/internal/models/performatives/amqp_transfer.hpp</label>
+        <link refid="amqp__transfer_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>src/amqp/private/link_impl.hpp</label>
+        <link refid="link__impl_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>src/amqp/private/management_impl.hpp</label>
+        <link refid="management__impl_8hpp_source"/>
+      </node>
+      <node id="3">
+        <label>src/amqp/private/message_receiver_impl.hpp</label>
+        <link refid="message__receiver__impl_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>src/amqp/private/message_sender_impl.hpp</label>
+        <link refid="message__sender__impl_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>src/models/private/performatives/transfer_impl.hpp</label>
+        <link refid="transfer__impl_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp">Azure::Core::Amqp</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_internal<sp/>{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>SenderSettleMode</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>Unsettled,</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>Settled,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>Mixed,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>SenderSettleMode<sp/>mode);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>ReceiverSettleMode</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>First,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>Second,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>ReceiverSettleMode<sp/>mode);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::_internal</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/amqp/internal/amqp_settle_mode.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::Policies::LogOptions</compoundname>
+    <includes refid="policy_8hpp" local="no">policy.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options_1a37d9d65f2d6c3885ecffb4a46f7f4500" prot="public" static="no" mutable="no">
+        <type>std::set&lt; std::string &gt;</type>
+        <definition>std::set&lt;std::string&gt; Azure::Core::Http::Policies::LogOptions::AllowedHttpQueryParameters</definition>
+        <argsstring></argsstring>
+        <name>AllowedHttpQueryParameters</name>
+        <qualifiedname>Azure::Core::Http::Policies::LogOptions::AllowedHttpQueryParameters</qualifiedname>
+        <initializer>= _detail::g_defaultAllowedHttpQueryParameters</initializer>
+        <briefdescription>
+<para>HTTP query parameter names that are allowed to be logged. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="126" column="14" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options_1a9771bcc330799bca14a2b5c50bc20866" prot="public" static="no" mutable="no">
+        <type><ref refid="case__insensitive__containers_8hpp_1a0b4687777bf2e07429813314673d8609" kindref="member">CaseInsensitiveSet</ref></type>
+        <definition>CaseInsensitiveSet Azure::Core::Http::Policies::LogOptions::AllowedHttpHeaders</definition>
+        <argsstring></argsstring>
+        <name>AllowedHttpHeaders</name>
+        <qualifiedname>Azure::Core::Http::Policies::LogOptions::AllowedHttpHeaders</qualifiedname>
+        <initializer>= _detail::g_defaultAllowedHttpHeaders</initializer>
+        <briefdescription>
+<para>HTTP header names that are allowed to be logged. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="132" column="24" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="132" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Log options that parameterize the information being logged. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>See <ulink url="https://azure.github.io/azure-sdk/general_azurecore.html#logging-policy">https://azure.github.io/azure-sdk/general_azurecore.html#logging-policy</ulink>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/http/policies/policy.hpp" line="120" column="3" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="121" bodyend="133"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options_1a9771bcc330799bca14a2b5c50bc20866" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::LogOptions</scope><name>AllowedHttpHeaders</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options_1a37d9d65f2d6c3885ecffb4a46f7f4500" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::LogOptions</scope><name>AllowedHttpQueryParameters</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

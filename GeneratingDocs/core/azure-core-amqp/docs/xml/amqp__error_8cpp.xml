@@ -1,0 +1,389 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="amqp__error_8cpp" kind="file" language="C++">
+    <compoundname>amqp_error.cpp</compoundname>
+    <includes refid="amqp__error_8hpp" local="yes">azure/core/amqp/internal/models/amqp_error.hpp</includes>
+    <includes refid="unique__handle_8hpp" local="yes">../amqp/private/unique_handle.hpp</includes>
+    <includes refid="amqp__value_8hpp" local="yes">azure/core/amqp/models/amqp_value.hpp</includes>
+    <includes refid="error__impl_8hpp" local="yes">private/error_impl.hpp</includes>
+    <includes refid="value__impl_8hpp" local="yes">private/value_impl.hpp</includes>
+    <includes local="no">azure_uamqp_c/amqp_definitions_fields.h</includes>
+    <includes local="no">azure_uamqp_c/amqp_definitions_error.h</includes>
+    <includes local="no">azure_uamqp_c/amqp_definitions_amqp_error.h</includes>
+    <includes local="no">iostream</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>azure/core/amqp/internal/models/amqp_error.hpp</label>
+        <link refid="amqp__error_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>azure/core/amqp/models/amqp_header.hpp</label>
+        <link refid="amqp__header_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>azure/core/amqp/models/amqp_properties.hpp</label>
+        <link refid="amqp__properties_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>amqp_value.hpp</label>
+        <link refid="amqp__value_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>../amqp/private/unique_handle.hpp</label>
+        <link refid="unique__handle_8hpp_source"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>src/models/amqp_error.cpp</label>
+        <link refid="amqp__error_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>private/error_impl.hpp</label>
+        <link refid="error__impl_8hpp_source"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>private/value_impl.hpp</label>
+        <link refid="value__impl_8hpp_source"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>array</label>
+      </node>
+      <node id="3">
+        <label>azure/core/amqp/dll_import_export.hpp</label>
+      </node>
+      <node id="14">
+        <label>azure/core/diagnostics/logger.hpp</label>
+      </node>
+      <node id="15">
+        <label>azure/core/internal/diagnostics/log.hpp</label>
+      </node>
+      <node id="23">
+        <label>azure/core/internal/extendable_enumeration.hpp</label>
+      </node>
+      <node id="16">
+        <label>azure/core/internal/unique_handle.hpp</label>
+      </node>
+      <node id="5">
+        <label>azure/core/nullable.hpp</label>
+      </node>
+      <node id="17">
+        <label>azure/core/uuid.hpp</label>
+      </node>
+      <node id="31">
+        <label>azure_uamqp_c/amqp_definitions_amqp_error.h</label>
+      </node>
+      <node id="27">
+        <label>azure_uamqp_c/amqp_definitions_error.h</label>
+      </node>
+      <node id="26">
+        <label>azure_uamqp_c/amqp_definitions_fields.h</label>
+      </node>
+      <node id="30">
+        <label>azure_uamqp_c/amqpvalue.h</label>
+      </node>
+      <node id="6">
+        <label>chrono</label>
+      </node>
+      <node id="7">
+        <label>cstddef</label>
+      </node>
+      <node id="8">
+        <label>cstdint</label>
+      </node>
+      <node id="9">
+        <label>exception</label>
+      </node>
+      <node id="19">
+        <label>functional</label>
+      </node>
+      <node id="32">
+        <label>iostream</label>
+      </node>
+      <node id="20">
+        <label>list</label>
+      </node>
+      <node id="21">
+        <label>map</label>
+      </node>
+      <node id="10">
+        <label>stdexcept</label>
+      </node>
+      <node id="22">
+        <label>string</label>
+      </node>
+      <node id="28">
+        <label>type_traits</label>
+      </node>
+      <node id="11">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp">Azure::Core::Amqp</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp_1_1_models">Azure::Core::Amqp::Models</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/core/amqp/internal/models/amqp_error.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../amqp/private/unique_handle.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/core/amqp/models/amqp_value.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;private/error_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;private/value_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_uamqp_c/amqp_definitions_fields.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_uamqp_c/amqp_definitions_error.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure_uamqp_c/amqp_definitions_amqp_error.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_detail<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@cond</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UniqueHandleHelper&lt;ERROR_INSTANCE_TAG&gt;::FreeAmqpError(ERROR_HANDLE<sp/>handle)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>error_destroy(handle);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@endcond</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::_detail</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_detail<sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="31"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Note<sp/>that<sp/>this<sp/>does<sp/>not<sp/>take<sp/>a<sp/>unique<sp/>handle<sp/>to<sp/>an<sp/>AMQP<sp/>Error<sp/>-<sp/>that<sp/>is<sp/>because<sp/>the<sp/>AMQP</highlight></codeline>
+<codeline lineno="32"><highlight class="comment"><sp/><sp/><sp/>*<sp/>code<sp/>will<sp/>NOT<sp/>take<sp/>ownership<sp/>of<sp/>the<sp/>underlying<sp/>ERROR_HANDLE<sp/>object.</highlight></codeline>
+<codeline lineno="33"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>_internal::AmqpError<sp/>AmqpErrorFactory::FromUamqp(ERROR_HANDLE<sp/>handle)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>_internal::AmqpError<sp/>rv;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>stringValue;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!error_get_condition(handle,<sp/>&amp;stringValue))</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rv.Condition<sp/>=<sp/>_internal::AmqpErrorCondition(stringValue);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!error_get_description(handle,<sp/>&amp;stringValue))</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rv.Description<sp/>=<sp/>stringValue;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>AMQP_VALUE<sp/>info;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!error_get_info(handle,<sp/>&amp;info)<sp/>&amp;&amp;<sp/>info)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>error_get_info<sp/>returns<sp/>the<sp/>AMQP<sp/>value<sp/>in<sp/>place,<sp/>so<sp/>we<sp/>clone<sp/>it<sp/>before<sp/>passing<sp/>it<sp/>to<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>UniqueAmqpValueHandle.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rv.Info<sp/>=<sp/>_detail::AmqpValueFactory::FromUamqp(</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_detail::UniqueAmqpValueHandle{amqpvalue_clone(info)})</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.AsMap();</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rv;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>UniqueAmqpErrorHandle<sp/>AmqpErrorFactory::ToAmqpError(_internal::AmqpError<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>error)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>_detail::UniqueAmqpErrorHandle<sp/>errorHandle(error_create(error.Condition.ToString().data()));</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!error.Description.empty())</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>error_set_description(errorHandle.get(),<sp/>error.Description.data());</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!error.Info.empty())</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>AmqpValue<sp/>infoValue(error.Info.AsAmqpValue());</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>error_set_info(errorHandle.get(),<sp/>_detail::AmqpValueFactory::ToUamqp(infoValue));</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>errorHandle;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>AmqpValue<sp/>AmqpErrorFactory::ToAmqp(_internal::AmqpError<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>error)</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>_detail::UniqueAmqpErrorHandle<sp/>errorHandle(ToAmqpError(error));</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>amqpvalue_create_error<sp/>clones<sp/>the<sp/>error<sp/>handle,<sp/>so<sp/>we<sp/>remember<sp/>it<sp/>separately.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>_detail::UniqueAmqpValueHandle<sp/>handleAsValue{amqpvalue_create_error(errorHandle.get())};</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>AmqpValue<sp/>constructor<sp/>will<sp/>clone<sp/>the<sp/>handle<sp/>passed<sp/>into<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>UniqueAmqpValueHandle<sp/>will<sp/>take<sp/>care<sp/>of<sp/>freeing<sp/>the<sp/>cloned<sp/>handle.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_detail::AmqpValueFactory::FromUamqp(handleAsValue);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models::_detail</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_internal<sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>AmqpError<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>error)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(error)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>{&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Condition<sp/>=&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>error.Condition.ToString();</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>Description=&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>error.Description;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>Info=&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>error.Info;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;}&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>{null}&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>os;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::DecodeError(amqp_error_decode_error);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::FrameSizeTooSmall(amqp_error_frame_size_too_small);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::IllegalState(amqp_error_illegal_state);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::InternalError(amqp_error_internal_error);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::InvalidField(amqp_error_invalid_field);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::NotAllowed(amqp_error_not_allowed);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::NotFound(amqp_error_not_found);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::NotImplemented(amqp_error_not_implemented);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::PreconditionFailed(amqp_error_precondition_failed);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ResourceDeleted(amqp_error_resource_deleted);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ResourceLimitExceeded(</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>amqp_error_resource_limit_exceeded);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ResourceLocked(amqp_error_resource_locked);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::UnauthorizedAccess(amqp_error_unauthorized_access);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::LinkStolen(</highlight><highlight class="stringliteral">&quot;amqp:link:stolen&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::LinkPayloadSizeExceeded(</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;amqp:link:message-size-exceeded&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::LinkDetachForced(</highlight><highlight class="stringliteral">&quot;amqp:link:detach-forced&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ConnectionForced(</highlight><highlight class="stringliteral">&quot;amqp:connection:forced&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>are<sp/>errors<sp/>that<sp/>are<sp/>specific<sp/>to<sp/>Azure<sp/>services.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ServerBusyError(</highlight><highlight class="stringliteral">&quot;com.microsoft:server-busy&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ArgumentError(</highlight><highlight class="stringliteral">&quot;com.microsoft:argument-error&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ArgumentOutOfRangeError(</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;com.microsoft:argument-out-of-range&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::EntityDisabledError(</highlight><highlight class="stringliteral">&quot;com.microsoft:entity-disabled&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::PartitionNotOwnedError(</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;com.microsoft:partition-not-owned&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::StoreLockLostError(</highlight><highlight class="stringliteral">&quot;com.microsoft:store-lock-lost&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::PublisherRevokedError(</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;com.microsoft:publisher-revoked&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::TimeoutError(</highlight><highlight class="stringliteral">&quot;com.microsoft:timeout&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::TrackingIdProperty(</highlight><highlight class="stringliteral">&quot;com.microsoft:tracking-id&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ProtonIo(</highlight><highlight class="stringliteral">&quot;proton:io&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ConnectionFramingError(</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;amqp:connection:framing-error&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::OperationCancelled(</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;com.microsoft:operation-cancelled&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::MessageLockLost(</highlight><highlight class="stringliteral">&quot;com.microsoft:message-lock-lost&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::SessionLockLost(</highlight><highlight class="stringliteral">&quot;com.microsoft:session-lock-lost&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::SessionCannotBeLocked(</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;com.microsoft:session-cannot-be-locked&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::MessageNotFound(</highlight><highlight class="stringliteral">&quot;com.microsoft:message-not-found&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::SessionNotFound(</highlight><highlight class="stringliteral">&quot;com.microsoft:session-not-found&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::EntityAlreadyExists(</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;com.microsoft:entity-already-exists&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::ConnectionRedirect(</highlight><highlight class="stringliteral">&quot;amqp:connection:redirect&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::LinkRedirect(</highlight><highlight class="stringliteral">&quot;amqp:link:redirect&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpErrorCondition<sp/>AmqpErrorCondition::TransferLimitExceeded(</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;amqp:link:transfer-limit-exceeded&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal">}}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models::_internal</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="src/models/amqp_error.cpp"/>
+  </compounddef>
+</doxygen>

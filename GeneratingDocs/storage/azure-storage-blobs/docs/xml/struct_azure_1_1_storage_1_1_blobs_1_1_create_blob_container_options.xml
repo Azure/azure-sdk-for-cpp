@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::CreateBlobContainerOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1aa232d551d24139366b40eed01c7e2f0d" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">Models::PublicAccessType</ref></type>
+        <definition>Models::PublicAccessType Azure::Storage::Blobs::CreateBlobContainerOptions::AccessType</definition>
+        <argsstring></argsstring>
+        <name>AccessType</name>
+        <qualifiedname>Azure::Storage::Blobs::CreateBlobContainerOptions::AccessType</qualifiedname>
+        <initializer>= <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a365803f217fd5f69c78ced4a5f2011fb" kindref="member">Models::PublicAccessType::None</ref></initializer>
+        <briefdescription>
+<para>Specifies whether data in the container may be accessed publicly and the level of access. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="315" column="30" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="315" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1a064676b07902deb5aee88b91d714590a" prot="public" static="no" mutable="no">
+        <type>Storage::Metadata</type>
+        <definition>Storage::Metadata Azure::Storage::Blobs::CreateBlobContainerOptions::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::CreateBlobContainerOptions::Metadata</qualifiedname>
+        <briefdescription>
+<para>Name-value pairs to associate with the container as metadata. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="320" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="320" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1a67d9b81fa2bb4a6f13e7241c12999299" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Blobs::CreateBlobContainerOptions::DefaultEncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>DefaultEncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::CreateBlobContainerOptions::DefaultEncryptionScope</qualifiedname>
+        <briefdescription>
+<para>The encryption scope to use as the default on the container. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="325" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="325" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1ae0f02e857500af83f2fff66d6eead75a" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; bool &gt;</type>
+        <definition>Azure::Nullable&lt;bool&gt; Azure::Storage::Blobs::CreateBlobContainerOptions::PreventEncryptionScopeOverride</definition>
+        <argsstring></argsstring>
+        <name>PreventEncryptionScopeOverride</name>
+        <qualifiedname>Azure::Storage::Blobs::CreateBlobContainerOptions::PreventEncryptionScopeOverride</qualifiedname>
+        <briefdescription>
+<para>If true, prevents any blob upload from specifying a different encryption scope. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="331" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="331" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a5bbdaedaf31f8ba92e2a3b56189e3131" kindref="member">Azure::Storage::Blobs::BlobContainerClient::Create</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::CreateBlobContainerOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessType</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::PublicAccessType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Blob</edgelabel>
+          <edgelabel>BlobContainer</edgelabel>
+          <edgelabel>None</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="309" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="310" bodyend="332"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1aa232d551d24139366b40eed01c7e2f0d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CreateBlobContainerOptions</scope><name>AccessType</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1a67d9b81fa2bb4a6f13e7241c12999299" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CreateBlobContainerOptions</scope><name>DefaultEncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1a064676b07902deb5aee88b91d714590a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CreateBlobContainerOptions</scope><name>Metadata</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options_1ae0f02e857500af83f2fff66d6eead75a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CreateBlobContainerOptions</scope><name>PreventEncryptionScopeOverride</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

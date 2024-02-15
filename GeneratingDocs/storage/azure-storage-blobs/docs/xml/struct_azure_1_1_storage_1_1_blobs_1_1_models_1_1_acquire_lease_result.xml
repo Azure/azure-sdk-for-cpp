@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::AcquireLeaseResult</compoundname>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result_1a59d406ebca9e71cdaf4e42d3a9b73c9b" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::AcquireLeaseResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AcquireLeaseResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="73" column="21" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result_1ac1d086b19ab784445e6891fd75ee8191" prot="public" static="no" mutable="no">
+        <type>Azure::DateTime</type>
+        <definition>Azure::DateTime Azure::Storage::Blobs::Models::AcquireLeaseResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AcquireLeaseResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date/time that the blob was last modified. The date format follows RFC 1123. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="78" column="25" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result_1a3df9e48335404b7a2d3ab237f5153924" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::AcquireLeaseResult::LeaseId</definition>
+        <argsstring></argsstring>
+        <name>LeaseId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AcquireLeaseResult::LeaseId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>When you request a lease, the Blob service returns a unique lease ID. While the lease is active, you must include the lease ID with any request to write to the blob, or to renew, change, or release the lease. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="85" column="21" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="85" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a98526574d5ca310819a410a43c43dd3b" kindref="member">Azure::Storage::Blobs::BlobLeaseClient::Acquire</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="68" column="7" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="69" bodyend="86"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result_1a59d406ebca9e71cdaf4e42d3a9b73c9b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AcquireLeaseResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result_1ac1d086b19ab784445e6891fd75ee8191" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AcquireLeaseResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result_1a3df9e48335404b7a2d3ab237f5153924" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AcquireLeaseResult</scope><name>LeaseId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

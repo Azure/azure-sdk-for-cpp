@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_curl_transport" kind="class" language="C++" prot="public">
+    <compoundname>Azure::Core::Http::CurlTransport</compoundname>
+    <basecompoundref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" prot="public" virt="non-virtual">Azure::Core::Http::HttpTransport</basecompoundref>
+    <includes refid="curl__transport_8hpp" local="no">curl_transport.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a584ac33b2fefa57dbef9ff66fbf770a9" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options" kindref="compound">CurlTransportOptions</ref></type>
+        <definition>CurlTransportOptions Azure::Core::Http::CurlTransport::m_options</definition>
+        <argsstring></argsstring>
+        <name>m_options</name>
+        <qualifiedname>Azure::Core::Http::CurlTransport::m_options</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="202" column="26" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="202" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_transport_1ab413838dbe9298dced850c6fc25f5d37" prot="private" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Azure::Core::Http::CurlTransport::OnUpgradedConnection</definition>
+        <argsstring>(std::unique_ptr&lt; CurlNetworkConnection &gt; &amp;&amp;)</argsstring>
+        <name>OnUpgradedConnection</name>
+        <qualifiedname>Azure::Core::Http::CurlTransport::OnUpgradedConnection</qualifiedname>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection" kindref="compound">CurlNetworkConnection</ref> &gt; &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>Called when an HTTP response indicates the connection should be upgraded to a websocket. Takes ownership of the <ref refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection" kindref="compound">CurlNetworkConnection</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="208" column="18" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="208" bodyend="208"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a5ad6635c2f4f80164d95db832e13e83b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::CurlTransport::CurlTransport</definition>
+        <argsstring>(CurlTransportOptions const &amp;options=CurlTransportOptions())</argsstring>
+        <name>CurlTransport</name>
+        <qualifiedname>Azure::Core::Http::CurlTransport::CurlTransport</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options" kindref="compound">CurlTransportOptions</ref> const &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options" kindref="compound">CurlTransportOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_http_1_1_curl_transport" kindref="compound">CurlTransport</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameter to override the default options. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="216" column="5" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="216" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_transport_1ab262ee5e4b98d00e3ca448402951cfed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>CurlTransport::CurlTransport</definition>
+        <argsstring>(Azure::Core::Http::Policies::TransportOptions const &amp;options)</argsstring>
+        <name>CurlTransport</name>
+        <qualifiedname>Azure::Core::Http::CurlTransport::CurlTransport</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options" kindref="compound">Azure::Core::Http::Policies::TransportOptions</ref> const &amp;</type>
+          <declname>options</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_http_1_1_curl_transport" kindref="compound">CurlTransport</ref> object based on common <ref refid="namespace_azure" kindref="compound">Azure</ref> HTTP Transport Options. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Common <ref refid="namespace_azure" kindref="compound">Azure</ref> Core Transport Options. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="225" column="5" bodyfile="src/http/curl/curl.cpp" bodystart="338" bodyend="341"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a5ec0198b7d400faff38599b52f174512" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Http::CurlTransport::~CurlTransport</definition>
+        <argsstring>()=default</argsstring>
+        <name>~CurlTransport</name>
+        <qualifiedname>Azure::Core::Http::CurlTransport::~CurlTransport</qualifiedname>
+        <briefdescription>
+<para>Destroys a <ref refid="class_azure_1_1_core_1_1_http_1_1_curl_transport" kindref="compound">CurlTransport</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See also: [Core Guidelines C.35: &quot;A base class destructor should be either public
+and virtual or protected and
+non-virtual&quot;](<ulink url="http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual">http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual</ulink>) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="235" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_transport_1aa6a92d65b363e50a2293b6bada21ef3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; RawResponse &gt; CurlTransport::Send</definition>
+        <argsstring>(Request &amp;request, Context const &amp;context) override</argsstring>
+        <name>Send</name>
+        <qualifiedname>Azure::Core::Http::CurlTransport::Send</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1aab0a38b3e67079a9ede743c3e8de909d">Send</reimplements>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Implements interface to send an HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> and produce an HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>an HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> to be send. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>unique ptr to an HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="245" column="21" bodyfile="src/http/curl/curl.cpp" bodystart="343" bodyend="406"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Concrete implementation of an HTTP Transport that uses libcurl. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::Http::CurlTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_transport"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Http::HttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_http_transport"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Http::CurlTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_transport"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Http::HttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_http_transport"/>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/http/curl_transport.hpp" line="200" column="3" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="200" bodyend="246"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a5ad6635c2f4f80164d95db832e13e83b" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>CurlTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1ab262ee5e4b98d00e3ca448402951cfed" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>CurlTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a8b47565baf7018fdfcad475b9c5d6615" prot="protected" virt="virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>HasWebSocketSupport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a76c34f294158836f72741cc90e4b480f" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1af7fadcff099af67a5e3732642cc42c78" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a0c6eb7479b5ef2e7359ec5f42fc404b8" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a584ac33b2fefa57dbef9ff66fbf770a9" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>m_options</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1ab413838dbe9298dced850c6fc25f5d37" prot="private" virt="virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>OnUpgradedConnection</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a44e0b2695aa316451ffe3c68e5e3ee30" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1aa6a92d65b363e50a2293b6bada21ef3e" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>Send</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a5ec0198b7d400faff38599b52f174512" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>~CurlTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a4c0b2905624416efe1f77e6ef244c0e9" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlTransport</scope><name>~HttpTransport</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_metadata_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_metadata_result_1aa8024d6cde4b73bc6809103165a30f1b" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="792" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="792" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_metadata_result_1ab90cd339c1d63eb9b414abb718510488" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="798" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="798" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1adeab65cb3661d6f6563c44444cb9a615" kindref="member">Azure::Storage::Blobs::BlobContainerClient::SetMetadata</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="786" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="787" bodyend="799"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_metadata_result_1aa8024d6cde4b73bc6809103165a30f1b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_metadata_result_1ab90cd339c1d63eb9b414abb718510488" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult</scope><name>LastModified</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

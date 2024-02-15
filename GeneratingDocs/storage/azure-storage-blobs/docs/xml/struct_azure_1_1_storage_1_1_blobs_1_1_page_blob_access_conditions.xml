@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::PageBlobAccessConditions</compoundname>
+    <basecompoundref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" prot="public" virt="non-virtual">Azure::Storage::Blobs::BlobAccessConditions</basecompoundref>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions_1a7ecd9a93253bffc471e69d3651ec3aee" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; int64_t &gt;</type>
+        <definition>Azure::Nullable&lt;int64_t&gt; Azure::Storage::Blobs::PageBlobAccessConditions::IfSequenceNumberLessThan</definition>
+        <argsstring></argsstring>
+        <name>IfSequenceNumberLessThan</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobAccessConditions::IfSequenceNumberLessThan</qualifiedname>
+        <briefdescription>
+<para>IfSequenceNumberLessThan ensures that the page blob operation succeeds only if the blob&apos;s sequence number is less than a value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="134" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions_1a38bfacf6bf2a18b0e6ad52727f1e75d2" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; int64_t &gt;</type>
+        <definition>Azure::Nullable&lt;int64_t&gt; Azure::Storage::Blobs::PageBlobAccessConditions::IfSequenceNumberLessThanOrEqual</definition>
+        <argsstring></argsstring>
+        <name>IfSequenceNumberLessThanOrEqual</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobAccessConditions::IfSequenceNumberLessThanOrEqual</qualifiedname>
+        <briefdescription>
+<para>IfSequenceNumberLessThanOrEqual ensures that the page blob operation succeeds only if the blob&apos;s sequence number is less than or equal to a value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="140" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions_1a76cac2406c1b14d63f7a76d7a3332700" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; int64_t &gt;</type>
+        <definition>Azure::Nullable&lt;int64_t&gt; Azure::Storage::Blobs::PageBlobAccessConditions::IfSequenceNumberEqual</definition>
+        <argsstring></argsstring>
+        <name>IfSequenceNumberEqual</name>
+        <qualifiedname>Azure::Storage::Blobs::PageBlobAccessConditions::IfSequenceNumberEqual</qualifiedname>
+        <briefdescription>
+<para>IfSequenceNumberEqual ensures that the page blob operation succeeds only if the blob&apos;s sequence number is equal to a value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="146" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="146" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Specifies access conditions for a page blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::PageBlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="5">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::PageBlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="5">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="128" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="129" bodyend="147"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions_1a76cac2406c1b14d63f7a76d7a3332700" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobAccessConditions</scope><name>IfSequenceNumberEqual</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions_1a7ecd9a93253bffc471e69d3651ec3aee" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobAccessConditions</scope><name>IfSequenceNumberLessThan</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions_1a38bfacf6bf2a18b0e6ad52727f1e75d2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobAccessConditions</scope><name>IfSequenceNumberLessThanOrEqual</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions_1ac41ede07d240f3ff98f4558ddc538823" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::PageBlobAccessConditions</scope><name>TagConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions_1a25058f85ab238c355e0b3f7575d7b201" prot="public" virt="virtual"><scope>Azure::Storage::Blobs::PageBlobAccessConditions</scope><name>~TagAccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

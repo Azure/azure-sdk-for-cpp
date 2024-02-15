@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::CorsRule</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a0cc6ce39b16e58926fc75d113d8a6f97" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::CorsRule::AllowedOrigins</definition>
+        <argsstring></argsstring>
+        <name>AllowedOrigins</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CorsRule::AllowedOrigins</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The origin domains that are permitted to make a request against the storage service via CORS. The origin domain is the domain from which the request originates. Note that the origin must be an exact case-sensitive match with the origin that the user age sends to the service. You can also use the wildcard character &apos;*&apos; to allow all origin domains to make requests via CORS. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="165" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a9354a74beb1aa22af7ae4d5334204172" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::CorsRule::AllowedMethods</definition>
+        <argsstring></argsstring>
+        <name>AllowedMethods</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CorsRule::AllowedMethods</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The methods (HTTP request verbs) that the origin domain may use for a CORS request. (comma separated). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="170" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a305a961664675dfbc5ecf365031e1831" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::CorsRule::AllowedHeaders</definition>
+        <argsstring></argsstring>
+        <name>AllowedHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CorsRule::AllowedHeaders</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The request headers that the origin domain may specify on the CORS request. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="174" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1aef7a99a71e432155273686a9934163a1" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::CorsRule::ExposedHeaders</definition>
+        <argsstring></argsstring>
+        <name>ExposedHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CorsRule::ExposedHeaders</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The response headers that may be sent in the response to the CORS request and exposed by the browser to the request issuer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="179" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a6de065f16d5e73b15517dad0b5de01e3" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t Azure::Storage::Blobs::Models::CorsRule::MaxAgeInSeconds</definition>
+        <argsstring></argsstring>
+        <name>MaxAgeInSeconds</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CorsRule::MaxAgeInSeconds</qualifiedname>
+        <initializer>= int32_t()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The maximum amount time that a browser should cache the preflight OPTIONS request. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="183" column="15" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>CORS is an HTTP feature that enables a web application running under one domain to access resources in another domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to call APIs in another domain. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="156" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="157" bodyend="184"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a305a961664675dfbc5ecf365031e1831" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CorsRule</scope><name>AllowedHeaders</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a9354a74beb1aa22af7ae4d5334204172" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CorsRule</scope><name>AllowedMethods</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a0cc6ce39b16e58926fc75d113d8a6f97" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CorsRule</scope><name>AllowedOrigins</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1aef7a99a71e432155273686a9934163a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CorsRule</scope><name>ExposedHeaders</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule_1a6de065f16d5e73b15517dad0b5de01e3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CorsRule</scope><name>MaxAgeInSeconds</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

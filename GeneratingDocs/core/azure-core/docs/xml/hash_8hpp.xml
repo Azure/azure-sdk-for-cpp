@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="hash_8hpp" kind="file" language="C++">
+    <compoundname>hash.hpp</compoundname>
+    <includes refid="azure__assert_8hpp" local="yes">azure/core/azure_assert.hpp</includes>
+    <includes local="no">memory</includes>
+    <includes local="no">stdexcept</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">string</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="core_8hpp" local="yes">inc/azure/core.hpp</includedby>
+    <includedby refid="sha__hash_8hpp" local="no">inc/azure/core/internal/cryptography/sha_hash.hpp</includedby>
+    <includedby refid="md5_8cpp" local="yes">src/cryptography/md5.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>azure/core/azure_assert.hpp</label>
+        <link refid="azure__assert_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/cryptography/hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>azure/core/platform.hpp</label>
+        <link refid="platform_8hpp"/>
+      </node>
+      <node id="6">
+        <label>cassert</label>
+      </node>
+      <node id="4">
+        <label>cstdlib</label>
+      </node>
+      <node id="7">
+        <label>memory</label>
+      </node>
+      <node id="8">
+        <label>stdexcept</label>
+      </node>
+      <node id="9">
+        <label>stdint.h</label>
+      </node>
+      <node id="5">
+        <label>string</label>
+      </node>
+      <node id="10">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core.hpp</label>
+        <link refid="core_8hpp_source"/>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/cryptography/hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/internal/cryptography/sha_hash.hpp</label>
+        <link refid="sha__hash_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" prot="public">Azure::Core::Cryptography::Hash</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" prot="public">Azure::Core::Cryptography::Md5Hash</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_cryptography">Azure::Core::Cryptography</innernamespace>
+    <briefdescription>
+<para>Utility functions to help compute the hash value for the input binary data, using algorithms such as MD5. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="azure__assert_8hpp" kindref="compound">azure/core/azure_assert.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;memory&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdexcept&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_azure" kindref="compound">Azure</ref><sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Cryptography<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kindref="compound">Hash</ref><sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnAppend(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length)<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>std::vector&lt;uint8_t&gt;<sp/>OnFinal(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length)<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="53" refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a713b9700af1c65cd6fff998d8e91cfd1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a713b9700af1c65cd6fff998d8e91cfd1" kindref="member">Hash</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="65" refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ac3c9cb8298ea1f02b9751d2aeada5e28" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ac3c9cb8298ea1f02b9751d2aeada5e28" kindref="member">Append</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="azure__assert_8hpp_1a23ae14b8c5b65e95fa2c61417450d840" kindref="member">AZURE_ASSERT</ref>(data<sp/>||<sp/>length<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="azure__assert_8hpp_1a9e91c95a63cb50551fd21d8b0bc1096d" kindref="member">AZURE_ASSERT_MSG</ref>(!m_isDone,<sp/></highlight><highlight class="stringliteral">&quot;Cannot<sp/>call<sp/>Append<sp/>after<sp/>calling<sp/>Final().&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>OnAppend(data,<sp/>length);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aae186272ffc97535f4c289803ea3bed7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;uint8_t&gt;<sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aae186272ffc97535f4c289803ea3bed7" kindref="member">Final</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="azure__assert_8hpp_1a23ae14b8c5b65e95fa2c61417450d840" kindref="member">AZURE_ASSERT</ref>(data<sp/>||<sp/>length<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="azure__assert_8hpp_1a9e91c95a63cb50551fd21d8b0bc1096d" kindref="member">AZURE_ASSERT_MSG</ref>(!m_isDone,<sp/></highlight><highlight class="stringliteral">&quot;Cannot<sp/>call<sp/>Final()<sp/>multiple<sp/>times.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>m_isDone<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>OnFinal(data,<sp/>length);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;uint8_t&gt;<sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" kindref="member">Final</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" kindref="member">Final</ref>(</highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,<sp/>0);<sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a5d4a624d64e23e0063fd9a3f9bfee3aa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a5d4a624d64e23e0063fd9a3f9bfee3aa" kindref="member">~Hash</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>m_isDone<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a713b9700af1c65cd6fff998d8e91cfd1" kindref="member">Hash</ref>(<ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kindref="compound">Hash</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>operator=(<ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kindref="compound">Hash</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" kindref="compound">Md5Hash</ref><sp/>final<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kindref="compound">Hash</ref><sp/>{</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="136" refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a69388cd5feec924cfbf0bb12c8798cb7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a69388cd5feec924cfbf0bb12c8798cb7" kindref="member">Md5Hash</ref>();</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a68d53cb85f27357ab1dbd236b0940b04" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a68d53cb85f27357ab1dbd236b0940b04" kindref="member">~Md5Hash</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;Hash&gt;<sp/>m_implementation;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;uint8_t&gt;<sp/>OnFinal(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnAppend(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal">}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Cryptography</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/cryptography/hash.hpp"/>
+  </compounddef>
+</doxygen>

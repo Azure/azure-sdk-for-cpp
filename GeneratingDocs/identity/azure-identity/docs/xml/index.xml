@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.10.0" xml:lang="en-US">
+  <compound refid="class_azure_1_1_identity_1_1_azure_cli_credential" kind="class"><name>Azure::Identity::AzureCliCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1a64549e7233e649e883c8be21b660b0c1" kind="variable"><name>m_tokenCache</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1a54051c259aa953da2858a87f6f7da51a" kind="variable"><name>m_additionallyAllowedTenants</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1aa95ef49680907daabfd7098cd2aefd04" kind="variable"><name>m_tenantId</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1afdd9804c649efb8099da8e00d0f8b842" kind="variable"><name>m_cliProcessTimeout</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1a057e441b1d0dcdffa9b1143b95dc1ae6" kind="function"><name>AzureCliCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1ae58ff6d6a8d074630e044dfeb4645813" kind="function"><name>ThrowIfNotSafeCmdLineInput</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1acaf4bbfe569130c5d56a5bd4395fad97" kind="function"><name>GetAzCommand</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1ae45d6f98f5eac6ec9305aac6d36f551c" kind="function"><name>GetLocalTimeToUtcDiffSeconds</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1a1436ef8a8d3760812cf88ced400b56ef" kind="function"><name>AzureCliCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1a8ec3d79fc46a006579738e6aca664be0" kind="function"><name>AzureCliCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_azure_cli_credential_1a427b4e623955abc8e8ae88d02edbfd34" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_identity_1_1_azure_cli_credential_options" kind="struct"><name>Azure::Identity::AzureCliCredentialOptions</name>
+    <member refid="struct_azure_1_1_identity_1_1_azure_cli_credential_options_1a3e92a8fcfa1339aba1890928f221d06b" kind="variable"><name>TenantId</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_azure_cli_credential_options_1a7e5ad6d51fa64eba9aa3afe83271260e" kind="variable"><name>CliProcessTimeout</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_azure_cli_credential_options_1a7102c8b82596cd198cc9ff920de8ebb6" kind="variable"><name>AdditionallyAllowedTenants</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_identity_1_1_chained_token_credential" kind="class"><name>Azure::Identity::ChainedTokenCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_chained_token_credential_1a5e012bf32300712f1f9dbdbbf2af2db0" kind="typedef"><name>Sources</name></member>
+    <member refid="class_azure_1_1_identity_1_1_chained_token_credential_1aa280e482545823bb261baac1fb2f4833" kind="variable"><name>m_impl</name></member>
+    <member refid="class_azure_1_1_identity_1_1_chained_token_credential_1ad31aaad21e121a6459a3f6a581871ca1" kind="function"><name>ChainedTokenCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_chained_token_credential_1a7e28cc81b15a1b77f68eba4bf9d5b189" kind="function"><name>~ChainedTokenCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_chained_token_credential_1a47a1c4da93508cae1366beaaec92950a" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_identity_1_1_client_certificate_credential" kind="class"><name>Azure::Identity::ClientCertificateCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a8c2a3aba737412f37d0a3f6612dc841f" kind="variable"><name>m_tokenCache</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1ad7ea7c07feb60a3e7eed6a96498839e5" kind="variable"><name>m_clientCredentialCore</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1ae51069f6f2f23fe783654327cc5fb6b9" kind="variable"><name>m_tokenCredentialImpl</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1ab302ff3e9a5d094844645922226223e7" kind="variable"><name>m_requestBody</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1ae9e2c4433af69c645c7622e206e0c5ff" kind="variable"><name>m_tokenPayloadStaticPart</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a5244931096dcd9270252cd77898267b1" kind="variable"><name>m_tokenHeaderEncoded</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a3c8e9c3484e023eaae0d34fb47633aa9" kind="variable"><name>m_pkey</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a10878b0e6e488efe6fe3ac2b954007cd" kind="function"><name>ClientCertificateCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a83daf2bd0feb7e2b127b06f0fc0e9372" kind="function"><name>ClientCertificateCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a8206da0cb1ffea0f2bf89f2fbd21d43c" kind="function"><name>ClientCertificateCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a85b022daeb7fc9ed92d08ef76ed2c2b5" kind="function"><name>~ClientCertificateCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_certificate_credential_1a2737abc7f101879fd2628d2e9fba49e2" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_identity_1_1_client_certificate_credential_options" kind="struct"><name>Azure::Identity::ClientCertificateCredentialOptions</name>
+    <member refid="struct_azure_1_1_identity_1_1_client_certificate_credential_options_1a6309bd0b95a1a30a14d618b2514035b6" kind="variable"><name>AuthorityHost</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_client_certificate_credential_options_1a5510c15a2ec204f24049210bc4e8acfb" kind="variable"><name>AdditionallyAllowedTenants</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_identity_1_1_client_secret_credential" kind="class"><name>Azure::Identity::ClientSecretCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1a8655bd05a772c750c2b1e4374fc6e301" kind="variable"><name>m_tokenCache</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1a192d0552f2e769be07b6acf0de8700cb" kind="variable"><name>m_clientCredentialCore</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1afa5961298ec595c9587ddf922765816a" kind="variable"><name>m_tokenCredentialImpl</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1a81dfef0029abb7858d3c87c538426d62" kind="variable"><name>m_requestBody</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1a3197c23a15c4ac0f13259dcb4018c2e9" kind="function"><name>ClientSecretCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1a71a54333972678dcce0f504dbcc13a08" kind="function"><name>ClientSecretCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1a06c38429d6a46b5fb9a6be087fadbf97" kind="function"><name>ClientSecretCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1a04161810780c373f39df3d518ed14c1e" kind="function"><name>~ClientSecretCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_client_secret_credential_1affb1ab481bb6c256e4ff4ec8e15310a3" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_identity_1_1_client_secret_credential_options" kind="struct"><name>Azure::Identity::ClientSecretCredentialOptions</name>
+    <member refid="struct_azure_1_1_identity_1_1_client_secret_credential_options_1acd1d096b1556046cd578e9a819377bb6" kind="variable"><name>AuthorityHost</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_client_secret_credential_options_1a4ce6fb32c2da3f8acf957068cdd4deac" kind="variable"><name>AdditionallyAllowedTenants</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_identity_1_1_default_azure_credential" kind="class"><name>Azure::Identity::DefaultAzureCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_default_azure_credential_1a2f849cff15f37b3bcf2d9c376555afeb" kind="variable"><name>m_impl</name></member>
+    <member refid="class_azure_1_1_identity_1_1_default_azure_credential_1a3f4cf3c6ae9e26d6e0ecd8a2f0460454" kind="function"><name>DefaultAzureCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_default_azure_credential_1a47b17757a3f1dbd488a1b7170b6fac36" kind="function"><name>DefaultAzureCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_default_azure_credential_1aa38858ae6958e758450ba5c81d943d47" kind="function"><name>~DefaultAzureCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_default_azure_credential_1a984d8536bb0823616e01fb2ed9ca813e" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_identity_1_1_environment_credential" kind="class"><name>Azure::Identity::EnvironmentCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_environment_credential_1a58a9d8d805f7d4e92b9b36cff05fdbb8" kind="variable"><name>m_credentialImpl</name></member>
+    <member refid="class_azure_1_1_identity_1_1_environment_credential_1a4ce788c2ce343f381d0c6f8842170dfe" kind="function"><name>EnvironmentCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_environment_credential_1a1bc2503583638260814e35f8141c3f0b" kind="function"><name>EnvironmentCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_environment_credential_1a4722883b8915826a1f1ef5c3938a2758" kind="function"><name>EnvironmentCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_environment_credential_1a39324ab493c2829e1b7e3a8f7b05c2b7" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_identity_1_1_environment_credential_options" kind="struct"><name>Azure::Identity::EnvironmentCredentialOptions</name>
+    <member refid="struct_azure_1_1_identity_1_1_environment_credential_options_1aa35136834c259ec23ebc804fc127bc23" kind="variable"><name>AdditionallyAllowedTenants</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_identity_1_1_managed_identity_credential" kind="class"><name>Azure::Identity::ManagedIdentityCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_managed_identity_credential_1a0fd7d4d2ab4c2ec4d095fca707753eff" kind="variable"><name>m_managedIdentitySource</name></member>
+    <member refid="class_azure_1_1_identity_1_1_managed_identity_credential_1ac3de45276d59de38540e36a62cd16744" kind="function"><name>~ManagedIdentityCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_managed_identity_credential_1a5155566c3911cc148c95af7f141a29f1" kind="function"><name>ManagedIdentityCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_managed_identity_credential_1a835c0eccb4607a4072672aaf6e853c23" kind="function"><name>ManagedIdentityCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_managed_identity_credential_1a01f3eb9bebd38bf1bd20580b549f77f9" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_identity_1_1_workload_identity_credential" kind="class"><name>Azure::Identity::WorkloadIdentityCredential</name>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1a0faff00c545355c974a23d500eeaef24" kind="variable"><name>m_tokenCache</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1a4972b4649041e08b507df1d3a3fef52e" kind="variable"><name>m_clientCredentialCore</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1a252b8b5409bc2369b0646a065dae41a8" kind="variable"><name>m_tokenCredentialImpl</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1aae26df44f10a04fc0f54d45b1080c2fc" kind="variable"><name>m_requestBody</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1af4d643cf4fa21a09af228762afbdefbb" kind="variable"><name>m_tokenFilePath</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1a3877072ba43a423c800f731040edae41" kind="function"><name>WorkloadIdentityCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1a0311473b4daabacbd09c54e4d65412d9" kind="function"><name>WorkloadIdentityCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1a99c621ecdfd0ccbcfc895492c423b76c" kind="function"><name>~WorkloadIdentityCredential</name></member>
+    <member refid="class_azure_1_1_identity_1_1_workload_identity_credential_1a232c1e471dcd0722ce912a729a04a19a" kind="function"><name>GetToken</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_identity_1_1_workload_identity_credential_options" kind="struct"><name>Azure::Identity::WorkloadIdentityCredentialOptions</name>
+    <member refid="struct_azure_1_1_identity_1_1_workload_identity_credential_options_1a5b65f699634ca53efafa9534fecc0c38" kind="variable"><name>TenantId</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_workload_identity_credential_options_1a31b87ec6b4bccb87ad37bf03ca146618" kind="variable"><name>ClientId</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_workload_identity_credential_options_1a3360e7ecc93ea74d1331b1e20d2427b7" kind="variable"><name>AuthorityHost</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_workload_identity_credential_options_1a863c9ef5784a9de1358d55923ae865a2" kind="variable"><name>TokenFilePath</name></member>
+    <member refid="struct_azure_1_1_identity_1_1_workload_identity_credential_options_1aba98a7967b111ec912b1ca5eb57b113e" kind="variable"><name>AdditionallyAllowedTenants</name></member>
+  </compound>
+  <compound refid="namespace_0d11" kind="namespace"><name>@11</name>
+  </compound>
+  <compound refid="namespace_0d13" kind="namespace"><name>@13</name>
+  </compound>
+  <compound refid="namespace_0d17" kind="namespace"><name>@17</name>
+  </compound>
+  <compound refid="namespace_0d18" kind="namespace"><name>@18</name>
+  </compound>
+  <compound refid="namespace_0d19" kind="namespace"><name>@19</name>
+  </compound>
+  <compound refid="namespace_0d25" kind="namespace"><name>@25</name>
+  </compound>
+  <compound refid="namespace_0d26" kind="namespace"><name>@26</name>
+  </compound>
+  <compound refid="namespace_0d27" kind="namespace"><name>@27</name>
+  </compound>
+  <compound refid="namespace_azure" kind="namespace"><name>Azure</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_credentials" kind="namespace"><name>Azure::Core::Credentials</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_identity" kind="namespace"><name>Azure::Identity</name>
+  </compound>
+  <compound refid="namespace_core" kind="namespace"><name>Core</name>
+  </compound>
+  <compound refid="namespace_core_1_1_credentials" kind="namespace"><name>Core::Credentials</name>
+  </compound>
+  <compound refid="namespacestd_1_1chrono__literals" kind="namespace"><name>std::chrono_literals</name>
+  </compound>
+  <compound refid="_c_h_a_n_g_e_l_o_g_8md" kind="file"><name>CHANGELOG.md</name>
+  </compound>
+  <compound refid="_default_azure_credential_auth_flow_8md" kind="file"><name>DefaultAzureCredentialAuthFlow.md</name>
+  </compound>
+  <compound refid="identity_8hpp" kind="file"><name>identity.hpp</name>
+  </compound>
+  <compound refid="azure__cli__credential_8hpp" kind="file"><name>azure_cli_credential.hpp</name>
+  </compound>
+  <compound refid="chained__token__credential_8hpp" kind="file"><name>chained_token_credential.hpp</name>
+  </compound>
+  <compound refid="client__certificate__credential_8hpp" kind="file"><name>client_certificate_credential.hpp</name>
+  </compound>
+  <compound refid="client__secret__credential_8hpp" kind="file"><name>client_secret_credential.hpp</name>
+  </compound>
+  <compound refid="default__azure__credential_8hpp" kind="file"><name>default_azure_credential.hpp</name>
+  </compound>
+  <compound refid="client__credential__core_8hpp" kind="file"><name>client_credential_core.hpp</name>
+  </compound>
+  <compound refid="token__cache_8hpp" kind="file"><name>token_cache.hpp</name>
+  </compound>
+  <compound refid="environment__credential_8hpp" kind="file"><name>environment_credential.hpp</name>
+  </compound>
+  <compound refid="managed__identity__credential_8hpp" kind="file"><name>managed_identity_credential.hpp</name>
+  </compound>
+  <compound refid="workload__identity__credential_8hpp" kind="file"><name>workload_identity_credential.hpp</name>
+  </compound>
+  <compound refid="_r_e_a_d_m_e_8md" kind="file"><name>README.md</name>
+  </compound>
+  <compound refid="azure__cli__credential_8cpp" kind="file"><name>azure_cli_credential.cpp</name>
+  </compound>
+  <compound refid="chained__token__credential_8cpp" kind="file"><name>chained_token_credential.cpp</name>
+  </compound>
+  <compound refid="client__certificate__credential_8cpp" kind="file"><name>client_certificate_credential.cpp</name>
+  </compound>
+  <compound refid="client__credential__core_8cpp" kind="file"><name>client_credential_core.cpp</name>
+  </compound>
+  <compound refid="client__secret__credential_8cpp" kind="file"><name>client_secret_credential.cpp</name>
+  </compound>
+  <compound refid="default__azure__credential_8cpp" kind="file"><name>default_azure_credential.cpp</name>
+  </compound>
+  <compound refid="environment__credential_8cpp" kind="file"><name>environment_credential.cpp</name>
+  </compound>
+  <compound refid="managed__identity__credential_8cpp" kind="file"><name>managed_identity_credential.cpp</name>
+  </compound>
+  <compound refid="managed__identity__source_8cpp" kind="file"><name>managed_identity_source.cpp</name>
+  </compound>
+  <compound refid="chained__token__credential__impl_8hpp" kind="file"><name>chained_token_credential_impl.hpp</name>
+  </compound>
+  <compound refid="identity__log_8hpp" kind="file"><name>identity_log.hpp</name>
+  </compound>
+  <compound refid="managed__identity__source_8hpp" kind="file"><name>managed_identity_source.hpp</name>
+  </compound>
+  <compound refid="tenant__id__resolver_8hpp" kind="file"><name>tenant_id_resolver.hpp</name>
+  </compound>
+  <compound refid="token__credential__impl_8hpp" kind="file"><name>token_credential_impl.hpp</name>
+  </compound>
+  <compound refid="tenant__id__resolver_8cpp" kind="file"><name>tenant_id_resolver.cpp</name>
+  </compound>
+  <compound refid="token__cache_8cpp" kind="file"><name>token_cache.cpp</name>
+  </compound>
+  <compound refid="token__credential__impl_8cpp" kind="file"><name>token_credential_impl.cpp</name>
+  </compound>
+  <compound refid="workload__identity__credential_8cpp" kind="file"><name>workload_identity_credential.cpp</name>
+  </compound>
+  <compound refid="md__c_h_a_n_g_e_l_o_g" kind="page"><name>md__c_h_a_n_g_e_l_o_g</name>
+  </compound>
+  <compound refid="defaultazurecredentialauthflow" kind="page"><name>defaultazurecredentialauthflow</name>
+  </compound>
+  <compound refid="dir_7d6893ff7a5980c9033ed77439b5f032" kind="dir"><name>inc/azure</name>
+  </compound>
+  <compound refid="dir_a2c20534e341cae0ffd13c79a073b66a" kind="dir"><name>inc/azure/identity/detail</name>
+  </compound>
+  <compound refid="dir_1bb1f509a3450c15f50f4c0fd42009e5" kind="dir"><name>inc/azure/identity</name>
+  </compound>
+  <compound refid="dir_2c1dd796c287ab9a5cf44281d8a3cbeb" kind="dir"><name>img</name>
+  </compound>
+  <compound refid="dir_bfccd401955b95cf8c75461437045ac0" kind="dir"><name>inc</name>
+  </compound>
+  <compound refid="dir_5ca7965f99b8f639b4d73774652a4e9d" kind="dir"><name>img/mermaidjs</name>
+  </compound>
+  <compound refid="dir_d49b597d86ed44de6eb8a459f0ed40df" kind="dir"><name>src/private</name>
+  </compound>
+  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>src</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobQueryInputTextOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1aad3e13735e4df2b78b2665625f90ef7e" prot="private" static="no" mutable="no">
+        <type>Models::_detail::QueryFormatType</type>
+        <definition>Models::_detail::QueryFormatType Azure::Storage::Blobs::BlobQueryInputTextOptions::m_format</definition>
+        <argsstring></argsstring>
+        <name>m_format</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::m_format</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1175" column="38" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1acbc2dbfcef5e3c9d47fb36583f41ea30" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryInputTextOptions::m_recordSeparator</definition>
+        <argsstring></argsstring>
+        <name>m_recordSeparator</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::m_recordSeparator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1176" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1aae00a0c0a3abb57e4ebf16aaedfba66f" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryInputTextOptions::m_columnSeparator</definition>
+        <argsstring></argsstring>
+        <name>m_columnSeparator</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::m_columnSeparator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1177" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a9fc6247d0786c622bd254399d98643a8" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryInputTextOptions::m_quotationCharacter</definition>
+        <argsstring></argsstring>
+        <name>m_quotationCharacter</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::m_quotationCharacter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1178" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a2afee6395619040be0de388b84c9842c" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobQueryInputTextOptions::m_escapeCharacter</definition>
+        <argsstring></argsstring>
+        <name>m_escapeCharacter</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::m_escapeCharacter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1179" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1ab5f366e1ea5f092e2c579c0aec07c6a7" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::BlobQueryInputTextOptions::m_hasHeaders</definition>
+        <argsstring></argsstring>
+        <name>m_hasHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::m_hasHeaders</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1180" column="10" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1180" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a4be31ea5fc92e6f527748e209f0142a0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlockBlobClient</definition>
+        <argsstring></argsstring>
+        <name>BlockBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::BlockBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1182" column="18" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1182" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a8d982ba94393e5ee6f17dcb09db41270" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options" kindref="compound">BlobQueryInputTextOptions</ref></type>
+        <definition>BlobQueryInputTextOptions Azure::Storage::Blobs::BlobQueryInputTextOptions::CreateCsvTextOptions</definition>
+        <argsstring>(const std::string &amp;recordSeparator=std::string(), const std::string &amp;columnSeparator=std::string(), const std::string &amp;quotationCharacter=std::string(), const std::string &amp;escapeCharacter=std::string(), bool hasHeaders=false)</argsstring>
+        <name>CreateCsvTextOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::CreateCsvTextOptions</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>recordSeparator</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>columnSeparator</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>quotationCharacter</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>escapeCharacter</declname>
+          <defval>std::string()</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>hasHeaders</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Creates CSV text configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>recordSeparator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Record separator. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>columnSeparator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column separator. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>quotationCharacter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Field quote. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>escapeCharacter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Escape character. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hasHeaders</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If CSV file has headers. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>CSV text configuration. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1153" column="38" bodyfile="src/blob_options.cpp" bodystart="10" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a212557fe24d923e648784566dae5867f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options" kindref="compound">BlobQueryInputTextOptions</ref></type>
+        <definition>BlobQueryInputTextOptions Azure::Storage::Blobs::BlobQueryInputTextOptions::CreateJsonTextOptions</definition>
+        <argsstring>(const std::string &amp;recordSeparator=std::string())</argsstring>
+        <name>CreateJsonTextOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::CreateJsonTextOptions</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>recordSeparator</declname>
+          <defval>std::string()</defval>
+        </param>
+        <briefdescription>
+<para>Creates Json text configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>recordSeparator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Record separator. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Json text configuration. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1165" column="38" bodyfile="src/blob_options.cpp" bodystart="27" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a2bb5499f29e95c4660535b0440590fb5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options" kindref="compound">BlobQueryInputTextOptions</ref></type>
+        <definition>BlobQueryInputTextOptions Azure::Storage::Blobs::BlobQueryInputTextOptions::CreateParquetTextOptions</definition>
+        <argsstring>()</argsstring>
+        <name>CreateParquetTextOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobQueryInputTextOptions::CreateParquetTextOptions</qualifiedname>
+        <briefdescription>
+<para>Creates Parquet text configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Parquet text configuration </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1172" column="38" bodyfile="src/blob_options.cpp" bodystart="36" bodyend="41"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Blob Query text configuration for input. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1141" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1141" bodyend="1183"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a4be31ea5fc92e6f527748e209f0142a0" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>BlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a8d982ba94393e5ee6f17dcb09db41270" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>CreateCsvTextOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a212557fe24d923e648784566dae5867f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>CreateJsonTextOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a2bb5499f29e95c4660535b0440590fb5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>CreateParquetTextOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1aae00a0c0a3abb57e4ebf16aaedfba66f" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>m_columnSeparator</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a2afee6395619040be0de388b84c9842c" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>m_escapeCharacter</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1aad3e13735e4df2b78b2665625f90ef7e" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>m_format</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1ab5f366e1ea5f092e2c579c0aec07c6a7" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>m_hasHeaders</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1a9fc6247d0786c622bd254399d98643a8" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>m_quotationCharacter</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options_1acbc2dbfcef5e3c9d47fb36583f41ea30" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobQueryInputTextOptions</scope><name>m_recordSeparator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

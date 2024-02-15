@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.10.0" xml:lang="en-US">
+  <compound refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider" kind="class"><name>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</name>
+    <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a5de4a27a0be410ff9892816308e2cdba" kind="variable"><name>m_tracerProvider</name></member>
+    <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a3985c2114d971f8aaec51c9f85a6e028" kind="variable"><name>OpenTelemetrySchemaUrl117</name></member>
+    <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a956ab11b5fa98eef8a68a495ef0949d0" kind="variable"><name>OpenTelemetrySchemaUrlCurrent</name></member>
+    <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a7440b70cb0455ee04b9eb2f59e614ec8" kind="function"><name>CreateTracer</name></member>
+    <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1ae8abc0bd5c8d2f0bc39fbd45abc4bcff" kind="function"><name>OpenTelemetryProvider</name></member>
+    <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a116163fdb6d81205e329c42e329c09bf" kind="function"><name>Create</name></member>
+    <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a35488274d3e0041bad3b3e75c208f4fd" kind="function"><name>~OpenTelemetryProvider</name></member>
+  </compound>
+  <compound refid="namespace_azure" kind="namespace"><name>Azure</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core" kind="namespace"><name>Azure::Core</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_tracing" kind="namespace"><name>Azure::Core::Tracing</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_tracing_1_1_open_telemetry" kind="namespace"><name>Azure::Core::Tracing::OpenTelemetry</name>
+  </compound>
+  <compound refid="namespaceopentelemetry" kind="namespace"><name>opentelemetry</name>
+  </compound>
+  <compound refid="namespaceopentelemetry_1_1common" kind="namespace"><name>opentelemetry::common</name>
+  </compound>
+  <compound refid="namespaceopentelemetry_1_1context" kind="namespace"><name>opentelemetry::context</name>
+  </compound>
+  <compound refid="namespaceopentelemetry_1_1context_1_1propagation" kind="namespace"><name>opentelemetry::context::propagation</name>
+  </compound>
+  <compound refid="_c_h_a_n_g_e_l_o_g_8md" kind="file"><name>CHANGELOG.md</name>
+  </compound>
+  <compound refid="opentelemetry_8hpp" kind="file"><name>opentelemetry.hpp</name>
+  </compound>
+  <compound refid="_r_e_a_d_m_e_8md" kind="file"><name>README.md</name>
+  </compound>
+  <compound refid="opentelemetry_8cpp" kind="file"><name>opentelemetry.cpp</name>
+  </compound>
+  <compound refid="opentelemetry__private_8hpp" kind="file"><name>opentelemetry_private.hpp</name>
+  </compound>
+  <compound refid="md__c_h_a_n_g_e_l_o_g" kind="page"><name>md__c_h_a_n_g_e_l_o_g</name>
+  </compound>
+  <compound refid="dir_7d6893ff7a5980c9033ed77439b5f032" kind="dir"><name>inc/azure</name>
+  </compound>
+  <compound refid="dir_06ad7f09ade60a1ced0a4e3dcb3d1625" kind="dir"><name>inc/azure/core</name>
+  </compound>
+  <compound refid="dir_bfccd401955b95cf8c75461437045ac0" kind="dir"><name>inc</name>
+  </compound>
+  <compound refid="dir_388a9ce964fd6eb041890bd7fd6f8bc2" kind="dir"><name>inc/azure/core/tracing/opentelemetry</name>
+  </compound>
+  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>src</name>
+  </compound>
+  <compound refid="dir_3c286591724a5035eca77d120b9aff18" kind="dir"><name>inc/azure/core/tracing</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

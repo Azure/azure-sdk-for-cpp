@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::CreateBlobContainerResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result_1aebf8b751ca6544fe52ef2d21e17217ce" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::CreateBlobContainerResult::Created</definition>
+        <argsstring></argsstring>
+        <name>Created</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobContainerResult::Created</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates if the container was successfully created by this operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="703" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="703" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result_1a49b14a1ec2e285a6809716ebc966bd21" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::CreateBlobContainerResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobContainerResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="708" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="708" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result_1a8adf54ec3323cb2a55a0eef20187038b" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::CreateBlobContainerResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreateBlobContainerResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="714" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="714" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a5bbdaedaf31f8ba92e2a3b56189e3131" kindref="member">Azure::Storage::Blobs::BlobContainerClient::Create</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="698" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="699" bodyend="715"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result_1aebf8b751ca6544fe52ef2d21e17217ce" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobContainerResult</scope><name>Created</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result_1a49b14a1ec2e285a6809716ebc966bd21" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobContainerResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result_1a8adf54ec3323cb2a55a0eef20187038b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreateBlobContainerResult</scope><name>LastModified</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

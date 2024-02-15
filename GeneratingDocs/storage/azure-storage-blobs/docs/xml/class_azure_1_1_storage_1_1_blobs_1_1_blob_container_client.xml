@@ -1,0 +1,1291 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobContainerClient</compoundname>
+    <includes refid="blob__container__client_8hpp" local="no">blob_container_client.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a1920dccdb55c99f10405fa70df000291" prot="private" static="no" mutable="no">
+        <type>Azure::Core::Url</type>
+        <definition>Azure::Core::Url Azure::Storage::Blobs::BlobContainerClient::m_blobContainerUrl</definition>
+        <argsstring></argsstring>
+        <name>m_blobContainerUrl</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::m_blobContainerUrl</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="330" column="22" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac271ca2bde28f08985db8d032d60b865" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; Azure::Core::Http::_internal::HttpPipeline &gt;</type>
+        <definition>std::shared_ptr&lt;Azure::Core::Http::_internal::HttpPipeline&gt; Azure::Storage::Blobs::BlobContainerClient::m_pipeline</definition>
+        <argsstring></argsstring>
+        <name>m_pipeline</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::m_pipeline</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="331" column="21" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="331" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac29d7f512b3294e59a85329eb1d7cf2b" prot="private" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key" kindref="compound">EncryptionKey</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;EncryptionKey&gt; Azure::Storage::Blobs::BlobContainerClient::m_customerProvidedKey</definition>
+        <argsstring></argsstring>
+        <name>m_customerProvidedKey</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::m_customerProvidedKey</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="332" column="21" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="332" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a245a2999fa274b2dbc4b17d39fda82c4" prot="private" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Blobs::BlobContainerClient::m_encryptionScope</definition>
+        <argsstring></argsstring>
+        <name>m_encryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::m_encryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="333" column="21" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="333" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a8f72a60a517d8061b1b06fcea24ddfdb" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; Azure::Core::Http::_internal::HttpPipeline &gt;</type>
+        <definition>std::shared_ptr&lt;Azure::Core::Http::_internal::HttpPipeline&gt; Azure::Storage::Blobs::BlobContainerClient::m_batchRequestPipeline</definition>
+        <argsstring></argsstring>
+        <name>m_batchRequestPipeline</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::m_batchRequestPipeline</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="335" column="21" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1aebae619e3ee787067cbaf43687702268" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; Azure::Core::Http::_internal::HttpPipeline &gt;</type>
+        <definition>std::shared_ptr&lt;Azure::Core::Http::_internal::HttpPipeline&gt; Azure::Storage::Blobs::BlobContainerClient::m_batchSubrequestPipeline</definition>
+        <argsstring></argsstring>
+        <name>m_batchSubrequestPipeline</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::m_batchSubrequestPipeline</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="336" column="21" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="336" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ae21f5317c43c381dea514877f4ae8ae4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobServiceClient</definition>
+        <argsstring></argsstring>
+        <name>BlobServiceClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::BlobServiceClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client" kindref="compound">BlobServiceClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="338" column="18" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="338" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a9ea742c7dfda83fc4e0290757e7c0cda" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobLeaseClient</definition>
+        <argsstring></argsstring>
+        <name>BlobLeaseClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::BlobLeaseClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" kindref="compound">BlobLeaseClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="339" column="18" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="339" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a62207ac2c610d49b85104d3dcee71a21" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobContainerBatch</definition>
+        <argsstring></argsstring>
+        <name>BlobContainerBatch</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::BlobContainerBatch</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_batch" kindref="compound">BlobContainerBatch</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="340" column="18" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="340" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a4b3a0b8a1d7582089126933142ff7465" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Files::DataLake::DataLakeFileSystemClient</definition>
+        <argsstring></argsstring>
+        <name>Files::DataLake::DataLakeFileSystemClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::DataLakeFileSystemClient</qualifiedname>
+        <param>
+          <type>Files::DataLake::DataLakeFileSystemClient</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="341" column="18" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="341" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a5d253aacb6e20578b7f5f233547be3e2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref></type>
+        <definition>BlobContainerClient Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString</definition>
+        <argsstring>(const std::string &amp;connectionString, const std::string &amp;blobContainerName, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>CreateFromConnectionString</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>connectionString</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>connectionString</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A connection string includes the authentication information required for your application to access data in an Azure Storage account at runtime. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobContainerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the container containing this blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="33" column="32" bodyfile="src/blob_container_client.cpp" bodystart="106" bodyend="124"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac2986de67a0ebe0521bcff63d5037fb2" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlobContainerClient::BlobContainerClient</definition>
+        <argsstring>(const std::string &amp;blobContainerUrl, std::shared_ptr&lt; StorageSharedKeyCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>BlobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::BlobContainerClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; StorageSharedKeyCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobContainerUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A url referencing the blob container that includes the name of the account and the name of the container. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared key credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="49" column="14" bodyfile="src/blob_container_client.cpp" bodystart="126" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a6a4e44cbf0062868a7fe685c61b35148" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlobContainerClient::BlobContainerClient</definition>
+        <argsstring>(const std::string &amp;blobContainerUrl, std::shared_ptr&lt; Core::Credentials::TokenCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>BlobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::BlobContainerClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; Core::Credentials::TokenCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobContainerUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A url referencing the blob container that includes the name of the account and the name of the container. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The token credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="64" column="14" bodyfile="src/blob_container_client.cpp" bodystart="158" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ad58f17faab40f56b891b3ba442b8bf8a" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlobContainerClient::BlobContainerClient</definition>
+        <argsstring>(const std::string &amp;blobContainerUrl, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>BlobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::BlobContainerClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerUrl</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobContainerUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A url referencing the blob that includes the name of the account and the name of the container, and possibly also a SAS token. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="79" column="14" bodyfile="src/blob_container_client.cpp" bodystart="197" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1addf98af36f8bd90cc953204809d705dd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+        <definition>BlobClient Azure::Storage::Blobs::BlobContainerClient::GetBlobClient</definition>
+        <argsstring>(const std::string &amp;blobName) const</argsstring>
+        <name>GetBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::GetBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <briefdescription>
+<para>Create a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref> object by appending blobName to the end of URL. The new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref> uses the same request policy pipeline as this <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="90" column="16" bodyfile="src/blob_container_client.cpp" bodystart="224" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1acd8c68e3f37268fde0010dd478ff048f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref></type>
+        <definition>BlockBlobClient Azure::Storage::Blobs::BlobContainerClient::GetBlockBlobClient</definition>
+        <argsstring>(const std::string &amp;blobName) const</argsstring>
+        <name>GetBlockBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::GetBlockBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <briefdescription>
+<para>Create a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> object by appending blobName to the end of URL. The new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> uses the same request policy pipeline as this <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="99" column="21" bodyfile="src/blob_container_client.cpp" bodystart="231" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a53e8718a8cbe7dc96ca55535582f75e2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref></type>
+        <definition>AppendBlobClient Azure::Storage::Blobs::BlobContainerClient::GetAppendBlobClient</definition>
+        <argsstring>(const std::string &amp;blobName) const</argsstring>
+        <name>GetAppendBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::GetAppendBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <briefdescription>
+<para>Create a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> object by appending blobName to the end of URL. The new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> uses the same request policy pipeline as this <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="108" column="22" bodyfile="src/blob_container_client.cpp" bodystart="236" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a1c69c3a4efa80a7bde5714868b9a8ee0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref></type>
+        <definition>PageBlobClient Azure::Storage::Blobs::BlobContainerClient::GetPageBlobClient</definition>
+        <argsstring>(const std::string &amp;blobName) const</argsstring>
+        <name>GetPageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::GetPageBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <briefdescription>
+<para>Create a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> object by appending blobName to the end of URL. The new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> uses the same request policy pipeline as this <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="117" column="20" bodyfile="src/blob_container_client.cpp" bodystart="241" bodyend="244"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a2df0855f5aa91a09129a02bdb3e7c814" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobContainerClient::GetUrl</definition>
+        <argsstring>() const</argsstring>
+        <name>GetUrl</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::GetUrl</qualifiedname>
+        <briefdescription>
+<para>Gets the container&apos;s primary URL endpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The container&apos;s primary URL endpoint. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="124" column="17" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a5bbdaedaf31f8ba92e2a3b56189e3131" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result" kindref="compound">Models::CreateBlobContainerResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::CreateBlobContainerResult &gt; Azure::Storage::Blobs::BlobContainerClient::Create</definition>
+        <argsstring>(const CreateBlobContainerOptions &amp;options=CreateBlobContainerOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Create</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::Create</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options" kindref="compound">CreateBlobContainerOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options" kindref="compound">CreateBlobContainerOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new container under the specified account. If the container with the same name already exists, the operation fails. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A CreateBlobContainerResult describing the newly created blob container. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="134" column="21" bodyfile="src/blob_container_client.cpp" bodystart="246" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ab3ef187d2e30e1a19ebadf45d0fdf9c4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result" kindref="compound">Models::CreateBlobContainerResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::CreateBlobContainerResult &gt; Azure::Storage::Blobs::BlobContainerClient::CreateIfNotExists</definition>
+        <argsstring>(const CreateBlobContainerOptions &amp;options=CreateBlobContainerOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>CreateIfNotExists</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::CreateIfNotExists</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options" kindref="compound">CreateBlobContainerOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options" kindref="compound">CreateBlobContainerOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new container under the specified account. If the container with the same name already exists, it is not changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A CreateBlobContainerResult describing the newly created blob container if the container doesn&apos;t exist. CreateBlobContainerResult.Created is false if the container already exists. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="148" column="21" bodyfile="src/blob_container_client.cpp" bodystart="260" bodyend="280"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ae7661b6d8f37213b409504c0e9a68d69" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_container_result" kindref="compound">Models::DeleteBlobContainerResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::DeleteBlobContainerResult &gt; Azure::Storage::Blobs::BlobContainerClient::Delete</definition>
+        <argsstring>(const DeleteBlobContainerOptions &amp;options=DeleteBlobContainerOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Delete</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::Delete</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options" kindref="compound">DeleteBlobContainerOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options" kindref="compound">DeleteBlobContainerOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Marks the specified container for deletion. The container and any blobs contained within it are later deleted during garbage collection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A DeleteBlobContainerResult if successful. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="160" column="21" bodyfile="src/blob_container_client.cpp" bodystart="282" bodyend="292"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ab8461247280f1c62e653b1cb16fc642e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_container_result" kindref="compound">Models::DeleteBlobContainerResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::DeleteBlobContainerResult &gt; Azure::Storage::Blobs::BlobContainerClient::DeleteIfExists</definition>
+        <argsstring>(const DeleteBlobContainerOptions &amp;options=DeleteBlobContainerOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>DeleteIfExists</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::DeleteIfExists</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options" kindref="compound">DeleteBlobContainerOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options" kindref="compound">DeleteBlobContainerOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Marks the specified container for deletion if it exists. The container and any blobs contained within it are later deleted during garbage collection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A DeleteBlobContainerResult if the container exists. DeleteBlobContainerResult.Deleted is false if the container doesn&apos;t exist. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="173" column="21" bodyfile="src/blob_container_client.cpp" bodystart="294" bodyend="314"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1acc7441a549d6aa88525c97e6a0d836cc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_properties" kindref="compound">Models::BlobContainerProperties</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::BlobContainerProperties &gt; Azure::Storage::Blobs::BlobContainerClient::GetProperties</definition>
+        <argsstring>(const GetBlobContainerPropertiesOptions &amp;options=GetBlobContainerPropertiesOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>GetProperties</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::GetProperties</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_properties_options" kindref="compound">GetBlobContainerPropertiesOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_properties_options" kindref="compound">GetBlobContainerPropertiesOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Returns all user-defined metadata and system properties for the specified container. The data returned does not include the container&apos;s list of blobs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A BlobContainerProperties describing the container and its properties. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="185" column="21" bodyfile="src/blob_container_client.cpp" bodystart="316" bodyend="327"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1adeab65cb3661d6f6563c44444cb9a615" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_metadata_result" kindref="compound">Models::SetBlobContainerMetadataResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::SetBlobContainerMetadataResult &gt; Azure::Storage::Blobs::BlobContainerClient::SetMetadata</definition>
+        <argsstring>(Metadata metadata, SetBlobContainerMetadataOptions options=SetBlobContainerMetadataOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>SetMetadata</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::SetMetadata</qualifiedname>
+        <param>
+          <type>Metadata</type>
+          <declname>metadata</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_metadata_options" kindref="compound">SetBlobContainerMetadataOptions</ref></type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_metadata_options" kindref="compound">SetBlobContainerMetadataOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Sets one or more user-defined name-value pairs for the specified container. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>metadata</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Custom metadata to set for this container. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A SetBlobContainerMetadataResult if successful. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="197" column="21" bodyfile="src/blob_container_client.cpp" bodystart="329" bodyend="341"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a8f7e6653ef69788cb4fb23ec85d4fd96" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response" kindref="compound">ListBlobsPagedResponse</ref></type>
+        <definition>ListBlobsPagedResponse Azure::Storage::Blobs::BlobContainerClient::ListBlobs</definition>
+        <argsstring>(const ListBlobsOptions &amp;options=ListBlobsOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>ListBlobs</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::ListBlobs</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options" kindref="compound">ListBlobsOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options" kindref="compound">ListBlobsOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Returns a sequence of blobs in this container. Enumerating the blobs may make multiple requests to the service while fetching all the values. Blobs are ordered lexicographically by name. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response" kindref="compound">ListBlobsPagedResponse</ref> describing the blobs in the container. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="211" column="28" bodyfile="src/blob_container_client.cpp" bodystart="343" bodyend="373"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a06666233dc90f9848c6b207673b25a75" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_by_hierarchy_paged_response" kindref="compound">ListBlobsByHierarchyPagedResponse</ref></type>
+        <definition>ListBlobsByHierarchyPagedResponse Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy</definition>
+        <argsstring>(const std::string &amp;delimiter, const ListBlobsOptions &amp;options=ListBlobsOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>ListBlobsByHierarchy</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>delimiter</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options" kindref="compound">ListBlobsOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options" kindref="compound">ListBlobsOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Returns a collection of blobs in this container. Enumerating the blobs may make multiple requests to the service while fetching all the values. Blobs are ordered lexicographically by name. A delimiter can be used to traverse a virtual hierarchy of blobs as though it were a file system. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>delimiter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This can be used to to traverse a virtual hierarchy of blobs as though it were a file system. The delimiter may be a single character or a string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_by_hierarchy_paged_response" kindref="compound">ListBlobsByHierarchyPagedResponse</ref> describing the blobs in the container. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="227" column="39" bodyfile="src/blob_container_client.cpp" bodystart="375" bodyend="421"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac1f49d3f4623660efb12dc84619f4d01" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy" kindref="compound">Models::BlobContainerAccessPolicy</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::BlobContainerAccessPolicy &gt; Azure::Storage::Blobs::BlobContainerClient::GetAccessPolicy</definition>
+        <argsstring>(const GetBlobContainerAccessPolicyOptions &amp;options=GetBlobContainerAccessPolicyOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>GetAccessPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::GetAccessPolicy</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_access_policy_options" kindref="compound">GetBlobContainerAccessPolicyOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_access_policy_options" kindref="compound">GetBlobContainerAccessPolicyOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Gets the permissions for this container. The permissions indicate whether container data may be accessed publicly. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A BlobContainerAccessPolicy describing the container&apos;s access policy. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="240" column="21" bodyfile="src/blob_container_client.cpp" bodystart="423" bodyend="434"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ab178fc558887607e2ed2142e81643aa0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_access_policy_result" kindref="compound">Models::SetBlobContainerAccessPolicyResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::SetBlobContainerAccessPolicyResult &gt; Azure::Storage::Blobs::BlobContainerClient::SetAccessPolicy</definition>
+        <argsstring>(const SetBlobContainerAccessPolicyOptions &amp;options=SetBlobContainerAccessPolicyOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>SetAccessPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::SetAccessPolicy</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options" kindref="compound">SetBlobContainerAccessPolicyOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options" kindref="compound">SetBlobContainerAccessPolicyOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Sets the permissions for the specified container. The permissions indicate whether blob container data may be accessed publicly. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A SetBlobContainerAccessPolicyResult describing the updated container. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="252" column="21" bodyfile="src/blob_container_client.cpp" bodystart="436" bodyend="448"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a22cacfe0ce12b7ac4cb8e3e20c96492d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_result" kindref="compound">Models::DeleteBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::DeleteBlobResult &gt; Azure::Storage::Blobs::BlobContainerClient::DeleteBlob</definition>
+        <argsstring>(const std::string &amp;blobName, const DeleteBlobOptions &amp;options=DeleteBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>DeleteBlob</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::DeleteBlob</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Marks the specified blob or snapshot for deletion. The blob is later deleted during garbage collection. Note that in order to delete a blob, you must delete all of its snapshots. You can delete both at the same time using <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options_1a0e9337de60f8c7d67d7a040d8b316b90" kindref="member">DeleteBlobOptions.DeleteSnapshots</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the blob to delete. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A DeleteBlobResult on successfully deleting. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="266" column="21" bodyfile="src/blob_container_client.cpp" bodystart="450" bodyend="457"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a35f233d50a95cce4a7e9408e0a053bb1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> &gt;</type>
+        <definition>Azure::Response&lt; BlockBlobClient &gt; Azure::Storage::Blobs::BlobContainerClient::UploadBlob</definition>
+        <argsstring>(const std::string &amp;blobName, Azure::Core::IO::BodyStream &amp;content, const UploadBlockBlobOptions &amp;options=UploadBlockBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>UploadBlob</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::UploadBlob</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <param>
+          <type>Azure::Core::IO::BodyStream &amp;</type>
+          <declname>content</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_options" kindref="compound">UploadBlockBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_options" kindref="compound">UploadBlockBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new block blob under this container. For partial block blob updates and other advanced features, please see <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref>. To create or modify page or see <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> or <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the blob to create. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>content</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A BodyStream containing the content to upload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> referencing the newly created block blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="282" column="21" bodyfile="src/blob_container_client.cpp" bodystart="459" bodyend="469"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a25931e6b33a9728843a591bf45f6c6ea" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response" kindref="compound">FindBlobsByTagsPagedResponse</ref></type>
+        <definition>FindBlobsByTagsPagedResponse Azure::Storage::Blobs::BlobContainerClient::FindBlobsByTags</definition>
+        <argsstring>(const std::string &amp;tagFilterSqlExpression, const FindBlobsByTagsOptions &amp;options=FindBlobsByTagsOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>FindBlobsByTags</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::FindBlobsByTags</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>tagFilterSqlExpression</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_options" kindref="compound">FindBlobsByTagsOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_options" kindref="compound">FindBlobsByTagsOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>The Filter Blobs operation enables callers to list blobs in a container whose tags match a given search expression. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tagFilterSqlExpression</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The where parameter enables the caller to query blobs whose tags match a given expression. The given expression must evaluate to true for a blob to be returned in the results. The [OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter, however, only a subset of the OData filter syntax is supported in the Blob service. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response" kindref="compound">FindBlobsByTagsPagedResponse</ref> describing the blobs. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="301" column="34" bodyfile="src/blob_container_client.cpp" bodystart="471" bodyend="497"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a7000c5d99f716e065872c3d83de283df" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_batch" kindref="compound">BlobContainerBatch</ref></type>
+        <definition>BlobContainerBatch Azure::Storage::Blobs::BlobContainerClient::CreateBatch</definition>
+        <argsstring>() const</argsstring>
+        <name>CreateBatch</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::CreateBatch</qualifiedname>
+        <briefdescription>
+<para>Creates a new batch object to collect subrequests that can be submitted together via SubmitBatch. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A new batch object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="312" column="24" bodyfile="src/blob_container_client.cpp" bodystart="499" bodyend="499"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a24234b36441e1bba5e5cb5515901664f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_submit_blob_batch_result" kindref="compound">Models::SubmitBlobBatchResult</ref> &gt;</type>
+        <definition>Response&lt; Models::SubmitBlobBatchResult &gt; Azure::Storage::Blobs::BlobContainerClient::SubmitBatch</definition>
+        <argsstring>(const BlobContainerBatch &amp;batch, const SubmitBlobBatchOptions &amp;options=SubmitBlobBatchOptions(), const Core::Context &amp;context=Core::Context()) const</argsstring>
+        <name>SubmitBatch</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobContainerClient::SubmitBatch</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_batch" kindref="compound">BlobContainerBatch</ref> &amp;</type>
+          <declname>batch</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_submit_blob_batch_options" kindref="compound">SubmitBlobBatchOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_submit_blob_batch_options" kindref="compound">SubmitBlobBatchOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Submits a batch of subrequests. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>batch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The batch object containing subrequests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A SubmitBlobBatchResult. </para>
+</simplesect>
+<simplesect kind="remark"><para>This function will throw only if there&apos;s something wrong with the batch request (parent request). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="324" column="14" bodyfile="src/blob_container_client.cpp" bodystart="501" bodyend="518"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref> allows you to manipulate Azure Storage containers and their blobs. </para>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_container_client.hpp" line="21" column="3" bodyfile="inc/azure/storage/blobs/blob_container_client.hpp" bodystart="21" bodyend="342"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a62207ac2c610d49b85104d3dcee71a21" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>BlobContainerBatch</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac2986de67a0ebe0521bcff63d5037fb2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>BlobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a6a4e44cbf0062868a7fe685c61b35148" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>BlobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ad58f17faab40f56b891b3ba442b8bf8a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>BlobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a9ea742c7dfda83fc4e0290757e7c0cda" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>BlobLeaseClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ae21f5317c43c381dea514877f4ae8ae4" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>BlobServiceClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a5bbdaedaf31f8ba92e2a3b56189e3131" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>Create</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a7000c5d99f716e065872c3d83de283df" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>CreateBatch</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a5d253aacb6e20578b7f5f233547be3e2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>CreateFromConnectionString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ab3ef187d2e30e1a19ebadf45d0fdf9c4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>CreateIfNotExists</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ae7661b6d8f37213b409504c0e9a68d69" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>Delete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a22cacfe0ce12b7ac4cb8e3e20c96492d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>DeleteBlob</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ab8461247280f1c62e653b1cb16fc642e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>DeleteIfExists</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a4b3a0b8a1d7582089126933142ff7465" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>Files::DataLake::DataLakeFileSystemClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a25931e6b33a9728843a591bf45f6c6ea" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>FindBlobsByTags</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac1f49d3f4623660efb12dc84619f4d01" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>GetAccessPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a53e8718a8cbe7dc96ca55535582f75e2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>GetAppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1addf98af36f8bd90cc953204809d705dd" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>GetBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1acd8c68e3f37268fde0010dd478ff048f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>GetBlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a1c69c3a4efa80a7bde5714868b9a8ee0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>GetPageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1acc7441a549d6aa88525c97e6a0d836cc" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>GetProperties</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a2df0855f5aa91a09129a02bdb3e7c814" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>GetUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a8f7e6653ef69788cb4fb23ec85d4fd96" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>ListBlobs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a06666233dc90f9848c6b207673b25a75" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>ListBlobsByHierarchy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a8f72a60a517d8061b1b06fcea24ddfdb" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>m_batchRequestPipeline</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1aebae619e3ee787067cbaf43687702268" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>m_batchSubrequestPipeline</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a1920dccdb55c99f10405fa70df000291" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>m_blobContainerUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac29d7f512b3294e59a85329eb1d7cf2b" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>m_customerProvidedKey</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a245a2999fa274b2dbc4b17d39fda82c4" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>m_encryptionScope</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac271ca2bde28f08985db8d032d60b865" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>m_pipeline</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ab178fc558887607e2ed2142e81643aa0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>SetAccessPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1adeab65cb3661d6f6563c44444cb9a615" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>SetMetadata</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a24234b36441e1bba5e5cb5515901664f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>SubmitBatch</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a35f233d50a95cce4a7e9408e0a053bb1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobContainerClient</scope><name>UploadBlob</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

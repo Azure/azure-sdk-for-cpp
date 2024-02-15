@@ -1,0 +1,271 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Azure::Core::Http::Policies::HttpPolicy</compoundname>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1__internal_1_1_bearer_token_authentication_policy" prot="public" virt="non-virtual">Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1__internal_1_1_log_policy" prot="public" virt="non-virtual">Azure::Core::Http::Policies::_internal::LogPolicy</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1__internal_1_1_request_activity_policy" prot="public" virt="non-virtual">Azure::Core::Http::Policies::_internal::RequestActivityPolicy</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1__internal_1_1_request_id_policy" prot="public" virt="non-virtual">Azure::Core::Http::Policies::_internal::RequestIdPolicy</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1__internal_1_1_retry_policy" prot="public" virt="non-virtual">Azure::Core::Http::Policies::_internal::RetryPolicy</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1__internal_1_1_telemetry_policy" prot="public" virt="non-virtual">Azure::Core::Http::Policies::_internal::TelemetryPolicy</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1__internal_1_1_transport_policy" prot="public" virt="non-virtual">Azure::Core::Http::Policies::_internal::TransportPolicy</derivedcompoundref>
+    <includes refid="policy_8hpp" local="no">policy.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1ae7cff2dc6590af4427a41d7eaeabc886" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; RawResponse &gt; Azure::Core::Http::Policies::HttpPolicy::Send</definition>
+        <argsstring>(Request &amp;request, NextHttpPolicy nextPolicy, Context const &amp;context) const =0</argsstring>
+        <name>Send</name>
+        <qualifiedname>Azure::Core::Http::Policies::HttpPolicy::Send</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy" kindref="compound">NextHttpPolicy</ref></type>
+          <declname>nextPolicy</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Applies this HTTP policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An HTTP request being sent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>nextPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The next HTTP to invoke after this policy has been applied. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An HTTP response after this policy, and all subsequent HTTP policies in the stack sequence of policies have been applied. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="248" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a3ac12b6638c7bd3d63823ce74309cd6b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Http::Policies::HttpPolicy::~HttpPolicy</definition>
+        <argsstring>()</argsstring>
+        <name>~HttpPolicy</name>
+        <qualifiedname>Azure::Core::Http::Policies::HttpPolicy::~HttpPolicy</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>HttpPolicy</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="257" column="13" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="257" bodyend="257"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a9a3b46c83e17a3f1f4b44fbb0f724129" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kindref="compound">HttpPolicy</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; HttpPolicy &gt; Azure::Core::Http::Policies::HttpPolicy::Clone</definition>
+        <argsstring>() const =0</argsstring>
+        <name>Clone</name>
+        <qualifiedname>Azure::Core::Http::Policies::HttpPolicy::Clone</qualifiedname>
+        <briefdescription>
+<para>Creates a clone of this <computeroutput>HttpPolicy</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A clone of this <computeroutput>HttpPolicy</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="263" column="29"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a3c0015149b62cd05c18ee02ecbdbc5ac" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::Policies::HttpPolicy::HttpPolicy</definition>
+        <argsstring>()=default</argsstring>
+        <name>HttpPolicy</name>
+        <qualifiedname>Azure::Core::Http::Policies::HttpPolicy::HttpPolicy</qualifiedname>
+        <briefdescription>
+<para>Constructs a default instance of <computeroutput>HttpPolicy</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="270" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1ab0181d999f0091c4482b3fd225245c26" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::Policies::HttpPolicy::HttpPolicy</definition>
+        <argsstring>(const HttpPolicy &amp;other)=default</argsstring>
+        <name>HttpPolicy</name>
+        <qualifiedname>Azure::Core::Http::Policies::HttpPolicy::HttpPolicy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kindref="compound">HttpPolicy</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a copy of <computeroutput>other</computeroutput> <computeroutput>HttpPolicy</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other <computeroutput>HttpPolicy</computeroutput> to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="277" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a610652f959893897ebe4538bcaf441f6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kindref="compound">HttpPolicy</ref> &amp;</type>
+        <definition>HttpPolicy &amp; Azure::Core::Http::Policies::HttpPolicy::operator=</definition>
+        <argsstring>(const HttpPolicy &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Http::Policies::HttpPolicy::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kindref="compound">HttpPolicy</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Assigns this <computeroutput>HttpPolicy</computeroutput> to copy the <computeroutput>other</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other <computeroutput>HttpPolicy</computeroutput> to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A reference to this <computeroutput>HttpPolicy</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="285" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1aade142834e113c84d2bfe4165fcbd257" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::Policies::HttpPolicy::HttpPolicy</definition>
+        <argsstring>(HttpPolicy &amp;&amp;other)=default</argsstring>
+        <name>HttpPolicy</name>
+        <qualifiedname>Azure::Core::Http::Policies::HttpPolicy::HttpPolicy</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kindref="compound">HttpPolicy</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>HttpPolicy</computeroutput> by moving <computeroutput>other</computeroutput> <computeroutput>HttpPolicy</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other <computeroutput>HttpPolicy</computeroutput> to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="292" column="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>HTTP policy base class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>An HTTP pipeline inside SDK clients is an stack sequence of HTTP policies. </para>
+</simplesect>
+<simplesect kind="note"><para>See <ulink url="https://azure.github.io/azure-sdk/general_azurecore.html#the-http-pipeline">https://azure.github.io/azure-sdk/general_azurecore.html#the-http-pipeline</ulink>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::Http::Policies::HttpPolicy</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy"/>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Core::Http::Policies::_internal::LogPolicy</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Azure::Core::Http::Policies::_internal::RequestActivityPolicy</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Azure::Core::Http::Policies::_internal::RequestIdPolicy</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Core::Http::Policies::_internal::RetryPolicy</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Azure::Core::Http::Policies::_internal::TelemetryPolicy</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Azure::Core::Http::Policies::_internal::TransportPolicy</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="inc/azure/core/http/policies/policy.hpp" line="232" column="3" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="232" bodyend="293"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a9a3b46c83e17a3f1f4b44fbb0f724129" prot="public" virt="pure-virtual"><scope>Azure::Core::Http::Policies::HttpPolicy</scope><name>Clone</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a3c0015149b62cd05c18ee02ecbdbc5ac" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::Policies::HttpPolicy</scope><name>HttpPolicy</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1ab0181d999f0091c4482b3fd225245c26" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::Policies::HttpPolicy</scope><name>HttpPolicy</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1aade142834e113c84d2bfe4165fcbd257" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::Policies::HttpPolicy</scope><name>HttpPolicy</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a610652f959893897ebe4538bcaf441f6" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::Policies::HttpPolicy</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1ae7cff2dc6590af4427a41d7eaeabc886" prot="public" virt="pure-virtual"><scope>Azure::Core::Http::Policies::HttpPolicy</scope><name>Send</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a3ac12b6638c7bd3d63823ce74309cd6b" prot="public" virt="virtual"><scope>Azure::Core::Http::Policies::HttpPolicy</scope><name>~HttpPolicy</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

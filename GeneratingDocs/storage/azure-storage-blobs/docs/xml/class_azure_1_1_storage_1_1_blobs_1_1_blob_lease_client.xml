@@ -1,0 +1,478 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobLeaseClient</compoundname>
+    <includes refid="blob__lease__client_8hpp" local="no">blob_lease_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a4c806715d3cf38fc304c0c176d3de806" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const std::chrono::seconds</type>
+        <definition>const std::chrono::seconds Azure::Storage::Blobs::BlobLeaseClient::InfiniteLeaseDuration</definition>
+        <argsstring></argsstring>
+        <name>InfiniteLeaseDuration</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::InfiniteLeaseDuration</qualifiedname>
+        <initializer>{-1}</initializer>
+        <briefdescription>
+<para>A value representing infinite lease duration. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="53" column="66" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1af4ba309bc76995cdde622b61a5f7c1c7" prot="private" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;BlobClient&gt; Azure::Storage::Blobs::BlobLeaseClient::m_blobClient</definition>
+        <argsstring></argsstring>
+        <name>m_blobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::m_blobClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="130" column="21" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1ad2a24adbb0a93fb948c028a69d34176d" prot="private" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;BlobContainerClient&gt; Azure::Storage::Blobs::BlobLeaseClient::m_blobContainerClient</definition>
+        <argsstring></argsstring>
+        <name>m_blobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::m_blobContainerClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="131" column="21" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1acce173b2b2cef53cecde937a8b6c1fa5" prot="private" static="no" mutable="no">
+        <type>std::mutex</type>
+        <definition>std::mutex Azure::Storage::Blobs::BlobLeaseClient::m_mutex</definition>
+        <argsstring></argsstring>
+        <name>m_mutex</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::m_mutex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="132" column="16" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a690506f6bbd23c312ccb85f5f86f5585" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobLeaseClient::m_leaseId</definition>
+        <argsstring></argsstring>
+        <name>m_leaseId</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::m_leaseId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="133" column="17" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a12704f14f3592bb914b74a5af3775873" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlobLeaseClient::BlobLeaseClient</definition>
+        <argsstring>(BlobClient blobClient, std::string leaseId)</argsstring>
+        <name>BlobLeaseClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::BlobLeaseClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+          <declname>blobClient</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>leaseId</declname>
+        </param>
+        <briefdescription>
+<para>Initializes a new instance of the <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" kindref="compound">BlobLeaseClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobClient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref> representing the blob being leased. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>leaseId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A lease ID. This is not required for break operation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="26" column="14" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="26" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a421b7997467d35e4d5a7e88b6d7a63fa" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlobLeaseClient::BlobLeaseClient</definition>
+        <argsstring>(BlobContainerClient blobContainerClient, std::string leaseId)</argsstring>
+        <name>BlobLeaseClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::BlobLeaseClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref></type>
+          <declname>blobContainerClient</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>leaseId</declname>
+        </param>
+        <briefdescription>
+<para>Initializes a new instance of the <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" kindref="compound">BlobLeaseClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobContainerClient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref> representing the blob container being leased. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>leaseId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A lease ID. This is not required for break operation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="38" column="14" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="38" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a6b4f7ffb5d7de22d9138efa62d69cdad" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobLeaseClient::GetLeaseId</definition>
+        <argsstring>()</argsstring>
+        <name>GetLeaseId</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::GetLeaseId</qualifiedname>
+        <briefdescription>
+<para>Get lease id of this lease client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Lease id of this lease client. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="60" column="17" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="60" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a98526574d5ca310819a410a43c43dd3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result" kindref="compound">Models::AcquireLeaseResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::AcquireLeaseResult &gt; Azure::Storage::Blobs::BlobLeaseClient::Acquire</definition>
+        <argsstring>(std::chrono::seconds duration, const AcquireLeaseOptions &amp;options=AcquireLeaseOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context())</argsstring>
+        <name>Acquire</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::Acquire</qualifiedname>
+        <param>
+          <type>std::chrono::seconds</type>
+          <declname>duration</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_acquire_lease_options" kindref="compound">AcquireLeaseOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_acquire_lease_options" kindref="compound">AcquireLeaseOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Acquires a lease on the blob or blob container. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>duration</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the duration of the lease, in seconds, or InfiniteLeaseDuration for a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An AcquireLeaseResult describing the lease. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="77" column="21" bodyfile="src/blob_lease_client.cpp" bodystart="18" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1ad43608d8cebd4206bd63ae06cbf6c70a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_renew_lease_result" kindref="compound">Models::RenewLeaseResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::RenewLeaseResult &gt; Azure::Storage::Blobs::BlobLeaseClient::Renew</definition>
+        <argsstring>(const RenewLeaseOptions &amp;options=RenewLeaseOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context())</argsstring>
+        <name>Renew</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::Renew</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_renew_lease_options" kindref="compound">RenewLeaseOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_renew_lease_options" kindref="compound">RenewLeaseOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Renews the blob or blob container&apos;s previously-acquired lease. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A RenewLeaseResult describing the lease. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="89" column="21" bodyfile="src/blob_lease_client.cpp" bodystart="86" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a56c33e72af151002ac5650808888a274" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_release_lease_result" kindref="compound">Models::ReleaseLeaseResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::ReleaseLeaseResult &gt; Azure::Storage::Blobs::BlobLeaseClient::Release</definition>
+        <argsstring>(const ReleaseLeaseOptions &amp;options=ReleaseLeaseOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context())</argsstring>
+        <name>Release</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::Release</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_release_lease_options" kindref="compound">ReleaseLeaseOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_release_lease_options" kindref="compound">ReleaseLeaseOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Releases the blob or blob container&apos;s previously-acquired lease. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A ReleaseLeaseResult describing the updated container or blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="100" column="21" bodyfile="src/blob_lease_client.cpp" bodystart="151" bodyend="212"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a5c8d12f23769f1e6a7de73a19b0989d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_change_lease_result" kindref="compound">Models::ChangeLeaseResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::ChangeLeaseResult &gt; Azure::Storage::Blobs::BlobLeaseClient::Change</definition>
+        <argsstring>(const std::string &amp;proposedLeaseId, const ChangeLeaseOptions &amp;options=ChangeLeaseOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context())</argsstring>
+        <name>Change</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::Change</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>proposedLeaseId</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_change_lease_options" kindref="compound">ChangeLeaseOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_change_lease_options" kindref="compound">ChangeLeaseOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Changes the lease of an active lease. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>proposedLeaseId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Proposed lease ID, in a GUID string format. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A ChangeLeaseResult describing the changed lease. </para>
+</simplesect>
+<simplesect kind="remark"><para>The current <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" kindref="compound">BlobLeaseClient</ref> becomes invalid if this operation succeeds. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="113" column="21" bodyfile="src/blob_lease_client.cpp" bodystart="214" bodyend="290"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a5687c70b70270a7ae72a79f75482459b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_break_lease_result" kindref="compound">Models::BreakLeaseResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::BreakLeaseResult &gt; Azure::Storage::Blobs::BlobLeaseClient::Break</definition>
+        <argsstring>(const BreakLeaseOptions &amp;options=BreakLeaseOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context())</argsstring>
+        <name>Break</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::Break</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_break_lease_options" kindref="compound">BreakLeaseOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_break_lease_options" kindref="compound">BreakLeaseOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Breaks the previously-acquired lease. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A BreakLeaseResult describing the broken lease. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="125" column="21" bodyfile="src/blob_lease_client.cpp" bodystart="292" bodyend="361"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a131166e0b4234e45be82c6014a44c82c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::BlobLeaseClient::CreateUniqueLeaseId</definition>
+        <argsstring>()</argsstring>
+        <name>CreateUniqueLeaseId</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobLeaseClient::CreateUniqueLeaseId</qualifiedname>
+        <briefdescription>
+<para>Gets a unique lease ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A unique lease ID. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="48" column="24" bodyfile="src/blob_lease_client.cpp" bodystart="13" bodyend="16"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" kindref="compound">BlobLeaseClient</ref> allows you to manipulate Azure Storage leases on containers and blobs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_lease_client.hpp" line="18" column="3" bodyfile="inc/azure/storage/blobs/blob_lease_client.hpp" bodystart="18" bodyend="134"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a98526574d5ca310819a410a43c43dd3b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>Acquire</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a12704f14f3592bb914b74a5af3775873" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>BlobLeaseClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a421b7997467d35e4d5a7e88b6d7a63fa" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>BlobLeaseClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a5687c70b70270a7ae72a79f75482459b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>Break</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a5c8d12f23769f1e6a7de73a19b0989d3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>Change</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a131166e0b4234e45be82c6014a44c82c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>CreateUniqueLeaseId</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a6b4f7ffb5d7de22d9138efa62d69cdad" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>GetLeaseId</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a4c806715d3cf38fc304c0c176d3de806" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>InfiniteLeaseDuration</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1af4ba309bc76995cdde622b61a5f7c1c7" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>m_blobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1ad2a24adbb0a93fb948c028a69d34176d" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>m_blobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a690506f6bbd23c312ccb85f5f86f5585" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>m_leaseId</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1acce173b2b2cef53cecde937a8b6c1fa5" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>m_mutex</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a56c33e72af151002ac5650808888a274" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>Release</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1ad43608d8cebd4206bd63ae06cbf6c70a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobLeaseClient</scope><name>Renew</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

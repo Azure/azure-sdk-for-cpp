@@ -1,0 +1,444 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_storage_1_1_blobs_1_1_models" kind="namespace" language="C++">
+    <compoundname>Azure::Storage::Blobs::Models</compoundname>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_abort_blob_copy_from_uri_result" prot="public">Azure::Storage::Blobs::Models::AbortBlobCopyFromUriResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" prot="public">Azure::Storage::Blobs::Models::AccessTier</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info" prot="public">Azure::Storage::Blobs::Models::AccountInfo</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" prot="public">Azure::Storage::Blobs::Models::AccountKind</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_acquire_lease_result" prot="public">Azure::Storage::Blobs::Models::AcquireLeaseResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_analytics_logging" prot="public">Azure::Storage::Blobs::Models::AnalyticsLogging</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_from_uri_result" prot="public">Azure::Storage::Blobs::Models::AppendBlockFromUriResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result" prot="public">Azure::Storage::Blobs::Models::AppendBlockResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" prot="public">Azure::Storage::Blobs::Models::ArchiveStatus</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_block" prot="public">Azure::Storage::Blobs::Models::BlobBlock</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy" prot="public">Azure::Storage::Blobs::Models::BlobContainerAccessPolicy</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item" prot="public">Azure::Storage::Blobs::Models::BlobContainerItem</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details" prot="public">Azure::Storage::Blobs::Models::BlobContainerItemDetails</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_properties" prot="public">Azure::Storage::Blobs::Models::BlobContainerProperties</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" prot="public">Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers" prot="public">Azure::Storage::Blobs::Models::BlobHttpHeaders</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy" prot="public">Azure::Storage::Blobs::Models::BlobImmutabilityPolicy</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" prot="public">Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_item" prot="public">Azure::Storage::Blobs::Models::BlobItem</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_item_details" prot="public">Azure::Storage::Blobs::Models::BlobItemDetails</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_properties" prot="public">Azure::Storage::Blobs::Models::BlobProperties</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field" prot="public">Azure::Storage::Blobs::Models::BlobQueryArrowField</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" prot="public">Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties" prot="public">Azure::Storage::Blobs::Models::BlobServiceProperties</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_type" prot="public">Azure::Storage::Blobs::Models::BlobType</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" prot="public">Azure::Storage::Blobs::Models::BlockListType</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" prot="public">Azure::Storage::Blobs::Models::BlockType</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_break_lease_result" prot="public">Azure::Storage::Blobs::Models::BreakLeaseResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_change_lease_result" prot="public">Azure::Storage::Blobs::Models::ChangeLeaseResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_clear_pages_result" prot="public">Azure::Storage::Blobs::Models::ClearPagesResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result" prot="public">Azure::Storage::Blobs::Models::CommitBlockListResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result" prot="public">Azure::Storage::Blobs::Models::CopyBlobFromUriResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" prot="public">Azure::Storage::Blobs::Models::CopyStatus</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule" prot="public">Azure::Storage::Blobs::Models::CorsRule</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_append_blob_result" prot="public">Azure::Storage::Blobs::Models::CreateAppendBlobResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result" prot="public">Azure::Storage::Blobs::Models::CreateBlobContainerResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result" prot="public">Azure::Storage::Blobs::Models::CreateBlobSnapshotResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result" prot="public">Azure::Storage::Blobs::Models::CreatePageBlobResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_container_result" prot="public">Azure::Storage::Blobs::Models::DeleteBlobContainerResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_immutability_policy_result" prot="public">Azure::Storage::Blobs::Models::DeleteBlobImmutabilityPolicyResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_result" prot="public">Azure::Storage::Blobs::Models::DeleteBlobResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_snapshots_option" prot="public">Azure::Storage::Blobs::Models::DeleteSnapshotsOption</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details" prot="public">Azure::Storage::Blobs::Models::DownloadBlobDetails</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_result" prot="public">Azure::Storage::Blobs::Models::DownloadBlobResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result" prot="public">Azure::Storage::Blobs::Models::DownloadBlobToResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" prot="public">Azure::Storage::Blobs::Models::EncryptionAlgorithmType</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication" prot="public">Azure::Storage::Blobs::Models::GeoReplication</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" prot="public">Azure::Storage::Blobs::Models::GeoReplicationStatus</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_get_block_list_result" prot="public">Azure::Storage::Blobs::Models::GetBlockListResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" prot="public">Azure::Storage::Blobs::Models::LeaseDurationType</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_state" prot="public">Azure::Storage::Blobs::Models::LeaseState</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" prot="public">Azure::Storage::Blobs::Models::LeaseStatus</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_metrics" prot="public">Azure::Storage::Blobs::Models::Metrics</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_policy" prot="public">Azure::Storage::Blobs::Models::ObjectReplicationPolicy</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule" prot="public">Azure::Storage::Blobs::Models::ObjectReplicationRule</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" prot="public">Azure::Storage::Blobs::Models::ObjectReplicationStatus</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" prot="public">Azure::Storage::Blobs::Models::PublicAccessType</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result" prot="public">Azure::Storage::Blobs::Models::QueryBlobResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" prot="public">Azure::Storage::Blobs::Models::RehydratePriority</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_release_lease_result" prot="public">Azure::Storage::Blobs::Models::ReleaseLeaseResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_renew_lease_result" prot="public">Azure::Storage::Blobs::Models::RenewLeaseResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_resize_page_blob_result" prot="public">Azure::Storage::Blobs::Models::ResizePageBlobResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy" prot="public">Azure::Storage::Blobs::Models::RetentionPolicy</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" prot="public">Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_seal_append_blob_result" prot="public">Azure::Storage::Blobs::Models::SealAppendBlobResult</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" prot="public">Azure::Storage::Blobs::Models::SequenceNumberAction</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_service_statistics" prot="public">Azure::Storage::Blobs::Models::ServiceStatistics</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_access_tier_result" prot="public">Azure::Storage::Blobs::Models::SetBlobAccessTierResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_access_policy_result" prot="public">Azure::Storage::Blobs::Models::SetBlobContainerAccessPolicyResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_container_metadata_result" prot="public">Azure::Storage::Blobs::Models::SetBlobContainerMetadataResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_expiry_result" prot="public">Azure::Storage::Blobs::Models::SetBlobExpiryResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result" prot="public">Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_immutability_policy_result" prot="public">Azure::Storage::Blobs::Models::SetBlobImmutabilityPolicyResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_legal_hold_result" prot="public">Azure::Storage::Blobs::Models::SetBlobLegalHoldResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result" prot="public">Azure::Storage::Blobs::Models::SetBlobMetadataResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_tags_result" prot="public">Azure::Storage::Blobs::Models::SetBlobTagsResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_service_properties_result" prot="public">Azure::Storage::Blobs::Models::SetServicePropertiesResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier" prot="public">Azure::Storage::Blobs::Models::SignedIdentifier</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" prot="public">Azure::Storage::Blobs::Models::SkuName</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_stage_block_from_uri_result" prot="public">Azure::Storage::Blobs::Models::StageBlockFromUriResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_stage_block_result" prot="public">Azure::Storage::Blobs::Models::StageBlockResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website" prot="public">Azure::Storage::Blobs::Models::StaticWebsite</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_submit_blob_batch_result" prot="public">Azure::Storage::Blobs::Models::SubmitBlobBatchResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item" prot="public">Azure::Storage::Blobs::Models::TaggedBlobItem</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_undelete_blob_result" prot="public">Azure::Storage::Blobs::Models::UndeleteBlobResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_update_sequence_number_result" prot="public">Azure::Storage::Blobs::Models::UpdateSequenceNumberResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result" prot="public">Azure::Storage::Blobs::Models::UploadBlockBlobFromUriResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_result" prot="public">Azure::Storage::Blobs::Models::UploadBlockBlobResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_pages_from_uri_result" prot="public">Azure::Storage::Blobs::Models::UploadPagesFromUriResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_pages_result" prot="public">Azure::Storage::Blobs::Models::UploadPagesResult</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key" prot="public">Azure::Storage::Blobs::Models::UserDelegationKey</innerclass>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="rest__client_8hpp_1ab9a2fe093459f9bc94b3e8e0085d1205" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>ListBlobContainersIncludeFlags</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ListBlobContainersIncludeFlags</qualifiedname>
+        <enumvalue id="rest__client_8hpp_1ab9a2fe093459f9bc94b3e8e0085d1205a6adf97f83acf6453d4a6a4b1070f3754" prot="public">
+          <name>None</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1ab9a2fe093459f9bc94b3e8e0085d1205ace21470ab49d1d1976bc3dc72438c183" prot="public">
+          <name>Metadata</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1ab9a2fe093459f9bc94b3e8e0085d1205a5fe6005bf6e415c950c011fb65f12b8f" prot="public">
+          <name>Deleted</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1ab9a2fe093459f9bc94b3e8e0085d1205aa45da96d0bf6575970f2d27af22be28a" prot="public">
+          <name>System</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Include this parameter to specify that the container&apos;s metadata be returned as part of the response body. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="494" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="495" bodyend="500"/>
+      </memberdef>
+      <memberdef kind="enum" id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>ListBlobsIncludeFlags</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ListBlobsIncludeFlags</qualifiedname>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8a6adf97f83acf6453d4a6a4b1070f3754" prot="public">
+          <name>None</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8a5fb63579fc981698f97d55bfecb213ea" prot="public">
+          <name>Copy</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8a5fe6005bf6e415c950c011fb65f12b8f" prot="public">
+          <name>Deleted</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8ace21470ab49d1d1976bc3dc72438c183" prot="public">
+          <name>Metadata</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8a9147e5e61a7b9260dec09f3a6eb3e5be" prot="public">
+          <name>Snapshots</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8aed6725592ea9cea89287f9cb11d04bb9" prot="public">
+          <name>UncomittedBlobs</name>
+          <initializer>= 16</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8a9e69db6d28a0ec32d28e2c9e327fd40a" prot="public">
+          <name>Versions</name>
+          <initializer>= 32</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8a189f63f277cd73395561651753563065" prot="public">
+          <name>Tags</name>
+          <initializer>= 64</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8a50c8e49baa81b59af97985e9962e022c" prot="public">
+          <name>ImmutabilityPolicy</name>
+          <initializer>= 128</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8ab0bb89fe9f7bb62165678012e052a13f" prot="public">
+          <name>LegalHold</name>
+          <initializer>= 256</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="rest__client_8hpp_1a4732f248c425f07ccdaf937136706ff8ab13fb09fb5b9e6579e28344526720183" prot="public">
+          <name>DeletedWithVersions</name>
+          <initializer>= 512</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Include this parameter to specify one or more datasets to include in the response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1514" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1515" bodyend="1527"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="blob__responses_8hpp_1ae07eb6bae87f537d8188104b1b0a8ad7" prot="public" static="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_result" kindref="compound">UploadBlockBlobResult</ref></type>
+        <definition>using Azure::Storage::Blobs::Models::UploadBlockBlobFromResult =  UploadBlockBlobResult</definition>
+        <argsstring></argsstring>
+        <name>UploadBlockBlobFromResult</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UploadBlockBlobFromResult</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="63" column="7" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="rest__client_8hpp_1a821936b74607a5d51f99028308942218" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobContainersIncludeFlags</type>
+        <definition>ListBlobContainersIncludeFlags Azure::Storage::Blobs::Models::operator|</definition>
+        <argsstring>(ListBlobContainersIncludeFlags lhs, ListBlobContainersIncludeFlags rhs)</argsstring>
+        <name>operator|</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator|</qualifiedname>
+        <param>
+          <type>ListBlobContainersIncludeFlags</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobContainersIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="501" column="43" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="501" bodyend="508"/>
+      </memberdef>
+      <memberdef kind="function" id="rest__client_8hpp_1aff70bb5b4f47a4d8496a15798567d16e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobContainersIncludeFlags &amp;</type>
+        <definition>ListBlobContainersIncludeFlags &amp; Azure::Storage::Blobs::Models::operator|=</definition>
+        <argsstring>(ListBlobContainersIncludeFlags &amp;lhs, ListBlobContainersIncludeFlags rhs)</argsstring>
+        <name>operator|=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator|=</qualifiedname>
+        <param>
+          <type>ListBlobContainersIncludeFlags &amp;</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobContainersIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="509" column="43" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="509" bodyend="515"/>
+      </memberdef>
+      <memberdef kind="function" id="rest__client_8hpp_1afd99b2bbbfadb5b433c104802f7ae79e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobContainersIncludeFlags</type>
+        <definition>ListBlobContainersIncludeFlags Azure::Storage::Blobs::Models::operator&amp;</definition>
+        <argsstring>(ListBlobContainersIncludeFlags lhs, ListBlobContainersIncludeFlags rhs)</argsstring>
+        <name>operator&amp;</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator&amp;</qualifiedname>
+        <param>
+          <type>ListBlobContainersIncludeFlags</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobContainersIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="516" column="43" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="516" bodyend="523"/>
+      </memberdef>
+      <memberdef kind="function" id="rest__client_8hpp_1a1d0c8eac3bd1550d4ef1c5fd12758303" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobContainersIncludeFlags &amp;</type>
+        <definition>ListBlobContainersIncludeFlags &amp; Azure::Storage::Blobs::Models::operator&amp;=</definition>
+        <argsstring>(ListBlobContainersIncludeFlags &amp;lhs, ListBlobContainersIncludeFlags rhs)</argsstring>
+        <name>operator&amp;=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator&amp;=</qualifiedname>
+        <param>
+          <type>ListBlobContainersIncludeFlags &amp;</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobContainersIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="524" column="43" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="524" bodyend="530"/>
+      </memberdef>
+      <memberdef kind="function" id="rest__client_8hpp_1ae7a5ef52516b0790b6afb42437c7a716" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobsIncludeFlags</type>
+        <definition>ListBlobsIncludeFlags Azure::Storage::Blobs::Models::operator|</definition>
+        <argsstring>(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)</argsstring>
+        <name>operator|</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator|</qualifiedname>
+        <param>
+          <type>ListBlobsIncludeFlags</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobsIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1528" column="34" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1528" bodyend="1532"/>
+      </memberdef>
+      <memberdef kind="function" id="rest__client_8hpp_1aca3bd291bad8404759f92769bb5bcb85" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobsIncludeFlags &amp;</type>
+        <definition>ListBlobsIncludeFlags &amp; Azure::Storage::Blobs::Models::operator|=</definition>
+        <argsstring>(ListBlobsIncludeFlags &amp;lhs, ListBlobsIncludeFlags rhs)</argsstring>
+        <name>operator|=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator|=</qualifiedname>
+        <param>
+          <type>ListBlobsIncludeFlags &amp;</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobsIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1533" column="34" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1533" bodyend="1537"/>
+      </memberdef>
+      <memberdef kind="function" id="rest__client_8hpp_1a50d65244443451d4e62455a17caaa63f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobsIncludeFlags</type>
+        <definition>ListBlobsIncludeFlags Azure::Storage::Blobs::Models::operator&amp;</definition>
+        <argsstring>(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)</argsstring>
+        <name>operator&amp;</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator&amp;</qualifiedname>
+        <param>
+          <type>ListBlobsIncludeFlags</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobsIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1538" column="34" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1538" bodyend="1542"/>
+      </memberdef>
+      <memberdef kind="function" id="rest__client_8hpp_1aeb6baf8ac138b5c4144fc7e6952d4573" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ListBlobsIncludeFlags &amp;</type>
+        <definition>ListBlobsIncludeFlags &amp; Azure::Storage::Blobs::Models::operator&amp;=</definition>
+        <argsstring>(ListBlobsIncludeFlags &amp;lhs, ListBlobsIncludeFlags rhs)</argsstring>
+        <name>operator&amp;=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::operator&amp;=</qualifiedname>
+        <param>
+          <type>ListBlobsIncludeFlags &amp;</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>ListBlobsIncludeFlags</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1543" column="34" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1543" bodyend="1547"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="30" column="5"/>
+  </compounddef>
+</doxygen>

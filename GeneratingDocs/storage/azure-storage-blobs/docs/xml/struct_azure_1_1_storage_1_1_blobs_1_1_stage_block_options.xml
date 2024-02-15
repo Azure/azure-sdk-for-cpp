@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::StageBlockOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options_1ae8010b428df06016f5364aa486dc33f6" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; ContentHash &gt;</type>
+        <definition>Azure::Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::StageBlockOptions::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::StageBlockOptions::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+<para>Hash of the blob content. This hash is used to verify the integrity of the blob during transport. When this header is specified, the storage service checks the hash that has arrived with the one that was sent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1032" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1032" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options_1a3a1019adde5e47ced661bdb02c335687" prot="public" static="no" mutable="no">
+        <type>LeaseAccessConditions</type>
+        <definition>LeaseAccessConditions Azure::Storage::Blobs::StageBlockOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::StageBlockOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1037" column="27" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1037" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a428813fece0e45f8094f81ce3920221c" kindref="member">Azure::Storage::Blobs::BlockBlobClient::StageBlock</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1025" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1026" bodyend="1038"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options_1a3a1019adde5e47ced661bdb02c335687" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StageBlockOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options_1ae8010b428df06016f5364aa486dc33f6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StageBlockOptions</scope><name>TransactionalContentHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

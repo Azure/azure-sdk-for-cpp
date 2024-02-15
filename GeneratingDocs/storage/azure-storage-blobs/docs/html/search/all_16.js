@@ -1,0 +1,10 @@
+var searchData=
+[
+  ['name_0',['Name',['../struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error.html#aab831348b1cec195c4a6a4818f64c14f',1,'Azure::Storage::Blobs::BlobQueryError::Name'],['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_item.html#ad0d31b0fe270474d20fb02a213ae5ad2',1,'Azure::Storage::Blobs::Models::BlobItem::Name'],['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item.html#a647dd3bebbbb2d57ed3d6d8ec3a8b9a3',1,'Azure::Storage::Blobs::Models::BlobContainerItem::Name'],['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field.html#a6b05b2bf54efd6e7d97c254c5ae4091c',1,'Azure::Storage::Blobs::Models::BlobQueryArrowField::Name'],['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_block.html#a21bbada98a6a3e8e318fac7a1a2abb6f',1,'Azure::Storage::Blobs::Models::BlobBlock::Name']]],
+  ['names_20for_20return_20types_1',['Define names for return types',['../md_swagger_2_r_e_a_d_m_e.html#define-names-for-return-types',1,'']]],
+  ['namespace_2',['Return Type namespace',['../md_swagger_2_r_e_a_d_m_e.html#return-type-namespace',1,'']]],
+  ['neverexpire_3',['NeverExpire',['../class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type.html#a3d94dcf17f931a2f075ec51c2a9af161',1,'Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType']]],
+  ['new_20features_4',['New Features',['../md__c_h_a_n_g_e_l_o_g.html#new-features',1,'New Features'],['../md__c_h_a_n_g_e_l_o_g.html#new-features-1',1,'New Features'],['../md__c_h_a_n_g_e_l_o_g.html#new-features-2',1,'New Features'],['../md__c_h_a_n_g_e_l_o_g.html#new-features-3',1,'New Features'],['../md__c_h_a_n_g_e_l_o_g.html#new-features-4',1,'New Features'],['../md__c_h_a_n_g_e_l_o_g.html#new-features-5',1,'New Features'],['../md__c_h_a_n_g_e_l_o_g.html#new-features-6',1,'New Features']]],
+  ['next_20steps_5',['Next steps',['../index.html#next-steps',1,'']]],
+  ['none_6',['None',['../class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type.html#a365803f217fd5f69c78ced4a5f2011fb',1,'Azure::Storage::Blobs::Models::PublicAccessType']]]
+];

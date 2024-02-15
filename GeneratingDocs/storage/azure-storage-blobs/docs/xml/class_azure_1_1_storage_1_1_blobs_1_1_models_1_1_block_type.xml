@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlockType</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1afd6bc88b8047b986ceb2863789dcb369" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref></type>
+        <definition>const BlockType Azure::Storage::Blobs::Models::BlockType::Committed</definition>
+        <argsstring></argsstring>
+        <name>Committed</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::Committed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref>: Committed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="78" column="57" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1af8a2fe2e9038daf6d7e4b58a36b7b3a0" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref></type>
+        <definition>const BlockType Azure::Storage::Blobs::Models::BlockType::Uncommitted</definition>
+        <argsstring></argsstring>
+        <name>Uncommitted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::Uncommitted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref>: Uncommitted </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="80" column="57" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1ae0e1d6f748211d11f709e4fb7c5b4239" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref></type>
+        <definition>const BlockType Azure::Storage::Blobs::Models::BlockType::Latest</definition>
+        <argsstring></argsstring>
+        <name>Latest</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::Latest</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref>: Latest </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="82" column="57" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1afc42bf4fd8b4072d18900eb4860674e9" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlockType::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="85" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="85" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1ab8b424c24f79afe4d0a1215c11367c17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlockType::BlockType</definition>
+        <argsstring>()=default</argsstring>
+        <name>BlockType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::BlockType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="68" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1ae3f24486fcd2730bca5ead21148d3925" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlockType::BlockType</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>BlockType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::BlockType</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="70" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1a8c4a4fd800ca17213d4f98983f54696f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlockType::operator==</definition>
+        <argsstring>(const BlockType &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="72" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="72" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1aa05593156732c274bab5a438c17d0eb4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlockType::operator!=</definition>
+        <argsstring>(const BlockType &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type" kindref="compound">BlockType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="74" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1a35d0e2754393a444480f149a85134406" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::BlockType::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockType::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="76" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Extensible enum used to specify how the service should look for a block ID. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlockType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Committed</edgelabel>
+          <edgelabel>Latest</edgelabel>
+          <edgelabel>Uncommitted</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="65" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="65" bodyend="86"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1ab8b424c24f79afe4d0a1215c11367c17" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>BlockType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1ae3f24486fcd2730bca5ead21148d3925" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>BlockType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1afd6bc88b8047b986ceb2863789dcb369" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>Committed</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1ae0e1d6f748211d11f709e4fb7c5b4239" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>Latest</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1afc42bf4fd8b4072d18900eb4860674e9" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1aa05593156732c274bab5a438c17d0eb4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1a8c4a4fd800ca17213d4f98983f54696f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1a35d0e2754393a444480f149a85134406" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_type_1af8a2fe2e9038daf6d7e4b58a36b7b3a0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockType</scope><name>Uncommitted</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

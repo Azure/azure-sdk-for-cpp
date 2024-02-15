@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::StaticWebsite</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1a2709ede6053604e6cbd482b74a49ed6a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::StaticWebsite::IsEnabled</definition>
+        <argsstring></argsstring>
+        <name>IsEnabled</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::StaticWebsite::IsEnabled</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether this account is hosting a static website. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="193" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1ae6a491b9b6846b13ffb6ed790e57bf1e" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::StaticWebsite::IndexDocument</definition>
+        <argsstring></argsstring>
+        <name>IndexDocument</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::StaticWebsite::IndexDocument</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The default name of the index page under each directory. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="197" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1aba6735d5fbb81c03b0ef38ada6969e41" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::StaticWebsite::ErrorDocument404Path</definition>
+        <argsstring></argsstring>
+        <name>ErrorDocument404Path</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::StaticWebsite::ErrorDocument404Path</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The absolute path of the custom 404 page. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="201" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1a4bbe9840318ec089608817226c471d95" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::StaticWebsite::DefaultIndexDocumentPath</definition>
+        <argsstring></argsstring>
+        <name>DefaultIndexDocumentPath</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::StaticWebsite::DefaultIndexDocumentPath</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Absolute path of the default index page. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="205" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="205" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The properties that enable an account to host a static website. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="188" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="189" bodyend="206"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1a4bbe9840318ec089608817226c471d95" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::StaticWebsite</scope><name>DefaultIndexDocumentPath</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1aba6735d5fbb81c03b0ef38ada6969e41" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::StaticWebsite</scope><name>ErrorDocument404Path</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1ae6a491b9b6846b13ffb6ed790e57bf1e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::StaticWebsite</scope><name>IndexDocument</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website_1a2709ede6053604e6cbd482b74a49ed6a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::StaticWebsite</scope><name>IsEnabled</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

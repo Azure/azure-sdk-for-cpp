@@ -1,0 +1,1584 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpValue</compoundname>
+    <includes refid="amqp__value_8hpp" local="no">amqp_value.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1adce7eda4b5b0bce7c2d82ccabbfc37ca" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; _detail::AmqpValueImpl &gt;</type>
+        <definition>std::unique_ptr&lt;_detail::AmqpValueImpl&gt; Azure::Core::Amqp::Models::AmqpValue::m_impl</definition>
+        <argsstring></argsstring>
+        <name>m_impl</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::m_impl</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="549" column="21" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="549" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <briefdescription>
+<para>Construct an AMQP null (empty) value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-null">AMQP Core Types section 1.6.1</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="112" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="318" bodyend="322"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acaed2eb0f33b3623fa71148cfeec4e84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::~AmqpValue</definition>
+        <argsstring>()</argsstring>
+        <name>~AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::~AmqpValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="113" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="233" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acf0815870a76125bd81390a864a7169d" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(AmqpValue const &amp;that) noexcept</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP Value from an existing AMQP Value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- source value to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="118" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="324" bodyend="328"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4336d64d7a1c1d93ca28e807e88fd283" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(AmqpValue &amp;&amp;that) noexcept</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &amp;&amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Move an AMQP Value to another existing AMQP Value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- source value to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="123" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="330" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ac4c079f91aa2a04defa240fc9f61a3d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &amp;</type>
+        <definition>AmqpValue &amp; Azure::Core::Amqp::Models::AmqpValue::operator=</definition>
+        <argsstring>(AmqpValue const &amp;that)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Copy an AMQP value to the current AMQP value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the other AMQP Value to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>&quot;this&quot;. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="130" column="15" bodyfile="src/models/amqp_value.cpp" bodystart="336" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a46b2aade48fb177542a53d0b99708d72" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &amp;</type>
+        <definition>AmqpValue &amp; Azure::Core::Amqp::Models::AmqpValue::operator=</definition>
+        <argsstring>(AmqpValue &amp;&amp;that) noexcept</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &amp;&amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Move an AMQP value to the current AMQP value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the other AMQP Value to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>&quot;this&quot;. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="136" column="15" bodyfile="src/models/amqp_value.cpp" bodystart="341" bodyend="345"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a23ba7a3ebc1a7c31c286b7e427a5e974" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(bool value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP boolean value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-boolean">AMQP Core Types section 1.6.2</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="145" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="235" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a8dfa7ed5fb4f3fc0ad8da0ee921abc5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::uint8_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::uint8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP ubyte value, an 8 bit unsigned integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ubyte">AMQP Core Types section 1.6.3</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="155" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="240" bodyend="244"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4fb7b712f7d427645d974c6d148b4fbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::uint16_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::uint16_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP ushort value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ushort">AMQP Core Types section 1.6.4</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="165" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="255" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a072cb565fbf458c307bd5d74f2fdd015" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::uint32_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::uint32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP uint value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ushort">AMQP Core Types section 1.6.5</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="175" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="265" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ab4e4fbbebdbfe184606ddabfd5a8eefd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::uint64_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::uint64_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP ulong value, a 64bit unsigned integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ulong">AMQP Core Types section 1.6.6</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="185" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="275" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a24d99ca75eaf34fb741307476db8f53c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::int8_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::int8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP byte value, an 8 bit signed integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-byte">AMQP Core Types section 1.6.7</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="195" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="250" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a73abdaff79cd9148a5014089f70af4e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(char value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>char</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP byte value, an 8 bit signed integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-byte">AMQP Core Types section 1.6.7</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="remark"><para>This field is a convenience overload to allow clients to declare an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> with a C++ character. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="208" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="245" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a10c33d9f4e36e056a1741efce2a8cbec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::int16_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::int16_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP short value, a 16 bit signed integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-short">AMQP Core Types section 1.6.8</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="218" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="260" bodyend="264"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a24ed4eff496439dc1e02a263d1230771" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::int32_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::int32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP int value, a 32 bit signed integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-int">AMQP Core Types section 1.6.9</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="228" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="270" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a182987bc8d98cd24843ca8131ab6b1f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::int64_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::int64_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP long value, a 64 bit signed integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-long">AMQP Core Types section 1.6.10</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="238" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="280" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a0fd251533fedd2795c72ba05ca4403cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(float value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP float value, an IEEE 754-2008 value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-float">AMQP Core Types section 1.6.11</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="248" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="285" bodyend="289"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a9a5d5f8a8278492dae4520f1c52cffa6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(double value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP double value, an IEEE 754-2008 value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-double">AMQP Core Types section 1.6.12</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="258" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="290" bodyend="294"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a94fa0ade1691564ff336d2691a791b6a" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::string const &amp;value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP string value, a UTF-8 encoded sequence of characters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-string">AMQP Core Types section 1.6.20</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="268" column="14" bodyfile="src/models/amqp_value.cpp" bodystart="307" bodyend="311"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aceeb8b53de6fa924ae0509c088aab383" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(const char *value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP string value, a UTF-8 encoded sequence of characters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-string">AMQP Core Types section 1.6.20</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="remark"><para>This is a convenience constructor to allow callers to specify: <programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref><sp/>myValue(</highlight><highlight class="stringliteral">&quot;This<sp/>is<sp/>some<sp/>text&quot;</highlight><highlight class="normal">);</highlight></codeline>
+</programlisting> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="283" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="312" bodyend="316"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a00d33b0e0354be92a98718abf54e475d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(char32_t value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>char32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP Char value, a UTF-32BE encoded Unicode character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-char">AMQP Core Types section 1.6.16</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>UTF-32 encoded unicode value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="293" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="295" bodyend="299"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1afbacdb9b13f4017a9a70c6093cf09e09" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(Azure::Core::Uuid const &amp;value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>Azure::Core::Uuid const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP Uuid value, an RFC-4122 Universally Unique Identifier. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>TODO: Decimal32, Decimal64, and Decimal128. </para>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-uuid">AMQP Core Types section 1.6.18</ulink>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>UTF-32 encoded unicode value to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="307" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="300" bodyend="305"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1af306ad4dec39d773feb5e1091e5fe296" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpValue::operator==</definition>
+        <argsstring>(AmqpValue const &amp;that) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator==</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Equality comparison operator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Value to compare to this value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the that is equal to this. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="313" column="10" bodyfile="src/models/amqp_value.cpp" bodystart="499" bodyend="534"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a362beb6833c1f6fdb3fe3d662fe85985" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpValue::operator!=</definition>
+        <argsstring>(AmqpValue const &amp;that) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator!=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Equality comparison operator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Value to compare to this value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the that is equal to this. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="319" column="10" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="319" bodyend="319"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae66032a774e411c626d17b845f312a83" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpValue::operator&lt;</definition>
+        <argsstring>(AmqpValue const &amp;that) const</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator&lt;</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Less Than comparison operator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Value to compare to this value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the that is less than this.</para>
+</simplesect>
+<simplesect kind="remark"><para>When comparing AMQP values, if the two values are not the same type, this returns if the numeric value of this.GetType() is less than that.GetType(). If the two values are of the same type, this returns if the value of this is less than the value of that. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="329" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="536" bodyend="596"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a28f919886a954983daecddbf09920501" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AmqpValueType</type>
+        <definition>AmqpValueType Azure::Core::Amqp::Models::AmqpValue::GetType</definition>
+        <argsstring>() const</argsstring>
+        <name>GetType</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::GetType</qualifiedname>
+        <briefdescription>
+<para>Returns the underlying type of the AMQP value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>AmqpValueType of the AMQP value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="335" column="19" bodyfile="src/models/amqp_value.cpp" bodystart="694" bodyend="702"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abdcd809a3402b4c3e2afd5a4314abba5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpValue::IsNull</definition>
+        <argsstring>() const</argsstring>
+        <name>IsNull</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::IsNull</qualifiedname>
+        <briefdescription>
+<para>Returns &apos;true&apos; if the AMQP value is &quot;null&quot;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> is null. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="341" column="10" bodyfile="src/models/amqp_value.cpp" bodystart="1212" bodyend="1215"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4d81c77afd97a9b5f10349d908e1138a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator bool</definition>
+        <argsstring>() const</argsstring>
+        <name>operator bool</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator bool</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a boolean. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>bool true if the AMQP value is true.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a boolean. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="349" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="347" bodyend="355"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4cbb701654ce1ed415fd713ef7629fcf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::uint8_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::uint8_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::uint8_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an unsigned 8 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an unsigned 8 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not an unsigned 8 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="357" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="357" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a87f74b63c90bd531edf93c5ba4e523f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::int8_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::int8_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::int8_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a signed 8 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an 8 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a signed 8 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="365" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="367" bodyend="375"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a108cdc015e596816c4ba262dcff84db4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator char</definition>
+        <argsstring>() const</argsstring>
+        <name>operator char</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator char</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a signed 8 bit integer. Convenience function to allow an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> to be constructed from a &apos;char&apos; value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a char.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a signed 8 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="374" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="377" bodyend="385"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abd871f3870ca739fa0efcb364d44c674" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::uint16_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::uint16_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::uint16_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an unsigned 16 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an unsigned 16 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not an unsigned 16 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="382" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="387" bodyend="395"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a85e0377151aece95da79520945a9bd38" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::int16_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::int16_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::int16_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a signed 16 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a signed 16 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a signed 16 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="390" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="397" bodyend="405"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a6f3f8e2e4a5c0cd58f838ece56fc69d8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::uint32_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::uint32_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::uint32_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an unsigned 32 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an unsigned 32 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not an unsigned 32 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="398" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="407" bodyend="415"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a8ad83cd2a9f00a146df6bcc725b0b980" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::int32_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::int32_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::int32_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a signed 32 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a signed 32 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a signed 32 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="406" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="417" bodyend="425"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aa2d35284186251d49e3cbc18b27c8a0a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::uint64_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::uint64_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::uint64_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an unsigned 64 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an unsigned 64 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not an unsigned 64 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="414" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="427" bodyend="435"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a7ef2c017d31270faca7130849055b09e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::int64_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::int64_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::int64_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a signed 64 bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a signed 64 bit integer.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a signed 64 bit integer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="422" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="437" bodyend="445"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a77a34c546e920af196bbd9b8ff78fde4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator float</definition>
+        <argsstring>() const</argsstring>
+        <name>operator float</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator float</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a 32 bit IEEE &apos;float&apos; value.. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a float.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a float. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="430" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="447" bodyend="455"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aaa7954d678b0c69d74c83775f5695d5c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator double</definition>
+        <argsstring>() const</argsstring>
+        <name>operator double</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator double</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a 64 bit IEEE &apos;double&apos; value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a double.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a double. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="438" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="457" bodyend="465"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a906e332a37787ed20a07c09c8bc8b840" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator char32_t</definition>
+        <argsstring>() const</argsstring>
+        <name>operator char32_t</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::operator char32_t</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a 32bit UCS32 value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a 32 bit character.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a 32 bit character. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="446" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="467" bodyend="475"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a920acd0808d7f0e92c51b906129c3ec7" prot="public" static="no" const="yes" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator std::string</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::string</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::string</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as a string.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="454" column="14" bodyfile="src/models/amqp_value.cpp" bodystart="477" bodyend="485"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acfe6eade9dcb9ff440e420d59dbcbfe0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::operator Azure::Core::Uuid</definition>
+        <argsstring>() const</argsstring>
+        <name>operator Azure::Core::Uuid</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::Uuid</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to a UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an Azure::Core::Uuid value.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="462" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="487" bodyend="497"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aa98eb64c410f7352d17577e2d3f2c79d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref></type>
+        <definition>AmqpList Azure::Core::Amqp::Models::AmqpValue::AsList</definition>
+        <argsstring>() const</argsstring>
+        <name>AsList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsList</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a list. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="470" column="14" bodyfile="src/models/amqp_value.cpp" bodystart="605" bodyend="605"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a72414b2e7232230e7b4f7695261286a7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref></type>
+        <definition>AmqpMap Azure::Core::Amqp::Models::AmqpValue::AsMap</definition>
+        <argsstring>() const</argsstring>
+        <name>AsMap</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsMap</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a map. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="478" column="13" bodyfile="src/models/amqp_value.cpp" bodystart="598" bodyend="598"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abec632157f1cf77a93e84374bfe0a464" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref></type>
+        <definition>AmqpArray Azure::Core::Amqp::Models::AmqpValue::AsArray</definition>
+        <argsstring>() const</argsstring>
+        <name>AsArray</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsArray</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not an array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="486" column="15" bodyfile="src/models/amqp_value.cpp" bodystart="600" bodyend="600"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a7ef61f75f0949c733c01dcf758039e91" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref></type>
+        <definition>AmqpBinaryData Azure::Core::Amqp::Models::AmqpValue::AsBinary</definition>
+        <argsstring>() const</argsstring>
+        <name>AsBinary</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsBinary</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a binary data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="494" column="20" bodyfile="src/models/amqp_value.cpp" bodystart="606" bodyend="606"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a611b5f602609c479436a13c20db5d31f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref></type>
+        <definition>AmqpTimestamp Azure::Core::Amqp::Models::AmqpValue::AsTimestamp</definition>
+        <argsstring>() const</argsstring>
+        <name>AsTimestamp</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsTimestamp</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a timestamp. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="502" column="19" bodyfile="src/models/amqp_value.cpp" bodystart="608" bodyend="608"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a27e4816eec8d78b5f04722659ff6b4be" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref></type>
+        <definition>AmqpSymbol Azure::Core::Amqp::Models::AmqpValue::AsSymbol</definition>
+        <argsstring>() const</argsstring>
+        <name>AsSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsSymbol</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a symbol. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="510" column="16" bodyfile="src/models/amqp_value.cpp" bodystart="602" bodyend="602"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae2c96cbca071a1b208664e1898c3d6bf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref></type>
+        <definition>AmqpComposite Azure::Core::Amqp::Models::AmqpValue::AsComposite</definition>
+        <argsstring>() const</argsstring>
+        <name>AsComposite</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsComposite</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an AMQP Composite value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An AMQP Composite value is functionally a list with a defined structure. The structure definition can be found via the GetDescriptor method.</para>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a Composite value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="521" column="19" bodyfile="src/models/amqp_value.cpp" bodystart="604" bodyend="604"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abd299756a984fa8f324f5d6ff8e15d99" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref></type>
+        <definition>AmqpDescribed Azure::Core::Amqp::Models::AmqpValue::AsDescribed</definition>
+        <argsstring>() const</argsstring>
+        <name>AsDescribed</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AsDescribed</qualifiedname>
+        <briefdescription>
+<para>convert the current AMQP Value to an AMQP Described value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An AMQP Described value is a tuple consisting of a Descriptor and Value.</para>
+<para><simplesect kind="return"><para>the value as an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the underlying AMQP value is not a Described value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="531" column="19" bodyfile="src/models/amqp_value.cpp" bodystart="607" bodyend="607"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a898b83eab2424637b0963dfe67b61c79" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4cbb701654ce1ed415fd713ef7629fcf" kindref="member">uint8_t</ref> &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Amqp::Models::AmqpValue::Serialize</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>Serialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::Serialize</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Serialize this AMQP value as an array of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="534" column="24" bodyfile="src/models/amqp_value.cpp" bodystart="717" bodyend="720"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acb8efae090a763ae07e8b24fe56e46ef" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Azure::Core::Amqp::Models::AmqpValue::GetSerializedSize</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>GetSerializedSize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::GetSerializedSize</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Returns the size (in bytes) of the serialized form of this value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="537" column="19" bodyfile="src/models/amqp_value.cpp" bodystart="721" bodyend="729"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a31c5e53b5a318b01986829076cf144c5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref></type>
+        <definition>AmqpValue Azure::Core::Amqp::Models::AmqpValue::Deserialize</definition>
+        <argsstring>(uint8_t const *data, size_t size)</argsstring>
+        <name>Deserialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::Deserialize</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4cbb701654ce1ed415fd713ef7629fcf" kindref="member">uint8_t</ref> const *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Deserialize an AMQP value from an array of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The serialized form of the AMQP value to deserialize. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the data parameter to deserialize. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="544" column="22" bodyfile="src/models/amqp_value.cpp" bodystart="712" bodyend="715"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a62b1065657fea5dcd16941d5c70d4d2a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</definition>
+        <argsstring>(std::unique_ptr&lt; Azure::Core::Amqp::Models::_detail::AmqpValueImpl &gt; &amp;&amp;value)</argsstring>
+        <name>AmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpValue::AmqpValue</qualifiedname>
+        <param>
+          <type>std::unique_ptr&lt; Azure::Core::Amqp::Models::_detail::AmqpValueImpl &gt; &amp;&amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct an AMQP value from the internal implementation of an AMQP value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="548" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="334" bodyend="334"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>An AMQP value.</para>
+<para>An AMQP value is a polymorphic type that can be used to represent any AMQP type.</para>
+<para><simplesect kind="see"><para><ulink url="https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html">https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html</ulink> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="104" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="104" bodyend="551"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acf0815870a76125bd81390a864a7169d" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4336d64d7a1c1d93ca28e807e88fd283" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a23ba7a3ebc1a7c31c286b7e427a5e974" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a8dfa7ed5fb4f3fc0ad8da0ee921abc5a" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4fb7b712f7d427645d974c6d148b4fbc" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a072cb565fbf458c307bd5d74f2fdd015" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ab4e4fbbebdbfe184606ddabfd5a8eefd" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a24d99ca75eaf34fb741307476db8f53c" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a73abdaff79cd9148a5014089f70af4e2" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a10c33d9f4e36e056a1741efce2a8cbec" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a24ed4eff496439dc1e02a263d1230771" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a182987bc8d98cd24843ca8131ab6b1f0" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a0fd251533fedd2795c72ba05ca4403cc" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a9a5d5f8a8278492dae4520f1c52cffa6" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a94fa0ade1691564ff336d2691a791b6a" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aceeb8b53de6fa924ae0509c088aab383" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a00d33b0e0354be92a98718abf54e475d" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1afbacdb9b13f4017a9a70c6093cf09e09" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a62b1065657fea5dcd16941d5c70d4d2a" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abec632157f1cf77a93e84374bfe0a464" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a7ef61f75f0949c733c01dcf758039e91" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsBinary</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae2c96cbca071a1b208664e1898c3d6bf" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsComposite</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abd299756a984fa8f324f5d6ff8e15d99" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsDescribed</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aa98eb64c410f7352d17577e2d3f2c79d" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsList</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a72414b2e7232230e7b4f7695261286a7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsMap</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a27e4816eec8d78b5f04722659ff6b4be" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a611b5f602609c479436a13c20db5d31f" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>AsTimestamp</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a31c5e53b5a318b01986829076cf144c5" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>Deserialize</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acb8efae090a763ae07e8b24fe56e46ef" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>GetSerializedSize</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a28f919886a954983daecddbf09920501" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>GetType</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abdcd809a3402b4c3e2afd5a4314abba5" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>IsNull</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1adce7eda4b5b0bce7c2d82ccabbfc37ca" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>m_impl</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acfe6eade9dcb9ff440e420d59dbcbfe0" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator Azure::Core::Uuid</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4d81c77afd97a9b5f10349d908e1138a" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator bool</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a108cdc015e596816c4ba262dcff84db4" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator char</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a906e332a37787ed20a07c09c8bc8b840" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator char32_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aaa7954d678b0c69d74c83775f5695d5c" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator double</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a77a34c546e920af196bbd9b8ff78fde4" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator float</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a85e0377151aece95da79520945a9bd38" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::int16_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a8ad83cd2a9f00a146df6bcc725b0b980" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::int32_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a7ef2c017d31270faca7130849055b09e" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::int64_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a87f74b63c90bd531edf93c5ba4e523f5" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::int8_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a920acd0808d7f0e92c51b906129c3ec7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::string</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abd871f3870ca739fa0efcb364d44c674" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::uint16_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a6f3f8e2e4a5c0cd58f838ece56fc69d8" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::uint32_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aa2d35284186251d49e3cbc18b27c8a0a" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::uint64_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4cbb701654ce1ed415fd713ef7629fcf" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator std::uint8_t</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a362beb6833c1f6fdb3fe3d662fe85985" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae66032a774e411c626d17b845f312a83" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator&lt;</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ac4c079f91aa2a04defa240fc9f61a3d1" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a46b2aade48fb177542a53d0b99708d72" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1af306ad4dec39d773feb5e1091e5fe296" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a898b83eab2424637b0963dfe67b61c79" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>Serialize</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acaed2eb0f33b3623fa71148cfeec4e84" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpValue</scope><name>~AmqpValue</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

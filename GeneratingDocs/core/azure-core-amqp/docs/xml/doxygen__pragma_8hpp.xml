@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="doxygen__pragma_8hpp" kind="file" language="C++">
+    <compoundname>doxygen_pragma.hpp</compoundname>
+    <includedby refid="amqp__value_8cpp" local="yes">src/models/amqp_value.cpp</includedby>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="doxygen__pragma_8hpp_1a5329e7f974103a811a128f8f13489d82" prot="public" static="no">
+        <name>BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>clang diagnostic push and pop macros</para>
+<para>These macros are used to suppress warnings from clang and gcc compilers.</para>
+<para>Some versions of clang don&apos;t understand the doxygen commands used to suppress documentation warnings.</para>
+<para>To work around this, add BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE/END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE around the lines which generate an error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/internal/doxygen_pragma.hpp" line="25" column="10" bodyfile="inc/azure/core/amqp/internal/doxygen_pragma.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="doxygen__pragma_8hpp_1afdb103150fc10dc839c965b5d6006e74" prot="public" static="no">
+        <name>END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/internal/doxygen_pragma.hpp" line="26" column="9" bodyfile="inc/azure/core/amqp/internal/doxygen_pragma.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(__GNUC__)<sp/>&amp;&amp;<sp/>(__GNUC__<sp/>&gt;<sp/>4<sp/>||<sp/>(__GNUC__<sp/>==<sp/>4<sp/>&amp;&amp;<sp/>__GNUC_MINOR__<sp/>&gt;=<sp/>6))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE<sp/>_Pragma(&quot;GCC<sp/>diagnostic<sp/>push&quot;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE<sp/>_Pragma(&quot;GCC<sp/>diagnostic<sp/>pop&quot;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined(__clang__)<sp/></highlight><highlight class="comment">//<sp/>!__clang__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE<sp/>_Pragma(&quot;clang<sp/>diagnostic<sp/>push&quot;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">_Pragma(</highlight><highlight class="stringliteral">&quot;clang<sp/>diagnostic<sp/>ignored<sp/>\&quot;-Wdocumentation-unknown-command\&quot;&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE<sp/>_Pragma(&quot;clang<sp/>diagnostic<sp/>pop&quot;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>_MSC_VER</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/amqp/internal/doxygen_pragma.hpp"/>
+  </compounddef>
+</doxygen>

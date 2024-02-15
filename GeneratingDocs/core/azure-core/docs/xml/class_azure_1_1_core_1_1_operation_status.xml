@@ -1,0 +1,303 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_operation_status" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::OperationStatus</compoundname>
+    <includes refid="operation__status_8hpp" local="no">operation_status.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_status_1a526841f14133451599f16dcd68b37fa2" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::OperationStatus::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Core::OperationStatus::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="24" column="17" bodyfile="inc/azure/core/operation_status.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_status_1a4471070aefea912692f1190405550e64" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT const <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref></type>
+        <definition>const OperationStatus Azure::Core::OperationStatus::NotStarted</definition>
+        <argsstring></argsstring>
+        <name>NotStarted</name>
+        <qualifiedname>Azure::Core::OperationStatus::NotStarted</qualifiedname>
+        <briefdescription>
+<para>The <ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Azure::Core::Operation</ref> is Not Started. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="80" column="52" bodyfile="inc/azure/core/operation_status.hpp" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_status_1aa5ca5ff7d5ef74f8752ef359279d4907" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT const <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref></type>
+        <definition>const OperationStatus Azure::Core::OperationStatus::Running</definition>
+        <argsstring></argsstring>
+        <name>Running</name>
+        <qualifiedname>Azure::Core::OperationStatus::Running</qualifiedname>
+        <initializer>{&quot;Running&quot;}</initializer>
+        <briefdescription>
+<para>The <ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Azure::Core::Operation</ref> is Running. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="85" column="52" bodyfile="inc/azure/core/operation_status.hpp" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_status_1ada164a4a4d1337d9bf4ff5d508cbcd79" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT const <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref></type>
+        <definition>const OperationStatus Azure::Core::OperationStatus::Succeeded</definition>
+        <argsstring></argsstring>
+        <name>Succeeded</name>
+        <qualifiedname>Azure::Core::OperationStatus::Succeeded</qualifiedname>
+        <initializer>{&quot;Succeeded&quot;}</initializer>
+        <briefdescription>
+<para>The <ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Azure::Core::Operation</ref> Succeeded. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="90" column="52" bodyfile="inc/azure/core/operation_status.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_status_1a3e0ef8283acb83a152df895053913aed" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT const <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref></type>
+        <definition>const OperationStatus Azure::Core::OperationStatus::Cancelled</definition>
+        <argsstring></argsstring>
+        <name>Cancelled</name>
+        <qualifiedname>Azure::Core::OperationStatus::Cancelled</qualifiedname>
+        <initializer>{&quot;Cancelled&quot;}</initializer>
+        <briefdescription>
+<para>The <ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Azure::Core::Operation</ref> was Cancelled. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="95" column="52" bodyfile="inc/azure/core/operation_status.hpp" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_status_1a2f7201bae9065bd77dd1461bce481542" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT const <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref></type>
+        <definition>const OperationStatus Azure::Core::OperationStatus::Failed</definition>
+        <argsstring></argsstring>
+        <name>Failed</name>
+        <qualifiedname>Azure::Core::OperationStatus::Failed</qualifiedname>
+        <initializer>{&quot;Failed&quot;}</initializer>
+        <briefdescription>
+<para>The <ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Azure::Core::Operation</ref> Failed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="100" column="52" bodyfile="inc/azure/core/operation_status.hpp" bodystart="100" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_status_1a634d16311a526d2a4c220d8fde1d0f09" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::OperationStatus::OperationStatus</definition>
+        <argsstring>(const std::string &amp;value)</argsstring>
+        <name>OperationStatus</name>
+        <qualifiedname>Azure::Core::OperationStatus::OperationStatus</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an <computeroutput>OperationStatus</computeroutput> with <computeroutput>value</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to initialize with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="32" column="14" bodyfile="inc/azure/core/operation_status.hpp" bodystart="32" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_status_1a6b57cbf7976f72aaf7c43511a4986465" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::OperationStatus::OperationStatus</definition>
+        <argsstring>(std::string &amp;&amp;value)</argsstring>
+        <name>OperationStatus</name>
+        <qualifiedname>Azure::Core::OperationStatus::OperationStatus</qualifiedname>
+        <param>
+          <type>std::string &amp;&amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an <computeroutput>OperationStatus</computeroutput> with <computeroutput>value</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to initialize with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="39" column="14" bodyfile="inc/azure/core/operation_status.hpp" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_status_1a9c2d67564dd194914e394b3b79b7f6c1" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::OperationStatus::OperationStatus</definition>
+        <argsstring>(const char *value)</argsstring>
+        <name>OperationStatus</name>
+        <qualifiedname>Azure::Core::OperationStatus::OperationStatus</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an <computeroutput>OperationStatus</computeroutput> with <computeroutput>value</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to initialize with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="46" column="14" bodyfile="inc/azure/core/operation_status.hpp" bodystart="46" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_status_1a8bc56741a8c391ea8b88755f94bf83cf" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::OperationStatus::operator==</definition>
+        <argsstring>(const OperationStatus &amp;other) const noexcept</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::OperationStatus::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Compares two <computeroutput>OperationStatus</computeroutput> objects for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An <computeroutput>OperationStatus</computeroutput> to compare with.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the states have the same string representation; otherwise,<computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="55" column="10" bodyfile="inc/azure/core/operation_status.hpp" bodystart="55" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_status_1aea5ada253ccc20e8f9fd43056a3bf92f" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::OperationStatus::operator!=</definition>
+        <argsstring>(const OperationStatus &amp;other) const noexcept</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Core::OperationStatus::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Compares two <computeroutput>OperationStatus</computeroutput> objects for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A <computeroutput>OperationStatus</computeroutput> to compare with.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>false</computeroutput> if the states have the same string representation; otherwise, <computeroutput>true</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="68" column="10" bodyfile="inc/azure/core/operation_status.hpp" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_status_1a070f8e27cd5265c2ff554db980b91cbc" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Core::OperationStatus::Get</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>Get</name>
+        <qualifiedname>Azure::Core::OperationStatus::Get</qualifiedname>
+        <briefdescription>
+<para>Gets the <computeroutput>std::string</computeroutput> representation of the operation status. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation_status.hpp" line="74" column="23" bodyfile="inc/azure/core/operation_status.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Long-running operation states. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::OperationStatus</label>
+        <link refid="class_azure_1_1_core_1_1_operation_status"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Cancelled</edgelabel>
+          <edgelabel>Failed</edgelabel>
+          <edgelabel>NotStarted</edgelabel>
+          <edgelabel>Running</edgelabel>
+          <edgelabel>Succeeded</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/operation_status.hpp" line="23" column="3" bodyfile="inc/azure/core/operation_status.hpp" bodystart="23" bodyend="101"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a3e0ef8283acb83a152df895053913aed" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>Cancelled</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a2f7201bae9065bd77dd1461bce481542" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>Failed</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a070f8e27cd5265c2ff554db980b91cbc" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>Get</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a526841f14133451599f16dcd68b37fa2" prot="private" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a4471070aefea912692f1190405550e64" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>NotStarted</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a634d16311a526d2a4c220d8fde1d0f09" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>OperationStatus</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a6b57cbf7976f72aaf7c43511a4986465" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>OperationStatus</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a9c2d67564dd194914e394b3b79b7f6c1" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>OperationStatus</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1aea5ada253ccc20e8f9fd43056a3bf92f" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1a8bc56741a8c391ea8b88755f94bf83cf" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1aa5ca5ff7d5ef74f8752ef359279d4907" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>Running</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_status_1ada164a4a4d1337d9bf4ff5d508cbcd79" prot="public" virt="non-virtual"><scope>Azure::Core::OperationStatus</scope><name>Succeeded</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

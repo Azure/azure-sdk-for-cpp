@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::ArchiveStatus</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1ad528334208fe269831a00a0f5296decc" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref></type>
+        <definition>const ArchiveStatus Azure::Storage::Blobs::Models::ArchiveStatus::RehydratePendingToHot</definition>
+        <argsstring></argsstring>
+        <name>RehydratePendingToHot</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::RehydratePendingToHot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref>: RehydratePendingToHot </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1106" column="61" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a31c243b822dad0827b2fb4dbac1ce17a" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref></type>
+        <definition>const ArchiveStatus Azure::Storage::Blobs::Models::ArchiveStatus::RehydratePendingToCool</definition>
+        <argsstring></argsstring>
+        <name>RehydratePendingToCool</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::RehydratePendingToCool</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref>: RehydratePendingToCool </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1108" column="61" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a9f77d76499ed31939c66b5a4f2a07b22" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref></type>
+        <definition>const ArchiveStatus Azure::Storage::Blobs::Models::ArchiveStatus::RehydratePendingToCold</definition>
+        <argsstring></argsstring>
+        <name>RehydratePendingToCold</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::RehydratePendingToCold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref>: RehydratePendingToCold </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1110" column="61" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1110" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a60b94ec81c839d70e0ba8f7f56f08d5d" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::ArchiveStatus::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1113" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1113" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a10220debf95d4a47994bdb7673b9dffe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::ArchiveStatus::ArchiveStatus</definition>
+        <argsstring>()=default</argsstring>
+        <name>ArchiveStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::ArchiveStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1096" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a1ea2796b257a0ebff467330d44100ba3" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::ArchiveStatus::ArchiveStatus</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>ArchiveStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::ArchiveStatus</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1098" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1098" bodyend="1098"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a639342e3ad4963f9c38cf0515359b3ef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::ArchiveStatus::operator==</definition>
+        <argsstring>(const ArchiveStatus &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1100" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1100" bodyend="1100"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a39381a2e906598ef4ffbf10ac7233186" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::ArchiveStatus::operator!=</definition>
+        <argsstring>(const ArchiveStatus &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status" kindref="compound">ArchiveStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1102" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1102" bodyend="1102"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1afa3333f9c2f74a2aac333e73d427da1f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::ArchiveStatus::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ArchiveStatus::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1104" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1104" bodyend="1104"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>For blob storage LRS accounts, valid values are rehydrate-pending-to-hot/rehydrate-pending-to-cool. If the blob is being rehydrated and is not complete then this value indicates that rehydrate is pending and also tells the destination tier. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::ArchiveStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>RehydratePendingToCold</edgelabel>
+          <edgelabel>RehydratePendingToCool</edgelabel>
+          <edgelabel>RehydratePendingToHot</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1093" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1093" bodyend="1114"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a10220debf95d4a47994bdb7673b9dffe" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>ArchiveStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a1ea2796b257a0ebff467330d44100ba3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>ArchiveStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a60b94ec81c839d70e0ba8f7f56f08d5d" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a39381a2e906598ef4ffbf10ac7233186" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a639342e3ad4963f9c38cf0515359b3ef" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a9f77d76499ed31939c66b5a4f2a07b22" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>RehydratePendingToCold</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1a31c243b822dad0827b2fb4dbac1ce17a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>RehydratePendingToCool</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1ad528334208fe269831a00a0f5296decc" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>RehydratePendingToHot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_archive_status_1afa3333f9c2f74a2aac333e73d427da1f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ArchiveStatus</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

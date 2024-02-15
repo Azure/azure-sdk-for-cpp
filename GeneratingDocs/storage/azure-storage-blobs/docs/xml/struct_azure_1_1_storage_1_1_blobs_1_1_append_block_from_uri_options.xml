@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::AppendBlockFromUriOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1a0b61b6b2d894a733cf06944b7bf0cb34" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; Core::Http::HttpRange &gt;</type>
+        <definition>Azure::Nullable&lt;Core::Http::HttpRange&gt; Azure::Storage::Blobs::AppendBlockFromUriOptions::SourceRange</definition>
+        <argsstring></argsstring>
+        <name>SourceRange</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlockFromUriOptions::SourceRange</qualifiedname>
+        <briefdescription>
+<para>Uploads only the bytes of the source blob in the specified range. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1348" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1348" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1a042874f4b1879fa905c5fa583f167a36" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; ContentHash &gt;</type>
+        <definition>Azure::Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::AppendBlockFromUriOptions::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlockFromUriOptions::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+<para>Hash of the blob content. This hash is used to verify the integrity of the blob during transport. When this header is specified, the storage service checks the hash that has arrived with the one that was sent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1355" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1ade9367b1272f5063bb841507cc44e122" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_blob_access_conditions" kindref="compound">AppendBlobAccessConditions</ref></type>
+        <definition>AppendBlobAccessConditions Azure::Storage::Blobs::AppendBlockFromUriOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlockFromUriOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1360" column="32" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1360" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1a53156b38d57c16653f786c87b12c2761" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::AppendBlockFromUriOptions::SourceAuthorization</definition>
+        <argsstring></argsstring>
+        <name>SourceAuthorization</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlockFromUriOptions::SourceAuthorization</qualifiedname>
+        <briefdescription>
+<para>Optional. Source authorization used to access the source file. The format is: &lt;scheme&gt; &lt;signature&gt; Only Bearer type is supported. Credentials should be a valid OAuth access token to copy source. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1368" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1368" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a992f3d7948d8e301778f0a3a08aa6347" kindref="member">Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="4">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::AppendBlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::AppendBlockFromUriOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="6">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1343" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1344" bodyend="1369"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1ade9367b1272f5063bb841507cc44e122" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlockFromUriOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1a53156b38d57c16653f786c87b12c2761" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlockFromUriOptions</scope><name>SourceAuthorization</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1a0b61b6b2d894a733cf06944b7bf0cb34" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlockFromUriOptions</scope><name>SourceRange</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options_1a042874f4b1879fa905c5fa583f167a36" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlockFromUriOptions</scope><name>TransactionalContentHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

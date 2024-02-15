@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobAudience</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::_internal::ExtendableEnumeration&lt; BlobAudience &gt;</basecompoundref>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience_1a56d7257a2bfdad128db751c5e7a03e86" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience" kindref="compound">BlobAudience</ref></type>
+        <definition>const BlobAudience Azure::Storage::Blobs::BlobAudience::DefaultAudience</definition>
+        <argsstring></argsstring>
+        <name>DefaultAudience</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobAudience::DefaultAudience</qualifiedname>
+        <briefdescription>
+<para>Default Audience. Use to acquire a token for authorizing requests to any Azure Storage account. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="58" column="58" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience_1aac573f95e65a4814bd10bf9b4e1e7253" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlobAudience::BlobAudience</definition>
+        <argsstring>(std::string blobAudience)</argsstring>
+        <name>BlobAudience</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobAudience::BlobAudience</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>blobAudience</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience" kindref="compound">BlobAudience</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobAudience</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Azure Active Directory audience to use when forming authorization scopes. For the Language service, this value corresponds to a URL that identifies the Azure cloud where the resource is located. For more information: See <ulink url="https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory">https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory</ulink> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="38" column="14" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="38" bodyend="40"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience_1adba321a734d353b40705543ace563771" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience" kindref="compound">BlobAudience</ref></type>
+        <definition>static BlobAudience Azure::Storage::Blobs::BlobAudience::CreateBlobServiceAccountAudience</definition>
+        <argsstring>(const std::string &amp;storageAccountName)</argsstring>
+        <name>CreateBlobServiceAccountAudience</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobAudience::CreateBlobServiceAccountAudience</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>storageAccountName</declname>
+        </param>
+        <briefdescription>
+<para>The service endpoint for a given storage account. Use this method to acquire a token for authorizing requests to that specific Azure Storage account and service only. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>storageAccountName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>he storage account name used to populate the service endpoint. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The service endpoint for a given storage account. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="49" column="25" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="49" bodyend="52"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Audiences available for blob service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::_internal::ExtendableEnumeration&lt; BlobAudience &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlobAudience</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::_internal::ExtendableEnumeration&lt; BlobAudience &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlobAudience</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>DefaultAudience</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="28" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="28" bodyend="59"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience_1aac573f95e65a4814bd10bf9b4e1e7253" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobAudience</scope><name>BlobAudience</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience_1adba321a734d353b40705543ace563771" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobAudience</scope><name>CreateBlobServiceAccountAudience</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience_1a56d7257a2bfdad128db751c5e7a03e86" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobAudience</scope><name>DefaultAudience</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

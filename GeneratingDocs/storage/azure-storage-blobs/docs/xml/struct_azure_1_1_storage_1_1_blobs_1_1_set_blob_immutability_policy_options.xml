@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options_1a5191952798ba4f4a1afde8067cbd6701" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; Azure::DateTime &gt;</type>
+        <definition>Azure::Nullable&lt;Azure::DateTime&gt; Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions::IfUnmodifiedSince</definition>
+        <argsstring></argsstring>
+        <name>IfUnmodifiedSince</name>
+        <qualifiedname>Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions::IfUnmodifiedSince</qualifiedname>
+        <briefdescription>
+<para>Specify this header to perform the operation only if the resource has not been modified since the specified time. This timestamp will be truncated to second. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1585" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1585" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options_1af383ffa8b769b85f502d5358f931c691" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options" kindref="compound">Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions</ref></type>
+        <definition>struct Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1586" column="22"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ade112c37b5858590349a2b5e46fd5709" kindref="member">Azure::Storage::Blobs::BlobClient::SetImmutabilityPolicy</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1574" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1575" bodyend="1587"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options_1af383ffa8b769b85f502d5358f931c691" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options_1a5191952798ba4f4a1afde8067cbd6701" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions</scope><name>IfUnmodifiedSince</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

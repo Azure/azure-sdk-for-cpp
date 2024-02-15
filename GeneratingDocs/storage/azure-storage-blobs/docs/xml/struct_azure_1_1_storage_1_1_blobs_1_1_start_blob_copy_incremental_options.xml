@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_incremental_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::StartBlobCopyIncrementalOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_incremental_options_1a5e1dcff82906306f89109ed302cddf28" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" kindref="compound">BlobAccessConditions</ref></type>
+        <definition>BlobAccessConditions Azure::Storage::Blobs::StartBlobCopyIncrementalOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyIncrementalOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1561" column="26" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1561" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aa763eb745ee9708716a2e13f7ac3aed9" kindref="member">Azure::Storage::Blobs::PageBlobClient::StartCopyIncremental</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::StartBlobCopyIncrementalOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_incremental_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="5">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1556" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1557" bodyend="1562"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_incremental_options_1a5e1dcff82906306f89109ed302cddf28" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyIncrementalOptions</scope><name>AccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

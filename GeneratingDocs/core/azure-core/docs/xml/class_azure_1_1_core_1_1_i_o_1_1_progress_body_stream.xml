@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream" kind="class" language="C++" prot="public">
+    <compoundname>Azure::Core::IO::ProgressBodyStream</compoundname>
+    <basecompoundref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" prot="public" virt="non-virtual">Azure::Core::IO::BodyStream</basecompoundref>
+    <includes refid="body__stream_8hpp" local="no">body_stream.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a94ce6502c2d345586fe5d657662c09fc" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">BodyStream</ref> *</type>
+        <definition>BodyStream* Azure::Core::IO::ProgressBodyStream::m_bodyStream</definition>
+        <argsstring></argsstring>
+        <name>m_bodyStream</name>
+        <qualifiedname>Azure::Core::IO::ProgressBodyStream::m_bodyStream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="292" column="16" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="292" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a986e9effe7d8cf7933e15308c6d137c7" prot="private" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Core::IO::ProgressBodyStream::m_bytesTransferred</definition>
+        <argsstring></argsstring>
+        <name>m_bytesTransferred</name>
+        <qualifiedname>Azure::Core::IO::ProgressBodyStream::m_bytesTransferred</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="293" column="13" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a3daa28ab376acad09e3a9a1ee1edf694" prot="private" static="no" mutable="no">
+        <type>std::function&lt; void(int64_t bytesTransferred)&gt;</type>
+        <definition>std::function&lt;void(int64_t bytesTransferred)&gt; Azure::Core::IO::ProgressBodyStream::m_callback</definition>
+        <argsstring></argsstring>
+        <name>m_callback</name>
+        <qualifiedname>Azure::Core::IO::ProgressBodyStream::m_callback</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="294" column="19" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="294" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1aea89198752057ba92e085f89757b9d1a" prot="private" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t ProgressBodyStream::OnRead</definition>
+        <argsstring>(uint8_t *buffer, size_t count, Azure::Core::Context const &amp;context) override</argsstring>
+        <name>OnRead</name>
+        <qualifiedname>Azure::Core::IO::ProgressBodyStream::OnRead</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a806f13d7e3fa1cc91b4b316ccd164d49">OnRead</reimplements>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Read portion of data into a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This is the <computeroutput>OnRead</computeroutput> implementation that all derived classes need to provide.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a byte buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of bytes read. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="297" column="12" bodyfile="src/io/body_stream.cpp" bodystart="210" bodyend="220"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a5fb7d977f6401dde5c1b606b4749e97d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ProgressBodyStream::ProgressBodyStream</definition>
+        <argsstring>(BodyStream &amp;bodyStream, std::function&lt; void(int64_t bytesTransferred)&gt; callback)</argsstring>
+        <name>ProgressBodyStream</name>
+        <qualifiedname>Azure::Core::IO::ProgressBodyStream::ProgressBodyStream</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">BodyStream</ref> &amp;</type>
+          <declname>bodyStream</declname>
+        </param>
+        <param>
+          <type>std::function&lt; void(int64_t bytesTransferred)&gt;</type>
+          <declname>callback</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>ProgressBodyStream</computeroutput> from a BodyStream. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bodyStream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The body stream to wrap.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback method used to report progress back to the caller.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="remark"><para>The <ref refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream" kindref="compound">Azure::Core::IO::ProgressBodyStream</ref> does not own the wrapped stream and is not responsible for closing / cleaning up resources. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="310" column="5" bodyfile="src/io/body_stream.cpp" bodystart="196" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a95177a860fe067590a2504387936d63c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ProgressBodyStream::Rewind</definition>
+        <argsstring>() override</argsstring>
+        <name>Rewind</name>
+        <qualifiedname>Azure::Core::IO::ProgressBodyStream::Rewind</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a52c2ce02e8a7dec1f55276f664c7c8b6">Rewind</reimplements>
+        <briefdescription>
+<para>Rewind seeks the current stream to the beginning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="315" column="10" bodyfile="src/io/body_stream.cpp" bodystart="203" bodyend="208"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a3acf5936e8f21a28e75388b4740acd8f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>int64_t</type>
+        <definition>int64_t ProgressBodyStream::Length</definition>
+        <argsstring>() const override</argsstring>
+        <name>Length</name>
+        <qualifiedname>Azure::Core::IO::ProgressBodyStream::Length</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a2e73f394ca060cf94146e03d5cf46d74">Length</reimplements>
+        <briefdescription>
+<para>Get the length of the data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Used with the HTTP <computeroutput>Content-Length</computeroutput> header. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="317" column="13" bodyfile="src/io/body_stream.cpp" bodystart="222" bodyend="222"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A concrete implementation of <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> that wraps another stream and reports progress. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::IO::BodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::IO::ProgressBodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::IO::BodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::IO::ProgressBodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/io/body_stream.hpp" line="290" column="3" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="290" bodyend="318"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a3acf5936e8f21a28e75388b4740acd8f" prot="public" virt="virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>Length</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a94ce6502c2d345586fe5d657662c09fc" prot="private" virt="non-virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>m_bodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a986e9effe7d8cf7933e15308c6d137c7" prot="private" virt="non-virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>m_bytesTransferred</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a3daa28ab376acad09e3a9a1ee1edf694" prot="private" virt="non-virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>m_callback</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1aea89198752057ba92e085f89757b9d1a" prot="private" virt="virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>OnRead</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a5fb7d977f6401dde5c1b606b4749e97d" prot="public" virt="non-virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>ProgressBodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ab7c962004d984d3bd1d32f33e6aa485d" prot="public" virt="non-virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>Read</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ac02611cf3f72c181dcf393c571df6226" prot="public" virt="non-virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>ReadToCount</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a6d2138790b0c79e24f7fbc0f776bb069" prot="public" virt="non-virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>ReadToEnd</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a95177a860fe067590a2504387936d63c" prot="public" virt="virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>Rewind</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a54e16528af689c00f5190858fff85e92" prot="public" virt="virtual"><scope>Azure::Core::IO::ProgressBodyStream</scope><name>~BodyStream</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobContainerItem</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1a647dd3bebbbb2d57ed3d6d8ec3a8b9a3" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobContainerItem::Name</definition>
+        <argsstring></argsstring>
+        <name>Name</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItem::Name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Blob container name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="476" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="476" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1ad67e1fe303e680fbaf8eef3ef90ee46e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobContainerItem::IsDeleted</definition>
+        <argsstring></argsstring>
+        <name>IsDeleted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItem::IsDeleted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether this container was deleted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="480" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="480" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1a8bfcfa9383e0ebbd501cab054041671e" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::BlobContainerItem::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItem::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Version ID of a deleted container. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="484" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="484" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1aabcb6ced0dd19fe794f154d6408ed178" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details" kindref="compound">BlobContainerItemDetails</ref></type>
+        <definition>BlobContainerItemDetails Azure::Storage::Blobs::Models::BlobContainerItem::Details</definition>
+        <argsstring></argsstring>
+        <name>Details</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItem::Details</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Properties of a container. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="488" column="32" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="488" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An Azure Storage container. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobContainerItem</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Details</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobContainerItemDetails</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>LeaseStatus</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>LeaseState</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>AccessType</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Azure::Storage::Blobs::Models::LeaseState</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_state"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>Available</edgelabel>
+          <edgelabel>Breaking</edgelabel>
+          <edgelabel>Broken</edgelabel>
+          <edgelabel>Expired</edgelabel>
+          <edgelabel>Leased</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::LeaseStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Locked</edgelabel>
+          <edgelabel>Unlocked</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Azure::Storage::Blobs::Models::PublicAccessType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>Blob</edgelabel>
+          <edgelabel>BlobContainer</edgelabel>
+          <edgelabel>None</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="471" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="472" bodyend="489"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1aabcb6ced0dd19fe794f154d6408ed178" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItem</scope><name>Details</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1ad67e1fe303e680fbaf8eef3ef90ee46e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItem</scope><name>IsDeleted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1a647dd3bebbbb2d57ed3d6d8ec3a8b9a3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItem</scope><name>Name</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_1a8bfcfa9383e0ebbd501cab054041671e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItem</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,343 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Azure::Core::IO::BodyStream</compoundname>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_curl_session" prot="public" virt="non-virtual">Azure::Core::Http::CurlSession</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1__detail_1_1_win_http_stream" prot="public" virt="non-virtual">Azure::Core::Http::_detail::WinHttpStream</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream" prot="public" virt="non-virtual">Azure::Core::IO::FileBodyStream</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream" prot="public" virt="non-virtual">Azure::Core::IO::MemoryBodyStream</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream" prot="public" virt="non-virtual">Azure::Core::IO::ProgressBodyStream</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_i_o_1_1__internal_1_1_null_body_stream" prot="public" virt="non-virtual">Azure::Core::IO::_internal::NullBodyStream</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_i_o_1_1__internal_1_1_random_access_file_body_stream" prot="public" virt="non-virtual">Azure::Core::IO::_internal::RandomAccessFileBodyStream</derivedcompoundref>
+    <includes refid="body__stream_8hpp" local="no">body_stream.hpp</includes>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a806f13d7e3fa1cc91b4b316ccd164d49" prot="private" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>size_t</type>
+        <definition>virtual size_t Azure::Core::IO::BodyStream::OnRead</definition>
+        <argsstring>(uint8_t *buffer, size_t count, Azure::Core::Context const &amp;context)=0</argsstring>
+        <name>OnRead</name>
+        <qualifiedname>Azure::Core::IO::BodyStream::OnRead</qualifiedname>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1a289b2a5d988730f4aac8aece3d3fdcb7">OnRead</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1adf94a325fdd49c9ae5258e3dbbd85699">OnRead</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1aea89198752057ba92e085f89757b9d1a">OnRead</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ab6e3d5e52bd439061419b51e3b133e6a">OnRead</reimplementedby>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Read portion of data into a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This is the <computeroutput>OnRead</computeroutput> implementation that all derived classes need to provide.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a byte buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of bytes read. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="45" column="20"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a54e16528af689c00f5190858fff85e92" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::IO::BodyStream::~BodyStream</definition>
+        <argsstring>()=default</argsstring>
+        <name>~BodyStream</name>
+        <qualifiedname>Azure::Core::IO::BodyStream::~BodyStream</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>BodyStream</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="52" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a2e73f394ca060cf94146e03d5cf46d74" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>int64_t</type>
+        <definition>virtual int64_t Azure::Core::IO::BodyStream::Length</definition>
+        <argsstring>() const =0</argsstring>
+        <name>Length</name>
+        <qualifiedname>Azure::Core::IO::BodyStream::Length</qualifiedname>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1aea97ce29a09c0b32a518f7195a9ea8bc">Length</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a4c9ea3f7f807238a662e75d7fa7e72da">Length</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a3acf5936e8f21a28e75388b4740acd8f">Length</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a6d8958274c0aa258f1127558b78d9cb8">Length</reimplementedby>
+        <briefdescription>
+<para>Get the length of the data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Used with the HTTP <computeroutput>Content-Length</computeroutput> header. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="58" column="21"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a52c2ce02e8a7dec1f55276f664c7c8b6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Azure::Core::IO::BodyStream::Rewind</definition>
+        <argsstring>()</argsstring>
+        <name>Rewind</name>
+        <qualifiedname>Azure::Core::IO::BodyStream::Rewind</qualifiedname>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1acf45328737df39d5ad836644be607f41">Rewind</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a6a508b86596a8c482ccf2b50f051a620">Rewind</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a95177a860fe067590a2504387936d63c">Rewind</reimplementedby>
+        <briefdescription>
+<para>Resets the stream back to the beginning (for retries). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Derived classes that send data in an HTTP request MUST override this and implement it properly. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="64" column="18" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="64" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ab7c962004d984d3bd1d32f33e6aa485d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Azure::Core::IO::BodyStream::Read</definition>
+        <argsstring>(uint8_t *buffer, size_t count, Azure::Core::Context const &amp;context=Azure::Core::Context())</argsstring>
+        <name>Read</name>
+        <qualifiedname>Azure::Core::IO::BodyStream::Read</qualifiedname>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref> const &amp;</type>
+          <declname>context</declname>
+          <defval><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Read portion of data into a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Throws if error/cancelled.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a first byte of the byte buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of bytes read. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="83" column="12" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="83" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ac02611cf3f72c181dcf393c571df6226" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t BodyStream::ReadToCount</definition>
+        <argsstring>(uint8_t *buffer, size_t count, Azure::Core::Context const &amp;context=Azure::Core::Context())</argsstring>
+        <name>ReadToCount</name>
+        <qualifiedname>Azure::Core::IO::BodyStream::ReadToCount</qualifiedname>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref> const &amp;</type>
+          <declname>context</declname>
+          <defval><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Read <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> into a buffer until the buffer is filled, or until the stream is read to end. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a first byte of the byte buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of bytes read. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="104" column="12" bodyfile="src/io/body_stream.cpp" bodystart="45" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a6d2138790b0c79e24f7fbc0f776bb069" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; BodyStream::ReadToEnd</definition>
+        <argsstring>(Azure::Core::Context const &amp;context=Azure::Core::Context())</argsstring>
+        <name>ReadToEnd</name>
+        <qualifiedname>Azure::Core::IO::BodyStream::ReadToEnd</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref> const &amp;</type>
+          <declname>context</declname>
+          <defval><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Read <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> until the stream is read to end, allocating memory for the entirety of contents. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A vector of bytes containing the entirety of data read from the <computeroutput>body</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="117" column="17" bodyfile="src/io/body_stream.cpp" bodystart="63" bodyend="80"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Used to read data to/from a service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Http::CurlSession</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_session"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Core::Http::_detail::WinHttpStream</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Core::IO::BodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream"/>
+      </node>
+      <node id="4">
+        <label>Azure::Core::IO::FileBodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Azure::Core::IO::MemoryBodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Core::IO::ProgressBodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Azure::Core::IO::_internal::NullBodyStream</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Azure::Core::IO::_internal::RandomAccessFileBodyStream</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="inc/azure/core/io/body_stream.hpp" line="32" column="3" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="32" bodyend="118"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a2e73f394ca060cf94146e03d5cf46d74" prot="public" virt="pure-virtual"><scope>Azure::Core::IO::BodyStream</scope><name>Length</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a806f13d7e3fa1cc91b4b316ccd164d49" prot="private" virt="pure-virtual"><scope>Azure::Core::IO::BodyStream</scope><name>OnRead</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ab7c962004d984d3bd1d32f33e6aa485d" prot="public" virt="non-virtual"><scope>Azure::Core::IO::BodyStream</scope><name>Read</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ac02611cf3f72c181dcf393c571df6226" prot="public" virt="non-virtual"><scope>Azure::Core::IO::BodyStream</scope><name>ReadToCount</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a6d2138790b0c79e24f7fbc0f776bb069" prot="public" virt="non-virtual"><scope>Azure::Core::IO::BodyStream</scope><name>ReadToEnd</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a52c2ce02e8a7dec1f55276f664c7c8b6" prot="public" virt="virtual"><scope>Azure::Core::IO::BodyStream</scope><name>Rewind</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a54e16528af689c00f5190858fff85e92" prot="public" virt="virtual"><scope>Azure::Core::IO::BodyStream</scope><name>~BodyStream</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

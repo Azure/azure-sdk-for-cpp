@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_47d404ee0e80b407a5dfff678745e934" kind="dir">
+    <compoundname>inc/azure/core/amqp/internal/models/performatives</compoundname>
+    <innerfile refid="amqp__detach_8hpp">amqp_detach.hpp</innerfile>
+    <innerfile refid="amqp__transfer_8hpp">amqp_transfer.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/internal/models/performatives/"/>
+  </compounddef>
+</doxygen>

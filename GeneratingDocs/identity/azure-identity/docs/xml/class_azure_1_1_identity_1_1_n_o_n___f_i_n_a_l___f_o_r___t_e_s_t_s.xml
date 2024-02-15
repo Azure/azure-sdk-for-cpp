@@ -1,0 +1,322 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s" kind="class" language="C++" prot="public">
+    <compoundname>Azure::Identity::NON_FINAL_FOR_TESTS</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Core::Credentials::TokenCredential</basecompoundref>
+    <includes refid="azure__cli__credential_8hpp" local="no">azure_cli_credential.hpp</includes>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1a2c3d396cdd934240e4eb90055d16b461" prot="protected" static="no" mutable="no">
+        <type>_detail::TokenCache</type>
+        <definition>_detail::TokenCache Azure::Identity::NON_FINAL_FOR_TESTS::m_tokenCache</definition>
+        <argsstring></argsstring>
+        <name>m_tokenCache</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::m_tokenCache</qualifiedname>
+        <briefdescription>
+<para>The cache for the access token. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="76" column="25" bodyfile="inc/azure/identity/azure_cli_credential.hpp" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1a8980ae61a7d347cbae89168593cca084" prot="protected" static="no" mutable="no">
+        <type>std::vector&lt; std::string &gt;</type>
+        <definition>std::vector&lt;std::string&gt; Azure::Identity::NON_FINAL_FOR_TESTS::m_additionallyAllowedTenants</definition>
+        <argsstring></argsstring>
+        <name>m_additionallyAllowedTenants</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::m_additionallyAllowedTenants</qualifiedname>
+        <briefdescription>
+<para>Additional tenants which will be allowed for this credential. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="79" column="17" bodyfile="inc/azure/identity/azure_cli_credential.hpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ad233ae653f7a00322202bda26a90f724" prot="protected" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Identity::NON_FINAL_FOR_TESTS::m_tenantId</definition>
+        <argsstring></argsstring>
+        <name>m_tenantId</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::m_tenantId</qualifiedname>
+        <briefdescription>
+<para>The ID of the tenant to which the credential will authenticate by default. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="82" column="17" bodyfile="inc/azure/identity/azure_cli_credential.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1aa7afa5c882c32c8b0a6eeaf020821f89" prot="protected" static="no" mutable="no">
+        <type>DateTime::duration</type>
+        <definition>DateTime::duration Azure::Identity::NON_FINAL_FOR_TESTS::m_cliProcessTimeout</definition>
+        <argsstring></argsstring>
+        <name>m_cliProcessTimeout</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::m_cliProcessTimeout</qualifiedname>
+        <briefdescription>
+<para>The CLI process timeout. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="85" column="24" bodyfile="inc/azure/identity/azure_cli_credential.hpp" bodystart="85" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1abc2fc2b4aa616e7d6b861126e21348e0" prot="private" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Identity::NON_FINAL_FOR_TESTS::AzureCliCredential</definition>
+        <argsstring>(Core::Credentials::TokenCredentialOptions const &amp;options, std::string tenantId, DateTime::duration cliProcessTimeout, std::vector&lt; std::string &gt; additionallyAllowedTenants)</argsstring>
+        <name>AzureCliCredential</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::AzureCliCredential</qualifiedname>
+        <param>
+          <type>Core::Credentials::TokenCredentialOptions const &amp;</type>
+          <declname>options</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>tenantId</declname>
+        </param>
+        <param>
+          <type>DateTime::duration</type>
+          <declname>cliProcessTimeout</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::string &gt;</type>
+          <declname>additionallyAllowedTenants</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="88" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1aea0ba726a449655f68dd4776924e2fb4" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Identity::NON_FINAL_FOR_TESTS::ThrowIfNotSafeCmdLineInput</definition>
+        <argsstring>(std::string const &amp;input, std::string const &amp;allowedChars, std::string const &amp;description) const</argsstring>
+        <name>ThrowIfNotSafeCmdLineInput</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::ThrowIfNotSafeCmdLineInput</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>allowedChars</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>description</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="94" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ae5f64de5f276cd33645c7e17d7878385" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>_azure_VIRTUAL_FOR_TESTS std::string</type>
+        <definition>_azure_VIRTUAL_FOR_TESTS std::string Azure::Identity::NON_FINAL_FOR_TESTS::GetAzCommand</definition>
+        <argsstring>(std::string const &amp;scopes, std::string const &amp;tenantId) const</argsstring>
+        <name>GetAzCommand</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::GetAzCommand</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>scopes</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>tenantId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="127" column="42"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1acc98a06e71394f3311ab10dbdf0eaf8c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>_azure_VIRTUAL_FOR_TESTS int</type>
+        <definition>_azure_VIRTUAL_FOR_TESTS int Azure::Identity::NON_FINAL_FOR_TESTS::GetLocalTimeToUtcDiffSeconds</definition>
+        <argsstring>() const</argsstring>
+        <name>GetLocalTimeToUtcDiffSeconds</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::GetLocalTimeToUtcDiffSeconds</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="131" column="34"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ae64ff74562745905e1d45c13355b74c3" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Identity::NON_FINAL_FOR_TESTS::AzureCliCredential</definition>
+        <argsstring>(AzureCliCredentialOptions const &amp;options={})</argsstring>
+        <name>AzureCliCredential</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::AzureCliCredential</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_identity_1_1_azure_cli_credential_options" kindref="compound">AzureCliCredentialOptions</ref> const &amp;</type>
+          <declname>options</declname>
+          <defval>{}</defval>
+        </param>
+        <briefdescription>
+<para>Constructs an Azure CLI Credential. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options for token retrieval. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="105" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ae6f81e94e8389c091079c3bd53bd8ac5" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Identity::NON_FINAL_FOR_TESTS::AzureCliCredential</definition>
+        <argsstring>(Core::Credentials::TokenCredentialOptions const &amp;options)</argsstring>
+        <name>AzureCliCredential</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::AzureCliCredential</qualifiedname>
+        <param>
+          <type>Core::Credentials::TokenCredentialOptions const &amp;</type>
+          <declname>options</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an Azure CLI Credential. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options for token retrieval. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="112" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1aeb41e6fd70cb59cbf365940516236982" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Core::Credentials::AccessToken</type>
+        <definition>Core::Credentials::AccessToken Azure::Identity::NON_FINAL_FOR_TESTS::GetToken</definition>
+        <argsstring>(Core::Credentials::TokenRequestContext const &amp;tokenRequestContext, Core::Context const &amp;context) const override</argsstring>
+        <name>GetToken</name>
+        <qualifiedname>Azure::Identity::NON_FINAL_FOR_TESTS::GetToken</qualifiedname>
+        <param>
+          <type>Core::Credentials::TokenRequestContext const &amp;</type>
+          <declname>tokenRequestContext</declname>
+        </param>
+        <param>
+          <type>Core::Context const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Gets an authentication token. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tokenRequestContext</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to get the token in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>Azure::Core::Credentials::AuthenticationException</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Authentication error occurred. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/identity/azure_cli_credential.hpp" line="122" column="36"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access token. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Identity::NON_FINAL_FOR_TESTS</label>
+        <link refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Core::Credentials::TokenCredential</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Identity::NON_FINAL_FOR_TESTS</label>
+        <link refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>m_tokenCache</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Identity::_detail::TokenCache</label>
+      </node>
+      <node id="2">
+        <label>Core::Credentials::TokenCredential</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/identity/azure_cli_credential.hpp" line="64" column="3" bodyfile="inc/azure/identity/azure_cli_credential.hpp" bodystart="68" bodyend="132"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1abc2fc2b4aa616e7d6b861126e21348e0" prot="private" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>AzureCliCredential</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ae64ff74562745905e1d45c13355b74c3" prot="public" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>AzureCliCredential</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ae6f81e94e8389c091079c3bd53bd8ac5" prot="public" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>AzureCliCredential</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ae5f64de5f276cd33645c7e17d7878385" prot="private" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>GetAzCommand</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1acc98a06e71394f3311ab10dbdf0eaf8c" prot="private" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>GetLocalTimeToUtcDiffSeconds</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1aeb41e6fd70cb59cbf365940516236982" prot="public" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>GetToken</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1a8980ae61a7d347cbae89168593cca084" prot="protected" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>m_additionallyAllowedTenants</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1aa7afa5c882c32c8b0a6eeaf020821f89" prot="protected" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>m_cliProcessTimeout</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1ad233ae653f7a00322202bda26a90f724" prot="protected" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>m_tenantId</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1a2c3d396cdd934240e4eb90055d16b461" prot="protected" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>m_tokenCache</name></member>
+      <member refid="class_azure_1_1_identity_1_1_n_o_n___f_i_n_a_l___f_o_r___t_e_s_t_s_1aea0ba726a449655f68dd4776924e2fb4" prot="private" virt="non-virtual"><scope>Azure::Identity::NON_FINAL_FOR_TESTS</scope><name>ThrowIfNotSafeCmdLineInput</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

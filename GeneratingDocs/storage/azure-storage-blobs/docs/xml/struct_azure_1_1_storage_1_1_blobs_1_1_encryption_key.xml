@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::EncryptionKey</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key_1ab9335e635170f440f80fbbc1e3acbcd9" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::EncryptionKey::Key</definition>
+        <argsstring></argsstring>
+        <name>Key</name>
+        <qualifiedname>Azure::Storage::Blobs::EncryptionKey::Key</qualifiedname>
+        <briefdescription>
+<para>Base64 encoded string of the AES256 encryption key. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="158" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key_1a580226066e830bd9f66e543ced457fad" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt;uint8_t&gt; Azure::Storage::Blobs::EncryptionKey::KeyHash</definition>
+        <argsstring></argsstring>
+        <name>KeyHash</name>
+        <qualifiedname>Azure::Storage::Blobs::EncryptionKey::KeyHash</qualifiedname>
+        <briefdescription>
+<para>SHA256 hash of the AES256 encryption key. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="163" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key_1af79e8c936a50a6cd935d234d6880a13b" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">Models::EncryptionAlgorithmType</ref></type>
+        <definition>Models::EncryptionAlgorithmType Azure::Storage::Blobs::EncryptionKey::Algorithm</definition>
+        <argsstring></argsstring>
+        <name>Algorithm</name>
+        <qualifiedname>Azure::Storage::Blobs::EncryptionKey::Algorithm</qualifiedname>
+        <briefdescription>
+<para>The algorithm for Azure Blob Storage to encrypt with. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="168" column="37" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="168" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Wrapper for an encryption key to be used with client provided key server-side encryption. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::EncryptionKey</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Algorithm</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Aes256</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="153" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="154" bodyend="169"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key_1af79e8c936a50a6cd935d234d6880a13b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::EncryptionKey</scope><name>Algorithm</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key_1ab9335e635170f440f80fbbc1e3acbcd9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::EncryptionKey</scope><name>Key</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key_1a580226066e830bd9f66e543ced457fad" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::EncryptionKey</scope><name>KeyHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

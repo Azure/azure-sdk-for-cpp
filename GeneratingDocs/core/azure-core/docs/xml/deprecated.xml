@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="deprecated" kind="page">
+    <compoundname>deprecated</compoundname>
+    <title>Deprecated List</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><variablelist>
+<varlistentry><term>Member <ref refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1a804d54f8e363ca038ee43578e1209b61" kindref="member">Azure::Core::Credentials::TokenCredential::TokenCredential</ref>  ()</term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000001"/>Use the constructor with parameter. </para>
+</listitem>
+</variablelist>
+</para>
+    </detaileddescription>
+    <location file="deprecated"/>
+  </compounddef>
+</doxygen>

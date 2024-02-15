@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_abort_blob_copy_from_uri_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::AbortBlobCopyFromUriResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a128e9bdfdd7bd7b7125aada157b2734a" kindref="member">Azure::Storage::Blobs::BlobClient::AbortCopyFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2394" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2395" bodyend="2396"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

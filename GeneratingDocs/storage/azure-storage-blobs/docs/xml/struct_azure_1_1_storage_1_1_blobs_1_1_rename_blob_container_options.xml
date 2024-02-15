@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_rename_blob_container_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::RenameBlobContainerOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_rename_blob_container_options_1a57ddea92c1b96fc9c97ece3671dfdf80" prot="public" static="no" mutable="no">
+        <type>LeaseAccessConditions</type>
+        <definition>LeaseAccessConditions Azure::Storage::Blobs::RenameBlobContainerOptions::SourceAccessConditions</definition>
+        <argsstring></argsstring>
+        <name>SourceAccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::RenameBlobContainerOptions::SourceAccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="361" column="27" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="361" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client_1ae36f455c373a9b31121d839568021dad" kindref="member">Azure::Storage::Blobs::BlobServiceClient::RenameBlobContainer</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="356" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="357" bodyend="362"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_rename_blob_container_options_1a57ddea92c1b96fc9c97ece3671dfdf80" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::RenameBlobContainerOptions</scope><name>SourceAccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

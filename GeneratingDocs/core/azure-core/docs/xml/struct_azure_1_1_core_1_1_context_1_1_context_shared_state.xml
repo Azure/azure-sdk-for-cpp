@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state" kind="struct" language="C++" prot="private" final="yes">
+    <compoundname>Azure::Core::Context::ContextSharedState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a35619416dc682073360b775802d7d3dd" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; ContextSharedState &gt;</type>
+        <definition>std::shared_ptr&lt;ContextSharedState&gt; Azure::Core::Context::ContextSharedState::Parent</definition>
+        <argsstring></argsstring>
+        <name>Parent</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::Parent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="82" column="23" bodyfile="inc/azure/core/context.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1ace7e0f2731f03360ba9f5f8d3652aef9" prot="public" static="no" mutable="no">
+        <type>std::atomic&lt; DateTime::rep &gt;</type>
+        <definition>std::atomic&lt;DateTime::rep&gt; Azure::Core::Context::ContextSharedState::Deadline</definition>
+        <argsstring></argsstring>
+        <name>Deadline</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::Deadline</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="83" column="19" bodyfile="inc/azure/core/context.hpp" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a3bd25943b5f306a9b123930fd81db749" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_core_1_1_tracing_1_1_tracer_provider" kindref="compound">Azure::Core::Tracing::TracerProvider</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;Azure::Core::Tracing::TracerProvider&gt; Azure::Core::Context::ContextSharedState::TraceProvider</definition>
+        <argsstring></argsstring>
+        <name>TraceProvider</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::TraceProvider</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="84" column="23" bodyfile="inc/azure/core/context.hpp" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1aca3a3af0774cfcda691569c8840e6afa" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_context_1_1_key" kindref="compound">Context::Key</ref></type>
+        <definition>Context::Key Azure::Core::Context::ContextSharedState::Key</definition>
+        <argsstring></argsstring>
+        <name>Key</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::Key</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="85" column="20" bodyfile="inc/azure/core/context.hpp" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a2bd1dd3cb544886b808a8421a76f5e85" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; void &gt;</type>
+        <definition>std::shared_ptr&lt;void&gt; Azure::Core::Context::ContextSharedState::Value</definition>
+        <argsstring></argsstring>
+        <name>Value</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::Value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="86" column="23" bodyfile="inc/azure/core/context.hpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a6b0d69be03cd87e052154805c75bb4e2" prot="public" static="yes" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr DateTime::rep</type>
+        <definition>static constexpr DateTime::rep Azure::Core::Context::ContextSharedState::ToDateTimeRepresentation</definition>
+        <argsstring>(DateTime const &amp;dateTime)</argsstring>
+        <name>ToDateTimeRepresentation</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::ToDateTimeRepresentation</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dateTime</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="90" column="38" bodyfile="inc/azure/core/context.hpp" bodystart="90" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1ab9dd9300a0b331775f65e8a8e8003ed4" prot="public" static="yes" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref></type>
+        <definition>static constexpr DateTime Azure::Core::Context::ContextSharedState::FromDateTimeRepresentation</definition>
+        <argsstring>(DateTime::rep dtRepresentation)</argsstring>
+        <name>FromDateTimeRepresentation</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::FromDateTimeRepresentation</qualifiedname>
+        <param>
+          <type>DateTime::rep</type>
+          <declname>dtRepresentation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="95" column="33" bodyfile="inc/azure/core/context.hpp" bodystart="95" bodyend="98"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a636e1f6a07ad054807e307c1d5c59a9a" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Context::ContextSharedState::ContextSharedState</definition>
+        <argsstring>()</argsstring>
+        <name>ContextSharedState</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::ContextSharedState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="100" column="16" bodyfile="inc/azure/core/context.hpp" bodystart="100" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1acabb055dc51a91870cff67a4385b2df9" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Context::ContextSharedState::ContextSharedState</definition>
+        <argsstring>(const std::shared_ptr&lt; ContextSharedState &gt; &amp;parent, DateTime const &amp;deadline)</argsstring>
+        <name>ContextSharedState</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::ContextSharedState</qualifiedname>
+        <param>
+          <type>const std::shared_ptr&lt; ContextSharedState &gt; &amp;</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>deadline</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="109" column="16" bodyfile="inc/azure/core/context.hpp" bodystart="109" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1aa380d16b5aee6bd0fdf5899c63a013b4" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>Azure::Core::Context::ContextSharedState::ContextSharedState</definition>
+        <argsstring>(const std::shared_ptr&lt; ContextSharedState &gt; &amp;parent, DateTime const &amp;deadline, Context::Key const &amp;key, T value)</argsstring>
+        <name>ContextSharedState</name>
+        <qualifiedname>Azure::Core::Context::ContextSharedState::ContextSharedState</qualifiedname>
+        <param>
+          <type>const std::shared_ptr&lt; ContextSharedState &gt; &amp;</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>deadline</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context_1_1_key" kindref="compound">Context::Key</ref> const &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="121" column="16" bodyfile="inc/azure/core/context.hpp" bodystart="121" bodyend="133"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Context::ContextSharedState</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Key</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Context::Key</label>
+        <link refid="class_azure_1_1_core_1_1_context_1_1_key"/>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/context.hpp" line="80" column="5" bodyfile="inc/azure/core/context.hpp" bodystart="81" bodyend="134"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a636e1f6a07ad054807e307c1d5c59a9a" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>ContextSharedState</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1acabb055dc51a91870cff67a4385b2df9" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>ContextSharedState</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1aa380d16b5aee6bd0fdf5899c63a013b4" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>ContextSharedState</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1ace7e0f2731f03360ba9f5f8d3652aef9" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>Deadline</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1ab9dd9300a0b331775f65e8a8e8003ed4" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>FromDateTimeRepresentation</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1aca3a3af0774cfcda691569c8840e6afa" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>Key</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a35619416dc682073360b775802d7d3dd" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>Parent</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a6b0d69be03cd87e052154805c75bb4e2" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>ToDateTimeRepresentation</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a3bd25943b5f306a9b123930fd81db749" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>TraceProvider</name></member>
+      <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a2bd1dd3cb544886b808a8421a76f5e85" prot="public" virt="non-virtual"><scope>Azure::Core::Context::ContextSharedState</scope><name>Value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

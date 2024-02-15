@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Sas::BlobSasBuilder</compoundname>
+    <includes refid="blob__sas__builder_8hpp" local="no">blob_sas_builder.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5e1d5fc0f61dfb9018745da8411fdd63" prot="public" static="no" mutable="no">
+        <type>SasProtocol</type>
+        <definition>SasProtocol Azure::Storage::Sas::BlobSasBuilder::Protocol</definition>
+        <argsstring></argsstring>
+        <name>Protocol</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::Protocol</qualifiedname>
+        <briefdescription>
+<para>The optional signed protocol field specifies the protocol permitted for a request made with the SAS. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="201" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a54ead79e95c82f7e19f670b3945ca4b9" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; Azure::DateTime &gt;</type>
+        <definition>Azure::Nullable&lt;Azure::DateTime&gt; Azure::Storage::Sas::BlobSasBuilder::StartsOn</definition>
+        <argsstring></argsstring>
+        <name>StartsOn</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::StartsOn</qualifiedname>
+        <briefdescription>
+<para>Optionally specify the time at which the shared access signature becomes valid. This timestamp will be truncated to second. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="207" column="21" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a86e11b38e3bd588addd5ffb0b7ccdb65" prot="public" static="no" mutable="no">
+        <type>Azure::DateTime</type>
+        <definition>Azure::DateTime Azure::Storage::Sas::BlobSasBuilder::ExpiresOn</definition>
+        <argsstring></argsstring>
+        <name>ExpiresOn</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::ExpiresOn</qualifiedname>
+        <briefdescription>
+<para>The time at which the shared access signature becomes invalid. This field must be omitted if it has been specified in an associated stored access policy. This timestamp will be truncated to second. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="214" column="21" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Sas::BlobSasBuilder::IPRange</definition>
+        <argsstring></argsstring>
+        <name>IPRange</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::IPRange</qualifiedname>
+        <briefdescription>
+<para>Specifies an IP address or a range of IP addresses from which to accept requests. If the IP address from which the request originates does not match the IP address or address range specified on the SAS token, the request is not authenticated. When specifying a range of IP addresses, note that the range is inclusive. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="222" column="21" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a7013729acb32beb758e1c84fe053598b" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::Identifier</definition>
+        <argsstring></argsstring>
+        <name>Identifier</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::Identifier</qualifiedname>
+        <briefdescription>
+<para>An optional unique value up to 64 characters in length that correlates to an access policy specified for the container. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="228" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1af70c9f6e9aaae4b29c153c713f25cc7f" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::BlobContainerName</definition>
+        <argsstring></argsstring>
+        <name>BlobContainerName</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::BlobContainerName</qualifiedname>
+        <briefdescription>
+<para>The name of the blob container being made accessible. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="233" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5da56debca7f3a3691f9f197cf893a68" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::BlobName</definition>
+        <argsstring></argsstring>
+        <name>BlobName</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::BlobName</qualifiedname>
+        <briefdescription>
+<para>The name of the blob being made accessible, or empty for a container SAS.. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="238" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a4a67c781a007cc4c068b5363db5a082e" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::Snapshot</definition>
+        <argsstring></argsstring>
+        <name>Snapshot</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::Snapshot</qualifiedname>
+        <briefdescription>
+<para>The name of the blob snapshot being made accessible, or empty for a container SAS and blob SAS. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="244" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aefd5551b5f6f9acca91b68887d817f3e" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::BlobVersionId</definition>
+        <argsstring></argsstring>
+        <name>BlobVersionId</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::BlobVersionId</qualifiedname>
+        <briefdescription>
+<para>The ID of the blob version being made accessible, or empty for a container SAS, blob SAS and blob snapshot SAS. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="250" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" prot="public" static="no" mutable="no">
+        <type>BlobSasResource</type>
+        <definition>BlobSasResource Azure::Storage::Sas::BlobSasBuilder::Resource</definition>
+        <argsstring></argsstring>
+        <name>Resource</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::Resource</qualifiedname>
+        <briefdescription>
+<para>Specifies which resources are accessible via the shared access signature. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="255" column="21" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="255" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::CacheControl</definition>
+        <argsstring></argsstring>
+        <name>CacheControl</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::CacheControl</qualifiedname>
+        <briefdescription>
+<para>Override the value returned for Cache-Control response header.. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="260" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::ContentDisposition</definition>
+        <argsstring></argsstring>
+        <name>ContentDisposition</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::ContentDisposition</qualifiedname>
+        <briefdescription>
+<para>Override the value returned for Content-Disposition response header.. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="265" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="265" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::ContentEncoding</definition>
+        <argsstring></argsstring>
+        <name>ContentEncoding</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::ContentEncoding</qualifiedname>
+        <briefdescription>
+<para>Override the value returned for Content-Encoding response header.. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="270" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="270" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::ContentLanguage</definition>
+        <argsstring></argsstring>
+        <name>ContentLanguage</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::ContentLanguage</qualifiedname>
+        <briefdescription>
+<para>Override the value returned for Content-Language response header.. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="275" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="275" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::ContentType</definition>
+        <argsstring></argsstring>
+        <name>ContentType</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::ContentType</qualifiedname>
+        <briefdescription>
+<para>Override the value returned for Content-Type response header.. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="280" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::EncryptionScope</qualifiedname>
+        <briefdescription>
+<para>Optional encryption scope to use when sending requests authorized with this SAS url. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="285" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="285" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a761520f141801e2c2410f0cfe4a4bf5a" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::Permissions</definition>
+        <argsstring></argsstring>
+        <name>Permissions</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::Permissions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="331" column="17" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="331" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a576bd2495f51c20c19c4aa188ff50313" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Storage::Sas::BlobSasBuilder::SetPermissions</definition>
+        <argsstring>(BlobContainerSasPermissions permissions)</argsstring>
+        <name>SetPermissions</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::SetPermissions</qualifiedname>
+        <param>
+          <type>BlobContainerSasPermissions</type>
+          <declname>permissions</declname>
+        </param>
+        <briefdescription>
+<para>Sets the permissions for the blob container SAS. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>permissions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The allowed permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="292" column="10" bodyfile="src/blob_sas_builder.cpp" bodystart="41" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a94399919f3752623e1d4775ee9521322" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Storage::Sas::BlobSasBuilder::SetPermissions</definition>
+        <argsstring>(BlobSasPermissions permissions)</argsstring>
+        <name>SetPermissions</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::SetPermissions</qualifiedname>
+        <param>
+          <type>BlobSasPermissions</type>
+          <declname>permissions</declname>
+        </param>
+        <briefdescription>
+<para>Sets the permissions for the blob SAS. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>permissions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The allowed permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="299" column="10" bodyfile="src/blob_sas_builder.cpp" bodystart="90" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a44e334fdd83ae9567b13e94c3f4a6594" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Storage::Sas::BlobSasBuilder::SetPermissions</definition>
+        <argsstring>(std::string rawPermissions)</argsstring>
+        <name>SetPermissions</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::SetPermissions</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>rawPermissions</declname>
+        </param>
+        <briefdescription>
+<para>Sets the permissions for the SAS using a raw permissions string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawPermissions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Raw permissions string for the SAS. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="306" column="10" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="306" bodyend="306"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a9fa261c75b49cf2ed22c689df90b0fa9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::GenerateSasToken</definition>
+        <argsstring>(const StorageSharedKeyCredential &amp;credential)</argsstring>
+        <name>GenerateSasToken</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::GenerateSasToken</qualifiedname>
+        <param>
+          <type>const StorageSharedKeyCredential &amp;</type>
+          <declname>credential</declname>
+        </param>
+        <briefdescription>
+<para>Uses the StorageSharedKeyCredential to sign this shared access signature, to produce the proper SAS query parameters for authentication requests. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The storage account&apos;s shared key credential. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The SAS query parameters used for authenticating requests. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="315" column="17" bodyfile="src/blob_sas_builder.cpp" bodystart="133" bodyend="224"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5bf74d765c846238b6d7a5522c5bb1d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Sas::BlobSasBuilder::GenerateSasToken</definition>
+        <argsstring>(const Blobs::Models::UserDelegationKey &amp;userDelegationKey, const std::string &amp;accountName)</argsstring>
+        <name>GenerateSasToken</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasBuilder::GenerateSasToken</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key" kindref="compound">Blobs::Models::UserDelegationKey</ref> &amp;</type>
+          <declname>userDelegationKey</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>accountName</declname>
+        </param>
+        <briefdescription>
+<para>Uses an account&apos;s user delegation key to sign this shared access signature, to produce the proper SAS query parameters for authentication requests. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>userDelegationKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>UserDelegationKey returned from BlobServiceClient.GetUserDelegationKey. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>accountName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the storage account. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The SAS query parameters used for authenticating requests. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="326" column="17" bodyfile="src/blob_sas_builder.cpp" bodystart="226" bodyend="324"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder" kindref="compound">BlobSasBuilder</ref> is used to generate a Shared Access Signature (SAS) for an Azure Storage container or blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="195" column="3" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="196" bodyend="332"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1af70c9f6e9aaae4b29c153c713f25cc7f" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>BlobContainerName</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5da56debca7f3a3691f9f197cf893a68" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>BlobName</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aefd5551b5f6f9acca91b68887d817f3e" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>BlobVersionId</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>CacheControl</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>ContentDisposition</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>ContentEncoding</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>ContentLanguage</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>ContentType</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a86e11b38e3bd588addd5ffb0b7ccdb65" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>ExpiresOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a9fa261c75b49cf2ed22c689df90b0fa9" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>GenerateSasToken</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5bf74d765c846238b6d7a5522c5bb1d3" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>GenerateSasToken</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a7013729acb32beb758e1c84fe053598b" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>Identifier</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>IPRange</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a761520f141801e2c2410f0cfe4a4bf5a" prot="private" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>Permissions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5e1d5fc0f61dfb9018745da8411fdd63" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>Protocol</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>Resource</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a576bd2495f51c20c19c4aa188ff50313" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>SetPermissions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a94399919f3752623e1d4775ee9521322" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>SetPermissions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a44e334fdd83ae9567b13e94c3f4a6594" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>SetPermissions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a4a67c781a007cc4c068b5363db5a082e" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>Snapshot</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a54ead79e95c82f7e19f670b3945ca4b9" prot="public" virt="non-virtual"><scope>Azure::Storage::Sas::BlobSasBuilder</scope><name>StartsOn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

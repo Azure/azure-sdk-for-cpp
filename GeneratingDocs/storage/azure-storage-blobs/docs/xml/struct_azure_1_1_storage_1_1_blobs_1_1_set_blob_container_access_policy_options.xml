@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options_1aaeaec3aca6cebb6a7d2de341933ee268" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">Models::PublicAccessType</ref></type>
+        <definition>Models::PublicAccessType Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions::AccessType</definition>
+        <argsstring></argsstring>
+        <name>AccessType</name>
+        <qualifiedname>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions::AccessType</qualifiedname>
+        <initializer>= <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a365803f217fd5f69c78ced4a5f2011fb" kindref="member">Models::PublicAccessType::None</ref></initializer>
+        <briefdescription>
+<para>Specifies whether data in the container may be accessed publicly and the level of access. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="446" column="30" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="446" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options_1aca5d2109fed948279567d7d65e1fdb15" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier" kindref="compound">Models::SignedIdentifier</ref> &gt;</type>
+        <definition>std::vector&lt;Models::SignedIdentifier&gt; Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions::SignedIdentifiers</definition>
+        <argsstring></argsstring>
+        <name>SignedIdentifiers</name>
+        <qualifiedname>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions::SignedIdentifiers</qualifiedname>
+        <briefdescription>
+<para>Stored access policies that you can use to provide fine grained control over container permissions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="452" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="452" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options_1a22f63f658e55bd1f141da710bd37ebc1" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions" kindref="compound">BlobContainerAccessConditions</ref></type>
+        <definition>BlobContainerAccessConditions Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="457" column="35" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="457" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ab178fc558887607e2ed2142e81643aa0" kindref="member">Azure::Storage::Blobs::BlobContainerClient::SetAccessPolicy</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::BlobContainerAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::PublicAccessType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Blob</edgelabel>
+          <edgelabel>BlobContainer</edgelabel>
+          <edgelabel>None</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessType</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="440" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="441" bodyend="458"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options_1a22f63f658e55bd1f141da710bd37ebc1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options_1aaeaec3aca6cebb6a7d2de341933ee268" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions</scope><name>AccessType</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options_1aca5d2109fed948279567d7d65e1fdb15" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions</scope><name>SignedIdentifiers</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

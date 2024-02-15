@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="md__c_h_a_n_g_e_l_o_g" kind="page">
+    <compoundname>md__c_h_a_n_g_e_l_o_g</compoundname>
+    <title>Release History</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md__c_h_a_n_g_e_l_o_g_1release-history"/> </para>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta8-unreleased">
+<title>1.0.0-beta.8 (Unreleased)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added">
+<title>Features Added</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Claims Based Security authentication now longer throws a <computeroutput>std::runtime_error</computeroutput>, and instead follows the pattern of the rest of the AMQP library and returns an error.</para>
+</listitem><listitem><para>Authentication now throws <computeroutput>Azure::Core::Credentials::AuthenticationException</computeroutput> instead of <computeroutput>std::runtime_error</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>Cancelled</computeroutput> status to <computeroutput>CbsOperationResult</computeroutput> and <computeroutput>ManagementOperationStatus</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5284">[#5284]</ulink> [azure-identity][azure-messaging-eventhubs] Impossible to catch exception resulting in SIGABRT signal.</para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/issues/5297">[#5297]</ulink>: Enabled multiple simultaneous <computeroutput>ExecuteOperation</computeroutput> calls.</para>
+</listitem><listitem><para>Fixed crash when Link Detach message is received while link is being destroyed.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para><computeroutput>std::ostream</computeroutput> inserter for message body no longer prints the body of the message.</para>
+</listitem><listitem><para>Tidied up the output of the <computeroutput>AmqpMessage</computeroutput> <computeroutput>std::ostream</computeroutput> inserter.</para>
+</listitem><listitem><para>Added several <computeroutput>std::ostream</computeroutput> inserters.</para>
+</listitem><listitem><para>Pass numeric values to <computeroutput>std::ostream</computeroutput> inserters by value not by reference.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta7-2024-02-02">
+<title>1.0.0-beta.7 (2024-02-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-1">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>The <computeroutput>Close</computeroutput> method on AMQP Message Sender and Message Receiver now blocks until the client receives a <computeroutput>DETACH</computeroutput> response from the remote node.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-1">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>The <computeroutput>Close</computeroutput> method on AMQP Message Sender and Message Receiver now accepts an <computeroutput>Azure::Core::Context</computeroutput> parameter. This parameter is defaulted so this change should not affect existing code.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-1">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed uAMQP connection channel so that a channel is released when an END performative is received from the remote node instead of when the END performative is sent to the remote node.</para>
+</listitem><listitem><para>Enabled more than one uAMQP session to be created on a single connection.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta6-2024-01-11">
+<title>1.0.0-beta.6 (2024-01-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-2">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>AMQP Value reference counts are now atomic, this fixes several AMQP related crashes.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-2">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para><computeroutput>MessageReceiver</computeroutput> returns a pointer to the received message instead of a copy.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-2">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed several memory leaks.</para>
+</listitem><listitem><para>AMQP Link Credits now work as expected.</para>
+</listitem><listitem><para>Integrated the fix for NVD - CVE-2024-21646.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta5-2023-11-07">
+<title>1.0.0-beta.5 (2023-11-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-3">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Refactored AMQP headers to isolate internal-only types to &quot;internal&quot; subdirectory in headers.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-1">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Removed public dependency on azure-uamqp-c to enable local bug fixes.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta4-2023-10-05">
+<title>1.0.0-beta.4 (2023-10-05)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-3">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>AMQP moved from a polling model to an asynchronous model.</para>
+</listitem><listitem><para>Added a new <computeroutput>MessageReceiver::TryWaitForIncomingMessage</computeroutput> API which allows callers to &quot;peek&quot; at the contents of the incoming message queue, returning an already received message or an empty message if none is available.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-4">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed the <computeroutput>QueueSend</computeroutput> API from <computeroutput>MessageSender</computeroutput> because it was not compatible with the new asynchronous model.</para>
+</listitem><listitem><para>The new asynchronous model requires the user to call <computeroutput>Close()</computeroutput> on the <computeroutput>MessageSender</computeroutput> and <computeroutput>MessageReceiver</computeroutput> to ensure operations have stabilized before destroying the object.</para>
+</listitem><listitem><para>For connection listeners (primarily test scenarios), if you call <computeroutput>Open()</computeroutput> or <computeroutput>Listen()</computeroutput> on a connection, you MUST call <computeroutput>Close()</computeroutput> before the connection is destroyed.</para>
+</listitem><listitem><para>The <computeroutput>Connection::Close()</computeroutput> method no longer requires that the caller provide connection disconnect information.</para>
+</listitem><listitem><para>The <computeroutput>Session::End()</computeroutput> method no longer requires that the caller provide session disconnect information.</para>
+</listitem><listitem><para>Several asserts have been added which will force termination of the running application if invariants have not been met.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-3">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Several fixes related to the new asynchronous model. Ensures that message senders and receivers are always closed, and that resources are released.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta3-2023-09-07">
+<title>1.0.0-beta.3 (2023-09-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-4">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>When a message sender is destroyed, close the underlying AMQP link if it hasn&apos;t been closed already.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta2-2023-08-04">
+<title>1.0.0-beta.2 (2023-08-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-4">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>Azure::Core::Amqp::Models::AmqpBinaryData::operator=(std::vector&lt;std::uint8_t&gt; const&amp;)</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a3c2e00247d78f71cfad2be5be3498d23" kindref="member">Azure::Core::Amqp::Models::AmqpMessage::MessageFormat</ref></computeroutput>.</para>
+</listitem><listitem><para>Collection types (<computeroutput>AmqpArray</computeroutput>, <computeroutput>AmqpMap</computeroutput>, <computeroutput>AmqpList</computeroutput>, <computeroutput>AmqpBinaryData</computeroutput>, <computeroutput>AmqpSymbol</computeroutput> and <computeroutput>AmqpComposite</computeroutput>):<itemizedlist>
+<listitem><para>Added explicit cast operator to underlying collection type.</para>
+</listitem><listitem><para>Added <computeroutput>find()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Rationalized the return code for AMQP MessageSender and MessageReceiver and Management APIs to use AmqpError for error codes.</para>
+</listitem><listitem><para>Added additional AMQP Error values.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-5">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Renamed <computeroutput>Azure::Core::Amqp::Models::AmqpMessageFormatValue</computeroutput> to <computeroutput>AmqpDefaultMessageFormatValue</computeroutput>.</para>
+</listitem><listitem><para>Changed the return values for the MessageSender, MessageReceiver and Management APIs.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta1-2023-07-06">
+<title>1.0.0-beta.1 (2023-07-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-5">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Initial release </para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+    </detaileddescription>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

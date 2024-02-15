@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_win_http_transport" kind="class" language="C++" prot="public">
+    <compoundname>Azure::Core::Http::WinHttpTransport</compoundname>
+    <basecompoundref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" prot="public" virt="non-virtual">Azure::Core::Http::HttpTransport</basecompoundref>
+    <includes refid="win__http__transport_8hpp" local="no">win_http_transport.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a675c29ea1935236efdb42ea6ec11ff05" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kindref="compound">WinHttpTransportOptions</ref></type>
+        <definition>WinHttpTransportOptions Azure::Core::Http::WinHttpTransport::m_options</definition>
+        <argsstring></argsstring>
+        <name>m_options</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::m_options</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="136" column="31" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a0cc727df79cb4078cf43a6426f099d7c" prot="private" static="no" mutable="no">
+        <type>const Azure::Core::_internal::UniqueHandle&lt; HINTERNET &gt;</type>
+        <definition>const Azure::Core::_internal::UniqueHandle&lt;HINTERNET&gt; Azure::Core::Http::WinHttpTransport::m_sessionHandle</definition>
+        <argsstring></argsstring>
+        <name>m_sessionHandle</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::m_sessionHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="138" column="50" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="138" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1acaee4432eed73c3949ae4b7efd792c61" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Core::_internal::UniqueHandle&lt; HINTERNET &gt;</type>
+        <definition>Azure::Core::_internal::UniqueHandle&lt; HINTERNET &gt; WinHttpTransport::CreateSessionHandle</definition>
+        <argsstring>()</argsstring>
+        <name>CreateSessionHandle</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::CreateSessionHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="140" column="44" bodyfile="src/http/winhttp/win_http_transport.cpp" bodystart="748" bodyend="815"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a9a8c8ea1c768960921779a12cac36a56" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Core::_internal::UniqueHandle&lt; HINTERNET &gt;</type>
+        <definition>Azure::Core::_internal::UniqueHandle&lt; HINTERNET &gt; WinHttpTransport::CreateConnectionHandle</definition>
+        <argsstring>(Azure::Core::Url const &amp;url, Azure::Core::Context const &amp;context)</argsstring>
+        <name>CreateConnectionHandle</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::CreateConnectionHandle</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Azure::Core::Url</ref> const &amp;</type>
+          <declname>url</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="141" column="44" bodyfile="src/http/winhttp/win_http_transport.cpp" bodystart="875" bodyend="906"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1ac6987407944e2100e45a96ad7fce459e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; _detail::WinHttpRequest &gt;</type>
+        <definition>std::unique_ptr&lt; _detail::WinHttpRequest &gt; WinHttpTransport::CreateRequestHandle</definition>
+        <argsstring>(Azure::Core::_internal::UniqueHandle&lt; HINTERNET &gt; const &amp;connectionHandle, Azure::Core::Url const &amp;url, Azure::Core::Http::HttpMethod const &amp;method)</argsstring>
+        <name>CreateRequestHandle</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::CreateRequestHandle</qualifiedname>
+        <param>
+          <type>Azure::Core::_internal::UniqueHandle&lt; HINTERNET &gt; const &amp;</type>
+          <declname>connectionHandle</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Azure::Core::Url</ref> const &amp;</type>
+          <declname>url</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">Azure::Core::Http::HttpMethod</ref> const &amp;</type>
+          <declname>method</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="144" column="23" bodyfile="src/http/winhttp/win_http_transport.cpp" bodystart="1072" bodyend="1085"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a37fc9adf6f265523d8b3bf2bfd522b1b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Azure::Core::Http::WinHttpTransport::OnUpgradedConnection</definition>
+        <argsstring>(std::unique_ptr&lt; _detail::WinHttpRequest &gt; const &amp;)</argsstring>
+        <name>OnUpgradedConnection</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::OnUpgradedConnection</qualifiedname>
+        <param>
+          <type>std::unique_ptr&lt; _detail::WinHttpRequest &gt; const &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="151" column="20" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="151" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1afdccf1e994704ce177d2139479a24c9d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void WinHttpTransport::GetErrorAndThrow</definition>
+        <argsstring>(const std::string &amp;exceptionMessage, DWORD error=GetLastError())</argsstring>
+        <name>GetErrorAndThrow</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::GetErrorAndThrow</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>exceptionMessage</declname>
+        </param>
+        <param>
+          <type>DWORD</type>
+          <declname>error</declname>
+          <defval>GetLastError()</defval>
+        </param>
+        <briefdescription>
+<para>Throw an exception based on the Win32 Error code. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>exceptionMessage</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message describing error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Win32 Error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="159" column="12" bodyfile="src/http/winhttp/win_http_transport.cpp" bodystart="741" bodyend="746"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1af91879ab9fa7b1fcd2bc0a95b99bc808" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>WinHttpTransport::WinHttpTransport</definition>
+        <argsstring>(WinHttpTransportOptions const &amp;options=WinHttpTransportOptions())</argsstring>
+        <name>WinHttpTransport</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::WinHttpTransport</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kindref="compound">WinHttpTransportOptions</ref> const &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kindref="compound">WinHttpTransportOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>WinHttpTransport</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameter to override the default settings. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="167" column="7" bodyfile="src/http/winhttp/win_http_transport.cpp" bodystart="862" bodyend="865"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1aa6a7fa2fdbe8cef1dd53ca9ed141bf6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>WinHttpTransport::WinHttpTransport</definition>
+        <argsstring>(Azure::Core::Http::Policies::TransportOptions const &amp;options)</argsstring>
+        <name>WinHttpTransport</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::WinHttpTransport</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options" kindref="compound">Azure::Core::Http::Policies::TransportOptions</ref> const &amp;</type>
+          <declname>options</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>WinHttpTransport</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameter to override the default settings.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Constructs <computeroutput>WinHttpTransport</computeroutput> object based on common <ref refid="namespace_azure" kindref="compound">Azure</ref> HTTP Transport Options </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="178" column="7" bodyfile="src/http/winhttp/win_http_transport.cpp" bodystart="867" bodyend="871"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a2cda516cd5af67b09bd02d65d443b446" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; RawResponse &gt; WinHttpTransport::Send</definition>
+        <argsstring>(Request &amp;request, Context const &amp;context) override</argsstring>
+        <name>Send</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::Send</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1aab0a38b3e67079a9ede743c3e8de909d">Send</reimplements>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Implements the HTTP transport interface to send an HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> and produce an HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="185" column="31" bodyfile="src/http/winhttp/win_http_transport.cpp" bodystart="1415" bodyend="1440"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a0f62089549f733e1ef42e9574186c64b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>WinHttpTransport::~WinHttpTransport</definition>
+        <argsstring>()</argsstring>
+        <name>~WinHttpTransport</name>
+        <qualifiedname>Azure::Core::Http::WinHttpTransport::~WinHttpTransport</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/win_http_transport.hpp" line="191" column="15"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Concrete implementation of an HTTP transport that uses WinHTTP when sending and receiving requests and responses over the wire. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Http::HttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_http_transport"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Http::WinHttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::Http::HttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_http_transport"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Http::WinHttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/http/win_http_transport.hpp" line="134" column="5" bodyfile="inc/azure/core/http/win_http_transport.hpp" bodystart="134" bodyend="192"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a9a8c8ea1c768960921779a12cac36a56" prot="private" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>CreateConnectionHandle</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1ac6987407944e2100e45a96ad7fce459e" prot="private" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>CreateRequestHandle</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1acaee4432eed73c3949ae4b7efd792c61" prot="private" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>CreateSessionHandle</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1afdccf1e994704ce177d2139479a24c9d" prot="private" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>GetErrorAndThrow</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a8b47565baf7018fdfcad475b9c5d6615" prot="protected" virt="virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>HasWebSocketSupport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a76c34f294158836f72741cc90e4b480f" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1af7fadcff099af67a5e3732642cc42c78" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a0c6eb7479b5ef2e7359ec5f42fc404b8" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a675c29ea1935236efdb42ea6ec11ff05" prot="private" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>m_options</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a0cc727df79cb4078cf43a6426f099d7c" prot="private" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>m_sessionHandle</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a37fc9adf6f265523d8b3bf2bfd522b1b" prot="private" virt="virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>OnUpgradedConnection</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a44e0b2695aa316451ffe3c68e5e3ee30" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a2cda516cd5af67b09bd02d65d443b446" prot="public" virt="virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>Send</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1af91879ab9fa7b1fcd2bc0a95b99bc808" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>WinHttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1aa6a7fa2fdbe8cef1dd53ca9ed141bf6c" prot="public" virt="non-virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>WinHttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a4c0b2905624416efe1f77e6ef244c0e9" prot="public" virt="virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>~HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a0f62089549f733e1ef42e9574186c64b" prot="public" virt="virtual"><scope>Azure::Core::Http::WinHttpTransport</scope><name>~WinHttpTransport</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

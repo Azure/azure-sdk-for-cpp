@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_amqp" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Amqp</compoundname>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp_1_1_common">Azure::Core::Amqp::Common</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp_1_1_models">Azure::Core::Amqp::Models</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp_1_1_network">Azure::Core::Amqp::Network</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/internal/amqp_settle_mode.hpp" line="8" column="28"/>
+  </compounddef>
+</doxygen>

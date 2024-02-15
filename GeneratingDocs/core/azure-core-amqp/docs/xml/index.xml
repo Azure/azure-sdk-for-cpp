@@ -1,0 +1,525 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.10.0" xml:lang="en-US">
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kind="class"><name>Azure::Core::Amqp::Models::AmqpArray</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a9b628d82192b468297f802957408ab96" kind="function"><name>AmqpArray</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52e3f499ec6b2d2667757d634a5a8b91" kind="function"><name>AmqpArray</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af02006be760a10cc524e105f076e3eda" kind="function"><name>~AmqpArray</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a4747ac5db8e06ff57738363b3a330f80" kind="function"><name>AmqpArray</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52cd61a003434fe7b3c2db4b7f0932ec" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a12bf8129bf237000ad747ab1e22940a4" kind="function"><name>AmqpArray</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af0fd842ac85b6886807fd9290f78db60" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a334a1250797a27e9a400a8bbc4de7605" kind="function"><name>AmqpArray</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kind="class"><name>Azure::Core::Amqp::Models::AmqpBinaryData</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1aae9cbf115c65d11b351940ed18b973d2" kind="function"><name>AmqpBinaryData</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab9cfaf587ffd763230ce6aa8293fe772" kind="function"><name>~AmqpBinaryData</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a025a92ebc7f0ee0c0da5ebfe376930f7" kind="function"><name>AmqpBinaryData</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a2ca2c8927d3d899a9b2ef4116c93fc56" kind="function"><name>AmqpBinaryData</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a0ccd18c704d1e57ee3017299838b3dde" kind="function"><name>AmqpBinaryData</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a111fe76cddad90c6f01884d0aa912df6" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a9d69397e1ace81489b6c61d13d3fcffd" kind="function"><name>AmqpBinaryData</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ad5692f2e6c9321bee661d25aa650a120" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab58435dba93389225699a80380c4c526" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a7d32e346fdfe40a0c3be351690fb6221" kind="function"><name>AmqpBinaryData</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kind="class"><name>Azure::Core::Amqp::Models::AmqpComposite</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1adbf7d40a2d8695ceecaa099c9bba684d" kind="variable"><name>m_descriptor</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1af1eaf835a7e462665dec2358cf4523a3" kind="function"><name>AmqpComposite</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a07f8a44e1cf8b24deff15c1f450c1575" kind="function"><name>~AmqpComposite</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a955132114a0ac94709a312fc322170ba" kind="function"><name>AmqpComposite</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a098987570b78dc0393b11fa4dc6df2ce" kind="function"><name>AmqpComposite</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a4cb9055ec312fbc435b7f0f916de34b4" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aaf0cd6821ba2672994b4d50d3125944c" kind="function"><name>AmqpComposite</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a95c3304854cfef475bd44919c3986d78" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a2de0902be6b19f27d61f5d8776cbb3c4" kind="function"><name>AmqpComposite</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a67ab366c75e438410feeacfeb9951e6b" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1ab51b0959b471073905028ebb10847cd9" kind="function"><name>operator!=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aa534649f2af9e8019a411a20ee827373" kind="function"><name>GetDescriptor</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kind="class"><name>Azure::Core::Amqp::Models::AmqpDescribed</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a12cf8b406b65a53796d80a8f87364777" kind="variable"><name>m_descriptor</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a835eb976b35250d6b81ab3013e29cdd3" kind="variable"><name>m_value</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a25f698dc0ffcecc44248f59efb2a5f6e" kind="function"><name>AmqpDescribed</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a006bb1f461b32b30b2939cd30837c542" kind="function"><name>AmqpDescribed</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1af32840ab35530199d152cc8e63b49083" kind="function"><name>AmqpDescribed</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ac3f1105b9989ae9e1ac7ec55cefaac02" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a2b825593c7c484a72bfd89f63189fddf" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a49194b652ab4bdaf8dcef111c612ce87" kind="function"><name>~AmqpDescribed</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a590fffbc228398575be02194a58f2f62" kind="function"><name>AmqpDescribed</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a9e3efe17252602c4ebf67635006d3c38" kind="function"><name>AmqpDescribed</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8f82d0d7dcbbfc147a7384c671bf8b54" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8baa0e9451f97582dea19bb52b35b016" kind="function"><name>operator!=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a832318ebc5b108bfa9411a4dd21b845a" kind="function"><name>operator AmqpValue const</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a6e3fee67f4555555a824e737bbcdb7d7" kind="function"><name>GetDescriptor</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ada178abd35cd4d696bc6d8989fbf9095" kind="function"><name>GetValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1afefceee350bece27eab38266df774f31" kind="function"><name>AsAmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1aa56548671fd79b944df717e141ef2fb4" kind="function"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kind="class"><name>Azure::Core::Amqp::Models::AmqpList</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a59be50e03a650d3f9e9e28b4783e535e" kind="function"><name>AmqpList</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a3034d8afb801b72bd14b9cfab36d1a88" kind="function"><name>~AmqpList</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1ab50ee879994cadc52d2780343e0fd14d" kind="function"><name>AmqpList</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a56a30f9ae6866b75075ca3c973bf4645" kind="function"><name>AmqpList</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a6adf47d8565feb7472ac3eaf9d69ad04" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeccfcb032c46f1146762c124ad78b87b" kind="function"><name>AmqpList</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a9bb512bd8561c05719ddda3cee4322c7" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeaff1db8f5af5b66e02ac815959d148b" kind="function"><name>AmqpList</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kind="class"><name>Azure::Core::Amqp::Models::AmqpMap</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1af2205b0d60a8a0a9fe7d67f938c598cc" kind="function"><name>AmqpMap</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1aba8d3e9c270c63b28285fa8f08cb4b44" kind="function"><name>AmqpMap</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a495bfd3bcab9184ed78920b98bea7a87" kind="function"><name>AmqpMap</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a2b778981a79be0e5ce33263206e1b209" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1aaebee47954037bf3a91b8aac012348e5" kind="function"><name>AmqpMap</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1ae8eff65267495676c2430786427dd382" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1aa70734fa7672d6f6be02a3e96dcd6df6" kind="function"><name>AmqpMap</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a74ede8e28a090c3bab5be36a13645882" kind="function"><name>~AmqpMap</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1ab35ac1e7364d5e80cfce62f261d94aa0" kind="function"><name>operator[]</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a9479da96da6a102caef0092db07988a9" kind="function"><name>emplace</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kind="class"><name>Azure::Core::Amqp::Models::AmqpMessage</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a3c2e00247d78f71cfad2be5be3498d23" kind="variable"><name>MessageFormat</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a84428fa94c76a58f35adba08d3b307bd" kind="variable"><name>Header</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ae6eba568e6be82e8a8083a63721e6aec" kind="variable"><name>DeliveryAnnotations</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a5f303cf362123d47adc4e635230bb763" kind="variable"><name>MessageAnnotations</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aafe23eb11fe9d9864f20d1a12c6c3c3c" kind="variable"><name>Properties</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a5c6ae0773425797c608a6b15ad4c981a" kind="variable"><name>ApplicationProperties</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a8e8286fd9257cf983f8f28f0e7c9917c" kind="variable"><name>DeliveryTag</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ad4f1a28d0f042ab67b4c5805280d1fa5" kind="variable"><name>Footer</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a63063b08f0ce22db2f312c9135d3bb16" kind="variable"><name>BodyType</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ac2b9b0346421effa3b8d4a82d319d5d7" kind="variable"><name>m_binaryDataBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1af914dfe9524d4f6416c2e6ce766b828e" kind="variable"><name>m_amqpSequenceBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a2a4417362d7acdb2ba2636980c03120f" kind="variable"><name>m_amqpValueBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a0bee73ff0125f7ee9c738bf60217a29c" kind="variable"><name>m_hasValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a2aeae58b48859731082e9c5316a1c950" kind="function"><name>AmqpMessage</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a1c462113da92a917715e74ee811c3d27" kind="function"><name>~AmqpMessage</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a053d37f6ff5f568fda59312e20b6d033" kind="function"><name>AmqpMessage</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a7fe547f5c4f723ef54de063991f27465" kind="function"><name>AmqpMessage</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a652145d3efb0706453fb7e6eeb9e6e23" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a4a538481ffb8dd69097c69af3a7c5599" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1adaca52703b82ca49f8dc92dfd6e9942b" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ad15afab0bac0977acbb5791b04c2cf94" kind="function"><name>operator!=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aebbd6245d24682e20513af0d5c7471b9" kind="function"><name>AmqpMessage</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a16801e8cb2c5027a3216a70aab82f851" kind="function"><name>operator bool</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a4bced73e14b9a0d5434a8d9dd1b48364" kind="function"><name>SetBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a6675beb5a1945e6004dcc1277d7c65b6" kind="function"><name>SetBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1adb38fe2beb9539bd4836b67d57652af2" kind="function"><name>SetBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aa6c83a69c4de9197dda42eda069d6218" kind="function"><name>SetBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1afdae69b0709a8545d12f4759995b0e6e" kind="function"><name>SetBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a69111998d513e75cd64bd0d8d7f5adef" kind="function"><name>GetBodyAsAmqpList</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a20c72f343d69541660525ea25358359f" kind="function"><name>GetBodyAsAmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a3570d66e4914fc6dc996bbc813a652ed" kind="function"><name>GetBodyAsBinary</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ac1f11446ee878574419914149c853529" kind="function"><name>Serialize</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a0cc3f9ede9f2496c970461b3abbd426f" kind="function"><name>Deserialize</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kind="class"><name>Azure::Core::Amqp::Models::AmqpSymbol</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a27bab0e9e277eaf0d7bd6a1cfe236e31" kind="function"><name>AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a5b391218a2b54d98a14b1b915f7a7df9" kind="function"><name>~AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1ae2a9bfdd08a26202276a2665ce8ecd60" kind="function"><name>AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a036a192d5d6cccf2efe3a5693d9926cd" kind="function"><name>AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a26e834a8f0031ee9af49447f33b0066e" kind="function"><name>AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a8ae4cc35ad50e666d31ae0861d0f1b96" kind="function"><name>AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a1531d2b580e0c5be86427d09f731a22f" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a7a4f9aec3778884e02cb3f5a604c6fd6" kind="function"><name>AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1af1fc10c5d04e8bad2d11d9a20f872f0d" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89f2b5831fd4033b0ba98722eafce394" kind="function"><name>AmqpSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a98bcb5021773c243c302706c99356e04" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89edd90fb86647e55062b0bf8d82738c" kind="function"><name>operator==</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kind="class"><name>Azure::Core::Amqp::Models::AmqpTimestamp</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a08162b1f25292ac8c938fe875d56186f" kind="variable"><name>m_value</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1ab7dbb821f003fd254296e76a22400ba7" kind="function"><name>AmqpTimestamp</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a66364472a70699a36c11f9be1a2b0903" kind="function"><name>~AmqpTimestamp</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1abcd104b279bbe70ee612bba8e4053662" kind="function"><name>AmqpTimestamp</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a9c78a0fd487e9f3b6c9cb8f2bddaf4f1" kind="function"><name>AmqpTimestamp</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a3256384d31c8ff3e9e40a6f3f0584d9b" kind="function"><name>AmqpTimestamp</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1adc96d69146452f65e93a255840512fa8" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a7d1c1d5f817fd4c43f98194a77e19b59" kind="function"><name>AmqpTimestamp</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1aa1cc2f8fffb34d8e3a0f4ed41c8f1b4c" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1ac22f957ac2a1a891dc3aab5ca86205d7" kind="function"><name>AsAmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a630e40e6e151923089ece5ae56d91c14" kind="function"><name>operator std::chrono::milliseconds</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a972ececb135346d8c18aeeea556f15dd" kind="function"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kind="class"><name>Azure::Core::Amqp::Models::AmqpValue</name>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1adce7eda4b5b0bce7c2d82ccabbfc37ca" kind="variable"><name>m_impl</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acaed2eb0f33b3623fa71148cfeec4e84" kind="function"><name>~AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acf0815870a76125bd81390a864a7169d" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4336d64d7a1c1d93ca28e807e88fd283" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ac4c079f91aa2a04defa240fc9f61a3d1" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a46b2aade48fb177542a53d0b99708d72" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a23ba7a3ebc1a7c31c286b7e427a5e974" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a8dfa7ed5fb4f3fc0ad8da0ee921abc5a" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4fb7b712f7d427645d974c6d148b4fbc" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a072cb565fbf458c307bd5d74f2fdd015" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ab4e4fbbebdbfe184606ddabfd5a8eefd" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a24d99ca75eaf34fb741307476db8f53c" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a73abdaff79cd9148a5014089f70af4e2" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a10c33d9f4e36e056a1741efce2a8cbec" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a24ed4eff496439dc1e02a263d1230771" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a182987bc8d98cd24843ca8131ab6b1f0" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a0fd251533fedd2795c72ba05ca4403cc" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a9a5d5f8a8278492dae4520f1c52cffa6" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a94fa0ade1691564ff336d2691a791b6a" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aceeb8b53de6fa924ae0509c088aab383" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a00d33b0e0354be92a98718abf54e475d" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1afbacdb9b13f4017a9a70c6093cf09e09" kind="function"><name>AmqpValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1af306ad4dec39d773feb5e1091e5fe296" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a362beb6833c1f6fdb3fe3d662fe85985" kind="function"><name>operator!=</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae66032a774e411c626d17b845f312a83" kind="function"><name>operator&lt;</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a28f919886a954983daecddbf09920501" kind="function"><name>GetType</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abdcd809a3402b4c3e2afd5a4314abba5" kind="function"><name>IsNull</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4d81c77afd97a9b5f10349d908e1138a" kind="function"><name>operator bool</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4cbb701654ce1ed415fd713ef7629fcf" kind="function"><name>operator std::uint8_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a87f74b63c90bd531edf93c5ba4e523f5" kind="function"><name>operator std::int8_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a108cdc015e596816c4ba262dcff84db4" kind="function"><name>operator char</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abd871f3870ca739fa0efcb364d44c674" kind="function"><name>operator std::uint16_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a85e0377151aece95da79520945a9bd38" kind="function"><name>operator std::int16_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a6f3f8e2e4a5c0cd58f838ece56fc69d8" kind="function"><name>operator std::uint32_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a8ad83cd2a9f00a146df6bcc725b0b980" kind="function"><name>operator std::int32_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aa2d35284186251d49e3cbc18b27c8a0a" kind="function"><name>operator std::uint64_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a7ef2c017d31270faca7130849055b09e" kind="function"><name>operator std::int64_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a77a34c546e920af196bbd9b8ff78fde4" kind="function"><name>operator float</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aaa7954d678b0c69d74c83775f5695d5c" kind="function"><name>operator double</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a906e332a37787ed20a07c09c8bc8b840" kind="function"><name>operator char32_t</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a920acd0808d7f0e92c51b906129c3ec7" kind="function"><name>operator std::string</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acfe6eade9dcb9ff440e420d59dbcbfe0" kind="function"><name>operator Azure::Core::Uuid</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aa98eb64c410f7352d17577e2d3f2c79d" kind="function"><name>AsList</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a72414b2e7232230e7b4f7695261286a7" kind="function"><name>AsMap</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abec632157f1cf77a93e84374bfe0a464" kind="function"><name>AsArray</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a7ef61f75f0949c733c01dcf758039e91" kind="function"><name>AsBinary</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a611b5f602609c479436a13c20db5d31f" kind="function"><name>AsTimestamp</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a27e4816eec8d78b5f04722659ff6b4be" kind="function"><name>AsSymbol</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae2c96cbca071a1b208664e1898c3d6bf" kind="function"><name>AsComposite</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abd299756a984fa8f324f5d6ff8e15d99" kind="function"><name>AsDescribed</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a898b83eab2424637b0963dfe67b61c79" kind="function"><name>Serialize</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acb8efae090a763ae07e8b24fe56e46ef" kind="function"><name>GetSerializedSize</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a31c5e53b5a318b01986829076cf144c5" kind="function"><name>Deserialize</name></member>
+    <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a62b1065657fea5dcd16941d5c70d4d2a" kind="function"><name>AmqpValue</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kind="struct"><name>Azure::Core::Amqp::Models::MessageHeader</name>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5f40f2afecd60bdb6c91981e59caa49b" kind="variable"><name>Durable</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab28f0903d806e5c1d38e9ace1dde2627" kind="variable"><name>Priority</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a720635f08ae0438a87b9b69fac3a3519" kind="variable"><name>TimeToLive</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a8070e66fe6930ad138e3aec4f3dd29cb" kind="variable"><name>IsFirstAcquirer</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a16c9479e3368ca97e70fa4de31bd39c1" kind="variable"><name>DeliveryCount</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aebd63a9a80a499519fc4a900f5521998" kind="function"><name>MessageHeader</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef6ecaac594401fb09f3d731b10b3f8" kind="function"><name>~MessageHeader</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a2997b8a720342bcf0ca3b88649746409" kind="function"><name>MessageHeader</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1afdc33564e1d03e866fb950ece6d75401" kind="function"><name>operator=</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef7a7bd29e6a564e81885c631396a1e" kind="function"><name>MessageHeader</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab2c9cd841e4123c1d1bd48d385ecb085" kind="function"><name>operator=</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5431446cbd4e03f5de910d4d3733c221" kind="function"><name>operator==</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1af5339681b0757afcc2d82d424c3b059a" kind="function"><name>ShouldSerialize</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ac1ae94d1b15c36f8ba79da30d7bca133" kind="function"><name>GetSerializedSize</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5d98ecdc9b12e04a2dc04528b2dc2fb0" kind="function"><name>Serialize</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aad697f201d5332c6c06d1b85bc79ea00" kind="function"><name>Deserialize</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kind="struct"><name>Azure::Core::Amqp::Models::MessageProperties</name>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ac02c58781c8e3cf4b9ecf65918031454" kind="variable"><name>MessageId</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a2107fb94db44097732eab2bd48047a08" kind="variable"><name>UserId</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a259a52af66937ea622d0ff5cf62c61de" kind="variable"><name>To</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a24c55f080b159147463ccb206945622c" kind="variable"><name>Subject</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a9d33fddfca4dfe2314807a7e578e4594" kind="variable"><name>CorrelationId</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a902a1e942fe754faf3c41b7df895d02d" kind="variable"><name>ReplyTo</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a274d2f1a5ae6f08f43d7180bc317803b" kind="variable"><name>ContentType</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a51a7211ebd81e52554d85388ba638307" kind="variable"><name>ContentEncoding</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a4767c3c8ac57aa89f1a7c0ff354b1ec6" kind="variable"><name>AbsoluteExpiryTime</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1aeeb1e882d029362420a15470155ae473" kind="variable"><name>CreationTime</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a7af7aac183b5b9b9524029f4923fc662" kind="variable"><name>GroupId</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ad4a79413f7ae45ae76fc04f04d8be081" kind="variable"><name>GroupSequence</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a7ede07bd770ba23c02bb671bdbaea607" kind="variable"><name>ReplyToGroupId</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ae105a05c696d58d94ee532f3e065fa45" kind="function"><name>MessageProperties</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a2113c91bd1d405656383bdae8e11ac5b" kind="function"><name>~MessageProperties</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a33ff93970b74fd3015a4b0fd29a481c3" kind="function"><name>MessageProperties</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1af69d98a7feaabee392fd837519192146" kind="function"><name>operator=</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a17f59f7dd0d41951281d971623811629" kind="function"><name>MessageProperties</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a0117132e0c6fb0703b41ec455c89ac3f" kind="function"><name>operator=</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a62bef3d909e3e178cfa5b52145cb6938" kind="function"><name>operator==</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a34a525ce6059bef8579618618bdcfb97" kind="function"><name>ShouldSerialize</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ac61d8ac28a8cd2c3c642b5e81270d983" kind="function"><name>Serialize</name></member>
+    <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a031d29a25d10f5bbc12a2f94b89405a7" kind="function"><name>Deserialize</name></member>
+  </compound>
+  <compound refid="namespace_0d35" kind="namespace"><name>@35</name>
+  </compound>
+  <compound refid="namespace_0d76" kind="namespace"><name>@76</name>
+  </compound>
+  <compound refid="namespace_azure" kind="namespace"><name>Azure</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core" kind="namespace"><name>Azure::Core</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_amqp" kind="namespace"><name>Azure::Core::Amqp</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_amqp_1_1_common" kind="namespace"><name>Azure::Core::Amqp::Common</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_amqp_1_1_models" kind="namespace"><name>Azure::Core::Amqp::Models</name>
+    <member refid="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7" kind="enum"><name>MessageBodyType</name></member>
+    <member refid="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a4bbb8f967da6d1a610596d7257179c2b" kind="enumvalue"><name>Invalid</name></member>
+    <member refid="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a6adf97f83acf6453d4a6a4b1070f3754" kind="enumvalue"><name>None</name></member>
+    <member refid="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7af6068daa29dbb05a7ead1e3b5a48bbee" kind="enumvalue"><name>Data</name></member>
+    <member refid="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a3ff39d3acb327553070a64ef0cb321d5" kind="enumvalue"><name>Sequence</name></member>
+    <member refid="amqp__message_8hpp_1a061424f06f3e4db79738ffeb5b8278c7a689202409e48743b914713f96d93947c" kind="enumvalue"><name>Value</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6" kind="enum"><name>AmqpValueType</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a4bbb8f967da6d1a610596d7257179c2b" kind="enumvalue"><name>Invalid</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6abbb93ef26e3c101ff11cdd21cab08a94" kind="enumvalue"><name>Null</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6ac26f15e86e3de4c398a8273272aba034" kind="enumvalue"><name>Bool</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a65c90f108e2d8ec6fa8b9ba809e8af9a" kind="enumvalue"><name>Ubyte</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6adba9e5ee771da57168d0ec2b3aede0b7" kind="enumvalue"><name>Ushort</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6afa28cf323a8d44edbf80f68165f4f75b" kind="enumvalue"><name>Uint</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a0814836ee4b68ba3373811f351e786e2" kind="enumvalue"><name>Ulong</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6aa245c3230debe5c956484ecc6fa93877" kind="enumvalue"><name>Byte</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a30bb747c98bccdd11b3f89e644c4d0ad" kind="enumvalue"><name>Short</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a1686a6c336b71b36d77354cea19a8b52" kind="enumvalue"><name>Int</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a8394f0347c184cf156ac5924dccb773b" kind="enumvalue"><name>Long</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a22ae0e2b89e5e3d477f988cc36d3272b" kind="enumvalue"><name>Float</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6ad909d38d705ce75386dd86e611a82f5b" kind="enumvalue"><name>Double</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a8e95e84813830072b7516cfaa7dbc1a9" kind="enumvalue"><name>Char</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6aa3d5de3eac8bb00ae86fd1a1005f1500" kind="enumvalue"><name>Timestamp</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a755bf05a8e6c3925f7d7d779bc5cfddc" kind="enumvalue"><name>Uuid</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a6ce976e8f061b2b5cfe4d0c50c3405dd" kind="enumvalue"><name>Binary</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a27118326006d3829667a400ad23d5d98" kind="enumvalue"><name>String</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a02c86eb2792f3262c21d030a87e19793" kind="enumvalue"><name>Symbol</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a4ee29ca12c7d126654bd0e5275de6135" kind="enumvalue"><name>List</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a46f3ea056caa3126b91f3f70beea068c" kind="enumvalue"><name>Map</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a4410ec34d9e6c1a68100ca0ce033fb17" kind="enumvalue"><name>Array</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6af452abc44352a90ee65e21736b85e2bd" kind="enumvalue"><name>Described</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a141a5b46e2087dc7a80a43710c2dacfb" kind="enumvalue"><name>Composite</name></member>
+    <member refid="amqp__value_8hpp_1a89f1bccefad6fde8dd45660c574727a6a88183b946cc5f0e8c96b2e66e1c74a7e" kind="enumvalue"><name>Unknown</name></member>
+    <member refid="amqp__message_8hpp_1a25d3a3409935d7e33b41ecf4e88c3003" kind="variable"><name>AmqpDefaultMessageFormatValue</name></member>
+    <member refid="amqp__header_8hpp_1aae007f5ebb2db1b25d9e686edda9b4ab" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__message_8hpp_1a070557bcd7e5113a0848278928cd72d6" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__properties_8hpp_1a64f726e864eebde8b4afc057ba6f4b68" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__value_8hpp_1a8ab21f784dc18666d251ae46280c6c83" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__value_8hpp_1a1d9127324bc9b30b56a1131ea3ec3e34" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__value_8hpp_1a6045fc081d16ca0363912a9bed6c296d" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__value_8hpp_1a153e18b7531d1e1e4118af8a3074db78" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__value_8hpp_1afaf53d051955ce532e92daa3651b0338" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__value_8hpp_1af3a8cc0610a2ac2db33e8bff9886e410" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="amqp__value_8hpp_1a6899d67fb8a50901d0e54cada4d5ee89" kind="function"><name>operator&lt;&lt;</name></member>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_amqp_1_1_models_1_1_0d54" kind="namespace"><name>Azure::Core::Amqp::Models::@54</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_amqp_1_1_models_1_1_0d55" kind="namespace"><name>Azure::Core::Amqp::Models::@55</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_amqp_1_1_models_1_1_0d57" kind="namespace"><name>Azure::Core::Amqp::Models::@57</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_amqp_1_1_network" kind="namespace"><name>Azure::Core::Amqp::Network</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_diagnostics" kind="namespace"><name>Azure::Core::Diagnostics</name>
+  </compound>
+  <compound refid="namespace_credentials" kind="namespace"><name>Credentials</name>
+  </compound>
+  <compound refid="namespacestd" kind="namespace"><name>std</name>
+  </compound>
+  <compound refid="_c_h_a_n_g_e_l_o_g_8md" kind="file"><name>CHANGELOG.md</name>
+  </compound>
+  <compound refid="amqp_8hpp" kind="file"><name>amqp.hpp</name>
+  </compound>
+  <compound refid="amqp__settle__mode_8hpp" kind="file"><name>amqp_settle_mode.hpp</name>
+  </compound>
+  <compound refid="cancellable_8hpp" kind="file"><name>cancellable.hpp</name>
+  </compound>
+  <compound refid="claims__based__security_8hpp" kind="file"><name>claims_based_security.hpp</name>
+  </compound>
+  <compound refid="async__operation__queue_8hpp" kind="file"><name>async_operation_queue.hpp</name>
+  </compound>
+  <compound refid="completion__operation_8hpp" kind="file"><name>completion_operation.hpp</name>
+  </compound>
+  <compound refid="global__state_8hpp" kind="file"><name>global_state.hpp</name>
+  </compound>
+  <compound refid="connection_8hpp" kind="file"><name>connection.hpp</name>
+  </compound>
+  <compound refid="connection__string__credential_8hpp" kind="file"><name>connection_string_credential.hpp</name>
+  </compound>
+  <compound refid="doxygen__pragma_8hpp" kind="file"><name>doxygen_pragma.hpp</name>
+    <member refid="doxygen__pragma_8hpp_1a5329e7f974103a811a128f8f13489d82" kind="define"><name>BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE</name></member>
+    <member refid="doxygen__pragma_8hpp_1afdb103150fc10dc839c965b5d6006e74" kind="define"><name>END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE</name></member>
+  </compound>
+  <compound refid="endpoint_8hpp" kind="file"><name>endpoint.hpp</name>
+  </compound>
+  <compound refid="link_8hpp" kind="file"><name>link.hpp</name>
+  </compound>
+  <compound refid="management_8hpp" kind="file"><name>management.hpp</name>
+  </compound>
+  <compound refid="message__receiver_8hpp" kind="file"><name>message_receiver.hpp</name>
+  </compound>
+  <compound refid="message__sender_8hpp" kind="file"><name>message_sender.hpp</name>
+  </compound>
+  <compound refid="amqp__error_8hpp" kind="file"><name>amqp_error.hpp</name>
+  </compound>
+  <compound refid="amqp__protocol_8hpp" kind="file"><name>amqp_protocol.hpp</name>
+  </compound>
+  <compound refid="message__source_8hpp" kind="file"><name>message_source.hpp</name>
+  </compound>
+  <compound refid="message__target_8hpp" kind="file"><name>message_target.hpp</name>
+  </compound>
+  <compound refid="messaging__values_8hpp" kind="file"><name>messaging_values.hpp</name>
+  </compound>
+  <compound refid="amqp__detach_8hpp" kind="file"><name>amqp_detach.hpp</name>
+  </compound>
+  <compound refid="amqp__transfer_8hpp" kind="file"><name>amqp_transfer.hpp</name>
+  </compound>
+  <compound refid="amqp__header__detect__transport_8hpp" kind="file"><name>amqp_header_detect_transport.hpp</name>
+  </compound>
+  <compound refid="sasl__transport_8hpp" kind="file"><name>sasl_transport.hpp</name>
+  </compound>
+  <compound refid="socket__listener_8hpp" kind="file"><name>socket_listener.hpp</name>
+  </compound>
+  <compound refid="socket__transport_8hpp" kind="file"><name>socket_transport.hpp</name>
+  </compound>
+  <compound refid="tls__transport_8hpp" kind="file"><name>tls_transport.hpp</name>
+  </compound>
+  <compound refid="transport_8hpp" kind="file"><name>transport.hpp</name>
+  </compound>
+  <compound refid="session_8hpp" kind="file"><name>session.hpp</name>
+  </compound>
+  <compound refid="amqp__header_8hpp" kind="file"><name>amqp_header.hpp</name>
+  </compound>
+  <compound refid="amqp__message_8hpp" kind="file"><name>amqp_message.hpp</name>
+  </compound>
+  <compound refid="amqp__properties_8hpp" kind="file"><name>amqp_properties.hpp</name>
+  </compound>
+  <compound refid="amqp__value_8hpp" kind="file"><name>amqp_value.hpp</name>
+  </compound>
+  <compound refid="_r_e_a_d_m_e_8md" kind="file"><name>README.md</name>
+  </compound>
+  <compound refid="cancellable_8cpp" kind="file"><name>cancellable.cpp</name>
+  </compound>
+  <compound refid="claim__based__security_8cpp" kind="file"><name>claim_based_security.cpp</name>
+  </compound>
+  <compound refid="connection_8cpp" kind="file"><name>connection.cpp</name>
+  </compound>
+  <compound refid="connection__string__credential_8cpp" kind="file"><name>connection_string_credential.cpp</name>
+  </compound>
+  <compound refid="link_8cpp" kind="file"><name>link.cpp</name>
+  </compound>
+  <compound refid="management_8cpp" kind="file"><name>management.cpp</name>
+  </compound>
+  <compound refid="message__receiver_8cpp" kind="file"><name>message_receiver.cpp</name>
+    <member refid="message__receiver_8cpp_1a7a104b2e349617222c6419b36bfd3260" kind="define"><name>__STDC_WANT_LIB_EXT1__</name></member>
+  </compound>
+  <compound refid="message__sender_8cpp" kind="file"><name>message_sender.cpp</name>
+    <member refid="message__sender_8cpp_1a7a104b2e349617222c6419b36bfd3260" kind="define"><name>__STDC_WANT_LIB_EXT1__</name></member>
+  </compound>
+  <compound refid="claims__based__security__impl_8hpp" kind="file"><name>claims_based_security_impl.hpp</name>
+  </compound>
+  <compound refid="connection__impl_8hpp" kind="file"><name>connection_impl.hpp</name>
+    <member refid="connection__impl_8hpp_1a88c9a1cd1f13590d620ed8899815568a" kind="define"><name>_azure_ACQUIRES_LOCK</name></member>
+  </compound>
+  <compound refid="link__impl_8hpp" kind="file"><name>link_impl.hpp</name>
+  </compound>
+  <compound refid="management__impl_8hpp" kind="file"><name>management_impl.hpp</name>
+  </compound>
+  <compound refid="message__receiver__impl_8hpp" kind="file"><name>message_receiver_impl.hpp</name>
+  </compound>
+  <compound refid="message__sender__impl_8hpp" kind="file"><name>message_sender_impl.hpp</name>
+  </compound>
+  <compound refid="session__impl_8hpp" kind="file"><name>session_impl.hpp</name>
+  </compound>
+  <compound refid="unique__handle_8hpp" kind="file"><name>unique_handle.hpp</name>
+  </compound>
+  <compound refid="session_8cpp" kind="file"><name>session.cpp</name>
+  </compound>
+  <compound refid="global__state_8cpp" kind="file"><name>global_state.cpp</name>
+  </compound>
+  <compound refid="amqp__detach_8cpp" kind="file"><name>amqp_detach.cpp</name>
+  </compound>
+  <compound refid="amqp__error_8cpp" kind="file"><name>amqp_error.cpp</name>
+  </compound>
+  <compound refid="amqp__header_8cpp" kind="file"><name>amqp_header.cpp</name>
+  </compound>
+  <compound refid="amqp__message_8cpp" kind="file"><name>amqp_message.cpp</name>
+    <member refid="amqp__message_8cpp_1a3bc2ea2d413a4af96b37b566b61ac3d1" kind="variable"><name>m_decoder</name></member>
+    <member refid="amqp__message_8cpp_1aacde0b14149d2f1fc56fc3709af3352e" kind="variable"><name>m_decodedValue</name></member>
+    <member refid="amqp__message_8cpp_1ac1004a6aa67292555939021f2bb17dc8" kind="variable"><name>m_expectedMessageFields</name></member>
+  </compound>
+  <compound refid="amqp__properties_8cpp" kind="file"><name>amqp_properties.cpp</name>
+  </compound>
+  <compound refid="amqp__transfer_8cpp" kind="file"><name>amqp_transfer.cpp</name>
+  </compound>
+  <compound refid="amqp__value_8cpp" kind="file"><name>amqp_value.cpp</name>
+    <member refid="amqp__value_8cpp_1a31e4a9fde2ab4e14343fa681f1209ad3" kind="variable"><name>m_decoder</name></member>
+    <member refid="amqp__value_8cpp_1ad7b4360df8a45073722d081ecc220037" kind="variable"><name>m_decodedValue</name></member>
+    <member refid="amqp__value_8cpp_1ace35e8c4ffee846f16f8465a6f7ef69d" kind="variable"><name>m_encodedValue</name></member>
+  </compound>
+  <compound refid="message__source_8cpp" kind="file"><name>message_source.cpp</name>
+  </compound>
+  <compound refid="message__target_8cpp" kind="file"><name>message_target.cpp</name>
+  </compound>
+  <compound refid="messaging__values_8cpp" kind="file"><name>messaging_values.cpp</name>
+  </compound>
+  <compound refid="error__impl_8hpp" kind="file"><name>error_impl.hpp</name>
+  </compound>
+  <compound refid="header__impl_8hpp" kind="file"><name>header_impl.hpp</name>
+  </compound>
+  <compound refid="message__impl_8hpp" kind="file"><name>message_impl.hpp</name>
+  </compound>
+  <compound refid="detach__impl_8hpp" kind="file"><name>detach_impl.hpp</name>
+  </compound>
+  <compound refid="transfer__impl_8hpp" kind="file"><name>transfer_impl.hpp</name>
+  </compound>
+  <compound refid="properties__impl_8hpp" kind="file"><name>properties_impl.hpp</name>
+  </compound>
+  <compound refid="source__impl_8hpp" kind="file"><name>source_impl.hpp</name>
+  </compound>
+  <compound refid="target__impl_8hpp" kind="file"><name>target_impl.hpp</name>
+  </compound>
+  <compound refid="value__impl_8hpp" kind="file"><name>value_impl.hpp</name>
+  </compound>
+  <compound refid="amqp__header__transport_8cpp" kind="file"><name>amqp_header_transport.cpp</name>
+  </compound>
+  <compound refid="transport__impl_8hpp" kind="file"><name>transport_impl.hpp</name>
+  </compound>
+  <compound refid="sasl__transport_8cpp" kind="file"><name>sasl_transport.cpp</name>
+  </compound>
+  <compound refid="socket__listener_8cpp" kind="file"><name>socket_listener.cpp</name>
+  </compound>
+  <compound refid="socket__transport_8cpp" kind="file"><name>socket_transport.cpp</name>
+  </compound>
+  <compound refid="tls__transport_8cpp" kind="file"><name>tls_transport.cpp</name>
+  </compound>
+  <compound refid="transport_8cpp" kind="file"><name>transport.cpp</name>
+  </compound>
+  <compound refid="md__c_h_a_n_g_e_l_o_g" kind="page"><name>md__c_h_a_n_g_e_l_o_g</name>
+  </compound>
+  <compound refid="dir_397a2ee3a37c7b2f3322a090fecdf9e2" kind="dir"><name>inc/azure/core/amqp</name>
+  </compound>
+  <compound refid="dir_87fb4e5f3915ff0bfb92d5c9f9fc2392" kind="dir"><name>src/amqp</name>
+  </compound>
+  <compound refid="dir_7d6893ff7a5980c9033ed77439b5f032" kind="dir"><name>inc/azure</name>
+  </compound>
+  <compound refid="dir_9bccf4eff747aacd564532927fdc045d" kind="dir"><name>inc/azure/core/amqp/internal/common</name>
+  </compound>
+  <compound refid="dir_fdedb0aba14d44ce9d99bc100e026e6a" kind="dir"><name>src/common</name>
+  </compound>
+  <compound refid="dir_06ad7f09ade60a1ced0a4e3dcb3d1625" kind="dir"><name>inc/azure/core</name>
+  </compound>
+  <compound refid="dir_bfccd401955b95cf8c75461437045ac0" kind="dir"><name>inc</name>
+  </compound>
+  <compound refid="dir_dad9d0b8794987d5ef942fe1b0a3e561" kind="dir"><name>inc/azure/core/amqp/internal</name>
+  </compound>
+  <compound refid="dir_fb7966df8dc1c2159f1d2928d47fb7df" kind="dir"><name>inc/azure/core/amqp/internal/models</name>
+  </compound>
+  <compound refid="dir_70e06a81cd6de0943a2d3baaf7dff45c" kind="dir"><name>inc/azure/core/amqp/models</name>
+  </compound>
+  <compound refid="dir_bdeba5f06b852fec80257c0bf4c3c36e" kind="dir"><name>src/models</name>
+  </compound>
+  <compound refid="dir_9a79ce38d853107a82c84b1127eca39d" kind="dir"><name>inc/azure/core/amqp/internal/network</name>
+  </compound>
+  <compound refid="dir_fc4c7f03e1a69a98c370fae55a743828" kind="dir"><name>src/network</name>
+  </compound>
+  <compound refid="dir_47d404ee0e80b407a5dfff678745e934" kind="dir"><name>inc/azure/core/amqp/internal/models/performatives</name>
+  </compound>
+  <compound refid="dir_b7102ff027806dab764db33a4f91f286" kind="dir"><name>src/models/private/performatives</name>
+  </compound>
+  <compound refid="dir_3d19e77b41700d4a0876863a1d0733b5" kind="dir"><name>src/amqp/private</name>
+  </compound>
+  <compound refid="dir_7f4ae16ac37690cbccd8751d21b51be8" kind="dir"><name>src/models/private</name>
+  </compound>
+  <compound refid="dir_0369d3b0dd40e9aef90fa4a1b74cee7c" kind="dir"><name>src/network/private</name>
+  </compound>
+  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>src</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

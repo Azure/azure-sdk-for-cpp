@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::CurlTransportSslOptions</compoundname>
+    <includes refid="curl__transport_8hpp" local="no">curl_transport.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a5d3fc54773da96c6477e3f938b73ddc5" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlTransportSslOptions::EnableCertificateRevocationListCheck</definition>
+        <argsstring></argsstring>
+        <name>EnableCertificateRevocationListCheck</name>
+        <qualifiedname>Azure::Core::Http::CurlTransportSslOptions::EnableCertificateRevocationListCheck</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>This option can enable the revocation list check. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Libcurl does revocation list check by default for SSL backends that supports this feature. However, the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK overrides libcurl&apos;s behavior and disables the revocation list check by default. This ensures that the libcurl behavior matches the WinHTTP behavior. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="45" column="10" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a11ebd05e5f58f37a9f6f77aa6f9a4b5d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlTransportSslOptions::AllowFailedCrlRetrieval</definition>
+        <argsstring></argsstring>
+        <name>AllowFailedCrlRetrieval</name>
+        <qualifiedname>Azure::Core::Http::CurlTransportSslOptions::AllowFailedCrlRetrieval</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>This option allows SSL connections to proceed even if there is an error retrieving the Certificate Revocation List. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this only works when libcurl is configured to use OpenSSL as its TLS provider. That functionally limits this check to Linux only, and only when openssl is configured (the default). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="55" column="10" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a11f843c6a50fbf433a4cb95a0b90b2da" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::CurlTransportSslOptions::PemEncodedExpectedRootCertificates</definition>
+        <argsstring></argsstring>
+        <name>PemEncodedExpectedRootCertificates</name>
+        <qualifiedname>Azure::Core::Http::CurlTransportSslOptions::PemEncodedExpectedRootCertificates</qualifiedname>
+        <briefdescription>
+<para>A set of PEM encoded X.509 certificates and CRLs describing the certificates used to validate the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>The <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK will not directly validate these certificates.</para>
+</simplesect>
+<simplesect kind="remark"><para>More about this option: <ulink url="https://curl.se/libcurl/c/CURLOPT_CAINFO_BLOB.html">https://curl.se/libcurl/c/CURLOPT_CAINFO_BLOB.html</ulink></para>
+</simplesect>
+<simplesect kind="warning"><para>Requires libcurl &gt;= 7.44.0 </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/curl_transport.hpp" line="69" column="17" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="69" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The available options to set libcurl SSL options. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="remark"><para>The SDK will map the enum option to libcurl&apos;s specific option. See more info here: <ulink url="https://curl.se/libcurl/c/CURLOPT_SSL_OPTIONS.html">https://curl.se/libcurl/c/CURLOPT_SSL_OPTIONS.html</ulink> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/http/curl_transport.hpp" line="36" column="3" bodyfile="inc/azure/core/http/curl_transport.hpp" bodystart="37" bodyend="70"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a11ebd05e5f58f37a9f6f77aa6f9a4b5d" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlTransportSslOptions</scope><name>AllowFailedCrlRetrieval</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a5d3fc54773da96c6477e3f938b73ddc5" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlTransportSslOptions</scope><name>EnableCertificateRevocationListCheck</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a11f843c6a50fbf433a4cb95a0b90b2da" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlTransportSslOptions</scope><name>PemEncodedExpectedRootCertificates</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

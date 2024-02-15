@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobServiceProperties</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a761106a0483c6eab3cf78a680ca68ff7" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_analytics_logging" kindref="compound">AnalyticsLogging</ref></type>
+        <definition>AnalyticsLogging Azure::Storage::Blobs::Models::BlobServiceProperties::Logging</definition>
+        <argsstring></argsstring>
+        <name>Logging</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobServiceProperties::Logging</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Azure Analytics Logging settings. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="221" column="24" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1ab1bacb4d909f61d0f5d83cda9e4d413d" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_metrics" kindref="compound">Metrics</ref></type>
+        <definition>Metrics Azure::Storage::Blobs::Models::BlobServiceProperties::HourMetrics</definition>
+        <argsstring></argsstring>
+        <name>HourMetrics</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobServiceProperties::HourMetrics</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A summary of request statistics grouped by API in hour or minute aggregates for blobs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="225" column="15" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a1eb9276a98ad9b6db0608eaea53d0a05" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_metrics" kindref="compound">Metrics</ref></type>
+        <definition>Metrics Azure::Storage::Blobs::Models::BlobServiceProperties::MinuteMetrics</definition>
+        <argsstring></argsstring>
+        <name>MinuteMetrics</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobServiceProperties::MinuteMetrics</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A summary of request statistics grouped by API in hour or minute aggregates for blobs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="229" column="15" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a02e30d8e81c2ffea911fb8852384a41c" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule" kindref="compound">CorsRule</ref> &gt;</type>
+        <definition>std::vector&lt;CorsRule&gt; Azure::Storage::Blobs::Models::BlobServiceProperties::Cors</definition>
+        <argsstring></argsstring>
+        <name>Cors</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobServiceProperties::Cors</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The set of CORS rules. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="233" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a775f2c25fa93d6781383e6a6b074d599" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::BlobServiceProperties::DefaultServiceVersion</definition>
+        <argsstring></argsstring>
+        <name>DefaultServiceVersion</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobServiceProperties::DefaultServiceVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The default version to use for requests to the Blob service if an incoming request&apos;s version is not specified. Possible values include version 2008-10-27 and all more recent versions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="239" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a74ed71def87bb40e98c940227511c3d4" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy" kindref="compound">RetentionPolicy</ref></type>
+        <definition>RetentionPolicy Azure::Storage::Blobs::Models::BlobServiceProperties::DeleteRetentionPolicy</definition>
+        <argsstring></argsstring>
+        <name>DeleteRetentionPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobServiceProperties::DeleteRetentionPolicy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The retention policy which determines how long the associated data should persist. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="243" column="23" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a4614af4fb21da874194af761d701985e" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website" kindref="compound">Models::StaticWebsite</ref></type>
+        <definition>Models::StaticWebsite Azure::Storage::Blobs::Models::BlobServiceProperties::StaticWebsite</definition>
+        <argsstring></argsstring>
+        <name>StaticWebsite</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobServiceProperties::StaticWebsite</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The properties that enable an account to host a static website. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="247" column="29" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="247" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Storage Service Properties. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::AnalyticsLogging</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_analytics_logging"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>RetentionPolicy</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobServiceProperties</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Logging</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>HourMetrics</edgelabel>
+          <edgelabel>MinuteMetrics</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>DeleteRetentionPolicy</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>StaticWebsite</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Azure::Storage::Blobs::Models::Metrics</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_metrics"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>RetentionPolicy</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::RetentionPolicy</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy"/>
+      </node>
+      <node id="5">
+        <label>Azure::Storage::Blobs::Models::StaticWebsite</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_static_website"/>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="216" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="217" bodyend="248"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a02e30d8e81c2ffea911fb8852384a41c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobServiceProperties</scope><name>Cors</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a775f2c25fa93d6781383e6a6b074d599" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobServiceProperties</scope><name>DefaultServiceVersion</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a74ed71def87bb40e98c940227511c3d4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobServiceProperties</scope><name>DeleteRetentionPolicy</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1ab1bacb4d909f61d0f5d83cda9e4d413d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobServiceProperties</scope><name>HourMetrics</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a761106a0483c6eab3cf78a680ca68ff7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobServiceProperties</scope><name>Logging</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a1eb9276a98ad9b6db0608eaea53d0a05" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobServiceProperties</scope><name>MinuteMetrics</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_service_properties_1a4614af4fb21da874194af761d701985e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobServiceProperties</scope><name>StaticWebsite</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

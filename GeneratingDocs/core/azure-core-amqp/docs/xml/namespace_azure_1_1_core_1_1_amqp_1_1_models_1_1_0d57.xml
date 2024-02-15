@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_amqp_1_1_models_1_1_0d57" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Amqp::Models</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/models/amqp_value.cpp" line="610" column="3"/>
+  </compounddef>
+</doxygen>

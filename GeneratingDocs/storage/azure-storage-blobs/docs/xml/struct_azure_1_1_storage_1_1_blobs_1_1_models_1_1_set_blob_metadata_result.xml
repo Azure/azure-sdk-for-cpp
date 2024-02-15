@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SetBlobMetadataResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1adff9b480fd1c72df8c3345c39e991579" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int64_t &gt;</type>
+        <definition>Nullable&lt;int64_t&gt; Azure::Storage::Blobs::Models::SetBlobMetadataResult::SequenceNumber</definition>
+        <argsstring></argsstring>
+        <name>SequenceNumber</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobMetadataResult::SequenceNumber</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2106" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a64ab609ba85f575cf8dc929fc177123d" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::SetBlobMetadataResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobMetadataResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2111" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a5baa85df2a406dbc8abd4f5442d04330" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::SetBlobMetadataResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobMetadataResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2117" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a61b93b6740986858cb4bc43055bcaa78" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::SetBlobMetadataResult::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobMetadataResult::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2123" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1af3b08e5cc71af8152c4e644b601fc26b" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::SetBlobMetadataResult::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobMetadataResult::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2128" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1af26e714985bb2260f2442c5f20c42817" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Storage::Blobs::Models::SetBlobMetadataResult::EncryptionKeySha256</definition>
+        <argsstring></argsstring>
+        <name>EncryptionKeySha256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobMetadataResult::EncryptionKeySha256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The SHA-256 hash of the encryption key used to encrypt the metadata. This header is only returned when the metadata was encrypted with a customer-provided key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2133" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a52a189987b86207ee6d09dd2175754fe" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::SetBlobMetadataResult::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobMetadataResult::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the name of the encryption scope used to encrypt the blob contents and application metadata. Note that the absence of this header implies use of the default account encryption scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2139" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2139" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a76301e79fa60cae85be9fca9072042a1" kindref="member">Azure::Storage::Blobs::BlobClient::SetMetadata</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2100" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2101" bodyend="2140"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1af26e714985bb2260f2442c5f20c42817" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobMetadataResult</scope><name>EncryptionKeySha256</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a52a189987b86207ee6d09dd2175754fe" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobMetadataResult</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a64ab609ba85f575cf8dc929fc177123d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobMetadataResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1af3b08e5cc71af8152c4e644b601fc26b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobMetadataResult</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a5baa85df2a406dbc8abd4f5442d04330" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobMetadataResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1adff9b480fd1c72df8c3345c39e991579" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobMetadataResult</scope><name>SequenceNumber</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_metadata_result_1a61b93b6740986858cb4bc43055bcaa78" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobMetadataResult</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

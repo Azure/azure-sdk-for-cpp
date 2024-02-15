@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser" kind="class" language="C++" prot="private" final="yes">
+    <compoundname>Azure::Core::Http::CurlSession::ResponseBufferParser</compoundname>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a63bbebc1fe73e45995108cf2551f10c9" prot="private" static="no" mutable="no">
+        <type>ResponseParserState</type>
+        <definition>ResponseParserState Azure::Core::Http::CurlSession::ResponseBufferParser::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::state</qualifiedname>
+        <initializer>= ResponseParserState::StatusLine</initializer>
+        <briefdescription>
+<para>Controls what the parser is expecting during the reading process. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="108" column="27" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a0512753f84e5fc839cbb0726b3190293" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;RawResponse&gt; Azure::Core::Http::CurlSession::ResponseBufferParser::m_response</definition>
+        <argsstring></argsstring>
+        <name>m_response</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::m_response</qualifiedname>
+        <briefdescription>
+<para>Unique ptr to a response. Parser will create an Initial-valid HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> and then it will append headers to it. This response is moved to a different owner once parsing is completed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="115" column="23" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab7e7eae2fecacfa520a30541dc2ed0a4" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlSession::ResponseBufferParser::m_parseCompleted</definition>
+        <argsstring></argsstring>
+        <name>m_parseCompleted</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::m_parseCompleted</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Indicates if parser has found the end of the headers and there is nothing left for the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="121" column="12" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a61a2f3a41ddbf157a130e1922ce5fdfe" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlSession::ResponseBufferParser::m_delimiterStartInPrevPosition</definition>
+        <argsstring></argsstring>
+        <name>m_delimiterStartInPrevPosition</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::m_delimiterStartInPrevPosition</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="123" column="12" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a811bef719179065cc3ad93c277201736" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::CurlSession::ResponseBufferParser::m_internalBuffer</definition>
+        <argsstring></argsstring>
+        <name>m_internalBuffer</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::m_internalBuffer</qualifiedname>
+        <briefdescription>
+<para>This buffer is used when the parsed buffer doesn&apos;t contain a completed token. The content from the buffer will be appended to this buffer. Once that a delimiter is found, the token for the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> is taken from this internal sting if it contains data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This buffer allows a libcurl session to use any size of buffer to read from a socket while constructing an initial valid HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. No matter if the response from wire contains hundreds of headers, we can use only one fixed size buffer to parse it all. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="136" column="19" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a97271538b22ad96379646db5f6916359" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Azure::Core::Http::CurlSession::ResponseBufferParser::BuildStatusCode</definition>
+        <argsstring>(uint8_t const *const buffer, size_t const bufferSize)</argsstring>
+        <name>BuildStatusCode</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::BuildStatusCode</qualifiedname>
+        <param>
+          <type>uint8_t const *const</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t const</type>
+          <declname>bufferSize</declname>
+        </param>
+        <briefdescription>
+<para>This method is invoked by the Parsing process if the internal state is set to status code. Function will get the status-line expected tokens until finding the end of status line delimiter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>When the end of status line delimiter is found, this method will create the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. The HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> is constructed by default with body type as Stream.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Points to a memory address with all or some part of a HTTP status line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bufferSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates the size of the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns the index of the last parsed position from buffer. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="150" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab50766f2d3cebcb6720fa8fd0361327f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Azure::Core::Http::CurlSession::ResponseBufferParser::BuildHeader</definition>
+        <argsstring>(uint8_t const *const buffer, size_t const bufferSize)</argsstring>
+        <name>BuildHeader</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::BuildHeader</qualifiedname>
+        <param>
+          <type>uint8_t const *const</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t const</type>
+          <declname>bufferSize</declname>
+        </param>
+        <briefdescription>
+<para>This method is invoked by the Parsing process if the internal state is set to headers. Function will keep adding headers to the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> created before while parsing an status line. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Points to a memory address with all or some part of a HTTP header. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bufferSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates the size of the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns the index of the last parsed position from buffer. When the returned value is smaller than the body size, means there is part of the body response in the buffer. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="163" column="14"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab9930e2e50f97e2f5deeee680746e268" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::CurlSession::ResponseBufferParser::ResponseBufferParser</definition>
+        <argsstring>()</argsstring>
+        <name>ResponseBufferParser</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::ResponseBufferParser</qualifiedname>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> Buffer Parser object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="170" column="7" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="170" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a4dc77e0174381c495fe672540bcc5118" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t CurlSession::ResponseBufferParser::Parse</definition>
+        <argsstring>(uint8_t const *const buffer, size_t const bufferSize)</argsstring>
+        <name>Parse</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::Parse</qualifiedname>
+        <param>
+          <type>uint8_t const *const</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t const</type>
+          <declname>bufferSize</declname>
+        </param>
+        <briefdescription>
+<para>Parses the content of a buffer to construct a valid HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. This method is expected to be called over and over until it returns 0, indicating there is nothing more to parse to build the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>points to a memory area that contains, all or some part of an HTTP response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bufferSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates the size of the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns the index of the last parsed position. Returning a 0 means nothing was parsed and it is likely that the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> is completed. Returning the same value as the buffer size means all buffer was parsed and the HTTP might be completed or not. Returning a value smaller than the buffer size will likely indicate that the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> is completed and that the rest of the buffer contains part of the response body. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="188" column="14" bodyfile="src/http/curl/curl.cpp" bodystart="1156" bodyend="1273"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1aaf3267f6ad92fff40cfbbb9586d8950c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlSession::ResponseBufferParser::IsParseCompleted</definition>
+        <argsstring>() const</argsstring>
+        <name>IsParseCompleted</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::IsParseCompleted</qualifiedname>
+        <briefdescription>
+<para>Indicates when the parser has completed parsing and building the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><computeroutput>true</computeroutput> if parsing is completed; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="195" column="12" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="195" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a16d06c242be4560e41727bd47019f8c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; RawResponse &gt; Azure::Core::Http::CurlSession::ResponseBufferParser::ExtractResponse</definition>
+        <argsstring>()</argsstring>
+        <name>ExtractResponse</name>
+        <qualifiedname>Azure::Core::Http::CurlSession::ResponseBufferParser::ExtractResponse</qualifiedname>
+        <briefdescription>
+<para>Moves the internal response to a different owner. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Will move the response only if parsing is completed and if the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> was not moved before. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_session_private.hpp" line="203" column="23" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="203" bodyend="210"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>stateful component used to read and parse a buffer to construct a valid HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="remark"><para>It uses an internal string as a buffer to accumulate a response token (version, code, header, etc.) until the next delimiter is found. Then it uses this string to keep building the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref>.</para>
+</simplesect>
+<simplesect kind="remark"><para>Only status line and headers are parsed and built. Body is ignored by this component. A libcurl session will use this component to build and return the HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> with a body stream to the pipeline. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="src/http/curl/curl_session_private.hpp" line="102" column="5" bodyfile="src/http/curl/curl_session_private.hpp" bodystart="102" bodyend="211"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab50766f2d3cebcb6720fa8fd0361327f" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>BuildHeader</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a97271538b22ad96379646db5f6916359" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>BuildStatusCode</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a16d06c242be4560e41727bd47019f8c1" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>ExtractResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1aaf3267f6ad92fff40cfbbb9586d8950c" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>IsParseCompleted</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a61a2f3a41ddbf157a130e1922ce5fdfe" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>m_delimiterStartInPrevPosition</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a811bef719179065cc3ad93c277201736" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>m_internalBuffer</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab7e7eae2fecacfa520a30541dc2ed0a4" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>m_parseCompleted</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a0512753f84e5fc839cbb0726b3190293" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>m_response</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a4dc77e0174381c495fe672540bcc5118" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>Parse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab9930e2e50f97e2f5deeee680746e268" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>ResponseBufferParser</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a63bbebc1fe73e45995108cf2551f10c9" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlSession::ResponseBufferParser</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

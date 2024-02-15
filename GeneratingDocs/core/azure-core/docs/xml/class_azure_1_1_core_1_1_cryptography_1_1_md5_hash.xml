@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Cryptography::Md5Hash</compoundname>
+    <basecompoundref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" prot="public" virt="non-virtual">Azure::Core::Cryptography::Hash</basecompoundref>
+    <includes refid="hash_8hpp" local="no">hash.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a59fc596fdff4ae4f38168f1aa077a54e" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kindref="compound">Hash</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;Hash&gt; Azure::Core::Cryptography::Md5Hash::m_implementation</definition>
+        <argsstring></argsstring>
+        <name>m_implementation</name>
+        <qualifiedname>Azure::Core::Cryptography::Md5Hash::m_implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="145" column="21" bodyfile="inc/azure/core/cryptography/hash.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a69388cd5feec924cfbf0bb12c8798cb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Cryptography::Md5Hash::Md5Hash</definition>
+        <argsstring>()</argsstring>
+        <name>Md5Hash</name>
+        <qualifiedname>Azure::Core::Cryptography::Md5Hash::Md5Hash</qualifiedname>
+        <briefdescription>
+<para>Construct a default instance of <ref refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" kindref="compound">Azure::Core::Cryptography::Md5Hash</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="136" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a68d53cb85f27357ab1dbd236b0940b04" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Cryptography::Md5Hash::~Md5Hash</definition>
+        <argsstring>() override</argsstring>
+        <name>~Md5Hash</name>
+        <qualifiedname>Azure::Core::Cryptography::Md5Hash::~Md5Hash</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>Md5Hash</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="142" column="5"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a3d3b8a5a776ee3a4e8cb2247755f8e99" prot="private" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Cryptography::Md5Hash::OnFinal</definition>
+        <argsstring>(const uint8_t *data, size_t length) override</argsstring>
+        <name>OnFinal</name>
+        <qualifiedname>Azure::Core::Cryptography::Md5Hash::OnFinal</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a63ddc8aadc46c0441870c1caad24ca79">OnFinal</reimplements>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Computes the hash value of the specified binary input data, including any previously appended. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pointer to binary data to compute the hash value for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the data provided. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The computed MD5 hash value corresponding to the input provided including any previously appended. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="155" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a6784a00f3b595ec0ec8f47693546a494" prot="private" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Cryptography::Md5Hash::OnAppend</definition>
+        <argsstring>(const uint8_t *data, size_t length) override</argsstring>
+        <name>OnAppend</name>
+        <qualifiedname>Azure::Core::Cryptography::Md5Hash::OnAppend</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ad91a23277675cf03163e92cc159be7d0">OnAppend</reimplements>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Used to append partial binary input data to compute the MD5 hash in a streaming fashion. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Once all the data has been added, call <ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" kindref="member">Azure::Core::Cryptography::Hash::Final()</ref> to get the computed hash value. </para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pointer to the current block of binary data that is used for hash calculation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the data provided. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="166" column="10"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents the class for the MD5 hash function which maps binary data of an arbitrary length to small binary data of a fixed length. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="warning"><para>MD5 is a deprecated hashing algorithm and SHOULD NOT be used, unless it is used to implement a specific protocol (See RFC 6151 for more information about the weaknesses of the MD5 hash function). Client implementers should strongly prefer the SHA256, SHA384, and SHA512 hash functions. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Cryptography::Hash</label>
+        <link refid="class_azure_1_1_core_1_1_cryptography_1_1_hash"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Cryptography::Md5Hash</label>
+        <link refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::Cryptography::Hash</label>
+        <link refid="class_azure_1_1_core_1_1_cryptography_1_1_hash"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Cryptography::Md5Hash</label>
+        <link refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/cryptography/hash.hpp" line="129" column="3" bodyfile="inc/azure/core/cryptography/hash.hpp" bodystart="129" bodyend="167"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ac3c9cb8298ea1f02b9751d2aeada5e28" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>Append</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aae186272ffc97535f4c289803ea3bed7" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>Final</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>Final</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a713b9700af1c65cd6fff998d8e91cfd1" prot="protected" virt="non-virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>Hash</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a59fc596fdff4ae4f38168f1aa077a54e" prot="private" virt="non-virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>m_implementation</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a69388cd5feec924cfbf0bb12c8798cb7" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>Md5Hash</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a6784a00f3b595ec0ec8f47693546a494" prot="private" virt="virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>OnAppend</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a3d3b8a5a776ee3a4e8cb2247755f8e99" prot="private" virt="virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>OnFinal</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a5d4a624d64e23e0063fd9a3f9bfee3aa" prot="public" virt="virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>~Hash</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a68d53cb85f27357ab1dbd236b0940b04" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Md5Hash</scope><name>~Md5Hash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

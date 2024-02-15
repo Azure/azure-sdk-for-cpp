@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a3d94dcf17f931a2f075ec51c2a9af161" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref></type>
+        <definition>const ScheduleBlobExpiryOriginType Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::NeverExpire</definition>
+        <argsstring></argsstring>
+        <name>NeverExpire</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::NeverExpire</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref>: NeverExpire </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2021" column="76" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2021" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a2b98c3d42151f62f83974959a2d0c5ca" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref></type>
+        <definition>const ScheduleBlobExpiryOriginType Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::RelativeToCreation</definition>
+        <argsstring></argsstring>
+        <name>RelativeToCreation</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::RelativeToCreation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref>: RelativeToCreation </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2023" column="76" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2023" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1ad4bcbd041bb79022a7d35601e1138174" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref></type>
+        <definition>const ScheduleBlobExpiryOriginType Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::RelativeToNow</definition>
+        <argsstring></argsstring>
+        <name>RelativeToNow</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::RelativeToNow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref>: RelativeToNow </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2025" column="76" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2025" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1aa0b3c2584418c13276c2024f1e5b88be" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref></type>
+        <definition>const ScheduleBlobExpiryOriginType Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::Absolute</definition>
+        <argsstring></argsstring>
+        <name>Absolute</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::Absolute</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref>: Absolute </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2027" column="76" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2027" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1ae53f1ab19d17a3d6e5d72e2892e27780" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2030" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2030" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a2467bda487a7a1ee94184c026e80720c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::ScheduleBlobExpiryOriginType</definition>
+        <argsstring>()=default</argsstring>
+        <name>ScheduleBlobExpiryOriginType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::ScheduleBlobExpiryOriginType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2008" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1ad9366f01b7716c8e757e23456a909b58" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::ScheduleBlobExpiryOriginType</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>ScheduleBlobExpiryOriginType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::ScheduleBlobExpiryOriginType</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2010" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2010" bodyend="2010"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a5fb1a15f43914f773f23f53ad9171f45" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::operator==</definition>
+        <argsstring>(const ScheduleBlobExpiryOriginType &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2012" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2012" bodyend="2015"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1af01f8b02ef6f76a5011574902e6199b7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::operator!=</definition>
+        <argsstring>(const ScheduleBlobExpiryOriginType &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type" kindref="compound">ScheduleBlobExpiryOriginType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2017" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2017" bodyend="2017"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a92c1c5efcdf3de6eeb8974b0122bf61e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2019" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2019" bodyend="2019"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Required. Indicates mode of the expiry time. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Absolute</edgelabel>
+          <edgelabel>NeverExpire</edgelabel>
+          <edgelabel>RelativeToCreation</edgelabel>
+          <edgelabel>RelativeToNow</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2005" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2005" bodyend="2031"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1aa0b3c2584418c13276c2024f1e5b88be" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>Absolute</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1ae53f1ab19d17a3d6e5d72e2892e27780" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a3d94dcf17f931a2f075ec51c2a9af161" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>NeverExpire</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1af01f8b02ef6f76a5011574902e6199b7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a5fb1a15f43914f773f23f53ad9171f45" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a2b98c3d42151f62f83974959a2d0c5ca" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>RelativeToCreation</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1ad4bcbd041bb79022a7d35601e1138174" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>RelativeToNow</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a2467bda487a7a1ee94184c026e80720c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>ScheduleBlobExpiryOriginType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1ad9366f01b7716c8e757e23456a909b58" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>ScheduleBlobExpiryOriginType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_schedule_blob_expiry_origin_type_1a92c1c5efcdf3de6eeb8974b0122bf61e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ScheduleBlobExpiryOriginType</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

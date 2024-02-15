@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_a7bb69ec52c5df340e69756891192a78" kind="dir">
+    <compoundname>src/http/winhttp</compoundname>
+    <innerfile refid="win__http__request_8hpp">win_http_request.hpp</innerfile>
+    <innerfile refid="win__http__transport_8cpp">win_http_transport.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/http/winhttp/"/>
+  </compounddef>
+</doxygen>

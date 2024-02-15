@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_bdeba5f06b852fec80257c0bf4c3c36e" kind="dir">
+    <compoundname>src/models</compoundname>
+    <innerdir refid="dir_7f4ae16ac37690cbccd8751d21b51be8">src/models/private</innerdir>
+    <innerfile refid="amqp__detach_8cpp">amqp_detach.cpp</innerfile>
+    <innerfile refid="amqp__error_8cpp">amqp_error.cpp</innerfile>
+    <innerfile refid="amqp__header_8cpp">amqp_header.cpp</innerfile>
+    <innerfile refid="amqp__message_8cpp">amqp_message.cpp</innerfile>
+    <innerfile refid="amqp__properties_8cpp">amqp_properties.cpp</innerfile>
+    <innerfile refid="amqp__transfer_8cpp">amqp_transfer.cpp</innerfile>
+    <innerfile refid="amqp__value_8cpp">amqp_value.cpp</innerfile>
+    <innerfile refid="message__source_8cpp">message_source.cpp</innerfile>
+    <innerfile refid="message__target_8cpp">message_target.cpp</innerfile>
+    <innerfile refid="messaging__values_8cpp">messaging_values.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/models/"/>
+  </compounddef>
+</doxygen>

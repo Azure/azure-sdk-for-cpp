@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ac5a67648e1cd5d9bca7cb1efc51d3a82" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::CopyBlobFromUriResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2358" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2358" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ac25a3cf8771d575bd93d620cfe484a65" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::CopyBlobFromUriResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2364" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2364" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ac578456b261cabedd26e8a1f665f3755" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CopyBlobFromUriResult::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2370" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ade584e8f78bb0035aa382a098d159f76" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::CopyBlobFromUriResult::CopyId</definition>
+        <argsstring></argsstring>
+        <name>CopyId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult::CopyId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String identifier for this copy operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2374" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2374" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1a3737a45b1af8709e63f5ecb2118eaa8c" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">Models::CopyStatus</ref></type>
+        <definition>Models::CopyStatus Azure::Storage::Blobs::Models::CopyBlobFromUriResult::CopyStatus</definition>
+        <argsstring></argsstring>
+        <name>CopyStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult::CopyStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>State of the copy operation identified by x-ms-copy-id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2378" column="26" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2378" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1aea2e26d1f0213f299a831fd2af2de8e6" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; ContentHash &gt;</type>
+        <definition>Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::Models::CopyBlobFromUriResult::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This response header is returned so that the client can check for the integrity of the copied content. This header is only returned if the source content MD5 was specified. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2383" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2383" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1af06b40793a6a4a2e290b7f814925d058" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CopyBlobFromUriResult::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyBlobFromUriResult::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the name of the encryption scope used to encrypt the blob contents and application metadata. Note that the absence of this header implies use of the default account encryption scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2389" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2389" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a267904b7db1f9e53632dc551aaea037c" kindref="member">Azure::Storage::Blobs::BlobClient::CopyFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>CopyStatus</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::CopyStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Aborted</edgelabel>
+          <edgelabel>Failed</edgelabel>
+          <edgelabel>Pending</edgelabel>
+          <edgelabel>Success</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2352" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2353" bodyend="2390"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ade584e8f78bb0035aa382a098d159f76" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</scope><name>CopyId</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1a3737a45b1af8709e63f5ecb2118eaa8c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</scope><name>CopyStatus</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1af06b40793a6a4a2e290b7f814925d058" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ac5a67648e1cd5d9bca7cb1efc51d3a82" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ac25a3cf8771d575bd93d620cfe484a65" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1aea2e26d1f0213f299a831fd2af2de8e6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</scope><name>TransactionalContentHash</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result_1ac578456b261cabedd26e8a1f665f3755" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyBlobFromUriResult</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

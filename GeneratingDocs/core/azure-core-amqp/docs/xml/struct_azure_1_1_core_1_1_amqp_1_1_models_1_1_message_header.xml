@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::MessageHeader</compoundname>
+    <includes refid="amqp__header_8hpp" local="no">amqp_header.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5f40f2afecd60bdb6c91981e59caa49b" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::MessageHeader::Durable</definition>
+        <argsstring></argsstring>
+        <name>Durable</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::Durable</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>True if the message is considered &quot;durable&quot;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header">AMQP Section 3.2.1</ulink>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="54" column="10" bodyfile="inc/azure/core/amqp/models/amqp_header.hpp" bodystart="54" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab28f0903d806e5c1d38e9ace1dde2627" prot="public" static="no" mutable="no">
+        <type>std::uint8_t</type>
+        <definition>std::uint8_t Azure::Core::Amqp::Models::MessageHeader::Priority</definition>
+        <argsstring></argsstring>
+        <name>Priority</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::Priority</qualifiedname>
+        <initializer>{4}</initializer>
+        <briefdescription>
+<para>Priority of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header">AMQP Section 3.2.1</ulink>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="61" column="18" bodyfile="inc/azure/core/amqp/models/amqp_header.hpp" bodystart="61" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a720635f08ae0438a87b9b69fac3a3519" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::chrono::milliseconds &gt;</type>
+        <definition>Nullable&lt;std::chrono::milliseconds&gt; Azure::Core::Amqp::Models::MessageHeader::TimeToLive</definition>
+        <argsstring></argsstring>
+        <name>TimeToLive</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::TimeToLive</qualifiedname>
+        <briefdescription>
+<para>If present, defines the time to live for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header">AMQP Section 3.2.1</ulink>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="68" column="14" bodyfile="inc/azure/core/amqp/models/amqp_header.hpp" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a8070e66fe6930ad138e3aec4f3dd29cb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::MessageHeader::IsFirstAcquirer</definition>
+        <argsstring></argsstring>
+        <name>IsFirstAcquirer</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::IsFirstAcquirer</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>If true, the message has not been acquired by any other link. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header">AMQP Section 3.2.1</ulink>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="75" column="10" bodyfile="inc/azure/core/amqp/models/amqp_header.hpp" bodystart="75" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a16c9479e3368ca97e70fa4de31bd39c1" prot="public" static="no" mutable="no">
+        <type>std::uint32_t</type>
+        <definition>std::uint32_t Azure::Core::Amqp::Models::MessageHeader::DeliveryCount</definition>
+        <argsstring></argsstring>
+        <name>DeliveryCount</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::DeliveryCount</qualifiedname>
+        <initializer>{0}</initializer>
+        <briefdescription>
+<para>The number of unsuccessful previous attempts to deliver this message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header">AMQP Section 3.2.1</ulink>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="83" column="19" bodyfile="inc/azure/core/amqp/models/amqp_header.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aebd63a9a80a499519fc4a900f5521998" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageHeader::MessageHeader</definition>
+        <argsstring>()=default</argsstring>
+        <name>MessageHeader</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::MessageHeader</qualifiedname>
+        <briefdescription>
+<para>Default constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="26" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef6ecaac594401fb09f3d731b10b3f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageHeader::~MessageHeader</definition>
+        <argsstring>()=default</argsstring>
+        <name>~MessageHeader</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::~MessageHeader</qualifiedname>
+        <briefdescription>
+<para>Destructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="28" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a2997b8a720342bcf0ca3b88649746409" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageHeader::MessageHeader</definition>
+        <argsstring>(MessageHeader &amp;&amp;other)=default</argsstring>
+        <name>MessageHeader</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::MessageHeader</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="31" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1afdc33564e1d03e866fb950ece6d75401" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> &amp;</type>
+        <definition>MessageHeader &amp; Azure::Core::Amqp::Models::MessageHeader::operator=</definition>
+        <argsstring>(MessageHeader &amp;&amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::operator=</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="34" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef7a7bd29e6a564e81885c631396a1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageHeader::MessageHeader</definition>
+        <argsstring>(MessageHeader const &amp;other)=default</argsstring>
+        <name>MessageHeader</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::MessageHeader</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> const &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="37" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab2c9cd841e4123c1d1bd48d385ecb085" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> &amp;</type>
+        <definition>MessageHeader &amp; Azure::Core::Amqp::Models::MessageHeader::operator=</definition>
+        <argsstring>(MessageHeader const &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::operator=</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> const &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="40" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5431446cbd4e03f5de910d4d3733c221" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::MessageHeader::operator==</definition>
+        <argsstring>(MessageHeader const &amp;that) const noexcept</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::operator==</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare two AMQP Message Headers for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP Message Header to compare to. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the two headers are equal, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="47" column="10" bodyfile="src/models/amqp_header.cpp" bodystart="27" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1af5339681b0757afcc2d82d424c3b059a" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::MessageHeader::ShouldSerialize</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>ShouldSerialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::ShouldSerialize</qualifiedname>
+        <briefdescription>
+<para>Returns true if this <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> should be serialized into an AMQP message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Message headers can be serialize if their values are different from the defined default values as specified in the AMQP spec. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="90" column="10" bodyfile="src/models/amqp_header.cpp" bodystart="130" bodyend="134"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ac1ae94d1b15c36f8ba79da30d7bca133" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Azure::Core::Amqp::Models::MessageHeader::GetSerializedSize</definition>
+        <argsstring>(MessageHeader const &amp;messageHeader)</argsstring>
+        <name>GetSerializedSize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::GetSerializedSize</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> const &amp;</type>
+          <declname>messageHeader</declname>
+        </param>
+        <briefdescription>
+<para>Returns the serialized size of this <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This is used to calculate the AMQP message size. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="96" column="19" bodyfile="src/models/amqp_header.cpp" bodystart="136" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5d98ecdc9b12e04a2dc04528b2dc2fb0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Amqp::Models::MessageHeader::Serialize</definition>
+        <argsstring>(MessageHeader const &amp;messageHeader)</argsstring>
+        <name>Serialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::Serialize</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> const &amp;</type>
+          <declname>messageHeader</declname>
+        </param>
+        <briefdescription>
+<para>Serializes this <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref> into a vector of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This is used to serialize the AMQP message header.</para>
+</simplesect>
+<simplesect kind="return"><para>A vector of bytes representing this <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="104" column="24" bodyfile="src/models/amqp_header.cpp" bodystart="144" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aad697f201d5332c6c06d1b85bc79ea00" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref></type>
+        <definition>MessageHeader Azure::Core::Amqp::Models::MessageHeader::Deserialize</definition>
+        <argsstring>(std::uint8_t const *data, size_t size)</argsstring>
+        <name>Deserialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageHeader::Deserialize</qualifiedname>
+        <param>
+          <type>std::uint8_t const *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Deserializes a vector of bytes into a <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This is used to create an AMQP message header from a vector of bytes. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="110" column="26" bodyfile="src/models/amqp_header.cpp" bodystart="152" bodyend="163"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The message header section carries standard delivery details about the transfer of a message through the AMQP network. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="remark"><para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header">AMQP Section 3.2.1</ulink>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/models/amqp_header.hpp" line="23" column="3" bodyfile="inc/azure/core/amqp/models/amqp_header.hpp" bodystart="24" bodyend="111"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a16c9479e3368ca97e70fa4de31bd39c1" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>DeliveryCount</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aad697f201d5332c6c06d1b85bc79ea00" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>Deserialize</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5f40f2afecd60bdb6c91981e59caa49b" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>Durable</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ac1ae94d1b15c36f8ba79da30d7bca133" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>GetSerializedSize</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a8070e66fe6930ad138e3aec4f3dd29cb" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>IsFirstAcquirer</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1aebd63a9a80a499519fc4a900f5521998" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>MessageHeader</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a2997b8a720342bcf0ca3b88649746409" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>MessageHeader</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef7a7bd29e6a564e81885c631396a1e" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>MessageHeader</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1afdc33564e1d03e866fb950ece6d75401" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>operator=</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab2c9cd841e4123c1d1bd48d385ecb085" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>operator=</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5431446cbd4e03f5de910d4d3733c221" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>operator==</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1ab28f0903d806e5c1d38e9ace1dde2627" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>Priority</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5d98ecdc9b12e04a2dc04528b2dc2fb0" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>Serialize</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1af5339681b0757afcc2d82d424c3b059a" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>ShouldSerialize</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a720635f08ae0438a87b9b69fac3a3519" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>TimeToLive</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header_1a5ef6ecaac594401fb09f3d731b10b3f8" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageHeader</scope><name>~MessageHeader</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

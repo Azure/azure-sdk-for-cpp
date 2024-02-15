@@ -1,0 +1,661 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::AppendBlobClient</compoundname>
+    <basecompoundref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" prot="public" virt="non-virtual">Azure::Storage::Blobs::BlobClient</basecompoundref>
+    <includes refid="append__blob__client_8hpp" local="no">append_blob_client.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1ae8d394bf44caeb3293234aee29f825ae" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobClient</definition>
+        <argsstring></argsstring>
+        <name>BlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::BlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="175" column="18" bodyfile="inc/azure/storage/blobs/append_blob_client.hpp" bodystart="175" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a5b92c87f881e9a2a855d3115c7a44d07" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref></type>
+        <definition>AppendBlobClient Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString</definition>
+        <argsstring>(const std::string &amp;connectionString, const std::string &amp;blobContainerName, const std::string &amp;blobName, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>CreateFromConnectionString</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>connectionString</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>connectionString</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A connection string includes the authentication information required for your application to access data in an Azure Storage account at runtime. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobContainerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the container containing this blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of this blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="34" column="29" bodyfile="src/append_blob_client.cpp" bodystart="13" bodyend="22"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1ad6f7696bdedc0b985878eb9a9cc3a0aa" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, std::shared_ptr&lt; StorageSharedKeyCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>AppendBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; StorageSharedKeyCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A url referencing the blob that includes the name of the account, the name of the container, and the name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared key credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="51" column="14" bodyfile="src/append_blob_client.cpp" bodystart="24" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1ae2da678b6f651b3e98514281c8c7553d" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, std::shared_ptr&lt; Core::Credentials::TokenCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>AppendBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; Core::Credentials::TokenCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A url referencing the blob that includes the name of the account, the name of the container, and the name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The token credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="66" column="14" bodyfile="src/append_blob_client.cpp" bodystart="32" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a66894919220bf0ef6d0b4b5b1e92a042" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>AppendBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A url referencing the blob that includes the name of the account, the name of the container, and the name of the blob, and possibly also a SAS token. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="81" column="14" bodyfile="src/append_blob_client.cpp" bodystart="40" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a8e67ffbfa41c5e8be8ef37ea2b9d745c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref></type>
+        <definition>AppendBlobClient Azure::Storage::Blobs::AppendBlobClient::WithSnapshot</definition>
+        <argsstring>(const std::string &amp;snapshot) const</argsstring>
+        <name>WithSnapshot</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::WithSnapshot</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>snapshot</declname>
+        </param>
+        <briefdescription>
+<para>Initializes a new instance of the <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> class with an identical URL source but the specified snapshot timestamp. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>snapshot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The snapshot identifier. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> instance. </para>
+</simplesect>
+<simplesect kind="remark"><para>Pass empty string to remove the snapshot returning the base blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="94" column="22" bodyfile="src/append_blob_client.cpp" bodystart="47" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a400b4092c802d53c9ead554448d07b3f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref></type>
+        <definition>AppendBlobClient Azure::Storage::Blobs::AppendBlobClient::WithVersionId</definition>
+        <argsstring>(const std::string &amp;versionId) const</argsstring>
+        <name>WithVersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::WithVersionId</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>versionId</declname>
+        </param>
+        <briefdescription>
+<para>Creates a clone of this instance that references a version ID rather than the base blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>versionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The version ID returning a URL to the base blob. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> instance. </para>
+</simplesect>
+<simplesect kind="remark"><para>Pass empty string to remove the version ID returning the base blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="104" column="22" bodyfile="src/append_blob_client.cpp" bodystart="62" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1af4741936142e482d4c4a0853acaa109a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_append_blob_result" kindref="compound">Models::CreateAppendBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::CreateAppendBlobResult &gt; Azure::Storage::Blobs::AppendBlobClient::Create</definition>
+        <argsstring>(const CreateAppendBlobOptions &amp;options=CreateAppendBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Create</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::Create</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_append_blob_options" kindref="compound">CreateAppendBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_append_blob_options" kindref="compound">CreateAppendBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new 0-length append blob. The content of any existing blob is overwritten with the newly initialized append blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A CreateAppendBlobResult describing the newly created append blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="114" column="21" bodyfile="src/append_blob_client.cpp" bodystart="77" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a3d89d503b46447c7ae4694307aeed7be" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_append_blob_result" kindref="compound">Models::CreateAppendBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::CreateAppendBlobResult &gt; Azure::Storage::Blobs::AppendBlobClient::CreateIfNotExists</definition>
+        <argsstring>(const CreateAppendBlobOptions &amp;options=CreateAppendBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>CreateIfNotExists</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::CreateIfNotExists</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_append_blob_options" kindref="compound">CreateAppendBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_append_blob_options" kindref="compound">CreateAppendBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new 0-length append blob. The content keeps unchanged if the blob already exists. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A CreateAppendBlobResult describing the newly created append blob. CreateAppendBlobResult.Created is false if the blob already exists. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="127" column="21" bodyfile="src/append_blob_client.cpp" bodystart="114" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a6b6ed9864322ae13a3c569343801aa1c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_result" kindref="compound">Models::AppendBlockResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::AppendBlockResult &gt; Azure::Storage::Blobs::AppendBlobClient::AppendBlock</definition>
+        <argsstring>(Azure::Core::IO::BodyStream &amp;content, const AppendBlockOptions &amp;options=AppendBlockOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>AppendBlock</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::AppendBlock</qualifiedname>
+        <param>
+          <type>Azure::Core::IO::BodyStream &amp;</type>
+          <declname>content</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_options" kindref="compound">AppendBlockOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_options" kindref="compound">AppendBlockOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Commits a new block of data, represented by the content BodyStream to the end of the existing append blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>content</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A BodyStream containing the content of the block to append. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An AppendBlockResult describing the state of the updated append blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="140" column="21" bodyfile="src/append_blob_client.cpp" bodystart="138" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a992f3d7948d8e301778f0a3a08aa6347" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_append_block_from_uri_result" kindref="compound">Models::AppendBlockFromUriResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::AppendBlockFromUriResult &gt; Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri</definition>
+        <argsstring>(const std::string &amp;sourceUri, const AppendBlockFromUriOptions &amp;options=AppendBlockFromUriOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>AppendBlockFromUri</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>sourceUri</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options" kindref="compound">AppendBlockFromUriOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options" kindref="compound">AppendBlockFromUriOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Commits a new block of data, represented by the content BodyStream to the end of the existing append blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sourceUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the uri of the source blob. The value may be a uri of up to 2 KB in length that specifies a blob. The source blob must either be public or must be authenticated via a shared access signature. If the source blob is public, no authentication is required to perform the operation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An AppendBlockFromUriResult describing the state of the updated append blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="157" column="21" bodyfile="src/append_blob_client.cpp" bodystart="176" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a2bf2de873cd4ec33fa17887a2235c201" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_seal_append_blob_result" kindref="compound">Models::SealAppendBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::SealAppendBlobResult &gt; Azure::Storage::Blobs::AppendBlobClient::Seal</definition>
+        <argsstring>(const SealAppendBlobOptions &amp;options=SealAppendBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Seal</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::Seal</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_seal_append_blob_options" kindref="compound">SealAppendBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_seal_append_blob_options" kindref="compound">SealAppendBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Seals the append blob, making it read only. Any subsequent appends will fail. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A SealAppendBlobResult describing the state of the sealed append blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="169" column="21" bodyfile="src/append_blob_client.cpp" bodystart="227" bodyend="239"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a64bb98019aac2962da6dcf9bc53a9098" prot="private" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</definition>
+        <argsstring>(BlobClient blobClient)</argsstring>
+        <name>AppendBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::AppendBlobClient::AppendBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+          <declname>blobClient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="174" column="14" bodyfile="src/append_blob_client.cpp" bodystart="45" bodyend="45"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref> allows you to manipulate Azure Storage append blobs. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>An append blob is comprised of blocks and is optimized for append operations. When you modify an append blob, blocks are added to the end of the blob only, via the AppendBlock operation. Updating or deleting of existing blocks is not supported. Unlike a block blob, an append blob does not expose its block IDs. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::AppendBlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::AppendBlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client"/>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="21" column="3" bodyfile="inc/azure/storage/blobs/append_blob_client.hpp" bodystart="21" bodyend="176"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a128e9bdfdd7bd7b7125aada157b2734a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AbortCopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1ad6f7696bdedc0b985878eb9a9cc3a0aa" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1ae2da678b6f651b3e98514281c8c7553d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a66894919220bf0ef6d0b4b5b1e92a042" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a64bb98019aac2962da6dcf9bc53a9098" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a6b6ed9864322ae13a3c569343801aa1c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AppendBlock</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a992f3d7948d8e301778f0a3a08aa6347" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AppendBlockFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a88846b9248a67b05abb25c791a8f9524" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AsAppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1acea541c3a579cf4bd279c328c88d2cd6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AsBlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a0b2c93bb3026f146c72bffcbccf32b54" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>AsPageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1ae8d394bf44caeb3293234aee29f825ae" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a648f91be2338d9726c8145ba214ac978" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa96e47997fba9d786c78fb7d451f335e" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa224db3a62b18fe4636bafc40388e2b4" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a267904b7db1f9e53632dc551aaea037c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>CopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1af4741936142e482d4c4a0853acaa109a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>Create</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a5b92c87f881e9a2a855d3115c7a44d07" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>CreateFromConnectionString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a3d89d503b46447c7ae4694307aeed7be" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>CreateIfNotExists</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a05131f0bfc5f8b6d32c98f18d6d450a7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>CreateSnapshot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ac121df9f5dfcdeb80f47b50543df0984" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>Delete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a17a5c20b7cee4478d5a33409440fea8d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>DeleteIfExists</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a13aefc1ffba111e1a40c6fab1b9e99e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>DeleteImmutabilityPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aee72db03143c80da4da4acb3e4c3673d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>Download</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa0bcbdbf6ebd17e4888cced4736420f7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>DownloadTo</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa7c42e08951121a5f683e3e93bdc17c1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>DownloadTo</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a305bf8f65dc35944e706df2d2791a3a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>GetProperties</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a314dab2e7c92c0044045e2bcbae63f58" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>GetTags</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aebb3229526e303cc615aa69d78503063" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>GetUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa765e21c8d0527fa727999530bc562d7" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>m_blobUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a5231380a85d877a46b806a5ca316ef1f" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>m_customerProvidedKey</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a3a6762883174de1e74f4aa7f888ff2c2" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>m_encryptionScope</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1afc38d8187d60217d1e8143996ec7df90" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>m_pipeline</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a2bf2de873cd4ec33fa17887a2235c201" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>Seal</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ad9104f59eef0ef11d1599fa0de03d5bb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>SetAccessTier</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a913e1aca81833426ec8b621531c9b4a5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>SetHttpHeaders</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ade112c37b5858590349a2b5e46fd5709" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>SetImmutabilityPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a7617dfc40b61d67af2cb8cfd53771da1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>SetLegalHold</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a76301e79fa60cae85be9fca9072042a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>SetMetadata</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a9c0bed9f975d4462ac7cb28f24963a77" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>SetTags</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1af1c432cf82637be1c954b94ea57fee1a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>StartCopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1abbe7d6e85fe6945188e97eead63b1e7f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>Undelete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a8e67ffbfa41c5e8be8ef37ea2b9d745c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>WithSnapshot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a400b4092c802d53c9ead554448d07b3f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>WithVersionId</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aba0c132a169d0dd59d6f69bd31381b0d" prot="public" virt="virtual"><scope>Azure::Storage::Blobs::AppendBlobClient</scope><name>~BlobClient</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::PagedResponse&lt; GetPageRangesDiffPagedResponse &gt;</basecompoundref>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1adbf0552f50e98d3784d199054c6a3281" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="451" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="451" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1ae37d8a895279491d4be2bfa525174fa5" prot="public" static="no" mutable="no">
+        <type>Azure::DateTime</type>
+        <definition>Azure::DateTime Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date/time that the blob was last modified. The date format follows RFC 1123. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="456" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="456" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a82f141b5036bc193fe72c2b1b7285cd9" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::BlobSize</definition>
+        <argsstring></argsstring>
+        <name>BlobSize</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::BlobSize</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="461" column="15" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="461" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a69349e977a0c02df3206dc0c83445bd7" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; Azure::Core::Http::HttpRange &gt;</type>
+        <definition>std::vector&lt;Azure::Core::Http::HttpRange&gt; Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::PageRanges</definition>
+        <argsstring></argsstring>
+        <name>PageRanges</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::PageRanges</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Page range items. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="466" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="466" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1aed45761e9168598856c67d8585c3e425" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; Azure::Core::Http::HttpRange &gt;</type>
+        <definition>std::vector&lt;Azure::Core::Http::HttpRange&gt; Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::ClearRanges</definition>
+        <argsstring></argsstring>
+        <name>ClearRanges</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::ClearRanges</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clear range items. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="471" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="471" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a521efb16b313a124438aab705c38460a" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;PageBlobClient&gt; Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_pageBlobClient</definition>
+        <argsstring></argsstring>
+        <name>m_pageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_pageBlobClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="476" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="476" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1aaf0f9a0bf379f1f1083a12b83ea3d3af" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref></type>
+        <definition>GetPageRangesOptions Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_operationOptions</definition>
+        <argsstring></argsstring>
+        <name>m_operationOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_operationOptions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="477" column="28" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="477" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a217eedd93b11efbeea5f01db911ffbac" prot="private" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_previousSnapshot</definition>
+        <argsstring></argsstring>
+        <name>m_previousSnapshot</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_previousSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="478" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="478" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a0c750defd7a95a6f6831ffe3e0577e29" prot="private" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_previousSnapshotUrl</definition>
+        <argsstring></argsstring>
+        <name>m_previousSnapshotUrl</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::m_previousSnapshotUrl</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="479" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="479" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1aec731219bc893c0748c01ce34ae93df4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class PageBlobClient</definition>
+        <argsstring></argsstring>
+        <name>PageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::PageBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="481" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="481" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a040db1283731f73b56e475506e142e6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Azure::Core::PagedResponse&lt; GetPageRangesDiffPagedResponse &gt;</definition>
+        <argsstring></argsstring>
+        <name>Azure::Core::PagedResponse&lt; GetPageRangesDiffPagedResponse &gt;</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::PagedResponse&lt; GetPageRangesDiffPagedResponse &gt;</qualifiedname>
+        <param>
+          <type>Azure::Core::PagedResponse&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response" kindref="compound">GetPageRangesDiffPagedResponse</ref> &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="481" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="482" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a9eb9e1ad891723354db0277fe9193bca" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::OnNextPage</definition>
+        <argsstring>(const Azure::Core::Context &amp;context)</argsstring>
+        <name>OnNextPage</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse::OnNextPage</qualifiedname>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="474" column="12" bodyfile="src/blob_responses.cpp" bodystart="107" bodyend="124"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a4740a1e4cac11f6c5db64c55074a6b7b" kindref="member">Azure::Storage::Blobs::PageBlobClient::GetPageRangesDiff</ref> and <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aee0bab24e7c3ba34e06955724819bf85" kindref="member">Azure::Storage::Blobs::PageBlobClient::GetManagedDiskPageRangesDiff</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; GetPageRangesDiffPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; GetPageRangesDiffPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="445" column="5" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="446" bodyend="483"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a040db1283731f73b56e475506e142e6d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>Azure::Core::PagedResponse&lt; GetPageRangesDiffPagedResponse &gt;</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a82f141b5036bc193fe72c2b1b7285cd9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>BlobSize</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1aed45761e9168598856c67d8585c3e425" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>ClearRanges</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1adbf0552f50e98d3784d199054c6a3281" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>ETag</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1ae37d8a895279491d4be2bfa525174fa5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>LastModified</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1aaf0f9a0bf379f1f1083a12b83ea3d3af" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>m_operationOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a521efb16b313a124438aab705c38460a" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>m_pageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a217eedd93b11efbeea5f01db911ffbac" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>m_previousSnapshot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a0c750defd7a95a6f6831ffe3e0577e29" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>m_previousSnapshotUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a9eb9e1ad891723354db0277fe9193bca" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>OnNextPage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1aec731219bc893c0748c01ce34ae93df4" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>PageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response_1a69349e977a0c02df3206dc0c83445bd7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</scope><name>PageRanges</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

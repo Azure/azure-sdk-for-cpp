@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_74d6d341cb4e7e7b4498e1cf6aa278fc" kind="dir">
+    <compoundname>inc/azure/core/internal</compoundname>
+    <innerdir refid="dir_651c3aca977d9e392ffdedf661d89149">inc/azure/core/internal/credentials</innerdir>
+    <innerdir refid="dir_54f9d91896843a9787506f3c865be103">inc/azure/core/internal/cryptography</innerdir>
+    <innerdir refid="dir_1bc691dfb177674896a497185f13bd11">inc/azure/core/internal/diagnostics</innerdir>
+    <innerdir refid="dir_f5764dd13d206f57b7a95970cc075f6b">inc/azure/core/internal/http</innerdir>
+    <innerdir refid="dir_1e3489a5ca9a00cc2a8c26298554b465">inc/azure/core/internal/io</innerdir>
+    <innerdir refid="dir_bba90c550a81782f6fcf6c90f01cc5ec">inc/azure/core/internal/json</innerdir>
+    <innerdir refid="dir_5afe09e1cffb80b89f80fb381e258d86">inc/azure/core/internal/tracing</innerdir>
+    <innerfile refid="client__options_8hpp">client_options.hpp</innerfile>
+    <innerfile refid="contract_8hpp">contract.hpp</innerfile>
+    <innerfile refid="environment_8hpp">environment.hpp</innerfile>
+    <innerfile refid="extendable__enumeration_8hpp">extendable_enumeration.hpp</innerfile>
+    <innerfile refid="strings_8hpp">strings.hpp</innerfile>
+    <innerfile refid="unique__handle_8hpp">unique_handle.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/internal/"/>
+  </compounddef>
+</doxygen>

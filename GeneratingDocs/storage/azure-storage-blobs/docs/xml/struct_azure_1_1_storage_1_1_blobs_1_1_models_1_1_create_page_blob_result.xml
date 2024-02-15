@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::CreatePageBlobResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a67b5374480ea4038fd7535ec2d5f127c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::CreatePageBlobResult::Created</definition>
+        <argsstring></argsstring>
+        <name>Created</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::Created</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates if the page blob was successfully created by this operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2667" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2667" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a45f1be35c9ebbb260e8d36932999e32a" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int64_t &gt;</type>
+        <definition>Nullable&lt;int64_t&gt; Azure::Storage::Blobs::Models::CreatePageBlobResult::SequenceNumber</definition>
+        <argsstring></argsstring>
+        <name>SequenceNumber</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::SequenceNumber</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2672" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2672" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a7d92165e2fcd70b71705077b76f352c2" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::CreatePageBlobResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2677" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2677" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a97d8a48fc4dd3b1e5d4ee5e899d2e284" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::CreatePageBlobResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2683" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2683" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a48ec1f335c50e47a1ea373038e1cdf0f" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CreatePageBlobResult::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2689" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2689" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a3ac57d7235e53014b438e7c1fcdb4c83" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::CreatePageBlobResult::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2694" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2694" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1adafb99584e7d5ce32e87c50af8200e1a" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Storage::Blobs::Models::CreatePageBlobResult::EncryptionKeySha256</definition>
+        <argsstring></argsstring>
+        <name>EncryptionKeySha256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::EncryptionKeySha256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The SHA-256 hash of the encryption key used to encrypt the blob. This header is only returned when the blob was encrypted with a customer-provided key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2699" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2699" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a8e1368ceee3f1e0a23960ddd08a6ac5b" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::CreatePageBlobResult::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CreatePageBlobResult::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the name of the encryption scope used to encrypt the blob contents and application metadata. Note that the absence of this header implies use of the default account encryption scope. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2705" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2705" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1aeabef65efdfb4fd8f2283205bd188c15" kindref="member">Azure::Storage::Blobs::PageBlobClient::Create</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2662" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2663" bodyend="2706"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a67b5374480ea4038fd7535ec2d5f127c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>Created</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1adafb99584e7d5ce32e87c50af8200e1a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>EncryptionKeySha256</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a8e1368ceee3f1e0a23960ddd08a6ac5b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a7d92165e2fcd70b71705077b76f352c2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a3ac57d7235e53014b438e7c1fcdb4c83" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a97d8a48fc4dd3b1e5d4ee5e899d2e284" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a45f1be35c9ebbb260e8d36932999e32a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>SequenceNumber</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result_1a48ec1f335c50e47a1ea373038e1cdf0f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CreatePageBlobResult</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

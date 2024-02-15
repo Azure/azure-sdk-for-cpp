@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_cryptography" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Cryptography</compoundname>
+    <innerclass refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" prot="public">Azure::Core::Cryptography::Hash</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" prot="public">Azure::Core::Cryptography::Md5Hash</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/cryptography/hash.hpp" line="20" column="28"/>
+  </compounddef>
+</doxygen>

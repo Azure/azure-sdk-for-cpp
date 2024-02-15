@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_397a2ee3a37c7b2f3322a090fecdf9e2" kind="dir">
+    <compoundname>inc/azure/core/amqp</compoundname>
+    <innerdir refid="dir_dad9d0b8794987d5ef942fe1b0a3e561">inc/azure/core/amqp/internal</innerdir>
+    <innerdir refid="dir_70e06a81cd6de0943a2d3baaf7dff45c">inc/azure/core/amqp/models</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a370991a1533a80b6f017b59b0cd20b92" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref></type>
+        <definition>const BlobImmutabilityPolicyMode Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::Unlocked</definition>
+        <argsstring></argsstring>
+        <name>Unlocked</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::Unlocked</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref>: Unlocked </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1244" column="74" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1adee92c6a7cea6dd4988aeb4bbb44dff0" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref></type>
+        <definition>const BlobImmutabilityPolicyMode Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::Locked</definition>
+        <argsstring></argsstring>
+        <name>Locked</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::Locked</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref>: Locked </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1246" column="74" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1246" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a351dc4e2128c382c647c4a44766eb787" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1249" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1249" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a56047ac0faa4c74db9616dbe639c026d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::BlobImmutabilityPolicyMode</definition>
+        <argsstring>()=default</argsstring>
+        <name>BlobImmutabilityPolicyMode</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::BlobImmutabilityPolicyMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1231" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1aa97d70bcb764051257a698738f288d90" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::BlobImmutabilityPolicyMode</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>BlobImmutabilityPolicyMode</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::BlobImmutabilityPolicyMode</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1233" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1233" bodyend="1233"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1abce2b21a90fa546e9a65b0919b4bf038" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::operator==</definition>
+        <argsstring>(const BlobImmutabilityPolicyMode &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1235" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1235" bodyend="1238"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a081e71934a94b073bed5c626cc29cbaf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::operator!=</definition>
+        <argsstring>(const BlobImmutabilityPolicyMode &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode" kindref="compound">BlobImmutabilityPolicyMode</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1240" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1240" bodyend="1240"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a3438fcec3687a4d7c11a545d40be0f28" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1242" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1242" bodyend="1242"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Specifies the immutability policy mode to set on the blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Locked</edgelabel>
+          <edgelabel>Unlocked</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1228" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1228" bodyend="1250"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a56047ac0faa4c74db9616dbe639c026d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>BlobImmutabilityPolicyMode</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1aa97d70bcb764051257a698738f288d90" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>BlobImmutabilityPolicyMode</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1adee92c6a7cea6dd4988aeb4bbb44dff0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>Locked</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a351dc4e2128c382c647c4a44766eb787" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a081e71934a94b073bed5c626cc29cbaf" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1abce2b21a90fa546e9a65b0919b4bf038" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a3438fcec3687a4d7c11a545d40be0f28" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode_1a370991a1533a80b6f017b59b0cd20b92" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</scope><name>Unlocked</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

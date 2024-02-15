@@ -1,0 +1,414 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_request_failed_exception" kind="class" language="C++" prot="public">
+    <compoundname>Azure::Core::RequestFailedException</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::runtime_error</basecompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_transport_exception" prot="public" virt="non-virtual">Azure::Core::Http::TransportException</derivedcompoundref>
+    <includes refid="exception_8hpp" local="no">exception.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_request_failed_exception_1a63efd3133353568a5c66689104fcce5d" prot="public" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;Azure::Core::Http::RawResponse&gt; Azure::Core::RequestFailedException::RawResponse</definition>
+        <argsstring></argsstring>
+        <name>RawResponse</name>
+        <qualifiedname>Azure::Core::RequestFailedException::RawResponse</qualifiedname>
+        <briefdescription>
+<para>The entire HTTP raw response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="63" column="21" bodyfile="inc/azure/core/exception.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_request_failed_exception_1a04b1b6357f6b8395efa99ac001f24ee7" prot="public" static="no" mutable="no">
+        <type><ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">Azure::Core::Http::HttpStatusCode</ref></type>
+        <definition>Azure::Core::Http::HttpStatusCode Azure::Core::RequestFailedException::StatusCode</definition>
+        <argsstring></argsstring>
+        <name>StatusCode</name>
+        <qualifiedname>Azure::Core::RequestFailedException::StatusCode</qualifiedname>
+        <initializer>= <ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da6adf97f83acf6453d4a6a4b1070f3754" kindref="member">Azure::Core::Http::HttpStatusCode::None</ref></initializer>
+        <briefdescription>
+<para>The HTTP response code. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="69" column="39" bodyfile="inc/azure/core/exception.hpp" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_request_failed_exception_1acea16c223d4984edba510194eb543bd1" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::RequestFailedException::ReasonPhrase</definition>
+        <argsstring></argsstring>
+        <name>ReasonPhrase</name>
+        <qualifiedname>Azure::Core::RequestFailedException::ReasonPhrase</qualifiedname>
+        <briefdescription>
+<para>The HTTP reason phrase from the response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="75" column="17" bodyfile="inc/azure/core/exception.hpp" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_request_failed_exception_1ab8a93e876193535ec4e3c406981ed7f4" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::RequestFailedException::ClientRequestId</definition>
+        <argsstring></argsstring>
+        <name>ClientRequestId</name>
+        <qualifiedname>Azure::Core::RequestFailedException::ClientRequestId</qualifiedname>
+        <briefdescription>
+<para>The client request header (<computeroutput>x-ms-client-request-id</computeroutput>) from the HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="81" column="17" bodyfile="inc/azure/core/exception.hpp" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_request_failed_exception_1ab29a5ed734d872052ac6353e30f47426" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::RequestFailedException::RequestId</definition>
+        <argsstring></argsstring>
+        <name>RequestId</name>
+        <qualifiedname>Azure::Core::RequestFailedException::RequestId</qualifiedname>
+        <briefdescription>
+<para>The request ID header (<computeroutput>x-ms-request-id</computeroutput>) from the HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="87" column="17" bodyfile="inc/azure/core/exception.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_request_failed_exception_1a7a94fb270077a498054481f054f78bd9" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::RequestFailedException::ErrorCode</definition>
+        <argsstring></argsstring>
+        <name>ErrorCode</name>
+        <qualifiedname>Azure::Core::RequestFailedException::ErrorCode</qualifiedname>
+        <briefdescription>
+<para>The error code from service returned in the HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see [<ref refid="namespace_azure" kindref="compound">Azure</ref> standards for error condition responses] (<ulink url="https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses">https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses</ulink>), specifically the handling of the &quot;code&quot; property.</para>
+<para>Note that the contents of the <computeroutput>ErrorCode</computeroutput> is service dependent. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="99" column="17" bodyfile="inc/azure/core/exception.hpp" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_request_failed_exception_1a5e8fcb788cc82fd39743eb6bded735ac" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::RequestFailedException::Message</definition>
+        <argsstring></argsstring>
+        <name>Message</name>
+        <qualifiedname>Azure::Core::RequestFailedException::Message</qualifiedname>
+        <briefdescription>
+<para>The error message from the service returned in the HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see [<ref refid="namespace_azure" kindref="compound">Azure</ref> standards for error condition responses] (<ulink url="https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses">https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses</ulink>), specifically the handling of the &quot;message&quot; property.</para>
+<para><simplesect kind="note"><para>This string is purely for informational or diagnostic purposes, and should&apos;t be relied on at runtime. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="112" column="17" bodyfile="inc/azure/core/exception.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1a136d07c3c2f88cce26af988d6925a069" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::RequestFailedException::RequestFailedException</definition>
+        <argsstring>(std::string const &amp;what)</argsstring>
+        <name>RequestFailedException</name>
+        <qualifiedname>Azure::Core::RequestFailedException::RequestFailedException</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>what</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a new <computeroutput>RequestFailedException</computeroutput> with a <computeroutput>message</computeroutput> string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>An Exception without an HTTP raw response represents an exception that is not associated with an HTTP response. Typically this is an error which occurred before the response was received from the service.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>what</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The explanatory string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="123" column="14" bodyfile="src/exception.cpp" bodystart="20" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1adc2eb2d6a7c324cdbaab257d15a19090" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::RequestFailedException::RequestFailedException</definition>
+        <argsstring>(std::unique_ptr&lt; Azure::Core::Http::RawResponse &gt; &amp;rawResponse)</argsstring>
+        <name>RequestFailedException</name>
+        <qualifiedname>Azure::Core::RequestFailedException::RequestFailedException</qualifiedname>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> &gt; &amp;</type>
+          <declname>rawResponse</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a new <computeroutput>RequestFailedException</computeroutput> object with an HTTP raw response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The HTTP raw response is parsed to populate <ulink url="https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses">information expected from all Azure Services</ulink> like the status code, reason phrase and some headers like the request ID. A concrete Service exception which derives from this exception uses its constructor to parse the HTTP raw response adding the service specific values to the exception.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawResponse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The HTTP raw response from the service. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="136" column="14" bodyfile="src/exception.cpp" bodystart="24" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1a23e0a8f5928f2e05a4309343175c95fd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::RequestFailedException::RequestFailedException</definition>
+        <argsstring>(const RequestFailedException &amp;other)</argsstring>
+        <name>RequestFailedException</name>
+        <qualifiedname>Azure::Core::RequestFailedException::RequestFailedException</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a new <computeroutput>RequestFailedException</computeroutput> by copying from an existing one. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Copies the <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> into the new <computeroutput><ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref></computeroutput>.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <computeroutput>RequestFailedException</computeroutput> to be copied. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="144" column="5" bodyfile="inc/azure/core/exception.hpp" bodystart="144" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1afb9d780714108f89754768b55b804918" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::RequestFailedException::RequestFailedException</definition>
+        <argsstring>(RequestFailedException &amp;&amp;other)=default</argsstring>
+        <name>RequestFailedException</name>
+        <qualifiedname>Azure::Core::RequestFailedException::RequestFailedException</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a new <computeroutput>RequestFailedException</computeroutput> by moving in an existing one. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <computeroutput>RequestFailedException</computeroutput> to move in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="160" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1a91012bd8bc80210d9d7ea1c202d0b909" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> &amp;</type>
+        <definition>RequestFailedException &amp; Azure::Core::RequestFailedException::operator=</definition>
+        <argsstring>(const RequestFailedException &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::RequestFailedException::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>An instance of <computeroutput>RequestFailedException</computeroutput> class cannot be assigned. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="166" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1a15b5421596c0af28206377e752125250" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> &amp;</type>
+        <definition>RequestFailedException &amp; Azure::Core::RequestFailedException::operator=</definition>
+        <argsstring>(RequestFailedException &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::RequestFailedException::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>An instance of <computeroutput>RequestFailedException</computeroutput> class cannot be moved into another instance after creation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="173" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1a33eed01d1c2eb23f440c2715ccd7a58e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::RequestFailedException::~RequestFailedException</definition>
+        <argsstring>()=default</argsstring>
+        <name>~RequestFailedException</name>
+        <qualifiedname>Azure::Core::RequestFailedException::~RequestFailedException</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>RequestFailedException</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="179" column="5"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1a460a3c512c45aaab8f6588748074ae87" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::RequestFailedException::GetRawResponseField</definition>
+        <argsstring>(std::unique_ptr&lt; Azure::Core::Http::RawResponse &gt; const &amp;rawResponse, std::string fieldName)</argsstring>
+        <name>GetRawResponseField</name>
+        <qualifiedname>Azure::Core::RequestFailedException::GetRawResponseField</qualifiedname>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> &gt; const &amp;</type>
+          <declname>rawResponse</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>fieldName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="182" column="24" bodyfile="src/exception.cpp" bodystart="56" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_request_failed_exception_1a23c9ab3b68cba67dadf8a99ca25f0091" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::RequestFailedException::GetRawResponseErrorMessage</definition>
+        <argsstring>(std::unique_ptr&lt; Azure::Core::Http::RawResponse &gt; const &amp;rawResponse)</argsstring>
+        <name>GetRawResponseErrorMessage</name>
+        <qualifiedname>Azure::Core::RequestFailedException::GetRawResponseErrorMessage</qualifiedname>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> &gt; const &amp;</type>
+          <declname>rawResponse</declname>
+        </param>
+        <briefdescription>
+<para>Returns a descriptive string for this RawResponse. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/exception.hpp" line="189" column="24" bodyfile="src/exception.cpp" bodystart="39" bodyend="54"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An error while trying to send a request to <ref refid="namespace_azure" kindref="compound">Azure</ref> service. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>A <ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> is sometimes generated as a result of an HTTP response returned from the service, and is sometimes generated for other reasons. The contents of the <ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> depend on whether the exception was thrown as a result of an HTTP response error or other reasons.</para>
+<para>To determine which form of <ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">RequestFailedException</ref> has occurred, a client can check the <computeroutput><ref refid="class_azure_1_1_core_1_1_request_failed_exception_1a63efd3133353568a5c66689104fcce5d" kindref="member">RequestFailedException::RawResponse</ref></computeroutput> field - if that value is null, then the request failed for some reason other than an HTTP response, the reason can be determined by calling <computeroutput>RequestFailedException::what()</computeroutput>.</para>
+<para>If the request has failed due to an HTTP response code, the client can inspect other fields in the exception to determine the actual failure returned by the service.</para>
+<para>Most <ref refid="namespace_azure" kindref="compound">Azure</ref> services follow the [<ref refid="namespace_azure" kindref="compound">Azure</ref> standards for error condition responses] (<ulink url="https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses">https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses</ulink>) and return an <computeroutput>error</computeroutput> object containing two properties, <computeroutput>code</computeroutput> and <computeroutput>message</computeroutput>. These properties are used to populate the <ref refid="class_azure_1_1_core_1_1_request_failed_exception_1a7a94fb270077a498054481f054f78bd9" kindref="member">RequestFailedException::ErrorCode</ref> and <ref refid="class_azure_1_1_core_1_1_request_failed_exception_1a5e8fcb788cc82fd39743eb6bded735ac" kindref="member">RequestFailedException::Message</ref> fields</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(<ref refid="class_azure_1_1_core_1_1_request_failed_exception" kindref="compound">Azure::Core::RequestFailedException</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>e)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Request<sp/>Failed<sp/>Exception<sp/>happened:&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl<sp/>&lt;&lt;<sp/>e.what()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(e.<ref refid="class_azure_1_1_core_1_1_request_failed_exception_1a63efd3133353568a5c66689104fcce5d" kindref="member">RawResponse</ref>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>Code:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>e.<ref refid="class_azure_1_1_core_1_1_request_failed_exception_1a7a94fb270077a498054481f054f78bd9" kindref="member">ErrorCode</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>Message:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>e.<ref refid="class_azure_1_1_core_1_1_request_failed_exception_1a5e8fcb788cc82fd39743eb6bded735ac" kindref="member">Message</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Azure::Core::Http::TransportException</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_transport_exception"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Core::RequestFailedException</label>
+        <link refid="class_azure_1_1_core_1_1_request_failed_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::runtime_error</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>HttpStatusCode</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::RequestFailedException</label>
+        <link refid="class_azure_1_1_core_1_1_request_failed_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>StatusCode</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::runtime_error</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/exception.hpp" line="57" column="3" bodyfile="inc/azure/core/exception.hpp" bodystart="57" bodyend="191"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1ab8a93e876193535ec4e3c406981ed7f4" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>ClientRequestId</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a7a94fb270077a498054481f054f78bd9" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>ErrorCode</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a23c9ab3b68cba67dadf8a99ca25f0091" prot="private" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>GetRawResponseErrorMessage</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a460a3c512c45aaab8f6588748074ae87" prot="private" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>GetRawResponseField</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a5e8fcb788cc82fd39743eb6bded735ac" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>Message</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a91012bd8bc80210d9d7ea1c202d0b909" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a15b5421596c0af28206377e752125250" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a63efd3133353568a5c66689104fcce5d" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>RawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1acea16c223d4984edba510194eb543bd1" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>ReasonPhrase</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a136d07c3c2f88cce26af988d6925a069" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1adc2eb2d6a7c324cdbaab257d15a19090" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a23e0a8f5928f2e05a4309343175c95fd" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1afb9d780714108f89754768b55b804918" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1ab29a5ed734d872052ac6353e30f47426" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>RequestId</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a04b1b6357f6b8395efa99ac001f24ee7" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>StatusCode</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a33eed01d1c2eb23f440c2715ccd7a58e" prot="public" virt="non-virtual"><scope>Azure::Core::RequestFailedException</scope><name>~RequestFailedException</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

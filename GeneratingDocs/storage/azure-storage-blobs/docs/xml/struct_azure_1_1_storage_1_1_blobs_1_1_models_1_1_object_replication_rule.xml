@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::ObjectReplicationRule</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule_1af4b4d789f14a565c85c160f41d57d720" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::ObjectReplicationRule::RuleId</definition>
+        <argsstring></argsstring>
+        <name>RuleId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationRule::RuleId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Object replication rule ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1203" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule_1a5fb1ed3b3ce2db28be29152c2e3f9577" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref></type>
+        <definition>ObjectReplicationStatus Azure::Storage::Blobs::Models::ObjectReplicationRule::ReplicationStatus</definition>
+        <argsstring></argsstring>
+        <name>ReplicationStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationRule::ReplicationStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Object replication status. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1207" column="31" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1207" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Contains the object replication rule ID and replication status of a blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::ObjectReplicationRule</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ReplicationStatus</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::ObjectReplicationStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Complete</edgelabel>
+          <edgelabel>Failed</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1198" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1199" bodyend="1208"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule_1a5fb1ed3b3ce2db28be29152c2e3f9577" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationRule</scope><name>ReplicationStatus</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_rule_1af4b4d789f14a565c85c160f41d57d720" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationRule</scope><name>RuleId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_undelete_blob_container_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::UndeleteBlobContainerOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client_1ac94d07bc951b72bd238ea7360a9fde59" kindref="member">Azure::Storage::Blobs::BlobServiceClient::UndeleteBlobContainer</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="349" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="350" bodyend="351"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_9bccf4eff747aacd564532927fdc045d" kind="dir">
+    <compoundname>inc/azure/core/amqp/internal/common</compoundname>
+    <innerfile refid="async__operation__queue_8hpp">async_operation_queue.hpp</innerfile>
+    <innerfile refid="completion__operation_8hpp">completion_operation.hpp</innerfile>
+    <innerfile refid="global__state_8hpp">global_state.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/internal/common/"/>
+  </compounddef>
+</doxygen>

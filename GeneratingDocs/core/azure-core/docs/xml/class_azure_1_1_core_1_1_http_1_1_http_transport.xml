@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_http_transport" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Azure::Core::Http::HttpTransport</compoundname>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_curl_transport" prot="public" virt="non-virtual">Azure::Core::Http::CurlTransport</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport" prot="public" virt="non-virtual">Azure::Core::Http::WinHttpTransport</derivedcompoundref>
+    <includes refid="transport_8hpp" local="no">transport.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_transport_1aab0a38b3e67079a9ede743c3e8de909d" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; RawResponse &gt; Azure::Core::Http::HttpTransport::Send</definition>
+        <argsstring>(Request &amp;request, Context const &amp;context)=0</argsstring>
+        <name>Send</name>
+        <qualifiedname>Azure::Core::Http::HttpTransport::Send</qualifiedname>
+        <reimplementedby refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1aa6a92d65b363e50a2293b6bada21ef3e">Send</reimplementedby>
+        <reimplementedby refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a2cda516cd5af67b09bd02d65d443b446">Send</reimplementedby>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Send an HTTP request over the wire. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref> to send. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/transport.hpp" line="32" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_transport_1a4c0b2905624416efe1f77e6ef244c0e9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Http::HttpTransport::~HttpTransport</definition>
+        <argsstring>()</argsstring>
+        <name>~HttpTransport</name>
+        <qualifiedname>Azure::Core::Http::HttpTransport::~HttpTransport</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>HttpTransport</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/transport.hpp" line="38" column="13" bodyfile="inc/azure/core/http/transport.hpp" bodystart="38" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_transport_1a76c34f294158836f72741cc90e4b480f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::HttpTransport::HttpTransport</definition>
+        <argsstring>()=default</argsstring>
+        <name>HttpTransport</name>
+        <qualifiedname>Azure::Core::Http::HttpTransport::HttpTransport</qualifiedname>
+        <briefdescription>
+<para>Constructs a default instance of <computeroutput>HttpTransport</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/transport.hpp" line="45" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_transport_1af7fadcff099af67a5e3732642cc42c78" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::HttpTransport::HttpTransport</definition>
+        <argsstring>(const HttpTransport &amp;other)=default</argsstring>
+        <name>HttpTransport</name>
+        <qualifiedname>Azure::Core::Http::HttpTransport::HttpTransport</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">HttpTransport</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>HttpTransport</computeroutput> by copying another instance of <computeroutput>HttpTransport</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An instance to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/transport.hpp" line="52" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_transport_1a0c6eb7479b5ef2e7359ec5f42fc404b8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::HttpTransport::HttpTransport</definition>
+        <argsstring>(HttpTransport &amp;&amp;other)=default</argsstring>
+        <name>HttpTransport</name>
+        <qualifiedname>Azure::Core::Http::HttpTransport::HttpTransport</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">HttpTransport</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>HttpTransport</computeroutput> by moving another instance of <computeroutput>HttpTransport</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An instance to move in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/transport.hpp" line="59" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_transport_1a44e0b2695aa316451ffe3c68e5e3ee30" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">HttpTransport</ref> &amp;</type>
+        <definition>HttpTransport &amp; Azure::Core::Http::HttpTransport::operator=</definition>
+        <argsstring>(const HttpTransport &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Http::HttpTransport::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">HttpTransport</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Assigns <computeroutput>HttpTransport</computeroutput> to another instance of <computeroutput>HttpTransport</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An instance to assign.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A reference to this instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/transport.hpp" line="68" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_transport_1a8b47565baf7018fdfcad475b9c5d6615" prot="protected" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Azure::Core::Http::HttpTransport::HasWebSocketSupport</definition>
+        <argsstring>() const</argsstring>
+        <name>HasWebSocketSupport</name>
+        <qualifiedname>Azure::Core::Http::HttpTransport::HasWebSocketSupport</qualifiedname>
+        <briefdescription>
+<para>Returns true if the <ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">HttpTransport</ref> supports WebSockets (the ability to communicate bidirectionally on the TCP connection used by the HTTP transport). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/transport.hpp" line="74" column="18" bodyfile="inc/azure/core/http/transport.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Base class for all HTTP transport implementations. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Http::CurlTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_transport"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Http::HttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_http_transport"/>
+      </node>
+      <node id="3">
+        <label>Azure::Core::Http::WinHttpTransport</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="inc/azure/core/http/transport.hpp" line="19" column="3" bodyfile="inc/azure/core/http/transport.hpp" bodystart="19" bodyend="75"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a8b47565baf7018fdfcad475b9c5d6615" prot="protected" virt="virtual"><scope>Azure::Core::Http::HttpTransport</scope><name>HasWebSocketSupport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a76c34f294158836f72741cc90e4b480f" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::HttpTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1af7fadcff099af67a5e3732642cc42c78" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::HttpTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a0c6eb7479b5ef2e7359ec5f42fc404b8" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::HttpTransport</scope><name>HttpTransport</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a44e0b2695aa316451ffe3c68e5e3ee30" prot="protected" virt="non-virtual"><scope>Azure::Core::Http::HttpTransport</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1aab0a38b3e67079a9ede743c3e8de909d" prot="public" virt="pure-virtual"><scope>Azure::Core::Http::HttpTransport</scope><name>Send</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a4c0b2905624416efe1f77e6ef244c0e9" prot="public" virt="virtual"><scope>Azure::Core::Http::HttpTransport</scope><name>~HttpTransport</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::CopyStatus</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a0ed40cc21a9813440ac56e953ba35251" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref></type>
+        <definition>const CopyStatus Azure::Storage::Blobs::Models::CopyStatus::Pending</definition>
+        <argsstring></argsstring>
+        <name>Pending</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::Pending</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref>: Pending </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1019" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1019" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a4145e2e9108e3d3205b46ba78ccd67ce" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref></type>
+        <definition>const CopyStatus Azure::Storage::Blobs::Models::CopyStatus::Success</definition>
+        <argsstring></argsstring>
+        <name>Success</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::Success</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref>: Success </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1021" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1021" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a7efa7cd1343d29a8542924b0ec2e5196" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref></type>
+        <definition>const CopyStatus Azure::Storage::Blobs::Models::CopyStatus::Aborted</definition>
+        <argsstring></argsstring>
+        <name>Aborted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::Aborted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref>: Aborted </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1023" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1023" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1af3094b46a5a152ba86b66d3fa075992a" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref></type>
+        <definition>const CopyStatus Azure::Storage::Blobs::Models::CopyStatus::Failed</definition>
+        <argsstring></argsstring>
+        <name>Failed</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::Failed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref>: Failed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1025" column="58" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1025" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a57ac575ae200b5dcaf6cf879d8034295" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::CopyStatus::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1028" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1028" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1ac6ec954e4dcc9d60d3a88c4075d9dda5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::CopyStatus::CopyStatus</definition>
+        <argsstring>()=default</argsstring>
+        <name>CopyStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::CopyStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1009" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a1848d420c64e9cd1c2c258684a73434a" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::CopyStatus::CopyStatus</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>CopyStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::CopyStatus</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1011" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1011" bodyend="1011"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a7fde04144db2ac909605b0b768ccc936" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::CopyStatus::operator==</definition>
+        <argsstring>(const CopyStatus &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1013" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1013" bodyend="1013"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a29d7696e1d384fcf280217d18c0b90e1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::CopyStatus::operator!=</definition>
+        <argsstring>(const CopyStatus &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">CopyStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1015" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1015" bodyend="1015"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a1a3be8c1367c6d59ddca308aaed005d3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::CopyStatus::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::CopyStatus::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1017" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1017" bodyend="1017"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Status of the copy operation. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::CopyStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Aborted</edgelabel>
+          <edgelabel>Failed</edgelabel>
+          <edgelabel>Pending</edgelabel>
+          <edgelabel>Success</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1006" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1006" bodyend="1029"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a7efa7cd1343d29a8542924b0ec2e5196" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>Aborted</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1ac6ec954e4dcc9d60d3a88c4075d9dda5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>CopyStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a1848d420c64e9cd1c2c258684a73434a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>CopyStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1af3094b46a5a152ba86b66d3fa075992a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>Failed</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a57ac575ae200b5dcaf6cf879d8034295" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a29d7696e1d384fcf280217d18c0b90e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a7fde04144db2ac909605b0b768ccc936" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a0ed40cc21a9813440ac56e953ba35251" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>Pending</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a4145e2e9108e3d3205b46ba78ccd67ce" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>Success</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status_1a1a3be8c1367c6d59ddca308aaed005d3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::CopyStatus</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_immutability_policy_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SetBlobImmutabilityPolicyResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_immutability_policy_result_1a7789093e7c3309f81c642baa46379208" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy" kindref="compound">BlobImmutabilityPolicy</ref></type>
+        <definition>BlobImmutabilityPolicy Azure::Storage::Blobs::Models::SetBlobImmutabilityPolicyResult::ImmutabilityPolicy</definition>
+        <argsstring></argsstring>
+        <name>ImmutabilityPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobImmutabilityPolicyResult::ImmutabilityPolicy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Immutability policy associated with the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2079" column="30" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2079" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ade112c37b5858590349a2b5e46fd5709" kindref="member">Azure::Storage::Blobs::BlobClient::SetImmutabilityPolicy</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobImmutabilityPolicy</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>PolicyMode</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::BlobImmutabilityPolicyMode</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy_mode"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Locked</edgelabel>
+          <edgelabel>Unlocked</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::SetBlobImmutabilityPolicyResult</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_immutability_policy_result"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ImmutabilityPolicy</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2074" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2075" bodyend="2080"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_immutability_policy_result_1a7789093e7c3309f81c642baa46379208" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobImmutabilityPolicyResult</scope><name>ImmutabilityPolicy</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

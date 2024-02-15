@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::DownloadBlobToOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1a0332b25fe3d96cb4d230e73ec1ffff5a" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; Core::Http::HttpRange &gt;</type>
+        <definition>Azure::Nullable&lt;Core::Http::HttpRange&gt; Azure::Storage::Blobs::DownloadBlobToOptions::Range</definition>
+        <argsstring></argsstring>
+        <name>Range</name>
+        <qualifiedname>Azure::Storage::Blobs::DownloadBlobToOptions::Range</qualifiedname>
+        <briefdescription>
+<para>Downloads only the bytes of the blob in the specified range. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="686" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="686" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1a134d39a1574e9b255d713032462f7be1" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::DownloadBlobToOptions::InitialChunkSize</definition>
+        <argsstring></argsstring>
+        <name>InitialChunkSize</name>
+        <qualifiedname>Azure::Storage::Blobs::DownloadBlobToOptions::InitialChunkSize</qualifiedname>
+        <initializer>= 256 * 1024 * 1024</initializer>
+        <briefdescription>
+<para>The size of the first range request in bytes. Blobs smaller than this limit will be downloaded in a single request. Blobs larger than this limit will continue being downloaded in chunks of size ChunkSize. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="698" column="15" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="698" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1a091e17f40a76c89a91cee88dc6896890" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::DownloadBlobToOptions::ChunkSize</definition>
+        <argsstring></argsstring>
+        <name>ChunkSize</name>
+        <qualifiedname>Azure::Storage::Blobs::DownloadBlobToOptions::ChunkSize</qualifiedname>
+        <initializer>= 4 * 1024 * 1024</initializer>
+        <briefdescription>
+<para>The maximum number of bytes in a single request. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="703" column="15" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="703" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1abf046c9bce5d8b92e21e8c9cfd197cc8" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t Azure::Storage::Blobs::DownloadBlobToOptions::Concurrency</definition>
+        <argsstring></argsstring>
+        <name>Concurrency</name>
+        <qualifiedname>Azure::Storage::Blobs::DownloadBlobToOptions::Concurrency</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+<para>The maximum number of threads that may be used in a parallel transfer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="708" column="15" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="708" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1ad872e0447e0af10e654a458a982afea0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options" kindref="compound">Azure::Storage::Blobs::DownloadBlobToOptions</ref></type>
+        <definition>struct Azure::Storage::Blobs::DownloadBlobToOptions Azure::Storage::Blobs::DownloadBlobToOptions::TransferOptions</definition>
+        <argsstring></argsstring>
+        <name>TransferOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::DownloadBlobToOptions::TransferOptions</qualifiedname>
+        <briefdescription>
+<para>Options for parallel transfer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="709" column="21"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa0bcbdbf6ebd17e4888cced4736420f7" kindref="member">Azure::Storage::Blobs::BlobClient::DownloadTo</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="681" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="682" bodyend="710"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1a091e17f40a76c89a91cee88dc6896890" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::DownloadBlobToOptions</scope><name>ChunkSize</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1abf046c9bce5d8b92e21e8c9cfd197cc8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::DownloadBlobToOptions</scope><name>Concurrency</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1a134d39a1574e9b255d713032462f7be1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::DownloadBlobToOptions</scope><name>InitialChunkSize</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1a0332b25fe3d96cb4d230e73ec1ffff5a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::DownloadBlobToOptions</scope><name>Range</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options_1ad872e0447e0af10e654a458a982afea0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::DownloadBlobToOptions</scope><name>TransferOptions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

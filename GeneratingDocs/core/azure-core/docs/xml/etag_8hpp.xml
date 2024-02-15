@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="etag_8hpp" kind="file" language="C++">
+    <compoundname>etag.hpp</compoundname>
+    <includes refid="azure__assert_8hpp" local="yes">azure/core/azure_assert.hpp</includes>
+    <includes refid="nullable_8hpp" local="yes">azure/core/nullable.hpp</includes>
+    <includes local="no">string</includes>
+    <includedby refid="core_8hpp" local="yes">inc/azure/core.hpp</includedby>
+    <includedby refid="match__conditions_8hpp" local="yes">inc/azure/core/match_conditions.hpp</includedby>
+    <includedby refid="etag_8cpp" local="yes">src/etag.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>azure/core/azure_assert.hpp</label>
+        <link refid="azure__assert_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/etag.hpp</label>
+        <link refid="etag_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>azure/core/nullable.hpp</label>
+        <link refid="nullable_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>azure/core/platform.hpp</label>
+        <link refid="platform_8hpp"/>
+      </node>
+      <node id="6">
+        <label>cassert</label>
+      </node>
+      <node id="4">
+        <label>cstdlib</label>
+      </node>
+      <node id="8">
+        <label>new</label>
+      </node>
+      <node id="5">
+        <label>string</label>
+      </node>
+      <node id="9">
+        <label>type_traits</label>
+      </node>
+      <node id="10">
+        <label>utility</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core.hpp</label>
+        <link refid="core_8hpp_source"/>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/etag.hpp</label>
+        <link refid="etag_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/match_conditions.hpp</label>
+        <link refid="match__conditions_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_azure_1_1_e_tag" prot="public">Azure::ETag</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <briefdescription>
+<para>Define ETag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="azure__assert_8hpp" kindref="compound">azure/core/azure_assert.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="nullable_8hpp" kindref="compound">azure/core/nullable.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_azure" kindref="compound">Azure</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="class_azure_1_1_e_tag" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref><sp/>final<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>ETag<sp/>is<sp/>a<sp/>validator<sp/>based<sp/>on<sp/>https://tools.ietf.org/html/rfc7232#section-2.3.2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable&lt;std::string&gt;</ref><sp/>m_value;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="31" refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" kindref="member">ETagComparison</ref></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>Strong,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>Weak</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="38"><highlight class="comment"><sp/><sp/>2.3.2.<sp/><sp/>Comparison</highlight></codeline>
+<codeline lineno="39"><highlight class="comment"></highlight></codeline>
+<codeline lineno="40"><highlight class="comment"><sp/><sp/><sp/><sp/>There<sp/>are<sp/>two<sp/>entity-tag<sp/>comparison<sp/>functions,<sp/>depending<sp/>on<sp/>whether</highlight></codeline>
+<codeline lineno="41"><highlight class="comment"><sp/><sp/><sp/><sp/>or<sp/>not<sp/>the<sp/>comparison<sp/>context<sp/>allows<sp/>the<sp/>use<sp/>of<sp/>weak<sp/>validators:</highlight></codeline>
+<codeline lineno="42"><highlight class="comment"></highlight></codeline>
+<codeline lineno="43"><highlight class="comment"><sp/><sp/><sp/><sp/>o<sp/><sp/>Strong<sp/>comparison:<sp/>two<sp/>entity-tags<sp/>are<sp/>equivalent<sp/>if<sp/>both<sp/>are<sp/>not</highlight></codeline>
+<codeline lineno="44"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>weak<sp/>and<sp/>their<sp/>opaque-tags<sp/>match<sp/>character-by-character.</highlight></codeline>
+<codeline lineno="45"><highlight class="comment"></highlight></codeline>
+<codeline lineno="46"><highlight class="comment"><sp/><sp/><sp/><sp/>o<sp/><sp/>Weak<sp/>comparison:<sp/>two<sp/>entity-tags<sp/>are<sp/>equivalent<sp/>if<sp/>their</highlight></codeline>
+<codeline lineno="47"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>opaque-tags<sp/>match<sp/>character-by-character,<sp/>regardless<sp/>of<sp/>either<sp/>or</highlight></codeline>
+<codeline lineno="48"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>both<sp/>being<sp/>tagged<sp/>as<sp/>&quot;weak&quot;.</highlight></codeline>
+<codeline lineno="49"><highlight class="comment"></highlight></codeline>
+<codeline lineno="50"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>+--------+--------+-------------------+-----------------+</highlight></codeline>
+<codeline lineno="51"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>|<sp/>ETag<sp/>1<sp/>|<sp/>ETag<sp/>2<sp/>|<sp/>Strong<sp/>Comparison<sp/>|<sp/>Weak<sp/>Comparison<sp/>|</highlight></codeline>
+<codeline lineno="52"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>+--------+--------+-------------------+-----------------+</highlight></codeline>
+<codeline lineno="53"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>|<sp/>W/&quot;1&quot;<sp/><sp/>|<sp/>W/&quot;1&quot;<sp/><sp/>|<sp/>no<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline lineno="54"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>|<sp/>W/&quot;1&quot;<sp/><sp/>|<sp/>W/&quot;2&quot;<sp/><sp/>|<sp/>no<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>no<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline lineno="55"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>|<sp/>W/&quot;1&quot;<sp/><sp/>|<sp/>&quot;1&quot;<sp/><sp/><sp/><sp/>|<sp/>no<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline lineno="56"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>|<sp/>&quot;1&quot;<sp/><sp/><sp/><sp/>|<sp/>&quot;1&quot;<sp/><sp/><sp/><sp/>|<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>match<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline lineno="57"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>+--------+--------+-------------------+-----------------+</highlight></codeline>
+<codeline lineno="58"><highlight class="comment"></highlight></codeline>
+<codeline lineno="59"><highlight class="comment"><sp/><sp/>//<sp/>etag:<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//This<sp/>is<sp/>possible<sp/>and<sp/>means<sp/>no<sp/>etag<sp/>is<sp/>present</highlight></codeline>
+<codeline lineno="60"><highlight class="comment"><sp/><sp/>//<sp/>etag:&quot;&quot;</highlight></codeline>
+<codeline lineno="61"><highlight class="comment"><sp/><sp/>//<sp/>etag:&quot;*&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//This<sp/>means<sp/>the<sp/>etag<sp/>is<sp/>value<sp/>&apos;*&apos;</highlight></codeline>
+<codeline lineno="62"><highlight class="comment"><sp/><sp/>//<sp/>etag:&quot;some<sp/>value&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//This<sp/>means<sp/>the<sp/>etag<sp/>is<sp/>value<sp/>&apos;some<sp/>value&apos;</highlight></codeline>
+<codeline lineno="63"><highlight class="comment"><sp/><sp/>//<sp/>etag:/W&quot;&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//Weak<sp/>eTag</highlight></codeline>
+<codeline lineno="64"><highlight class="comment"><sp/><sp/>//<sp/>etag:*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//This<sp/>is<sp/>special,<sp/>means<sp/>any<sp/>etag</highlight></codeline>
+<codeline lineno="65"><highlight class="comment"><sp/><sp/>//<sp/>If-Match<sp/>header<sp/>can<sp/>do<sp/>this</highlight></codeline>
+<codeline lineno="66"><highlight class="comment"><sp/><sp/>//<sp/>If-Match:&quot;value1&quot;,&quot;value2&quot;,&quot;value3&quot;<sp/><sp/>//<sp/>Do<sp/>this<sp/>if<sp/>any<sp/>of<sp/>these<sp/>match</highlight></codeline>
+<codeline lineno="67"><highlight class="comment"></highlight></codeline>
+<codeline lineno="68"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="class_azure_1_1_e_tag_1a8a099159c1206da752cee1a13a5c5f07" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1a8a099159c1206da752cee1a13a5c5f07" kindref="member">Equals</ref>(</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref>&amp;<sp/>left,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref>&amp;<sp/>right,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" kindref="member">ETagComparison</ref><sp/>comparisonKind<sp/>=<sp/>ETagComparison::Strong)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>ETags<sp/>are<sp/>!=<sp/>if<sp/>one<sp/>of<sp/>the<sp/>values<sp/>is<sp/>null</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!left.m_value<sp/>||<sp/>!right.m_value)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Caveat,<sp/>If<sp/>both<sp/>values<sp/>are<sp/>null<sp/>then<sp/>we<sp/>consider<sp/>the<sp/>ETag<sp/>equal</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!left.m_value<sp/>&amp;&amp;<sp/>!right.m_value;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(comparisonKind)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>ETagComparison::Strong:</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Strong<sp/>comparison</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>either<sp/>is<sp/>weak<sp/>then<sp/>there<sp/>is<sp/>no<sp/>match</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>else<sp/>tags<sp/>must<sp/>match<sp/>character<sp/>for<sp/>character</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!left.<ref refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" kindref="member">IsWeak</ref>()<sp/>&amp;&amp;<sp/>!right.<ref refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" kindref="member">IsWeak</ref>()</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;&amp;<sp/>(left.m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>().compare(right.m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>())<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>ETagComparison::Weak:</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>leftStart<sp/>=<sp/>left.<ref refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" kindref="member">IsWeak</ref>()<sp/>?<sp/>2<sp/>:<sp/>0;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rightStart<sp/>=<sp/>right.<ref refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" kindref="member">IsWeak</ref>()<sp/>?<sp/>2<sp/>:<sp/>0;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>leftVal<sp/>=<sp/>left.m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>();</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rightVal<sp/>=<sp/>right.m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>();</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Compare<sp/>if<sp/>lengths<sp/>are<sp/>equal</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Compare<sp/>the<sp/>strings<sp/>character<sp/>by<sp/>character</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>((leftVal.length()<sp/>-<sp/>leftStart)<sp/>==<sp/>(rightVal.length()<sp/>-<sp/>rightStart))</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;&amp;<sp/>(leftVal.compare(leftStart,<sp/>leftVal.length()<sp/>-<sp/>leftStart,<sp/>&amp;rightVal[rightStart])</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Unknown<sp/>comparison</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="azure__assert_8hpp_1a89e2bf005c01baa889835e8c3cb243a1" kindref="member">AZURE_UNREACHABLE_CODE</ref>();</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="class_azure_1_1_e_tag_1a5f51ee1a9eaf64372d8cc1d00d1042a6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_azure_1_1_e_tag_1a5f51ee1a9eaf64372d8cc1d00d1042a6" kindref="member">ETag</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="class_azure_1_1_e_tag_1ae17064a85468c70b9ae5e1c739f29282" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1ae17064a85468c70b9ae5e1c739f29282" kindref="member">ETag</ref>(std::string<sp/>etag)<sp/>:<sp/>m_value(std::move(etag))<sp/>{}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="class_azure_1_1_e_tag_1a36ae96279fde0e6c22585b15ccb340fe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1a36ae96279fde0e6c22585b15ccb340fe" kindref="member">HasValue</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.<ref refid="class_azure_1_1_nullable_1a9a0c797c4eb208551e045de2d97809f7" kindref="member">HasValue</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="class_azure_1_1_e_tag_1a9fc3b3c367ce24ee19b430c8cb36fe9c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="class_azure_1_1_e_tag_1a9fc3b3c367ce24ee19b430c8cb36fe9c" kindref="member">ToString</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="143"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="azure__assert_8hpp_1a9e91c95a63cb50551fd21d8b0bc1096d" kindref="member">AZURE_ASSERT_MSG</ref>(m_value.<ref refid="class_azure_1_1_nullable_1a9a0c797c4eb208551e045de2d97809f7" kindref="member">HasValue</ref>(),<sp/></highlight><highlight class="stringliteral">&quot;Empty<sp/>ETag,<sp/>check<sp/>HasValue()<sp/>before<sp/>calling<sp/>ToString().&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>();</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="class_azure_1_1_e_tag_1aab47574005070ae685e98aa33427ebf6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1aab47574005070ae685e98aa33427ebf6" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref>&amp;<sp/>other)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1a8a099159c1206da752cee1a13a5c5f07" kindref="member">Equals</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>other,<sp/>ETagComparison::Strong);<sp/>}</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="class_azure_1_1_e_tag_1a83cf243c393b71b92aebcf0eb8b9f786" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1a83cf243c393b71b92aebcf0eb8b9f786" kindref="member">operator!=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref>&amp;<sp/>other)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>==<sp/>other);<sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" kindref="member">IsWeak</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="169"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Null<sp/>ETag<sp/>is<sp/>considered<sp/>Strong</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Shortest<sp/>valid<sp/>weak<sp/>etag<sp/>has<sp/>length<sp/>of<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>W/&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Valid<sp/>weak<sp/>format<sp/>must<sp/>start<sp/>with<sp/>W/&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Must<sp/>end<sp/>with<sp/>a<sp/>/&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>weak<sp/>=<sp/>m_value<sp/>&amp;&amp;<sp/>(m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>().length()<sp/>&gt;=<sp/>4)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;&amp;<sp/>((m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>()[0]<sp/>==<sp/></highlight><highlight class="charliteral">&apos;W&apos;</highlight><highlight class="normal">)<sp/>&amp;&amp;<sp/>(m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>()[1]<sp/>==<sp/></highlight><highlight class="charliteral">&apos;/&apos;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;&amp;<sp/>(m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>()[2]<sp/>==<sp/></highlight><highlight class="charliteral">&apos;&quot;&apos;</highlight><highlight class="normal">)<sp/>&amp;&amp;<sp/>(m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>()[m_value.<ref refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kindref="member">Value</ref>().size()<sp/>-<sp/>1]<sp/>==<sp/></highlight><highlight class="charliteral">&apos;&quot;&apos;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>weak;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref>&amp;<sp/><ref refid="class_azure_1_1_e_tag_1a5264a49bd00787f15735f3798537b3b2" kindref="member">Any</ref>();</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/etag.hpp"/>
+  </compounddef>
+</doxygen>

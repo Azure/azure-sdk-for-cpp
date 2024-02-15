@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_submit_blob_batch_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SubmitBlobBatchResult</compoundname>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <briefdescription>
+<para>Response type for BlobClient::SubmitBatch. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="212" column="7" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="213" bodyend="214"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_f5764dd13d206f57b7a95970cc075f6b" kind="dir">
+    <compoundname>inc/azure/core/internal/http</compoundname>
+    <innerfile refid="http__sanitizer_8hpp">http_sanitizer.hpp</innerfile>
+    <innerfile refid="pipeline_8hpp">pipeline.hpp</innerfile>
+    <innerfile refid="user__agent_8hpp">user_agent.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/internal/http/"/>
+  </compounddef>
+</doxygen>

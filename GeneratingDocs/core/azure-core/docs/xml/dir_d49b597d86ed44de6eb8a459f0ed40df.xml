@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_d49b597d86ed44de6eb8a459f0ed40df" kind="dir">
+    <compoundname>src/private</compoundname>
+    <innerfile refid="environment__log__level__listener_8hpp">environment_log_level_listener.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/private/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_7d6893ff7a5980c9033ed77439b5f032" kind="dir">
+    <compoundname>inc/azure</compoundname>
+    <innerdir refid="dir_06ad7f09ade60a1ced0a4e3dcb3d1625">inc/azure/core</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/"/>
+  </compounddef>
+</doxygen>

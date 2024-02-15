@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_response" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Response</compoundname>
+    <includes refid="response_8hpp" local="no">response.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class T</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_response_1a1255aa09b307bfbbeb0613526ac88dd7" prot="public" static="no" mutable="no">
+        <type>T</type>
+        <definition>T Azure::Response&lt; T &gt;::Value</definition>
+        <argsstring></argsstring>
+        <name>Value</name>
+        <qualifiedname>Azure::Response::Value</qualifiedname>
+        <briefdescription>
+<para>The value returned by the service. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/response.hpp" line="30" column="5" bodyfile="inc/azure/core/response.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_response_1acbf2f2476eecdff336882895b813239e" prot="public" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;Azure::Core::Http::RawResponse&gt; Azure::Response&lt; T &gt;::RawResponse</definition>
+        <argsstring></argsstring>
+        <name>RawResponse</name>
+        <qualifiedname>Azure::Response::RawResponse</qualifiedname>
+        <briefdescription>
+<para>The HTTP response returned by the service. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/response.hpp" line="32" column="19" bodyfile="inc/azure/core/response.hpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_response_1a065023c9314d24f63b7df1d332c1169a" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Response&lt; T &gt;::Response</definition>
+        <argsstring>(T value, std::unique_ptr&lt; Azure::Core::Http::RawResponse &gt; rawResponse)</argsstring>
+        <name>Response</name>
+        <qualifiedname>Azure::Response::Response</qualifiedname>
+        <param>
+          <type>T</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> &gt;</type>
+          <declname>rawResponse</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <computeroutput>Response</computeroutput> with the value and raw response returned by the service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value returned by the service. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rawResponse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The HTTP response returned by the service. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/response.hpp" line="40" column="12" bodyfile="inc/azure/core/response.hpp" bodystart="40" bodyend="43"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents the result of an <ref refid="namespace_azure" kindref="compound">Azure</ref> operation over HTTP by wrapping the raw HTTP response from a request made to the service into a response of a specific type. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A specific type of value to get from the raw HTTP response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/response.hpp" line="26" column="12" bodyfile="inc/azure/core/response.hpp" bodystart="26" bodyend="44"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_response_1acbf2f2476eecdff336882895b813239e" prot="public" virt="non-virtual"><scope>Azure::Response</scope><name>RawResponse</name></member>
+      <member refid="class_azure_1_1_response_1a065023c9314d24f63b7df1d332c1169a" prot="public" virt="non-virtual"><scope>Azure::Response</scope><name>Response</name></member>
+      <member refid="class_azure_1_1_response_1a1255aa09b307bfbbeb0613526ac88dd7" prot="public" virt="non-virtual"><scope>Azure::Response</scope><name>Value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

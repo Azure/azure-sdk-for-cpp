@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_i_o" kind="namespace" language="C++">
+    <compoundname>Azure::Core::IO</compoundname>
+    <innerclass refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" prot="public">Azure::Core::IO::BodyStream</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream" prot="public">Azure::Core::IO::FileBodyStream</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream" prot="public">Azure::Core::IO::MemoryBodyStream</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream" prot="public">Azure::Core::IO::ProgressBodyStream</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/internal/io/null_body_stream.hpp" line="13" column="28"/>
+  </compounddef>
+</doxygen>

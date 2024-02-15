@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_submit_blob_batch_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::SubmitBlobBatchOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client_1a1ee857beb2d70d56c0400563bb6043c8" kindref="member">Azure::Storage::Blobs::BlobServiceClient::SubmitBatch</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1599" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1600" bodyend="1601"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

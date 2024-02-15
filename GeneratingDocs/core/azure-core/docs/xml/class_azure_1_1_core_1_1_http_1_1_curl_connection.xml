@@ -1,0 +1,504 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_curl_connection" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::CurlConnection</compoundname>
+    <basecompoundref refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection" prot="public" virt="non-virtual">Azure::Core::Http::CurlNetworkConnection</basecompoundref>
+    <includes refid="curl__connection__private_8hpp" local="no">curl_connection_private.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1adfeb9b403f7be590e6c7374eb965563d" prot="private" static="no" mutable="no">
+        <type>Azure::Core::_internal::UniqueHandle&lt; CURL &gt;</type>
+        <definition>Azure::Core::_internal::UniqueHandle&lt;CURL&gt; Azure::Core::Http::CurlConnection::m_handle</definition>
+        <argsstring></argsstring>
+        <name>m_handle</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::m_handle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="145" column="44" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a857be7b7e84d3ed2b580e9b045421ce6" prot="private" static="no" mutable="no">
+        <type>curl_socket_t</type>
+        <definition>curl_socket_t Azure::Core::Http::CurlConnection::m_curlSocket</definition>
+        <argsstring></argsstring>
+        <name>m_curlSocket</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::m_curlSocket</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="146" column="21" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1adbaca9188258070f0bc1788a5cdd4495" prot="private" static="no" mutable="no">
+        <type>std::chrono::steady_clock::time_point</type>
+        <definition>std::chrono::steady_clock::time_point Azure::Core::Http::CurlConnection::m_lastUseTime</definition>
+        <argsstring></argsstring>
+        <name>m_lastUseTime</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::m_lastUseTime</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="147" column="45" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a709bae41ea402f2755052b061c99b566" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::CurlConnection::m_connectionKey</definition>
+        <argsstring></argsstring>
+        <name>m_connectionKey</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::m_connectionKey</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="148" column="19" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a4a0f5648394f5300ef178973bde80419" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlConnection::m_enableCrlValidation</definition>
+        <argsstring></argsstring>
+        <name>m_enableCrlValidation</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::m_enableCrlValidation</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="150" column="12" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="150" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ac96cef535eff259f705b9615db9639f4" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlConnection::m_allowFailedCrlRetrieval</definition>
+        <argsstring></argsstring>
+        <name>m_allowFailedCrlRetrieval</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::m_allowFailedCrlRetrieval</qualifiedname>
+        <initializer>{true}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="152" column="12" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="152" bodyend="152"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a1d4ff6da3282d15ddcf74e0063db962d" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int CurlConnection::CurlLoggingCallback</definition>
+        <argsstring>(CURL *handle, curl_infotype type, char *data, size_t size, void *userp)</argsstring>
+        <name>CurlLoggingCallback</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::CurlLoggingCallback</qualifiedname>
+        <param>
+          <type>CURL *</type>
+          <declname>handle</declname>
+        </param>
+        <param>
+          <type>curl_infotype</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>userp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="154" column="18" bodyfile="src/http/curl/curl.cpp" bodystart="1368" bodyend="1410"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ad939c5a185376b5e4b22c73b24fc57e7" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int CurlConnection::CurlSslCtxCallback</definition>
+        <argsstring>(CURL *curl, void *sslctx, void *parm)</argsstring>
+        <name>CurlSslCtxCallback</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::CurlSslCtxCallback</qualifiedname>
+        <param>
+          <type>CURL *</type>
+          <declname>curl</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>sslctx</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>parm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="161" column="18" bodyfile="src/http/curl/curl.cpp" bodystart="2020" bodyend="2024"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a383b372d494972bd8b8bf80f2f72e3d7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int CurlConnection::SslCtxCallback</definition>
+        <argsstring>(CURL *curl, void *sslctx)</argsstring>
+        <name>SslCtxCallback</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::SslCtxCallback</qualifiedname>
+        <param>
+          <type>CURL *</type>
+          <declname>curl</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>sslctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="162" column="11" bodyfile="src/http/curl/curl.cpp" bodystart="2026" bodyend="2062"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a6879ac2cad06b069bd6e56df4189d200" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int CurlConnection::VerifyCertificateError</definition>
+        <argsstring>(int ok, X509_STORE_CTX *storeContext)</argsstring>
+        <name>VerifyCertificateError</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::VerifyCertificateError</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>ok</declname>
+        </param>
+        <param>
+          <type><ref refid="curl__connection__private_8hpp_1ae681945a2cf88d6337137dc0260a1545" kindref="member">X509_STORE_CTX</ref> *</type>
+          <declname>storeContext</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="163" column="11" bodyfile="src/http/curl/curl.cpp" bodystart="1932" bodyend="2018"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ae028bfff06339fae9b1486bc34d9e42e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>CurlConnection::CurlConnection</definition>
+        <argsstring>(Azure::Core::Http::Request &amp;request, Azure::Core::Http::CurlTransportOptions const &amp;options, std::string const &amp;hostDisplayName, std::string const &amp;connectionPropertiesKey)</argsstring>
+        <name>CurlConnection</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::CurlConnection</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options" kindref="compound">Azure::Core::Http::CurlTransportOptions</ref> const &amp;</type>
+          <declname>options</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>hostDisplayName</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>connectionPropertiesKey</declname>
+        </param>
+        <briefdescription>
+<para>Construct CURL HTTP connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Remote request </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection options. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hostDisplayName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Display name for remote host, used for diagnostics.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>connectionPropertiesKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CURL connection properties key </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="175" column="7" bodyfile="src/http/curl/curl.cpp" bodystart="2190" bodyend="2468"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a4d52d51c148ceb82858f0dd6de83f317" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::CurlConnection::~CurlConnection</definition>
+        <argsstring>() override</argsstring>
+        <name>~CurlConnection</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::~CurlConnection</qualifiedname>
+        <briefdescription>
+<para>Destructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Cleans up CURL (invokes <computeroutput>curl_easy_cleanup()</computeroutput>). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="185" column="7" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="185" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a2b8da0ad12d29ac85ce8334e9bb2b177" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::string const &amp;</type>
+        <definition>std::string const  &amp; Azure::Core::Http::CurlConnection::GetConnectionKey</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetConnectionKey</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::GetConnectionKey</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a1ec150945dfb9ad8831cec9c2d2d5109">GetConnectionKey</reimplements>
+        <briefdescription>
+<para>Get the Connection Properties Key object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="187" column="25" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="187" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a1ccde96315ab2370ced8bcfc87cc1556" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Http::CurlConnection::UpdateLastUsageTime</definition>
+        <argsstring>() override</argsstring>
+        <name>UpdateLastUsageTime</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::UpdateLastUsageTime</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a33c469afabc2ff3dd0b096a03e0cb0cf">UpdateLastUsageTime</reimplements>
+        <briefdescription>
+<para>Update last usage time for the connection. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="193" column="12" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="193" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a011c45dd8398536a6eda1dde6e8a4cb4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::CurlConnection::IsExpired</definition>
+        <argsstring>() override</argsstring>
+        <name>IsExpired</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::IsExpired</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a53e781c7fa6b1a875998f84c62581f05">IsExpired</reimplements>
+        <briefdescription>
+<para>Checks whether this CURL connection is expired. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><computeroutput>true</computeroutput> if this connection is considered expired; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="202" column="12" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="202" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a39ec5246e8cab60c9229acee7f2f8ce7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t CurlConnection::ReadFromSocket</definition>
+        <argsstring>(uint8_t *buffer, size_t bufferSize, Context const &amp;context) override</argsstring>
+        <name>ReadFromSocket</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::ReadFromSocket</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a70019a25e47e49fb9b91c6d79d89cf89">ReadFromSocket</reimplements>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bufferSize</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>This function is used when working with streams to pull more data from the wire. Function will try to keep pulling data from socket until the buffer is all written or until there is no more data to get from the socket. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ptr to buffer where to copy bytes from socket. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bufferSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>size of the buffer and the requested bytes to be pulled from wire. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>return the numbers of bytes pulled from socket. It can be less than what it was requested. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="220" column="14" bodyfile="src/http/curl/curl.cpp" bodystart="1102" bodyend="1152"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a38965e729c4fb3fb234f1753562e7116" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>CURLcode</type>
+        <definition>CURLcode CurlConnection::SendBuffer</definition>
+        <argsstring>(uint8_t const *buffer, size_t bufferSize, Context const &amp;context) override</argsstring>
+        <name>SendBuffer</name>
+        <qualifiedname>Azure::Core::Http::CurlConnection::SendBuffer</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1afbc09222e1cd35e2173b397153015501">SendBuffer</reimplements>
+        <param>
+          <type>uint8_t const *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bufferSize</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>This method will use libcurl socket to write all the bytes from buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Hardcoded timeout is used in case a socket stop responding.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ptr to the data to be sent to wire. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bufferSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>size of the buffer to send. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>CURL_OK when response is sent successfully. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/http/curl/curl_connection_private.hpp" line="232" column="16" bodyfile="src/http/curl/curl.cpp" bodystart="581" bodyend="647"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>CURL HTTP connection. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::Http::CurlConnection</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_connection"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Http::CurlNetworkConnection</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Http::CurlConnection</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_connection"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Http::CurlNetworkConnection</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection"/>
+      </node>
+    </collaborationgraph>
+    <location file="src/http/curl/curl_connection_private.hpp" line="143" column="5" bodyfile="src/http/curl/curl_connection_private.hpp" bodystart="143" bodyend="234"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ae028bfff06339fae9b1486bc34d9e42e" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>CurlConnection</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a1d4ff6da3282d15ddcf74e0063db962d" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>CurlLoggingCallback</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ad939c5a185376b5e4b22c73b24fc57e7" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>CurlSslCtxCallback</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a2b8da0ad12d29ac85ce8334e9bb2b177" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>GetConnectionKey</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a011c45dd8398536a6eda1dde6e8a4cb4" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>IsExpired</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1acd1b6bbeb9cd1229c48d276064610458" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>IsShutdown</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ac96cef535eff259f705b9615db9639f4" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>m_allowFailedCrlRetrieval</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a709bae41ea402f2755052b061c99b566" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>m_connectionKey</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a857be7b7e84d3ed2b580e9b045421ce6" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>m_curlSocket</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a4a0f5648394f5300ef178973bde80419" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>m_enableCrlValidation</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1adfeb9b403f7be590e6c7374eb965563d" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>m_handle</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1adbaca9188258070f0bc1788a5cdd4495" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>m_lastUseTime</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a39ec5246e8cab60c9229acee7f2f8ce7" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>ReadFromSocket</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a38965e729c4fb3fb234f1753562e7116" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>SendBuffer</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a6f47fb11d68a6e40de30cc1b172ef6a4" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>Shutdown</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a383b372d494972bd8b8bf80f2f72e3d7" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>SslCtxCallback</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a1ccde96315ab2370ced8bcfc87cc1556" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>UpdateLastUsageTime</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a6879ac2cad06b069bd6e56df4189d200" prot="private" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>VerifyCertificateError</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a4d52d51c148ceb82858f0dd6de83f317" prot="public" virt="non-virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>~CurlConnection</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a8748df2b1bf8402584acb0249b8b1844" prot="public" virt="virtual"><scope>Azure::Core::Http::CurlConnection</scope><name>~CurlNetworkConnection</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::UserDelegationKey</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1ad28eee3aa1d2f42298f02f0c757a7859" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::UserDelegationKey::SignedObjectId</definition>
+        <argsstring></argsstring>
+        <name>SignedObjectId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UserDelegationKey::SignedObjectId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The Azure Active Directory object ID in GUID format. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="568" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="568" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1aa57f38e25a39b422d29c7ae31bd0c883" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::UserDelegationKey::SignedTenantId</definition>
+        <argsstring></argsstring>
+        <name>SignedTenantId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UserDelegationKey::SignedTenantId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The Azure Active Directory tenant ID in GUID format. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="572" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="572" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a75fe758a72489c33f9d6e5cf77407342" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::UserDelegationKey::SignedStartsOn</definition>
+        <argsstring></argsstring>
+        <name>SignedStartsOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UserDelegationKey::SignedStartsOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date-time the key is active. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="576" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="576" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a07b545ac4aff5b1ecbaeb3945d45c5f5" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::UserDelegationKey::SignedExpiresOn</definition>
+        <argsstring></argsstring>
+        <name>SignedExpiresOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UserDelegationKey::SignedExpiresOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date-time the key expires. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="580" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="580" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a111a025acc186aa639bfef5b56680ea1" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::UserDelegationKey::SignedService</definition>
+        <argsstring></argsstring>
+        <name>SignedService</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UserDelegationKey::SignedService</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Abbreviation of the Azure Storage service that accepts the key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="584" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="584" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a3f61b8ff274efbd128a4d6f474841eda" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::UserDelegationKey::SignedVersion</definition>
+        <argsstring></argsstring>
+        <name>SignedVersion</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UserDelegationKey::SignedVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The service version that created the key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="588" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="588" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1acca1e1032ac1bb565c9692fe9cfd62bb" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::UserDelegationKey::Value</definition>
+        <argsstring></argsstring>
+        <name>Value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::UserDelegationKey::Value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The key as a base64 string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="592" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="592" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A user delegation key. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="563" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="564" bodyend="593"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a07b545ac4aff5b1ecbaeb3945d45c5f5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UserDelegationKey</scope><name>SignedExpiresOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1ad28eee3aa1d2f42298f02f0c757a7859" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UserDelegationKey</scope><name>SignedObjectId</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a111a025acc186aa639bfef5b56680ea1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UserDelegationKey</scope><name>SignedService</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a75fe758a72489c33f9d6e5cf77407342" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UserDelegationKey</scope><name>SignedStartsOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1aa57f38e25a39b422d29c7ae31bd0c883" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UserDelegationKey</scope><name>SignedTenantId</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1a3f61b8ff274efbd128a4d6f474841eda" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UserDelegationKey</scope><name>SignedVersion</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_user_delegation_key_1acca1e1032ac1bb565c9692fe9cfd62bb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::UserDelegationKey</scope><name>Value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

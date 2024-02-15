@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_c_h_a_n_g_e_l_o_g_8md" kind="file" language="Markdown">
+    <compoundname>CHANGELOG.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Release<sp/>History</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.8<sp/>(Unreleased)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Claims<sp/>Based<sp/>Security<sp/>authentication<sp/>now<sp/>longer<sp/>throws<sp/>a<sp/>`std::runtime_error`,<sp/>and<sp/>instead<sp/>follows<sp/>the<sp/>pattern<sp/>of<sp/>the<sp/>rest<sp/>of<sp/>the<sp/>AMQP<sp/>library<sp/>and<sp/>returns<sp/>an<sp/>error.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Authentication<sp/>now<sp/>throws<sp/>`Azure::Core::Credentials::AuthenticationException`<sp/>instead<sp/>of<sp/>`std::runtime_error`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Cancelled`<sp/>status<sp/>to<sp/>`CbsOperationResult`<sp/>and<sp/>`ManagementOperationStatus`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5284]](https://github.com/Azure/azure-sdk-for-cpp/issues/5284)<sp/>[azure-identity][azure-messaging-eventhubs]<sp/>Impossible<sp/>to<sp/>catch<sp/>exception<sp/>resulting<sp/>in<sp/>SIGABRT<sp/>signal.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5297]](https://github.com/Azure/azure-sdk-for-cpp/issues/5297):<sp/>Enabled<sp/>multiple<sp/>simultaneous<sp/>`ExecuteOperation`<sp/>calls.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>crash<sp/>when<sp/>Link<sp/>Detach<sp/>message<sp/>is<sp/>received<sp/>while<sp/>link<sp/>is<sp/>being<sp/>destroyed.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>`std::ostream`<sp/>inserter<sp/>for<sp/>message<sp/>body<sp/>no<sp/>longer<sp/>prints<sp/>the<sp/>body<sp/>of<sp/>the<sp/>message.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Tidied<sp/>up<sp/>the<sp/>output<sp/>of<sp/>the<sp/>`AmqpMessage`<sp/>`std::ostream`<sp/>inserter.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>several<sp/>`std::ostream`<sp/>inserters.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Pass<sp/>numeric<sp/>values<sp/>to<sp/>`std::ostream`<sp/>inserters<sp/>by<sp/>value<sp/>not<sp/>by<sp/>reference.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.7<sp/>(2024-02-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>`Close`<sp/>method<sp/>on<sp/>AMQP<sp/>Message<sp/>Sender<sp/>and<sp/>Message<sp/>Receiver<sp/>now<sp/>blocks<sp/>until<sp/>the<sp/>client<sp/>receives<sp/>a<sp/>`DETACH`<sp/>response<sp/>from<sp/>the<sp/>remote<sp/>node.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>`Close`<sp/>method<sp/>on<sp/>AMQP<sp/>Message<sp/>Sender<sp/>and<sp/>Message<sp/>Receiver<sp/>now<sp/>accepts<sp/>an<sp/>`Azure::Core::Context`<sp/>parameter.<sp/>This<sp/>parameter<sp/>is<sp/>defaulted<sp/>so<sp/>this<sp/>change<sp/>should<sp/>not<sp/>affect<sp/>existing<sp/>code.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>uAMQP<sp/>connection<sp/>channel<sp/>so<sp/>that<sp/>a<sp/>channel<sp/>is<sp/>released<sp/>when<sp/>an<sp/>END<sp/>performative<sp/>is<sp/>received<sp/>from<sp/>the<sp/>remote<sp/>node<sp/>instead<sp/>of<sp/>when<sp/>the<sp/>END<sp/>performative<sp/>is<sp/>sent<sp/>to<sp/>the<sp/>remote<sp/>node.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Enabled<sp/>more<sp/>than<sp/>one<sp/>uAMQP<sp/>session<sp/>to<sp/>be<sp/>created<sp/>on<sp/>a<sp/>single<sp/>connection.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.6<sp/>(2024-01-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>AMQP<sp/>Value<sp/>reference<sp/>counts<sp/>are<sp/>now<sp/>atomic,<sp/>this<sp/>fixes<sp/>several<sp/>AMQP<sp/>related<sp/>crashes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>`MessageReceiver`<sp/>returns<sp/>a<sp/>pointer<sp/>to<sp/>the<sp/>received<sp/>message<sp/>instead<sp/>of<sp/>a<sp/>copy.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>several<sp/>memory<sp/>leaks.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>AMQP<sp/>Link<sp/>Credits<sp/>now<sp/>work<sp/>as<sp/>expected.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Integrated<sp/>the<sp/>fix<sp/>for<sp/>NVD<sp/>-<sp/>CVE-2024-21646.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.5<sp/>(2023-11-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Refactored<sp/>AMQP<sp/>headers<sp/>to<sp/>isolate<sp/>internal-only<sp/>types<sp/>to<sp/>&quot;internal&quot;<sp/>subdirectory<sp/>in<sp/>headers.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>public<sp/>dependency<sp/>on<sp/>azure-uamqp-c<sp/>to<sp/>enable<sp/>local<sp/>bug<sp/>fixes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.4<sp/>(2023-10-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>AMQP<sp/>moved<sp/>from<sp/>a<sp/>polling<sp/>model<sp/>to<sp/>an<sp/>asynchronous<sp/>model.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>a<sp/>new<sp/>`MessageReceiver::TryWaitForIncomingMessage`<sp/>API<sp/>which<sp/>allows<sp/>callers<sp/>to<sp/>&quot;peek&quot;<sp/>at<sp/>the<sp/>contents<sp/>of<sp/></highlight></codeline>
+<codeline><highlight class="normal">the<sp/>incoming<sp/>message<sp/>queue,<sp/>returning<sp/>an<sp/>already<sp/>received<sp/>message<sp/>or<sp/>an<sp/>empty<sp/>message<sp/>if<sp/>none<sp/>is<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>the<sp/>`QueueSend`<sp/>API<sp/>from<sp/>`MessageSender`<sp/>because<sp/>it<sp/>was<sp/>not<sp/>compatible<sp/>with<sp/>the<sp/>new<sp/>asynchronous<sp/>model.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>new<sp/>asynchronous<sp/>model<sp/>requires<sp/>the<sp/>user<sp/>to<sp/>call<sp/>`Close()`<sp/>on<sp/>the<sp/>`MessageSender`<sp/>and<sp/>`MessageReceiver`<sp/></highlight></codeline>
+<codeline><highlight class="normal">to<sp/>ensure<sp/>operations<sp/>have<sp/>stabilized<sp/>before<sp/>destroying<sp/>the<sp/>object.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>For<sp/>connection<sp/>listeners<sp/>(primarily<sp/>test<sp/>scenarios),<sp/>if<sp/>you<sp/>call<sp/>`Open()`<sp/>or<sp/>`Listen()`<sp/>on<sp/>a<sp/>connection,<sp/>you<sp/>MUST<sp/>call<sp/>`Close()`<sp/></highlight></codeline>
+<codeline><highlight class="normal">before<sp/>the<sp/>connection<sp/>is<sp/>destroyed.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>`Connection::Close()`<sp/>method<sp/>no<sp/>longer<sp/>requires<sp/>that<sp/>the<sp/>caller<sp/>provide<sp/>connection<sp/>disconnect<sp/>information.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>`Session::End()`<sp/>method<sp/>no<sp/>longer<sp/>requires<sp/>that<sp/>the<sp/>caller<sp/>provide<sp/>session<sp/>disconnect<sp/>information.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Several<sp/>asserts<sp/>have<sp/>been<sp/>added<sp/>which<sp/>will<sp/>force<sp/>termination<sp/>of<sp/>the<sp/>running<sp/>application<sp/>if<sp/>invariants<sp/>have<sp/>not<sp/>been<sp/>met.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Several<sp/>fixes<sp/>related<sp/>to<sp/>the<sp/>new<sp/>asynchronous<sp/>model.<sp/>Ensures<sp/>that<sp/>message<sp/>senders<sp/>and<sp/>receivers<sp/>are<sp/>always<sp/>closed,<sp/></highlight></codeline>
+<codeline><highlight class="normal">and<sp/>that<sp/>resources<sp/>are<sp/>released.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.3<sp/>(2023-09-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>When<sp/>a<sp/>message<sp/>sender<sp/>is<sp/>destroyed,<sp/>close<sp/>the<sp/>underlying<sp/>AMQP<sp/>link<sp/>if<sp/>it<sp/>hasn&apos;t<sp/>been<sp/>closed<sp/>already.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.2<sp/>(2023-08-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Amqp::Models::AmqpBinaryData::operator=(std::vector&lt;std::uint8_t&gt;<sp/>const&amp;)`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Amqp::Models::AmqpMessage::MessageFormat`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Collection<sp/>types<sp/>(`AmqpArray`,<sp/>`AmqpMap`,<sp/>`AmqpList`,<sp/>`AmqpBinaryData`,<sp/>`AmqpSymbol`<sp/>and<sp/>`AmqpComposite`):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Added<sp/>explicit<sp/>cast<sp/>operator<sp/>to<sp/>underlying<sp/>collection<sp/>type.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Added<sp/>`find()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Rationalized<sp/>the<sp/>return<sp/>code<sp/>for<sp/>AMQP<sp/>MessageSender<sp/>and<sp/>MessageReceiver<sp/>and<sp/>Management<sp/>APIs<sp/>to<sp/>use<sp/>AmqpError<sp/>for<sp/>error<sp/>codes.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>additional<sp/>AMQP<sp/>Error<sp/>values.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`Azure::Core::Amqp::Models::AmqpMessageFormatValue`<sp/>to<sp/>`AmqpDefaultMessageFormatValue`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>return<sp/>values<sp/>for<sp/>the<sp/>MessageSender,<sp/>MessageReceiver<sp/>and<sp/>Management<sp/>APIs.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.1<sp/>(2023-07-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Initial<sp/>release</highlight></codeline>
+    </programlisting>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

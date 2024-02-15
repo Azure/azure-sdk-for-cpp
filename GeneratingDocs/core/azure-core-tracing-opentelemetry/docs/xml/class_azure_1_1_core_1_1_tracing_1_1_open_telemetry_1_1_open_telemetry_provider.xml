@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::Tracing::TracerProvider</basecompoundref>
+    <includes refid="opentelemetry_8hpp" local="no">opentelemetry.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a5de4a27a0be410ff9892816308e2cdba" prot="private" static="no" mutable="no">
+        <type>opentelemetry::nostd::shared_ptr&lt; opentelemetry::trace::TracerProvider &gt;</type>
+        <definition>opentelemetry::nostd::shared_ptr&lt;opentelemetry::trace::TracerProvider&gt; Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::m_tracerProvider</definition>
+        <argsstring></argsstring>
+        <name>m_tracerProvider</name>
+        <qualifiedname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::m_tracerProvider</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="42" column="38" bodyfile="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a3985c2114d971f8aaec51c9f85a6e028" prot="private" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::OpenTelemetrySchemaUrl117</definition>
+        <argsstring></argsstring>
+        <name>OpenTelemetrySchemaUrl117</name>
+        <qualifiedname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::OpenTelemetrySchemaUrl117</qualifiedname>
+        <initializer>= &quot;https://opentelemetry.io/schemas/1.17.0&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="49" column="16" bodyfile="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a956ab11b5fa98eef8a68a495ef0949d0" prot="private" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::OpenTelemetrySchemaUrlCurrent</definition>
+        <argsstring></argsstring>
+        <name>OpenTelemetrySchemaUrlCurrent</name>
+        <qualifiedname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::OpenTelemetrySchemaUrlCurrent</qualifiedname>
+        <initializer>= OpenTelemetrySchemaUrl117</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="50" column="16" bodyfile="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a7440b70cb0455ee04b9eb2f59e614ec8" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::shared_ptr&lt; Azure::Core::Tracing::_internal::Tracer &gt;</type>
+        <definition>std::shared_ptr&lt; Azure::Core::Tracing::_internal::Tracer &gt; Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::CreateTracer</definition>
+        <argsstring>(std::string const &amp;name, std::string const &amp;version) const override</argsstring>
+        <name>CreateTracer</name>
+        <qualifiedname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::CreateTracer</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="38" column="21" bodyfile="src/opentelemetry.cpp" bodystart="43" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1ae8abc0bd5c8d2f0bc39fbd45abc4bcff" prot="private" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::OpenTelemetryProvider</definition>
+        <argsstring>(opentelemetry::nostd::shared_ptr&lt; opentelemetry::trace::TracerProvider &gt; tracerProvider=opentelemetry::trace::Provider::GetTracerProvider())</argsstring>
+        <name>OpenTelemetryProvider</name>
+        <qualifiedname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::OpenTelemetryProvider</qualifiedname>
+        <param>
+          <type>opentelemetry::nostd::shared_ptr&lt; opentelemetry::trace::TracerProvider &gt;</type>
+          <declname>tracerProvider</declname>
+          <defval>opentelemetry::trace::Provider::GetTracerProvider()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="44" column="14" bodyfile="src/opentelemetry.cpp" bodystart="30" bodyend="34"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a116163fdb6d81205e329c42e329c09bf" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider" kindref="compound">OpenTelemetryProvider</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; OpenTelemetryProvider &gt; Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create</definition>
+        <argsstring>(opentelemetry::nostd::shared_ptr&lt; opentelemetry::trace::TracerProvider &gt; tracerProvider=opentelemetry::trace::Provider::GetTracerProvider())</argsstring>
+        <name>Create</name>
+        <qualifiedname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create</qualifiedname>
+        <param>
+          <type>opentelemetry::nostd::shared_ptr&lt; opentelemetry::trace::TracerProvider &gt;</type>
+          <declname>tracerProvider</declname>
+          <defval>opentelemetry::trace::Provider::GetTracerProvider()</defval>
+        </param>
+        <briefdescription>
+<para>Create a new instance of an <ref refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider" kindref="compound">OpenTelemetryProvider</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tracerProvider</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>opentelemetry-cpp TracerProvider object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>a new <ref refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider" kindref="compound">OpenTelemetryProvider</ref> object </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="60" column="28" bodyfile="src/opentelemetry.cpp" bodystart="36" bodyend="41"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a35488274d3e0041bad3b3e75c208f4fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::~OpenTelemetryProvider</definition>
+        <argsstring>()=default</argsstring>
+        <name>~OpenTelemetryProvider</name>
+        <qualifiedname>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::~OpenTelemetryProvider</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="64" column="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Trace Provider - factory for creating Tracer objects. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>An <ref refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider" kindref="compound">OpenTelemetryProvider</ref> object wraps an opentelemetry-cpp TracerProvider object and provides an abstraction of the opentelemetry APIs which can be consumed by Azure Core and other Azure services. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</label>
+        <link refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Tracing::TracerProvider</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</label>
+        <link refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Tracing::TracerProvider</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" line="36" column="3" bodyfile="inc/azure/core/tracing/opentelemetry/opentelemetry.hpp" bodystart="36" bodyend="65"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a116163fdb6d81205e329c42e329c09bf" prot="public" virt="non-virtual"><scope>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</scope><name>Create</name></member>
+      <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a7440b70cb0455ee04b9eb2f59e614ec8" prot="private" virt="non-virtual"><scope>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</scope><name>CreateTracer</name></member>
+      <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a5de4a27a0be410ff9892816308e2cdba" prot="private" virt="non-virtual"><scope>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</scope><name>m_tracerProvider</name></member>
+      <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1ae8abc0bd5c8d2f0bc39fbd45abc4bcff" prot="private" virt="non-virtual"><scope>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</scope><name>OpenTelemetryProvider</name></member>
+      <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a3985c2114d971f8aaec51c9f85a6e028" prot="private" virt="non-virtual"><scope>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</scope><name>OpenTelemetrySchemaUrl117</name></member>
+      <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a956ab11b5fa98eef8a68a495ef0949d0" prot="private" virt="non-virtual"><scope>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</scope><name>OpenTelemetrySchemaUrlCurrent</name></member>
+      <member refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider_1a35488274d3e0041bad3b3e75c208f4fd" prot="public" virt="virtual"><scope>Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</scope><name>~OpenTelemetryProvider</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

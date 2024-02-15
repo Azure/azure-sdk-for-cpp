@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_cd38344297a017debf1ad1e1976f1427" kind="dir">
+    <compoundname>inc/azure/core/cryptography</compoundname>
+    <innerfile refid="hash_8hpp">hash.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/cryptography/"/>
+  </compounddef>
+</doxygen>

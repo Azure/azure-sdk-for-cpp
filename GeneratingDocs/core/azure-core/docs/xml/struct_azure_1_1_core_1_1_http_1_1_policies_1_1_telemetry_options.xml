@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::Policies::TelemetryOptions</compoundname>
+    <includes refid="policy_8hpp" local="no">policy.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options_1a5f09a2eb13d3e872468c21aa6603deaf" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::Policies::TelemetryOptions::ApplicationId</definition>
+        <argsstring></argsstring>
+        <name>ApplicationId</name>
+        <qualifiedname>Azure::Core::Http::Policies::TelemetryOptions::ApplicationId</qualifiedname>
+        <briefdescription>
+<para>The Application ID is the last part of the user agent for telemetry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This option allows an end-user to create an SDK client and report telemetry with a specific ID for it. The default is an empty string. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="65" column="17" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options_1ad7c977da6f746fe19b77f1b5ecd8dc96" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_core_1_1_tracing_1_1_tracer_provider" kindref="compound">Azure::Core::Tracing::TracerProvider</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;Azure::Core::Tracing::TracerProvider&gt; Azure::Core::Http::Policies::TelemetryOptions::TracingProvider</definition>
+        <argsstring></argsstring>
+        <name>TracingProvider</name>
+        <qualifiedname>Azure::Core::Http::Policies::TelemetryOptions::TracingProvider</qualifiedname>
+        <briefdescription>
+<para>Specifies the default distributed tracing provider to use for this client. By default, this will be the tracing provider specified in the application context. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="71" column="21" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="71" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Telemetry options, used to configure telemetry parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>See <ulink url="https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy">https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy</ulink>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/http/policies/policy.hpp" line="56" column="3" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="57" bodyend="72"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options_1a5f09a2eb13d3e872468c21aa6603deaf" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TelemetryOptions</scope><name>ApplicationId</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options_1ad7c977da6f746fe19b77f1b5ecd8dc96" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TelemetryOptions</scope><name>TracingProvider</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

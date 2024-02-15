@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_storage_1_1_blobs" kind="namespace" language="C++">
+    <compoundname>Azure::Storage::Blobs</compoundname>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_abort_blob_copy_from_uri_options" prot="public">Azure::Storage::Blobs::AbortBlobCopyFromUriOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_acquire_lease_options" prot="public">Azure::Storage::Blobs::AcquireLeaseOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_blob_access_conditions" prot="public">Azure::Storage::Blobs::AppendBlobAccessConditions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" prot="public">Azure::Storage::Blobs::AppendBlobClient</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_from_uri_options" prot="public">Azure::Storage::Blobs::AppendBlockFromUriOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_block_options" prot="public">Azure::Storage::Blobs::AppendBlockOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" prot="public">Azure::Storage::Blobs::BlobAccessConditions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_audience" prot="public">Azure::Storage::Blobs::BlobAudience</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" prot="public">Azure::Storage::Blobs::BlobClient</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" prot="public">Azure::Storage::Blobs::BlobClientOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions" prot="public">Azure::Storage::Blobs::BlobContainerAccessConditions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_batch" prot="public">Azure::Storage::Blobs::BlobContainerBatch</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" prot="public">Azure::Storage::Blobs::BlobContainerClient</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" prot="public">Azure::Storage::Blobs::BlobLeaseClient</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_query_error" prot="public">Azure::Storage::Blobs::BlobQueryError</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_input_text_options" prot="public">Azure::Storage::Blobs::BlobQueryInputTextOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_query_output_text_options" prot="public">Azure::Storage::Blobs::BlobQueryOutputTextOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch" prot="public">Azure::Storage::Blobs::BlobServiceBatch</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client" prot="public">Azure::Storage::Blobs::BlobServiceClient</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" prot="public">Azure::Storage::Blobs::BlockBlobClient</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_break_lease_options" prot="public">Azure::Storage::Blobs::BreakLeaseOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_change_lease_options" prot="public">Azure::Storage::Blobs::ChangeLeaseOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_clear_pages_options" prot="public">Azure::Storage::Blobs::ClearPagesOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options" prot="public">Azure::Storage::Blobs::CommitBlockListOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options" prot="public">Azure::Storage::Blobs::CopyBlobFromUriOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_append_blob_options" prot="public">Azure::Storage::Blobs::CreateAppendBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options" prot="public">Azure::Storage::Blobs::CreateBlobContainerOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options" prot="public">Azure::Storage::Blobs::CreateBlobSnapshotOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_page_blob_options" prot="public">Azure::Storage::Blobs::CreatePageBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_container_options" prot="public">Azure::Storage::Blobs::DeleteBlobContainerOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_immutability_policy_options" prot="public">Azure::Storage::Blobs::DeleteBlobImmutabilityPolicyOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" prot="public">Azure::Storage::Blobs::DeleteBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_options" prot="public">Azure::Storage::Blobs::DownloadBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options" prot="public">Azure::Storage::Blobs::DownloadBlobToOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_encryption_key" prot="public">Azure::Storage::Blobs::EncryptionKey</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_options" prot="public">Azure::Storage::Blobs::FindBlobsByTagsOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_find_blobs_by_tags_paged_response" prot="public">Azure::Storage::Blobs::FindBlobsByTagsPagedResponse</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_account_info_options" prot="public">Azure::Storage::Blobs::GetAccountInfoOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_access_policy_options" prot="public">Azure::Storage::Blobs::GetBlobContainerAccessPolicyOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_properties_options" prot="public">Azure::Storage::Blobs::GetBlobContainerPropertiesOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_properties_options" prot="public">Azure::Storage::Blobs::GetBlobPropertiesOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_service_statistics_options" prot="public">Azure::Storage::Blobs::GetBlobServiceStatisticsOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_tags_options" prot="public">Azure::Storage::Blobs::GetBlobTagsOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options" prot="public">Azure::Storage::Blobs::GetBlockListOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_diff_paged_response" prot="public">Azure::Storage::Blobs::GetPageRangesDiffPagedResponse</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" prot="public">Azure::Storage::Blobs::GetPageRangesOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response" prot="public">Azure::Storage::Blobs::GetPageRangesPagedResponse</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_service_properties_options" prot="public">Azure::Storage::Blobs::GetServicePropertiesOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_user_delegation_key_options" prot="public">Azure::Storage::Blobs::GetUserDelegationKeyOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_lease_blob_access_conditions" prot="public">Azure::Storage::Blobs::LeaseBlobAccessConditions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blob_containers_options" prot="public">Azure::Storage::Blobs::ListBlobContainersOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blob_containers_paged_response" prot="public">Azure::Storage::Blobs::ListBlobContainersPagedResponse</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_by_hierarchy_paged_response" prot="public">Azure::Storage::Blobs::ListBlobsByHierarchyPagedResponse</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options" prot="public">Azure::Storage::Blobs::ListBlobsOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response" prot="public">Azure::Storage::Blobs::ListBlobsPagedResponse</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_page_blob_access_conditions" prot="public">Azure::Storage::Blobs::PageBlobAccessConditions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" prot="public">Azure::Storage::Blobs::PageBlobClient</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_query_blob_options" prot="public">Azure::Storage::Blobs::QueryBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_release_lease_options" prot="public">Azure::Storage::Blobs::ReleaseLeaseOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_rename_blob_container_options" prot="public">Azure::Storage::Blobs::RenameBlobContainerOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_renew_lease_options" prot="public">Azure::Storage::Blobs::RenewLeaseOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_resize_page_blob_options" prot="public">Azure::Storage::Blobs::ResizePageBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_seal_append_blob_options" prot="public">Azure::Storage::Blobs::SealAppendBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" prot="public">Azure::Storage::Blobs::SetBlobAccessTierOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_access_policy_options" prot="public">Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_container_metadata_options" prot="public">Azure::Storage::Blobs::SetBlobContainerMetadataOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_http_headers_options" prot="public">Azure::Storage::Blobs::SetBlobHttpHeadersOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options" prot="public">Azure::Storage::Blobs::SetBlobImmutabilityPolicyOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_legal_hold_options" prot="public">Azure::Storage::Blobs::SetBlobLegalHoldOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_metadata_options" prot="public">Azure::Storage::Blobs::SetBlobMetadataOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_tags_options" prot="public">Azure::Storage::Blobs::SetBlobTagsOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_service_properties_options" prot="public">Azure::Storage::Blobs::SetServicePropertiesOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options" prot="public">Azure::Storage::Blobs::StageBlockFromUriOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options" prot="public">Azure::Storage::Blobs::StageBlockOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_from_uri_options" prot="public">Azure::Storage::Blobs::StartBlobCopyFromUriOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_incremental_options" prot="public">Azure::Storage::Blobs::StartBlobCopyIncrementalOptions</innerclass>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" prot="public">Azure::Storage::Blobs::StartBlobCopyOperation</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_submit_blob_batch_options" prot="public">Azure::Storage::Blobs::SubmitBlobBatchOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions" prot="public">Azure::Storage::Blobs::TagAccessConditions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_undelete_blob_container_options" prot="public">Azure::Storage::Blobs::UndeleteBlobContainerOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_undelete_blob_options" prot="public">Azure::Storage::Blobs::UndeleteBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_update_page_blob_sequence_number_options" prot="public">Azure::Storage::Blobs::UpdatePageBlobSequenceNumberOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options" prot="public">Azure::Storage::Blobs::UploadBlockBlobFromOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options" prot="public">Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_options" prot="public">Azure::Storage::Blobs::UploadBlockBlobOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_pages_from_uri_options" prot="public">Azure::Storage::Blobs::UploadPagesFromUriOptions</innerclass>
+    <innerclass refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_pages_options" prot="public">Azure::Storage::Blobs::UploadPagesOptions</innerclass>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_blobs_1_1_models">Azure::Storage::Blobs::Models</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="11" column="31"/>
+  </compounddef>
+</doxygen>

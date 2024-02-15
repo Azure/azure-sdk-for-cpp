@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpTimestamp</compoundname>
+    <includes refid="amqp__value_8hpp" local="no">amqp_value.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a08162b1f25292ac8c938fe875d56186f" prot="private" static="no" mutable="no">
+        <type>std::chrono::milliseconds</type>
+        <definition>std::chrono::milliseconds Azure::Core::Amqp::Models::AmqpTimestamp::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="896" column="31" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="896" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1ab7dbb821f003fd254296e76a22400ba7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</definition>
+        <argsstring>()</argsstring>
+        <name>AmqpTimestamp</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="899" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="994" bodyend="994"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a66364472a70699a36c11f9be1a2b0903" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpTimestamp::~AmqpTimestamp</definition>
+        <argsstring>()=default</argsstring>
+        <name>~AmqpTimestamp</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::~AmqpTimestamp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="900" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1abcd104b279bbe70ee612bba8e4053662" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</definition>
+        <argsstring>(std::chrono::milliseconds const &amp;values)</argsstring>
+        <name>AmqpTimestamp</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</qualifiedname>
+        <param>
+          <type>std::chrono::milliseconds const &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> object . </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="903" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="991" bodyend="993"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a9c78a0fd487e9f3b6c9cb8f2bddaf4f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>AmqpTimestamp</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> object from an existing uAMQP AMQP_VALUE item. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this does NOT capture the passed in AMQP_VALUE object, the caller is responsible for freeing that object.</para>
+</simplesect>
+<simplesect kind="remark"><para>This is an internal accessor and should never be used by code outside the AMQP implementation.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP &quot;binary&quot; value to capture. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="915" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="986" bodyend="989"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a3256384d31c8ff3e9e40a6f3f0584d9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</definition>
+        <argsstring>(const AmqpTimestamp &amp;other)=default</argsstring>
+        <name>AmqpTimestamp</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="918" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1adc96d69146452f65e93a255840512fa8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> &amp;</type>
+        <definition>AmqpTimestamp &amp; Azure::Core::Amqp::Models::AmqpTimestamp::operator=</definition>
+        <argsstring>(const AmqpTimestamp &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy Assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="921" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a7d1c1d5f817fd4c43f98194a77e19b59" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</definition>
+        <argsstring>(AmqpTimestamp &amp;&amp;other) noexcept=default</argsstring>
+        <name>AmqpTimestamp</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::AmqpTimestamp</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="924" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1aa1cc2f8fffb34d8e3a0f4ed41c8f1b4c" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> &amp;</type>
+        <definition>AmqpTimestamp &amp; Azure::Core::Amqp::Models::AmqpTimestamp::operator=</definition>
+        <argsstring>(AmqpTimestamp &amp;&amp;other) noexcept=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move Assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="927" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1ac22f957ac2a1a891dc3aab5ca86205d7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref></type>
+        <definition>AmqpValue Azure::Core::Amqp::Models::AmqpTimestamp::AsAmqpValue</definition>
+        <argsstring>() const</argsstring>
+        <name>AsAmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::AsAmqpValue</qualifiedname>
+        <briefdescription>
+<para>Convert this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>An <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> containing this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="944" column="15" bodyfile="src/models/amqp_value.cpp" bodystart="965" bodyend="968"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a630e40e6e151923089ece5ae56d91c14" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpTimestamp::operator std::chrono::milliseconds</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::chrono::milliseconds</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::milliseconds</qualifiedname>
+        <briefdescription>
+<para>Convert an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> instance to a std::chrono::milliseconds. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="949" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="949" bodyend="949"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a972ececb135346d8c18aeeea556f15dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpTimestamp::operator&lt;</definition>
+        <argsstring>(AmqpTimestamp const &amp;that)</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpTimestamp::operator&lt;</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare this AMQP Timestamp with another. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the other AMQP Timestamp to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if this AMQP Timestamp is less than the other. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="955" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="955" bodyend="955"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An AMQP timestamp value. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-timestamp">AMQP Core Types section 1.6.19</ulink>. </para>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="895" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="895" bodyend="956"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1ab7dbb821f003fd254296e76a22400ba7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>AmqpTimestamp</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1abcd104b279bbe70ee612bba8e4053662" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>AmqpTimestamp</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a9c78a0fd487e9f3b6c9cb8f2bddaf4f1" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>AmqpTimestamp</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a3256384d31c8ff3e9e40a6f3f0584d9b" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>AmqpTimestamp</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a7d1c1d5f817fd4c43f98194a77e19b59" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>AmqpTimestamp</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1ac22f957ac2a1a891dc3aab5ca86205d7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>AsAmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a08162b1f25292ac8c938fe875d56186f" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a630e40e6e151923089ece5ae56d91c14" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>operator std::chrono::milliseconds</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a972ececb135346d8c18aeeea556f15dd" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>operator&lt;</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1adc96d69146452f65e93a255840512fa8" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1aa1cc2f8fffb34d8e3a0f4ed41c8f1b4c" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a66364472a70699a36c11f9be1a2b0903" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpTimestamp</scope><name>~AmqpTimestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

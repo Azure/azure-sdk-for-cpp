@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::ObjectReplicationStatus</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1ae1b903b07b8538a98632182a965308e1" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref></type>
+        <definition>const ObjectReplicationStatus Azure::Storage::Blobs::Models::ObjectReplicationStatus::Complete</definition>
+        <argsstring></argsstring>
+        <name>Complete</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::Complete</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref>: Complete </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1188" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1188" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1ab73b79c3a0fb59624730ebfa4564ab5c" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref></type>
+        <definition>const ObjectReplicationStatus Azure::Storage::Blobs::Models::ObjectReplicationStatus::Failed</definition>
+        <argsstring></argsstring>
+        <name>Failed</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::Failed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref>: Failed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1190" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1190" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1ae93956f9767c8327a8215bdfcbba2fb9" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::ObjectReplicationStatus::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1193" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1193" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a8573dc16b3418828b81f652359940650" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::ObjectReplicationStatus::ObjectReplicationStatus</definition>
+        <argsstring>()=default</argsstring>
+        <name>ObjectReplicationStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::ObjectReplicationStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1175" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a3a1d32ada05567ca491518616e68da5a" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::ObjectReplicationStatus::ObjectReplicationStatus</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>ObjectReplicationStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::ObjectReplicationStatus</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1177" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1177" bodyend="1177"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a891815883270619edc4f658c7bc3c024" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::ObjectReplicationStatus::operator==</definition>
+        <argsstring>(const ObjectReplicationStatus &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1179" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1179" bodyend="1182"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a28cf4e9dbc2ed482b0512c0d87b00e03" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::ObjectReplicationStatus::operator!=</definition>
+        <argsstring>(const ObjectReplicationStatus &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status" kindref="compound">ObjectReplicationStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1184" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1184" bodyend="1184"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1aa5970fb6e2474d1f06b7a3099c2b855b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::ObjectReplicationStatus::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ObjectReplicationStatus::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1186" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1186" bodyend="1186"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The replication status of blob with the given policy and rule identifiers. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::ObjectReplicationStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Complete</edgelabel>
+          <edgelabel>Failed</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1172" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1172" bodyend="1194"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1ae1b903b07b8538a98632182a965308e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>Complete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1ab73b79c3a0fb59624730ebfa4564ab5c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>Failed</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1ae93956f9767c8327a8215bdfcbba2fb9" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a8573dc16b3418828b81f652359940650" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>ObjectReplicationStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a3a1d32ada05567ca491518616e68da5a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>ObjectReplicationStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a28cf4e9dbc2ed482b0512c0d87b00e03" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1a891815883270619edc4f658c7bc3c024" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_status_1aa5970fb6e2474d1f06b7a3099c2b855b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ObjectReplicationStatus</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

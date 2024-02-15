@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobContainerItemDetails</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1acca7227605b3f5f5c6b3387bcd09823e" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::BlobContainerItemDetails::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="411" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="411" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a77f4d0f6e34ccc83359df59dc628158a" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::BlobContainerItemDetails::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="416" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="416" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1acf382ee5e55f29c019c19290d9b218e5" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">Models::LeaseStatus</ref></type>
+        <definition>Models::LeaseStatus Azure::Storage::Blobs::Models::BlobContainerItemDetails::LeaseStatus</definition>
+        <argsstring></argsstring>
+        <name>LeaseStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::LeaseStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current lease status of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="420" column="27" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="420" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a04153414b4942c3967f988aca50b574a" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_state" kindref="compound">Models::LeaseState</ref></type>
+        <definition>Models::LeaseState Azure::Storage::Blobs::Models::BlobContainerItemDetails::LeaseState</definition>
+        <argsstring></argsstring>
+        <name>LeaseState</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::LeaseState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current lease state of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="424" column="26" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="424" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a503100be5ee57847a6cc5bafb2a8f693" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref> &gt;</type>
+        <definition>Nullable&lt;LeaseDurationType&gt; Azure::Storage::Blobs::Models::BlobContainerItemDetails::LeaseDuration</definition>
+        <argsstring></argsstring>
+        <name>LeaseDuration</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::LeaseDuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>When a blob is leased, specifies whether the lease is of infinite or fixed duration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="428" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="428" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a26bb15d23e082e140ab1d03a55896ddc" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref></type>
+        <definition>PublicAccessType Azure::Storage::Blobs::Models::BlobContainerItemDetails::AccessType</definition>
+        <argsstring></argsstring>
+        <name>AccessType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::AccessType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Specifies whether data in the container may be accessed publicly and the level of access. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="432" column="24" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="432" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a5945d07b6d0b8df2aedc4cbe551ade80" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobContainerItemDetails::HasImmutabilityPolicy</definition>
+        <argsstring></argsstring>
+        <name>HasImmutabilityPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::HasImmutabilityPolicy</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the container has an immutability policy set on it. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="436" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="436" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a70437344997fcda2ebaac46f40dff888" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobContainerItemDetails::HasLegalHold</definition>
+        <argsstring></argsstring>
+        <name>HasLegalHold</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::HasLegalHold</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the container has a legal hold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="440" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="440" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a43a488d55efe6db05f5f8285bf784b0f" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlobContainerItemDetails::DefaultEncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>DefaultEncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::DefaultEncryptionScope</qualifiedname>
+        <initializer>= &quot;$account-encryption-key&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The default encryption scope for the container. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="444" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="444" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a18b243d037fb34657c8f27423dc124cb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobContainerItemDetails::PreventEncryptionScopeOverride</definition>
+        <argsstring></argsstring>
+        <name>PreventEncryptionScopeOverride</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::PreventEncryptionScopeOverride</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the container&apos;s default encryption scope can be overriden. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="448" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="448" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a4b7de0f37d5e78d53cf43f39fa6ebb00" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; DateTime &gt;</type>
+        <definition>Nullable&lt;DateTime&gt; Azure::Storage::Blobs::Models::BlobContainerItemDetails::DeletedOn</definition>
+        <argsstring></argsstring>
+        <name>DeletedOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::DeletedOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Data and time at which this container was deleted. Only valid when this container was deleted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="453" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="453" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a4424011fa7b6555c811e973076b8bf66" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int32_t &gt;</type>
+        <definition>Nullable&lt;int32_t&gt; Azure::Storage::Blobs::Models::BlobContainerItemDetails::RemainingRetentionDays</definition>
+        <argsstring></argsstring>
+        <name>RemainingRetentionDays</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::RemainingRetentionDays</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remaining days before this container will be permanently deleted. Only valid when this container was deleted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="458" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="458" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1ad56e9c3645371d4bd6a55b4b0880bcbb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlobContainerItemDetails::HasImmutableStorageWithVersioning</definition>
+        <argsstring></argsstring>
+        <name>HasImmutableStorageWithVersioning</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::HasImmutableStorageWithVersioning</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates if version level worm is enabled on this container. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="462" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="462" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a03c3905dedc51609a7c8a619fe6441fe" prot="public" static="no" mutable="no">
+        <type>Core::CaseInsensitiveMap</type>
+        <definition>Core::CaseInsensitiveMap Azure::Storage::Blobs::Models::BlobContainerItemDetails::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerItemDetails::Metadata</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A set of name-value pairs associated with this blob or blob container. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="466" column="32" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="466" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Properties of a container. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobContainerItemDetails</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>LeaseStatus</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>LeaseState</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>AccessType</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::LeaseState</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_state"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Available</edgelabel>
+          <edgelabel>Breaking</edgelabel>
+          <edgelabel>Broken</edgelabel>
+          <edgelabel>Expired</edgelabel>
+          <edgelabel>Leased</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::LeaseStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Locked</edgelabel>
+          <edgelabel>Unlocked</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Azure::Storage::Blobs::Models::PublicAccessType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>Blob</edgelabel>
+          <edgelabel>BlobContainer</edgelabel>
+          <edgelabel>None</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="404" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="405" bodyend="467"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a26bb15d23e082e140ab1d03a55896ddc" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>AccessType</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a43a488d55efe6db05f5f8285bf784b0f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>DefaultEncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a4b7de0f37d5e78d53cf43f39fa6ebb00" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>DeletedOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a77f4d0f6e34ccc83359df59dc628158a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a5945d07b6d0b8df2aedc4cbe551ade80" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>HasImmutabilityPolicy</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1ad56e9c3645371d4bd6a55b4b0880bcbb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>HasImmutableStorageWithVersioning</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a70437344997fcda2ebaac46f40dff888" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>HasLegalHold</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1acca7227605b3f5f5c6b3387bcd09823e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a503100be5ee57847a6cc5bafb2a8f693" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>LeaseDuration</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a04153414b4942c3967f988aca50b574a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>LeaseState</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1acf382ee5e55f29c019c19290d9b218e5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>LeaseStatus</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a03c3905dedc51609a7c8a619fe6441fe" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>Metadata</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a18b243d037fb34657c8f27423dc124cb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>PreventEncryptionScopeOverride</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_item_details_1a4424011fa7b6555c811e973076b8bf66" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerItemDetails</scope><name>RemainingRetentionDays</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

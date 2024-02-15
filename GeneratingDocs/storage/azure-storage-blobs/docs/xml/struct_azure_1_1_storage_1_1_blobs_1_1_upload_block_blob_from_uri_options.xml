@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a96d94e54f4533da84e6a8fb57d8c4377" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::CopySourceBlobProperties</definition>
+        <argsstring></argsstring>
+        <name>CopySourceBlobProperties</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::CopySourceBlobProperties</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If true, the properties of the source blob will be copied to the new blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="961" column="10" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="961" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a74a72ec7ec3b349d6f05a7e802f2c0e0" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers" kindref="compound">Models::BlobHttpHeaders</ref></type>
+        <definition>Models::BlobHttpHeaders Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::HttpHeaders</definition>
+        <argsstring></argsstring>
+        <name>HttpHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::HttpHeaders</qualifiedname>
+        <briefdescription>
+<para>The standard HTTP header system properties to set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="966" column="29" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="966" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a7b0631e20aeb2eb8bc0895b29e44927c" prot="public" static="no" mutable="no">
+        <type>Storage::Metadata</type>
+        <definition>Storage::Metadata Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::Metadata</qualifiedname>
+        <briefdescription>
+<para>Name-value pairs associated with the blob as metadata. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="971" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="971" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1aec237c61baa95fc474eee67e80c8e212" prot="public" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::string &gt;</type>
+        <definition>std::map&lt;std::string, std::string&gt; Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::Tags</definition>
+        <argsstring></argsstring>
+        <name>Tags</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::Tags</qualifiedname>
+        <briefdescription>
+<para>The tags to set for this blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="976" column="14" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="976" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1aa2a15de5400146e1c6cbc124baba86cf" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">Models::AccessTier</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::AccessTier&gt; Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::AccessTier</definition>
+        <argsstring></argsstring>
+        <name>AccessTier</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::AccessTier</qualifiedname>
+        <briefdescription>
+<para>Indicates the tier to be set on blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="981" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="981" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a5d426a1ff7daf936b7984a846f3f16cb" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" kindref="compound">BlobAccessConditions</ref></type>
+        <definition>BlobAccessConditions Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="986" column="26" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="986" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1aa76ceeb4aaf9a0bb3679c776411aa777" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::SourceAccessConditions</definition>
+        <argsstring></argsstring>
+        <name>SourceAccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::SourceAccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that source must meet to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Azure storage service doesn&apos;t support tags access condition for this operation. Don&apos;t use it. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="997" column="27"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a521daa31d50e3534be07467f5450479e" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; ContentHash &gt;</type>
+        <definition>Azure::Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+<para>Hash of the blob content. This hash is used to verify the integrity of the blob during transport. When this header is specified, the storage service checks the hash that has arrived with the one that was sent. Note that this hash is not stored with the blob. If the two hashes do not match, the operation will fail. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1005" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1005" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a3b350f85dd5ff349da0beac5d8336cc6" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">Models::BlobCopySourceTagsMode</ref></type>
+        <definition>Models::BlobCopySourceTagsMode Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::CopySourceTagsMode</definition>
+        <argsstring></argsstring>
+        <name>CopySourceTagsMode</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::CopySourceTagsMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates the tags on the destination blob should be copied from source or replaced by Tags in this option. Default is to replace. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1011" column="36" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1011" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1afa56598851877ea8e436bf496435b49a" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::SourceAuthorization</definition>
+        <argsstring></argsstring>
+        <name>SourceAuthorization</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions::SourceAuthorization</qualifiedname>
+        <briefdescription>
+<para>Optional. Source authorization used to access the source file. The format is: &lt;scheme&gt; &lt;signature&gt; Only Bearer type is supported. Credentials should be a valid OAuth access token to copy source. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1019" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1019" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a64761feab5444ba8737f5a43267aaeb2" kindref="member">Azure::Storage::Blobs::BlockBlobClient::UploadFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="4">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>Copy</edgelabel>
+          <edgelabel>Replace</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobHttpHeaders</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers"/>
+      </node>
+      <node id="7">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>HttpHeaders</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>CopySourceTagsMode</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="956" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="957" bodyend="1020"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a5d426a1ff7daf936b7984a846f3f16cb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1aa2a15de5400146e1c6cbc124baba86cf" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>AccessTier</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a96d94e54f4533da84e6a8fb57d8c4377" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>CopySourceBlobProperties</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a3b350f85dd5ff349da0beac5d8336cc6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>CopySourceTagsMode</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a74a72ec7ec3b349d6f05a7e802f2c0e0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>HttpHeaders</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a7b0631e20aeb2eb8bc0895b29e44927c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>Metadata</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1aa76ceeb4aaf9a0bb3679c776411aa777" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>SourceAccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1afa56598851877ea8e436bf496435b49a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>SourceAuthorization</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1aec237c61baa95fc474eee67e80c8e212" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>Tags</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options_1a521daa31d50e3534be07467f5450479e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromUriOptions</scope><name>TransactionalContentHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

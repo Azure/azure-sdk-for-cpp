@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core_1_1_tracing" kind="namespace" language="C++">
+    <compoundname>Azure::Core::Tracing</compoundname>
+    <innerclass refid="class_azure_1_1_core_1_1_tracing_1_1_tracer_provider" prot="public">Azure::Core::Tracing::TracerProvider</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/context.hpp" line="24" column="28"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::UploadBlockBlobFromOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a82de8ef403d66c0e27bb29603d2d0463" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers" kindref="compound">Models::BlobHttpHeaders</ref></type>
+        <definition>Models::BlobHttpHeaders Azure::Storage::Blobs::UploadBlockBlobFromOptions::HttpHeaders</definition>
+        <argsstring></argsstring>
+        <name>HttpHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::HttpHeaders</qualifiedname>
+        <briefdescription>
+<para>The standard HTTP header system properties to set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="902" column="29" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="902" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1af724c1f855c8386c125390ed54a3bc6d" prot="public" static="no" mutable="no">
+        <type>Storage::Metadata</type>
+        <definition>Storage::Metadata Azure::Storage::Blobs::UploadBlockBlobFromOptions::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::Metadata</qualifiedname>
+        <briefdescription>
+<para>Name-value pairs associated with the blob as metadata. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="907" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="907" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1ae7c6f9f3aba469b72aa2bf98f44e4001" prot="public" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::string &gt;</type>
+        <definition>std::map&lt;std::string, std::string&gt; Azure::Storage::Blobs::UploadBlockBlobFromOptions::Tags</definition>
+        <argsstring></argsstring>
+        <name>Tags</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::Tags</qualifiedname>
+        <briefdescription>
+<para>The tags to set for this blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="912" column="14" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="912" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1ada88b80ee397b3c85f96873eb7277b36" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">Models::AccessTier</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::AccessTier&gt; Azure::Storage::Blobs::UploadBlockBlobFromOptions::AccessTier</definition>
+        <argsstring></argsstring>
+        <name>AccessTier</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::AccessTier</qualifiedname>
+        <briefdescription>
+<para>Indicates the tier to be set on blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="917" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="917" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1ab3856639a1ed7f010cdd6110844098d1" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::UploadBlockBlobFromOptions::SingleUploadThreshold</definition>
+        <argsstring></argsstring>
+        <name>SingleUploadThreshold</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::SingleUploadThreshold</qualifiedname>
+        <initializer>= 256 * 1024 * 1024</initializer>
+        <briefdescription>
+<para>Blob smaller than this will be uploaded with a single upload operation. This value cannot be larger than 5000 MiB. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="928" column="15" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="928" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1abfff04df50340d4cba7b3971345b74f3" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; int64_t &gt;</type>
+        <definition>Azure::Nullable&lt;int64_t&gt; Azure::Storage::Blobs::UploadBlockBlobFromOptions::ChunkSize</definition>
+        <argsstring></argsstring>
+        <name>ChunkSize</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::ChunkSize</qualifiedname>
+        <briefdescription>
+<para>The maximum number of bytes in a single request. This value cannot be larger than 4000 MiB. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="934" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="934" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a6dcd0b1df571772281a54cdb2ec021fa" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t Azure::Storage::Blobs::UploadBlockBlobFromOptions::Concurrency</definition>
+        <argsstring></argsstring>
+        <name>Concurrency</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::Concurrency</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+<para>The maximum number of threads that may be used in a parallel transfer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="939" column="15" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="939" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a0461708a48420c035da6aed4adc99b31" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options" kindref="compound">Azure::Storage::Blobs::UploadBlockBlobFromOptions</ref></type>
+        <definition>struct Azure::Storage::Blobs::UploadBlockBlobFromOptions Azure::Storage::Blobs::UploadBlockBlobFromOptions::TransferOptions</definition>
+        <argsstring></argsstring>
+        <name>TransferOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::TransferOptions</qualifiedname>
+        <briefdescription>
+<para>Options for parallel transfer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="940" column="21"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1aab6f7ee48b49834550d700af330f5298" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy" kindref="compound">Models::BlobImmutabilityPolicy</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::BlobImmutabilityPolicy&gt; Azure::Storage::Blobs::UploadBlockBlobFromOptions::ImmutabilityPolicy</definition>
+        <argsstring></argsstring>
+        <name>ImmutabilityPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::ImmutabilityPolicy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Immutability policy to set on the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="945" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="945" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a1660c6c290e3688efe3ed087e8f98e8e" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; bool &gt;</type>
+        <definition>Azure::Nullable&lt;bool&gt; Azure::Storage::Blobs::UploadBlockBlobFromOptions::HasLegalHold</definition>
+        <argsstring></argsstring>
+        <name>HasLegalHold</name>
+        <qualifiedname>Azure::Storage::Blobs::UploadBlockBlobFromOptions::HasLegalHold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the blob has a legal hold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="950" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="950" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a400fd66a74a7fae192d4934332ed5321" kindref="member">Azure::Storage::Blobs::BlockBlobClient::UploadFrom</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobHttpHeaders</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::UploadBlockBlobFromOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>HttpHeaders</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="897" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="898" bodyend="951"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1ada88b80ee397b3c85f96873eb7277b36" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>AccessTier</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1abfff04df50340d4cba7b3971345b74f3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>ChunkSize</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a6dcd0b1df571772281a54cdb2ec021fa" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>Concurrency</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a1660c6c290e3688efe3ed087e8f98e8e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>HasLegalHold</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a82de8ef403d66c0e27bb29603d2d0463" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>HttpHeaders</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1aab6f7ee48b49834550d700af330f5298" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>ImmutabilityPolicy</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1af724c1f855c8386c125390ed54a3bc6d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>Metadata</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1ab3856639a1ed7f010cdd6110844098d1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>SingleUploadThreshold</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1ae7c6f9f3aba469b72aa2bf98f44e4001" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>Tags</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options_1a0461708a48420c035da6aed4adc99b31" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::UploadBlockBlobFromOptions</scope><name>TransferOptions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

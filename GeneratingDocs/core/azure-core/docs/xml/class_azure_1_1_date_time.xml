@@ -1,0 +1,614 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_date_time" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::DateTime</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">_detail::Clock::time_point</basecompoundref>
+    <includes refid="datetime_8hpp" local="no">datetime.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="enum" id="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>TimeFractionFormat</name>
+        <qualifiedname>Azure::DateTime::TimeFractionFormat</qualifiedname>
+        <enumvalue id="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507ad2036c99295a7229c20dfecbbb2eb11f" prot="public">
+          <name>DropTrailingZeros</name>
+          <briefdescription>
+<para>Include only meaningful fractional time digits, up to and excluding trailing zeroes. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507ac2d00adea7dc680aca053d273a441d57" prot="public">
+          <name>AllDigits</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Include all the fractional time digits up to maximum precision, even if the entire value is zero. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507aa8156810bfee2bd2b44765b9e91db3bd" prot="public">
+          <name>Truncate</name>
+          <briefdescription>
+<para>Drop all the fractional time digits. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Defines the format applied to the fraction part of any <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="145" column="3" bodyfile="inc/azure/core/datetime.hpp" bodystart="146" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="enum" id="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>DateFormat</name>
+        <qualifiedname>Azure::DateTime::DateFormat</qualifiedname>
+        <enumvalue id="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5a550760bbd51d117ffb22059b91d79d9f" prot="public">
+          <name>Rfc1123</name>
+          <briefdescription>
+<para>RFC 1123. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5ac8d161c49f2f3a896d3848046f84feaa" prot="public">
+          <name>Rfc3339</name>
+          <briefdescription>
+<para>RFC 3339. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Defines the supported date and time string formats. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="162" column="3" bodyfile="inc/azure/core/datetime.hpp" bodystart="163" bodyend="169"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_date_time_1a2e4202c1f6f506ce580388ce4d938e6a" prot="private" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const</type>
+        <definition>DateTime const DateTime::SystemClockEpoch</definition>
+        <argsstring></argsstring>
+        <name>SystemClockEpoch</name>
+        <qualifiedname>Azure::DateTime::SystemClockEpoch</qualifiedname>
+        <initializer>= GetSystemClockEpoch()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="57" column="43" bodyfile="inc/azure/core/datetime.hpp" bodystart="57" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_date_time_1ae082c2befd1e5ae7ea500ed0288cafeb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DateTime::DateTime</definition>
+        <argsstring>(int16_t year, int8_t month, int8_t day, int8_t hour, int8_t minute, int8_t second, int32_t fracSec, int8_t dayOfWeek, int8_t localDiffHours, int8_t localDiffMinutes, bool roundFracSecUp=false)</argsstring>
+        <name>DateTime</name>
+        <qualifiedname>Azure::DateTime::DateTime</qualifiedname>
+        <param>
+          <type>int16_t</type>
+          <declname>year</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>month</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>day</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>hour</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>minute</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>second</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>fracSec</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>dayOfWeek</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>localDiffHours</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>localDiffMinutes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>roundFracSecUp</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="59" column="3" bodyfile="src/datetime.cpp" bodystart="391" bodyend="421"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a31b926a5511f4c117c7c80a3ad7d9f9c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DateTime::ThrowIfUnsupportedYear</definition>
+        <argsstring>() const</argsstring>
+        <name>ThrowIfUnsupportedYear</name>
+        <qualifiedname>Azure::DateTime::ThrowIfUnsupportedYear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="72" column="8" bodyfile="src/datetime.cpp" bodystart="747" bodyend="768"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a8eb68f8551a7a238c41c6f03946b68d9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DateTime::GetDateTimeParts</definition>
+        <argsstring>(int16_t *year, int8_t *month, int8_t *day, int8_t *hour, int8_t *minute, int8_t *second, int32_t *fracSec, int8_t *dayOfWeek) const</argsstring>
+        <name>GetDateTimeParts</name>
+        <qualifiedname>Azure::DateTime::GetDateTimeParts</qualifiedname>
+        <param>
+          <type>int16_t *</type>
+          <declname>year</declname>
+        </param>
+        <param>
+          <type>int8_t *</type>
+          <declname>month</declname>
+        </param>
+        <param>
+          <type>int8_t *</type>
+          <declname>day</declname>
+        </param>
+        <param>
+          <type>int8_t *</type>
+          <declname>hour</declname>
+        </param>
+        <param>
+          <type>int8_t *</type>
+          <declname>minute</declname>
+        </param>
+        <param>
+          <type>int8_t *</type>
+          <declname>second</declname>
+        </param>
+        <param>
+          <type>int32_t *</type>
+          <declname>fracSec</declname>
+        </param>
+        <param>
+          <type>int8_t *</type>
+          <declname>dayOfWeek</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="74" column="8" bodyfile="src/datetime.cpp" bodystart="770" bodyend="817"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a09f30f83292b531179df535a7dd3e2f9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string DateTime::ToStringRfc1123</definition>
+        <argsstring>() const</argsstring>
+        <name>ToStringRfc1123</name>
+        <qualifiedname>Azure::DateTime::ToStringRfc1123</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="84" column="15" bodyfile="src/datetime.cpp" bodystart="819" bodyend="847"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a4a47aa28681164fad63a17ff3b04df02" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr Azure::DateTime::DateTime</definition>
+        <argsstring>()</argsstring>
+        <name>DateTime</name>
+        <qualifiedname>Azure::DateTime::DateTime</qualifiedname>
+        <briefdescription>
+<para>Constructs a default instance of <computeroutput>DateTime</computeroutput> (<computeroutput>00:00:00.0000000 on January 1st, 0001</computeroutput>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="91" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a31d945351b8c6061a69f1954a5984432" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::DateTime::DateTime</definition>
+        <argsstring>(int16_t year, int8_t month=1, int8_t day=1, int8_t hour=0, int8_t minute=0, int8_t second=0)</argsstring>
+        <name>DateTime</name>
+        <qualifiedname>Azure::DateTime::DateTime</qualifiedname>
+        <param>
+          <type>int16_t</type>
+          <declname>year</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>month</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>day</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>hour</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>minute</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>second</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Constructs an instance of <computeroutput>DateTime</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>year</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Year. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>month</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Month. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>day</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Day. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hour</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hour. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minute</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minute. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>second</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Seconds.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If any parameter is invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="105" column="12" bodyfile="inc/azure/core/datetime.hpp" bodystart="105" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a2fd52469cf778230bcc178d7795c98c1" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr Azure::DateTime::DateTime</definition>
+        <argsstring>(time_point const &amp;timePoint)</argsstring>
+        <name>DateTime</name>
+        <qualifiedname>Azure::DateTime::DateTime</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time_1a47ebd257a65488440d2a00bdde9342d2" kindref="member">time_point</ref> const &amp;</type>
+          <declname>timePoint</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an instance of <computeroutput>DateTime</computeroutput> from a <computeroutput>time_point</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="120" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a480dea5c0d4099e8c0a91194eece5b91" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::DateTime::DateTime</definition>
+        <argsstring>(std::chrono::system_clock::time_point const &amp;systemTime)</argsstring>
+        <name>DateTime</name>
+        <qualifiedname>Azure::DateTime::DateTime</qualifiedname>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>systemTime</declname>
+        </param>
+        <briefdescription>
+<para>Construct an instance of <computeroutput>DateTime</computeroutput> from <computeroutput>std::chrono::system_clock::time_point</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>systemTime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A value of <computeroutput>std::chrono::system_clock::time_point</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="127" column="3" bodyfile="inc/azure/core/datetime.hpp" bodystart="127" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a47ebd257a65488440d2a00bdde9342d2" prot="public" static="no" const="yes" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DateTime::operator std::chrono::system_clock::time_point</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::chrono::system_clock::time_point</name>
+        <qualifiedname>Azure::DateTime::time_point</qualifiedname>
+        <briefdescription>
+<para>Convert an instance of <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> to <computeroutput>std::chrono::system_clock::time_point</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> is outside of the range that can be represented. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="139" column="12" bodyfile="src/datetime.cpp" bodystart="423" bodyend="448"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1aea9897a8e5668dc7ba30fa631d27482b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string DateTime::ToString</definition>
+        <argsstring>(DateFormat format=DateFormat::Rfc3339) const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::DateTime::ToString</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5" kindref="member">DateFormat</ref></type>
+          <declname>format</declname>
+          <defval><ref refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5ac8d161c49f2f3a896d3848046f84feaa" kindref="member">DateFormat::Rfc3339</ref></defval>
+        </param>
+        <briefdescription>
+<para>Get a string representation of the <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>format</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The representation format to use, defaulted to use RFC 3339.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If year exceeds 9999, or if <computeroutput>format</computeroutput> is not recognized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="191" column="15" bodyfile="src/datetime.cpp" bodystart="849" bodyend="856"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_date_time_1a09adcc030765e491d9f340db5e8a0db7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string DateTime::ToString</definition>
+        <argsstring>(DateFormat format, TimeFractionFormat fractionFormat) const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::DateTime::ToString</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5" kindref="member">DateFormat</ref></type>
+          <declname>format</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507" kindref="member">TimeFractionFormat</ref></type>
+          <declname>fractionFormat</declname>
+        </param>
+        <briefdescription>
+<para>Get a string representation of the <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>format</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The representation format to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fractionFormat</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The format for the fraction part of the <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref>. Only supported by RFC3339.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If year exceeds 9999, or if <computeroutput>format</computeroutput> is not recognized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="202" column="15" bodyfile="src/datetime.cpp" bodystart="858" bodyend="916"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_date_time_1abe9f1e977e70d30c8efada1f41b4b30f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref></type>
+        <definition>DateTime DateTime::Parse</definition>
+        <argsstring>(std::string const &amp;dateTime, DateFormat format)</argsstring>
+        <name>Parse</name>
+        <qualifiedname>Azure::DateTime::Parse</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>dateTime</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5" kindref="member">DateFormat</ref></type>
+          <declname>format</declname>
+        </param>
+        <briefdescription>
+<para>Create <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> from a string representing time in UTC in the specified format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dateTime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A string with the date and time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>format</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A format to which <computeroutput>dateTime</computeroutput> string adheres to.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> that was constructed from the <computeroutput>dateTime</computeroutput> string.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If <computeroutput>format</computeroutput> is not recognized, or if parsing error. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="182" column="19" bodyfile="src/datetime.cpp" bodystart="450" bodyend="745"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Manages date and time in standardized string formats. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Supports date range from year 0001 to end of year 9999 with 100ns (7 decimal places for fractional second) precision. <simplesect kind="remark"><para><computeroutput>std::chrono::system_clock::time_point</computeroutput> can&apos;t be used, because there is no guarantees for the date range and precision. </para>
+</simplesect>
+<simplesect kind="remark"><para>This class is supposed to be able to handle a <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> that comes over the wire. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::DateTime</label>
+        <link refid="class_azure_1_1_date_time"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>_detail::Clock::time_point</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::DateTime</label>
+        <link refid="class_azure_1_1_date_time"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>_detail::Clock::time_point</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/datetime.hpp" line="54" column="1" bodyfile="inc/azure/core/datetime.hpp" bodystart="54" bodyend="203"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>DateFormat</name></member>
+      <member refid="class_azure_1_1_date_time_1ae082c2befd1e5ae7ea500ed0288cafeb" prot="private" virt="non-virtual"><scope>Azure::DateTime</scope><name>DateTime</name></member>
+      <member refid="class_azure_1_1_date_time_1a4a47aa28681164fad63a17ff3b04df02" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>DateTime</name></member>
+      <member refid="class_azure_1_1_date_time_1a31d945351b8c6061a69f1954a5984432" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>DateTime</name></member>
+      <member refid="class_azure_1_1_date_time_1a2fd52469cf778230bcc178d7795c98c1" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>DateTime</name></member>
+      <member refid="class_azure_1_1_date_time_1a480dea5c0d4099e8c0a91194eece5b91" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>DateTime</name></member>
+      <member refid="class_azure_1_1_date_time_1a8eb68f8551a7a238c41c6f03946b68d9" prot="private" virt="non-virtual"><scope>Azure::DateTime</scope><name>GetDateTimeParts</name></member>
+      <member refid="class_azure_1_1_date_time_1a47ebd257a65488440d2a00bdde9342d2" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>operator std::chrono::system_clock::time_point</name></member>
+      <member refid="class_azure_1_1_date_time_1abe9f1e977e70d30c8efada1f41b4b30f" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>Parse</name></member>
+      <member refid="class_azure_1_1_date_time_1a2e4202c1f6f506ce580388ce4d938e6a" prot="private" virt="non-virtual"><scope>Azure::DateTime</scope><name>SystemClockEpoch</name></member>
+      <member refid="class_azure_1_1_date_time_1a31b926a5511f4c117c7c80a3ad7d9f9c" prot="private" virt="non-virtual"><scope>Azure::DateTime</scope><name>ThrowIfUnsupportedYear</name></member>
+      <member refid="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>TimeFractionFormat</name></member>
+      <member refid="class_azure_1_1_date_time_1aea9897a8e5668dc7ba30fa631d27482b" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_date_time_1a09adcc030765e491d9f340db5e8a0db7" prot="public" virt="non-virtual"><scope>Azure::DateTime</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_date_time_1a09f30f83292b531179df535a7dd3e2f9" prot="private" virt="non-virtual"><scope>Azure::DateTime</scope><name>ToStringRfc1123</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

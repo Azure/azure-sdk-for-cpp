@@ -1,0 +1,599 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_request" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::Request</compoundname>
+    <includes refid="http_8hpp" local="no">http.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_request_1a9fd1bc3264efffc579493243e80ed1da" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>HttpMethod Azure::Core::Http::Request::m_method</definition>
+        <argsstring></argsstring>
+        <name>m_method</name>
+        <qualifiedname>Azure::Core::Http::Request::m_method</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="203" column="16" bodyfile="inc/azure/core/http/http.hpp" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_request_1ab7cdc37abc27a7ad358cfba810a529e5" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Url</ref></type>
+        <definition>Url Azure::Core::Http::Request::m_url</definition>
+        <argsstring></argsstring>
+        <name>m_url</name>
+        <qualifiedname>Azure::Core::Http::Request::m_url</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="204" column="9" bodyfile="inc/azure/core/http/http.hpp" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_request_1a7b8c1a44aa46bd593be959a280ba2cf4" prot="private" static="no" mutable="no">
+        <type><ref refid="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" kindref="member">CaseInsensitiveMap</ref></type>
+        <definition>CaseInsensitiveMap Azure::Core::Http::Request::m_headers</definition>
+        <argsstring></argsstring>
+        <name>m_headers</name>
+        <qualifiedname>Azure::Core::Http::Request::m_headers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="205" column="24" bodyfile="inc/azure/core/http/http.hpp" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_request_1a7f75941110ac60e289c26a977369dbb5" prot="private" static="no" mutable="no">
+        <type><ref refid="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" kindref="member">CaseInsensitiveMap</ref></type>
+        <definition>CaseInsensitiveMap Azure::Core::Http::Request::m_retryHeaders</definition>
+        <argsstring></argsstring>
+        <name>m_retryHeaders</name>
+        <qualifiedname>Azure::Core::Http::Request::m_retryHeaders</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="206" column="24" bodyfile="inc/azure/core/http/http.hpp" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_request_1ab6fe91bfce79f8ba42d07ab52591c175" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> *</type>
+        <definition>Azure::Core::IO::BodyStream* Azure::Core::Http::Request::m_bodyStream</definition>
+        <argsstring></argsstring>
+        <name>m_bodyStream</name>
+        <qualifiedname>Azure::Core::Http::Request::m_bodyStream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="208" column="33" bodyfile="inc/azure/core/http/http.hpp" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_request_1ac91751288f47f9256793664f34bd9fbe" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::Request::m_retryModeEnabled</definition>
+        <argsstring></argsstring>
+        <name>m_retryModeEnabled</name>
+        <qualifiedname>Azure::Core::Http::Request::m_retryModeEnabled</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="211" column="10" bodyfile="inc/azure/core/http/http.hpp" bodystart="211" bodyend="211"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_request_1a33c9af223b431fbb7b321f60bada6705" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::Request::m_shouldBufferResponse</definition>
+        <argsstring></argsstring>
+        <name>m_shouldBufferResponse</name>
+        <qualifiedname>Azure::Core::Http::Request::m_shouldBufferResponse</qualifiedname>
+        <initializer>{true}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="212" column="10" bodyfile="inc/azure/core/http/http.hpp" bodystart="212" bodyend="212"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a3a9c8c935dbf43f28aa8f89d95b3c274" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Request::StartTry</definition>
+        <argsstring>()</argsstring>
+        <name>StartTry</name>
+        <qualifiedname>Azure::Core::Http::Request::StartTry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="216" column="10" bodyfile="src/http/request.cpp" bodystart="66" bodyend="77"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1ad84b62ca2ea5ef08ff85ded91c7783f1" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::Request::Request</definition>
+        <argsstring>(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream *bodyStream, bool shouldBufferResponse)</argsstring>
+        <name>Request</name>
+        <qualifiedname>Azure::Core::Http::Request::Request</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+          <declname>httpMethod</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Url</ref></type>
+          <declname>url</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> *</type>
+          <declname>bodyStream</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>shouldBufferResponse</declname>
+        </param>
+        <briefdescription>
+<para>Construct an <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>httpMethod</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>url</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request URL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bodyStream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldBufferResponse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A boolean value indicating whether the returned response should be buffered or returned as a body stream instead. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="228" column="14" bodyfile="inc/azure/core/http/http.hpp" bodystart="228" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a5587e1d3c3a96d87975a22a6f419f74c" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::Request::Request</definition>
+        <argsstring>(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream *bodyStream)</argsstring>
+        <name>Request</name>
+        <qualifiedname>Azure::Core::Http::Request::Request</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+          <declname>httpMethod</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Url</ref></type>
+          <declname>url</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> *</type>
+          <declname>bodyStream</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <computeroutput>Request</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>httpMethod</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP method. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>url</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request URL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bodyStream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="246" column="14" bodyfile="inc/azure/core/http/http.hpp" bodystart="246" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a0796aaa004d8df2962ecec9afe4c67dd" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Request::Request</definition>
+        <argsstring>(HttpMethod httpMethod, Url url, bool shouldBufferResponse)</argsstring>
+        <name>Request</name>
+        <qualifiedname>Azure::Core::Http::Request::Request</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+          <declname>httpMethod</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Url</ref></type>
+          <declname>url</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>shouldBufferResponse</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <computeroutput>Request</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>httpMethod</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP method. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>url</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request URL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldBufferResponse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A boolean value indicating whether the returned response should be buffered or returned as a body stream instead. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="259" column="14" bodyfile="src/http/request.cpp" bodystart="28" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a2a0f814ae40f49d0226ad98ea3b40e39" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Request::Request</definition>
+        <argsstring>(HttpMethod httpMethod, Url url)</argsstring>
+        <name>Request</name>
+        <qualifiedname>Azure::Core::Http::Request::Request</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+          <declname>httpMethod</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Url</ref></type>
+          <declname>url</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <computeroutput>Request</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>httpMethod</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP method. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>url</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request URL. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="267" column="14" bodyfile="src/http/request.cpp" bodystart="33" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1afea0c98e7e3ceace622958a59c6c44b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Request::SetHeader</definition>
+        <argsstring>(std::string const &amp;name, std::string const &amp;value)</argsstring>
+        <name>SetHeader</name>
+        <qualifiedname>Azure::Core::Http::Request::SetHeader</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set an HTTP header to the <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>If the header key does not exists, it is added.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name for the header to be set or added. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value for the header to be set or added.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>if</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><computeroutput>name</computeroutput> is an invalid header key. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="280" column="10" bodyfile="src/http/request.cpp" bodystart="52" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a809dd9ab456cdcbb3c9e7a98a555854b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt; std::string &gt; Request::GetHeader</definition>
+        <argsstring>(std::string const &amp;name)</argsstring>
+        <name>GetHeader</name>
+        <qualifiedname>Azure::Core::Http::Request::GetHeader</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Gets a specific HTTP header from an <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Azure::Core::Http::Request</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name for the header to be retrieved. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The desired header, or an empty nullable if it is not found..</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>if</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><computeroutput>name</computeroutput> is an invalid header key. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="290" column="21" bodyfile="src/http/request.cpp" bodystart="38" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1ab979a9f34f26d37566a263b297e78404" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Request::RemoveHeader</definition>
+        <argsstring>(std::string const &amp;name)</argsstring>
+        <name>RemoveHeader</name>
+        <qualifiedname>Azure::Core::Http::Request::RemoveHeader</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Remove an HTTP header. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HTTP header name. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="297" column="10" bodyfile="src/http/request.cpp" bodystart="60" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a8a9ed25368d3e3e4dfb22f2ab329c448" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref> const &amp;</type>
+        <definition>HttpMethod const  &amp; Request::GetMethod</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMethod</name>
+        <qualifiedname>Azure::Core::Http::Request::GetMethod</qualifiedname>
+        <briefdescription>
+<para>Get <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="304" column="22" bodyfile="src/http/request.cpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a8da634936a1c7bf5a48782a534988454" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" kindref="member">CaseInsensitiveMap</ref></type>
+        <definition>Azure::Core::CaseInsensitiveMap Request::GetHeaders</definition>
+        <argsstring>() const</argsstring>
+        <name>GetHeaders</name>
+        <qualifiedname>Azure::Core::Http::Request::GetHeaders</qualifiedname>
+        <briefdescription>
+<para>Get HTTP headers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this function return a COPY of the headers for this request. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="312" column="24" bodyfile="src/http/request.cpp" bodystart="81" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1ad6a43a06e13ea601c6c5a2889d053fe2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> *</type>
+        <definition>Azure::Core::IO::BodyStream * Azure::Core::Http::Request::GetBodyStream</definition>
+        <argsstring>()</argsstring>
+        <name>GetBodyStream</name>
+        <qualifiedname>Azure::Core::Http::Request::GetBodyStream</qualifiedname>
+        <briefdescription>
+<para>Get HTTP body as <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="318" column="33" bodyfile="inc/azure/core/http/http.hpp" bodystart="318" bodyend="318"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a62c8dc26508af3aa0fd78eb6aeea8dd3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> const *</type>
+        <definition>Azure::Core::IO::BodyStream const  * Azure::Core::Http::Request::GetBodyStream</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBodyStream</name>
+        <qualifiedname>Azure::Core::Http::Request::GetBodyStream</qualifiedname>
+        <briefdescription>
+<para>Get HTTP body as <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="324" column="39" bodyfile="inc/azure/core/http/http.hpp" bodystart="324" bodyend="324"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1ac60bcb59c7e6340c83d4de8d65e28db2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::Request::ShouldBufferResponse</definition>
+        <argsstring>()</argsstring>
+        <name>ShouldBufferResponse</name>
+        <qualifiedname>Azure::Core::Http::Request::ShouldBufferResponse</qualifiedname>
+        <briefdescription>
+<para>A value indicating whether the returned raw response for this request will be buffered within a memory buffer or if it will be returned as a body stream instead. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="330" column="10" bodyfile="inc/azure/core/http/http.hpp" bodystart="330" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a6cda1c14edbd6c5283be6014fe37a4dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Url</ref> &amp;</type>
+        <definition>Url &amp; Azure::Core::Http::Request::GetUrl</definition>
+        <argsstring>()</argsstring>
+        <name>GetUrl</name>
+        <qualifiedname>Azure::Core::Http::Request::GetUrl</qualifiedname>
+        <briefdescription>
+<para>Get URL. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="336" column="9" bodyfile="inc/azure/core/http/http.hpp" bodystart="336" bodyend="336"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_request_1a54b9c7d4b31e67088338c0b360bc5392" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Url</ref> const &amp;</type>
+        <definition>Url const  &amp; Azure::Core::Http::Request::GetUrl</definition>
+        <argsstring>() const</argsstring>
+        <name>GetUrl</name>
+        <qualifiedname>Azure::Core::Http::Request::GetUrl</qualifiedname>
+        <briefdescription>
+<para>Get URL. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="342" column="15" bodyfile="inc/azure/core/http/http.hpp" bodystart="342" bodyend="342"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A request message from a client to a server. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Includes, within the first line of the message, the <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref> to be applied to the resource, the URL of the resource, and the protocol version in use. </para>
+    </detaileddescription>
+    <location file="inc/azure/core/http/http.hpp" line="182" column="3" bodyfile="inc/azure/core/http/http.hpp" bodystart="182" bodyend="343"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ad6a43a06e13ea601c6c5a2889d053fe2" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>GetBodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a62c8dc26508af3aa0fd78eb6aeea8dd3" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>GetBodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a809dd9ab456cdcbb3c9e7a98a555854b" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>GetHeader</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a8da634936a1c7bf5a48782a534988454" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>GetHeaders</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a8a9ed25368d3e3e4dfb22f2ab329c448" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>GetMethod</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a6cda1c14edbd6c5283be6014fe37a4dd" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>GetUrl</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a54b9c7d4b31e67088338c0b360bc5392" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>GetUrl</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ab6fe91bfce79f8ba42d07ab52591c175" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>m_bodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a7b8c1a44aa46bd593be959a280ba2cf4" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>m_headers</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a9fd1bc3264efffc579493243e80ed1da" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>m_method</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a7f75941110ac60e289c26a977369dbb5" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>m_retryHeaders</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ac91751288f47f9256793664f34bd9fbe" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>m_retryModeEnabled</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a33c9af223b431fbb7b321f60bada6705" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>m_shouldBufferResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ab7cdc37abc27a7ad358cfba810a529e5" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>m_url</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ab979a9f34f26d37566a263b297e78404" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>RemoveHeader</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ad84b62ca2ea5ef08ff85ded91c7783f1" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>Request</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a5587e1d3c3a96d87975a22a6f419f74c" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>Request</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a0796aaa004d8df2962ecec9afe4c67dd" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>Request</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a2a0f814ae40f49d0226ad98ea3b40e39" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>Request</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1afea0c98e7e3ceace622958a59c6c44b7" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>SetHeader</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ac60bcb59c7e6340c83d4de8d65e28db2" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>ShouldBufferResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a3a9c8c935dbf43f28aa8f89d95b3c274" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Request</scope><name>StartTry</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

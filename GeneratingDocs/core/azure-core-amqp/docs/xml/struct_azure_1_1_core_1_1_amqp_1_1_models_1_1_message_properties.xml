@@ -1,0 +1,493 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::MessageProperties</compoundname>
+    <includes refid="amqp__properties_8hpp" local="no">amqp_properties.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ac02c58781c8e3cf4b9ecf65918031454" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &gt;</type>
+        <definition>Nullable&lt;AmqpValue&gt; Azure::Core::Amqp::Models::MessageProperties::MessageId</definition>
+        <argsstring></argsstring>
+        <name>MessageId</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::MessageId</qualifiedname>
+        <briefdescription>
+<para>The message-id, if set, uniquely identifies a message within the message system. The message producer is usually responsible for setting the message-id in such a way that it is assured to be globally unique. A broker MAY discard a message as a duplicate if the value of the message-id matches that of a previously received message sent to the same node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>The message producer is usually responsible for setting the message-id in such a way that it is assured to be globally unique. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="58" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a2107fb94db44097732eab2bd48047a08" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Core::Amqp::Models::MessageProperties::UserId</definition>
+        <argsstring></argsstring>
+        <name>UserId</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::UserId</qualifiedname>
+        <briefdescription>
+<para>User ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The identity of the user responsible for producing the message. The client sets this value, and it MAY be authenticated by intermediaries. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="65" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a259a52af66937ea622d0ff5cf62c61de" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &gt;</type>
+        <definition>Nullable&lt;AmqpValue&gt; Azure::Core::Amqp::Models::MessageProperties::To</definition>
+        <argsstring></argsstring>
+        <name>To</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::To</qualifiedname>
+        <briefdescription>
+<para>The to field identifies the node that is the intended destination of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>A message with no to field is interpreted as being addressed to the implied &quot;anonymous&quot; node. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="72" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a24c55f080b159147463ccb206945622c" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Core::Amqp::Models::MessageProperties::Subject</definition>
+        <argsstring></argsstring>
+        <name>Subject</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::Subject</qualifiedname>
+        <briefdescription>
+<para>The subject of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A common field for summary information about the message content and purpose. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="78" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a9d33fddfca4dfe2314807a7e578e4594" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &gt;</type>
+        <definition>Nullable&lt;AmqpValue&gt; Azure::Core::Amqp::Models::MessageProperties::CorrelationId</definition>
+        <argsstring></argsstring>
+        <name>CorrelationId</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::CorrelationId</qualifiedname>
+        <briefdescription>
+<para>This is a client-specific id that can be used to mark or identify messages between clients. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="83" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a902a1e942fe754faf3c41b7df895d02d" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &gt;</type>
+        <definition>Nullable&lt;AmqpValue&gt; Azure::Core::Amqp::Models::MessageProperties::ReplyTo</definition>
+        <argsstring></argsstring>
+        <name>ReplyTo</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::ReplyTo</qualifiedname>
+        <briefdescription>
+<para>The address of the node to send replies to. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="87" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a274d2f1a5ae6f08f43d7180bc317803b" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Core::Amqp::Models::MessageProperties::ContentType</definition>
+        <argsstring></argsstring>
+        <name>ContentType</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::ContentType</qualifiedname>
+        <briefdescription>
+<para>The content-type field describes the payload type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The RFC-2046 <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html#anchor-RFC2046">RFC2046</ulink> MIME type for the message&apos;s application-data section (body). As per RFC-2046 [RFC2046] this can contain a charset parameter defining the character encoding used: e.g., &apos;text/plain; charset=&quot;utf-8&quot;&apos;.</para>
+<para>For clarity, as per section 7.2.1 of RFC-2616 <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html#anchor-RFC2046">RFC2046</ulink>, where the content type is unknown the content-type SHOULD NOT be set. This allows the recipient the opportunity to determine the actual type. Where the section is known to be truly opaque binary data, the content-type SHOULD be set to application/octet-stream.</para>
+<para>When using an application-data section with a section code other than data, content-type SHOULD NOT be set </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="106" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a51a7211ebd81e52554d85388ba638307" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Core::Amqp::Models::MessageProperties::ContentEncoding</definition>
+        <argsstring></argsstring>
+        <name>ContentEncoding</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::ContentEncoding</qualifiedname>
+        <briefdescription>
+<para>MIME Content Encoding. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The content-encoding property is used as a modifier to the content-type. When present, its value indicates what additional content encodings have been applied to the application-data, and thus what decoding mechanisms need to be applied in order to obtain the media-type referenced by the content-type header field.</para>
+<para>Content-encoding is primarily used to allow a document to be compressed without losing the identity of its underlying content type.</para>
+<para>Content-encodings are to be interpreted as per section 3.5 of RFC 2616 [RFC2616]. Valid content-encodings are registered at IANA [IANAHTTPPARAMS].</para>
+<para>The content-encoding MUST NOT be set when the application-data section is other than data. The binary representation of all other application-data section types is defined completely in terms of the AMQP type system.</para>
+<para>Implementations MUST NOT use the identity encoding. Instead, implementations SHOULD NOT set this property. Implementations SHOULD NOT use the compress encoding, except as to remain compatible with messages originally sent with other protocols, e.g. HTTP or SMTP.</para>
+<para>Implementations SHOULD NOT specify multiple content-encoding values except as to be compatible with messages originally sent with other protocols, e.g. HTTP or SMTP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="134" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a4767c3c8ac57aa89f1a7c0ff354b1ec6" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::chrono::system_clock::time_point &gt;</type>
+        <definition>Nullable&lt;std::chrono::system_clock::time_point&gt; Azure::Core::Amqp::Models::MessageProperties::AbsoluteExpiryTime</definition>
+        <argsstring></argsstring>
+        <name>AbsoluteExpiryTime</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::AbsoluteExpiryTime</qualifiedname>
+        <briefdescription>
+<para>The absolute expiry time of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An absolute time when this message is considered to be expired. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="140" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1aeeb1e882d029362420a15470155ae473" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::chrono::system_clock::time_point &gt;</type>
+        <definition>Nullable&lt;std::chrono::system_clock::time_point&gt; Azure::Core::Amqp::Models::MessageProperties::CreationTime</definition>
+        <argsstring></argsstring>
+        <name>CreationTime</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::CreationTime</qualifiedname>
+        <briefdescription>
+<para>the time when this message was created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="143" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a7af7aac183b5b9b9524029f4923fc662" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Core::Amqp::Models::MessageProperties::GroupId</definition>
+        <argsstring></argsstring>
+        <name>GroupId</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::GroupId</qualifiedname>
+        <briefdescription>
+<para>The group this message belongs to. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Identifies the group the message belongs to. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="149" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ad4a79413f7ae45ae76fc04f04d8be081" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; uint32_t &gt;</type>
+        <definition>Nullable&lt;uint32_t&gt; Azure::Core::Amqp::Models::MessageProperties::GroupSequence</definition>
+        <argsstring></argsstring>
+        <name>GroupSequence</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::GroupSequence</qualifiedname>
+        <briefdescription>
+<para>The sequence-number of this message within its group . </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The relative position of this message within its group. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="155" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a7ede07bd770ba23c02bb671bdbaea607" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Core::Amqp::Models::MessageProperties::ReplyToGroupId</definition>
+        <argsstring></argsstring>
+        <name>ReplyToGroupId</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::ReplyToGroupId</qualifiedname>
+        <briefdescription>
+<para>The group the reply message belongs to. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is a client-specific id that is used so that client can send replies to this message to a specific group </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="162" column="14" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="162" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ae105a05c696d58d94ee532f3e065fa45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageProperties::MessageProperties</definition>
+        <argsstring>()=default</argsstring>
+        <name>MessageProperties</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::MessageProperties</qualifiedname>
+        <briefdescription>
+<para>Default constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates an empty <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="29" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a2113c91bd1d405656383bdae8e11ac5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageProperties::~MessageProperties</definition>
+        <argsstring>()=default</argsstring>
+        <name>~MessageProperties</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::~MessageProperties</qualifiedname>
+        <briefdescription>
+<para>Destructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Destroys the <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="35" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a33ff93970b74fd3015a4b0fd29a481c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageProperties::MessageProperties</definition>
+        <argsstring>(MessageProperties &amp;&amp;other)=default</argsstring>
+        <name>MessageProperties</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::MessageProperties</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="38" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1af69d98a7feaabee392fd837519192146" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> &amp;</type>
+        <definition>MessageProperties &amp; Azure::Core::Amqp::Models::MessageProperties::operator=</definition>
+        <argsstring>(MessageProperties &amp;&amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::operator=</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move Assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="41" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a17f59f7dd0d41951281d971623811629" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::MessageProperties::MessageProperties</definition>
+        <argsstring>(MessageProperties const &amp;other)=default</argsstring>
+        <name>MessageProperties</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::MessageProperties</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> const &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="44" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a0117132e0c6fb0703b41ec455c89ac3f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> &amp;</type>
+        <definition>MessageProperties &amp; Azure::Core::Amqp::Models::MessageProperties::operator=</definition>
+        <argsstring>(MessageProperties const &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::operator=</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> const &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy Assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="47" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a62bef3d909e3e178cfa5b52145cb6938" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::MessageProperties::operator==</definition>
+        <argsstring>(MessageProperties const &amp;that) const noexcept</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::operator==</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare two message properties objects. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The other message properties object to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="168" column="10" bodyfile="src/models/amqp_properties.cpp" bodystart="264" bodyend="278"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a34a525ce6059bef8579618618bdcfb97" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::MessageProperties::ShouldSerialize</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>ShouldSerialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::ShouldSerialize</qualifiedname>
+        <briefdescription>
+<para>Should this <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object be serialized. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if the object should be serialized, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="174" column="10" bodyfile="src/models/amqp_properties.cpp" bodystart="280" bodyend="287"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ac61d8ac28a8cd2c3c642b5e81270d983" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Amqp::Models::MessageProperties::Serialize</definition>
+        <argsstring>(MessageProperties const &amp;properties)</argsstring>
+        <name>Serialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::Serialize</qualifiedname>
+        <param>
+          <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> const &amp;</type>
+          <declname>properties</declname>
+        </param>
+        <briefdescription>
+<para>Serialize a <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object into a vector of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>properties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object to serialize. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A vector of bytes representing the serialized <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="181" column="24" bodyfile="src/models/amqp_properties.cpp" bodystart="289" bodyend="296"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a031d29a25d10f5bbc12a2f94b89405a7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref></type>
+        <definition>MessageProperties Azure::Core::Amqp::Models::MessageProperties::Deserialize</definition>
+        <argsstring>(uint8_t const *data, size_t size)</argsstring>
+        <name>Deserialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::MessageProperties::Deserialize</qualifiedname>
+        <param>
+          <type>uint8_t const *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Deserialize a <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object from a vector of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The vector of bytes representing the serialized <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the vector of bytes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The deserialized <ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref> object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="189" column="30" bodyfile="src/models/amqp_properties.cpp" bodystart="298" bodyend="309"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents the immutable properties of an AMQP message. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The properties section is part of the bare message used for a range of features including reliable delivery, routing and security.</para>
+<para><simplesect kind="see"><para><ulink url="https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties">https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties</ulink> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/models/amqp_properties.hpp" line="23" column="3" bodyfile="inc/azure/core/amqp/models/amqp_properties.hpp" bodystart="24" bodyend="190"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a4767c3c8ac57aa89f1a7c0ff354b1ec6" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>AbsoluteExpiryTime</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a51a7211ebd81e52554d85388ba638307" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>ContentEncoding</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a274d2f1a5ae6f08f43d7180bc317803b" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>ContentType</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a9d33fddfca4dfe2314807a7e578e4594" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>CorrelationId</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1aeeb1e882d029362420a15470155ae473" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>CreationTime</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a031d29a25d10f5bbc12a2f94b89405a7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>Deserialize</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a7af7aac183b5b9b9524029f4923fc662" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>GroupId</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ad4a79413f7ae45ae76fc04f04d8be081" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>GroupSequence</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ac02c58781c8e3cf4b9ecf65918031454" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>MessageId</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ae105a05c696d58d94ee532f3e065fa45" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>MessageProperties</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a33ff93970b74fd3015a4b0fd29a481c3" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>MessageProperties</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a17f59f7dd0d41951281d971623811629" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>MessageProperties</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1af69d98a7feaabee392fd837519192146" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>operator=</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a0117132e0c6fb0703b41ec455c89ac3f" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>operator=</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a62bef3d909e3e178cfa5b52145cb6938" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>operator==</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a902a1e942fe754faf3c41b7df895d02d" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>ReplyTo</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a7ede07bd770ba23c02bb671bdbaea607" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>ReplyToGroupId</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1ac61d8ac28a8cd2c3c642b5e81270d983" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>Serialize</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a34a525ce6059bef8579618618bdcfb97" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>ShouldSerialize</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a24c55f080b159147463ccb206945622c" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>Subject</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a259a52af66937ea622d0ff5cf62c61de" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>To</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a2107fb94db44097732eab2bd48047a08" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>UserId</name></member>
+      <member refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties_1a2113c91bd1d405656383bdae8e11ac5b" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::MessageProperties</scope><name>~MessageProperties</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

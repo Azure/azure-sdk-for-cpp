@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::ListBlobsPagedResponse</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::PagedResponse&lt; ListBlobsPagedResponse &gt;</basecompoundref>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1afd99ae9cd2338c9f63a3fd5458737a97" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::ListBlobsPagedResponse::ServiceEndpoint</definition>
+        <argsstring></argsstring>
+        <name>ServiceEndpoint</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::ServiceEndpoint</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Service endpoint. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="330" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a67f0ab6281932dfd957d5c24a1cad42b" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::ListBlobsPagedResponse::BlobContainerName</definition>
+        <argsstring></argsstring>
+        <name>BlobContainerName</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::BlobContainerName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Name of the container. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="335" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a9cbc437cb4bc3ae5a1b8d275230c3e2a" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::ListBlobsPagedResponse::Prefix</definition>
+        <argsstring></argsstring>
+        <name>Prefix</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::Prefix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Blob name prefix that&apos;s used to filter the result. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="340" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="340" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a1110582bbf28ffba6017bd65cc32d8b2" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_item" kindref="compound">Models::BlobItem</ref> &gt;</type>
+        <definition>std::vector&lt;Models::BlobItem&gt; Azure::Storage::Blobs::ListBlobsPagedResponse::Blobs</definition>
+        <argsstring></argsstring>
+        <name>Blobs</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::Blobs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Blob items. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="345" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="345" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a4870a3a084c2808073b11e83d00d4950" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;BlobContainerClient&gt; Azure::Storage::Blobs::ListBlobsPagedResponse::m_blobContainerClient</definition>
+        <argsstring></argsstring>
+        <name>m_blobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::m_blobContainerClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="350" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="350" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1ae531012b417916da0fdac005522a6bfa" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options" kindref="compound">ListBlobsOptions</ref></type>
+        <definition>ListBlobsOptions Azure::Storage::Blobs::ListBlobsPagedResponse::m_operationOptions</definition>
+        <argsstring></argsstring>
+        <name>m_operationOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::m_operationOptions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="351" column="24" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="351" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a0015cd845dfb7d7d22613ccb9cbad865" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobContainerClient</definition>
+        <argsstring></argsstring>
+        <name>BlobContainerClient</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::BlobContainerClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="353" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="353" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a7352061a44ebb579cd9e415a8980df23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Azure::Core::PagedResponse&lt; ListBlobsPagedResponse &gt;</definition>
+        <argsstring></argsstring>
+        <name>Azure::Core::PagedResponse&lt; ListBlobsPagedResponse &gt;</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::PagedResponse&lt; ListBlobsPagedResponse &gt;</qualifiedname>
+        <param>
+          <type>Azure::Core::PagedResponse&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response" kindref="compound">ListBlobsPagedResponse</ref> &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="353" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="354" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1ae0a359a23d604496354a7ec32c44ab58" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Storage::Blobs::ListBlobsPagedResponse::OnNextPage</definition>
+        <argsstring>(const Azure::Core::Context &amp;context)</argsstring>
+        <name>OnNextPage</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsPagedResponse::OnNextPage</qualifiedname>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="348" column="12" bodyfile="src/blob_responses.cpp" bodystart="89" bodyend="93"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a8f7e6653ef69788cb4fb23ec85d4fd96" kindref="member">Azure::Storage::Blobs::BlobContainerClient::ListBlobs</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; ListBlobsPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::ListBlobsPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; ListBlobsPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::ListBlobsPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="325" column="5" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="325" bodyend="355"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a7352061a44ebb579cd9e415a8980df23" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>Azure::Core::PagedResponse&lt; ListBlobsPagedResponse &gt;</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a0015cd845dfb7d7d22613ccb9cbad865" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>BlobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a67f0ab6281932dfd957d5c24a1cad42b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>BlobContainerName</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a1110582bbf28ffba6017bd65cc32d8b2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>Blobs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a4870a3a084c2808073b11e83d00d4950" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>m_blobContainerClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1ae531012b417916da0fdac005522a6bfa" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>m_operationOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1ae0a359a23d604496354a7ec32c44ab58" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>OnNextPage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1a9cbc437cb4bc3ae5a1b8d275230c3e2a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>Prefix</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_list_blobs_paged_response_1afd99ae9cd2338c9f63a3fd5458737a97" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsPagedResponse</scope><name>ServiceEndpoint</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

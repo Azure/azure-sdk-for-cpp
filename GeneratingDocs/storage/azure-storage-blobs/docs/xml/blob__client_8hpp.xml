@@ -1,0 +1,498 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="blob__client_8hpp" kind="file" language="C++">
+    <compoundname>blob_client.hpp</compoundname>
+    <includes refid="blob__options_8hpp" local="yes">azure/storage/blobs/blob_options.hpp</includes>
+    <includes refid="blob__responses_8hpp" local="yes">azure/storage/blobs/blob_responses.hpp</includes>
+    <includes local="no">azure/core/credentials/credentials.hpp</includes>
+    <includes local="no">azure/storage/common/storage_credential.hpp</includes>
+    <includes local="no">cstdint</includes>
+    <includes local="no">map</includes>
+    <includes local="no">memory</includes>
+    <includes local="no">string</includes>
+    <includedby refid="blobs_8hpp" local="yes">inc/azure/storage/blobs.hpp</includedby>
+    <includedby refid="append__blob__client_8hpp" local="yes">inc/azure/storage/blobs/append_blob_client.hpp</includedby>
+    <includedby refid="blob__batch_8hpp" local="yes">inc/azure/storage/blobs/blob_batch.hpp</includedby>
+    <includedby refid="blob__container__client_8hpp" local="yes">inc/azure/storage/blobs/blob_container_client.hpp</includedby>
+    <includedby refid="blob__lease__client_8hpp" local="yes">inc/azure/storage/blobs/blob_lease_client.hpp</includedby>
+    <includedby refid="block__blob__client_8hpp" local="yes">inc/azure/storage/blobs/block_blob_client.hpp</includedby>
+    <includedby refid="page__blob__client_8hpp" local="yes">inc/azure/storage/blobs/page_blob_client.hpp</includedby>
+    <includedby refid="blob__client_8cpp" local="yes">src/blob_client.cpp</includedby>
+    <includedby refid="blob__responses_8cpp" local="yes">src/blob_responses.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>inc/azure/storage/blobs/blob_client.hpp</label>
+        <link refid="blob__client_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>azure/storage/blobs/blob_options.hpp</label>
+        <link refid="blob__options_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>azure/storage/blobs/blob_responses.hpp</label>
+        <link refid="blob__responses_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>azure/storage/blobs/rest_client.hpp</label>
+        <link refid="rest__client_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>azure/core/azure_assert.hpp</label>
+      </node>
+      <node id="4">
+        <label>azure/core/case_insensitive_containers.hpp</label>
+      </node>
+      <node id="5">
+        <label>azure/core/context.hpp</label>
+      </node>
+      <node id="35">
+        <label>azure/core/credentials/credentials.hpp</label>
+      </node>
+      <node id="6">
+        <label>azure/core/datetime.hpp</label>
+      </node>
+      <node id="7">
+        <label>azure/core/etag.hpp</label>
+      </node>
+      <node id="8">
+        <label>azure/core/http/http.hpp</label>
+      </node>
+      <node id="22">
+        <label>azure/core/internal/client_options.hpp</label>
+      </node>
+      <node id="23">
+        <label>azure/core/internal/extendable_enumeration.hpp</label>
+      </node>
+      <node id="9">
+        <label>azure/core/internal/http/pipeline.hpp</label>
+      </node>
+      <node id="10">
+        <label>azure/core/io/body_stream.hpp</label>
+      </node>
+      <node id="24">
+        <label>azure/core/match_conditions.hpp</label>
+      </node>
+      <node id="25">
+        <label>azure/core/modified_conditions.hpp</label>
+      </node>
+      <node id="11">
+        <label>azure/core/nullable.hpp</label>
+      </node>
+      <node id="32">
+        <label>azure/core/operation.hpp</label>
+      </node>
+      <node id="33">
+        <label>azure/core/paged_response.hpp</label>
+      </node>
+      <node id="12">
+        <label>azure/core/response.hpp</label>
+      </node>
+      <node id="13">
+        <label>azure/core/url.hpp</label>
+      </node>
+      <node id="14">
+        <label>azure/storage/blobs/dll_import_export.hpp</label>
+      </node>
+      <node id="26">
+        <label>azure/storage/common/access_conditions.hpp</label>
+      </node>
+      <node id="27">
+        <label>azure/storage/common/crypt.hpp</label>
+      </node>
+      <node id="15">
+        <label>azure/storage/common/storage_common.hpp</label>
+      </node>
+      <node id="36">
+        <label>azure/storage/common/storage_credential.hpp</label>
+      </node>
+      <node id="28">
+        <label>chrono</label>
+      </node>
+      <node id="16">
+        <label>cstdint</label>
+      </node>
+      <node id="17">
+        <label>map</label>
+      </node>
+      <node id="18">
+        <label>memory</label>
+      </node>
+      <node id="29">
+        <label>numeric</label>
+      </node>
+      <node id="19">
+        <label>string</label>
+      </node>
+      <node id="34">
+        <label>thread</label>
+      </node>
+      <node id="20">
+        <label>type_traits</label>
+      </node>
+      <node id="21">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/storage/blobs.hpp</label>
+        <link refid="blobs_8hpp_source"/>
+      </node>
+      <node id="3">
+        <label>inc/azure/storage/blobs/append_blob_client.hpp</label>
+        <link refid="append__blob__client_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>inc/azure/storage/blobs/blob_batch.hpp</label>
+        <link refid="blob__batch_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/storage/blobs/blob_client.hpp</label>
+        <link refid="blob__client_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>inc/azure/storage/blobs/blob_container_client.hpp</label>
+        <link refid="blob__container__client_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>inc/azure/storage/blobs/blob_lease_client.hpp</label>
+        <link refid="blob__lease__client_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>inc/azure/storage/blobs/blob_service_client.hpp</label>
+        <link refid="blob__service__client_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>inc/azure/storage/blobs/block_blob_client.hpp</label>
+        <link refid="block__blob__client_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>inc/azure/storage/blobs/page_blob_client.hpp</label>
+        <link refid="page__blob__client_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" prot="public">Azure::Storage::Blobs::BlobClient</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage">Azure::Storage</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_files">Azure::Storage::Files</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_files_1_1_data_lake">Azure::Storage::Files::DataLake</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_blobs">Azure::Storage::Blobs</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/storage/blobs/blob_options.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/storage/blobs/blob_responses.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/credentials/credentials.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/storage/common/storage_credential.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdint&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;map&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;memory&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Storage<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Files<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">DataLake<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">DataLakeFileSystemClient;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">DataLakeDirectoryClient;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">DataLakeFileClient;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Storage::Files::DataLake</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Storage<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Blobs<sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">BlockBlobClient;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AppendBlobClient;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">PageBlobClient;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">BlobLeaseClient;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref><sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="39" refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aba0c132a169d0dd59d6f69bd31381b0d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aba0c132a169d0dd59d6f69bd31381b0d" kindref="member">~BlobClient</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a6493139c9e3911fcbaa87b025ea3f4ef" kindref="member">CreateFromConnectionString</ref>(</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>connectionString,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>blobContainerName,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>blobName,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>());</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a648f91be2338d9726c8145ba214ac978" kindref="member">BlobClient</ref>(</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>blobUrl,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;StorageSharedKeyCredential&gt;<sp/>credential,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>());</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a648f91be2338d9726c8145ba214ac978" kindref="member">BlobClient</ref>(</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>blobUrl,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;Core::Credentials::TokenCredential&gt;<sp/>credential,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>());</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a648f91be2338d9726c8145ba214ac978" kindref="member">BlobClient</ref>(</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>blobUrl,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>());</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1acea541c3a579cf4bd279c328c88d2cd6" kindref="member">AsBlockBlobClient</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client" kindref="compound">AppendBlobClient</ref><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a88846b9248a67b05abb25c791a8f9524" kindref="member">AsAppendBlobClient</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a0b2c93bb3026f146c72bffcbccf32b54" kindref="member">AsPageBlobClient</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aebb3229526e303cc615aa69d78503063" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aebb3229526e303cc615aa69d78503063" kindref="member">GetUrl</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa765e21c8d0527fa727999530bc562d7" kindref="member">m_blobUrl</ref>.GetAbsoluteUrl();<sp/>}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a4e49e26b8d6742f576981131a0f764f6" kindref="member">WithSnapshot</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>snapshot)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1acb8edeaca12630b7549b9a9b77594b00" kindref="member">WithVersionId</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>versionId)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::BlobProperties&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a305bf8f65dc35944e706df2d2791a3a1" kindref="member">GetProperties</ref>(</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_properties_options" kindref="compound">GetBlobPropertiesOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_properties_options" kindref="compound">GetBlobPropertiesOptions</ref>(),</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::SetBlobHttpHeadersResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a913e1aca81833426ec8b621531c9b4a5" kindref="member">SetHttpHeaders</ref>(</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers" kindref="compound">Models::BlobHttpHeaders</ref><sp/>httpHeaders,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_http_headers_options" kindref="compound">SetBlobHttpHeadersOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_http_headers_options" kindref="compound">SetBlobHttpHeadersOptions</ref>(),</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::SetBlobMetadataResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a76301e79fa60cae85be9fca9072042a1" kindref="member">SetMetadata</ref>(</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Metadata<sp/>metadata,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_metadata_options" kindref="compound">SetBlobMetadataOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_metadata_options" kindref="compound">SetBlobMetadataOptions</ref>(),</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::SetBlobAccessTierResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ad9104f59eef0ef11d1599fa0de03d5bb" kindref="member">SetAccessTier</ref>(</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">Models::AccessTier</ref><sp/>accessTier,</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" kindref="compound">SetBlobAccessTierOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" kindref="compound">SetBlobAccessTierOptions</ref>(),</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::CopyBlobFromUriResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a267904b7db1f9e53632dc551aaea037c" kindref="member">CopyFromUri</ref>(</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>sourceUri,</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options" kindref="compound">CopyBlobFromUriOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options" kindref="compound">CopyBlobFromUriOptions</ref>(),</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1af1c432cf82637be1c954b94ea57fee1a" kindref="member">StartCopyFromUri</ref>(</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>sourceUri,</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_from_uri_options" kindref="compound">StartBlobCopyFromUriOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_from_uri_options" kindref="compound">StartBlobCopyFromUriOptions</ref>(),</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::AbortBlobCopyFromUriResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a128e9bdfdd7bd7b7125aada157b2734a" kindref="member">AbortCopyFromUri</ref>(</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>copyId,</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_abort_blob_copy_from_uri_options" kindref="compound">AbortBlobCopyFromUriOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_abort_blob_copy_from_uri_options" kindref="compound">AbortBlobCopyFromUriOptions</ref>(),</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::DownloadBlobResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aee72db03143c80da4da4acb3e4c3673d" kindref="member">Download</ref>(</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_options" kindref="compound">DownloadBlobOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_options" kindref="compound">DownloadBlobOptions</ref>(),</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::DownloadBlobToResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa0bcbdbf6ebd17e4888cced4736420f7" kindref="member">DownloadTo</ref>(</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t*<sp/>buffer,</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>bufferSize,</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options" kindref="compound">DownloadBlobToOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options" kindref="compound">DownloadBlobToOptions</ref>(),</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::DownloadBlobToResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa0bcbdbf6ebd17e4888cced4736420f7" kindref="member">DownloadTo</ref>(</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>fileName,</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options" kindref="compound">DownloadBlobToOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_download_blob_to_options" kindref="compound">DownloadBlobToOptions</ref>(),</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::CreateBlobSnapshotResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a05131f0bfc5f8b6d32c98f18d6d450a7" kindref="member">CreateSnapshot</ref>(</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options" kindref="compound">CreateBlobSnapshotOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options" kindref="compound">CreateBlobSnapshotOptions</ref>(),</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::DeleteBlobResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ac121df9f5dfcdeb80f47b50543df0984" kindref="member">Delete</ref>(</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref>(),</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::DeleteBlobResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a17a5c20b7cee4478d5a33409440fea8d" kindref="member">DeleteIfExists</ref>(</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref>(),</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::UndeleteBlobResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1abbe7d6e85fe6945188e97eead63b1e7f" kindref="member">Undelete</ref>(</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_undelete_blob_options" kindref="compound">UndeleteBlobOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_undelete_blob_options" kindref="compound">UndeleteBlobOptions</ref>(),</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::SetBlobTagsResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a9c0bed9f975d4462ac7cb28f24963a77" kindref="member">SetTags</ref>(</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::map&lt;std::string,<sp/>std::string&gt;<sp/>tags,</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_tags_options" kindref="compound">SetBlobTagsOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_tags_options" kindref="compound">SetBlobTagsOptions</ref>(),</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;std::map&lt;std::string,<sp/>std::string&gt;&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a314dab2e7c92c0044045e2bcbae63f58" kindref="member">GetTags</ref>(</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_tags_options" kindref="compound">GetBlobTagsOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_tags_options" kindref="compound">GetBlobTagsOptions</ref>(),</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"></highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::SetBlobImmutabilityPolicyResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ade112c37b5858590349a2b5e46fd5709" kindref="member">SetImmutabilityPolicy</ref>(</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy" kindref="compound">Models::BlobImmutabilityPolicy</ref><sp/>immutabilityPolicy,</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options" kindref="compound">SetBlobImmutabilityPolicyOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_immutability_policy_options" kindref="compound">SetBlobImmutabilityPolicyOptions</ref>(),</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::DeleteBlobImmutabilityPolicyResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a13aefc1ffba111e1a40c6fab1b9e99e1" kindref="member">DeleteImmutabilityPolicy</ref>(</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_immutability_policy_options" kindref="compound">DeleteBlobImmutabilityPolicyOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_immutability_policy_options" kindref="compound">DeleteBlobImmutabilityPolicyOptions</ref>(),</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"></highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Response&lt;Models::SetBlobLegalHoldResult&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a7617dfc40b61d67af2cb8cfd53771da1" kindref="member">SetLegalHold</ref>(</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>hasLegalHold,</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_legal_hold_options" kindref="compound">SetBlobLegalHoldOptions</ref>&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_legal_hold_options" kindref="compound">SetBlobLegalHoldOptions</ref>(),</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::Context&amp;<sp/>context<sp/>=<sp/>Azure::Core::Context())<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"></highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="413" refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa765e21c8d0527fa727999530bc562d7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Core::Url<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa765e21c8d0527fa727999530bc562d7" kindref="member">m_blobUrl</ref>;</highlight></codeline>
+<codeline lineno="415" refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1afc38d8187d60217d1e8143996ec7df90" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;Azure::Core::Http::_internal::HttpPipeline&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1afc38d8187d60217d1e8143996ec7df90" kindref="member">m_pipeline</ref>;</highlight></codeline>
+<codeline lineno="417" refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a5231380a85d877a46b806a5ca316ef1f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Nullable&lt;EncryptionKey&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a5231380a85d877a46b806a5ca316ef1f" kindref="member">m_customerProvidedKey</ref>;</highlight></codeline>
+<codeline lineno="419" refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a3a6762883174de1e74f4aa7f888ff2c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Nullable&lt;std::string&gt;<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a3a6762883174de1e74f4aa7f888ff2c2" kindref="member">m_encryptionScope</ref>;</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"></highlight></codeline>
+<codeline lineno="421"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a648f91be2338d9726c8145ba214ac978" kindref="member">BlobClient</ref>(</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Core::Url<sp/>blobUrl,</highlight></codeline>
+<codeline lineno="424"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;Azure::Core::Http::_internal::HttpPipeline&gt;<sp/>pipeline,</highlight></codeline>
+<codeline lineno="425"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Nullable&lt;EncryptionKey&gt;<sp/>customerProvidedKey<sp/>=<sp/>Azure::Nullable&lt;EncryptionKey&gt;(),</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Nullable&lt;std::string&gt;<sp/>encryptionScope<sp/>=<sp/>Azure::Nullable&lt;std::string&gt;())</highlight></codeline>
+<codeline lineno="427"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa765e21c8d0527fa727999530bc562d7" kindref="member">m_blobUrl</ref>(std::move(blobUrl)),<sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1afc38d8187d60217d1e8143996ec7df90" kindref="member">m_pipeline</ref>(std::move(pipeline)),</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a5231380a85d877a46b806a5ca316ef1f" kindref="member">m_customerProvidedKey</ref>(std::move(customerProvidedKey)),</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a3a6762883174de1e74f4aa7f888ff2c2" kindref="member">m_encryptionScope</ref>(std::move(encryptionScope))</highlight></codeline>
+<codeline lineno="430"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="433"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client" kindref="compound">BlobContainerClient</ref>;</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Files::DataLake::DataLakeFileSystemClient;</highlight></codeline>
+<codeline lineno="435"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Files::DataLake::DataLakeDirectoryClient;</highlight></codeline>
+<codeline lineno="436"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Files::DataLake::DataLakeFileClient;</highlight></codeline>
+<codeline lineno="437"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client" kindref="compound">BlobLeaseClient</ref>;</highlight></codeline>
+<codeline lineno="438"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch" kindref="compound">BlobServiceBatch</ref>;</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_batch" kindref="compound">BlobContainerBatch</ref>;</highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="441"><highlight class="normal">}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Storage::Blobs</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/storage/blobs/blob_client.hpp"/>
+  </compounddef>
+</doxygen>

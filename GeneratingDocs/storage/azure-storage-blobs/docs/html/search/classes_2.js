@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['changeleaseoptions_0',['ChangeLeaseOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_change_lease_options.html',1,'Azure::Storage::Blobs']]],
+  ['changeleaseresult_1',['ChangeLeaseResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_change_lease_result.html',1,'Azure::Storage::Blobs::Models']]],
+  ['clearpagesoptions_2',['ClearPagesOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_clear_pages_options.html',1,'Azure::Storage::Blobs']]],
+  ['clearpagesresult_3',['ClearPagesResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_clear_pages_result.html',1,'Azure::Storage::Blobs::Models']]],
+  ['commitblocklistoptions_4',['CommitBlockListOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options.html',1,'Azure::Storage::Blobs']]],
+  ['commitblocklistresult_5',['CommitBlockListResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result.html',1,'Azure::Storage::Blobs::Models']]],
+  ['copyblobfromurioptions_6',['CopyBlobFromUriOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options.html',1,'Azure::Storage::Blobs']]],
+  ['copyblobfromuriresult_7',['CopyBlobFromUriResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_blob_from_uri_result.html',1,'Azure::Storage::Blobs::Models']]],
+  ['copystatus_8',['CopyStatus',['../class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status.html',1,'Azure::Storage::Blobs::Models']]],
+  ['corsrule_9',['CorsRule',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_cors_rule.html',1,'Azure::Storage::Blobs::Models']]],
+  ['createappendbloboptions_10',['CreateAppendBlobOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_create_append_blob_options.html',1,'Azure::Storage::Blobs']]],
+  ['createappendblobresult_11',['CreateAppendBlobResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_append_blob_result.html',1,'Azure::Storage::Blobs::Models']]],
+  ['createblobcontaineroptions_12',['CreateBlobContainerOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_container_options.html',1,'Azure::Storage::Blobs']]],
+  ['createblobcontainerresult_13',['CreateBlobContainerResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_container_result.html',1,'Azure::Storage::Blobs::Models']]],
+  ['createblobsnapshotoptions_14',['CreateBlobSnapshotOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_create_blob_snapshot_options.html',1,'Azure::Storage::Blobs']]],
+  ['createblobsnapshotresult_15',['CreateBlobSnapshotResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_blob_snapshot_result.html',1,'Azure::Storage::Blobs::Models']]],
+  ['createpagebloboptions_16',['CreatePageBlobOptions',['../struct_azure_1_1_storage_1_1_blobs_1_1_create_page_blob_options.html',1,'Azure::Storage::Blobs']]],
+  ['createpageblobresult_17',['CreatePageBlobResult',['../struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_create_page_blob_result.html',1,'Azure::Storage::Blobs::Models']]]
+];

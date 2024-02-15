@@ -1,0 +1,578 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="win__http__transport_8hpp" kind="file" language="C++">
+    <compoundname>win_http_transport.hpp</compoundname>
+    <includes refid="context_8hpp" local="yes">azure/core/context.hpp</includes>
+    <includes refid="http_8hpp" local="yes">azure/core/http/http.hpp</includes>
+    <includes refid="policy_8hpp" local="yes">azure/core/http/policies/policy.hpp</includes>
+    <includes refid="transport_8hpp" local="yes">azure/core/http/transport.hpp</includes>
+    <includes refid="unique__handle_8hpp" local="yes">azure/core/internal/unique_handle.hpp</includes>
+    <includes refid="platform_8hpp" local="yes">azure/core/platform.hpp</includes>
+    <includes local="no">memory</includes>
+    <includes local="no">type_traits</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">wincrypt.h</includes>
+    <includes local="no">winhttp.h</includes>
+    <includedby refid="win__http__request_8hpp" local="yes">src/http/winhttp/win_http_request.hpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>azure/core/azure_assert.hpp</label>
+        <link refid="azure__assert_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>azure/core/case_insensitive_containers.hpp</label>
+        <link refid="case__insensitive__containers_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>azure/core/context.hpp</label>
+        <link refid="context_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>azure/core/credentials/credentials.hpp</label>
+        <link refid="credentials_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>azure/core/datetime.hpp</label>
+        <link refid="datetime_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>azure/core/exception.hpp</label>
+        <link refid="exception_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>azure/core/http/http.hpp</label>
+        <link refid="http_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>azure/core/http/http_status_code.hpp</label>
+        <link refid="http__status__code_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>azure/core/http/policies/policy.hpp</label>
+        <link refid="policy_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>azure/core/http/raw_response.hpp</label>
+        <link refid="raw__response_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>azure/core/http/transport.hpp</label>
+        <link refid="transport_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/http/win_http_transport.hpp</label>
+        <link refid="win__http__transport_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>azure/core/internal/contract.hpp</label>
+        <link refid="contract_8hpp_source"/>
+      </node>
+      <node id="43">
+        <label>azure/core/internal/http/http_sanitizer.hpp</label>
+        <link refid="http__sanitizer_8hpp_source"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>azure/core/internal/http/user_agent.hpp</label>
+        <link refid="user__agent_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>azure/core/internal/strings.hpp</label>
+        <link refid="strings_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>azure/core/internal/unique_handle.hpp</label>
+        <link refid="unique__handle_8hpp_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>azure/core/io/body_stream.hpp</label>
+        <link refid="body__stream_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>azure/core/nullable.hpp</label>
+        <link refid="nullable_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>azure/core/platform.hpp</label>
+        <link refid="platform_8hpp"/>
+      </node>
+      <node id="36">
+        <label>azure/core/url.hpp</label>
+        <link refid="url_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>azure/core/uuid.hpp</label>
+        <link refid="uuid_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>algorithm</label>
+      </node>
+      <node id="46">
+        <label>array</label>
+      </node>
+      <node id="13">
+        <label>atomic</label>
+      </node>
+      <node id="9">
+        <label>azure/core/dll_import_export.hpp</label>
+      </node>
+      <node id="12">
+        <label>azure/core/rtti.hpp</label>
+      </node>
+      <node id="7">
+        <label>cassert</label>
+      </node>
+      <node id="10">
+        <label>chrono</label>
+      </node>
+      <node id="48">
+        <label>cstddef</label>
+      </node>
+      <node id="28">
+        <label>cstdint</label>
+      </node>
+      <node id="29">
+        <label>cstdio</label>
+      </node>
+      <node id="5">
+        <label>cstdlib</label>
+      </node>
+      <node id="21">
+        <label>cstring</label>
+      </node>
+      <node id="40">
+        <label>exception</label>
+      </node>
+      <node id="30">
+        <label>functional</label>
+      </node>
+      <node id="22">
+        <label>map</label>
+      </node>
+      <node id="14">
+        <label>memory</label>
+      </node>
+      <node id="41">
+        <label>mutex</label>
+      </node>
+      <node id="34">
+        <label>new</label>
+      </node>
+      <node id="11">
+        <label>ostream</label>
+      </node>
+      <node id="23">
+        <label>set</label>
+      </node>
+      <node id="49">
+        <label>shared_mutex</label>
+      </node>
+      <node id="15">
+        <label>stdexcept</label>
+      </node>
+      <node id="47">
+        <label>stdint.h</label>
+      </node>
+      <node id="6">
+        <label>string</label>
+      </node>
+      <node id="16">
+        <label>type_traits</label>
+      </node>
+      <node id="37">
+        <label>unordered_set</label>
+      </node>
+      <node id="35">
+        <label>utility</label>
+      </node>
+      <node id="31">
+        <label>vector</label>
+      </node>
+      <node id="51">
+        <label>wincrypt.h</label>
+      </node>
+      <node id="52">
+        <label>winhttp.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>inc/azure/core/http/win_http_transport.hpp</label>
+        <link refid="win__http__transport_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>src/http/winhttp/win_http_request.hpp</label>
+        <link refid="win__http__request_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" prot="public">Azure::Core::Http::WinHttpTransportOptions</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport" prot="public">Azure::Core::Http::WinHttpTransport</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_http">Azure::Core::Http</innernamespace>
+    <briefdescription>
+<para><ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">Azure::Core::Http::HttpTransport</ref> implementation via WinHTTP. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="context_8hpp" kindref="compound">azure/core/context.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="http_8hpp" kindref="compound">azure/core/http/http.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="policy_8hpp" kindref="compound">azure/core/http/policies/policy.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="transport_8hpp" kindref="compound">azure/core/http/transport.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/core/internal/unique_handle.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="platform_8hpp" kindref="compound">azure/core/platform.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(AZ_PLATFORM_WINDOWS)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>!defined(WIN32_LEAN_AND_MEAN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WIN32_LEAN_AND_MEAN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>!defined(NOMINMAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NOMINMAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;windows.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;memory&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;type_traits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;wincrypt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;winhttp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_azure" kindref="compound">Azure</ref><sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_detail<sp/>{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">UniqueHandleHelper&lt;HINTERNET&gt;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>FreeHandle(HINTERNET<sp/>obj)<sp/>{<sp/>WinHttpCloseHandle(obj);<sp/>}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal">type<sp/>=<sp/>_internal::BasicUniqueHandle&lt;void,<sp/>FreeHandle&gt;;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>_detail</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Http<sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_detail<sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>DefaultUploadChunkSize<sp/>=<sp/>1024<sp/>*<sp/>64;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>MaximumUploadChunkSize<sp/>=<sp/>1024<sp/>*<sp/>1024;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Forward<sp/>declaration<sp/>for<sp/>WinHttpRequest.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">WinHttpRequest;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>_detail</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kindref="compound">WinHttpTransportOptions</ref><sp/>final</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="71" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a61b3b8519a98c64c6204ebab417c248b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a61b3b8519a98c64c6204ebab417c248b" kindref="member">IgnoreUnknownCertificateAuthority</ref>{</highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a8b9852962aaf01fdd50271ec945cd037" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a8b9852962aaf01fdd50271ec945cd037" kindref="member">IgnoreInvalidCertificateCommonName</ref>{</highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a841ee45e1fa533932f96c4e59a21598f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a841ee45e1fa533932f96c4e59a21598f" kindref="member">EnableSystemDefaultProxy</ref>{</highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a1d00f0e086279a56eb3135331d6d0ca1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a1d00f0e086279a56eb3135331d6d0ca1" kindref="member">EnableCertificateRevocationListCheck</ref>{</highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aaee8369faa29d288f349fc88e04a1462" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aaee8369faa29d288f349fc88e04a1462" kindref="member">ProxyInformation</ref>;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aa2b08dcb78deb040e044538ddfb20536" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable&lt;std::string&gt;</ref><sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aa2b08dcb78deb040e044538ddfb20536" kindref="member">ProxyUserName</ref>;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1ab34db2c7c64b9e85b4e3b1e67816bacb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable&lt;std::string&gt;</ref><sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1ab34db2c7c64b9e85b4e3b1e67816bacb" kindref="member">ProxyPassword</ref>;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a49e20549ca5ccd9dcbc0a7ac08c08976" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a49e20549ca5ccd9dcbc0a7ac08c08976" kindref="member">ExpectedTlsRootCertificates</ref>;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport" kindref="compound">WinHttpTransport</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">HttpTransport</ref><sp/>{</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kindref="compound">WinHttpTransportOptions</ref><sp/>m_options;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>m_sessionhandle<sp/>is<sp/>const<sp/>to<sp/>ensure<sp/>immutability.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Azure::Core::_internal::UniqueHandle&lt;HINTERNET&gt;<sp/>m_sessionHandle;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Core::_internal::UniqueHandle&lt;HINTERNET&gt;<sp/>CreateSessionHandle();</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Core::_internal::UniqueHandle&lt;HINTERNET&gt;<sp/>CreateConnectionHandle(</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Azure::Core::Url</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>url,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>context);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::unique_ptr&lt;_detail::WinHttpRequest&gt;<sp/>CreateRequestHandle(</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Core::_internal::UniqueHandle&lt;HINTERNET&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>connectionHandle,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_url" kindref="compound">Azure::Core::Url</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>url,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">Azure::Core::Http::HttpMethod</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>method);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Callback<sp/>to<sp/>allow<sp/>a<sp/>derived<sp/>transport<sp/>to<sp/>extract<sp/>the<sp/>request<sp/>handle.<sp/>Used<sp/>for<sp/>WebSocket</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>transports.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnUpgradedConnection(std::unique_ptr&lt;_detail::WinHttpRequest&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;){};</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetErrorAndThrow(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>exceptionMessage,<sp/>DWORD<sp/>error<sp/>=<sp/>GetLastError());</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1af91879ab9fa7b1fcd2bc0a95b99bc808" kindref="member">WinHttpTransport</ref>(<ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kindref="compound">WinHttpTransportOptions</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>options<sp/>=<sp/><ref refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kindref="compound">WinHttpTransportOptions</ref>());</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1af91879ab9fa7b1fcd2bc0a95b99bc808" kindref="member">WinHttpTransport</ref>(<ref refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options" kindref="compound">Azure::Core::Http::Policies::TransportOptions</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>options);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>std::unique_ptr&lt;RawResponse&gt;<sp/><ref refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a2cda516cd5af67b09bd02d65d443b446" kindref="member">Send</ref>(<ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref>&amp;<sp/>request,<sp/><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>context)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>See<sp/>also:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>[Core<sp/>Guidelines<sp/>C.35:<sp/>&quot;A<sp/>base<sp/>class<sp/>destructor<sp/>should<sp/>be<sp/>either<sp/>public</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>and<sp/>virtual<sp/>or<sp/>protected<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>non-virtual&quot;](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport" kindref="compound">~WinHttpTransport</ref>();</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Http</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal">}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/http/win_http_transport.hpp"/>
+  </compounddef>
+</doxygen>

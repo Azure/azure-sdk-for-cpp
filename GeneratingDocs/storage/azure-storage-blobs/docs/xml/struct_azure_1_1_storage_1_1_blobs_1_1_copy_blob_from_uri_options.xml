@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options" kind="struct" language="C++" prot="public">
+    <compoundname>Azure::Storage::Blobs::CopyBlobFromUriOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a7d0126fe86bb1aa33c6827ad1594679b" prot="public" static="no" mutable="no">
+        <type>Storage::Metadata</type>
+        <definition>Storage::Metadata Azure::Storage::Blobs::CopyBlobFromUriOptions::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::Metadata</qualifiedname>
+        <briefdescription>
+<para>Specifies user-defined name-value pairs associated with the blob. If no name-value pairs are specified, the operation will copy the metadata from the source blob or file to the destination blob. If one or more name-value pairs are specified, the destination blob is created with the specified metadata, and metadata is not copied from the source blob or file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="588" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="588" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a821d79facd4ff07a2f6046ea19166c37" prot="public" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::string &gt;</type>
+        <definition>std::map&lt;std::string, std::string&gt; Azure::Storage::Blobs::CopyBlobFromUriOptions::Tags</definition>
+        <argsstring></argsstring>
+        <name>Tags</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::Tags</qualifiedname>
+        <briefdescription>
+<para>The tags to set for this blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="593" column="14" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="593" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a336818880afe56260cd599681587f86d" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" kindref="compound">BlobAccessConditions</ref></type>
+        <definition>BlobAccessConditions Azure::Storage::Blobs::CopyBlobFromUriOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="598" column="26" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="598" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a2ef34469ea60fd18cf708493255d29e5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>Azure::Storage::Blobs::CopyBlobFromUriOptions::SourceAccessConditions</definition>
+        <argsstring></argsstring>
+        <name>SourceAccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::SourceAccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that the source must meet to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Lease access condition only works for API versions before 2012-02-12. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="607" column="27"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a1402cb3fdc63c5405c5ebcfc5c4e612e" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">Models::AccessTier</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::AccessTier&gt; Azure::Storage::Blobs::CopyBlobFromUriOptions::AccessTier</definition>
+        <argsstring></argsstring>
+        <name>AccessTier</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::AccessTier</qualifiedname>
+        <briefdescription>
+<para>Specifies the tier to be set on the target blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="612" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="612" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a5c719d15c725f6796c935d56dbfdc955" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; ContentHash &gt;</type>
+        <definition>Azure::Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::CopyBlobFromUriOptions::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+<para>Hash of the blob content. This hash is used to verify the integrity of the blob during transport. When this header is specified, the storage service checks the hash that has arrived with the one that was sent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="619" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="619" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a3727b530dc902344d360f478ea3032f5" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy" kindref="compound">Models::BlobImmutabilityPolicy</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::BlobImmutabilityPolicy&gt; Azure::Storage::Blobs::CopyBlobFromUriOptions::ImmutabilityPolicy</definition>
+        <argsstring></argsstring>
+        <name>ImmutabilityPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::ImmutabilityPolicy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Immutability policy to set on the destination blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="624" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="624" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a109a6db94b4ad0fa37a2053df6d68867" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; bool &gt;</type>
+        <definition>Azure::Nullable&lt;bool&gt; Azure::Storage::Blobs::CopyBlobFromUriOptions::HasLegalHold</definition>
+        <argsstring></argsstring>
+        <name>HasLegalHold</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::HasLegalHold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the destination blob has a legal hold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="628" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="628" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a6b92c7750a0c30f294145e7a33b12e7c" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode" kindref="compound">Models::BlobCopySourceTagsMode</ref></type>
+        <definition>Models::BlobCopySourceTagsMode Azure::Storage::Blobs::CopyBlobFromUriOptions::CopySourceTagsMode</definition>
+        <argsstring></argsstring>
+        <name>CopySourceTagsMode</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::CopySourceTagsMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates the tags on the destination blob should be copied from source or replaced by Tags in this option. Default is to replace. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="634" column="36" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="634" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1ac75fa959db252a8993e00d76a7258127" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::CopyBlobFromUriOptions::SourceAuthorization</definition>
+        <argsstring></argsstring>
+        <name>SourceAuthorization</name>
+        <qualifiedname>Azure::Storage::Blobs::CopyBlobFromUriOptions::SourceAuthorization</qualifiedname>
+        <briefdescription>
+<para>Optional. Source authorization used to access the source file. The format is: &lt;scheme&gt; &lt;signature&gt; Only Bearer type is supported. Credentials should be a valid OAuth access token to copy source. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="642" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="642" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a267904b7db1f9e53632dc551aaea037c" kindref="member">Azure::Storage::Blobs::BlobClient::CopyFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::CopyBlobFromUriOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>CopySourceTagsMode</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Azure::Storage::Blobs::Models::BlobCopySourceTagsMode</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_copy_source_tags_mode"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>Copy</edgelabel>
+          <edgelabel>Replace</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="5">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="579" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="580" bodyend="643"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a336818880afe56260cd599681587f86d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a1402cb3fdc63c5405c5ebcfc5c4e612e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>AccessTier</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a6b92c7750a0c30f294145e7a33b12e7c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>CopySourceTagsMode</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a109a6db94b4ad0fa37a2053df6d68867" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>HasLegalHold</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a3727b530dc902344d360f478ea3032f5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>ImmutabilityPolicy</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a7d0126fe86bb1aa33c6827ad1594679b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>Metadata</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a2ef34469ea60fd18cf708493255d29e5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>SourceAccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1ac75fa959db252a8993e00d76a7258127" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>SourceAuthorization</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a821d79facd4ff07a2f6046ea19166c37" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>Tags</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_copy_blob_from_uri_options_1a5c719d15c725f6796c935d56dbfdc955" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CopyBlobFromUriOptions</scope><name>TransactionalContentHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

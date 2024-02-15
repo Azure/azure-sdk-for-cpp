@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::StartBlobCopyOperation</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::Operation&lt; Models::BlobProperties &gt;</basecompoundref>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a12911f29b88aed646c3c5d6505d499aa" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;BlobClient&gt; Azure::Storage::Blobs::StartBlobCopyOperation::m_blobClient</definition>
+        <argsstring></argsstring>
+        <name>m_blobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::m_blobClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="254" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a8b60ed0e28fcf30b8ba6a80c7e74207b" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_properties" kindref="compound">Models::BlobProperties</ref></type>
+        <definition>Models::BlobProperties Azure::Storage::Blobs::StartBlobCopyOperation::m_pollResult</definition>
+        <argsstring></argsstring>
+        <name>m_pollResult</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::m_pollResult</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="255" column="30" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="255" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a9aa69ffefff6e4362e89b63bab53f6ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Blobs::BlobClient</definition>
+        <argsstring></argsstring>
+        <name>Blobs::BlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::BlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">Blobs::BlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="257" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a479df75421e90f28afeeb228e4fab0a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Blobs::PageBlobClient</definition>
+        <argsstring></argsstring>
+        <name>Blobs::PageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::PageBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">Blobs::PageBlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="258" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="258" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1ada47a0ad4f92d62c495d156bf2239c8e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_properties" kindref="compound">Models::BlobProperties</ref></type>
+        <definition>Models::BlobProperties Azure::Storage::Blobs::StartBlobCopyOperation::Value</definition>
+        <argsstring>() const override</argsstring>
+        <name>Value</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::Value</qualifiedname>
+        <briefdescription>
+<para>Get the <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_properties" kindref="compound">Azure::Storage::Blobs::Models::BlobProperties</ref> object, which includes the latest copy information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_properties" kindref="compound">Azure::Storage::Blobs::Models::BlobProperties</ref> object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="229" column="30" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="229" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a80f9386b33ac61f768c70c15d6b78f71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::StartBlobCopyOperation::StartBlobCopyOperation</definition>
+        <argsstring>()=default</argsstring>
+        <name>StartBlobCopyOperation</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::StartBlobCopyOperation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="231" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a6d31dfe4afe5b2a1a394155db219d989" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::StartBlobCopyOperation::StartBlobCopyOperation</definition>
+        <argsstring>(StartBlobCopyOperation &amp;&amp;)=default</argsstring>
+        <name>StartBlobCopyOperation</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::StartBlobCopyOperation</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>Construct a <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref> from a <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="237" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1ae0bf798e069ae26604e43d67cc6927b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref> &amp;</type>
+        <definition>StartBlobCopyOperation &amp; Azure::Storage::Blobs::StartBlobCopyOperation::operator=</definition>
+        <argsstring>(StartBlobCopyOperation &amp;&amp;)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Move a <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation" kindref="compound">StartBlobCopyOperation</ref> . </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="240" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1af029d4bbf8255c4e32609edf19c2644a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::StartBlobCopyOperation::~StartBlobCopyOperation</definition>
+        <argsstring>() override</argsstring>
+        <name>~StartBlobCopyOperation</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::~StartBlobCopyOperation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="242" column="7" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="242" bodyend="242"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a52072186b507e99c6bded4f9da327ea6" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::StartBlobCopyOperation::GetResumeToken</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetResumeToken</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::GetResumeToken</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="245" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="245" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a474a1bf4baf93d14104b082df77ee50d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; Azure::Core::Http::RawResponse &gt;</type>
+        <definition>std::unique_ptr&lt; Azure::Core::Http::RawResponse &gt; Azure::Storage::Blobs::StartBlobCopyOperation::PollInternal</definition>
+        <argsstring>(const Azure::Core::Context &amp;context) override</argsstring>
+        <name>PollInternal</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::PollInternal</qualifiedname>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="247" column="23" bodyfile="src/blob_responses.cpp" bodystart="13" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a4aef8416c706be45902369e5a93f6e4d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_properties" kindref="compound">Models::BlobProperties</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::BlobProperties &gt; Azure::Storage::Blobs::StartBlobCopyOperation::PollUntilDoneInternal</definition>
+        <argsstring>(std::chrono::milliseconds period, Azure::Core::Context &amp;context) override</argsstring>
+        <name>PollUntilDoneInternal</name>
+        <qualifiedname>Azure::Storage::Blobs::StartBlobCopyOperation::PollUntilDoneInternal</qualifiedname>
+        <param>
+          <type>std::chrono::milliseconds</type>
+          <declname>period</declname>
+        </param>
+        <param>
+          <type>Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="250" column="23" bodyfile="src/blob_responses.cpp" bodystart="38" bodyend="62"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A long-running operation to copy a blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Operation&lt; Models::BlobProperties &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::StartBlobCopyOperation</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::Operation&lt; Models::BlobProperties &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::StartBlobCopyOperation</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="221" column="5" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="221" bodyend="259"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a9aa69ffefff6e4362e89b63bab53f6ab" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>Blobs::BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a479df75421e90f28afeeb228e4fab0a0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>Blobs::PageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a52072186b507e99c6bded4f9da327ea6" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>GetResumeToken</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a12911f29b88aed646c3c5d6505d499aa" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>m_blobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a8b60ed0e28fcf30b8ba6a80c7e74207b" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>m_pollResult</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1ae0bf798e069ae26604e43d67cc6927b6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a474a1bf4baf93d14104b082df77ee50d" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>PollInternal</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a4aef8416c706be45902369e5a93f6e4d" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>PollUntilDoneInternal</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a80f9386b33ac61f768c70c15d6b78f71" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>StartBlobCopyOperation</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1a6d31dfe4afe5b2a1a394155db219d989" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>StartBlobCopyOperation</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1ada47a0ad4f92d62c495d156bf2239c8e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>Value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_start_blob_copy_operation_1af029d4bbf8255c4e32609edf19c2644a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StartBlobCopyOperation</scope><name>~StartBlobCopyOperation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

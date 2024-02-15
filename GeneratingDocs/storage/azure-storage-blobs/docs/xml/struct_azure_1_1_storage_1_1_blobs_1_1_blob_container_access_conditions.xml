@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobContainerAccessConditions</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::ModifiedConditions</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">LeaseAccessConditions</basecompoundref>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <briefdescription>
+<para>Specifies access conditions for a container. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlobContainerAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlobContainerAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_container_access_conditions"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="64" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="66" bodyend="67"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

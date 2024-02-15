@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="md__c_h_a_n_g_e_l_o_g" kind="page">
+    <compoundname>md__c_h_a_n_g_e_l_o_g</compoundname>
+    <title>Release History</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md__c_h_a_n_g_e_l_o_g_1release-history"/> </para>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta5-unreleased">
+<title>1.0.0-beta.5 (Unreleased)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added">
+<title>Features Added</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes">
+<title>Breaking Changes</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed">
+<title>Bugs Fixed</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes">
+<title>Other Changes</title></sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta4-2023-02-02">
+<title>1.0.0-beta.4 (2023-02-02)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-1">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Aligned OpenTelemetry tracing infrastructure with OpenTelemetry 1.17.0 conventions for use with Azure Monitor.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-1">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Suppress several warnings from opentelemetry-cpp package.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta3-2022-08-04">
+<title>1.0.0-beta.3 (2022-08-04)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-2">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Removed hard dependency on <computeroutput>opentelemetry-cpp</computeroutput> package version.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta2-2022-06-30">
+<title>1.0.0-beta.2 (2022-06-30)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-1">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>The <computeroutput><ref refid="class_azure_1_1_core_1_1_tracing_1_1_open_telemetry_1_1_open_telemetry_provider" kindref="compound">Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider</ref></computeroutput> type can only be instantiated via a factory method: <computeroutput>OpenTelemetryProvider::Create()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-3">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>_internal</computeroutput> APIs from the public API surface. Also removed most of the <computeroutput>_internal</computeroutput> APIs from the public <computeroutput><ref refid="opentelemetry_8hpp_source" kindref="compound">opentelemetry.hpp</ref></computeroutput> headers.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta1-2022-06-07">
+<title>1.0.0-beta.1 (2022-06-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-2">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Initial release </para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+    </detaileddescription>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

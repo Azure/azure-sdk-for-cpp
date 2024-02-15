@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_1bb1f509a3450c15f50f4c0fd42009e5" kind="dir">
+    <compoundname>inc/azure/identity</compoundname>
+    <innerdir refid="dir_a2c20534e341cae0ffd13c79a073b66a">inc/azure/identity/detail</innerdir>
+    <innerfile refid="azure__cli__credential_8hpp">azure_cli_credential.hpp</innerfile>
+    <innerfile refid="chained__token__credential_8hpp">chained_token_credential.hpp</innerfile>
+    <innerfile refid="client__certificate__credential_8hpp">client_certificate_credential.hpp</innerfile>
+    <innerfile refid="client__secret__credential_8hpp">client_secret_credential.hpp</innerfile>
+    <innerfile refid="default__azure__credential_8hpp">default_azure_credential.hpp</innerfile>
+    <innerfile refid="environment__credential_8hpp">environment_credential.hpp</innerfile>
+    <innerfile refid="managed__identity__credential_8hpp">managed_identity_credential.hpp</innerfile>
+    <innerfile refid="workload__identity__credential_8hpp">workload_identity_credential.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/identity/"/>
+  </compounddef>
+</doxygen>

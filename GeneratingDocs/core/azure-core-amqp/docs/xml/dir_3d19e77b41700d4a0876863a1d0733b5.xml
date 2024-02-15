@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_3d19e77b41700d4a0876863a1d0733b5" kind="dir">
+    <compoundname>src/amqp/private</compoundname>
+    <innerfile refid="claims__based__security__impl_8hpp">claims_based_security_impl.hpp</innerfile>
+    <innerfile refid="connection__impl_8hpp">connection_impl.hpp</innerfile>
+    <innerfile refid="link__impl_8hpp">link_impl.hpp</innerfile>
+    <innerfile refid="management__impl_8hpp">management_impl.hpp</innerfile>
+    <innerfile refid="message__receiver__impl_8hpp">message_receiver_impl.hpp</innerfile>
+    <innerfile refid="message__sender__impl_8hpp">message_sender_impl.hpp</innerfile>
+    <innerfile refid="session__impl_8hpp">session_impl.hpp</innerfile>
+    <innerfile refid="unique__handle_8hpp">unique_handle.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/amqp/private/"/>
+  </compounddef>
+</doxygen>

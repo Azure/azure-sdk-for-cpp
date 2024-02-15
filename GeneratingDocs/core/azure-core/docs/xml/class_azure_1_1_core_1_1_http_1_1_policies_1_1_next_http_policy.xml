@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::Policies::NextHttpPolicy</compoundname>
+    <includes refid="policy_8hpp" local="no">policy.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a5fe4fd0e29cc7e9d1aca10838be9c3ed" prot="private" static="no" mutable="no">
+        <type>const size_t</type>
+        <definition>const size_t Azure::Core::Http::Policies::NextHttpPolicy::m_index</definition>
+        <argsstring></argsstring>
+        <name>m_index</name>
+        <qualifiedname>Azure::Core::Http::Policies::NextHttpPolicy::m_index</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="305" column="18" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="305" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a076c0712d5c2bc9659b8dfa85689ab5d" prot="private" static="no" mutable="no">
+        <type>const std::vector&lt; std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kindref="compound">HttpPolicy</ref> &gt; &gt; &amp;</type>
+        <definition>const std::vector&lt;std::unique_ptr&lt;HttpPolicy&gt; &gt;&amp; Azure::Core::Http::Policies::NextHttpPolicy::m_policies</definition>
+        <argsstring></argsstring>
+        <name>m_policies</name>
+        <qualifiedname>Azure::Core::Http::Policies::NextHttpPolicy::m_policies</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="306" column="23" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="306" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a9563e99253733b0ed54cd0f467e72afe" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::Policies::NextHttpPolicy::NextHttpPolicy</definition>
+        <argsstring>(size_t index, const std::vector&lt; std::unique_ptr&lt; HttpPolicy &gt; &gt; &amp;policies)</argsstring>
+        <name>NextHttpPolicy</name>
+        <qualifiedname>Azure::Core::Http::Policies::NextHttpPolicy::NextHttpPolicy</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kindref="compound">HttpPolicy</ref> &gt; &gt; &amp;</type>
+          <declname>policies</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an abstraction representing a next line in the stack sequence of policies, from the caller&apos;s perspective. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A sequential index of this policy in the stack sequence of policies. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>policies</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A vector of unique pointers next in the line to be invoked after the current policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="317" column="14" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="317" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a9c1768b963eade38336239f48d471097" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; RawResponse &gt; NextHttpPolicy::Send</definition>
+        <argsstring>(Request &amp;request, Context const &amp;context)</argsstring>
+        <name>Send</name>
+        <qualifiedname>Azure::Core::Http::Policies::NextHttpPolicy::Send</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Applies this HTTP policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An HTTP request being sent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An HTTP response after this policy, and all subsequent HTTP policies in the stack sequence of policies have been applied. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="331" column="21" bodyfile="src/http/policy.cpp" bodystart="14" bodyend="23"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The next HTTP policy in the stack sequence of policies. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para><computeroutput>NextHttpPolicy</computeroutput> is an abstraction representing the next policy in the stack sequence of policies, from the caller&apos;s perspective. </para>
+</simplesect>
+<simplesect kind="note"><para>Inside the <ref refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1ae7cff2dc6590af4427a41d7eaeabc886" kindref="member">Azure::Core::Http::Policies::HttpPolicy::Send()</ref> function implementation, an object of ths class represent the next HTTP policy in the stack of HTTP policies, relative to the curent HTTP policy. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/http/policies/policy.hpp" line="304" column="3" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="304" bodyend="332"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a5fe4fd0e29cc7e9d1aca10838be9c3ed" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Policies::NextHttpPolicy</scope><name>m_index</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a076c0712d5c2bc9659b8dfa85689ab5d" prot="private" virt="non-virtual"><scope>Azure::Core::Http::Policies::NextHttpPolicy</scope><name>m_policies</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a9563e99253733b0ed54cd0f467e72afe" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::NextHttpPolicy</scope><name>NextHttpPolicy</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a9c1768b963eade38336239f48d471097" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::NextHttpPolicy</scope><name>Send</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_7d6893ff7a5980c9033ed77439b5f032" kind="dir">
+    <compoundname>inc/azure</compoundname>
+    <innerdir refid="dir_1bb1f509a3450c15f50f4c0fd42009e5">inc/azure/identity</innerdir>
+    <innerfile refid="identity_8hpp">identity.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::QueryBlobResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a9be87fe5cafa285b1fbf4a9651b16505" prot="public" static="no" mutable="no">
+        <type>std::unique_ptr&lt; Core::IO::BodyStream &gt;</type>
+        <definition>std::unique_ptr&lt;Core::IO::BodyStream&gt; Azure::Storage::Blobs::Models::QueryBlobResult::BodyStream</definition>
+        <argsstring></argsstring>
+        <name>BodyStream</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::QueryBlobResult::BodyStream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The response body stream. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2621" column="23" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2621" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a0acb0e32460a6ce6680e897cb8e83769" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::QueryBlobResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::QueryBlobResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2627" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2627" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a449da03757431dd84049c92bdb657d77" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::QueryBlobResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::QueryBlobResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2632" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2632" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a5639414824199dbae57ea6a26b94a8cb" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref> &gt;</type>
+        <definition>Nullable&lt;LeaseDurationType&gt; Azure::Storage::Blobs::Models::QueryBlobResult::LeaseDuration</definition>
+        <argsstring></argsstring>
+        <name>LeaseDuration</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::QueryBlobResult::LeaseDuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>When a blob is leased, specifies whether the lease is of infinite or fixed duration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2636" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2636" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a81fde1ed6a4ecc3cb1f23b513eadc094" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_state" kindref="compound">Models::LeaseState</ref></type>
+        <definition>Models::LeaseState Azure::Storage::Blobs::Models::QueryBlobResult::LeaseState</definition>
+        <argsstring></argsstring>
+        <name>LeaseState</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::QueryBlobResult::LeaseState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lease state of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2640" column="26" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2640" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1ae6f2eb3d9e53a560968daae26ed2c0af" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">Models::LeaseStatus</ref></type>
+        <definition>Models::LeaseStatus Azure::Storage::Blobs::Models::QueryBlobResult::LeaseStatus</definition>
+        <argsstring></argsstring>
+        <name>LeaseStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::QueryBlobResult::LeaseStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current lease status of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2644" column="27" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2644" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a02f30b591b62a5359c74f17eb3c0b947" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::QueryBlobResult::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::QueryBlobResult::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The value of this header is set to true if the blob data and application metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2651" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2651" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a6188259279eab1bd8dbff684258ea673" kindref="member">Azure::Storage::Blobs::BlockBlobClient::Query</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::LeaseState</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_state"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Available</edgelabel>
+          <edgelabel>Breaking</edgelabel>
+          <edgelabel>Broken</edgelabel>
+          <edgelabel>Expired</edgelabel>
+          <edgelabel>Leased</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::LeaseStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Locked</edgelabel>
+          <edgelabel>Unlocked</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::QueryBlobResult</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>LeaseState</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>LeaseStatus</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2616" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2617" bodyend="2652"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a9be87fe5cafa285b1fbf4a9651b16505" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::QueryBlobResult</scope><name>BodyStream</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a449da03757431dd84049c92bdb657d77" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::QueryBlobResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a02f30b591b62a5359c74f17eb3c0b947" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::QueryBlobResult</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a0acb0e32460a6ce6680e897cb8e83769" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::QueryBlobResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a5639414824199dbae57ea6a26b94a8cb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::QueryBlobResult</scope><name>LeaseDuration</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1a81fde1ed6a4ecc3cb1f23b513eadc094" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::QueryBlobResult</scope><name>LeaseState</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result_1ae6f2eb3d9e53a560968daae26ed2c0af" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::QueryBlobResult</scope><name>LeaseStatus</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_storage" kind="namespace" language="C++">
+    <compoundname>Azure::Storage</compoundname>
+    <innerclass refid="class_azure_1_1_storage_1_1_deferred_response" prot="public">Azure::Storage::DeferredResponse</innerclass>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_blobs">Azure::Storage::Blobs</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_files">Azure::Storage::Files</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_sas">Azure::Storage::Sas</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/append_blob_client.hpp" line="11" column="15"/>
+  </compounddef>
+</doxygen>

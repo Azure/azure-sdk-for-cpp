@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['send_0',['Send',['../class_azure_1_1_core_1_1_http_1_1_curl_transport.html#aa6a92d65b363e50a2293b6bada21ef3e',1,'Azure::Core::Http::CurlTransport::Send()'],['../class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy.html#ae7cff2dc6590af4427a41d7eaeabc886',1,'Azure::Core::Http::Policies::HttpPolicy::Send()'],['../class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy.html#a9c1768b963eade38336239f48d471097',1,'Azure::Core::Http::Policies::NextHttpPolicy::Send()'],['../class_azure_1_1_core_1_1_http_1_1_http_transport.html#aab0a38b3e67079a9ede743c3e8de909d',1,'Azure::Core::Http::HttpTransport::Send()'],['../class_azure_1_1_core_1_1_http_1_1_win_http_transport.html#a2cda516cd5af67b09bd02d65d443b446',1,'Azure::Core::Http::WinHttpTransport::Send()']]],
+  ['sendbuffer_1',['SendBuffer',['../class_azure_1_1_core_1_1_http_1_1_curl_network_connection.html#afbc09222e1cd35e2173b397153015501',1,'Azure::Core::Http::CurlNetworkConnection::SendBuffer()'],['../class_azure_1_1_core_1_1_http_1_1_curl_connection.html#a38965e729c4fb3fb234f1753562e7116',1,'Azure::Core::Http::CurlConnection::SendBuffer()']]],
+  ['setbody_2',['SetBody',['../class_azure_1_1_core_1_1_http_1_1_raw_response.html#a4669c61fbdd1916c7cb4951d990a91a5',1,'Azure::Core::Http::RawResponse']]],
+  ['setbodystream_3',['SetBodyStream',['../class_azure_1_1_core_1_1_http_1_1_raw_response.html#af12357c369ecf7071416b97697868cfa',1,'Azure::Core::Http::RawResponse']]],
+  ['setheader_4',['SetHeader',['../class_azure_1_1_core_1_1_http_1_1_request.html#afea0c98e7e3ceace622958a59c6c44b7',1,'Azure::Core::Http::Request::SetHeader()'],['../class_azure_1_1_core_1_1_http_1_1_raw_response.html#a5265579e09f5254509c9aa40ff16ce7d',1,'Azure::Core::Http::RawResponse::SetHeader()']]],
+  ['sethost_5',['SetHost',['../class_azure_1_1_core_1_1_url.html#adad0f462a391e619644a1b64be2c1da2',1,'Azure::Core::Url']]],
+  ['setlevel_6',['SetLevel',['../class_azure_1_1_core_1_1_diagnostics_1_1_logger.html#a04c04d487a84eb71da1951acff3a6660',1,'Azure::Core::Diagnostics::Logger']]],
+  ['setlistener_7',['SetListener',['../class_azure_1_1_core_1_1_diagnostics_1_1_logger.html#a6e5b3340f691b3003ce0c0f4354d74b3',1,'Azure::Core::Diagnostics::Logger']]],
+  ['setpath_8',['SetPath',['../class_azure_1_1_core_1_1_url.html#aa8a555680713c54ec99a64a7176d2d49',1,'Azure::Core::Url']]],
+  ['setport_9',['SetPort',['../class_azure_1_1_core_1_1_url.html#a417410d68be3066878748f871348b3b3',1,'Azure::Core::Url']]],
+  ['setqueryparameters_10',['SetQueryParameters',['../class_azure_1_1_core_1_1_url.html#aafafcb3c20b2663251ed254e6e65ab0c',1,'Azure::Core::Url']]],
+  ['setscheme_11',['SetScheme',['../class_azure_1_1_core_1_1_url.html#a7dc569d2c6f25a95df9d5c5a62afc717',1,'Azure::Core::Url']]],
+  ['shouldbufferresponse_12',['ShouldBufferResponse',['../class_azure_1_1_core_1_1_http_1_1_request.html#ac60bcb59c7e6340c83d4de8d65e28db2',1,'Azure::Core::Http::Request']]],
+  ['shutdown_13',['Shutdown',['../class_azure_1_1_core_1_1_http_1_1_curl_network_connection.html#a6f47fb11d68a6e40de30cc1b172ef6a4',1,'Azure::Core::Http::CurlNetworkConnection']]],
+  ['status_14',['Status',['../class_azure_1_1_core_1_1_operation.html#aacfb286b1cdc3ea5586fb62ad8721b5e',1,'Azure::Core::Operation']]],
+  ['swap_15',['Swap',['../class_azure_1_1_nullable.html#ab5af88a2c22ea9bc2eb9c9404a9227cd',1,'Azure::Nullable']]]
+];

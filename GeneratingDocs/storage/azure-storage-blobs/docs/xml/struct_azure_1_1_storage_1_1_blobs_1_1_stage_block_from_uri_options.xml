@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::StageBlockFromUriOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1a403abca1dce5a81e8ab2d7baac3ef2d4" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; Core::Http::HttpRange &gt;</type>
+        <definition>Azure::Nullable&lt;Core::Http::HttpRange&gt; Azure::Storage::Blobs::StageBlockFromUriOptions::SourceRange</definition>
+        <argsstring></argsstring>
+        <name>SourceRange</name>
+        <qualifiedname>Azure::Storage::Blobs::StageBlockFromUriOptions::SourceRange</qualifiedname>
+        <briefdescription>
+<para>Uploads only the bytes of the source blob in the specified range. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1048" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1048" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1ac7dca2e8feadf561d6f9556822daa72b" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; ContentHash &gt;</type>
+        <definition>Azure::Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::StageBlockFromUriOptions::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::StageBlockFromUriOptions::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+<para>Hash of the blob content. This hash is used to verify the integrity of the blob during transport. When this header is specified, the storage service checks the hash that has arrived with the one that was sent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1055" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1055" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1ab3cb0f041b12e56f0a5320b4f8c9f137" prot="public" static="no" mutable="no">
+        <type>LeaseAccessConditions</type>
+        <definition>LeaseAccessConditions Azure::Storage::Blobs::StageBlockFromUriOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::StageBlockFromUriOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1060" column="27" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1060" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1ae034e2260f010bb8f7c0ce29452bd2bb" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>Azure::Storage::Blobs::StageBlockFromUriOptions::SourceAccessConditions</definition>
+        <argsstring></argsstring>
+        <name>SourceAccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::StageBlockFromUriOptions::SourceAccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that the source must meet to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1067" column="27"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1a7a7819bb04c6f76993458d1ddb9d60b8" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::StageBlockFromUriOptions::SourceAuthorization</definition>
+        <argsstring></argsstring>
+        <name>SourceAuthorization</name>
+        <qualifiedname>Azure::Storage::Blobs::StageBlockFromUriOptions::SourceAuthorization</qualifiedname>
+        <briefdescription>
+<para>Optional. Source authorization used to access the source file. The format is: &lt;scheme&gt; &lt;signature&gt; Only Bearer type is supported. Credentials should be a valid OAuth access token to copy source. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1075" column="17" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1075" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a9fd2e9aa4d024e99641aa3cc426766c5" kindref="member">Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1043" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1044" bodyend="1076"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1ab3cb0f041b12e56f0a5320b4f8c9f137" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StageBlockFromUriOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1ae034e2260f010bb8f7c0ce29452bd2bb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StageBlockFromUriOptions</scope><name>SourceAccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1a7a7819bb04c6f76993458d1ddb9d60b8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StageBlockFromUriOptions</scope><name>SourceAuthorization</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1a403abca1dce5a81e8ab2d7baac3ef2d4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StageBlockFromUriOptions</scope><name>SourceRange</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options_1ac7dca2e8feadf561d6f9556822daa72b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::StageBlockFromUriOptions</scope><name>TransactionalContentHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

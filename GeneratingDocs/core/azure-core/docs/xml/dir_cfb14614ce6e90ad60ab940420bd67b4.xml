@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_cfb14614ce6e90ad60ab940420bd67b4" kind="dir">
+    <compoundname>src/credentials</compoundname>
+    <innerfile refid="authorization__challenge__parser_8cpp">authorization_challenge_parser.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/credentials/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="uuid_8hpp" kind="file" language="C++">
+    <compoundname>uuid.hpp</compoundname>
+    <includes refid="platform_8hpp" local="yes">azure/core/platform.hpp</includes>
+    <includes local="no">array</includes>
+    <includes local="no">cstdint</includes>
+    <includes local="no">cstring</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">string</includes>
+    <includedby refid="core_8hpp" local="yes">inc/azure/core.hpp</includedby>
+    <includedby refid="policy_8hpp" local="yes">inc/azure/core/http/policies/policy.hpp</includedby>
+    <includedby refid="uuid_8cpp" local="yes">src/uuid.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>azure/core/platform.hpp</label>
+        <link refid="platform_8hpp"/>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/uuid.hpp</label>
+        <link refid="uuid_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>array</label>
+      </node>
+      <node id="4">
+        <label>cstdint</label>
+      </node>
+      <node id="5">
+        <label>cstring</label>
+      </node>
+      <node id="6">
+        <label>stdint.h</label>
+      </node>
+      <node id="7">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core.hpp</label>
+        <link refid="core_8hpp_source"/>
+      </node>
+      <node id="10">
+        <label>inc/azure/core/credentials/token_credential_options.hpp</label>
+        <link refid="token__credential__options_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>inc/azure/core/http/curl_transport.hpp</label>
+        <link refid="curl__transport_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/http/policies/policy.hpp</label>
+        <link refid="policy_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>inc/azure/core/http/win_http_transport.hpp</label>
+        <link refid="win__http__transport_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>inc/azure/core/internal/client_options.hpp</label>
+        <link refid="client__options_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>inc/azure/core/internal/http/pipeline.hpp</label>
+        <link refid="pipeline_8hpp"/>
+      </node>
+      <node id="12">
+        <label>inc/azure/core/internal/tracing/service_tracing.hpp</label>
+        <link refid="service__tracing_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/uuid.hpp</label>
+        <link refid="uuid_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>src/http/curl/curl_connection_pool_private.hpp</label>
+        <link refid="curl__connection__pool__private_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>src/http/curl/curl_session_private.hpp</label>
+        <link refid="curl__session__private_8hpp"/>
+      </node>
+      <node id="13">
+        <label>src/http/user_agent.cpp</label>
+        <link refid="user__agent_8cpp"/>
+      </node>
+      <node id="8">
+        <label>src/http/winhttp/win_http_request.hpp</label>
+        <link refid="win__http__request_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_azure_1_1_core_1_1_uuid" prot="public">Azure::Core::Uuid</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <briefdescription>
+<para>Universally unique identifier. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="platform_8hpp" kindref="compound">azure/core/platform.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;array&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdint&gt;</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>defines<sp/>std::uint8_t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstring&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>deprecated,<sp/>defines<sp/>uint8_t<sp/>in<sp/>global<sp/>namespace.<sp/>TODO:<sp/>Remove<sp/>in<sp/>the<sp/>future<sp/>when<sp/>references<sp/>to<sp/>uint8_t<sp/>and<sp/>friends<sp/>are<sp/>removed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_azure" kindref="compound">Azure</ref><sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{</highlight></codeline>
+<codeline lineno="23" refid="class_azure_1_1_core_1_1_uuid" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref><sp/>final<sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>UuidSize<sp/>=<sp/>16;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;uint8_t,<sp/>UuidSize&gt;<sp/>m_uuid{};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref>(uint8_t<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uuid[UuidSize])<sp/>{<sp/>std::memcpy(m_uuid.data(),<sp/>uuid,<sp/>UuidSize);<sp/>}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="class_azure_1_1_core_1_1_uuid_1a711b5a31244382863c81000a7245f182" kindref="member">ToString</ref>();</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="class_azure_1_1_core_1_1_uuid_1a89f5d7ef27af38bbcd0676444a087269" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;uint8_t,<sp/>UuidSize&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="class_azure_1_1_core_1_1_uuid_1a89f5d7ef27af38bbcd0676444a087269" kindref="member">AsArray</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_uuid;<sp/>}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref><sp/><ref refid="class_azure_1_1_core_1_1_uuid_1a911dd11d09db4ed8ef0fd157a9de678f" kindref="member">CreateUuid</ref>();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_uuid" kindref="compound">Uuid</ref><sp/><ref refid="class_azure_1_1_core_1_1_uuid_1aee8d5f158b0e2721faefb2e7ad1d694b" kindref="member">CreateFromArray</ref>(std::array&lt;uint8_t,<sp/>UuidSize&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>uuid);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/uuid.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_diagnostics_1_1_logger" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Diagnostics::Logger</compoundname>
+    <includes refid="logger_8hpp" local="no">logger.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="enum" id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" prot="public" static="no" strong="yes">
+        <type>int</type>
+        <name>Level</name>
+        <qualifiedname>Azure::Core::Diagnostics::Logger::Level</qualifiedname>
+        <enumvalue id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569ad4a9fa383ab700c5bdd6f31cf7df0faf" prot="public">
+          <name>Verbose</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+<para>Logging level for detailed troubleshooting scenarios. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a5391f9a882a54c787b206138ed6d28b0" prot="public">
+          <name>Informational</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+<para>Logging level when a function operates normally. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a0eaadb4fcb48a0a0ed7bc9868be9fbaa" prot="public">
+          <name>Warning</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+<para>Logging level when a function fails to perform its intended task. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a902b0d55fddef6f8d651fe1035b7d4bd" prot="public">
+          <name>Error</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+<para>Logging level for failures that the application is unlikely to recover from. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Log message level. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/diagnostics/logger.hpp" line="25" column="5" bodyfile="inc/azure/core/diagnostics/logger.hpp" bodystart="26" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a6e5b3340f691b3003ce0c0f4354d74b3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::SetListener</definition>
+        <argsstring>(std::function&lt; void(Level level, std::string const &amp;message)&gt; listener)</argsstring>
+        <name>SetListener</name>
+        <qualifiedname>Azure::Core::Diagnostics::Logger::SetListener</qualifiedname>
+        <param>
+          <type>std::function&lt; void(<ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" kindref="member">Level</ref> level, std::string const &amp;message)&gt;</type>
+          <declname>listener</declname>
+        </param>
+        <briefdescription>
+<para>Sets the function that will be invoked to report an <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK log message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>listener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A callback function that will be invoked when the SDK reports a log message. If <computeroutput>nullptr</computeroutput>, no function will be invoked. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/diagnostics/logger.hpp" line="46" column="17" bodyfile="src/logger.cpp" bodystart="45" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a04c04d487a84eb71da1951acff3a6660" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::SetLevel</definition>
+        <argsstring>(Level level)</argsstring>
+        <name>SetLevel</name>
+        <qualifiedname>Azure::Core::Diagnostics::Logger::SetLevel</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" kindref="member">Level</ref></type>
+          <declname>level</declname>
+        </param>
+        <briefdescription>
+<para>Sets the log message level an application is interested in receiving. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>level</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The most verbose level to receive log messages for. Least verbose levels will be included, more verbose levels will be not. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/diagnostics/logger.hpp" line="54" column="17" bodyfile="src/logger.cpp" bodystart="53" bodyend="53"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a1682b820de5464aac021f735965f67fa" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Diagnostics::Logger::Logger</definition>
+        <argsstring>()=delete</argsstring>
+        <name>Logger</name>
+        <qualifiedname>Azure::Core::Diagnostics::Logger::Logger</qualifiedname>
+        <briefdescription>
+<para>An instance of <computeroutput>Logger</computeroutput> class cannot be created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/diagnostics/logger.hpp" line="61" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a2bac1281230c720f7778fbe19c930c5a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Diagnostics::Logger::~Logger</definition>
+        <argsstring>()=delete</argsstring>
+        <name>~Logger</name>
+        <qualifiedname>Azure::Core::Diagnostics::Logger::~Logger</qualifiedname>
+        <briefdescription>
+<para>An instance of <computeroutput>Logger</computeroutput> class cannot be destructed, because no instance can be created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/diagnostics/logger.hpp" line="68" column="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Log message handler. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/diagnostics/logger.hpp" line="18" column="3" bodyfile="inc/azure/core/diagnostics/logger.hpp" bodystart="18" bodyend="69"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" prot="public" virt="non-virtual"><scope>Azure::Core::Diagnostics::Logger</scope><name>Level</name></member>
+      <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a1682b820de5464aac021f735965f67fa" prot="private" virt="non-virtual"><scope>Azure::Core::Diagnostics::Logger</scope><name>Logger</name></member>
+      <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a04c04d487a84eb71da1951acff3a6660" prot="public" virt="non-virtual"><scope>Azure::Core::Diagnostics::Logger</scope><name>SetLevel</name></member>
+      <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a6e5b3340f691b3003ce0c0f4354d74b3" prot="public" virt="non-virtual"><scope>Azure::Core::Diagnostics::Logger</scope><name>SetListener</name></member>
+      <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a2bac1281230c720f7778fbe19c930c5a" prot="private" virt="non-virtual"><scope>Azure::Core::Diagnostics::Logger</scope><name>~Logger</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

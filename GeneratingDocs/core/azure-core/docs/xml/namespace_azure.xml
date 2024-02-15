@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure" kind="namespace" language="C++">
+    <compoundname>Azure</compoundname>
+    <innerclass refid="class_azure_1_1_date_time" prot="public">Azure::DateTime</innerclass>
+    <innerclass refid="class_azure_1_1_e_tag" prot="public">Azure::ETag</innerclass>
+    <innerclass refid="struct_azure_1_1_match_conditions" prot="public">Azure::MatchConditions</innerclass>
+    <innerclass refid="struct_azure_1_1_modified_conditions" prot="public">Azure::ModifiedConditions</innerclass>
+    <innerclass refid="class_azure_1_1_nullable" prot="public">Azure::Nullable</innerclass>
+    <innerclass refid="class_azure_1_1_response" prot="public">Azure::Response</innerclass>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_azure_1ad5f802a27f1622bcffc8f6bfd20bbbf0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator==</definition>
+        <argsstring>(DateTime const &amp;dt, std::chrono::system_clock::time_point const &amp;tp)</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::operator==</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <briefdescription>
+<para>Compare a <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> object with a std::chrono::system_clock::time_point object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="212" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="212" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1aac14644b6a38606b2e4fd57580b832a3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&lt;</definition>
+        <argsstring>(DateTime const &amp;dt, std::chrono::system_clock::time_point const &amp;tp)</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>Azure::operator&lt;</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <briefdescription>
+<para>Compare a <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> object with a std::chrono::system_clock::time_point object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="218" column="8" bodyfile="inc/azure/core/datetime.hpp" bodystart="218" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1a40c71f411622d257183ce5466ced4014" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&lt;=</definition>
+        <argsstring>(DateTime const &amp;dt, std::chrono::system_clock::time_point const &amp;tp)</argsstring>
+        <name>operator&lt;=</name>
+        <qualifiedname>Azure::operator&lt;=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <briefdescription>
+<para>Compare a <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> object with a std::chrono::system_clock::time_point object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="224" column="8" bodyfile="inc/azure/core/datetime.hpp" bodystart="224" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1a8832e28c92a8f5e0bfeec8c472e263ba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator!=</definition>
+        <argsstring>(DateTime const &amp;dt, std::chrono::system_clock::time_point const &amp;tp)</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::operator!=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <briefdescription>
+<para>Compare a <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> object with a std::chrono::system_clock::time_point object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="230" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="230" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1a7752c823acda5b4e260716b587c58f94" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&gt;</definition>
+        <argsstring>(DateTime const &amp;dt, std::chrono::system_clock::time_point const &amp;tp)</argsstring>
+        <name>operator&gt;</name>
+        <qualifiedname>Azure::operator&gt;</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <briefdescription>
+<para>Compare a <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> object with a std::chrono::system_clock::time_point object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="236" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="236" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1a67661c8f8de216401061590d5a5fa352" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&gt;=</definition>
+        <argsstring>(DateTime const &amp;dt, std::chrono::system_clock::time_point const &amp;tp)</argsstring>
+        <name>operator&gt;=</name>
+        <qualifiedname>Azure::operator&gt;=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <briefdescription>
+<para>Compare a <ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> object with a std::chrono::system_clock::time_point object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="242" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="242" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1aeabed2737401e81de437422df6f154c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator==</definition>
+        <argsstring>(std::chrono::system_clock::time_point const &amp;tp, DateTime const &amp;dt)</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::operator==</qualifiedname>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <briefdescription>
+<para>Compare a std::chrono::system_clock::time_point object with an <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="248" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="248" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1a8acbef4b5fbd8a2a6bcfd74a3ebe8c9b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator!=</definition>
+        <argsstring>(std::chrono::system_clock::time_point const &amp;tp, DateTime const &amp;dt)</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::operator!=</qualifiedname>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <briefdescription>
+<para>Compare a std::chrono::system_clock::time_point object with an <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="254" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="254" bodyend="257"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1abb7c58568e4970a697a304e7e912fd1f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&lt;</definition>
+        <argsstring>(std::chrono::system_clock::time_point const &amp;tp, DateTime const &amp;dt)</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>Azure::operator&lt;</qualifiedname>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <briefdescription>
+<para>Compare a std::chrono::system_clock::time_point object with an <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="260" column="8" bodyfile="inc/azure/core/datetime.hpp" bodystart="260" bodyend="263"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1a35b2a6d5662a1dc95d9b9f1a60c60dc2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&lt;=</definition>
+        <argsstring>(std::chrono::system_clock::time_point const &amp;tp, DateTime const &amp;dt)</argsstring>
+        <name>operator&lt;=</name>
+        <qualifiedname>Azure::operator&lt;=</qualifiedname>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <briefdescription>
+<para>Compare a std::chrono::system_clock::time_point object with an <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="266" column="8" bodyfile="inc/azure/core/datetime.hpp" bodystart="266" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1a489f78638457fc1c4f263f51d0cfb381" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&gt;</definition>
+        <argsstring>(std::chrono::system_clock::time_point const &amp;tp, DateTime const &amp;dt)</argsstring>
+        <name>operator&gt;</name>
+        <qualifiedname>Azure::operator&gt;</qualifiedname>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <briefdescription>
+<para>Compare a std::chrono::system_clock::time_point object with an <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="272" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="272" bodyend="275"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_azure_1abb600836cfa0cbe98b3987b562512007" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::operator&gt;=</definition>
+        <argsstring>(std::chrono::system_clock::time_point const &amp;tp, DateTime const &amp;dt)</argsstring>
+        <name>operator&gt;=</name>
+        <qualifiedname>Azure::operator&gt;=</qualifiedname>
+        <param>
+          <type>std::chrono::system_clock::time_point const &amp;</type>
+          <declname>tp</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>dt</declname>
+        </param>
+        <briefdescription>
+<para>Compare a std::chrono::system_clock::time_point object with an <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/datetime.hpp" line="278" column="13" bodyfile="inc/azure/core/datetime.hpp" bodystart="278" bodyend="281"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Compute the hash value for the input binary data, using SHA256, SHA384 and SHA512. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Helper classes to enable service client distributed tracing implementations. </para>
+    </detaileddescription>
+    <location file="inc/azure/core/azure_assert.hpp" line="57" column="1"/>
+  </compounddef>
+</doxygen>

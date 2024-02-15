@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_core" kind="namespace" language="C++">
+    <compoundname>Azure::Core</compoundname>
+    <innerclass refid="class_azure_1_1_core_1_1_context" prot="public">Azure::Core::Context</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_convert" prot="public">Azure::Core::Convert</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_operation" prot="public">Azure::Core::Operation</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_operation_cancelled_exception" prot="public">Azure::Core::OperationCancelledException</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_operation_status" prot="public">Azure::Core::OperationStatus</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_paged_response" prot="public">Azure::Core::PagedResponse</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_request_failed_exception" prot="public">Azure::Core::RequestFailedException</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_url" prot="public">Azure::Core::Url</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_uuid" prot="public">Azure::Core::Uuid</innerclass>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_credentials">Azure::Core::Credentials</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_cryptography">Azure::Core::Cryptography</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_diagnostics">Azure::Core::Diagnostics</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_http">Azure::Core::Http</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_i_o">Azure::Core::IO</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_json">Azure::Core::Json</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_tracing">Azure::Core::Tracing</innernamespace>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" prot="public" static="no">
+        <type>std::map&lt; std::string, std::string, _internal::StringExtensions::CaseInsensitiveComparator &gt;</type>
+        <definition>using Azure::Core::CaseInsensitiveMap =  std::map&lt;std::string, std::string, _internal::StringExtensions::CaseInsensitiveComparator&gt;</definition>
+        <argsstring></argsstring>
+        <name>CaseInsensitiveMap</name>
+        <qualifiedname>Azure::Core::CaseInsensitiveMap</qualifiedname>
+        <briefdescription>
+<para>A type alias of <computeroutput>std::map&lt;std::string, std::string&gt;</computeroutput> with case-insensitive key comparison. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/case_insensitive_containers.hpp" line="23" column="3" bodyfile="inc/azure/core/case_insensitive_containers.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="case__insensitive__containers_8hpp_1a0b4687777bf2e07429813314673d8609" prot="public" static="no">
+        <type>std::set&lt; std::string, _internal::StringExtensions::CaseInsensitiveComparator &gt;</type>
+        <definition>using Azure::Core::CaseInsensitiveSet =  std::set&lt;std::string, _internal::StringExtensions::CaseInsensitiveComparator&gt;</definition>
+        <argsstring></argsstring>
+        <name>CaseInsensitiveSet</name>
+        <qualifiedname>Azure::Core::CaseInsensitiveSet</qualifiedname>
+        <briefdescription>
+<para>A type alias of <computeroutput>std::set&lt;std::string&gt;</computeroutput> with case-insensitive element comparison. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/case_insensitive_containers.hpp" line="29" column="3" bodyfile="inc/azure/core/case_insensitive_containers.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/azure_assert.hpp" line="57" column="15"/>
+  </compounddef>
+</doxygen>

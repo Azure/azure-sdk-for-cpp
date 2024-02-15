@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlobServiceBatch</compoundname>
+    <includes refid="blob__batch_8hpp" local="no">blob_batch.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a0013b8615f767f1c7dd87ff49ab53599" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client" kindref="compound">BlobServiceClient</ref></type>
+        <definition>BlobServiceClient Azure::Storage::Blobs::BlobServiceBatch::m_blobServiceClient</definition>
+        <argsstring></argsstring>
+        <name>m_blobServiceClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::m_blobServiceClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="137" column="23" bodyfile="inc/azure/storage/blobs/blob_batch.hpp" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a016d282f58fee00b6a06d586b6d669a9" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::shared_ptr&lt; _detail::BatchSubrequest &gt; &gt;</type>
+        <definition>std::vector&lt;std::shared_ptr&lt;_detail::BatchSubrequest&gt; &gt; Azure::Storage::Blobs::BlobServiceBatch::m_subrequests</definition>
+        <argsstring></argsstring>
+        <name>m_subrequests</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::m_subrequests</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="139" column="17" bodyfile="inc/azure/storage/blobs/blob_batch.hpp" bodystart="139" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1ae21f5317c43c381dea514877f4ae8ae4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobServiceClient</definition>
+        <argsstring></argsstring>
+        <name>BlobServiceClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::BlobServiceClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client" kindref="compound">BlobServiceClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="141" column="18" bodyfile="inc/azure/storage/blobs/blob_batch.hpp" bodystart="141" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1ae3a391218e8e677d7cbdbad0ac1771d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref>&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_result" kindref="compound">Models::DeleteBlobResult</ref> &gt;</type>
+        <definition>DeferredResponse&lt; Models::DeleteBlobResult &gt; Azure::Storage::Blobs::BlobServiceBatch::DeleteBlob</definition>
+        <argsstring>(const std::string &amp;blobContainerName, const std::string &amp;blobName, const DeleteBlobOptions &amp;options=DeleteBlobOptions())</argsstring>
+        <name>DeleteBlob</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::DeleteBlob</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Adds a delete subrequest into batch object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobContainerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Container name of the blob to delete. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the blob to delete. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute the delete operation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A deferred response which can produce a Response&lt;DeleteBlobResult&gt; after batch object is submitted. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="84" column="22" bodyfile="src/blob_batch.cpp" bodystart="576" bodyend="590"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a2226992648a7eee268b91bf5080593cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref>&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_result" kindref="compound">Models::DeleteBlobResult</ref> &gt;</type>
+        <definition>DeferredResponse&lt; Models::DeleteBlobResult &gt; Azure::Storage::Blobs::BlobServiceBatch::DeleteBlobUrl</definition>
+        <argsstring>(const std::string &amp;blobUrl, const DeleteBlobOptions &amp;options=DeleteBlobOptions())</argsstring>
+        <name>DeleteBlobUrl</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::DeleteBlobUrl</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_delete_blob_options" kindref="compound">DeleteBlobOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Adds a delete subrequest into batch object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Url of the blob to delete. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute the delete operation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A deferred response which can produce a Response&lt;DeleteBlobResult&gt; after batch object is submitted. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="97" column="22" bodyfile="src/blob_batch.cpp" bodystart="592" bodyend="602"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a80533a758164d0f16e3e39965b55db2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref>&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_access_tier_result" kindref="compound">Models::SetBlobAccessTierResult</ref> &gt;</type>
+        <definition>DeferredResponse&lt; Models::SetBlobAccessTierResult &gt; Azure::Storage::Blobs::BlobServiceBatch::SetBlobAccessTier</definition>
+        <argsstring>(const std::string &amp;blobContainerName, const std::string &amp;blobName, Models::AccessTier accessTier, const SetBlobAccessTierOptions &amp;options=SetBlobAccessTierOptions())</argsstring>
+        <name>SetBlobAccessTier</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::SetBlobAccessTier</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">Models::AccessTier</ref></type>
+          <declname>accessTier</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" kindref="compound">SetBlobAccessTierOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" kindref="compound">SetBlobAccessTierOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Adds a change tier subrequest into batch object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobContainerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Container name of the blob to delete. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the blob to delete. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>accessTier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates the tier to be set on the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute the delete operation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A deferred response which can produce a Response&lt;SetBlobAccessTierResult&gt; after batch object is submitted. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="111" column="22" bodyfile="src/blob_batch.cpp" bodystart="604" bodyend="619"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a4b0f65204f148e0fd69e538bf5024143" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_deferred_response" kindref="compound">DeferredResponse</ref>&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_access_tier_result" kindref="compound">Models::SetBlobAccessTierResult</ref> &gt;</type>
+        <definition>DeferredResponse&lt; Models::SetBlobAccessTierResult &gt; Azure::Storage::Blobs::BlobServiceBatch::SetBlobAccessTierUrl</definition>
+        <argsstring>(const std::string &amp;blobUrl, Models::AccessTier accessTier, const SetBlobAccessTierOptions &amp;options=SetBlobAccessTierOptions())</argsstring>
+        <name>SetBlobAccessTierUrl</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::SetBlobAccessTierUrl</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">Models::AccessTier</ref></type>
+          <declname>accessTier</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" kindref="compound">SetBlobAccessTierOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" kindref="compound">SetBlobAccessTierOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Adds a change tier subrequest into batch object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Url of the blob to delete. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>accessTier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates the tier to be set on the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute the delete operation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A deferred response which can produce a Response&lt;SetBlobAccessTierResult&gt; after batch object is submitted. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="126" column="22" bodyfile="src/blob_batch.cpp" bodystart="621" bodyend="632"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a2abd1f6247b96ff9f65e6bcb354c1103" prot="private" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlobServiceBatch::BlobServiceBatch</definition>
+        <argsstring>(BlobServiceClient blobServiceClient)</argsstring>
+        <name>BlobServiceBatch</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::BlobServiceBatch</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client" kindref="compound">BlobServiceClient</ref></type>
+          <declname>blobServiceClient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="132" column="14" bodyfile="src/blob_batch.cpp" bodystart="563" bodyend="566"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a08c63d766d70fdef9a52987e3e7351e5" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+        <definition>BlobClient Azure::Storage::Blobs::BlobServiceBatch::GetBlobClientForSubrequest</definition>
+        <argsstring>(Core::Url url) const</argsstring>
+        <name>GetBlobClientForSubrequest</name>
+        <qualifiedname>Azure::Storage::Blobs::BlobServiceBatch::GetBlobClientForSubrequest</qualifiedname>
+        <param>
+          <type>Core::Url</type>
+          <declname>url</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_batch.hpp" line="134" column="16" bodyfile="src/blob_batch.cpp" bodystart="568" bodyend="574"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A batch object allows you to batch multiple operations in a single request via <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client_1a1ee857beb2d70d56c0400563bb6043c8" kindref="member">Azure::Storage::Blobs::BlobServiceClient::SubmitBatch</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_batch.hpp" line="73" column="3" bodyfile="inc/azure/storage/blobs/blob_batch.hpp" bodystart="73" bodyend="143"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a2abd1f6247b96ff9f65e6bcb354c1103" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>BlobServiceBatch</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1ae21f5317c43c381dea514877f4ae8ae4" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>BlobServiceClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1ae3a391218e8e677d7cbdbad0ac1771d2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>DeleteBlob</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a2226992648a7eee268b91bf5080593cc" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>DeleteBlobUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a08c63d766d70fdef9a52987e3e7351e5" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>GetBlobClientForSubrequest</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a0013b8615f767f1c7dd87ff49ab53599" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>m_blobServiceClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a016d282f58fee00b6a06d586b6d669a9" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>m_subrequests</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a80533a758164d0f16e3e39965b55db2d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>SetBlobAccessTier</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_batch_1a4b0f65204f148e0fd69e538bf5024143" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlobServiceBatch</scope><name>SetBlobAccessTierUrl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

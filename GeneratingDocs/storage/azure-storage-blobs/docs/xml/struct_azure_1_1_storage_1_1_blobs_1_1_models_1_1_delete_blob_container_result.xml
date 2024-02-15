@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_container_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::DeleteBlobContainerResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_container_result_1a998b41f72f811ed7d16747c2ef9b2225" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::DeleteBlobContainerResult::Deleted</definition>
+        <argsstring></argsstring>
+        <name>Deleted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DeleteBlobContainerResult::Deleted</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates if the container was successfully deleted by this operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="781" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="781" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ae7661b6d8f37213b409504c0e9a68d69" kindref="member">Azure::Storage::Blobs::BlobContainerClient::Delete</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="776" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="777" bodyend="782"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_delete_blob_container_result_1a998b41f72f811ed7d16747c2ef9b2225" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DeleteBlobContainerResult</scope><name>Deleted</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

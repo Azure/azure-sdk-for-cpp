@@ -1,0 +1,788 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpMessage</compoundname>
+    <includes refid="amqp__message_8hpp" local="no">amqp_message.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a3c2e00247d78f71cfad2be5be3498d23" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t Azure::Core::Amqp::Models::AmqpMessage::MessageFormat</definition>
+        <argsstring></argsstring>
+        <name>MessageFormat</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::MessageFormat</qualifiedname>
+        <initializer>= AmqpDefaultMessageFormatValue</initializer>
+        <briefdescription>
+<para>The message format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>By default, AMQP uses 0, however services can override this to express additional semantics about the message payload.</para>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format">AMQP Message Format</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="94" column="14" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a84428fa94c76a58f35adba08d3b307bd" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header" kindref="compound">MessageHeader</ref></type>
+        <definition>MessageHeader Azure::Core::Amqp::Models::AmqpMessage::Header</definition>
+        <argsstring></argsstring>
+        <name>Header</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::Header</qualifiedname>
+        <briefdescription>
+<para>The header for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header">AMQP Message Header</ulink> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="102" column="19" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ae6eba568e6be82e8a8083a63721e6aec" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref></type>
+        <definition>AmqpMap Azure::Core::Amqp::Models::AmqpMessage::DeliveryAnnotations</definition>
+        <argsstring></argsstring>
+        <name>DeliveryAnnotations</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::DeliveryAnnotations</qualifiedname>
+        <briefdescription>
+<para>Delivery Annotations for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-delivery-annotations">AMQP Delivery Annotations</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="109" column="13" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a5f303cf362123d47adc4e635230bb763" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref></type>
+        <definition>AmqpMap Azure::Core::Amqp::Models::AmqpMessage::MessageAnnotations</definition>
+        <argsstring></argsstring>
+        <name>MessageAnnotations</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::MessageAnnotations</qualifiedname>
+        <briefdescription>
+<para>Message Annotations for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-message-annotations">AMQP Message Annotations</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="116" column="13" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aafe23eb11fe9d9864f20d1a12c6c3c3c" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties" kindref="compound">MessageProperties</ref></type>
+        <definition>MessageProperties Azure::Core::Amqp::Models::AmqpMessage::Properties</definition>
+        <argsstring></argsstring>
+        <name>Properties</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::Properties</qualifiedname>
+        <briefdescription>
+<para>Immutable Properties for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties">AMQP Properties</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="123" column="23" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a5c6ae0773425797c608a6b15ad4c981a" prot="public" static="no" mutable="no">
+        <type>std::map&lt; std::string, <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> &gt;</type>
+        <definition>std::map&lt;std::string, AmqpValue&gt; Azure::Core::Amqp::Models::AmqpMessage::ApplicationProperties</definition>
+        <argsstring></argsstring>
+        <name>ApplicationProperties</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::ApplicationProperties</qualifiedname>
+        <briefdescription>
+<para>Application Properties for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties">AMQP Application Properties</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="130" column="14" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a8e8286fd9257cf983f8f28f0e7c9917c" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref></type>
+        <definition>AmqpValue Azure::Core::Amqp::Models::AmqpMessage::DeliveryTag</definition>
+        <argsstring></argsstring>
+        <name>DeliveryTag</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::DeliveryTag</qualifiedname>
+        <briefdescription>
+<para>Delivery Tag for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-delivery-tag">AMQP Transport Transfer</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="137" column="15" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ad4f1a28d0f042ab67b4c5805280d1fa5" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref></type>
+        <definition>AmqpMap Azure::Core::Amqp::Models::AmqpMessage::Footer</definition>
+        <argsstring></argsstring>
+        <name>Footer</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::Footer</qualifiedname>
+        <briefdescription>
+<para>Footer for the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-footer">AMQP Footer</ulink>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="144" column="13" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a63063b08f0ce22db2f312c9135d3bb16" prot="public" static="no" mutable="no">
+        <type>MessageBodyType</type>
+        <definition>MessageBodyType Azure::Core::Amqp::Models::AmqpMessage::BodyType</definition>
+        <argsstring></argsstring>
+        <name>BodyType</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::BodyType</qualifiedname>
+        <initializer>{MessageBodyType::None}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Specifies the type of the body.</para>
+<para>An AMQP Message Body can be one of the following formats:</para>
+<para><itemizedlist>
+<listitem><para>One or more binary data sections</para>
+</listitem><listitem><para>One or more sequence sections.</para>
+</listitem><listitem><para>A single AMQP Value. </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="155" column="21" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="155" bodyend="155"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ac2b9b0346421effa3b8d4a82d319d5d7" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &gt;</type>
+        <definition>std::vector&lt;AmqpBinaryData&gt; Azure::Core::Amqp::Models::AmqpMessage::m_binaryDataBody</definition>
+        <argsstring></argsstring>
+        <name>m_binaryDataBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::m_binaryDataBody</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="283" column="17" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="283" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1af914dfe9524d4f6416c2e6ce766b828e" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &gt;</type>
+        <definition>std::vector&lt;AmqpList&gt; Azure::Core::Amqp::Models::AmqpMessage::m_amqpSequenceBody</definition>
+        <argsstring></argsstring>
+        <name>m_amqpSequenceBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::m_amqpSequenceBody</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="284" column="17" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="284" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a2a4417362d7acdb2ba2636980c03120f" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref></type>
+        <definition>AmqpValue Azure::Core::Amqp::Models::AmqpMessage::m_amqpValueBody</definition>
+        <argsstring></argsstring>
+        <name>m_amqpValueBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::m_amqpValueBody</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="285" column="15" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a0bee73ff0125f7ee9c738bf60217a29c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpMessage::m_hasValue</definition>
+        <argsstring></argsstring>
+        <name>m_hasValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::m_hasValue</qualifiedname>
+        <initializer>{true}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="286" column="10" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="286" bodyend="286"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a2aeae58b48859731082e9c5316a1c950" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</definition>
+        <argsstring>()=default</argsstring>
+        <name>AmqpMessage</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</qualifiedname>
+        <briefdescription>
+<para>Construct a new AMQP Message object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="50" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a1c462113da92a917715e74ee811c3d27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpMessage::~AmqpMessage</definition>
+        <argsstring>()=default</argsstring>
+        <name>~AmqpMessage</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::~AmqpMessage</qualifiedname>
+        <briefdescription>
+<para>Destroy an instance of an AMQP Message object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="53" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a053d37f6ff5f568fda59312e20b6d033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</definition>
+        <argsstring>(AmqpMessage &amp;&amp;)=default</argsstring>
+        <name>AmqpMessage</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>Create a new AMQP Message from an existing message moving the contents. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="56" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a7fe547f5c4f723ef54de063991f27465" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</definition>
+        <argsstring>(AmqpMessage const &amp;)=default</argsstring>
+        <name>AmqpMessage</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+<para>Construct a new AMQP message object from an existing object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="59" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a652145d3efb0706453fb7e6eeb9e6e23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> &amp;</type>
+        <definition>AmqpMessage &amp; Azure::Core::Amqp::Models::AmqpMessage::operator=</definition>
+        <argsstring>(AmqpMessage const &amp;)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+<para>Copy an AMQP message object to another object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A reference to this. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="64" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a4a538481ffb8dd69097c69af3a7c5599" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> &amp;</type>
+        <definition>AmqpMessage &amp; Azure::Core::Amqp::Models::AmqpMessage::operator=</definition>
+        <argsstring>(AmqpMessage &amp;&amp;)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>Move an AMQP message object to another object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A reference to this. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="69" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1adaca52703b82ca49f8dc92dfd6e9942b" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpMessage::operator==</definition>
+        <argsstring>(AmqpMessage const &amp;that) const noexcept</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::operator==</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare two AmqpMessages for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="72" column="10" bodyfile="src/models/amqp_message.cpp" bodystart="413" bodyend="421"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ad15afab0bac0977acbb5791b04c2cf94" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpMessage::operator!=</definition>
+        <argsstring>(AmqpMessage const &amp;that) const noexcept</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::operator!=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare two <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="75" column="10" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="75" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aebbd6245d24682e20513af0d5c7471b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</definition>
+        <argsstring>(std::nullptr_t)</argsstring>
+        <name>AmqpMessage</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::AmqpMessage</qualifiedname>
+        <param>
+          <type>std::nullptr_t</type>
+        </param>
+        <briefdescription>
+<para>Construct an empty AMQP Message. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="78" column="5" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="78" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a16801e8cb2c5027a3216a70aab82f851" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpMessage::operator bool</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>operator bool</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::operator bool</qualifiedname>
+        <briefdescription>
+<para>Returns True if the AMQP message has a value, false otherwise. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if the AMQP message has a value, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="84" column="5" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a4bced73e14b9a0d5434a8d9dd1b48364" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Amqp::Models::AmqpMessage::SetBody</definition>
+        <argsstring>(std::vector&lt; AmqpList &gt; const &amp;bodySequence)</argsstring>
+        <name>SetBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::SetBody</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &gt; const &amp;</type>
+          <declname>bodySequence</declname>
+        </param>
+        <briefdescription>
+<para>Sets the body of the message to a list of sequence sections. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An AMQP Message Body can be one of the following formats:</para>
+<para><itemizedlist>
+<listitem><para>One or more binary data sections</para>
+</listitem><listitem><para>One or more sequence sections.</para>
+</listitem><listitem><para>A single AMQP Value.</para>
+</listitem></itemizedlist>
+</para>
+<para>This method appends the bodySequence value to the sequence of sections. See <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-sequence">Amqp Sequence</ulink> for more information.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bodySequence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the list of AMQP values which make up the body of the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="172" column="10" bodyfile="src/models/amqp_message.cpp" bodystart="385" bodyend="389"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a6675beb5a1945e6004dcc1277d7c65b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Amqp::Models::AmqpMessage::SetBody</definition>
+        <argsstring>(AmqpList const &amp;bodySequence)</argsstring>
+        <name>SetBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::SetBody</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> const &amp;</type>
+          <declname>bodySequence</declname>
+        </param>
+        <briefdescription>
+<para>Appends a list to the body of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An AMQP Message Body can be one of the following formats:</para>
+<para><itemizedlist>
+<listitem><para>One or more binary data sections</para>
+</listitem><listitem><para>One or more sequence sections.</para>
+</listitem><listitem><para>A single AMQP Value.</para>
+</listitem></itemizedlist>
+</para>
+<para>This method appends the bodySequence value to the sequence of sections. See <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-sequence">Amqp Sequence</ulink> for more information.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bodySequence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the list of AMQP values which make up the body of the message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="remark"><para>This is a convenience method to make it simpler to append a single binary value to the message body. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="193" column="10" bodyfile="src/models/amqp_message.cpp" bodystart="390" bodyend="394"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1adb38fe2beb9539bd4836b67d57652af2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Amqp::Models::AmqpMessage::SetBody</definition>
+        <argsstring>(std::vector&lt; AmqpBinaryData &gt; const &amp;bodyBinarySequence)</argsstring>
+        <name>SetBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::SetBody</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &gt; const &amp;</type>
+          <declname>bodyBinarySequence</declname>
+        </param>
+        <briefdescription>
+<para>Set the body of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An AMQP Message Body can be one of the following formats:</para>
+<para><itemizedlist>
+<listitem><para>One or more binary data sections</para>
+</listitem><listitem><para>One or more sequence sections.</para>
+</listitem><listitem><para>A single AMQP Value.</para>
+</listitem></itemizedlist>
+</para>
+<para>This method sets the body of the message to a sequence data values. See <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-data">Amqp Data</ulink> for more information.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bodyBinarySequence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- a sequence of binary data which which makes up the body of the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="211" column="10" bodyfile="src/models/amqp_message.cpp" bodystart="375" bodyend="379"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aa6c83a69c4de9197dda42eda069d6218" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Amqp::Models::AmqpMessage::SetBody</definition>
+        <argsstring>(AmqpBinaryData const &amp;bodyBinary)</argsstring>
+        <name>SetBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::SetBody</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> const &amp;</type>
+          <declname>bodyBinary</declname>
+        </param>
+        <briefdescription>
+<para>Appends a binary value to the body of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An AMQP Message Body can be one of the following formats:</para>
+<para><itemizedlist>
+<listitem><para>One or more binary data sections</para>
+</listitem><listitem><para>One or more sequence sections.</para>
+</listitem><listitem><para>A single AMQP Value.</para>
+</listitem></itemizedlist>
+</para>
+<para>This method sets the body of the message to a sequence data values. See <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-data">Amqp Data</ulink> for more information.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bodyBinary</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- a single value binary data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="remark"><para>This is a convenience method to make it simpler to append a single binary value to the message body. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="231" column="10" bodyfile="src/models/amqp_message.cpp" bodystart="370" bodyend="374"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1afdae69b0709a8545d12f4759995b0e6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Amqp::Models::AmqpMessage::SetBody</definition>
+        <argsstring>(AmqpValue const &amp;bodyValue)</argsstring>
+        <name>SetBody</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::SetBody</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>bodyValue</declname>
+        </param>
+        <briefdescription>
+<para>Set the body of the message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An AMQP Message Body can be one of the following formats:</para>
+<para><itemizedlist>
+<listitem><para>One or more binary data sections</para>
+</listitem><listitem><para>One or more sequence sections.</para>
+</listitem><listitem><para>A single AMQP Value.</para>
+</listitem></itemizedlist>
+</para>
+<para>This method sets the body of the message to a single AMQP value. See <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-amqp-value">Amqp Value</ulink> for more information.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bodyValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- a single value binary data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="248" column="10" bodyfile="src/models/amqp_message.cpp" bodystart="380" bodyend="384"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a69111998d513e75cd64bd0d8d7f5adef" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref> &gt; const &amp;</type>
+        <definition>std::vector&lt; AmqpList &gt; const  &amp; Azure::Core::Amqp::Models::AmqpMessage::GetBodyAsAmqpList</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBodyAsAmqpList</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::GetBodyAsAmqpList</qualifiedname>
+        <briefdescription>
+<para>Returns a list of Amqp Sequence values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This API will fail if BodyType is not MessageBodyType::Sequence. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="254" column="23" bodyfile="src/models/amqp_message.cpp" bodystart="361" bodyend="368"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a20c72f343d69541660525ea25358359f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+        <definition>AmqpValue const  &amp; Azure::Core::Amqp::Models::AmqpMessage::GetBodyAsAmqpValue</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBodyAsAmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::GetBodyAsAmqpValue</qualifiedname>
+        <briefdescription>
+<para>Returns an Amqp Value message body. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This API will fail if BodyType is not MessageBodyType::Value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="260" column="21" bodyfile="src/models/amqp_message.cpp" bodystart="396" bodyend="403"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a3570d66e4914fc6dc996bbc813a652ed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &gt; const &amp;</type>
+        <definition>std::vector&lt; AmqpBinaryData &gt; const  &amp; Azure::Core::Amqp::Models::AmqpMessage::GetBodyAsBinary</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBodyAsBinary</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::GetBodyAsBinary</qualifiedname>
+        <briefdescription>
+<para>Returns an Amqp Binary message body. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This API will fail if BodyType is not MessageBodyType::Binary. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="266" column="23" bodyfile="src/models/amqp_message.cpp" bodystart="404" bodyend="411"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ac1f11446ee878574419914149c853529" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Amqp::Models::AmqpMessage::Serialize</definition>
+        <argsstring>(AmqpMessage const &amp;message)</argsstring>
+        <name>Serialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::Serialize</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> const &amp;</type>
+          <declname>message</declname>
+        </param>
+        <briefdescription>
+<para>Serialize the message into a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This API will fail if BodyType is not set. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="272" column="24" bodyfile="src/models/amqp_message.cpp" bodystart="423" bodyend="524"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a0cc3f9ede9f2496c970461b3abbd426f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref></type>
+        <definition>AmqpMessage Azure::Core::Amqp::Models::AmqpMessage::Deserialize</definition>
+        <argsstring>(std::uint8_t const *buffer, size_t size)</argsstring>
+        <name>Deserialize</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpMessage::Deserialize</qualifiedname>
+        <param>
+          <type>std::uint8_t const *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Deserialize the message from a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This API will fail if BodyType is not set. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="278" column="24" bodyfile="src/models/amqp_message.cpp" bodystart="745" bodyend="748"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message" kindref="compound">AmqpMessage</ref> object represents a received AMQP message. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="remark"><para>An AMQP message is comprised of a header, properties, application properties, and body. The body of the message can be one of the following types:<itemizedlist>
+<listitem><para>A single AMQP Value.</para>
+</listitem><listitem><para>One or more binary data sections.</para>
+</listitem><listitem><para>One or more sequence sections.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+For more information, see <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format">AMQP Message Format</ulink>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::map&lt; AmqpValue, AmqpValue &gt;, AmqpMap &gt;</label>
+      </node>
+      <node id="3">
+        <label>Azure::Core::Amqp::Models::AmqpMap</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpMessage</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Header</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>DeliveryAnnotations</edgelabel>
+          <edgelabel>Footer</edgelabel>
+          <edgelabel>MessageAnnotations</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>Properties</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>DeliveryTag</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Core::Amqp::Models::AmqpValue</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value"/>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::MessageHeader</label>
+        <link refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_header"/>
+      </node>
+      <node id="5">
+        <label>Azure::Core::Amqp::Models::MessageProperties</label>
+        <link refid="struct_azure_1_1_core_1_1_amqp_1_1_models_1_1_message_properties"/>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/amqp/models/amqp_message.hpp" line="47" column="3" bodyfile="inc/azure/core/amqp/models/amqp_message.hpp" bodystart="47" bodyend="287"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a2aeae58b48859731082e9c5316a1c950" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>AmqpMessage</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a053d37f6ff5f568fda59312e20b6d033" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>AmqpMessage</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a7fe547f5c4f723ef54de063991f27465" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>AmqpMessage</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aebbd6245d24682e20513af0d5c7471b9" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>AmqpMessage</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a5c6ae0773425797c608a6b15ad4c981a" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>ApplicationProperties</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a63063b08f0ce22db2f312c9135d3bb16" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>BodyType</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ae6eba568e6be82e8a8083a63721e6aec" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>DeliveryAnnotations</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a8e8286fd9257cf983f8f28f0e7c9917c" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>DeliveryTag</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a0cc3f9ede9f2496c970461b3abbd426f" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>Deserialize</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ad4f1a28d0f042ab67b4c5805280d1fa5" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>Footer</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a69111998d513e75cd64bd0d8d7f5adef" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>GetBodyAsAmqpList</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a20c72f343d69541660525ea25358359f" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>GetBodyAsAmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a3570d66e4914fc6dc996bbc813a652ed" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>GetBodyAsBinary</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a84428fa94c76a58f35adba08d3b307bd" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>Header</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1af914dfe9524d4f6416c2e6ce766b828e" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>m_amqpSequenceBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a2a4417362d7acdb2ba2636980c03120f" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>m_amqpValueBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ac2b9b0346421effa3b8d4a82d319d5d7" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>m_binaryDataBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a0bee73ff0125f7ee9c738bf60217a29c" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>m_hasValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a5f303cf362123d47adc4e635230bb763" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>MessageAnnotations</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a3c2e00247d78f71cfad2be5be3498d23" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>MessageFormat</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a16801e8cb2c5027a3216a70aab82f851" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>operator bool</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ad15afab0bac0977acbb5791b04c2cf94" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a652145d3efb0706453fb7e6eeb9e6e23" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a4a538481ffb8dd69097c69af3a7c5599" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1adaca52703b82ca49f8dc92dfd6e9942b" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aafe23eb11fe9d9864f20d1a12c6c3c3c" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>Properties</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1ac1f11446ee878574419914149c853529" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>Serialize</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a4bced73e14b9a0d5434a8d9dd1b48364" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>SetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a6675beb5a1945e6004dcc1277d7c65b6" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>SetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1adb38fe2beb9539bd4836b67d57652af2" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>SetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1aa6c83a69c4de9197dda42eda069d6218" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>SetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1afdae69b0709a8545d12f4759995b0e6e" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>SetBody</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_message_1a1c462113da92a917715e74ee811c3d27" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpMessage</scope><name>~AmqpMessage</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

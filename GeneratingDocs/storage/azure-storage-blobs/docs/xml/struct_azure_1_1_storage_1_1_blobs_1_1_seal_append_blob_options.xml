@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_seal_append_blob_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::SealAppendBlobOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_seal_append_blob_options_1a5a015286c1bf60c01866d02152b2dc7d" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_blob_access_conditions" kindref="compound">AppendBlobAccessConditions</ref></type>
+        <definition>AppendBlobAccessConditions Azure::Storage::Blobs::SealAppendBlobOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::SealAppendBlobOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Azure storage service doesn&apos;t support tags access condition for this operation. Don&apos;t use it. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1381" column="32" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1381" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_append_blob_client_1a2bf2de873cd4ec33fa17887a2235c201" kindref="member">Azure::Storage::Blobs::AppendBlobClient::Seal</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="4">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::AppendBlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_append_blob_access_conditions"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::SealAppendBlobOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_seal_append_blob_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="6">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1374" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1375" bodyend="1382"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_seal_append_blob_options_1a5a015286c1bf60c01866d02152b2dc7d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SealAppendBlobOptions</scope><name>AccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

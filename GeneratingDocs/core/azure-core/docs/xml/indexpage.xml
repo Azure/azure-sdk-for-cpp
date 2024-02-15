@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>Azure SDK Core Library for C++</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="index_1md__r_e_a_d_m_e"/> Azure::Core (<computeroutput>azure-core</computeroutput>) provides shared primitives, abstractions, and helpers for modern <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK client libraries written in the C++. These libraries follow the <ulink url="https://azure.github.io/azure-sdk/cpp_introduction.html">Azure SDK Design Guidelines for C++</ulink>.</para>
+<para>The library allows client libraries to expose common functionality in a consistent fashion. Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.</para>
+<sect1 id="index_1getting-started">
+<title>Getting started</title><para>Typically, you will not need to download <computeroutput>azure-core</computeroutput>; it will be downloaded for you as a dependency of the client libraries. In case you want to download it explicitly (to implement your own client library, for example), you can find the source in here, or use vcpkg to install the package <computeroutput>azure-core-cpp</computeroutput>.</para>
+<sect2 id="index_1include-the-package">
+<title>Include the package</title><para>The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding <ulink url="https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk">Azure SDK for C++ readme section</ulink>.</para>
+<para>To install <ref refid="namespace_azure" kindref="compound">Azure</ref> Core package via vcpkg:</para>
+<para><programlisting filename=".cmd"><codeline><highlight class="normal">&gt;<sp/>vcpkg<sp/>install<sp/>azure-core-cpp</highlight></codeline>
+</programlisting></para>
+<para>Then, use in your CMake file:</para>
+<para><programlisting filename=".CMake"><codeline><highlight class="normal">find_package(azure-core-cpp<sp/>CONFIG<sp/>REQUIRED)</highlight></codeline>
+<codeline><highlight class="normal">target_link_libraries(&lt;your<sp/>project<sp/>name&gt;<sp/>PRIVATE<sp/>Azure::azure-core)</highlight></codeline>
+</programlisting></para>
+</sect2>
+</sect1>
+<sect1 id="index_1key-concepts">
+<title>Key concepts</title><para>The main shared concepts of <computeroutput>Azure::Core</computeroutput> include:</para>
+<para><itemizedlist>
+<listitem><para>Handling streaming data and input/output (I/O) via <computeroutput>BodyStream</computeroutput> along with its derived types.</para>
+</listitem><listitem><para>Accessing HTTP response details for the returned model of any SDK client operation, via <computeroutput>Response&lt;T&gt;</computeroutput>.</para>
+</listitem><listitem><para>Polling long-running operations (LROs), via <computeroutput>Operation&lt;T&gt;</computeroutput>.</para>
+</listitem><listitem><para>Exceptions for reporting errors from service requests in a consistent fashion via the base exception type <computeroutput>RequestFailedException</computeroutput>.</para>
+</listitem><listitem><para>Abstractions for <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK credentials (<computeroutput>TokenCredential</computeroutput>).</para>
+</listitem><listitem><para>Replaceable HTTP transport layer to send requests and receive responses over the network.</para>
+</listitem><listitem><para>HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.</para>
+</listitem></itemizedlist>
+</para>
+<sect2 id="index_1long-running-operations">
+<title>Long Running Operations</title><para>Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return <computeroutput>Operation&lt;T&gt;</computeroutput> types.</para>
+<para>You can intermittently poll whether the operation has finished by using the <computeroutput>Poll()</computeroutput> method on the returned <computeroutput>Operation&lt;T&gt;</computeroutput> and track progress of the operation using <computeroutput>Value()</computeroutput>. Alternatively, if you just want to wait until the operation completes, you can use <computeroutput>PollUntilDone()</computeroutput>.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">SomeServiceClient<sp/>client;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>operation<sp/>=<sp/>*client.StartSomeLongRunningOperation();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(!operation.IsDone())</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>std::unique_ptr&lt;Http::RawResponse&gt;<sp/>response<sp/>=<sp/>operation.Poll();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>partialResult<sp/>=<sp/>operation.Value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Your<sp/>per-polling<sp/>custom<sp/>logic<sp/>goes<sp/>here,<sp/>such<sp/>as<sp/>logging<sp/>progress.</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>You<sp/>can<sp/>also<sp/>try<sp/>to<sp/>abort<sp/>the<sp/>operation<sp/>if<sp/>it<sp/>doesn&apos;t<sp/>complete<sp/>in<sp/>time.</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>std::this_thread::sleep_for(std::chrono::milliseconds(1000));</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>finalResult<sp/>=<sp/>operation.Value();</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="index_1http-transport-adapter">
+<title>HTTP Transport adapter</title><para>Out of the box, the <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with <ref refid="namespace_azure" kindref="compound">Azure</ref> services over the network. The SDK also provides a mechanism for <computeroutput>customer-implemented</computeroutput> <emphasis>HTTP transport adapter</emphasis>. <ulink url="https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#http-transport-adapter">You can learn more about the transport adapter in this doc</ulink>.</para>
+</sect2>
+</sect1>
+<sect1 id="index_1troubleshooting">
+<title>Troubleshooting</title><para>Three main ways of troubleshooting failures are:</para>
+<para><itemizedlist>
+<listitem><para>Inspecting exceptions</para>
+</listitem><listitem><para>Enabling logging (see <ref refid="index_1sdk-log-messages" kindref="member">SDK Log Messages</ref>)</para>
+</listitem></itemizedlist>
+</para>
+<sect2 id="index_1sdk-log-messages">
+<title>SDK Log Messages</title><para>The simplest way to enable logs is to set <computeroutput>AZURE_LOG_LEVEL</computeroutput> environment variable to one of the values: <table rows="5" cols="3"><row>
+<entry thead="yes"><para><computeroutput>AZURE_LOG_LEVEL</computeroutput>   </para>
+</entry><entry thead="yes"><para><computeroutput><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" kindref="member">Azure::Core::Diagnostics::Logger::Level</ref></computeroutput>   </para>
+</entry><entry thead="yes"><para>Log message level    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>4</computeroutput>, or <computeroutput>error</computeroutput>, or <computeroutput>err</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>Error</computeroutput>   </para>
+</entry><entry thead="no"><para>Logging level for failures that the application is unlikely to recover from.    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>3</computeroutput>, or <computeroutput>warning</computeroutput>, or <computeroutput>warn</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>Warning</computeroutput>   </para>
+</entry><entry thead="no"><para>Logging level when a function fails to perform its intended task.    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>2</computeroutput>, or <computeroutput>informational</computeroutput>, or <computeroutput>information</computeroutput>, or <computeroutput>info</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>Informational</computeroutput>   </para>
+</entry><entry thead="no"><para>Logging level when a function operates normally.    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>1</computeroutput>, or <computeroutput>verbose</computeroutput>, or <computeroutput>debug</computeroutput>   </para>
+</entry><entry thead="no"><para><computeroutput>Verbose</computeroutput>   </para>
+</entry><entry thead="no"><para>Logging level for detailed troubleshooting scenarios.   </para>
+</entry></row>
+</table>
+</para>
+<para>Then, log messages will be printed to console (<computeroutput>stderr</computeroutput>). Note that <computeroutput>stderr</computeroutput> messages can be redirected into a log file like this:</para>
+<para>On Windows: <programlisting filename=".cmd"><codeline><highlight class="normal">myprogram.exe<sp/>2&gt;<sp/>log.txt</highlight></codeline>
+</programlisting></para>
+<para>On Linux or macOS: <programlisting filename=".sh"><codeline><highlight class="normal">./myprogram<sp/>2&gt;<sp/>log.txt</highlight></codeline>
+</programlisting></para>
+<para>In addition, log messages can be programmatically processed by providing a callback function, which can save them to a file, or display them in a desired custom way. <programlisting filename=".cpp"><codeline><highlight class="preprocessor">#include<sp/>&lt;<ref refid="logger_8hpp" kindref="compound">azure/core/diagnostics/logger.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main()</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">Azure::Core::Diagnostics;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>See<sp/>above<sp/>for<sp/>the<sp/>level<sp/>descriptions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>Logger::SetLevel(Logger::Level::Verbose);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>SetListener<sp/>accepts<sp/>std::function&lt;&gt;,<sp/>which<sp/>can<sp/>be<sp/>either<sp/>lambda<sp/>or<sp/>a<sp/>function<sp/>pointer.</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>Logger::SetListener([&amp;](</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>lvl,<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>msg){<sp/></highlight><highlight class="comment">/*<sp/>handle<sp/>Logger::Level<sp/>lvl<sp/>and<sp/>std::string<sp/>msg<sp/>*/</highlight><highlight class="normal"><sp/>});</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Note, the listener callback is executed on the same thread as the operation that triggered the log message. It is recommended implementation due the minimal amount of log message processing on the callback thread. Where message processing is required, consider implementing in a way that the callback pushes the message string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.</para>
+</sect2>
+</sect1>
+<sect1 id="index_1next-steps">
+<title>Next steps</title><para>Explore and install available <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK libraries.</para>
+</sect1>
+<sect1 id="index_1contributing">
+<title>Contributing</title><para>For details on contributing to this repository, see the <ulink url="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md">contributing guide</ulink>.</para>
+<para>This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit the <ulink url="https://cla.microsoft.com">Contributor License Agreement</ulink>.</para>
+<para>When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.</para>
+<para>This project has adopted the <ulink url="https://opensource.microsoft.com/codeofconduct/">Microsoft Open Source Code of Conduct</ulink>. For more information see the <ulink url="https://opensource.microsoft.com/codeofconduct/faq/">Code of Conduct FAQ</ulink> or contact <ulink url="mailto:opencode@microsoft.com">opencode@microsoft.com</ulink> with any additional questions or comments.</para>
+<sect2 id="index_1additional-helpful-links-for-contributors">
+<title>Additional Helpful Links for Contributors</title><para>Many people all over the world have helped make this project better. You&apos;ll want to check out:</para>
+<para><itemizedlist>
+<listitem><para><ulink url="https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22">What are some good first issues for new contributors to the repo?</ulink></para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide">How to build and test your change</ulink></para>
+</listitem><listitem><para><ulink url="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests">How you can make a change happen!</ulink></para>
+</listitem><listitem><para>Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed <ulink url="https://github.com/azure/azure-sdk-for-cpp/wiki">Azure SDK for C++ wiki</ulink>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="index_1reporting-security-issues-and-security-bugs">
+<title>Reporting security issues and security bugs</title><para>Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <ulink url="mailto:secure@microsoft.com">secure@microsoft.com</ulink>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the <ulink url="https://www.microsoft.com/msrc/faqs-report-an-issue">Security TechCenter</ulink>.</para>
+</sect2>
+<sect2 id="index_1license">
+<title>License</title><para><ref refid="namespace_azure" kindref="compound">Azure</ref> SDK for C++ is licensed under the <ulink url="https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt">MIT</ulink> license. </para>
+</sect2>
+</sect1>
+    </detaileddescription>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>

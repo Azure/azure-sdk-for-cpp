@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::Policies::TransportOptions</compoundname>
+    <includes refid="policy_8hpp" local="no">policy.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1ab25c172097ae8c8b86b9d26265397b84" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Core::Http::Policies::TransportOptions::HttpProxy</definition>
+        <argsstring></argsstring>
+        <name>HttpProxy</name>
+        <qualifiedname>Azure::Core::Http::Policies::TransportOptions::HttpProxy</qualifiedname>
+        <initializer>{}</initializer>
+        <briefdescription>
+<para>The URL for the proxy server to use for this connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>If an empty string is specified, it instructs the transport to disable all proxies, including system proxies.</para>
+</simplesect>
+<simplesect kind="remark"><para>This field is only used if the customer has not specified a default transport adapter. If the customer has set a Transport adapter, this option is ignored. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="149" column="21" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="149" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1af07684ad257ce136b94aa2b83c17b772" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Core::Http::Policies::TransportOptions::ProxyUserName</definition>
+        <argsstring></argsstring>
+        <name>ProxyUserName</name>
+        <qualifiedname>Azure::Core::Http::Policies::TransportOptions::ProxyUserName</qualifiedname>
+        <initializer>{}</initializer>
+        <briefdescription>
+<para>The username to use when authenticating with the proxy server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This field is only used if the customer has not specified a default transport adapter. If the customer has set a Transport adapter, this option is ignored. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="157" column="21" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="157" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a2aa3c57ba8e4e21b76c67a0c1fa623ad" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Core::Http::Policies::TransportOptions::ProxyPassword</definition>
+        <argsstring></argsstring>
+        <name>ProxyPassword</name>
+        <qualifiedname>Azure::Core::Http::Policies::TransportOptions::ProxyPassword</qualifiedname>
+        <initializer>{}</initializer>
+        <briefdescription>
+<para>The password to use when authenticating with the proxy server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This field is only used if the customer has not specified a default transport adapter. If the customer has set a Transport adapter, this option is ignored. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="165" column="21" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="165" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a810a2213c70ab96dc5b46f54114da57c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::Policies::TransportOptions::EnableCertificateRevocationListCheck</definition>
+        <argsstring></argsstring>
+        <name>EnableCertificateRevocationListCheck</name>
+        <qualifiedname>Azure::Core::Http::Policies::TransportOptions::EnableCertificateRevocationListCheck</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>Enable TLS Certificate validation against a certificate revocation list. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that by default, CRL validation is <emphasis>disabled</emphasis>.</para>
+</simplesect>
+<simplesect kind="remark"><para>This field is only used if the customer has not specified a default transport adapter. If the customer has set a Transport adapter, this option is ignored. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="175" column="10" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="175" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a0ee73cd033f55386522d129b9c13af0e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::Policies::TransportOptions::DisableTlsCertificateValidation</definition>
+        <argsstring></argsstring>
+        <name>DisableTlsCertificateValidation</name>
+        <qualifiedname>Azure::Core::Http::Policies::TransportOptions::DisableTlsCertificateValidation</qualifiedname>
+        <initializer>{false}</initializer>
+        <briefdescription>
+<para>Disable SSL/TLS certificate verification. This option allows transport layer to perform insecure SSL/TLS connections and skip SSL/TLS certificate checks while still having SSL/TLS-encrypted communications. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Disabling TLS security is generally a bad idea because it allows malicious actors to spoof the target server and should never be enabled in production code.</para>
+</simplesect>
+<simplesect kind="remark"><para>This field is only used if the customer has not specified a default transport adapter. If the customer has set a Transport adapter, this option is ignored. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="188" column="10" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="188" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a9c3f25825627b024790cb13fb58fe837" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::Policies::TransportOptions::ExpectedTlsRootCertificate</definition>
+        <argsstring></argsstring>
+        <name>ExpectedTlsRootCertificate</name>
+        <qualifiedname>Azure::Core::Http::Policies::TransportOptions::ExpectedTlsRootCertificate</qualifiedname>
+        <initializer>{}</initializer>
+        <briefdescription>
+<para>Base64 encoded DER representation of an X.509 certificate expected in the certificate chain used in TLS connections. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that with the schannel and sectransp crypto backends, setting the expected root certificate disables access to the system certificate store. This means that the expected root certificate is the only certificate that will be trusted.</para>
+</simplesect>
+<simplesect kind="remark"><para>This field is only used if the customer has not specified a default transport adapter. If the customer has set a Transport adapter, this option is ignored. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="201" column="17" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="201" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a117e90dea642f92200ba49afbf4ffc3a" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">HttpTransport</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;HttpTransport&gt; Azure::Core::Http::Policies::TransportOptions::Transport</definition>
+        <argsstring></argsstring>
+        <name>Transport</name>
+        <qualifiedname>Azure::Core::Http::Policies::TransportOptions::Transport</qualifiedname>
+        <briefdescription>
+<para><ref refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kindref="compound">Azure::Core::Http::HttpTransport</ref> that the transport policy will use to send and receive requests and responses over the wire. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>When no option is set, the default transport adapter on non-Windows platforms is the libcurl transport adapter and WinHTTP transport adapter on Windows.</para>
+</simplesect>
+<simplesect kind="note"><para>See <ulink url="https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md">https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md</ulink>.</para>
+</simplesect>
+<simplesect kind="remark"><para>When using a custom transport adapter, the implementation for <computeroutput><ref refid="policy_8hpp_1a8fdb3bdd9092e835bb253e12f13a5042" kindref="member">AzureSdkGetCustomHttpTransport()</ref></computeroutput> must be linked in the end-user application.</para>
+</simplesect>
+<simplesect kind="remark"><para>If the caller specifies a value for Transport, then all the other options in <ref refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options" kindref="compound">TransportOptions</ref> will be ignored, since the caller will have already configured the transport. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="221" column="21" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="221" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>HTTP transport options parameterize the HTTP transport adapter being used. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Http::Policies::TransportOptions</label>
+        <link refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>HttpProxy</edgelabel>
+          <edgelabel>ProxyPassword</edgelabel>
+          <edgelabel>ProxyUserName</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::_detail::NontrivialEmptyType</label>
+      </node>
+      <node id="2">
+        <label>Azure::Nullable&lt; std::string &gt;</label>
+        <link refid="class_azure_1_1_nullable"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>m_disengaged</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/http/policies/policy.hpp" line="138" column="3" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="139" bodyend="222"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a0ee73cd033f55386522d129b9c13af0e" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TransportOptions</scope><name>DisableTlsCertificateValidation</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a810a2213c70ab96dc5b46f54114da57c" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TransportOptions</scope><name>EnableCertificateRevocationListCheck</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a9c3f25825627b024790cb13fb58fe837" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TransportOptions</scope><name>ExpectedTlsRootCertificate</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1ab25c172097ae8c8b86b9d26265397b84" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TransportOptions</scope><name>HttpProxy</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a2aa3c57ba8e4e21b76c67a0c1fa623ad" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TransportOptions</scope><name>ProxyPassword</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1af07684ad257ce136b94aa2b83c17b772" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TransportOptions</scope><name>ProxyUserName</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a117e90dea642f92200ba49afbf4ffc3a" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::TransportOptions</scope><name>Transport</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

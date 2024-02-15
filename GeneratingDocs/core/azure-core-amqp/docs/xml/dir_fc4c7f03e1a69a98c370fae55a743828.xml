@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_fc4c7f03e1a69a98c370fae55a743828" kind="dir">
+    <compoundname>src/network</compoundname>
+    <innerdir refid="dir_0369d3b0dd40e9aef90fa4a1b74cee7c">src/network/private</innerdir>
+    <innerfile refid="amqp__header__transport_8cpp">amqp_header_transport.cpp</innerfile>
+    <innerfile refid="sasl__transport_8cpp">sasl_transport.cpp</innerfile>
+    <innerfile refid="socket__listener_8cpp">socket_listener.cpp</innerfile>
+    <innerfile refid="socket__transport_8cpp">socket_transport.cpp</innerfile>
+    <innerfile refid="tls__transport_8cpp">tls_transport.cpp</innerfile>
+    <innerfile refid="transport_8cpp">transport.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/network/"/>
+  </compounddef>
+</doxygen>

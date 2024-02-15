@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1abf142f80bab86c885938cdae48c18073" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref></type>
+        <definition>const EncryptionAlgorithmType Azure::Storage::Blobs::Models::EncryptionAlgorithmType::Aes256</definition>
+        <argsstring></argsstring>
+        <name>Aes256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::Aes256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref>: Aes256 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="57" column="71" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="57" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1aa156c36a8c579ccb58a77a1e1e8a3938" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::EncryptionAlgorithmType::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="60" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a2bd35c649323e1876f589dfd310a3339" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::EncryptionAlgorithmType</definition>
+        <argsstring>()=default</argsstring>
+        <name>EncryptionAlgorithmType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::EncryptionAlgorithmType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="44" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a6664ed02104c56b55c828eceebb9dc97" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::EncryptionAlgorithmType</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>EncryptionAlgorithmType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::EncryptionAlgorithmType</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="46" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="46" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a4c1b40106f21f9e63c61c8d86e13cd23" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::EncryptionAlgorithmType::operator==</definition>
+        <argsstring>(const EncryptionAlgorithmType &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="48" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="48" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a0cf5ce8adba5aa35021ae59cfdc0cfc2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::EncryptionAlgorithmType::operator!=</definition>
+        <argsstring>(const EncryptionAlgorithmType &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type" kindref="compound">EncryptionAlgorithmType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="53" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="53" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1aa32f8dc793074cd1d94a8a55030049a2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::EncryptionAlgorithmType::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::EncryptionAlgorithmType::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="55" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="55" bodyend="55"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The algorithm used to produce the encryption key hash. Currently, the only accepted value is &quot;AES256&quot;. Must be provided if the x-ms-encryption-key header is provided. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Aes256</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="41" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="41" bodyend="61"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1abf142f80bab86c885938cdae48c18073" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</scope><name>Aes256</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a2bd35c649323e1876f589dfd310a3339" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</scope><name>EncryptionAlgorithmType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a6664ed02104c56b55c828eceebb9dc97" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</scope><name>EncryptionAlgorithmType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1aa156c36a8c579ccb58a77a1e1e8a3938" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a0cf5ce8adba5aa35021ae59cfdc0cfc2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1a4c1b40106f21f9e63c61c8d86e13cd23" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_encryption_algorithm_type_1aa32f8dc793074cd1d94a8a55030049a2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::EncryptionAlgorithmType</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

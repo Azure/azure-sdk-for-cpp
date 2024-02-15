@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="azure__assert_8cpp" kind="file" language="C++">
+    <compoundname>azure_assert.cpp</compoundname>
+    <includes refid="azure__assert_8hpp" local="yes">azure/core/azure_assert.hpp</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>azure/core/azure_assert.hpp</label>
+        <link refid="azure__assert_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>azure/core/platform.hpp</label>
+        <link refid="platform_8hpp"/>
+      </node>
+      <node id="1">
+        <label>src/azure_assert.cpp</label>
+        <link refid="azure__assert_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>cassert</label>
+      </node>
+      <node id="4">
+        <label>cstdlib</label>
+      </node>
+      <node id="5">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="azure__assert_8hpp" kindref="compound">azure/core/azure_assert.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Calling<sp/>this<sp/>function<sp/>would<sp/>terminate<sp/>program,<sp/>therefore<sp/>this<sp/>function<sp/>can&apos;t<sp/>be<sp/>covered<sp/>in<sp/>tests.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal">[[noreturn]]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Azure::Core::_internal::AzureNoReturnPath(std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>msg)</highlight></codeline>
+<codeline lineno="8"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>void<sp/>msg<sp/>for<sp/>Release<sp/>build<sp/>where<sp/>Assert<sp/>is<sp/>ignored</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>(void)msg;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><ref refid="azure__assert_8hpp_1a9e91c95a63cb50551fd21d8b0bc1096d" kindref="member">AZURE_ASSERT_MSG</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>msg);</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>std::abort();</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="src/azure_assert.cpp"/>
+  </compounddef>
+</doxygen>

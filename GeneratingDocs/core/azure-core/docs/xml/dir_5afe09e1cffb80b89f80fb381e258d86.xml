@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_5afe09e1cffb80b89f80fb381e258d86" kind="dir">
+    <compoundname>inc/azure/core/internal/tracing</compoundname>
+    <innerfile refid="service__tracing_8hpp">service_tracing.hpp</innerfile>
+    <innerfile refid="tracing__impl_8hpp">tracing_impl.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/internal/tracing/"/>
+  </compounddef>
+</doxygen>

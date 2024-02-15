@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::GeoReplicationStatus</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a82364987589d672b072c1c409baeab16" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref></type>
+        <definition>const GeoReplicationStatus Azure::Storage::Blobs::Models::GeoReplicationStatus::Live</definition>
+        <argsstring></argsstring>
+        <name>Live</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::Live</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref>: Live </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="265" column="68" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="265" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1ae7ff968f98f46a937cd1f5e6168c8132" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref></type>
+        <definition>const GeoReplicationStatus Azure::Storage::Blobs::Models::GeoReplicationStatus::Bootstrap</definition>
+        <argsstring></argsstring>
+        <name>Bootstrap</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::Bootstrap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref>: Bootstrap </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="267" column="68" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="267" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1ab43f010e7f21401a32324516687ac192" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref></type>
+        <definition>const GeoReplicationStatus Azure::Storage::Blobs::Models::GeoReplicationStatus::Unavailable</definition>
+        <argsstring></argsstring>
+        <name>Unavailable</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::Unavailable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref>: Unavailable </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="269" column="68" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="269" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1ac12c774db4e84cd2f5beaeed2ea13062" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::GeoReplicationStatus::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="272" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="272" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a9e3125ab382f670a428ddd97dc2eb863" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::GeoReplicationStatus::GeoReplicationStatus</definition>
+        <argsstring>()=default</argsstring>
+        <name>GeoReplicationStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::GeoReplicationStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="255" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1adf89eb33fe542dfb477a0b1dc58a08ab" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::GeoReplicationStatus::GeoReplicationStatus</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>GeoReplicationStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::GeoReplicationStatus</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="257" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="257" bodyend="257"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a2fd07a1077d0ac11c79ee553ec2cc0e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::GeoReplicationStatus::operator==</definition>
+        <argsstring>(const GeoReplicationStatus &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="259" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="259" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a32837233bdc9065f54af54c45792b531" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::GeoReplicationStatus::operator!=</definition>
+        <argsstring>(const GeoReplicationStatus &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="261" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="261" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a1be1f12737db2d02f484d66ddaba322b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::GeoReplicationStatus::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplicationStatus::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="263" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="263" bodyend="263"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The status of the secondary location. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::GeoReplicationStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Bootstrap</edgelabel>
+          <edgelabel>Live</edgelabel>
+          <edgelabel>Unavailable</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="252" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="252" bodyend="273"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1ae7ff968f98f46a937cd1f5e6168c8132" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>Bootstrap</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a9e3125ab382f670a428ddd97dc2eb863" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>GeoReplicationStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1adf89eb33fe542dfb477a0b1dc58a08ab" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>GeoReplicationStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a82364987589d672b072c1c409baeab16" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>Live</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1ac12c774db4e84cd2f5beaeed2ea13062" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a32837233bdc9065f54af54c45792b531" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a2fd07a1077d0ac11c79ee553ec2cc0e7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1a1be1f12737db2d02f484d66ddaba322b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status_1ab43f010e7f21401a32324516687ac192" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplicationStatus</scope><name>Unavailable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

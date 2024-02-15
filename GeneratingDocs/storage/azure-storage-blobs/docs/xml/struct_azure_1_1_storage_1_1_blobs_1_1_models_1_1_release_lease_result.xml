@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_release_lease_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::ReleaseLeaseResult</compoundname>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_release_lease_result_1a2d78e5e930c99028af613008ca1ede54" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::ReleaseLeaseResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ReleaseLeaseResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="135" column="21" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_release_lease_result_1a82f41ad199b858ebe5245b0f632016f5" prot="public" static="no" mutable="no">
+        <type>Azure::DateTime</type>
+        <definition>Azure::DateTime Azure::Storage::Blobs::Models::ReleaseLeaseResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::ReleaseLeaseResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date/time that the blob was last modified. The date format follows RFC 1123. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="140" column="25" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="140" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_lease_client_1a56c33e72af151002ac5650808888a274" kindref="member">Azure::Storage::Blobs::BlobLeaseClient::Release</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="130" column="7" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="131" bodyend="141"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_release_lease_result_1a2d78e5e930c99028af613008ca1ede54" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ReleaseLeaseResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_release_lease_result_1a82f41ad199b858ebe5245b0f632016f5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::ReleaseLeaseResult</scope><name>LastModified</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobContainerAccessPolicy</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy_1a035c74b7d0d941ad84b5a0d054a4c2b4" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_signed_identifier" kindref="compound">SignedIdentifier</ref> &gt;</type>
+        <definition>std::vector&lt;SignedIdentifier&gt; Azure::Storage::Blobs::Models::BlobContainerAccessPolicy::SignedIdentifiers</definition>
+        <argsstring></argsstring>
+        <name>SignedIdentifiers</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerAccessPolicy::SignedIdentifiers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A collection of signed identifiers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="830" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="830" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy_1a50fd411e31b23f95c6b5fa7a7ac0c858" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref></type>
+        <definition>PublicAccessType Azure::Storage::Blobs::Models::BlobContainerAccessPolicy::AccessType</definition>
+        <argsstring></argsstring>
+        <name>AccessType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobContainerAccessPolicy::AccessType</qualifiedname>
+        <initializer>= <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a365803f217fd5f69c78ced4a5f2011fb" kindref="member">PublicAccessType::None</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicated whether data in the container may be accessed publicly and the level of access. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="834" column="24" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="834" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1ac1f49d3f4623660efb12dc84619f4d01" kindref="member">Azure::Storage::Blobs::BlobContainerClient::GetAccessPolicy</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobContainerAccessPolicy</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AccessType</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::PublicAccessType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Blob</edgelabel>
+          <edgelabel>BlobContainer</edgelabel>
+          <edgelabel>None</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="825" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="826" bodyend="835"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy_1a50fd411e31b23f95c6b5fa7a7ac0c858" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerAccessPolicy</scope><name>AccessType</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_container_access_policy_1a035c74b7d0d941ad84b5a0d054a4c2b4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobContainerAccessPolicy</scope><name>SignedIdentifiers</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

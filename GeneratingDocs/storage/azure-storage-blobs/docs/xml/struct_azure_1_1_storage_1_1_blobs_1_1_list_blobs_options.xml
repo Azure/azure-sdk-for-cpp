@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::ListBlobsOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1a21e9d61b71a582b7feb72123f246dcc0" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Blobs::ListBlobsOptions::Prefix</definition>
+        <argsstring></argsstring>
+        <name>Prefix</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsOptions::Prefix</qualifiedname>
+        <briefdescription>
+<para>Specifies a string that filters the results to return only blobs whose name begins with the specified prefix. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="403" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="403" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1af1352a8fac3f0a4be224f55107765b74" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; std::string &gt;</type>
+        <definition>Azure::Nullable&lt;std::string&gt; Azure::Storage::Blobs::ListBlobsOptions::ContinuationToken</definition>
+        <argsstring></argsstring>
+        <name>ContinuationToken</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsOptions::ContinuationToken</qualifiedname>
+        <briefdescription>
+<para>A string value that identifies the portion of the list of blobs to be returned with the next listing operation. The operation returns a non-empty BlobsFlatSegment.ContinuationToken value if the listing operation did not return all blobs remaining to be listed with the current segment. The ContinuationToken value can be used as the value for the ContinuationToken parameter in a subsequent call to request the next segment of list items. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="413" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="413" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1a34ee24dcb7bce4ddc8e12f21df132b48" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; int32_t &gt;</type>
+        <definition>Azure::Nullable&lt;int32_t&gt; Azure::Storage::Blobs::ListBlobsOptions::PageSizeHint</definition>
+        <argsstring></argsstring>
+        <name>PageSizeHint</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsOptions::PageSizeHint</qualifiedname>
+        <briefdescription>
+<para>Specifies the maximum number of blobs to return. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="418" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="418" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1aa6951308270013262a3988ec038116c4" prot="public" static="no" mutable="no">
+        <type>Models::ListBlobsIncludeFlags</type>
+        <definition>Models::ListBlobsIncludeFlags Azure::Storage::Blobs::ListBlobsOptions::Include</definition>
+        <argsstring></argsstring>
+        <name>Include</name>
+        <qualifiedname>Azure::Storage::Blobs::ListBlobsOptions::Include</qualifiedname>
+        <initializer>= Models::ListBlobsIncludeFlags::None</initializer>
+        <briefdescription>
+<para>Specifies one or more datasets to include in the response. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="423" column="35" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="423" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a8f7e6653ef69788cb4fb23ec85d4fd96" kindref="member">Azure::Storage::Blobs::BlobContainerClient::ListBlobs</ref> and <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1a06666233dc90f9848c6b207673b25a75" kindref="member">Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="397" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="398" bodyend="424"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1af1352a8fac3f0a4be224f55107765b74" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsOptions</scope><name>ContinuationToken</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1aa6951308270013262a3988ec038116c4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsOptions</scope><name>Include</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1a34ee24dcb7bce4ddc8e12f21df132b48" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsOptions</scope><name>PageSizeHint</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_list_blobs_options_1a21e9d61b71a582b7feb72123f246dcc0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::ListBlobsOptions</scope><name>Prefix</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

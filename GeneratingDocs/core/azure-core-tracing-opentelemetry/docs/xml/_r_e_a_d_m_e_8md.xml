@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_r_e_a_d_m_e_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Azure<sp/>SDK<sp/>Core<sp/>Tracing<sp/>Library<sp/>for<sp/>C++</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Azure::Core::Tracing::OpenTelemetry<sp/>(`azure-core-tracing-opentelemetry`)<sp/>provides<sp/>an<sp/>implementation</highlight></codeline>
+<codeline><highlight class="normal">to<sp/>enable<sp/>customers<sp/>to<sp/>implement<sp/>tracing<sp/>in<sp/>the<sp/>Azure<sp/>SDK<sp/>for<sp/>C++<sp/>libraries.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Getting<sp/>started</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Include<sp/>the<sp/>package</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>easiest<sp/>way<sp/>to<sp/>acquire<sp/>the<sp/>OpenTelemetry<sp/>library<sp/>is<sp/>leveraging<sp/>vcpkg<sp/>package<sp/>manager.<sp/>See<sp/>the<sp/>corresponding<sp/>[Azure<sp/>SDK<sp/>for<sp/>C++<sp/>readme<sp/>section][azsdk_vcpkg_install].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>install<sp/>Azure<sp/>Core<sp/>OpenTelemetry<sp/>package<sp/>via<sp/>vcpkg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cmd</highlight></codeline>
+<codeline><highlight class="normal">&gt;<sp/>vcpkg<sp/>install<sp/>azure-core-tracing-opentelemetry-cpp</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then,<sp/>use<sp/>in<sp/>your<sp/>CMake<sp/>file:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```CMake</highlight></codeline>
+<codeline><highlight class="normal">find_package(azure-core-tracing-opentelemetry-cpp<sp/>CONFIG<sp/>REQUIRED)</highlight></codeline>
+<codeline><highlight class="normal">target_link_libraries(&lt;your<sp/>project<sp/>name&gt;<sp/>PRIVATE<sp/>Azure::azure-core-tracing-opentelemetry)</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Key<sp/>concepts</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>`azure-core-tracing-opentelemetry`<sp/>package<sp/>supports<sp/>enabling<sp/>tracing<sp/>for<sp/>Azure<sp/>SDK<sp/>packages,<sp/>using<sp/>an<sp/>[OpenTelemetry](https://opentelemetry.io/)<sp/>`Tracer`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">By<sp/>default,<sp/>all<sp/>libraries<sp/>log<sp/>with<sp/>a<sp/>`NoOpTracer`<sp/>that<sp/>takes<sp/>no<sp/>action.<sp/>To<sp/>enable<sp/>tracing,<sp/>you<sp/>will<sp/>need<sp/>to<sp/>set<sp/>a<sp/>global<sp/>tracer<sp/>provider<sp/>following<sp/>the<sp/>instructions<sp/>in<sp/>the<sp/>[OpenTelemetry<sp/>getting<sp/>started<sp/>guide](https://opentelemetry-cpp.readthedocs.io/en/latest/api/GettingStarted.html)<sp/>or<sp/>the<sp/>[Enabling<sp/>Tracing<sp/>using<sp/>OpenTelemetry<sp/>example](#enabling-tracing-using-opentelemetry)<sp/>below.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Span<sp/>Propagation</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Core<sp/>Tracing<sp/>supports<sp/>both<sp/>automatic<sp/>and<sp/>manual<sp/>span<sp/>propagation.<sp/>Automatic<sp/>propagation<sp/>is<sp/>handled<sp/>using<sp/>OpenTelemetry&apos;s<sp/>API<sp/>and<sp/>will<sp/>work<sp/>well<sp/>in<sp/>most<sp/>scenarios.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">For<sp/>customers<sp/>who<sp/>require<sp/>manual<sp/>propagation,<sp/>all<sp/>client<sp/>library<sp/>operations<sp/>accept<sp/>an<sp/>optional<sp/>field<sp/>in<sp/>the<sp/>`options`<sp/>parameter<sp/>where<sp/>a<sp/>tracingContext<sp/>can<sp/></highlight></codeline>
+<codeline><highlight class="normal">be<sp/>passed<sp/>in<sp/>and<sp/>used<sp/>as<sp/>the<sp/>currently<sp/>active<sp/>context.<sp/>Please<sp/>see<sp/>the<sp/>[Manual<sp/>Span<sp/>Propagation<sp/>example](#manual-span-propagation-using-opentelemetry)<sp/></highlight></codeline>
+<codeline><highlight class="normal">below<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>OpenTelemetry<sp/>Compatibility</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Most<sp/>Azure<sp/>SDKs<sp/>use<sp/>[OpenTelemetry](https://opentelemetry.io/)<sp/>to<sp/>support<sp/>tracing.<sp/>Specifically,<sp/>we<sp/>depend<sp/>on<sp/></highlight></codeline>
+<codeline><highlight class="normal">the<sp/>[opentelemetry-cpp](https://github.com/open-telemetry/opentelemetry-cpp/blob/main/docs/building-with-vcpkg.md)<sp/>VCPKG<sp/>package.</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Enabling<sp/>tracing<sp/>using<sp/>OpenTelemetry</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Start<sp/>by<sp/>creating<sp/>an<sp/>OpenTelemetry<sp/>Provider<sp/>using<sp/>the</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>default<sp/>OpenTelemetry<sp/>tracer<sp/>provider.</highlight></codeline>
+<codeline><highlight class="normal">std::shared_ptr&lt;Azure::Core::Tracing::TracerProvider&gt;<sp/>tracerProvider<sp/>=<sp/>Azure::Core::OpenTelemetry::TracerProvider::Create();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Connect<sp/>the<sp/>tracerProvider<sp/>to<sp/>the<sp/>current<sp/>application<sp/>context.</highlight></codeline>
+<codeline><highlight class="normal">ApplicationContext().SetTracerProvider(tracerProvider);</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">After<sp/>this,<sp/>the<sp/>SDK<sp/>API<sp/>implementations<sp/>will<sp/>be<sp/>able<sp/>to<sp/>retrieve<sp/>the<sp/>tracer<sp/>provider<sp/>and<sp/>produce<sp/>tracing<sp/>events<sp/>automatically.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Enabling<sp/>tracing<sp/>using<sp/>a<sp/>non-default<sp/>TracerProvider</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Start<sp/>by<sp/>creating<sp/>an<sp/>OpenTelemetry<sp/>Provider.</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>exporter<sp/>=<sp/>std::make_unique&lt;MySpanExporter&gt;();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>simple<sp/>processor</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>simple_processor<sp/>=<sp/>std::unique_ptr&lt;opentelemetry::sdk::trace::SpanProcessor&gt;(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>new<sp/>opentelemetry::sdk::trace::SimpleSpanProcessor(std::move(exporter)));</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>always_on_sampler<sp/>=<sp/>std::unique_ptr&lt;opentelemetry::sdk::trace::AlwaysOnSampler&gt;(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>new<sp/>opentelemetry::sdk::trace::AlwaysOnSampler);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>resource_attributes<sp/>=<sp/>opentelemetry::sdk::resource::ResourceAttributes{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{&quot;service.name&quot;,<sp/>&quot;telemetryTest&quot;},<sp/>{&quot;service.instance.id&quot;,<sp/>&quot;instance-1&quot;}};</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>resource<sp/>=<sp/>opentelemetry::sdk::resource::Resource::Create(resource_attributes);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>openTelemetryProvider<sp/>=<sp/>opentelemetry::nostd::shared_ptr&lt;opentelemetry::trace::TracerProvider&gt;(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>new<sp/>opentelemetry::sdk::trace::TracerProvider(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::move(simple_processor),<sp/>resource,<sp/>std::move(always_on_sampler)));</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Use<sp/>the<sp/>default<sp/>OpenTelemetry<sp/>tracer<sp/>provider.</highlight></codeline>
+<codeline><highlight class="normal">std::shared_ptr&lt;Azure::Core::Tracing::TracerProvider&gt;<sp/>tracerProvider<sp/>=<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Core::OpenTelemetry::TracerProvider::Create(openTelemetryProvider);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Connect<sp/>the<sp/>tracerProvider<sp/>to<sp/>the<sp/>current<sp/>application<sp/>context.</highlight></codeline>
+<codeline><highlight class="normal">ApplicationContext().SetTracerProvider(tracerProvider);</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Manual<sp/>Span<sp/>Propagation<sp/>using<sp/>OpenTelemetry</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">In<sp/>Azure<sp/>Service<sp/>methods,<sp/>the<sp/>`Azure::Context`<sp/>value<sp/>passed<sp/>into<sp/>the<sp/>tracer<sp/>optionally<sp/>has<sp/>an<sp/>associated<sp/>Span.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>there<sp/>is<sp/>a<sp/>span<sp/>associated<sp/>with<sp/>the<sp/>`Azure::Context`,<sp/>then<sp/>calling<sp/>`DiagnosticTracingFactory::CreateSpanFromContext`<sp/>will</highlight></codeline>
+<codeline><highlight class="normal">cause<sp/>a<sp/>new<sp/>span<sp/>to<sp/>be<sp/>created<sp/>using<sp/>the<sp/>span<sp/>in<sp/>the<sp/>provided<sp/>`Azure::Context`<sp/>object<sp/>as<sp/>the<sp/>parent<sp/>span.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>contextAndSpan</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Azure::Core::Tracing::_internal::DiagnosticTracingFactory::CreateSpanFromContext(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;HTTP<sp/>GET#2&quot;,<sp/>context);</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Next<sp/>steps</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">You<sp/>can<sp/>build<sp/>and<sp/>run<sp/>the<sp/>tests<sp/>locally<sp/>by<sp/>executing<sp/>`azure-core-tracing-opentelemetry-test`.<sp/>Explore<sp/>the<sp/>`test`<sp/>folder<sp/>to<sp/>see<sp/>advanced<sp/>usage<sp/>and<sp/>behavior<sp/>of<sp/>the<sp/>public<sp/>classes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Troubleshooting</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>you<sp/>run<sp/>into<sp/>issues<sp/>while<sp/>using<sp/>this<sp/>library,<sp/>please<sp/>feel<sp/>free<sp/>to<sp/>[file<sp/>an<sp/>issue](https://github.com/Azure/azure-sdk-for-cpp/issues/new).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>OpenTelemetry<sp/>Compatibility<sp/>Errors</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&gt;<sp/>Ideally<sp/>you&apos;d<sp/>want<sp/>to<sp/>use<sp/>OpenTelemetry<sp/>1.3.0<sp/>or<sp/>higher.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;!--<sp/>###<sp/>Community--&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Reporting<sp/>security<sp/>issues<sp/>and<sp/>security<sp/>bugs</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Security<sp/>issues<sp/>and<sp/>bugs<sp/>should<sp/>be<sp/>reported<sp/>privately,<sp/>via<sp/>email,<sp/>to<sp/>the<sp/>Microsoft<sp/>Security<sp/>Response<sp/>Center<sp/>(MSRC)<sp/>&lt;secure@microsoft.com&gt;.<sp/>You<sp/>should<sp/>receive<sp/>a<sp/>response<sp/>within<sp/>24<sp/>hours.<sp/>If<sp/>for<sp/>some<sp/>reason<sp/>you<sp/>do<sp/>not,<sp/>please<sp/>follow<sp/>up<sp/>via<sp/>email<sp/>to<sp/>ensure<sp/>we<sp/>received<sp/>your<sp/>original<sp/>message.<sp/>Further<sp/>information,<sp/>including<sp/>the<sp/>MSRC<sp/>PGP<sp/>key,<sp/>can<sp/>be<sp/>found<sp/>in<sp/>the<sp/>[Security<sp/>TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>License</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Azure<sp/>SDK<sp/>for<sp/>C++<sp/>is<sp/>licensed<sp/>under<sp/>the<sp/>[MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt)<sp/>license.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;!--<sp/>LINKS<sp/>--&gt;</highlight></codeline>
+<codeline><highlight class="normal">[azsdk_vcpkg_install]:<sp/>https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing_developer_guide]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing_pull_requests]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_cpp_development_guidelines]:<sp/>https://azure.github.io/azure-sdk/cpp_introduction.html</highlight></codeline>
+<codeline><highlight class="normal">[azure_cli]:<sp/>https://docs.microsoft.com/cli/azure</highlight></codeline>
+<codeline><highlight class="normal">[azure_pattern_circuit_breaker]:<sp/>https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker</highlight></codeline>
+<codeline><highlight class="normal">[azure_pattern_retry]:<sp/>https://docs.microsoft.com/azure/architecture/patterns/retry</highlight></codeline>
+<codeline><highlight class="normal">[azure_portal]:<sp/>https://portal.azure.com</highlight></codeline>
+<codeline><highlight class="normal">[azure_sub]:<sp/>https://azure.microsoft.com/free/</highlight></codeline>
+<codeline><highlight class="normal">[c_compiler]:<sp/>https://visualstudio.microsoft.com/vs/features/cplusplus/</highlight></codeline>
+<codeline><highlight class="normal">[cloud_shell]:<sp/>https://docs.microsoft.com/azure/cloud-shell/overview</highlight></codeline>
+<codeline><highlight class="normal">[cloud_shell_bash]:<sp/>https://shell.azure.com/bash</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Fcore%2Fcore-opentelemetry%2FREADME.png)</highlight></codeline>
+    </programlisting>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>

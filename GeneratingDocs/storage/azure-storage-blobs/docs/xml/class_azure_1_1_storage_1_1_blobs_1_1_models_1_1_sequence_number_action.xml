@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SequenceNumberAction</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1ae896d260bba6a1be58d42d951aa3c5a8" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref></type>
+        <definition>const SequenceNumberAction Azure::Storage::Blobs::Models::SequenceNumberAction::Max</definition>
+        <argsstring></argsstring>
+        <name>Max</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::Max</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref>: Max </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2896" column="68" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2896" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1acf104832ff1331017ee6d5a9cde024d2" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref></type>
+        <definition>const SequenceNumberAction Azure::Storage::Blobs::Models::SequenceNumberAction::Update</definition>
+        <argsstring></argsstring>
+        <name>Update</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::Update</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref>: Update </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2898" column="68" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2898" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a4f2aa68d4e9e8684ea155871add4e6af" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref></type>
+        <definition>const SequenceNumberAction Azure::Storage::Blobs::Models::SequenceNumberAction::Increment</definition>
+        <argsstring></argsstring>
+        <name>Increment</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::Increment</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref>: Increment </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2900" column="68" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2900" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a4b4729a4c7fc13a19c076be1d1fd0ffd" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::SequenceNumberAction::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2903" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2903" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a749f24d66a7644e508bf03bdc63c6154" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::SequenceNumberAction::SequenceNumberAction</definition>
+        <argsstring>()=default</argsstring>
+        <name>SequenceNumberAction</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::SequenceNumberAction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2886" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a018a76e110bb6086dc82c34c03a2daf1" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::SequenceNumberAction::SequenceNumberAction</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>SequenceNumberAction</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::SequenceNumberAction</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2888" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2888" bodyend="2888"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1ac155b96256a29655c869808e31c019b7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::SequenceNumberAction::operator==</definition>
+        <argsstring>(const SequenceNumberAction &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2890" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2890" bodyend="2890"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a7906d7caca25804c1bb9dae0e2ee8635" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::SequenceNumberAction::operator!=</definition>
+        <argsstring>(const SequenceNumberAction &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action" kindref="compound">SequenceNumberAction</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2892" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2892" bodyend="2892"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1affa9054bb8902c11c8a9f9358daf4d6d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::SequenceNumberAction::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SequenceNumberAction::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2894" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2894" bodyend="2894"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Required if the x-ms-blob-sequence-number header is set for the request. This property applies to page blobs only. This property indicates how the service should modify the blob&apos;s sequence number. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::SequenceNumberAction</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Increment</edgelabel>
+          <edgelabel>Max</edgelabel>
+          <edgelabel>Update</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2883" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2883" bodyend="2904"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a4f2aa68d4e9e8684ea155871add4e6af" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>Increment</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a4b4729a4c7fc13a19c076be1d1fd0ffd" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1ae896d260bba6a1be58d42d951aa3c5a8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>Max</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a7906d7caca25804c1bb9dae0e2ee8635" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1ac155b96256a29655c869808e31c019b7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a749f24d66a7644e508bf03bdc63c6154" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>SequenceNumberAction</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1a018a76e110bb6086dc82c34c03a2daf1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>SequenceNumberAction</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1affa9054bb8902c11c8a9f9358daf4d6d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sequence_number_action_1acf104832ff1331017ee6d5a9cde024d2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SequenceNumberAction</scope><name>Update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

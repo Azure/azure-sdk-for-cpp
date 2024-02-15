@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_89693230ba9ced4bdbad15b8ad004445" kind="dir">
+    <compoundname>inc/azure/storage</compoundname>
+    <innerdir refid="dir_2418dc9715ae31a5fa4d820781d26dc9">inc/azure/storage/blobs</innerdir>
+    <innerfile refid="blobs_8hpp">blobs.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/"/>
+  </compounddef>
+</doxygen>

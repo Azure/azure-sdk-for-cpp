@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::AccountInfo</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info_1a5499859647556e7beefe51ac1712ae8f" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">Models::SkuName</ref></type>
+        <definition>Models::SkuName Azure::Storage::Blobs::Models::AccountInfo::SkuName</definition>
+        <argsstring></argsstring>
+        <name>SkuName</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountInfo::SkuName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Identifies the sku name of the account. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="666" column="23" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="666" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info_1a0548de8fce83862ba036511bd7b97e2d" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">Models::AccountKind</ref></type>
+        <definition>Models::AccountKind Azure::Storage::Blobs::Models::AccountInfo::AccountKind</definition>
+        <argsstring></argsstring>
+        <name>AccountKind</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountInfo::AccountKind</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Identifies the account kind. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="670" column="27" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="670" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info_1aefce8beb647bc79bdaef0b9671083c71" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::AccountInfo::IsHierarchicalNamespaceEnabled</definition>
+        <argsstring></argsstring>
+        <name>IsHierarchicalNamespaceEnabled</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountInfo::IsHierarchicalNamespaceEnabled</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Version 2019-07-07 and newer. Indicates if the account has a hierarchical namespace enabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="675" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="675" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client_1a6fdba0f0336b075806cfa199827348e5" kindref="member">Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::AccountInfo</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>SkuName</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>AccountKind</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::AccountKind</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>BlobStorage</edgelabel>
+          <edgelabel>BlockBlobStorage</edgelabel>
+          <edgelabel>FileStorage</edgelabel>
+          <edgelabel>Storage</edgelabel>
+          <edgelabel>StorageV2</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::SkuName</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>PremiumLrs</edgelabel>
+          <edgelabel>PremiumZrs</edgelabel>
+          <edgelabel>StandardGrs</edgelabel>
+          <edgelabel>StandardGzrs</edgelabel>
+          <edgelabel>StandardLrs</edgelabel>
+          <edgelabel>StandardRagrs</edgelabel>
+          <edgelabel>StandardRagzrs</edgelabel>
+          <edgelabel>StandardZrs</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="661" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="662" bodyend="676"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info_1a0548de8fce83862ba036511bd7b97e2d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountInfo</scope><name>AccountKind</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info_1aefce8beb647bc79bdaef0b9671083c71" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountInfo</scope><name>IsHierarchicalNamespaceEnabled</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_info_1a5499859647556e7beefe51ac1712ae8f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountInfo</scope><name>SkuName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

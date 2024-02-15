@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_f375df7cdb07aec5e8f5ec64fd47cac7" kind="dir">
+    <compoundname>src/http/curl</compoundname>
+    <innerfile refid="curl_8cpp">curl.cpp</innerfile>
+    <innerfile refid="curl__connection__pool__private_8hpp">curl_connection_pool_private.hpp</innerfile>
+    <innerfile refid="curl__connection__private_8hpp">curl_connection_private.hpp</innerfile>
+    <innerfile refid="curl__session__private_8hpp">curl_session_private.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/http/curl/"/>
+  </compounddef>
+</doxygen>

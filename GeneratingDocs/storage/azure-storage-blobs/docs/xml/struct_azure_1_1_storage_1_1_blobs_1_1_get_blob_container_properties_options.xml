@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_properties_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::GetBlobContainerPropertiesOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_properties_options_1a5693a1cb180ffb76acaac8552534c842" prot="public" static="no" mutable="no">
+        <type>LeaseAccessConditions</type>
+        <definition>LeaseAccessConditions Azure::Storage::Blobs::GetBlobContainerPropertiesOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::GetBlobContainerPropertiesOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="372" column="27" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="372" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_container_client_1acc7441a549d6aa88525c97e6a0d836cc" kindref="member">Azure::Storage::Blobs::BlobContainerClient::GetProperties</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="367" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="368" bodyend="373"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_blob_container_properties_options_1a5693a1cb180ffb76acaac8552534c842" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetBlobContainerPropertiesOptions</scope><name>AccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

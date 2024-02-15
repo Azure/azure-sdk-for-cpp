@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::SetBlobAccessTierOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options_1a8cd1c9a118101d254d8ddf15ac517611" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">Models::RehydratePriority</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::RehydratePriority&gt; Azure::Storage::Blobs::SetBlobAccessTierOptions::RehydratePriority</definition>
+        <argsstring></argsstring>
+        <name>RehydratePriority</name>
+        <qualifiedname>Azure::Storage::Blobs::SetBlobAccessTierOptions::RehydratePriority</qualifiedname>
+        <briefdescription>
+<para>Indicates the priority with which to rehydrate an archived blob. The priority can be set on a blob only once. This header will be ignored on subsequent requests to the same blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="503" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="503" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options_1aa958177e1b6a918b9eca05bbc3a7e58c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>Azure::Storage::Blobs::SetBlobAccessTierOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::SetBlobAccessTierOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="509" column="21"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ad9104f59eef0ef11d1599fa0de03d5bb" kindref="member">Azure::Storage::Blobs::BlobClient::SetAccessTier</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="496" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="497" bodyend="510"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options_1aa958177e1b6a918b9eca05bbc3a7e58c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SetBlobAccessTierOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_set_blob_access_tier_options_1a8cd1c9a118101d254d8ddf15ac517611" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::SetBlobAccessTierOptions</scope><name>RehydratePriority</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

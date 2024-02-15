@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::RehydratePriority</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1a8dac68ea12bc28a37a22bd4f5404c4d7" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref></type>
+        <definition>const RehydratePriority Azure::Storage::Blobs::Models::RehydratePriority::High</definition>
+        <argsstring></argsstring>
+        <name>High</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::High</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref>: High </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1131" column="65" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1abe137cfa2c4c56a38720c6ed306d8e50" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref></type>
+        <definition>const RehydratePriority Azure::Storage::Blobs::Models::RehydratePriority::Standard</definition>
+        <argsstring></argsstring>
+        <name>Standard</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::Standard</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref>: Standard </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1133" column="65" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1133" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1aafb5c468e93514a5f0ee35d6cfaf7fab" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::RehydratePriority::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1136" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1136" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1aafef4b6b7b0c282b01a73223d1f06935" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::RehydratePriority::RehydratePriority</definition>
+        <argsstring>()=default</argsstring>
+        <name>RehydratePriority</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::RehydratePriority</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1121" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1a1779439476989295f06dba55fe5e3e37" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::RehydratePriority::RehydratePriority</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>RehydratePriority</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::RehydratePriority</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1123" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1123" bodyend="1123"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1aa71c6df60346eee0ba587394f1a7ba3e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::RehydratePriority::operator==</definition>
+        <argsstring>(const RehydratePriority &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1125" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1125" bodyend="1125"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1a2733c8e255187ed9d493060981e97023" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::RehydratePriority::operator!=</definition>
+        <argsstring>(const RehydratePriority &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority" kindref="compound">RehydratePriority</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1127" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1127" bodyend="1127"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1ad429e9e903e316c14a30bbfc938b7cc7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::RehydratePriority::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RehydratePriority::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1129" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1129" bodyend="1129"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional: Indicates the priority with which to rehydrate an archived blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::RehydratePriority</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>High</edgelabel>
+          <edgelabel>Standard</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1118" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1118" bodyend="1137"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1a8dac68ea12bc28a37a22bd4f5404c4d7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>High</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1aafb5c468e93514a5f0ee35d6cfaf7fab" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1a2733c8e255187ed9d493060981e97023" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1aa71c6df60346eee0ba587394f1a7ba3e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1aafef4b6b7b0c282b01a73223d1f06935" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>RehydratePriority</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1a1779439476989295f06dba55fe5e3e37" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>RehydratePriority</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1abe137cfa2c4c56a38720c6ed306d8e50" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>Standard</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_rehydrate_priority_1ad429e9e903e316c14a30bbfc938b7cc7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RehydratePriority</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

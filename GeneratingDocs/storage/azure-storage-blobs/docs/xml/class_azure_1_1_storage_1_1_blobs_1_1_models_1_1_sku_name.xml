@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SkuName</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1ac226d582482486d52c8e5f7c54e1929a" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::StandardLrs</definition>
+        <argsstring></argsstring>
+        <name>StandardLrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::StandardLrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: StandardLrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="610" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="610" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1aa69becdd27749eeedefb0c69948130aa" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::StandardGrs</definition>
+        <argsstring></argsstring>
+        <name>StandardGrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::StandardGrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: StandardGrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="612" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="612" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a75253400ea2c101617fdac789608bc9f" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::StandardRagrs</definition>
+        <argsstring></argsstring>
+        <name>StandardRagrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::StandardRagrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: StandardRagrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="614" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="614" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a7dcb6f2a9375b29f9059c3b4d04dc60d" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::StandardZrs</definition>
+        <argsstring></argsstring>
+        <name>StandardZrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::StandardZrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: StandardZrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="616" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="616" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a0f79783b5f086b6bed0983b2220eed74" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::PremiumLrs</definition>
+        <argsstring></argsstring>
+        <name>PremiumLrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::PremiumLrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: PremiumLrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="618" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="618" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1aa1820ad61140d0a097557fd58f7dce8b" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::PremiumZrs</definition>
+        <argsstring></argsstring>
+        <name>PremiumZrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::PremiumZrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: PremiumZrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="620" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="620" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1acfaf26170a7a0d752004ea9b9285bfb1" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::StandardGzrs</definition>
+        <argsstring></argsstring>
+        <name>StandardGzrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::StandardGzrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: StandardGzrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="622" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="622" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1ae2dd32274e6e19bb9cd314128880f1ff" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref></type>
+        <definition>const SkuName Azure::Storage::Blobs::Models::SkuName::StandardRagzrs</definition>
+        <argsstring></argsstring>
+        <name>StandardRagzrs</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::StandardRagzrs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>: StandardRagzrs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="624" column="55" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="624" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a9e4c49c1eb701a901de297d4cf0130bd" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::SkuName::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="627" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="627" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a7131ddbea631eca45c3ff160d185f19a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::SkuName::SkuName</definition>
+        <argsstring>()=default</argsstring>
+        <name>SkuName</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::SkuName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="600" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a016e443fa7db9ea7dcfeee68cab0aa27" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::SkuName::SkuName</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>SkuName</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::SkuName</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="602" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="602" bodyend="602"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a588f5e1ace17a4656ab502ffc7f2b507" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::SkuName::operator==</definition>
+        <argsstring>(const SkuName &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="604" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="604" bodyend="604"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1abaf0f4421ad6edfaf22c0cac468ce63f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::SkuName::operator!=</definition>
+        <argsstring>(const SkuName &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name" kindref="compound">SkuName</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="606" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="606" bodyend="606"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a6311f168c2f3212eed3fd8c1364b9791" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::SkuName::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SkuName::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="608" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="608" bodyend="608"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Identifies the sku name of the account. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::SkuName</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>PremiumLrs</edgelabel>
+          <edgelabel>PremiumZrs</edgelabel>
+          <edgelabel>StandardGrs</edgelabel>
+          <edgelabel>StandardGzrs</edgelabel>
+          <edgelabel>StandardLrs</edgelabel>
+          <edgelabel>StandardRagrs</edgelabel>
+          <edgelabel>StandardRagzrs</edgelabel>
+          <edgelabel>StandardZrs</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="597" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="597" bodyend="628"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a9e4c49c1eb701a901de297d4cf0130bd" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1abaf0f4421ad6edfaf22c0cac468ce63f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a588f5e1ace17a4656ab502ffc7f2b507" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a0f79783b5f086b6bed0983b2220eed74" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>PremiumLrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1aa1820ad61140d0a097557fd58f7dce8b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>PremiumZrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a7131ddbea631eca45c3ff160d185f19a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>SkuName</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a016e443fa7db9ea7dcfeee68cab0aa27" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>SkuName</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1aa69becdd27749eeedefb0c69948130aa" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>StandardGrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1acfaf26170a7a0d752004ea9b9285bfb1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>StandardGzrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1ac226d582482486d52c8e5f7c54e1929a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>StandardLrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a75253400ea2c101617fdac789608bc9f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>StandardRagrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1ae2dd32274e6e19bb9cd314128880f1ff" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>StandardRagzrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a7dcb6f2a9375b29f9059c3b4d04dc60d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>StandardZrs</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_sku_name_1a6311f168c2f3212eed3fd8c1364b9791" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SkuName</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,774 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_c_h_a_n_g_e_l_o_g_8md" kind="file" language="Markdown">
+    <compoundname>CHANGELOG.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Release<sp/>History</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.12.0-beta.1<sp/>(Unreleased)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Move<sp/>the<sp/>connection<sp/>back<sp/>to<sp/>the<sp/>connection<sp/>pool<sp/>when<sp/>HTTP<sp/>error<sp/>404<sp/>was<sp/>received.<sp/>This<sp/>may<sp/>improve<sp/>the<sp/>performance<sp/>of<sp/>a<sp/>multithreaded<sp/>application<sp/>when<sp/>libcurl<sp/>transport<sp/>adapter<sp/>is<sp/>being<sp/>used.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[mchelnokov](https://github.com/mchelnokov)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Mykhailo<sp/>Chelnokov<sp/>_([GitHub](https://github.com/mchelnokov))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.11.1<sp/>(2024-02-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5154]](https://github.com/Azure/azure-sdk-for-cpp/issues/5154)<sp/>WinHTTP<sp/>Transport<sp/>logging<sp/>(and<sp/>exception<sp/>strings)<sp/>have<sp/>dangling<sp/>periods<sp/>making<sp/>it<sp/>harder<sp/>to<sp/>read.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>log<sp/>messages<sp/>for<sp/>WinHTTP<sp/>Transport<sp/>to<sp/>help<sp/>diagnose<sp/>WinHTTP<sp/>state<sp/>machine<sp/>related<sp/>issues.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.11.0<sp/>(2024-01-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>&apos;OPTIONS&apos;<sp/>HTTP<sp/>method<sp/>to<sp/>`Azure::Core::Http::HttpMethod`<sp/>enum.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>TLS<sp/>1.3<sp/>support<sp/>to<sp/>WinHTTP<sp/>transport.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Environment<sp/>Log<sp/>Level<sp/>Listener<sp/>now<sp/>logs<sp/>the<sp/>ThreadID<sp/>for<sp/>the<sp/>thread<sp/>originating<sp/>the<sp/>trace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983)<sp/>Added<sp/>support<sp/>for<sp/>setting<sp/>`CURLOPT_CAPATH`<sp/>libcurl<sp/>option<sp/>on<sp/>Linux.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[phoebusm](https://github.com/phoebusm)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5172]](https://github.com/Azure/azure-sdk-for-cpp/issues/5172)<sp/>`Azure::Nullable::Emplace()`<sp/>does<sp/>not<sp/>set<sp/>`HasValue()`<sp/>to<sp/>`true`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5130]](https://github.com/Azure/azure-sdk-for-cpp/issues/5130)<sp/>`Url::AppendPath()`<sp/>and<sp/>`Url::SetPath()`<sp/>may<sp/>end<sp/>up<sp/>with<sp/>a<sp/>double<sp/>slash<sp/>at<sp/>the<sp/>beginning<sp/>of<sp/>a<sp/>path.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5007]](https://github.com/Azure/azure-sdk-for-cpp/issues/5007)<sp/>Some<sp/>versions<sp/>of<sp/>GCC<sp/>no<sp/>longer<sp/>include<sp/>stdint.h<sp/>in<sp/>cstdint.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4756]]<sp/>(https://github.com/Azure/azure-sdk-for-cpp/issues/4756)<sp/>`BearerTokenAuthenticationPolicy`<sp/>now<sp/>uses<sp/>shared<sp/>mutex<sp/>lock<sp/>for<sp/>read<sp/>operations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Phoebus<sp/>Mak<sp/>_([GitHub](https://github.com/phoebusm))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.11.0-beta.2<sp/>(2023-11-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>TLS<sp/>1.3<sp/>support<sp/>to<sp/>WinHTTP<sp/>transport.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Environment<sp/>Log<sp/>Level<sp/>Listener<sp/>now<sp/>logs<sp/>the<sp/>ThreadID<sp/>for<sp/>the<sp/>thread<sp/>originating<sp/>the<sp/>trace.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5007]](https://github.com/Azure/azure-sdk-for-cpp/issues/5007)<sp/>Some<sp/>versions<sp/>of<sp/>GCC<sp/>no<sp/>longer<sp/>include<sp/>stdint.h<sp/>in<sp/>cstdint.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.11.0-beta.1<sp/>(2023-10-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4983]](https://github.com/Azure/azure-sdk-for-cpp/issues/4983)<sp/>Added<sp/>support<sp/>for<sp/>setting<sp/>`CURLOPT_CAPATH`<sp/>libcurl<sp/>option<sp/>on<sp/>Linux.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[phoebusm](https://github.com/phoebusm)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Phoebus<sp/>Mak<sp/>_([GitHub](https://github.com/phoebusm))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.10.3<sp/>(2023-10-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Concurrency<sp/>issues<sp/>in<sp/>`Azure::Core::Diagnostics::_internal::Log::Stream`<sp/>have<sp/>been<sp/>fixed.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>SDK<sp/>consumption<sp/>documentation<sp/>improvement.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[kou](https://github.com/kou)_)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>GCC<sp/>13<sp/>compilation<sp/>error.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[adamdebreceni](https://github.com/adamdebreceni)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Sutou<sp/>Kouhei<sp/>_([GitHub](https://github.com/kou))_</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>adamdebreceni<sp/>_([GitHub](https://github.com/adamdebreceni))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.10.2<sp/>(2023-08-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4792]](https://github.com/Azure/azure-sdk-for-cpp/issues/4792)<sp/>Only<sp/>support<sp/>CURL&apos;s<sp/>root<sp/>cert<sp/>validation<sp/>when<sp/>CURL<sp/>version<sp/>is<sp/>&gt;=<sp/>7.77.0.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.10.1<sp/>(2023-07-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4662]](https://github.com/Azure/azure-sdk-for-cpp/issues/4662)<sp/>`Azure::Core::Operation&lt;T&gt;::GetRawResponseInternal()`<sp/>is<sp/>now<sp/>deprecated<sp/>and<sp/>no<sp/>longer<sp/>requires<sp/>an<sp/>override.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Empty<sp/>diagnostic<sp/>messages<sp/>will<sp/>no<sp/>longer<sp/>be<sp/>generated.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.10.0<sp/>(2023-06-01)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Uuid::AsArray()`<sp/>and<sp/>`Azure::Core::Uuid::CreateFromArray()`<sp/>to<sp/>enable<sp/>reading<sp/>or<sp/>writing<sp/>from<sp/>an<sp/>existing<sp/>UUID.<sp/>This<sp/>is<sp/>useful<sp/>when<sp/>the<sp/>UUID<sp/>was<sp/>generated<sp/>outside<sp/>the<sp/>Azure<sp/>SDK,<sp/>or<sp/>needs<sp/>to<sp/>be<sp/>used<sp/>from<sp/>a<sp/>component<sp/>outside<sp/>the<sp/>Azure<sp/>SDK.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#3964]](https://github.com/Azure/azure-sdk-for-cpp/issues/3964)<sp/>Ensuring<sp/>some<sp/>Azure<sp/>SDK<sp/>types<sp/>have<sp/>the<sp/>expected<sp/>default<sp/>operations.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[jnyfah](https://github.com/jnyfah)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Jennifer<sp/>Chukwu<sp/>_([GitHub](https://github.com/jnyfah))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.10.0-beta.1<sp/>(2023-05-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Uuid::AsArray()`<sp/>and<sp/>`Azure::Core::Uuid::CreateFromArray()`<sp/>to<sp/>enable<sp/>reading<sp/>or<sp/>writing<sp/>from<sp/>an<sp/>existing<sp/>UUID.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>is<sp/>useful<sp/>when<sp/>the<sp/>UUID<sp/>was<sp/>generated<sp/>outside<sp/>the<sp/>Azure<sp/>SDK,<sp/>or<sp/>needs<sp/>to<sp/>be<sp/>used<sp/>from<sp/>a<sp/>component<sp/>outside<sp/>the<sp/>Azure<sp/>SDK.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.9.0<sp/>(2023-05-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>ignore<sp/>invalid<sp/>certificate<sp/>common<sp/>name<sp/>for<sp/>TLS<sp/>connections<sp/>in<sp/>WinHTTP<sp/>transport.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`DisableTlsCertificateValidation`<sp/>in<sp/>`TransportOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`TokenCredential::GetCredentialName()`<sp/>to<sp/>be<sp/>utilized<sp/>in<sp/>diagnostic<sp/>messages.<sp/>If<sp/>you<sp/>have<sp/>any<sp/>custom<sp/>implementations<sp/>of<sp/>`TokenCredential`,<sp/>it<sp/>is<sp/>recommended<sp/>to<sp/>pass<sp/>the<sp/>name<sp/>of<sp/>your<sp/>credential<sp/>to<sp/>`TokenCredential`<sp/>constructor.<sp/>The<sp/>old<sp/>parameterless<sp/>constructor<sp/>is<sp/>deprecated.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>challenge-based<sp/>and<sp/>multi-tenant<sp/>authentication.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>the<sp/>UUID<sp/>generation<sp/>so<sp/>the<sp/>variant<sp/>is<sp/>RFC<sp/>4122<sp/>conforming.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352)<sp/>Fixed<sp/>compilation<sp/>error<sp/>on<sp/>Visual<sp/>Studio<sp/>2017.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[jorgen](https://github.com/jorgen)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Jorgen<sp/>Lind<sp/>_([GitHub](https://github.com/jorgen))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.8.2<sp/>(2023-04-24)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4490]](https://github.com/Azure/azure-sdk-for-cpp/issues/4490)<sp/>Fixed<sp/>WinHTTP<sp/>memory<sp/>leak<sp/>during<sp/>failed<sp/>requests.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.9.0-beta.1<sp/>(2023-04-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>ignore<sp/>invalid<sp/>certificate<sp/>common<sp/>name<sp/>for<sp/>TLS<sp/>connections<sp/>in<sp/>WinHTTP<sp/>transport.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`DisableTlsCertificateValidation`<sp/>in<sp/>`TransportOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`TokenCredential::GetCredentialName()`<sp/>to<sp/>be<sp/>utilized<sp/>in<sp/>diagnostic<sp/>messages.<sp/>If<sp/>you<sp/>have<sp/>any<sp/>custom<sp/>implementations<sp/>of<sp/>`TokenCredential`,<sp/>it<sp/>is<sp/>recommended<sp/>to<sp/>pass<sp/>the<sp/>name<sp/>of<sp/>your<sp/>credential<sp/>to<sp/>`TokenCredential`<sp/>constructor.<sp/>The<sp/>old<sp/>parameterless<sp/>constructor<sp/>is<sp/>deprecated.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>challenge-based<sp/>and<sp/>multi-tenant<sp/>authentication.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352)<sp/>Fixed<sp/>compilation<sp/>error<sp/>on<sp/>Visual<sp/>Studio<sp/>2017.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[jorgen](https://github.com/jorgen)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Jorgen<sp/>Lind<sp/>_([GitHub](https://github.com/jorgen))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.8.1<sp/>(2023-04-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4213]](https://github.com/Azure/azure-sdk-for-cpp/issues/4213)<sp/>Fixed<sp/>a<sp/>bug<sp/>where<sp/>`Host`<sp/>request<sp/>header<sp/>is<sp/>not<sp/>set<sp/>for<sp/>non-default<sp/>port<sp/>(80,<sp/>443).</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443)<sp/>Fixed<sp/>potentially<sp/>high<sp/>CPU<sp/>usage<sp/>on<sp/>Windows.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Libcurl<sp/>transport<sp/>doesn&apos;t<sp/>add<sp/>`Content-Length`<sp/>request<sp/>header<sp/>for<sp/>GET/HEAD/DELETE<sp/>requests<sp/>anymore.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.8.0<sp/>(2023-02-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>parsing<sp/>space<sp/>character<sp/>in<sp/>place<sp/>of<sp/>&apos;T&apos;<sp/>in<sp/>RFC3339<sp/>DateTimes.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>HTTP<sp/>proxy<sp/>servers,<sp/>both<sp/>unauthenticated<sp/>and<sp/>with<sp/>basic<sp/>authentication.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>universal<sp/>support<sp/>for<sp/>several<sp/>TLS<sp/>options:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>set<sp/>the<sp/>expected<sp/>TLS<sp/>root<sp/>certificate<sp/>for<sp/>TLS<sp/>connection<sp/>(useful<sp/>if<sp/>a<sp/>proxy<sp/>server<sp/>uses<sp/>a<sp/>TLS<sp/>certificate<sp/>that<sp/>is<sp/>not<sp/>chained<sp/>to<sp/>a<sp/>known<sp/>root).</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>enable<sp/>TLS<sp/>certificate<sp/>revocation<sp/>list<sp/>checks<sp/>(off<sp/>by<sp/>default).</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>For<sp/>libcurl<sp/>only:<sp/>Allow<sp/>TLS<sp/>connection<sp/>to<sp/>succeed<sp/>if<sp/>CRL<sp/>retrieval<sp/>fails.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>*NOTE*:<sp/>This<sp/>change<sp/>only<sp/>applies<sp/>if<sp/>libcurl<sp/>is<sp/>built<sp/>using<sp/>the<sp/>OpenSSL<sp/>crypto<sp/>backend.<sp/>It<sp/>does<sp/>NOT<sp/>apply<sp/>if<sp/>libcurl<sp/>uses<sp/>the<sp/>schannel<sp/>(Windows<sp/>default)<sp/>or<sp/>SecureTransport<sp/>(macOS/iOS<sp/>default).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>name<sp/>of<sp/>several<sp/>distributed<sp/>tracing<sp/>HTTP<sp/>span<sp/>attributes:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`requestId`<sp/>is<sp/>renamed<sp/>to<sp/>`az.client_request_id`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`serviceRequestId`<sp/>is<sp/>renamed<sp/>to<sp/>`az.service_request_id`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bearer<sp/>token<sp/>authentication<sp/>will<sp/>not<sp/>work<sp/>for<sp/>endpoint<sp/>URL<sp/>protocol<sp/>schemes<sp/>other<sp/>than<sp/>`&quot;https&quot;`.<sp/>This<sp/>ensures<sp/>token<sp/>security<sp/>and<sp/>is<sp/>consistent<sp/>with<sp/>the<sp/>Azure<sp/>SDKs<sp/>for<sp/>other<sp/>languages.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`noexcept`<sp/>specification<sp/>from<sp/>`Azure::DateTime::clock::now()`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>retry<sp/>policy<sp/>timeouts<sp/>to<sp/>conform<sp/>to<sp/>Azure<sp/>guidelines.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>The<sp/>default<sp/>delay<sp/>between<sp/>retries<sp/>is<sp/>changed<sp/>from<sp/>4<sp/>seconds<sp/>to<sp/>800ms.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>The<sp/>maximum<sp/>retry<sp/>delay<sp/>is<sp/>changed<sp/>from<sp/>2<sp/>minutes<sp/>to<sp/>60<sp/>seconds<sp/>(one<sp/>minute).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>If<sp/>the<sp/>original<sp/>behavior<sp/>is<sp/>desired,<sp/>customers<sp/>can<sp/>adjust<sp/>these<sp/>timeouts<sp/>by<sp/>changing<sp/>the<sp/>`RetryDelay`<sp/>and<sp/>`MaxRetryDelay`<sp/>fields<sp/>in<sp/>the<sp/>`RetryOptions`<sp/>structure.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>bug<sp/>in<sp/>WinHTTP<sp/>client<sp/>which<sp/>caused<sp/>the<sp/>`IgnoreUnknownCertificateAuthority`<sp/>and<sp/>`EnableCertificateRevocationListCheck`<sp/>fields<sp/>to<sp/>be<sp/>ignored<sp/>if<sp/>they<sp/>were<sp/>passed<sp/>in<sp/>from<sp/>`TransportOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206)<sp/>Fixed<sp/>connectivity<sp/>issues<sp/>in<sp/>libcurl<sp/>HTTP<sp/>transport<sp/>which<sp/>can<sp/>occur<sp/>if<sp/>a<sp/>TCP<sp/>connection<sp/>is<sp/>dropped<sp/>prematurely.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[ahojnnes](https://github.com/ahojnnes)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Update<sp/>distributed<sp/>tracing<sp/>attributes<sp/>to<sp/>align<sp/>with<sp/>current<sp/>Azure<sp/>Distributed<sp/>Tracing<sp/>Conventions<sp/>attributes<sp/>and<sp/>names.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>consume<sp/>version<sp/>1.1.1n<sp/>of<sp/>OpenSSL.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>Identity<sp/>token<sp/>caching,<sp/>and<sp/>for<sp/>configuring<sp/>token<sp/>refresh<sp/>offset<sp/>in<sp/>`BearerTokenAuthenticationPolicy`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>cancellation<sp/>support<sp/>for<sp/>WinHTTP<sp/>transport.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Johannes<sp/>Schonberger<sp/>_([GitHub](https://github.com/ahojnnes))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.8.0-beta.3<sp/>(2023-01-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>parsing<sp/>space<sp/>character<sp/>in<sp/>place<sp/>of<sp/>&apos;T&apos;<sp/>in<sp/>RFC3339<sp/>DateTimes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Bearer<sp/>token<sp/>authentication<sp/>will<sp/>not<sp/>work<sp/>for<sp/>endpoint<sp/>URL<sp/>protocol<sp/>schemes<sp/>other<sp/>than<sp/>`&quot;https&quot;`.<sp/>This<sp/>ensures<sp/>token<sp/>security<sp/>and<sp/>is<sp/>consistent<sp/>with<sp/>the<sp/>Azure<sp/>SDKs<sp/>for<sp/>other<sp/>languages.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`noexcept`<sp/>specification<sp/>from<sp/>`Azure::DateTime::clock::now()`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.8.0-beta.2<sp/>(2022-11-03)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>consume<sp/>version<sp/>1.1.1n<sp/>of<sp/>OpenSSL.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>Identity<sp/>token<sp/>caching,<sp/>and<sp/>for<sp/>configuring<sp/>token<sp/>refresh<sp/>offset<sp/>in<sp/>`BearerTokenAuthenticationPolicy`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>cancellation<sp/>support<sp/>for<sp/>WinHTTP<sp/>transport.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.8.0-beta.1<sp/>(2022-10-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>HTTP<sp/>proxy<sp/>servers,<sp/>both<sp/>unauthenticated<sp/>and<sp/>with<sp/>Plain<sp/>authentication.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>universal<sp/>support<sp/>for<sp/>several<sp/>TLS<sp/>options:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>set<sp/>the<sp/>expected<sp/>TLS<sp/>root<sp/>certificate<sp/>for<sp/>TLS<sp/>connection<sp/>(useful<sp/>if<sp/>a<sp/>proxy<sp/>server<sp/>uses<sp/>a<sp/>TLS<sp/>certificate<sp/>that<sp/>is<sp/>not<sp/>chained<sp/>to<sp/>a<sp/>known<sp/>root).</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Added<sp/>the<sp/>ability<sp/>to<sp/>enable<sp/>TLS<sp/>certificate<sp/>revocation<sp/>list<sp/>checks<sp/>(off<sp/>by<sp/>default).</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>For<sp/>libcurl<sp/>only:<sp/>Allow<sp/>TLS<sp/>connection<sp/>to<sp/>succeed<sp/>if<sp/>CRL<sp/>retrieval<sp/>fails.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>*NOTE*:<sp/>This<sp/>change<sp/>only<sp/>applies<sp/>if<sp/>libcurl<sp/>is<sp/>built<sp/>using<sp/>the<sp/>OpenSSL<sp/>crypto<sp/>backend.<sp/>It<sp/>does<sp/>NOT<sp/>apply<sp/>if<sp/>libcurl<sp/>uses<sp/>the<sp/>schannel<sp/>(Windows<sp/>default)<sp/>or<sp/>SecureTransport<sp/>(macOS/iOS<sp/>default).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>retry<sp/>policy<sp/>timeouts<sp/>to<sp/>conform<sp/>to<sp/>Azure<sp/>guidelines.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>The<sp/>default<sp/>delay<sp/>between<sp/>retries<sp/>is<sp/>changed<sp/>from<sp/>4<sp/>seconds<sp/>to<sp/>800ms.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>The<sp/>maximum<sp/>retry<sp/>delay<sp/>is<sp/>changed<sp/>from<sp/>2<sp/>minutes<sp/>to<sp/>60<sp/>seconds<sp/>(one<sp/>minute).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>If<sp/>the<sp/>original<sp/>behavior<sp/>is<sp/>desired,<sp/>customers<sp/>can<sp/>adjust<sp/>these<sp/>timeouts<sp/>by<sp/>changing<sp/>the<sp/>`RetryDelay`<sp/>and<sp/>`MaxRetryDelay`<sp/>fields<sp/>in<sp/>the<sp/>`RetryOptions`<sp/>structure.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.7.2<sp/>(2022-09-01)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>WinHTTP<sp/>Transport<sp/>Adapter:<sp/>Fixed<sp/>missing<sp/>reason<sp/>phrase<sp/>handling<sp/>for<sp/>HTTP/2<sp/>responses.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.7.1<sp/>(2022-08-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#3794]](https://github.com/Azure/azure-sdk-for-cpp/issues/3794)<sp/>Fix<sp/>memory<sp/>leak<sp/>in<sp/>`CurlTransport`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#3692]](https://github.com/Azure/azure-sdk-for-cpp/issues/3692)<sp/>Interrupted<sp/>poll<sp/>calls<sp/>cause<sp/>spurious<sp/>HTTP<sp/>request<sp/>failures.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[johnwheffner](https://github.com/johnwheffner)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>John<sp/>Heffner<sp/>_([GitHub](https://github.com/johnwheffner))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.7.0<sp/>(2022-06-30)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>prototypes<sp/>and<sp/>initial<sp/>service<sp/>support<sp/>for<sp/>Distributed<sp/>Tracing.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.7.0-beta.1<sp/>(2022-06-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>prototypes<sp/>and<sp/>initial<sp/>service<sp/>support<sp/>for<sp/>Distributed<sp/>Tracing.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`noexcept`<sp/>specification<sp/>from<sp/>`Azure::Core::Context::IsCancelled()`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.6.0<sp/>(2022-05-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>`Azure::Core::Http::Request`<sp/>constructor<sp/>overload<sp/>to<sp/>support<sp/>payload<sp/>and<sp/>non-buffered<sp/>response.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#3537]](https://github.com/Azure/azure-sdk-for-cpp/issues/3537)<sp/>Updated<sp/>field<sp/>type<sp/>`CurlTransportOptions.Proxy`<sp/>from<sp/>`std::string`<sp/>to<sp/>`Azure::Nullable&lt;std::string&gt;`.<sp/>This<sp/>allows<sp/>libcurl<sp/>to<sp/>ignore<sp/>the<sp/>proxy<sp/>settings<sp/>from<sp/>the<sp/>environment<sp/>when<sp/>the<sp/>string<sp/>is<sp/>empty.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#3548]](https://github.com/Azure/azure-sdk-for-cpp/issues/3548),<sp/>[[#1098]](https://github.com/Azure/azure-sdk-for-cpp/issues/1098)<sp/>Improve<sp/>performance<sp/>of<sp/>the<sp/>Http<sp/>transport<sp/>on<sp/>Windows<sp/>by<sp/>reusing<sp/>the<sp/>same<sp/>session<sp/>handle<sp/>across<sp/>all<sp/>requests.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581)<sp/>Update<sp/>log<sp/>level<sp/>in<sp/>retry<sp/>policy<sp/>from<sp/>warning<sp/>to<sp/>informational.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>the<sp/>MD5<sp/>Hash<sp/>implementation<sp/>to<sp/>work<sp/>on<sp/>top<sp/>of<sp/>OpenSSL<sp/>3.0.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[jepio](https://github.com/jepio)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Jeremi<sp/>Piotrowski<sp/>_([GitHub](https://github.com/jepio))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.5.0<sp/>(2022-03-31)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>When<sp/>a<sp/>`RequestFailedException`<sp/>exception<sp/>is<sp/>thrown,<sp/>the<sp/>`what()`<sp/>method<sp/>now<sp/>includes<sp/>information<sp/>about<sp/>the<sp/>HTTP<sp/>request<sp/>which<sp/>failed.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Adding<sp/>option<sp/>`WinHttpTransportOptions.IgnoreUnknownCertificateAuthority`.<sp/>It<sp/>can<sp/>be<sp/>used<sp/>to<sp/>disable<sp/>verifying<sp/>server<sp/>certificate<sp/>for<sp/>the<sp/>`WinHttpTransport`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Enforce<sp/>TLS<sp/>1.2<sp/>or<sp/>greater<sp/>for<sp/>`CurlTransport`<sp/>and<sp/>`WinHttpTransport`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Improve<sp/>output<sp/>message<sp/>for<sp/>`Azure::Core::Http::TransportException`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.4.0<sp/>(2022-03-03)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Stabilized<sp/>the<sp/>beta<sp/>features<sp/>and<sp/>changes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.4.0-beta.1<sp/>(2022-02-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Enabled<sp/>environment-controlled<sp/>console<sp/>logging<sp/>on<sp/>UWP.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>the<sp/>`AzureNoReturnPath()`<sp/>function<sp/>from<sp/>the<sp/>global<sp/>namespace,<sp/>and<sp/>deprecated<sp/>the<sp/>associated<sp/>macros,<sp/>such<sp/>as<sp/>`AZURE_ASSERT`<sp/>since<sp/>they<sp/>are<sp/>meant<sp/>for<sp/>internal<sp/>use<sp/>only.<sp/>If<sp/>your<sp/>code<sp/>was<sp/>using<sp/>the<sp/>`AZURE_ASSERT`<sp/>macro,<sp/>consider<sp/>using<sp/>the<sp/>standard<sp/>library&apos;s<sp/>`assert`<sp/>as<sp/>an<sp/>alternative.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>the<sp/>two<sp/>parameter<sp/>`RequestFailedException`<sp/>ctor,<sp/>it<sp/>has<sp/>no<sp/>use<sp/>case<sp/>and<sp/>wasn&apos;t<sp/>intended<sp/>for<sp/>public<sp/>use.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>`Azure::DateTime::Parse()`<sp/>validation<sp/>if<sp/>the<sp/>result<sp/>is<sp/>going<sp/>to<sp/>exceed<sp/>`9999-12-31T23:59:59.9999999`<sp/>due<sp/>to<sp/>time<sp/>zone,<sp/>leap<sp/>second,<sp/>or<sp/>fractional<sp/>digits<sp/>rounding<sp/>up<sp/>adjustments.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#3224]](https://github.com/Azure/azure-sdk-for-cpp/issues/3224)<sp/>Fixed<sp/>intermittent<sp/>crash<sp/>on<sp/>macOS<sp/>when<sp/>logging<sp/>is<sp/>turned<sp/>on.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>`Base64::Decode`<sp/>API<sp/>will<sp/>throw<sp/>a<sp/>`std::runtime_error`<sp/>exception<sp/>if<sp/>presented<sp/>with<sp/>invalid<sp/>inputs.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.3.1<sp/>(2021-11-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>linking<sp/>error<sp/>when<sp/>Azure<sp/>SDK<sp/>is<sp/>being<sp/>built<sp/>as<sp/>DLL.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.3.0<sp/>(2021-11-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>`NoSignal`<sp/>option<sp/>to<sp/>the<sp/>`CurlTransportAdapter`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>`ConnectionTimeout`<sp/>option<sp/>to<sp/>the<sp/>`CurlTransportAdapter`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">[2848](https://github.com/Azure/azure-sdk-for-cpp/issues/2848)<sp/>Update<sp/>the<sp/>libcurl<sp/>transport<sp/>adapter<sp/>to<sp/>work<sp/>with<sp/>HTTP/1.1<sp/>only.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>`base64`<sp/>implementation<sp/>to<sp/>remove<sp/>external<sp/>dependency.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>`Uuid`<sp/>implementation<sp/>for<sp/>Linux<sp/>to<sp/>remove<sp/>external<sp/>dependency.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.2.1<sp/>(2021-09-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[2785](https://github.com/Azure/azure-sdk-for-cpp/issues/2785)<sp/>Fix<sp/>to<sp/>build<sp/>on<sp/>g++<sp/>5.5.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>compilation<sp/>error<sp/>on<sp/>POSIX<sp/>platforms<sp/>where<sp/>OpenSSL<sp/>was<sp/>not<sp/>available.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>CMake<sp/>version<sp/>3.12</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.2.0<sp/>(2021-08-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::IO::ProgressBodyStream`<sp/>type<sp/>that<sp/>wraps<sp/>an<sp/>existing<sp/>BodyStream<sp/>based<sp/>type<sp/>stream<sp/>and<sp/>reports<sp/>progress<sp/>via<sp/>callback<sp/>when<sp/>the<sp/>stream<sp/>position<sp/>is<sp/>updated.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[2647](https://github.com/Azure/azure-sdk-for-cpp/issues/2647)<sp/>Make<sp/>the<sp/>curl<sp/>transport<sp/>adapter<sp/>to<sp/>check<sp/>the<sp/>connection<sp/>close<sp/>header.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[2474](https://github.com/Azure/azure-sdk-for-cpp/issues/2474)<sp/>Fix<sp/>compiling<sp/>with<sp/>MSVC<sp/>and<sp/>`/analyze`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Make<sp/>WinHTTP<sp/>transport<sp/>adapter<sp/>to<sp/>NOT<sp/>use<sp/>SSL/TLS<sp/>for<sp/>unsecured<sp/>HTTP<sp/>connections.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>source<sp/>code<sp/>to<sp/>build<sp/>with<sp/>Clang<sp/>11.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[davidchisnall](https://github.com/davidchisnall)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>David<sp/>Chisnall<sp/>_([GitHub](https://github.com/davidchisnall))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.1.0<sp/>(2021-07-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>a<sp/>memory<sp/>leak<sp/>issue<sp/>in<sp/>`Base64Encode()`.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[jorgen](https://github.com/jorgen)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Made<sp/>internal-only<sp/>changes<sp/>to<sp/>support<sp/>the<sp/>Azure<sp/>Key<sp/>Vault<sp/>client<sp/>library.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Jorgen<sp/>Lind<sp/>_([GitHub](https://github.com/jorgen))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0<sp/>(2021-06-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Make<sp/>`RequestFailedException`<sp/>copiable<sp/>so<sp/>it<sp/>can<sp/>be<sp/>propagated<sp/>across<sp/>thread.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>By<sp/>default,<sp/>add<sp/>`x-ms-request-id`<sp/>header<sp/>to<sp/>the<sp/>allow<sp/>list<sp/>of<sp/>headers<sp/>to<sp/>log.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.9<sp/>(2021-05-18)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::PagedResponse&lt;T&gt;`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`final`<sp/>specifier<sp/>to<sp/>classes<sp/>and<sp/>structures<sp/>that<sp/>are<sp/>are<sp/>not<sp/>expected<sp/>to<sp/>be<sp/>inheritable<sp/>at<sp/>the<sp/>moment.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Context::GetApplicationContext()`<sp/>in<sp/>favor<sp/>of<sp/>a<sp/>new<sp/>static<sp/>data<sp/>member<sp/>`Context::ApplicationContext`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`Request::IsDownloadViaStream()`<sp/>to<sp/>`ShouldBufferResponse()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>the<sp/>`Azure::Core::Http::Request`<sp/>ctor<sp/>overload<sp/>that<sp/>takes<sp/>both<sp/>a<sp/>`bodyStream`<sp/>and<sp/>a<sp/>`bufferedDownload`<sp/>boolean<sp/>since<sp/>it<sp/>is<sp/>not<sp/>useful.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>integer<sp/>size<sp/>parameters<sp/>for<sp/>buffers<sp/>from<sp/>`int64_t`<sp/>to<sp/>`size_t`<sp/>in<sp/>various<sp/>places<sp/>such<sp/>as<sp/>`Azure::Core::IO::BodyStream::Read()`<sp/>APIs.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>the<sp/>`Azure::Core::Diagnostics::Logger::Listener`<sp/>typedef.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Do<sp/>not<sp/>re-use<sp/>a<sp/>libcurl<sp/>connection<sp/>to<sp/>same<sp/>host<sp/>but<sp/>different<sp/>port.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>curl<sp/>transport<sp/>issue<sp/>to<sp/>avoid<sp/>crash<sp/>at<sp/>exit<sp/>when<sp/>curl<sp/>connection<sp/>pool<sp/>cleanup<sp/>thread<sp/>is<sp/>running.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Ensure<sp/>uniqueness<sp/>of<sp/>`Azure::Core::Uuid`<sp/>on<sp/>POSIX<sp/>platforms.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Modified<sp/>precondition<sp/>validation<sp/>of<sp/>function<sp/>arguments<sp/>to<sp/>now<sp/>result<sp/>in<sp/>assert<sp/>failures<sp/>rather<sp/>than<sp/>throwing<sp/>an<sp/>exception.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Remove<sp/>exposing<sp/>windows.h<sp/>header<sp/>from<sp/>our<sp/>public<sp/>headers.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>performance<sp/>of<sp/>the<sp/>WinHTTP<sp/>transport<sp/>layer<sp/>on<sp/>Windows<sp/>for<sp/>uploading<sp/>large<sp/>payloads.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.8<sp/>(2021-04-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Url::GetScheme()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Context::TryGetValue()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Context::GetDeadline()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Credentials::TokenCredentialOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>useful<sp/>fields<sp/>to<sp/>the<sp/>`Azure::Core::RequestFailedException`<sp/>class<sp/>such<sp/>as<sp/>`StatusCode`,<sp/>`ReasonPhrase`,<sp/>and<sp/>the<sp/>`RawResponse`,<sp/>for<sp/>better<sp/>diagnosis<sp/>of<sp/>errors.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Simplified<sp/>the<sp/>`Response&lt;T&gt;`<sp/>API<sp/>surface<sp/>to<sp/>expose<sp/>two<sp/>public<sp/>fields<sp/>with<sp/>direct<sp/>access:<sp/>`T<sp/>Value`<sp/>and<sp/>a<sp/>`unique_ptr`<sp/>to<sp/>an<sp/>`Azure::Core::Http::RawResponse`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>`Azure::Nullable&lt;T&gt;::GetValue()`<sp/>to<sp/>`Value()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>from<sp/>`Azure::Core::Http::Request`:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`SetUploadChunkSize()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`GetHTTPMessagePreBody()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`GetUploadChunkSize()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`GetHeadersAsString()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changes<sp/>to<sp/>`Azure::Core::Http::RawResponse`:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`SetHeader(std::string<sp/>const&amp;<sp/>header)`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`SetHeader(uint8_t<sp/>const*<sp/>const<sp/>first,<sp/>uint8_t<sp/>const*<sp/>const<sp/>last)`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`GetMajorVersion()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`GetMinorVersion()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`GetBodyStream()`<sp/>to<sp/>`ExtractBodyStream()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changes<sp/>to<sp/>`Azure::Core::Context`:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`Get()`<sp/>and<sp/>`HasKey()`<sp/>in<sp/>favor<sp/>of<sp/>a<sp/>new<sp/>method<sp/>`TryGetValue()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Changed<sp/>input<sp/>parameter<sp/>type<sp/>of<sp/>`WithDeadline()`<sp/>to<sp/>`Azure::DateTime`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Azure::Core::PackageVersion`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>from<sp/>`Azure::Core::Http::Policies`<sp/>namespace:<sp/>`HttpPolicyOrder`,<sp/>`TransportPolicy`,<sp/>`RetryPolicy`,<sp/>`RequestIdPolicy`,<sp/>`TelemetryPolicy`,<sp/>`BearerTokenAuthenticationPolicy`,<sp/>`LogPolicy`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`AppendQueryParameters()`,<sp/>`GetUrlWithoutQuery()`<sp/>and<sp/>`GetUrlAuthorityWithScheme()`<sp/>from<sp/>`Azure::Core::Url`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>`Azure::Core::Http::HttpMethod`<sp/>regular<sp/>enum<sp/>into<sp/>an<sp/>extensible<sp/>enum<sp/>class<sp/>and<sp/>removed<sp/>the<sp/>`HttpMethodToString()`<sp/>helper<sp/>method.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Introduced<sp/>`Azure::Core::Context::Key`<sp/>class<sp/>which<sp/>takes<sp/>place<sp/>of<sp/>`std::string`<sp/>used<sp/>for<sp/>`Azure::Core::Context`<sp/>keys<sp/>previously.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>casing<sp/>of<sp/>`SSL`<sp/>in<sp/>API<sp/>names<sp/>to<sp/>`Ssl`:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>type<sp/>`Azure::Core::Http::CurlTransportSSLOptions`<sp/>to<sp/>`CurlTransportSslOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>member<sp/>`Azure::Core::Http::CurlTransportOptions::SSLOptions`<sp/>to<sp/>`SslOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>member<sp/>`Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer`<sp/>to<sp/>`SslVerifyPeer`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`Azure::Core::Http::Request`<sp/>to<sp/>its<sp/>own<sp/>header<sp/>file<sp/>from<sp/>`http.hpp`<sp/>to<sp/>`inc/azure/core/http/raw_response.hpp`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`Azure::Core::Http::HttpStatusCode`<sp/>to<sp/>its<sp/>own<sp/>header<sp/>file<sp/>from<sp/>`http.hpp`<sp/>to<sp/>`inc/azure/core/http/http_status_code.hpp`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.7<sp/>(2021-03-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`HttpPolicyOrder`<sp/>for<sp/>adding<sp/>custom<sp/>Http<sp/>policies<sp/>to<sp/>SDK<sp/>clients.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::Operation&lt;T&gt;::GetRawResponse()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Core::PackageVersion`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>logging<sp/>to<sp/>console<sp/>when<sp/>`AZURE_LOG_LEVEL`<sp/>environment<sp/>variable<sp/>is<sp/>set.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Changes<sp/>to<sp/>`Azure::Core`<sp/>namespace:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`Response&lt;void&gt;`,<sp/>`ValueBase`,<sp/>and<sp/>`ContextValue`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`Context::operator[]`,<sp/>`Get()`<sp/>introduced<sp/>instead.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`Uuid::GetUuidString()`<sp/>to<sp/>`ToString()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Changed<sp/>return<sp/>type<sp/>of<sp/>`Operation&lt;T&gt;::Poll()`<sp/>from<sp/>`std::unique_ptr&lt;RawResponse&gt;`<sp/>to<sp/>`RawResponse<sp/>const&amp;`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Moved<sp/>`GetApplicationContext()`<sp/>to<sp/>`Context::GetApplicationContext()`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Moved<sp/>the<sp/>`Base64Encode()`<sp/>and<sp/>`Base64Decode()`<sp/>functions<sp/>to<sp/>be<sp/>static<sp/>members<sp/>of<sp/>a<sp/>`Convert`<sp/>class.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Moved<sp/>`Logging`<sp/>namespace<sp/>entities<sp/>to<sp/>`Diagnostics::Logger`<sp/>class.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Moved<sp/>`AccessToken`,<sp/>`TokenCredential`,<sp/>and<sp/>`AuthenticationException`<sp/>to<sp/>`Credentials`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Moved<sp/>`Context`<sp/>to<sp/>be<sp/>the<sp/>last<sp/>parameter<sp/>for<sp/>consistency,<sp/>instead<sp/>of<sp/>first<sp/>in<sp/>various<sp/>azure-core<sp/>types.<sp/>For<sp/>example:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>`BodyStream::Read(uint8_t*<sp/>buffer,<sp/>int64_t<sp/>count,<sp/>Context<sp/>const&amp;<sp/>context)`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>`BodyStream::ReadToEnd(BodyStream&amp;<sp/>body,<sp/>Context<sp/>const&amp;<sp/>context)`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>`HttpPolicy::Send(Request&amp;<sp/>request,<sp/>NextHttpPolicy<sp/>policy,<sp/>Context<sp/>const&amp;<sp/>context)`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>`Operation&lt;T&gt;::PollUntilDone(std::chrono::milliseconds<sp/>period,<sp/>Context&amp;<sp/>context)`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>`TokenCredential::GetToken(Http::TokenRequestOptions<sp/>const&amp;<sp/>tokenRequestOptions,<sp/>Context<sp/>const&amp;<sp/>context)`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Moved<sp/>from<sp/>`Azure::Core`<sp/>to<sp/>`Azure`<sp/>namespace:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>`Response&lt;T&gt;`,<sp/>`ETag`,<sp/>and<sp/>`Nullable&lt;T&gt;`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Split<sp/>`RequestConditions`<sp/>into<sp/>`MatchConditions`<sp/>and<sp/>`ModifiedConditions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Renamed<sp/>`DateTime::GetString()`<sp/>to<sp/>`ToString()`,<sp/>and<sp/>removed<sp/>`DateTime::GetRfc3339String()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changes<sp/>to<sp/>`Azure::Core::Http`<sp/>namespace:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`HttpPipeline`,<sp/>`TransportKind`,<sp/>`NullBodyStream`,<sp/>and<sp/>`LimitBodyStream`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`Request::StartTry()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`InvalidHeaderException`<sp/>and<sp/>throw<sp/>`std::invalid_argument`<sp/>if<sp/>the<sp/>user<sp/>provides<sp/>invalid<sp/>header<sp/>arguments.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`CurlTransportSSLOptions::NoRevoke`<sp/>to<sp/>`EnableCertificateRevocationListCheck`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`Range`<sp/>to<sp/>`HttpRange`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`TokenRequestOptions`<sp/>to<sp/>`TokenRequestContext`,<sp/>and<sp/>moved<sp/>it<sp/>to<sp/>`Azure::Core::Credentials`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Moved<sp/>`Url`<sp/>to<sp/>`Azure::Core`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`Request`<sp/>and<sp/>`RawResponse`:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Renamed<sp/>`AddHeader()`<sp/>to<sp/>`SetHeader()`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Introduced<sp/>`Azure::Core::CaseInsensitiveMap`<sp/>which<sp/>is<sp/>now<sp/>used<sp/>to<sp/>store<sp/>headers.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`BodyStream`<sp/>and<sp/>the<sp/>types<sp/>that<sp/>derive<sp/>from<sp/>it:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Moved<sp/>to<sp/>`Azure::Core::IO`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Changed<sp/>the<sp/>static<sp/>methods<sp/>`BodyStream::ReadToCount()`<sp/>and<sp/>`BodyStream::ReadToEnd()`<sp/>into<sp/>instance<sp/>methods.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Changed<sp/>the<sp/>constructor<sp/>of<sp/>`FileBodyStream`<sp/>to<sp/>accept<sp/>a<sp/>file<sp/>name<sp/>directly<sp/>and<sp/>take<sp/>ownership<sp/>of<sp/>opening/closing<sp/>the<sp/>file,<sp/>instead<sp/>of<sp/>accepting<sp/>a<sp/>file<sp/>descriptor,<sp/>offset,<sp/>and<sp/>length.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>HTTP<sp/>policies<sp/>and<sp/>their<sp/>options:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Moved<sp/>to<sp/>`Policies`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Renamed<sp/>`TransportPolicyOptions`<sp/>to<sp/>`TransportOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Renamed<sp/>`TelemetryPolicyOptions`<sp/>to<sp/>`TelemetryOptions`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Changed<sp/>type<sp/>of<sp/>`RetryOptions::StatusCodes`<sp/>from<sp/>`std::vector`<sp/>to<sp/>`std::set`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>Renamed<sp/>`LoggingPolicy`<sp/>to<sp/>`LogPolicy`,<sp/>and<sp/>introduced<sp/>`LogOptions`<sp/>as<sp/>mandatory<sp/>parameter<sp/>for<sp/>the<sp/>constructor.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>header<sp/>files:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`azure/core/credentials.hpp`<sp/>to<sp/>`azure/core/credentials/credentials.hpp`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`azure/core/logger.hpp`<sp/>to<sp/>`azure/core/diagnostics/logger.hpp`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`azure/core/http/body_stream.hpp`<sp/>to<sp/>`azure/core/io/body_stream.hpp`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`azure/core/http/policy.hpp`<sp/>to<sp/>`azure/core/http/policies/policy.hpp`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`azure/core/http/curl/curl.hpp`<sp/>to<sp/>`azure/core/http/curl_transport.hpp`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`azure/core/http/winhttp/win_http_client.hpp`<sp/>to<sp/>`azure/core/http/win_http_transport.hpp`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Make<sp/>sure<sp/>to<sp/>rewind<sp/>the<sp/>body<sp/>stream<sp/>at<sp/>the<sp/>start<sp/>of<sp/>each<sp/>request<sp/>retry<sp/>attempt,<sp/>including<sp/>the<sp/>first.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Connection<sp/>pool<sp/>resets<sp/>when<sp/>all<sp/>connections<sp/>are<sp/>closed.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fix<sp/>`Azure::Context`<sp/>to<sp/>support<sp/>`std::unique_ptr`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Throw<sp/>`std::runtime_error`<sp/>from<sp/>`Response&lt;T&gt;::GetRawResponse()`<sp/>if<sp/>the<sp/>response<sp/>was<sp/>already<sp/>extracted.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.6<sp/>(2021-02-09)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>HTTP<sp/>conditional<sp/>requests<sp/>`MatchConditions`<sp/>and<sp/>`RequestConditions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>the<sp/>`Hash`<sp/>base<sp/>class<sp/>and<sp/>MD5<sp/>hashing<sp/>APIs<sp/>to<sp/>the<sp/>`Azure::Core::Cryptography`<sp/>namespace<sp/>available<sp/>from<sp/>`azure/core/cryptography/hash.hpp`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Context::CancelWhen()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`LogClassification`<sp/>and<sp/>related<sp/>functionality,<sp/>added<sp/>`LogLevel`<sp/>instead.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>computation<sp/>of<sp/>the<sp/>token<sp/>expiration<sp/>time<sp/>in<sp/>`BearerTokenAuthenticationPolicy`.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[sjoubert](https://github.com/sjoubert)_)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>`Retry-After`<sp/>HTTP<sp/>header<sp/>to<sp/>be<sp/>treated<sp/>as<sp/>case-insensitive.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[sjoubert](https://github.com/sjoubert)_)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>compilation<sp/>dependency<sp/>issue<sp/>for<sp/>MacOS<sp/>when<sp/>consuming<sp/>the<sp/>SDK<sp/>from<sp/>VcPkg.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>support<sp/>for<sp/>sending<sp/>requests<sp/>to<sp/>endpoints<sp/>with<sp/>a<sp/>custom<sp/>port<sp/>within<sp/>the<sp/>url<sp/>on<sp/>Windows<sp/>when<sp/>using<sp/>the<sp/>WinHttp<sp/>transport.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Sylvain<sp/>Joubert<sp/>_([GitHub](https://github.com/sjoubert))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.5<sp/>(2021-02-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>HTTP<sp/>validators<sp/>`ETag`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Make<sp/>`ToLower()`<sp/>and<sp/>`LocaleInvariantCaseInsensitiveEqual()`<sp/>internal<sp/>by<sp/>moving<sp/>them<sp/>from<sp/>`Azure::Core::Strings`<sp/>to<sp/>`Azure::Core::Internal::Strings`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`BearerTokenAuthenticationPolicy`<sp/>constructor<sp/>takes<sp/>`TokenRequestOptions`<sp/>struct<sp/>instead<sp/>of<sp/>scopes<sp/>vector.<sp/>`TokenRequestOptions`<sp/>struct<sp/>has<sp/>scopes<sp/>vector<sp/>as<sp/>data<sp/>member.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`TokenCredential::GetToken()`<sp/>takes<sp/>`TokenRequestOptions`<sp/>instead<sp/>of<sp/>scopes<sp/>vector.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>the<sp/>parsing<sp/>of<sp/>the<sp/>last<sp/>chunk<sp/>of<sp/>a<sp/>chunked<sp/>response<sp/>when<sp/>using<sp/>the<sp/>curl<sp/>transport<sp/>adapter.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>reading<sp/>the<sp/>value<sp/>from<sp/>`retry-after`<sp/>header<sp/>in<sp/>`RetryPolicy`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fix<sp/>link<sp/>errors<sp/>when<sp/>producing<sp/>a<sp/>DLL<sp/>and<sp/>add<sp/>UWP<sp/>compilation<sp/>support.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Do<sp/>not<sp/>pass<sp/>a<sp/>placeholder<sp/>user-agent<sp/>string<sp/>as<sp/>a<sp/>fallback<sp/>when<sp/>using<sp/>WinHttp.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Initialize<sp/>local<sp/>variables<sp/>in<sp/>implementation<sp/>to<sp/>fix<sp/>warning<sp/>within<sp/>release<sp/>builds<sp/>on<sp/>Linux.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.4<sp/>(2021-01-13)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>a<sp/>WinHTTP-based<sp/>`HttpTransport`<sp/>called<sp/>`WinHttpTransport`<sp/>and<sp/>use<sp/>that<sp/>as<sp/>the<sp/>default<sp/>`TransportPolicyOptions.Transport`<sp/>on<sp/>Windows<sp/>when<sp/>sending<sp/>and<sp/>receiving<sp/>requests<sp/>and<sp/>responses<sp/>over<sp/>the<sp/>wire.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Range`<sp/>type<sp/>to<sp/>`Azure::Core::Http`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>long-running<sp/>operations<sp/>with<sp/>`Operation&lt;T&gt;`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>setting<sp/>a<sp/>custom<sp/>transport<sp/>adapter<sp/>by<sp/>implementing<sp/>the<sp/>method<sp/>`std::shared_ptr&lt;HttpTransport&gt;<sp/>::AzureSdkGetCustomHttpTransport()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>interoperability<sp/>between<sp/>`std::chrono::system_clock`<sp/>types<sp/>and<sp/>`DateTime`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>default<sp/>constructor<sp/>to<sp/>`DateTime`<sp/>and<sp/>support<sp/>for<sp/>dates<sp/>since<sp/>0001.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>Base64<sp/>encoding<sp/>and<sp/>decoding<sp/>utility<sp/>APIs<sp/>to<sp/>the<sp/>`Azure::Core`<sp/>namespace<sp/>available<sp/>from<sp/>`azure/core/base64.hpp`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Http::Response&lt;void&gt;`<sp/>template<sp/>specialization.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`GetHeadersAsString()`<sp/>on<sp/>the<sp/>`Azure::Core::Http::Request`<sp/>class.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>a<sp/>`platform.hpp`<sp/>header<sp/>file<sp/>for<sp/>defining<sp/>commonly<sp/>used<sp/>OS-specific<sp/>`#define`<sp/>constants.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`IsCancelled()`<sp/>on<sp/>the<sp/>`Azure::Core::Context`<sp/>class.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`DateTime::operator<sp/>Duration()`,<sp/>`DateTime::Duration`<sp/>typedef<sp/>and<sp/>`DateTime::Now()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`Azure::Core::BearerTokenAuthenticationPolicy`,<sp/>defined<sp/>in<sp/>`azure/core/credentials.hpp`<sp/>to<sp/>`Azure::Core::Http`<sp/>namespace<sp/>in<sp/>`azure/core/http/policy.hpp`<sp/>header.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>type<sp/>of<sp/>`Token::ExpiresOn`<sp/>to<sp/>`DateTime`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Renamed<sp/>exception<sp/>`OperationCanceledException`<sp/>to<sp/>`OperationCancelledException`<sp/>and<sp/>`ThrowIfCanceled()`<sp/>to<sp/>`ThrowIfCancelled()`<sp/>on<sp/>the<sp/>`Context`<sp/>class.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`Azure::Core::Version`,<sp/>defined<sp/>in<sp/>`azure/core/version.hpp`<sp/>to<sp/>the<sp/>`Azure::Core::Details`<sp/>namespace.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>`Azure::Core::AuthenticationException`<sp/>to<sp/>derive<sp/>from<sp/>`std::exception`<sp/>instead<sp/>of<sp/>`std::runtime_error`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>the<sp/>`BodyStream::Read`<sp/>API<sp/>from<sp/>being<sp/>a<sp/>pure<sp/>virtual<sp/>function<sp/>to<sp/>non-virtual.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`CurlConnection`,<sp/>`CurlConnectionPool`,<sp/>`CurlSession`,<sp/>and<sp/>`CurlNetworkConnection`<sp/>by<sp/>making<sp/>headers<sp/>meant<sp/>as<sp/>implementation,<sp/>private.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>option<sp/>`AllowBeast`<sp/>from<sp/>`CurlTransportSSLOptions`<sp/>in<sp/>`CurlTransportOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>default<sp/>option<sp/>`NoRevoke`<sp/>from<sp/>`CurlTransportSSLOptions`<sp/>for<sp/>the<sp/>`CurlTransportOptions`<sp/>to<sp/>`true`.<sp/>This<sp/>disables<sp/>the<sp/>revocation<sp/>list<sp/>checking<sp/>by<sp/>default.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>the<sp/>Curl<sp/>transport<sp/>adapter<sp/>connection<sp/>pooling<sp/>when<sp/>setting<sp/>options.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>setting<sp/>up<sp/>the<sp/>default<sp/>transport<sp/>adapter.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>linker<sp/>error<sp/>of<sp/>missing<sp/>pthread<sp/>on<sp/>Linux.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Initialize<sp/>class<sp/>data<sp/>members<sp/>to<sp/>avoid<sp/>MSVC<sp/>warning.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Throw<sp/>`Azure::Core::Http::TransportException`<sp/>if<sp/>`curl_easy_init()`<sp/>returns<sp/>a<sp/>null<sp/>handle.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[ku-sourav](https://github.com/ku-sourav)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>distributing<sp/>the<sp/>C++<sp/>SDK<sp/>as<sp/>a<sp/>source<sp/>package<sp/>via<sp/>vcpkg.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>installation<sp/>error<sp/>when<sp/>the<sp/>SDK<sp/>is<sp/>being<sp/>installed<sp/>under<sp/>a<sp/>non-standard<sp/>prefix.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[juchem](https://github.com/juchem)_)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>linker<sp/>error<sp/>when<sp/>pthread<sp/>is<sp/>missing<sp/>on<sp/>Linux.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[lordgamez](https://github.com/lordgamez)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Gabor<sp/>Gyimesi<sp/>_([GitHub](https://github.com/lordgamez))_</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Marcelo<sp/>Juchem<sp/>_([GitHub](https://github.com/juchem))_</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`ku-sourav`<sp/>_([GitHub](https://github.com/ku-sourav))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.3<sp/>(2020-11-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`strings.hpp`<sp/>with<sp/>`Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual`<sp/>and<sp/>`Azure::Core::Strings::ToLower`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`GetPort()`<sp/>to<sp/>`Url`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`TransportPolicyOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`TelemetryPolicyOptions`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`RequestFailedException`<sp/>deriving<sp/>from<sp/>`std::runtime_error`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`CurlTransportOptions`<sp/>for<sp/>the<sp/>`CurlTransport`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`DateTime`<sp/>supporting<sp/>dates<sp/>since<sp/>1601.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`OperationCanceledException`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Encode`<sp/>and<sp/>`Decode`<sp/>to<sp/>`Url`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`azure.hpp`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>macro<sp/>`AZURE_UNREFERENCED_PARAMETER`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Bump<sp/>CMake<sp/>version<sp/>from<sp/>3.12<sp/>to<sp/>3.13.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Bump<sp/>libcurl<sp/>version<sp/>from<sp/>7.4<sp/>to<sp/>7.44.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`ClientSecretCredential`<sp/>and<sp/>`EnvironmentCredential`<sp/>to<sp/>the<sp/>Identity<sp/>library.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>`Url`<sp/>class<sp/>changes:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>`AppendPath`<sp/>now<sp/>does<sp/>not<sp/>encode<sp/>the<sp/>input<sp/>by<sp/>default.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Signature<sp/>updated<sp/>for<sp/>`SetHost`,<sp/>`SetPath`<sp/>and<sp/>`AppendPath`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Removed<sp/>`SetFragment`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`AppendQueries`<sp/>to<sp/>`AppendQueryParameters`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`AppendQuery`<sp/>to<sp/>`AppendQueryParameter`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`RemoveQuery`<sp/>to<sp/>`RemoveQueryParameter`.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>Renamed<sp/>`GetQuery`<sp/>to<sp/>`GetQueryParameters`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Prevent<sp/>pipeline<sp/>of<sp/>length<sp/>zero<sp/>to<sp/>be<sp/>created.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Avoid<sp/>re-using<sp/>a<sp/>connection<sp/>when<sp/>a<sp/>request<sp/>to<sp/>upload<sp/>data<sp/>fails<sp/>while<sp/>using<sp/>the<sp/>`CurlTransport`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>entropy<sp/>to<sp/>`Uuid`<sp/>generation.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>high-level<sp/>and<sp/>simplified<sp/>core.hpp<sp/>file<sp/>for<sp/>simpler<sp/>include<sp/>experience<sp/>for<sp/>customers.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>code<sp/>coverage<sp/>using<sp/>gcov<sp/>with<sp/>gcc.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Update<sp/>SDK-defined<sp/>exception<sp/>types<sp/>to<sp/>be<sp/>classes<sp/>instead<sp/>of<sp/>structs.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>`TransportException`<sp/>and<sp/>`InvalidHeaderException`<sp/>to<sp/>derive<sp/>from<sp/>`RequestFailedException`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Vcpkg<sp/>dependency<sp/>version<sp/>updated<sp/>to<sp/>2020.11.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Make<sp/>libcurl<sp/>network<sp/>requests<sp/>cancelable<sp/>by<sp/>Context::Cancel().</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Validate<sp/>HTTP<sp/>headers<sp/>for<sp/>invalid<sp/>characters.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Calling<sp/>`Cancel()`<sp/>from<sp/>context<sp/>now<sp/>throws<sp/>`OperationCanceledException`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.2<sp/>(2020-10-09)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Throw<sp/>Azure::Http::TransportException<sp/>if<sp/>creating<sp/>new<sp/>connection<sp/>fails.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Response<sp/>objects<sp/>store<sp/>Nullable\&lt;T\&gt;.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bug<sp/>Fixes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Switched<sp/>to<sp/>a<sp/>more<sp/>stable<sp/>wait<sp/>on<sp/>sockets<sp/>to<sp/>address<sp/>connection<sp/>timeouts.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Replace<sp/>`Nullable(const<sp/>T&amp;)`<sp/>with<sp/>`Nullable(T)`<sp/>to<sp/>avoid<sp/>extra<sp/>copy<sp/>when<sp/>initialized<sp/>with<sp/>an<sp/>rvalue.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>performance<sp/>on<sp/>windows<sp/>when<sp/>using<sp/>libcurl.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Pinned<sp/>the<sp/>version<sp/>of<sp/>package<sp/>dependencies.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>NOTICE.txt<sp/>for<sp/>3rd<sp/>party<sp/>dependencies.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>build<sp/>instructions<sp/>for<sp/>running<sp/>tests.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[ku-sourav](https://github.com/ku-sourav)_)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>vcpkg<sp/>build<sp/>instructions.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[ku-sourav](https://github.com/ku-sourav)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Core<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>`ku-sourav`<sp/>_([GitHub](https://github.com/ku-sourav))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.1<sp/>(2020-09-09)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Initial<sp/>release</highlight></codeline>
+    </programlisting>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

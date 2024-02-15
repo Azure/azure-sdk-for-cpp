@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_06ad7f09ade60a1ced0a4e3dcb3d1625" kind="dir">
+    <compoundname>inc/azure/core</compoundname>
+    <innerdir refid="dir_3c286591724a5035eca77d120b9aff18">inc/azure/core/tracing</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/"/>
+  </compounddef>
+</doxygen>

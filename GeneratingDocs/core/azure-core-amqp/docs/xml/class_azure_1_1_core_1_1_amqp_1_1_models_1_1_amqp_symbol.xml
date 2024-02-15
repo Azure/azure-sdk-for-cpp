@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpSymbol</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::string, AmqpSymbol &gt;</basecompoundref>
+    <includes refid="amqp__value_8hpp" local="no">amqp_value.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a27bab0e9e277eaf0d7bd6a1cfe236e31" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</definition>
+        <argsstring>()</argsstring>
+        <name>AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="835" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="835" bodyend="835"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a5b391218a2b54d98a14b1b915f7a7df9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Amqp::Models::AmqpSymbol::~AmqpSymbol</definition>
+        <argsstring>()=default</argsstring>
+        <name>~AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::~AmqpSymbol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="836" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1ae2a9bfdd08a26202276a2665ce8ecd60" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</definition>
+        <argsstring>(std::string const &amp;values)</argsstring>
+        <name>AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> object with an initializer list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="839" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="839" bodyend="839"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a036a192d5d6cccf2efe3a5693d9926cd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</definition>
+        <argsstring>(initializer_type const &amp;initializer)</argsstring>
+        <name>AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</qualifiedname>
+        <param>
+          <type>initializer_type const &amp;</type>
+          <declname>initializer</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> object with an initializer list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="842" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="842" bodyend="842"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a26e834a8f0031ee9af49447f33b0066e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</definition>
+        <argsstring>(const char *const values)</argsstring>
+        <name>AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</qualifiedname>
+        <param>
+          <type>const char *const</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> object from a constant string value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="845" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="845" bodyend="845"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a8ae4cc35ad50e666d31ae0861d0f1b96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</definition>
+        <argsstring>(const AmqpSymbol &amp;other)=default</argsstring>
+        <name>AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="848" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a1531d2b580e0c5be86427d09f731a22f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> &amp;</type>
+        <definition>AmqpSymbol &amp; Azure::Core::Amqp::Models::AmqpSymbol::operator=</definition>
+        <argsstring>(const AmqpSymbol &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy Assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="851" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a7a4f9aec3778884e02cb3f5a604c6fd6" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</definition>
+        <argsstring>(AmqpSymbol &amp;&amp;other) noexcept=default</argsstring>
+        <name>AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="854" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1af1fc10c5d04e8bad2d11d9a20f872f0d" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> &amp;</type>
+        <definition>AmqpSymbol &amp; Azure::Core::Amqp::Models::AmqpSymbol::operator=</definition>
+        <argsstring>(AmqpSymbol &amp;&amp;other) noexcept=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move Assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="857" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89f2b5831fd4033b0ba98722eafce394" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>AmqpSymbol</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::AmqpSymbol</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> object from an existing uAMQP AMQP_VALUE item. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this does NOT capture the passed in AMQP_VALUE object, the caller is responsible for freeing that object.</para>
+</simplesect>
+<simplesect kind="remark"><para>This is an internal accessor and should never be used by code outside the AMQP implementation.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP &quot;binary&quot; value to capture. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="869" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="944" bodyend="958"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a98bcb5021773c243c302706c99356e04" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpSymbol::operator==</definition>
+        <argsstring>(AmqpSymbol const &amp;that) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::operator==</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare two AMQP symbols for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP symbol to compare to. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the two symbols are equal, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="876" column="10" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="876" bodyend="876"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89edd90fb86647e55062b0bf8d82738c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpSymbol::operator==</definition>
+        <argsstring>(const decltype(m_value)::value_type *const that) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpSymbol::operator==</qualifiedname>
+        <param>
+          <type>const decltype(m_value)::value_type *const</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare two AMQP symbols for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP symbol to compare to. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the two symbols are equal, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="882" column="10" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="882" bodyend="885"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An AMQP symbol value. An AMQP Symbol is a string valued from a constrained domain, whose content is sequence of ASCII encoded characters. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-symbol">AMQP Core Types section 1.6.19</ulink>. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::string, AmqpSymbol &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpSymbol</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::string, AmqpSymbol &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpSymbol</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="833" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="833" bodyend="886"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a27bab0e9e277eaf0d7bd6a1cfe236e31" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>AmqpSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1ae2a9bfdd08a26202276a2665ce8ecd60" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>AmqpSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a036a192d5d6cccf2efe3a5693d9926cd" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>AmqpSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a26e834a8f0031ee9af49447f33b0066e" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>AmqpSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a8ae4cc35ad50e666d31ae0861d0f1b96" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>AmqpSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a7a4f9aec3778884e02cb3f5a604c6fd6" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>AmqpSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89f2b5831fd4033b0ba98722eafce394" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>AmqpSymbol</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a1531d2b580e0c5be86427d09f731a22f" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1af1fc10c5d04e8bad2d11d9a20f872f0d" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a98bcb5021773c243c302706c99356e04" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89edd90fb86647e55062b0bf8d82738c" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a5b391218a2b54d98a14b1b915f7a7df9" prot="public" virt="virtual"><scope>Azure::Core::Amqp::Models::AmqpSymbol</scope><name>~AmqpSymbol</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

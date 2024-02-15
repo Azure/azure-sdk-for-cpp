@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_r_e_a_d_m_e_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Azure<sp/>SDK<sp/>Core<sp/>Library<sp/>for<sp/>C++</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Azure::Core<sp/>(`azure-core`)<sp/>provides<sp/>shared<sp/>primitives,<sp/>abstractions,<sp/>and<sp/>helpers<sp/>for<sp/>modern<sp/>Azure<sp/>SDK<sp/>client<sp/>libraries<sp/>written<sp/>in<sp/>the<sp/>C++.<sp/>These<sp/>libraries<sp/>follow<sp/>the<sp/>[Azure<sp/>SDK<sp/>Design<sp/>Guidelines<sp/>for<sp/>C++][azure_sdk_cpp_development_guidelines].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>library<sp/>allows<sp/>client<sp/>libraries<sp/>to<sp/>expose<sp/>common<sp/>functionality<sp/>in<sp/>a<sp/>consistent<sp/>fashion.<sp/>Once<sp/>you<sp/>learn<sp/>how<sp/>to<sp/>use<sp/>these<sp/>APIs<sp/>in<sp/>one<sp/>client<sp/>library,<sp/>you<sp/>will<sp/>know<sp/>how<sp/>to<sp/>use<sp/>them<sp/>in<sp/>other<sp/>client<sp/>libraries.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Getting<sp/>started</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Typically,<sp/>you<sp/>will<sp/>not<sp/>need<sp/>to<sp/>download<sp/>`azure-core`;<sp/>it<sp/>will<sp/>be<sp/>downloaded<sp/>for<sp/>you<sp/>as<sp/>a<sp/>dependency<sp/>of<sp/>the<sp/>client<sp/>libraries.<sp/>In<sp/>case<sp/>you<sp/>want<sp/>to<sp/>download<sp/>it<sp/>explicitly<sp/>(to<sp/>implement<sp/>your<sp/>own<sp/>client<sp/>library,<sp/>for<sp/>example),<sp/>you<sp/>can<sp/>find<sp/>the<sp/>source<sp/>in<sp/>here,<sp/>or<sp/>use<sp/>vcpkg<sp/>to<sp/>install<sp/>the<sp/>package<sp/>`azure-core-cpp`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Include<sp/>the<sp/>package</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>easiest<sp/>way<sp/>to<sp/>acquire<sp/>the<sp/>C++<sp/>SDK<sp/>is<sp/>leveraging<sp/>vcpkg<sp/>package<sp/>manager.<sp/>See<sp/>the<sp/>corresponding<sp/>[Azure<sp/>SDK<sp/>for<sp/>C++<sp/>readme<sp/>section][azsdk_vcpkg_install].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>install<sp/>Azure<sp/>Core<sp/>package<sp/>via<sp/>vcpkg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cmd</highlight></codeline>
+<codeline><highlight class="normal">&gt;<sp/>vcpkg<sp/>install<sp/>azure-core-cpp</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then,<sp/>use<sp/>in<sp/>your<sp/>CMake<sp/>file:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```CMake</highlight></codeline>
+<codeline><highlight class="normal">find_package(azure-core-cpp<sp/>CONFIG<sp/>REQUIRED)</highlight></codeline>
+<codeline><highlight class="normal">target_link_libraries(&lt;your<sp/>project<sp/>name&gt;<sp/>PRIVATE<sp/>Azure::azure-core)</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Key<sp/>concepts</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>main<sp/>shared<sp/>concepts<sp/>of<sp/>`Azure::Core`<sp/>include:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Handling<sp/>streaming<sp/>data<sp/>and<sp/>input/output<sp/>(I/O)<sp/>via<sp/>`BodyStream`<sp/>along<sp/>with<sp/>its<sp/>derived<sp/>types.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Accessing<sp/>HTTP<sp/>response<sp/>details<sp/>for<sp/>the<sp/>returned<sp/>model<sp/>of<sp/>any<sp/>SDK<sp/>client<sp/>operation,<sp/>via<sp/>`Response&lt;T&gt;`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Polling<sp/>long-running<sp/>operations<sp/>(LROs),<sp/>via<sp/>`Operation&lt;T&gt;`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Exceptions<sp/>for<sp/>reporting<sp/>errors<sp/>from<sp/>service<sp/>requests<sp/>in<sp/>a<sp/>consistent<sp/>fashion<sp/>via<sp/>the<sp/>base<sp/>exception<sp/>type<sp/>`RequestFailedException`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Abstractions<sp/>for<sp/>Azure<sp/>SDK<sp/>credentials<sp/>(`TokenCredential`).</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Replaceable<sp/>HTTP<sp/>transport<sp/>layer<sp/>to<sp/>send<sp/>requests<sp/>and<sp/>receive<sp/>responses<sp/>over<sp/>the<sp/>network.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>HTTP<sp/>pipeline<sp/>and<sp/>HTTP<sp/>policies<sp/>such<sp/>as<sp/>retry<sp/>and<sp/>logging,<sp/>which<sp/>are<sp/>configurable<sp/>via<sp/>service<sp/>client<sp/>specific<sp/>options.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Long<sp/>Running<sp/>Operations</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Some<sp/>operations<sp/>take<sp/>a<sp/>long<sp/>time<sp/>to<sp/>complete<sp/>and<sp/>require<sp/>polling<sp/>for<sp/>their<sp/>status.<sp/>Methods<sp/>starting<sp/>long-running<sp/>operations<sp/>return<sp/>`Operation&lt;T&gt;`<sp/>types.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">You<sp/>can<sp/>intermittently<sp/>poll<sp/>whether<sp/>the<sp/>operation<sp/>has<sp/>finished<sp/>by<sp/>using<sp/>the<sp/>`Poll()`<sp/>method<sp/>on<sp/>the<sp/>returned<sp/>`Operation&lt;T&gt;`<sp/>and<sp/>track<sp/>progress<sp/>of<sp/>the<sp/>operation<sp/>using<sp/>`Value()`.<sp/>Alternatively,<sp/>if<sp/>you<sp/>just<sp/>want<sp/>to<sp/>wait<sp/>until<sp/>the<sp/>operation<sp/>completes,<sp/>you<sp/>can<sp/>use<sp/>`PollUntilDone()`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```{.cpp}</highlight></codeline>
+<codeline><highlight class="normal">SomeServiceClient<sp/>client;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>operation<sp/>=<sp/>*client.StartSomeLongRunningOperation();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">while<sp/>(!operation.IsDone())</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>std::unique_ptr&lt;Http::RawResponse&gt;<sp/>response<sp/>=<sp/>operation.Poll();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>auto<sp/>partialResult<sp/>=<sp/>operation.Value();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Your<sp/>per-polling<sp/>custom<sp/>logic<sp/>goes<sp/>here,<sp/>such<sp/>as<sp/>logging<sp/>progress.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>You<sp/>can<sp/>also<sp/>try<sp/>to<sp/>abort<sp/>the<sp/>operation<sp/>if<sp/>it<sp/>doesn&apos;t<sp/>complete<sp/>in<sp/>time.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>std::this_thread::sleep_for(std::chrono::milliseconds(1000));</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>finalResult<sp/>=<sp/>operation.Value();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>HTTP<sp/>Transport<sp/>adapter</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Out<sp/>of<sp/>the<sp/>box,<sp/>the<sp/>Azure<sp/>SDK<sp/>for<sp/>C++<sp/>supports<sp/>the<sp/>libcurl<sp/>and<sp/>WinHTTP<sp/>libraries<sp/>as<sp/>HTTP<sp/>stacks<sp/>for<sp/>communicating<sp/>with<sp/>Azure<sp/>services<sp/>over<sp/>the<sp/>network.<sp/>The<sp/>SDK<sp/>also<sp/>provides<sp/>a<sp/>mechanism<sp/>for<sp/>`customer-implemented`<sp/>_HTTP<sp/>transport<sp/>adapter_.<sp/>[You<sp/>can<sp/>learn<sp/>more<sp/>about<sp/>the<sp/>transport<sp/>adapter<sp/>in<sp/>this<sp/>doc](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#http-transport-adapter).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Troubleshooting</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Three<sp/>main<sp/>ways<sp/>of<sp/>troubleshooting<sp/>failures<sp/>are:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Inspecting<sp/>exceptions</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Enabling<sp/>logging<sp/>(see<sp/>[SDK<sp/>Log<sp/>Messages](#sdk-log-messages))</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>SDK<sp/>Log<sp/>Messages</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>simplest<sp/>way<sp/>to<sp/>enable<sp/>logs<sp/>is<sp/>to<sp/>set<sp/>`AZURE_LOG_LEVEL`<sp/>environment<sp/>variable<sp/>to<sp/>one<sp/>of<sp/>the<sp/>values:</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_LOG_LEVEL`|`Azure::Core::Diagnostics::Logger::Level`|Log<sp/>message<sp/>level</highlight></codeline>
+<codeline><highlight class="normal">|-|-|-</highlight></codeline>
+<codeline><highlight class="normal">|`4`,<sp/>or<sp/>`error`,<sp/>or<sp/>`err`|`Error`|Logging<sp/>level<sp/>for<sp/>failures<sp/>that<sp/>the<sp/>application<sp/>is<sp/>unlikely<sp/>to<sp/>recover<sp/>from.</highlight></codeline>
+<codeline><highlight class="normal">|`3`,<sp/>or<sp/>`warning`,<sp/>or<sp/>`warn`|`Warning`|Logging<sp/>level<sp/>when<sp/>a<sp/>function<sp/>fails<sp/>to<sp/>perform<sp/>its<sp/>intended<sp/>task.</highlight></codeline>
+<codeline><highlight class="normal">|`2`,<sp/>or<sp/>`informational`,<sp/>or<sp/>`information`,<sp/>or<sp/>`info`|`Informational`|Logging<sp/>level<sp/>when<sp/>a<sp/>function<sp/>operates<sp/>normally.</highlight></codeline>
+<codeline><highlight class="normal">|`1`,<sp/>or<sp/>`verbose`,<sp/>or<sp/>`debug`|`Verbose`|Logging<sp/>level<sp/>for<sp/>detailed<sp/>troubleshooting<sp/>scenarios.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then,<sp/>log<sp/>messages<sp/>will<sp/>be<sp/>printed<sp/>to<sp/>console<sp/>(`stderr`).</highlight></codeline>
+<codeline><highlight class="normal">Note<sp/>that<sp/>`stderr`<sp/>messages<sp/>can<sp/>be<sp/>redirected<sp/>into<sp/>a<sp/>log<sp/>file<sp/>like<sp/>this:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">On<sp/>Windows:</highlight></codeline>
+<codeline><highlight class="normal">```cmd</highlight></codeline>
+<codeline><highlight class="normal">myprogram.exe<sp/>2&gt;<sp/>log.txt</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">On<sp/>Linux<sp/>or<sp/>macOS:</highlight></codeline>
+<codeline><highlight class="normal">```sh</highlight></codeline>
+<codeline><highlight class="normal">./myprogram<sp/>2&gt;<sp/>log.txt</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">In<sp/>addition,<sp/>log<sp/>messages<sp/>can<sp/>be<sp/>programmatically<sp/>processed<sp/>by<sp/>providing<sp/>a<sp/>callback<sp/>function,<sp/>which<sp/>can<sp/>save<sp/>them<sp/>to<sp/>a<sp/>file,<sp/>or<sp/>display<sp/>them<sp/>in<sp/>a<sp/>desired<sp/>custom<sp/>way.</highlight></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;azure/core/diagnostics/logger.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>using<sp/>namespace<sp/>Azure::Core::Diagnostics;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>See<sp/>above<sp/>for<sp/>the<sp/>level<sp/>descriptions.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>Logger::SetLevel(Logger::Level::Verbose);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>SetListener<sp/>accepts<sp/>std::function&lt;&gt;,<sp/>which<sp/>can<sp/>be<sp/>either<sp/>lambda<sp/>or<sp/>a<sp/>function<sp/>pointer.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>Logger::SetListener([&amp;](auto<sp/>lvl,<sp/>auto<sp/>msg){<sp/>/*<sp/>handle<sp/>Logger::Level<sp/>lvl<sp/>and<sp/>std::string<sp/>msg<sp/>*/<sp/>});</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Note,<sp/>the<sp/>listener<sp/>callback<sp/>is<sp/>executed<sp/>on<sp/>the<sp/>same<sp/>thread<sp/>as<sp/>the<sp/>operation<sp/>that<sp/>triggered<sp/>the<sp/>log<sp/>message.<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/>It<sp/>is<sp/>recommended<sp/>implementation<sp/>due<sp/>the<sp/>minimal<sp/>amount<sp/>of<sp/>log<sp/>message<sp/>processing<sp/>on<sp/>the<sp/>callback<sp/>thread.</highlight></codeline>
+<codeline><highlight class="normal">Where<sp/>message<sp/>processing<sp/>is<sp/>required,<sp/>consider<sp/>implementing<sp/>in<sp/>a<sp/>way<sp/>that<sp/>the<sp/>callback<sp/>pushes<sp/>the<sp/>message<sp/></highlight></codeline>
+<codeline><highlight class="normal">string<sp/>into<sp/>a<sp/>thread-safe<sp/>queue,<sp/>so<sp/>that<sp/>another<sp/>thread<sp/>would<sp/>pick<sp/>the<sp/>messages<sp/>from<sp/>that<sp/>queue<sp/>and<sp/>handle<sp/>them.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Next<sp/>steps</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Explore<sp/>and<sp/>install<sp/>available<sp/>Azure<sp/>SDK<sp/>libraries.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Contributing</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">For<sp/>details<sp/>on<sp/>contributing<sp/>to<sp/>this<sp/>repository,<sp/>see<sp/>the<sp/>[contributing<sp/>guide][azure_sdk_for_cpp_contributing].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>project<sp/>welcomes<sp/>contributions<sp/>and<sp/>suggestions.<sp/>Most<sp/>contributions<sp/>require<sp/>you<sp/>to<sp/>agree<sp/>to<sp/>a</highlight></codeline>
+<codeline><highlight class="normal">Contributor<sp/>License<sp/>Agreement<sp/>(CLA)<sp/>declaring<sp/>that<sp/>you<sp/>have<sp/>the<sp/>right<sp/>to,<sp/>and<sp/>actually<sp/>do,<sp/>grant<sp/>us</highlight></codeline>
+<codeline><highlight class="normal">the<sp/>rights<sp/>to<sp/>use<sp/>your<sp/>contribution.<sp/>For<sp/>details,<sp/>visit<sp/>the<sp/>[Contributor<sp/>License<sp/>Agreement](https://cla.microsoft.com).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">When<sp/>you<sp/>submit<sp/>a<sp/>pull<sp/>request,<sp/>a<sp/>CLA-bot<sp/>will<sp/>automatically<sp/>determine<sp/>whether<sp/>you<sp/>need<sp/>to<sp/>provide</highlight></codeline>
+<codeline><highlight class="normal">a<sp/>CLA<sp/>and<sp/>decorate<sp/>the<sp/>PR<sp/>appropriately<sp/>(e.g.,<sp/>label,<sp/>comment).<sp/>Simply<sp/>follow<sp/>the<sp/>instructions</highlight></codeline>
+<codeline><highlight class="normal">provided<sp/>by<sp/>the<sp/>bot.<sp/>You<sp/>will<sp/>only<sp/>need<sp/>to<sp/>do<sp/>this<sp/>once<sp/>across<sp/>all<sp/>repos<sp/>using<sp/>our<sp/>CLA.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>project<sp/>has<sp/>adopted<sp/>the<sp/>[Microsoft<sp/>Open<sp/>Source<sp/>Code<sp/>of<sp/>Conduct](https://opensource.microsoft.com/codeofconduct/).</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>more<sp/>information<sp/>see<sp/>the<sp/>[Code<sp/>of<sp/>Conduct<sp/>FAQ](https://opensource.microsoft.com/codeofconduct/faq/)<sp/>or</highlight></codeline>
+<codeline><highlight class="normal">contact<sp/>[opencode@microsoft.com](mailto:opencode@microsoft.com)<sp/>with<sp/>any<sp/>additional<sp/>questions<sp/>or<sp/>comments.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Additional<sp/>Helpful<sp/>Links<sp/>for<sp/>Contributors</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Many<sp/>people<sp/>all<sp/>over<sp/>the<sp/>world<sp/>have<sp/>helped<sp/>make<sp/>this<sp/>project<sp/>better.<sp/>You&apos;ll<sp/>want<sp/>to<sp/>check<sp/>out:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[What<sp/>are<sp/>some<sp/>good<sp/>first<sp/>issues<sp/>for<sp/>new<sp/>contributors<sp/>to<sp/>the<sp/>repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[How<sp/>to<sp/>build<sp/>and<sp/>test<sp/>your<sp/>change][azure_sdk_for_cpp_contributing_developer_guide]</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[How<sp/>you<sp/>can<sp/>make<sp/>a<sp/>change<sp/>happen!][azure_sdk_for_cpp_contributing_pull_requests]</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Frequently<sp/>Asked<sp/>Questions<sp/>(FAQ)<sp/>and<sp/>Conceptual<sp/>Topics<sp/>in<sp/>the<sp/>detailed<sp/>[Azure<sp/>SDK<sp/>for<sp/>C++<sp/>wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;!--<sp/>###<sp/>Community--&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Reporting<sp/>security<sp/>issues<sp/>and<sp/>security<sp/>bugs</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Security<sp/>issues<sp/>and<sp/>bugs<sp/>should<sp/>be<sp/>reported<sp/>privately,<sp/>via<sp/>email,<sp/>to<sp/>the<sp/>Microsoft<sp/>Security<sp/>Response<sp/>Center<sp/>(MSRC)<sp/>&lt;secure@microsoft.com&gt;.<sp/>You<sp/>should<sp/>receive<sp/>a<sp/>response<sp/>within<sp/>24<sp/>hours.<sp/>If<sp/>for<sp/>some<sp/>reason<sp/>you<sp/>do<sp/>not,<sp/>please<sp/>follow<sp/>up<sp/>via<sp/>email<sp/>to<sp/>ensure<sp/>we<sp/>received<sp/>your<sp/>original<sp/>message.<sp/>Further<sp/>information,<sp/>including<sp/>the<sp/>MSRC<sp/>PGP<sp/>key,<sp/>can<sp/>be<sp/>found<sp/>in<sp/>the<sp/>[Security<sp/>TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>License</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Azure<sp/>SDK<sp/>for<sp/>C++<sp/>is<sp/>licensed<sp/>under<sp/>the<sp/>[MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt)<sp/>license.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;!--<sp/>LINKS<sp/>--&gt;</highlight></codeline>
+<codeline><highlight class="normal">[azsdk_vcpkg_install]:<sp/>https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing_developer_guide]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing_pull_requests]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_cpp_development_guidelines]:<sp/>https://azure.github.io/azure-sdk/cpp_introduction.html</highlight></codeline>
+<codeline><highlight class="normal">[azure_cli]:<sp/>https://docs.microsoft.com/cli/azure</highlight></codeline>
+<codeline><highlight class="normal">[azure_pattern_circuit_breaker]:<sp/>https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker</highlight></codeline>
+<codeline><highlight class="normal">[azure_pattern_retry]:<sp/>https://docs.microsoft.com/azure/architecture/patterns/retry</highlight></codeline>
+<codeline><highlight class="normal">[azure_portal]:<sp/>https://portal.azure.com</highlight></codeline>
+<codeline><highlight class="normal">[azure_sub]:<sp/>https://azure.microsoft.com/free/</highlight></codeline>
+<codeline><highlight class="normal">[c_compiler]:<sp/>https://visualstudio.microsoft.com/vs/features/cplusplus/</highlight></codeline>
+<codeline><highlight class="normal">[cloud_shell]:<sp/>https://docs.microsoft.com/azure/cloud-shell/overview</highlight></codeline>
+<codeline><highlight class="normal">[cloud_shell_bash]:<sp/>https://shell.azure.com/bash</highlight></codeline>
+    </programlisting>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>

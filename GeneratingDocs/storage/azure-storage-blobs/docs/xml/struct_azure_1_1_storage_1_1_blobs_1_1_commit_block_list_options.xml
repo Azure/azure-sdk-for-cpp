@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::CommitBlockListOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1ac599edbb8799738f5fe51bebef0a76f5" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers" kindref="compound">Models::BlobHttpHeaders</ref></type>
+        <definition>Models::BlobHttpHeaders Azure::Storage::Blobs::CommitBlockListOptions::HttpHeaders</definition>
+        <argsstring></argsstring>
+        <name>HttpHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::CommitBlockListOptions::HttpHeaders</qualifiedname>
+        <briefdescription>
+<para>The standard HTTP header system properties to set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1086" column="29" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1086" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a7e205efb996bc02bc7aaac93cf5f8bdb" prot="public" static="no" mutable="no">
+        <type>Storage::Metadata</type>
+        <definition>Storage::Metadata Azure::Storage::Blobs::CommitBlockListOptions::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::CommitBlockListOptions::Metadata</qualifiedname>
+        <briefdescription>
+<para>Name-value pairs associated with the blob as metadata. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1091" column="23" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1091" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a6f6307acb415396fe7a33c290f83bed0" prot="public" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::string &gt;</type>
+        <definition>std::map&lt;std::string, std::string&gt; Azure::Storage::Blobs::CommitBlockListOptions::Tags</definition>
+        <argsstring></argsstring>
+        <name>Tags</name>
+        <qualifiedname>Azure::Storage::Blobs::CommitBlockListOptions::Tags</qualifiedname>
+        <briefdescription>
+<para>The tags to set for this blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1096" column="14" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1096" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a23fdda67f09789f8003df33feeb363e1" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_access_tier" kindref="compound">Models::AccessTier</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::AccessTier&gt; Azure::Storage::Blobs::CommitBlockListOptions::AccessTier</definition>
+        <argsstring></argsstring>
+        <name>AccessTier</name>
+        <qualifiedname>Azure::Storage::Blobs::CommitBlockListOptions::AccessTier</qualifiedname>
+        <briefdescription>
+<para>Indicates the tier to be set on blob. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1101" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a4dad299c5664eb1f1a6ecf53b7cb6c4f" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions" kindref="compound">BlobAccessConditions</ref></type>
+        <definition>BlobAccessConditions Azure::Storage::Blobs::CommitBlockListOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::CommitBlockListOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1106" column="26" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a96bd9de4676569fd2fc4691ef8e6bac7" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy" kindref="compound">Models::BlobImmutabilityPolicy</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Models::BlobImmutabilityPolicy&gt; Azure::Storage::Blobs::CommitBlockListOptions::ImmutabilityPolicy</definition>
+        <argsstring></argsstring>
+        <name>ImmutabilityPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::CommitBlockListOptions::ImmutabilityPolicy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Immutability policy to set on the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1111" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a2cbf565434b4dd32a3385c7d4dea97f4" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; bool &gt;</type>
+        <definition>Azure::Nullable&lt;bool&gt; Azure::Storage::Blobs::CommitBlockListOptions::HasLegalHold</definition>
+        <argsstring></argsstring>
+        <name>HasLegalHold</name>
+        <qualifiedname>Azure::Storage::Blobs::CommitBlockListOptions::HasLegalHold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the blob has a legal hold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="1116" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1116" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a5e47df66b82d5832cf2268d9a991c924" kindref="member">Azure::Storage::Blobs::BlockBlobClient::CommitBlockList</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Azure::MatchConditions</label>
+      </node>
+      <node id="4">
+        <label>Azure::ModifiedConditions</label>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::BlobAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_access_conditions"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::CommitBlockListOptions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>HttpHeaders</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>AccessConditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobHttpHeaders</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers"/>
+      </node>
+      <node id="7">
+        <label>Azure::Storage::Blobs::TagAccessConditions</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_tag_access_conditions"/>
+      </node>
+      <node id="6">
+        <label>LeaseAccessConditions</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="1081" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="1082" bodyend="1117"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a4dad299c5664eb1f1a6ecf53b7cb6c4f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CommitBlockListOptions</scope><name>AccessConditions</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a23fdda67f09789f8003df33feeb363e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CommitBlockListOptions</scope><name>AccessTier</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a2cbf565434b4dd32a3385c7d4dea97f4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CommitBlockListOptions</scope><name>HasLegalHold</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1ac599edbb8799738f5fe51bebef0a76f5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CommitBlockListOptions</scope><name>HttpHeaders</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a96bd9de4676569fd2fc4691ef8e6bac7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CommitBlockListOptions</scope><name>ImmutabilityPolicy</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a7e205efb996bc02bc7aaac93cf5f8bdb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CommitBlockListOptions</scope><name>Metadata</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options_1a6f6307acb415396fe7a33c290f83bed0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::CommitBlockListOptions</scope><name>Tags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="unique__handle_8hpp" kind="file" language="C++">
+    <compoundname>unique_handle.hpp</compoundname>
+    <includes local="no">azure/core/internal/unique_handle.hpp</includes>
+    <includedby refid="claims__based__security__impl_8hpp" local="yes">src/amqp/private/claims_based_security_impl.hpp</includedby>
+    <includedby refid="connection__impl_8hpp" local="yes">src/amqp/private/connection_impl.hpp</includedby>
+    <includedby refid="message__receiver__impl_8hpp" local="yes">src/amqp/private/message_receiver_impl.hpp</includedby>
+    <includedby refid="message__sender__impl_8hpp" local="yes">src/amqp/private/message_sender_impl.hpp</includedby>
+    <includedby refid="session__impl_8hpp" local="yes">src/amqp/private/session_impl.hpp</includedby>
+    <includedby refid="amqp__detach_8cpp" local="yes">src/models/amqp_detach.cpp</includedby>
+    <includedby refid="amqp__error_8cpp" local="yes">src/models/amqp_error.cpp</includedby>
+    <includedby refid="amqp__message_8cpp" local="yes">src/models/amqp_message.cpp</includedby>
+    <includedby refid="amqp__transfer_8cpp" local="yes">src/models/amqp_transfer.cpp</includedby>
+    <includedby refid="error__impl_8hpp" local="yes">src/models/private/error_impl.hpp</includedby>
+    <includedby refid="header__impl_8hpp" local="yes">src/models/private/header_impl.hpp</includedby>
+    <includedby refid="message__impl_8hpp" local="yes">src/models/private/message_impl.hpp</includedby>
+    <includedby refid="detach__impl_8hpp" local="yes">src/models/private/performatives/detach_impl.hpp</includedby>
+    <includedby refid="transfer__impl_8hpp" local="yes">src/models/private/performatives/transfer_impl.hpp</includedby>
+    <includedby refid="properties__impl_8hpp" local="yes">src/models/private/properties_impl.hpp</includedby>
+    <includedby refid="source__impl_8hpp" local="yes">src/models/private/source_impl.hpp</includedby>
+    <includedby refid="target__impl_8hpp" local="yes">src/models/private/target_impl.hpp</includedby>
+    <includedby refid="value__impl_8hpp" local="yes">src/models/private/value_impl.hpp</includedby>
+    <includedby refid="transport__impl_8hpp" local="yes">src/network/private/transport_impl.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>src/amqp/private/unique_handle.hpp</label>
+        <link refid="unique__handle_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>azure/core/internal/unique_handle.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>src/amqp/private/claims_based_security_impl.hpp</label>
+        <link refid="claims__based__security__impl_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>src/amqp/private/connection_impl.hpp</label>
+        <link refid="connection__impl_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>src/amqp/private/link_impl.hpp</label>
+        <link refid="link__impl_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>src/amqp/private/management_impl.hpp</label>
+        <link refid="management__impl_8hpp_source"/>
+      </node>
+      <node id="3">
+        <label>src/amqp/private/message_receiver_impl.hpp</label>
+        <link refid="message__receiver__impl_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>src/amqp/private/message_sender_impl.hpp</label>
+        <link refid="message__sender__impl_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>src/amqp/private/session_impl.hpp</label>
+        <link refid="session__impl_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>src/amqp/private/unique_handle.hpp</label>
+        <link refid="unique__handle_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>src/models/private/error_impl.hpp</label>
+        <link refid="error__impl_8hpp_source"/>
+      </node>
+      <node id="10">
+        <label>src/models/private/header_impl.hpp</label>
+        <link refid="header__impl_8hpp_source"/>
+      </node>
+      <node id="11">
+        <label>src/models/private/message_impl.hpp</label>
+        <link refid="message__impl_8hpp_source"/>
+      </node>
+      <node id="12">
+        <label>src/models/private/performatives/detach_impl.hpp</label>
+        <link refid="detach__impl_8hpp_source"/>
+      </node>
+      <node id="13">
+        <label>src/models/private/performatives/transfer_impl.hpp</label>
+        <link refid="transfer__impl_8hpp_source"/>
+      </node>
+      <node id="14">
+        <label>src/models/private/properties_impl.hpp</label>
+        <link refid="properties__impl_8hpp_source"/>
+      </node>
+      <node id="15">
+        <label>src/models/private/source_impl.hpp</label>
+        <link refid="source__impl_8hpp_source"/>
+      </node>
+      <node id="16">
+        <label>src/models/private/target_impl.hpp</label>
+        <link refid="target__impl_8hpp_source"/>
+      </node>
+      <node id="17">
+        <label>src/models/private/value_impl.hpp</label>
+        <link refid="value__impl_8hpp_source"/>
+      </node>
+      <node id="18">
+        <label>src/network/private/transport_impl.hpp</label>
+        <link refid="transport__impl_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp">Azure::Core::Amqp</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/internal/unique_handle.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_detail<sp/>{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">UniqueHandleHelper;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;<sp/></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal">UniqueHandle<sp/>=<sp/>Core::_internal::UniqueHandle&lt;T,<sp/>UniqueHandleHelper&gt;;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::_detail</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="src/amqp/private/unique_handle.hpp"/>
+  </compounddef>
+</doxygen>

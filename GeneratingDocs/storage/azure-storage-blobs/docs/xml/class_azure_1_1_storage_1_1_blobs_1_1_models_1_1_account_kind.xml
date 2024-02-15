@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::AccountKind</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1ab917ebcf10aca9f41b88e9852eb07e25" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref></type>
+        <definition>const AccountKind Azure::Storage::Blobs::Models::AccountKind::Storage</definition>
+        <argsstring></argsstring>
+        <name>Storage</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::Storage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref>: Storage </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="645" column="59" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="645" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1abe6fff8123aafb2e8d6f6a9969cce1a5" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref></type>
+        <definition>const AccountKind Azure::Storage::Blobs::Models::AccountKind::BlobStorage</definition>
+        <argsstring></argsstring>
+        <name>BlobStorage</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::BlobStorage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref>: BlobStorage </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="647" column="59" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="647" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a1f3b0c5c17e4174df34a3447a95ca6e0" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref></type>
+        <definition>const AccountKind Azure::Storage::Blobs::Models::AccountKind::StorageV2</definition>
+        <argsstring></argsstring>
+        <name>StorageV2</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::StorageV2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref>: StorageV2 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="649" column="59" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="649" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a0c223ae43730371d62b8c7abd4f52a29" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref></type>
+        <definition>const AccountKind Azure::Storage::Blobs::Models::AccountKind::FileStorage</definition>
+        <argsstring></argsstring>
+        <name>FileStorage</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::FileStorage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref>: FileStorage </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="651" column="59" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="651" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a4281e6f0d491d630b4f94d4b0b05fde3" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref></type>
+        <definition>const AccountKind Azure::Storage::Blobs::Models::AccountKind::BlockBlobStorage</definition>
+        <argsstring></argsstring>
+        <name>BlockBlobStorage</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::BlockBlobStorage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref>: BlockBlobStorage </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="653" column="59" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="653" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a272ecaef0269db67efde242f128938a8" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::AccountKind::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="656" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="656" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a2b165b4775012e4bed93e37a23920eed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::AccountKind::AccountKind</definition>
+        <argsstring>()=default</argsstring>
+        <name>AccountKind</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::AccountKind</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="635" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1ab74265bef083675f2f27d084a37904e0" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::AccountKind::AccountKind</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>AccountKind</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::AccountKind</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="637" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="637" bodyend="637"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a50606c4a69d7bbe693882d6614b6f5a7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::AccountKind::operator==</definition>
+        <argsstring>(const AccountKind &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="639" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="639" bodyend="639"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a2bbcd68d86311274d6bc44109d596583" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::AccountKind::operator!=</definition>
+        <argsstring>(const AccountKind &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind" kindref="compound">AccountKind</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="641" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="641" bodyend="641"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a1bb506eaf013f6a851442af1585722cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::AccountKind::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::AccountKind::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="643" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="643" bodyend="643"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Identifies the account kind. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::AccountKind</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>BlobStorage</edgelabel>
+          <edgelabel>BlockBlobStorage</edgelabel>
+          <edgelabel>FileStorage</edgelabel>
+          <edgelabel>Storage</edgelabel>
+          <edgelabel>StorageV2</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="632" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="632" bodyend="657"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a2b165b4775012e4bed93e37a23920eed" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>AccountKind</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1ab74265bef083675f2f27d084a37904e0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>AccountKind</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1abe6fff8123aafb2e8d6f6a9969cce1a5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>BlobStorage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a4281e6f0d491d630b4f94d4b0b05fde3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>BlockBlobStorage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a0c223ae43730371d62b8c7abd4f52a29" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>FileStorage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a272ecaef0269db67efde242f128938a8" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a2bbcd68d86311274d6bc44109d596583" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a50606c4a69d7bbe693882d6614b6f5a7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1ab917ebcf10aca9f41b88e9852eb07e25" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>Storage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a1f3b0c5c17e4174df34a3447a95ca6e0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>StorageV2</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_account_kind_1a1bb506eaf013f6a851442af1585722cf" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::AccountKind</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

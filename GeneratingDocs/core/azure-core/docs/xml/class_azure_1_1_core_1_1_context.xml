@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_context" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Context</compoundname>
+    <includes refid="context_8hpp" local="no">context.hpp</includes>
+    <innerclass refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state" prot="private">Azure::Core::Context::ContextSharedState</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_context_1_1_key" prot="public">Azure::Core::Context::Key</innerclass>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_context_1a0c8236b45a3f96801d20ed9056107d44" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; ContextSharedState &gt;</type>
+        <definition>std::shared_ptr&lt;ContextSharedState&gt; Azure::Core::Context::m_contextSharedState</definition>
+        <argsstring></argsstring>
+        <name>m_contextSharedState</name>
+        <qualifiedname>Azure::Core::Context::m_contextSharedState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="136" column="21" bodyfile="inc/azure/core/context.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_context_1aac55e9cad63f64d4a3e407154c0cd0b3" prot="public" static="yes" mutable="no">
+        <type>const AZ_CORE_DLLEXPORT <ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref></type>
+        <definition>const Context Context::ApplicationContext</definition>
+        <argsstring></argsstring>
+        <name>ApplicationContext</name>
+        <qualifiedname>Azure::Core::Context::ApplicationContext</qualifiedname>
+        <briefdescription>
+<para>The application context (root). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="252" column="44" bodyfile="inc/azure/core/context.hpp" bodystart="252" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1a38f866aaff500608d0373a4682417a49" prot="private" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Context::Context</definition>
+        <argsstring>(std::shared_ptr&lt; ContextSharedState &gt; impl)</argsstring>
+        <name>Context</name>
+        <qualifiedname>Azure::Core::Context::Context</qualifiedname>
+        <param>
+          <type>std::shared_ptr&lt; ContextSharedState &gt;</type>
+          <declname>impl</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="138" column="14" bodyfile="inc/azure/core/context.hpp" bodystart="138" bodyend="141"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1ab158c637c5e299c323bec474cccd2611" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Context::Context</definition>
+        <argsstring>()</argsstring>
+        <name>Context</name>
+        <qualifiedname>Azure::Core::Context::Context</qualifiedname>
+        <briefdescription>
+<para>Constructs a new context with no deadline, and no value associated. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="148" column="5" bodyfile="inc/azure/core/context.hpp" bodystart="148" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1a570378f71f4d923f16974cb5f92ee9d3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref></type>
+        <definition>Context Azure::Core::Context::WithDeadline</definition>
+        <argsstring>(DateTime const &amp;deadline) const</argsstring>
+        <name>WithDeadline</name>
+        <qualifiedname>Azure::Core::Context::WithDeadline</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref> const &amp;</type>
+          <declname>deadline</declname>
+        </param>
+        <briefdescription>
+<para>Creates a context with a deadline. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>deadline</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A point in time after which a context expires.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A child context with deadline. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="157" column="13" bodyfile="inc/azure/core/context.hpp" bodystart="157" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1a9d1a4f785ea71043920be592f789e87b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref></type>
+        <definition>Context Azure::Core::Context::WithValue</definition>
+        <argsstring>(Key const &amp;key, T &amp;&amp;value) const</argsstring>
+        <name>WithValue</name>
+        <qualifiedname>Azure::Core::Context::WithValue</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context_1_1_key" kindref="compound">Key</ref> const &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>T &amp;&amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Creates a context without a deadline, but with <computeroutput>key</computeroutput> and <computeroutput>value</computeroutput> associated with it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the value to be stored with the key. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A key to associate with this context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A value to associate with this context.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A child context with no deadline and the <computeroutput>key</computeroutput> and <computeroutput>value</computeroutput> associated with it. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="171" column="25" bodyfile="inc/azure/core/context.hpp" bodystart="171" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1af27222eb504319f458057565af0c640f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_date_time" kindref="compound">DateTime</ref></type>
+        <definition>Azure::DateTime Azure::Core::Context::GetDeadline</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDeadline</name>
+        <qualifiedname>Azure::Core::Context::GetDeadline</qualifiedname>
+        <briefdescription>
+<para>Gets the deadline for this context or the branch of contexts this context belongs to. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The deadline associated with the context; <computeroutput>Azure::DateTime::max()</computeroutput> if no deadline is specified. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="185" column="14" bodyfile="src/context.cpp" bodystart="10" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1a44896de14f31ec4e45ba5f0beaa99326" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool Azure::Core::Context::TryGetValue</definition>
+        <argsstring>(Key const &amp;key, T &amp;outputValue) const</argsstring>
+        <name>TryGetValue</name>
+        <qualifiedname>Azure::Core::Context::TryGetValue</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context_1_1_key" kindref="compound">Key</ref> const &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>T &amp;</type>
+          <declname>outputValue</declname>
+        </param>
+        <briefdescription>
+<para>Gets the value associated with a <computeroutput>key</computeroutput> parameter within this context or the branch of contexts this context belongs to. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the value to be retrieved. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A key associated with a context to find. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outputValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to the value corresponding to the <computeroutput>key</computeroutput> to be set, if found within the context tree.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if <computeroutput>key</computeroutput> is found, with <computeroutput>outputValue</computeroutput> set to the value associated with the key found; otherwise, <computeroutput>false</computeroutput>.</para>
+</simplesect>
+<simplesect kind="note"><para>The <computeroutput>outputValue</computeroutput> is left unmodified if the <computeroutput>key</computeroutput> is not found. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="201" column="22" bodyfile="inc/azure/core/context.hpp" bodystart="201" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1a3ac7608f0afbe908aef54bee7bf9ad5b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Context::Cancel</definition>
+        <argsstring>()</argsstring>
+        <name>Cancel</name>
+        <qualifiedname>Azure::Core::Context::Cancel</qualifiedname>
+        <briefdescription>
+<para>Cancels the context. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="223" column="10" bodyfile="inc/azure/core/context.hpp" bodystart="223" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1ada5850b1bb2ad455c4fc1595ae75d66f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Context::IsCancelled</definition>
+        <argsstring>() const</argsstring>
+        <name>IsCancelled</name>
+        <qualifiedname>Azure::Core::Context::IsCancelled</qualifiedname>
+        <briefdescription>
+<para>Checks if the context is cancelled. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><computeroutput>true</computeroutput> if this context is cancelled; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="233" column="10" bodyfile="inc/azure/core/context.hpp" bodystart="233" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_context_1a08e3e60c70888f118ea0038a8b5e8df2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Context::ThrowIfCancelled</definition>
+        <argsstring>() const</argsstring>
+        <name>ThrowIfCancelled</name>
+        <qualifiedname>Azure::Core::Context::ThrowIfCancelled</qualifiedname>
+        <briefdescription>
+<para>Checks if the context is cancelled. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="class_azure_1_1_core_1_1_operation_cancelled_exception" kindref="compound">Azure::Core::OperationCancelledException</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the context is cancelled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="240" column="10" bodyfile="inc/azure/core/context.hpp" bodystart="240" bodyend="246"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A context is a node within a tree that represents deadlines and key/value pairs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Context</label>
+        <link refid="class_azure_1_1_core_1_1_context"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>ApplicationContext</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/context.hpp" line="46" column="3" bodyfile="inc/azure/core/context.hpp" bodystart="46" bodyend="253"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_context_1aac55e9cad63f64d4a3e407154c0cd0b3" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>ApplicationContext</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1a3ac7608f0afbe908aef54bee7bf9ad5b" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>Cancel</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1a38f866aaff500608d0373a4682417a49" prot="private" virt="non-virtual"><scope>Azure::Core::Context</scope><name>Context</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1ab158c637c5e299c323bec474cccd2611" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>Context</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1af27222eb504319f458057565af0c640f" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>GetDeadline</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1ada5850b1bb2ad455c4fc1595ae75d66f" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>IsCancelled</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1a0c8236b45a3f96801d20ed9056107d44" prot="private" virt="non-virtual"><scope>Azure::Core::Context</scope><name>m_contextSharedState</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1a08e3e60c70888f118ea0038a8b5e8df2" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>ThrowIfCancelled</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1a44896de14f31ec4e45ba5f0beaa99326" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>TryGetValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1a570378f71f4d923f16974cb5f92ee9d3" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>WithDeadline</name></member>
+      <member refid="class_azure_1_1_core_1_1_context_1a9d1a4f785ea71043920be592f789e87b" prot="public" virt="non-virtual"><scope>Azure::Core::Context</scope><name>WithValue</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

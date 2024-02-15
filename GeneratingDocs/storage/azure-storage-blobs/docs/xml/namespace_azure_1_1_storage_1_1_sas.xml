@@ -1,0 +1,364 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="namespace_azure_1_1_storage_1_1_sas" kind="namespace" language="C++">
+    <compoundname>Azure::Storage::Sas</compoundname>
+    <innerclass refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder" prot="public">Azure::Storage::Sas::BlobSasBuilder</innerclass>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="blob__sas__builder_8hpp_1aca865524ceb682af6a6d70e890b30861" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>BlobSasResource</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasResource</qualifiedname>
+        <enumvalue id="blob__sas__builder_8hpp_1aca865524ceb682af6a6d70e890b30861a64a89d9f2f559d710148613ea8d26881" prot="public">
+          <name>BlobContainer</name>
+          <briefdescription>
+<para>Grants access to the content and metadata of any blob in the container, and to the list of blobs in the container. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1aca865524ceb682af6a6d70e890b30861ae8016c85ada38bdc5fac616ec1318047" prot="public">
+          <name>Blob</name>
+          <briefdescription>
+<para>Grants access to the content and metadata of the blob. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1aca865524ceb682af6a6d70e890b30861a7bea2db6f29ff14a9d089211b31e2605" prot="public">
+          <name>BlobSnapshot</name>
+          <briefdescription>
+<para>Grants access to the content and metadata of the specific snapshot, but not the corresponding root blob. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1aca865524ceb682af6a6d70e890b30861aad4b4966ebc3a40a5277b79771dc924d" prot="public">
+          <name>BlobVersion</name>
+          <briefdescription>
+<para>Grants access to the content and metadata of the specific version, but not the corresponding root blob. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Specifies which resources are accessible via the shared access signature. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="17" column="3" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="18" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="enum" id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bb" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>BlobContainerSasPermissions</name>
+        <qualifiedname>Azure::Storage::Sas::BlobContainerSasPermissions</qualifiedname>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bba7a1a5f3e79fdc91edf2f5ead9d66abb4" prot="public">
+          <name>Read</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+<para>Indicates that Read is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bba1129c0e4d43f2d121652a7302712cff6" prot="public">
+          <name>Write</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+<para>Indicates that Write is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bbaf2a6c498fb90ee345d997f888fce3b18" prot="public">
+          <name>Delete</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+<para>Indicates that Delete is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bba4ee29ca12c7d126654bd0e5275de6135" prot="public">
+          <name>List</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+<para>Indicates that List is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bbaec211f7c20af43e742bf2570c3cb84f9" prot="public">
+          <name>Add</name>
+          <initializer>= 16</initializer>
+          <briefdescription>
+<para>Indicates that Add is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bba686e697538050e4664636337cc3b834f" prot="public">
+          <name>Create</name>
+          <initializer>= 32</initializer>
+          <briefdescription>
+<para>Indicates that Create is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bba189f63f277cd73395561651753563065" prot="public">
+          <name>Tags</name>
+          <initializer>= 64</initializer>
+          <briefdescription>
+<para>Indicates that reading and writing tags is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bba1877f3b666b96cff3e23342ff2a7b7a1" prot="public">
+          <name>DeleteVersion</name>
+          <initializer>= 128</initializer>
+          <briefdescription>
+<para>Indicates that deleting previous blob version is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bbac6a2b2eae1975b2538b0d3fcace88888" prot="public">
+          <name>SetImmutabilityPolicy</name>
+          <initializer>= 256</initializer>
+          <briefdescription>
+<para>Indicates that setting immutability policy is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bbaa5cb49099455d5fefcda2f815e2868dd" prot="public">
+          <name>PermanentDelete</name>
+          <initializer>= 512</initializer>
+          <briefdescription>
+<para>Indicates that permanent delete is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a8f7ec4b54960283e039e4a0aeddca7bbab1c94ca2fbc3e78fc30069c8d0f01680" prot="public">
+          <name>All</name>
+          <initializer>= ~0</initializer>
+          <briefdescription>
+<para>Indicates that all permissions are set. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>The list of permissions that can be set for a blob container&apos;s access policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="46" column="3" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="47" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="enum" id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>BlobSasPermissions</name>
+        <qualifiedname>Azure::Storage::Sas::BlobSasPermissions</qualifiedname>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9a7a1a5f3e79fdc91edf2f5ead9d66abb4" prot="public">
+          <name>Read</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+<para>Indicates that Read is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9a1129c0e4d43f2d121652a7302712cff6" prot="public">
+          <name>Write</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+<para>Indicates that Write is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9af2a6c498fb90ee345d997f888fce3b18" prot="public">
+          <name>Delete</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+<para>Indicates that Delete is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9aec211f7c20af43e742bf2570c3cb84f9" prot="public">
+          <name>Add</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+<para>Indicates that Add is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9a686e697538050e4664636337cc3b834f" prot="public">
+          <name>Create</name>
+          <initializer>= 16</initializer>
+          <briefdescription>
+<para>Indicates that Create is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9a189f63f277cd73395561651753563065" prot="public">
+          <name>Tags</name>
+          <initializer>= 32</initializer>
+          <briefdescription>
+<para>Indicates that reading and writing tags is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9a1877f3b666b96cff3e23342ff2a7b7a1" prot="public">
+          <name>DeleteVersion</name>
+          <initializer>= 64</initializer>
+          <briefdescription>
+<para>Indicates that deleting previous blob version is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9ac6a2b2eae1975b2538b0d3fcace88888" prot="public">
+          <name>SetImmutabilityPolicy</name>
+          <initializer>= 128</initializer>
+          <briefdescription>
+<para>Indicates that setting immutability policy is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9aa5cb49099455d5fefcda2f815e2868dd" prot="public">
+          <name>PermanentDelete</name>
+          <initializer>= 256</initializer>
+          <briefdescription>
+<para>Indicates that permanent delete is permitted. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="blob__sas__builder_8hpp_1a4588b23d9c94b43f0c5b0356f90cecc9ab1c94ca2fbc3e78fc30069c8d0f01680" prot="public">
+          <name>All</name>
+          <initializer>= ~0</initializer>
+          <briefdescription>
+<para>Indicates that all permissions are set. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>The list of permissions that can be set for a blob&apos;s access policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="125" column="3" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="126" bodyend="177"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="blob__sas__builder_8hpp_1aad46f5b375f7949721573e18bf9c8e15" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>BlobContainerSasPermissions</type>
+        <definition>BlobContainerSasPermissions Azure::Storage::Sas::operator|</definition>
+        <argsstring>(BlobContainerSasPermissions lhs, BlobContainerSasPermissions rhs)</argsstring>
+        <name>operator|</name>
+        <qualifiedname>Azure::Storage::Sas::operator|</qualifiedname>
+        <param>
+          <type>BlobContainerSasPermissions</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>BlobContainerSasPermissions</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="104" column="38" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="104" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="blob__sas__builder_8hpp_1a92ef71e3fc4632de3529d8246fc36b39" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>BlobContainerSasPermissions</type>
+        <definition>BlobContainerSasPermissions Azure::Storage::Sas::operator&amp;</definition>
+        <argsstring>(BlobContainerSasPermissions lhs, BlobContainerSasPermissions rhs)</argsstring>
+        <name>operator&amp;</name>
+        <qualifiedname>Azure::Storage::Sas::operator&amp;</qualifiedname>
+        <param>
+          <type>BlobContainerSasPermissions</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>BlobContainerSasPermissions</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="113" column="38" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="113" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="blob__sas__builder_8hpp_1af607ac12e0f628f26468d9d2ed6593fc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>BlobSasPermissions</type>
+        <definition>BlobSasPermissions Azure::Storage::Sas::operator|</definition>
+        <argsstring>(BlobSasPermissions lhs, BlobSasPermissions rhs)</argsstring>
+        <name>operator|</name>
+        <qualifiedname>Azure::Storage::Sas::operator|</qualifiedname>
+        <param>
+          <type>BlobSasPermissions</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>BlobSasPermissions</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="179" column="29" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="179" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="blob__sas__builder_8hpp_1a3dd69b55be16cbefe5bcf7c5c6267823" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>BlobSasPermissions</type>
+        <definition>BlobSasPermissions Azure::Storage::Sas::operator&amp;</definition>
+        <argsstring>(BlobSasPermissions lhs, BlobSasPermissions rhs)</argsstring>
+        <name>operator&amp;</name>
+        <qualifiedname>Azure::Storage::Sas::operator&amp;</qualifiedname>
+        <param>
+          <type>BlobSasPermissions</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>BlobSasPermissions</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="185" column="29" bodyfile="inc/azure/storage/blobs/blob_sas_builder.hpp" bodystart="185" bodyend="189"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_sas_builder.hpp" line="12" column="31"/>
+  </compounddef>
+</doxygen>

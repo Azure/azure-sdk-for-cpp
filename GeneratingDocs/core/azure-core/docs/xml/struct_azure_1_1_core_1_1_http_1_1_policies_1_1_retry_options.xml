@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::Policies::RetryOptions</compoundname>
+    <includes refid="policy_8hpp" local="no">policy.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a1ae346a844eeeee69972acbdc5bd92e3" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t Azure::Core::Http::Policies::RetryOptions::MaxRetries</definition>
+        <argsstring></argsstring>
+        <name>MaxRetries</name>
+        <qualifiedname>Azure::Core::Http::Policies::RetryOptions::MaxRetries</qualifiedname>
+        <initializer>= 3</initializer>
+        <briefdescription>
+<para>The maximum number of retry attempts before giving up. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="86" column="13" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a06ba92fd6194748cabd32bc78390e348" prot="public" static="no" mutable="no">
+        <type>std::chrono::milliseconds</type>
+        <definition>std::chrono::milliseconds Azure::Core::Http::Policies::RetryOptions::RetryDelay</definition>
+        <argsstring></argsstring>
+        <name>RetryDelay</name>
+        <qualifiedname>Azure::Core::Http::Policies::RetryOptions::RetryDelay</qualifiedname>
+        <initializer>= std::chrono::milliseconds(800)</initializer>
+        <briefdescription>
+<para>The minimum permissible delay between retry attempts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>See <ulink url="https://en.cppreference.com/w/cpp/chrono/duration">https://en.cppreference.com/w/cpp/chrono/duration</ulink>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="93" column="31" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a5f90051b3513321e14d257298723b615" prot="public" static="no" mutable="no">
+        <type>std::chrono::milliseconds</type>
+        <definition>std::chrono::milliseconds Azure::Core::Http::Policies::RetryOptions::MaxRetryDelay</definition>
+        <argsstring></argsstring>
+        <name>MaxRetryDelay</name>
+        <qualifiedname>Azure::Core::Http::Policies::RetryOptions::MaxRetryDelay</qualifiedname>
+        <initializer>= std::chrono::seconds(60)</initializer>
+        <briefdescription>
+<para>The maximum permissible delay between retry attempts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>See <ulink url="https://en.cppreference.com/w/cpp/chrono/duration">https://en.cppreference.com/w/cpp/chrono/duration</ulink>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="100" column="31" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a88c82f2eeb65eb9b7819e1c55dcf86ae" prot="public" static="no" mutable="no">
+        <type>std::set&lt; <ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kindref="member">HttpStatusCode</ref> &gt;</type>
+        <definition>std::set&lt;HttpStatusCode&gt; Azure::Core::Http::Policies::RetryOptions::StatusCodes</definition>
+        <argsstring></argsstring>
+        <name>StatusCodes</name>
+        <qualifiedname>Azure::Core::Http::Policies::RetryOptions::StatusCodes</qualifiedname>
+        <initializer>{
+        <ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3632c2e4e6225d4d9fcd2a6fd2c65048" kindref="member">HttpStatusCode::RequestTimeout</ref>,
+        <ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daecbf01325f1c744e9d7bb586ac2eb5ed" kindref="member">HttpStatusCode::InternalServerError</ref>,
+        <ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0e7c9ad08be0653518bf456c9994ace5" kindref="member">HttpStatusCode::BadGateway</ref>,
+        <ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da2a4581043d849bcb0e4747970ef1489b" kindref="member">HttpStatusCode::ServiceUnavailable</ref>,
+        <ref refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dada405cbc74723dfdda615e3f679ef2be" kindref="member">HttpStatusCode::GatewayTimeout</ref>,
+    }</initializer>
+        <briefdescription>
+<para>The HTTP status codes that indicate when an operation should be retried. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/policies/policy.hpp" line="106" column="14" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="106" bodyend="112"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The set of options that can be specified to influence how retry attempts are made, and a failure is eligible to be retried. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>See <ulink url="https://azure.github.io/azure-sdk/general_azurecore.html#retry-policy">https://azure.github.io/azure-sdk/general_azurecore.html#retry-policy</ulink>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/http/policies/policy.hpp" line="80" column="3" bodyfile="inc/azure/core/http/policies/policy.hpp" bodystart="81" bodyend="113"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a1ae346a844eeeee69972acbdc5bd92e3" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::RetryOptions</scope><name>MaxRetries</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a5f90051b3513321e14d257298723b615" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::RetryOptions</scope><name>MaxRetryDelay</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a06ba92fd6194748cabd32bc78390e348" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::RetryOptions</scope><name>RetryDelay</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a88c82f2eeb65eb9b7819e1c55dcf86ae" prot="public" virt="non-virtual"><scope>Azure::Core::Http::Policies::RetryOptions</scope><name>StatusCodes</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,547 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_operation" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Azure::Core::Operation</compoundname>
+    <includes refid="operation_8hpp" local="no">operation.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class T</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_1a0c40e6a0933c30778d70eaec93cd3505" prot="protected" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;Azure::Core::Http::RawResponse&gt; Azure::Core::Operation&lt; T &gt;::m_rawResponse</definition>
+        <argsstring></argsstring>
+        <name>m_rawResponse</name>
+        <qualifiedname>Azure::Core::Operation::m_rawResponse</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+<para>the underlying raw response for this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="42" column="21" bodyfile="inc/azure/core/operation.hpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_operation_1a645caf9042b301b2b415bd8aa8da2827" prot="protected" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref></type>
+        <definition>OperationStatus Azure::Core::Operation&lt; T &gt;::m_status</definition>
+        <argsstring></argsstring>
+        <name>m_status</name>
+        <qualifiedname>Azure::Core::Operation::m_status</qualifiedname>
+        <initializer>= <ref refid="class_azure_1_1_core_1_1_operation_status_1a4471070aefea912692f1190405550e64" kindref="member">OperationStatus::NotStarted</ref></initializer>
+        <briefdescription>
+<para>the current status of the operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="45" column="21" bodyfile="inc/azure/core/operation.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1acc6f2a48739c62db894132f80c11f6c9" prot="private" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Http::RawResponse</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; Http::RawResponse &gt; Azure::Core::Operation&lt; T &gt;::PollInternal</definition>
+        <argsstring>(Context const &amp;context)=0</argsstring>
+        <name>PollInternal</name>
+        <qualifiedname>Azure::Core::Operation::PollInternal</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="30" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a147de21857cb62ba8e477e8cb28b8dd2" prot="private" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="class_azure_1_1_response" kindref="compound">Response</ref>&lt; T &gt;</type>
+        <definition>virtual Response&lt; T &gt; Azure::Core::Operation&lt; T &gt;::PollUntilDoneInternal</definition>
+        <argsstring>(std::chrono::milliseconds period, Context &amp;context)=0</argsstring>
+        <name>PollUntilDoneInternal</name>
+        <qualifiedname>Azure::Core::Operation::PollUntilDoneInternal</qualifiedname>
+        <param>
+          <type>std::chrono::milliseconds</type>
+          <declname>period</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="31" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a312893cd16c059e68452febbb755619a" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> const &amp;</type>
+        <definition>virtual Azure::Core::Http::RawResponse const  &amp; Azure::Core::Operation&lt; T &gt;::GetRawResponseInternal</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRawResponseInternal</name>
+        <qualifiedname>Azure::Core::Operation::GetRawResponseInternal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="35" column="5" bodyfile="inc/azure/core/operation.hpp" bodystart="35" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a0c025983fa1ec8d2c6077afc1d21e7d9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Operation&lt; T &gt;::Operation</definition>
+        <argsstring>()=default</argsstring>
+        <name>Operation</name>
+        <qualifiedname>Azure::Core::Operation::Operation</qualifiedname>
+        <briefdescription>
+<para>Constructs a default instance of <computeroutput>Operation</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="51" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a5aa096d3962f075a0fed8476556660ac" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Operation&lt; T &gt;::Operation</definition>
+        <argsstring>(Operation &amp;&amp;other)</argsstring>
+        <name>Operation</name>
+        <qualifiedname>Azure::Core::Operation::Operation</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Operation</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an instance of <computeroutput>Operation</computeroutput> by moving in another instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An <computeroutput>Operation</computeroutput> instance to move in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="60" column="5" bodyfile="inc/azure/core/operation.hpp" bodystart="60" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a6fca7590de4fa9bb25ba343b055059b9" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Operation&lt; T &gt;::Operation</definition>
+        <argsstring>(Operation const &amp;other)</argsstring>
+        <name>Operation</name>
+        <qualifiedname>Azure::Core::Operation::Operation</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Operation</ref> const &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an instance of <computeroutput>Operation</computeroutput> by copying another instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An <computeroutput>Operation</computeroutput> instance to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="72" column="5" bodyfile="inc/azure/core/operation.hpp" bodystart="72" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1ac406eeda5d1990d72466a968eb76b1a5" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Operation</ref> &amp;</type>
+        <definition>Operation &amp; Azure::Core::Operation&lt; T &gt;::operator=</definition>
+        <argsstring>(Operation &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Operation::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Operation</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Assigns an instance of <computeroutput>Operation</computeroutput> by moving in another instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An <computeroutput>Operation</computeroutput> instance to move in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A reference to this instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="87" column="15" bodyfile="inc/azure/core/operation.hpp" bodystart="87" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a991d84dd39866eb035d57d9429a629e8" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Operation</ref> &amp;</type>
+        <definition>Operation &amp; Azure::Core::Operation&lt; T &gt;::operator=</definition>
+        <argsstring>(Operation const &amp;other)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Operation::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_operation" kindref="compound">Operation</ref> const &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Assigns another <computeroutput>Operation</computeroutput> instance by copying. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An <computeroutput>Operation</computeroutput> instance to copy.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A reference to this instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="103" column="15" bodyfile="inc/azure/core/operation.hpp" bodystart="103" bodyend="108"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a6fc4a704f20ce6fc4cf172f57d9579b6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Operation&lt; T &gt;::~Operation</definition>
+        <argsstring>()</argsstring>
+        <name>~Operation</name>
+        <qualifiedname>Azure::Core::Operation::~Operation</qualifiedname>
+        <briefdescription>
+<para>Destructs the <computeroutput>Operation</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="115" column="13" bodyfile="inc/azure/core/operation.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1ad92b8b97a7e0f1ef24a051132d447cef" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>T</type>
+        <definition>virtual T Azure::Core::Operation&lt; T &gt;::Value</definition>
+        <argsstring>() const =0</argsstring>
+        <name>Value</name>
+        <qualifiedname>Azure::Core::Operation::Value</qualifiedname>
+        <briefdescription>
+<para>Final result of the long-running operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The final result of the long-running operation. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="122" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a44883c43c2dd4ca3e0273735ec506999" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::string</type>
+        <definition>virtual std::string Azure::Core::Operation&lt; T &gt;::GetResumeToken</definition>
+        <argsstring>() const =0</argsstring>
+        <name>GetResumeToken</name>
+        <qualifiedname>Azure::Core::Operation::GetResumeToken</qualifiedname>
+        <briefdescription>
+<para>Gets a token representing the operation that can be used to poll for the status of the long-running operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>std::string The resume token. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="130" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1ae04fa8a5e2e1f751ea299eda037f8b41" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> const &amp;</type>
+        <definition>Azure::Core::Http::RawResponse const  &amp; Azure::Core::Operation&lt; T &gt;::GetRawResponse</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRawResponse</name>
+        <qualifiedname>Azure::Core::Operation::GetRawResponse</qualifiedname>
+        <briefdescription>
+<para>Gets the raw HTTP response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A reference to an <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref>. </para>
+</simplesect>
+<simplesect kind="note"><para>Does not give up ownership of the RawResponse. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="137" column="42" bodyfile="inc/azure/core/operation.hpp" bodystart="137" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1aacfb286b1cdc3ea5586fb62ad8721b5e" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">OperationStatus</ref> const &amp;</type>
+        <definition>OperationStatus const  &amp; Azure::Core::Operation&lt; T &gt;::Status</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>Status</name>
+        <qualifiedname>Azure::Core::Operation::Status</qualifiedname>
+        <briefdescription>
+<para>Gets the current <ref refid="class_azure_1_1_core_1_1_operation_status" kindref="compound">Azure::Core::OperationStatus</ref> of the long-running operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="150" column="27" bodyfile="inc/azure/core/operation.hpp" bodystart="150" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a29f86ab638e03051f6c5aedf34f3497a" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Operation&lt; T &gt;::IsDone</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>IsDone</name>
+        <qualifiedname>Azure::Core::Operation::IsDone</qualifiedname>
+        <briefdescription>
+<para>Checks if the long-running operation is completed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><computeroutput>true</computeroutput> if the long-running operation is done; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="157" column="10" bodyfile="inc/azure/core/operation.hpp" bodystart="157" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1ae55c2a76868dd21105094b6f7b21e0d0" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Operation&lt; T &gt;::HasValue</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>HasValue</name>
+        <qualifiedname>Azure::Core::Operation::HasValue</qualifiedname>
+        <briefdescription>
+<para>Checks if the long-running operation completed successfully and has produced a final result. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The final result is accessible from <computeroutput><ref refid="class_azure_1_1_core_1_1_operation_1ad92b8b97a7e0f1ef24a051132d447cef" kindref="member">Value()</ref></computeroutput>.</para>
+</simplesect>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the long-running operation completed successfully; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="171" column="10" bodyfile="inc/azure/core/operation.hpp" bodystart="171" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a7bc97d4a9d65bf1112adc5f248e90312" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Http::RawResponse</ref> const &amp;</type>
+        <definition>Http::RawResponse const  &amp; Azure::Core::Operation&lt; T &gt;::Poll</definition>
+        <argsstring>()</argsstring>
+        <name>Poll</name>
+        <qualifiedname>Azure::Core::Operation::Poll</qualifiedname>
+        <briefdescription>
+<para>Gets updated status of the long-running operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>An HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> returned from the service. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="178" column="29" bodyfile="inc/azure/core/operation.hpp" bodystart="178" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a38ea4f1b10e44616d091bfddff7bd2d5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Http::RawResponse</ref> const &amp;</type>
+        <definition>Http::RawResponse const  &amp; Azure::Core::Operation&lt; T &gt;::Poll</definition>
+        <argsstring>(Context const &amp;context)</argsstring>
+        <name>Poll</name>
+        <qualifiedname>Azure::Core::Operation::Poll</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Gets updated status of the long-running operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An HTTP <ref refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kindref="compound">Azure::Core::Http::RawResponse</ref> returned from the service. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="192" column="29" bodyfile="inc/azure/core/operation.hpp" bodystart="192" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1ae6919591c1f99490df704c744d347451" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_response" kindref="compound">Response</ref>&lt; T &gt;</type>
+        <definition>Response&lt; T &gt; Azure::Core::Operation&lt; T &gt;::PollUntilDone</definition>
+        <argsstring>(std::chrono::milliseconds period)</argsstring>
+        <name>PollUntilDone</name>
+        <qualifiedname>Azure::Core::Operation::PollUntilDone</qualifiedname>
+        <param>
+          <type>std::chrono::milliseconds</type>
+          <declname>period</declname>
+        </param>
+        <briefdescription>
+<para>Periodically polls till the long-running operation completes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>period</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time in milliseconds to wait between polls.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Response&lt;T&gt; the final result of the long-running operation. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="206" column="14" bodyfile="inc/azure/core/operation.hpp" bodystart="206" bodyend="212"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_1a1dd3436f91112ebb63d540b9926b2c34" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_response" kindref="compound">Response</ref>&lt; T &gt;</type>
+        <definition>Response&lt; T &gt; Azure::Core::Operation&lt; T &gt;::PollUntilDone</definition>
+        <argsstring>(std::chrono::milliseconds period, Context &amp;context)</argsstring>
+        <name>PollUntilDone</name>
+        <qualifiedname>Azure::Core::Operation::PollUntilDone</qualifiedname>
+        <param>
+          <type>std::chrono::milliseconds</type>
+          <declname>period</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Context</ref> &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Periodically polls till the long-running operation completes;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>period</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time in milliseconds to wait between polls. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Response&lt;T&gt; the final result of the long-running operation. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/operation.hpp" line="222" column="14" bodyfile="inc/azure/core/operation.hpp" bodystart="222" bodyend="226"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Methods starting long-running operations return Operation&lt;T&gt; types. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The long-running operation final result type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Operation&lt; T &gt;</label>
+        <link refid="class_azure_1_1_core_1_1_operation"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>m_status</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::OperationStatus</label>
+        <link refid="class_azure_1_1_core_1_1_operation_status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Cancelled</edgelabel>
+          <edgelabel>Failed</edgelabel>
+          <edgelabel>NotStarted</edgelabel>
+          <edgelabel>Running</edgelabel>
+          <edgelabel>Succeeded</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/operation.hpp" line="27" column="14" bodyfile="inc/azure/core/operation.hpp" bodystart="27" bodyend="227"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_operation_1ae04fa8a5e2e1f751ea299eda037f8b41" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>GetRawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a312893cd16c059e68452febbb755619a" prot="private" virt="virtual"><scope>Azure::Core::Operation</scope><name>GetRawResponseInternal</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a44883c43c2dd4ca3e0273735ec506999" prot="public" virt="pure-virtual"><scope>Azure::Core::Operation</scope><name>GetResumeToken</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1ae55c2a76868dd21105094b6f7b21e0d0" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>HasValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a29f86ab638e03051f6c5aedf34f3497a" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>IsDone</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a0c40e6a0933c30778d70eaec93cd3505" prot="protected" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>m_rawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a645caf9042b301b2b415bd8aa8da2827" prot="protected" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>m_status</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a0c025983fa1ec8d2c6077afc1d21e7d9" prot="protected" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>Operation</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a5aa096d3962f075a0fed8476556660ac" prot="protected" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>Operation</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a6fca7590de4fa9bb25ba343b055059b9" prot="protected" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>Operation</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1ac406eeda5d1990d72466a968eb76b1a5" prot="protected" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a991d84dd39866eb035d57d9429a629e8" prot="protected" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a7bc97d4a9d65bf1112adc5f248e90312" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>Poll</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a38ea4f1b10e44616d091bfddff7bd2d5" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>Poll</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1acc6f2a48739c62db894132f80c11f6c9" prot="private" virt="pure-virtual"><scope>Azure::Core::Operation</scope><name>PollInternal</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1ae6919591c1f99490df704c744d347451" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>PollUntilDone</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a1dd3436f91112ebb63d540b9926b2c34" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>PollUntilDone</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a147de21857cb62ba8e477e8cb28b8dd2" prot="private" virt="pure-virtual"><scope>Azure::Core::Operation</scope><name>PollUntilDoneInternal</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1aacfb286b1cdc3ea5586fb62ad8721b5e" prot="public" virt="non-virtual"><scope>Azure::Core::Operation</scope><name>Status</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1ad92b8b97a7e0f1ef24a051132d447cef" prot="public" virt="pure-virtual"><scope>Azure::Core::Operation</scope><name>Value</name></member>
+      <member refid="class_azure_1_1_core_1_1_operation_1a6fc4a704f20ce6fc4cf172f57d9579b6" prot="public" virt="virtual"><scope>Azure::Core::Operation</scope><name>~Operation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

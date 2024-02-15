@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_651c3aca977d9e392ffdedf661d89149" kind="dir">
+    <compoundname>inc/azure/core/internal/credentials</compoundname>
+    <innerfile refid="authorization__challenge__parser_8hpp">authorization_challenge_parser.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/internal/credentials/"/>
+  </compounddef>
+</doxygen>

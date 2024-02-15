@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::PublicAccessType</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a34f510d4a59b0cdf9d2f855e9bdcd9f1" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref></type>
+        <definition>const PublicAccessType Azure::Storage::Blobs::Models::PublicAccessType::BlobContainer</definition>
+        <argsstring></argsstring>
+        <name>BlobContainer</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::BlobContainer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref>: BlobContainer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="392" column="64" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="392" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a518e060353a3519a9b8bccdc6b7f0c6f" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref></type>
+        <definition>const PublicAccessType Azure::Storage::Blobs::Models::PublicAccessType::Blob</definition>
+        <argsstring></argsstring>
+        <name>Blob</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::Blob</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref>: Blob </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="394" column="64" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="394" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a365803f217fd5f69c78ced4a5f2011fb" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref></type>
+        <definition>const PublicAccessType Azure::Storage::Blobs::Models::PublicAccessType::None</definition>
+        <argsstring></argsstring>
+        <name>None</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::None</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref>: None </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="396" column="64" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="396" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1afcdfc3e1d88bc192e422ad970c44f528" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::PublicAccessType::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="399" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="399" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1ae95ba35e34263138ae667f36c0d7732b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::PublicAccessType::PublicAccessType</definition>
+        <argsstring>()=default</argsstring>
+        <name>PublicAccessType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::PublicAccessType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="382" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a871a19b74750e291570c75fa1e19d469" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::PublicAccessType::PublicAccessType</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>PublicAccessType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::PublicAccessType</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="384" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="384" bodyend="384"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1ab79538314ac01518794101d7b26446e6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::PublicAccessType::operator==</definition>
+        <argsstring>(const PublicAccessType &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="386" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="386" bodyend="386"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a36c801df146ff32380dc25240cd23b00" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::PublicAccessType::operator!=</definition>
+        <argsstring>(const PublicAccessType &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type" kindref="compound">PublicAccessType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="388" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="388" bodyend="388"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a34bd0a0e15c1e29e16490271d8eb2662" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::PublicAccessType::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::PublicAccessType::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="390" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="390" bodyend="390"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Specifies whether data in the container may be accessed publicly and the level of access. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::PublicAccessType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Blob</edgelabel>
+          <edgelabel>BlobContainer</edgelabel>
+          <edgelabel>None</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="379" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="379" bodyend="400"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a518e060353a3519a9b8bccdc6b7f0c6f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>Blob</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a34f510d4a59b0cdf9d2f855e9bdcd9f1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>BlobContainer</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1afcdfc3e1d88bc192e422ad970c44f528" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a365803f217fd5f69c78ced4a5f2011fb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>None</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a36c801df146ff32380dc25240cd23b00" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1ab79538314ac01518794101d7b26446e6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1ae95ba35e34263138ae667f36c0d7732b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>PublicAccessType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a871a19b74750e291570c75fa1e19d469" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>PublicAccessType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_public_access_type_1a34bd0a0e15c1e29e16490271d8eb2662" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::PublicAccessType</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

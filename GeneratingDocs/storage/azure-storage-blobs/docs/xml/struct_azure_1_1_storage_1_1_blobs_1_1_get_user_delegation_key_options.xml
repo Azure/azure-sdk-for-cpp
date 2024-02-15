@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_get_user_delegation_key_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::GetUserDelegationKeyOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_get_user_delegation_key_options_1ab96067ca1101082e2a4b1cd8823e0a7a" prot="public" static="no" mutable="no">
+        <type>Azure::DateTime</type>
+        <definition>Azure::DateTime Azure::Storage::Blobs::GetUserDelegationKeyOptions::StartsOn</definition>
+        <argsstring></argsstring>
+        <name>StartsOn</name>
+        <qualifiedname>Azure::Storage::Blobs::GetUserDelegationKeyOptions::StartsOn</qualifiedname>
+        <initializer>= std::chrono::system_clock::now()</initializer>
+        <briefdescription>
+<para>Start time for the key&apos;s validity. The time should be specified in UTC, and will be truncated to second. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="256" column="21" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="256" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_service_client_1a0a6c2305c9f339c75f074946105b69bf" kindref="member">Azure::Storage::Blobs::BlobServiceClient::GetUserDelegationKey</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="250" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="251" bodyend="257"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_user_delegation_key_options_1ab96067ca1101082e2a4b1cd8823e0a7a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetUserDelegationKeyOptions</scope><name>StartsOn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

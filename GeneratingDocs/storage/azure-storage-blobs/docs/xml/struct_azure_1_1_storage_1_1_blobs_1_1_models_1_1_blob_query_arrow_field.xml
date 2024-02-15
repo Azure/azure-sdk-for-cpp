@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlobQueryArrowField</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1ae8f2fdba9eeab8f601687a87bab5e9e4" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type" kindref="compound">BlobQueryArrowFieldType</ref></type>
+        <definition>BlobQueryArrowFieldType Azure::Storage::Blobs::Models::BlobQueryArrowField::Type</definition>
+        <argsstring></argsstring>
+        <name>Type</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowField::Type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of blob query arrow field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2535" column="31" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2535" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1a6b05b2bf54efd6e7d97c254c5ae4091c" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::BlobQueryArrowField::Name</definition>
+        <argsstring></argsstring>
+        <name>Name</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowField::Name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Name of the field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2539" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2539" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1a0a7292d41713f20aa74158e85d0eb2f1" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int32_t &gt;</type>
+        <definition>Nullable&lt;int32_t&gt; Azure::Storage::Blobs::Models::BlobQueryArrowField::Precision</definition>
+        <argsstring></argsstring>
+        <name>Precision</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowField::Precision</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Precision of the field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2543" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2543" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1ac27c8a31509f9620f85bd8dff21f069f" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int32_t &gt;</type>
+        <definition>Nullable&lt;int32_t&gt; Azure::Storage::Blobs::Models::BlobQueryArrowField::Scale</definition>
+        <argsstring></argsstring>
+        <name>Scale</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlobQueryArrowField::Scale</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scale of the field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2547" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2547" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Groups settings regarding specific field of an arrow schema. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlobQueryArrowField</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Type</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobQueryArrowFieldType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Bool</edgelabel>
+          <edgelabel>Decimal</edgelabel>
+          <edgelabel>Double</edgelabel>
+          <edgelabel>Int64</edgelabel>
+          <edgelabel>String</edgelabel>
+          <edgelabel>Timestamp</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2530" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2531" bodyend="2548"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1a6b05b2bf54efd6e7d97c254c5ae4091c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowField</scope><name>Name</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1a0a7292d41713f20aa74158e85d0eb2f1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowField</scope><name>Precision</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1ac27c8a31509f9620f85bd8dff21f069f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowField</scope><name>Scale</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_query_arrow_field_1ae8f2fdba9eeab8f601687a87bab5e9e4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlobQueryArrowField</scope><name>Type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

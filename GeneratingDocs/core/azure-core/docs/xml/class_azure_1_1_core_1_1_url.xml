@@ -1,0 +1,663 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_url" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Url</compoundname>
+    <includes refid="url_8hpp" local="no">url.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_url_1aff066437288b3258b7ef59fc4785087f" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Url::m_scheme</definition>
+        <argsstring></argsstring>
+        <name>m_scheme</name>
+        <qualifiedname>Azure::Core::Url::m_scheme</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="48" column="17" bodyfile="inc/azure/core/url.hpp" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_url_1a0197017de1a576f6052ec9641b2d1192" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Url::m_host</definition>
+        <argsstring></argsstring>
+        <name>m_host</name>
+        <qualifiedname>Azure::Core::Url::m_host</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="49" column="17" bodyfile="inc/azure/core/url.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_url_1afd667eb5e4b87983e736ef28948fdecd" prot="private" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t Azure::Core::Url::m_port</definition>
+        <argsstring></argsstring>
+        <name>m_port</name>
+        <qualifiedname>Azure::Core::Url::m_port</qualifiedname>
+        <initializer>{0}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="50" column="14" bodyfile="inc/azure/core/url.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_url_1a78e82074adab6dee1270a9a495bdf310" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Url::m_encodedPath</definition>
+        <argsstring></argsstring>
+        <name>m_encodedPath</name>
+        <qualifiedname>Azure::Core::Url::m_encodedPath</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="51" column="17" bodyfile="inc/azure/core/url.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_url_1a0e5500c645ae44971dd1d42709b1070c" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::string &gt;</type>
+        <definition>std::map&lt;std::string, std::string&gt; Azure::Core::Url::m_encodedQueryParameters</definition>
+        <argsstring></argsstring>
+        <name>m_encodedQueryParameters</name>
+        <qualifiedname>Azure::Core::Url::m_encodedQueryParameters</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="53" column="14" bodyfile="inc/azure/core/url.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a00e015f12f37b9afd03544b42d193d12" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Url::GetUrlWithoutQuery</definition>
+        <argsstring>(bool relative) const</argsstring>
+        <name>GetUrlWithoutQuery</name>
+        <qualifiedname>Azure::Core::Url::GetUrlWithoutQuery</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>relative</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="55" column="17" bodyfile="src/http/url.cpp" bodystart="201" bodyend="232"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a85c0e4e77027dc7407d8ed3001dd7c89" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Url::AppendQueryParameters</definition>
+        <argsstring>(const std::string &amp;encodedQueryParameters)</argsstring>
+        <name>AppendQueryParameters</name>
+        <qualifiedname>Azure::Core::Url::AppendQueryParameters</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedQueryParameters</declname>
+        </param>
+        <briefdescription>
+<para>Finds the first &apos;?&apos; symbol and parses everything after it as query parameters. separated by &apos;&amp;&apos;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodedQueryParameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><computeroutput>std::string</computeroutput> containing one or more query parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="63" column="10" bodyfile="src/http/url.cpp" bodystart="170" bodyend="199"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1aba20d44d6724194e0e0b3e7095dc3e1a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Url::Decode</definition>
+        <argsstring>(const std::string &amp;value)</argsstring>
+        <name>Decode</name>
+        <qualifiedname>Azure::Core::Url::Decode</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Decodes <computeroutput>value</computeroutput> by transforming all escaped characters to it&apos;s non-encoded value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL-encoded string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>std::string</computeroutput> with non-URL encoded values. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="72" column="24" bodyfile="src/http/url.cpp" bodystart="97" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a0106c6aedc2eceb0b8f2410c32ebd8ea" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Url::Encode</definition>
+        <argsstring>(const std::string &amp;value, const std::string &amp;doNotEncodeSymbols=&quot;&quot;)</argsstring>
+        <name>Encode</name>
+        <qualifiedname>Azure::Core::Url::Encode</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>doNotEncodeSymbols</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <briefdescription>
+<para>Encodes <computeroutput>value</computeroutput> by escaping characters to the form of HH where HH are hex digits. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para><computeroutput>doNotEncodeSymbols</computeroutput> arg can be used to explicitly ask this function to skip characters from encoding. For instance, using this <computeroutput>= -</computeroutput> input would prevent encoding <computeroutput>=</computeroutput>, <computeroutput> </computeroutput> and <computeroutput>-</computeroutput>.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Non URL-encoded string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>doNotEncodeSymbols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A string consisting of characters that do not need to be encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>std::string </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="85" column="24" bodyfile="src/http/url.cpp" bodystart="141" bodyend="168"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a23fbff4e754d18602f9a9e361ac2e327" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Url::Url</definition>
+        <argsstring>()</argsstring>
+        <name>Url</name>
+        <qualifiedname>Azure::Core::Url::Url</qualifiedname>
+        <briefdescription>
+<para>Constructs a new, empty URL object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="91" column="5" bodyfile="inc/azure/core/url.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a208ba7e3b7868145181f844500f3dc4c" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Url::Url</definition>
+        <argsstring>(const std::string &amp;encodedUrl)</argsstring>
+        <name>Url</name>
+        <qualifiedname>Azure::Core::Url::Url</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedUrl</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a URL from a URL-encoded string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodedUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A URL-encoded string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>encodedUrl is expected to have all parts URL-encoded. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="99" column="14" bodyfile="src/http/url.cpp" bodystart="15" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a7dc569d2c6f25a95df9d5c5a62afc717" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::SetScheme</definition>
+        <argsstring>(const std::string &amp;scheme)</argsstring>
+        <name>SetScheme</name>
+        <qualifiedname>Azure::Core::Url::SetScheme</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>scheme</declname>
+        </param>
+        <briefdescription>
+<para>Sets URL scheme. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scheme</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL scheme. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="109" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="109" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1adad0f462a391e619644a1b64be2c1da2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::SetHost</definition>
+        <argsstring>(const std::string &amp;encodedHost)</argsstring>
+        <name>SetHost</name>
+        <qualifiedname>Azure::Core::Url::SetHost</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedHost</declname>
+        </param>
+        <briefdescription>
+<para>Sets URL host. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodedHost</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL host, already encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="116" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="116" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a417410d68be3066878748f871348b3b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::SetPort</definition>
+        <argsstring>(uint16_t port)</argsstring>
+        <name>SetPort</name>
+        <qualifiedname>Azure::Core::Url::SetPort</qualifiedname>
+        <param>
+          <type>uint16_t</type>
+          <declname>port</declname>
+        </param>
+        <briefdescription>
+<para>Sets URL port. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>port</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL port. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="123" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1aa8a555680713c54ec99a64a7176d2d49" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::SetPath</definition>
+        <argsstring>(const std::string &amp;encodedPath)</argsstring>
+        <name>SetPath</name>
+        <qualifiedname>Azure::Core::Url::SetPath</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedPath</declname>
+        </param>
+        <briefdescription>
+<para>Sets URL path. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodedPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL path, already encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="130" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1aafafcb3c20b2663251ed254e6e65ab0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::SetQueryParameters</definition>
+        <argsstring>(std::map&lt; std::string, std::string &gt; queryParameters)</argsstring>
+        <name>SetQueryParameters</name>
+        <qualifiedname>Azure::Core::Url::SetQueryParameters</qualifiedname>
+        <param>
+          <type>std::map&lt; std::string, std::string &gt;</type>
+          <declname>queryParameters</declname>
+        </param>
+        <briefdescription>
+<para>Sets the query parameters from an existing query parameter map. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Keys and values in <computeroutput>queryParameters</computeroutput> are expected to be URL-encoded.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryParameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>query parameters for request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="139" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="139" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1aef3df635805705f5a8f6bd998179cc4b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::AppendPath</definition>
+        <argsstring>(const std::string &amp;encodedPath)</argsstring>
+        <name>AppendPath</name>
+        <qualifiedname>Azure::Core::Url::AppendPath</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedPath</declname>
+        </param>
+        <briefdescription>
+<para>Appends an element of URL path. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodedPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL path element to append, already encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="152" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="152" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a7c0512da23c15239de458db36e235c33" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::AppendQueryParameter</definition>
+        <argsstring>(const std::string &amp;encodedKey, const std::string &amp;encodedValue)</argsstring>
+        <name>AppendQueryParameter</name>
+        <qualifiedname>Azure::Core::Url::AppendQueryParameter</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedKey</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedValue</declname>
+        </param>
+        <briefdescription>
+<para>The value of a query parameter is expected to be non-URL-encoded and, by default, it will be encoded before adding to the URL. Use <computeroutput>isValueEncoded</computeroutput> = true when the value is already encoded. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Overrides the value of existing query parameters.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodedKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the query parameter, already encoded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>encodedValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the query parameter, already encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="171" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="171" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a77ee4eabf6e8bc547f1a293655b1e818" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Url::RemoveQueryParameter</definition>
+        <argsstring>(const std::string &amp;encodedKey)</argsstring>
+        <name>RemoveQueryParameter</name>
+        <qualifiedname>Azure::Core::Url::RemoveQueryParameter</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>encodedKey</declname>
+        </param>
+        <briefdescription>
+<para>Removes an existing query parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodedKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the query parameter to be removed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="181" column="10" bodyfile="inc/azure/core/url.hpp" bodystart="181" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a78f71c6e36a35efe1d2597cadd728320" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Core::Url::GetHost</definition>
+        <argsstring>() const</argsstring>
+        <name>GetHost</name>
+        <qualifiedname>Azure::Core::Url::GetHost</qualifiedname>
+        <briefdescription>
+<para>Gets URL host. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="191" column="23" bodyfile="inc/azure/core/url.hpp" bodystart="191" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1aabedcc05b33d53e7dca291c0d39c83cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Core::Url::GetPath</definition>
+        <argsstring>() const</argsstring>
+        <name>GetPath</name>
+        <qualifiedname>Azure::Core::Url::GetPath</qualifiedname>
+        <briefdescription>
+<para>Gets the URL path. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>const std::string&amp; </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="198" column="23" bodyfile="inc/azure/core/url.hpp" bodystart="198" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1aaad8684cf7519832b6aa49f8d121fbab" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t Azure::Core::Url::GetPort</definition>
+        <argsstring>() const</argsstring>
+        <name>GetPort</name>
+        <qualifiedname>Azure::Core::Url::GetPort</qualifiedname>
+        <briefdescription>
+<para>Gets the port number set for the URL. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If the port was not set for the URL, the returned port is 0. An HTTP request cannot be performed to port zero, an HTTP client is expected to set the default port depending on the request&apos;s schema when the port was not defined in the URL.</para>
+</simplesect>
+<simplesect kind="return"><para>The port number from the URL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="209" column="14" bodyfile="inc/azure/core/url.hpp" bodystart="209" bodyend="209"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1ab8dd37022c4c6036d59a4992a3607ffc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::map&lt; std::string, std::string &gt;</type>
+        <definition>std::map&lt; std::string, std::string &gt; Azure::Core::Url::GetQueryParameters</definition>
+        <argsstring>() const</argsstring>
+        <name>GetQueryParameters</name>
+        <qualifiedname>Azure::Core::Url::GetQueryParameters</qualifiedname>
+        <briefdescription>
+<para>Gets a copy of the list of query parameters from the URL. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The query parameters are URL-encoded.</para>
+</simplesect>
+<simplesect kind="return"><para>A copy of the query parameters map. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="218" column="14" bodyfile="inc/azure/core/url.hpp" bodystart="218" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a92fd65dfc4bb0e0b1f418e519e7f7445" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Core::Url::GetScheme</definition>
+        <argsstring>() const</argsstring>
+        <name>GetScheme</name>
+        <qualifiedname>Azure::Core::Url::GetScheme</qualifiedname>
+        <briefdescription>
+<para>Gets the URL scheme. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="227" column="23" bodyfile="inc/azure/core/url.hpp" bodystart="227" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1ab589b1eaf6f8cbe2dc86ec5678b465f0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Url::GetRelativeUrl</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRelativeUrl</name>
+        <qualifiedname>Azure::Core::Url::GetRelativeUrl</qualifiedname>
+        <briefdescription>
+<para>Gets the path and query parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Relative URL with URL-encoded query parameters. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="234" column="17" bodyfile="src/http/url.cpp" bodystart="234" bodyend="238"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_url_1a68990d32c4bb0229f28cf384d0380c47" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Url::GetAbsoluteUrl</definition>
+        <argsstring>() const</argsstring>
+        <name>GetAbsoluteUrl</name>
+        <qualifiedname>Azure::Core::Url::GetAbsoluteUrl</qualifiedname>
+        <briefdescription>
+<para>Gets Scheme, host, path and query parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Absolute URL with URL-encoded query parameters. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/url.hpp" line="241" column="17" bodyfile="src/http/url.cpp" bodystart="240" bodyend="244"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents the location where a request will be performed. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It can be parsed and initialized from a string that contains all URL components (scheme, host, path, etc.). Authority is not currently supported. </para>
+    </detaileddescription>
+    <location file="inc/azure/core/url.hpp" line="46" column="3" bodyfile="inc/azure/core/url.hpp" bodystart="46" bodyend="242"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_url_1aef3df635805705f5a8f6bd998179cc4b" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>AppendPath</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a7c0512da23c15239de458db36e235c33" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>AppendQueryParameter</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a85c0e4e77027dc7407d8ed3001dd7c89" prot="private" virt="non-virtual"><scope>Azure::Core::Url</scope><name>AppendQueryParameters</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1aba20d44d6724194e0e0b3e7095dc3e1a" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>Decode</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a0106c6aedc2eceb0b8f2410c32ebd8ea" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>Encode</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a68990d32c4bb0229f28cf384d0380c47" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetAbsoluteUrl</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a78f71c6e36a35efe1d2597cadd728320" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetHost</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1aabedcc05b33d53e7dca291c0d39c83cf" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetPath</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1aaad8684cf7519832b6aa49f8d121fbab" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetPort</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1ab8dd37022c4c6036d59a4992a3607ffc" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetQueryParameters</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1ab589b1eaf6f8cbe2dc86ec5678b465f0" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetRelativeUrl</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a92fd65dfc4bb0e0b1f418e519e7f7445" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetScheme</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a00e015f12f37b9afd03544b42d193d12" prot="private" virt="non-virtual"><scope>Azure::Core::Url</scope><name>GetUrlWithoutQuery</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a78e82074adab6dee1270a9a495bdf310" prot="private" virt="non-virtual"><scope>Azure::Core::Url</scope><name>m_encodedPath</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a0e5500c645ae44971dd1d42709b1070c" prot="private" virt="non-virtual"><scope>Azure::Core::Url</scope><name>m_encodedQueryParameters</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a0197017de1a576f6052ec9641b2d1192" prot="private" virt="non-virtual"><scope>Azure::Core::Url</scope><name>m_host</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1afd667eb5e4b87983e736ef28948fdecd" prot="private" virt="non-virtual"><scope>Azure::Core::Url</scope><name>m_port</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1aff066437288b3258b7ef59fc4785087f" prot="private" virt="non-virtual"><scope>Azure::Core::Url</scope><name>m_scheme</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a77ee4eabf6e8bc547f1a293655b1e818" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>RemoveQueryParameter</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1adad0f462a391e619644a1b64be2c1da2" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>SetHost</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1aa8a555680713c54ec99a64a7176d2d49" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>SetPath</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a417410d68be3066878748f871348b3b3" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>SetPort</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1aafafcb3c20b2663251ed254e6e65ab0c" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>SetQueryParameters</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a7dc569d2c6f25a95df9d5c5a62afc717" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>SetScheme</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a23fbff4e754d18602f9a9e361ac2e327" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>Url</name></member>
+      <member refid="class_azure_1_1_core_1_1_url_1a208ba7e3b7868145181f844500f3dc4c" prot="public" virt="non-virtual"><scope>Azure::Core::Url</scope><name>Url</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

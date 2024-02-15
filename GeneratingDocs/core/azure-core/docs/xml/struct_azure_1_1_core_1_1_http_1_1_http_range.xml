@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_core_1_1_http_1_1_http_range" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::HttpRange</compoundname>
+    <includes refid="http_8hpp" local="no">http.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_http_range_1af06b65e86a32a3e071c352fa5bce5366" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Core::Http::HttpRange::Offset</definition>
+        <argsstring></argsstring>
+        <name>Offset</name>
+        <qualifiedname>Azure::Core::Http::HttpRange::Offset</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>The starting point of the HTTP Range. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="82" column="13" bodyfile="inc/azure/core/http/http.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_core_1_1_http_1_1_http_range_1a091897cf2777bfe8ca7ae3f21eff8222" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; int64_t &gt;</type>
+        <definition>Azure::Nullable&lt;int64_t&gt; Azure::Core::Http::HttpRange::Length</definition>
+        <argsstring></argsstring>
+        <name>Length</name>
+        <qualifiedname>Azure::Core::Http::HttpRange::Length</qualifiedname>
+        <briefdescription>
+<para>The size of the HTTP Range. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="88" column="21" bodyfile="inc/azure/core/http/http.hpp" bodystart="88" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The range of bytes within an HTTP resource. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>Starts at an <computeroutput>Offset</computeroutput> and ends at <computeroutput>Offset + Length - 1</computeroutput> inclusively. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Http::HttpRange</label>
+        <link refid="struct_azure_1_1_core_1_1_http_1_1_http_range"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Length</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::_detail::NontrivialEmptyType</label>
+      </node>
+      <node id="2">
+        <label>Azure::Nullable&lt; int64_t &gt;</label>
+        <link refid="class_azure_1_1_nullable"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>m_disengaged</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/http/http.hpp" line="76" column="3" bodyfile="inc/azure/core/http/http.hpp" bodystart="77" bodyend="89"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_http_range_1a091897cf2777bfe8ca7ae3f21eff8222" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpRange</scope><name>Length</name></member>
+      <member refid="struct_azure_1_1_core_1_1_http_1_1_http_range_1af06b65e86a32a3e071c352fa5bce5366" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpRange</scope><name>Offset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

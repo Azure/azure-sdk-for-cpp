@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::TaggedBlobItem</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item_1a839354964d2b54279e953071b15710c4" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::TaggedBlobItem::BlobName</definition>
+        <argsstring></argsstring>
+        <name>BlobName</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::TaggedBlobItem::BlobName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Blob name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="685" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="685" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item_1a89e74c546583e53fcd82eb52f444c200" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::TaggedBlobItem::BlobContainerName</definition>
+        <argsstring></argsstring>
+        <name>BlobContainerName</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::TaggedBlobItem::BlobContainerName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Blob container name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="689" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="689" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item_1a24f8124860785ad2f60d43cba76bb0b4" prot="public" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::string &gt;</type>
+        <definition>std::map&lt;std::string, std::string&gt; Azure::Storage::Blobs::Models::TaggedBlobItem::Tags</definition>
+        <argsstring></argsstring>
+        <name>Tags</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::TaggedBlobItem::Tags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User-defined tags for this blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="693" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="693" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Blob info from a Filter Blobs API call. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="680" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="681" bodyend="694"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item_1a89e74c546583e53fcd82eb52f444c200" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::TaggedBlobItem</scope><name>BlobContainerName</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item_1a839354964d2b54279e953071b15710c4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::TaggedBlobItem</scope><name>BlobName</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_tagged_blob_item_1a24f8124860785ad2f60d43cba76bb0b4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::TaggedBlobItem</scope><name>Tags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

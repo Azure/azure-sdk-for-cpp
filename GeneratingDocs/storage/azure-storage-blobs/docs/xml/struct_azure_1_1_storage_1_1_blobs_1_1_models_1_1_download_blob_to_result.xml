@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::DownloadBlobToResult</compoundname>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a777dd59b4a4b5ef6c2b3444bc46c878a" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_type" kindref="compound">Models::BlobType</ref></type>
+        <definition>Models::BlobType Azure::Storage::Blobs::Models::DownloadBlobToResult::BlobType</definition>
+        <argsstring></argsstring>
+        <name>BlobType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobToResult::BlobType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The blob&apos;s type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="40" column="26" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a8cbdcf405b1c0e4670b99534d6fd3f91" prot="public" static="no" mutable="no">
+        <type>Azure::Core::Http::HttpRange</type>
+        <definition>Azure::Core::Http::HttpRange Azure::Storage::Blobs::Models::DownloadBlobToResult::ContentRange</definition>
+        <argsstring></argsstring>
+        <name>ContentRange</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobToResult::ContentRange</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates the range of bytes returned. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="45" column="38" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a75ee0ae5d1c394260f54bdd9c628a934" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::Models::DownloadBlobToResult::BlobSize</definition>
+        <argsstring></argsstring>
+        <name>BlobSize</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobToResult::BlobSize</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="50" column="17" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a0ce99d552dde891ac20edced6b65bb0e" prot="public" static="no" mutable="no">
+        <type>Azure::Nullable&lt; ContentHash &gt;</type>
+        <definition>Azure::Nullable&lt;ContentHash&gt; Azure::Storage::Blobs::Models::DownloadBlobToResult::TransactionalContentHash</definition>
+        <argsstring></argsstring>
+        <name>TransactionalContentHash</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobToResult::TransactionalContentHash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The request may return a CRC64 or MD5 hash for the downloaded range of data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="55" column="25" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1ad3ea2d96703016bcdd5707e6853fba3f" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details" kindref="compound">DownloadBlobDetails</ref></type>
+        <definition>DownloadBlobDetails Azure::Storage::Blobs::Models::DownloadBlobToResult::Details</definition>
+        <argsstring></argsstring>
+        <name>Details</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobToResult::Details</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Details information of the downloaded blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="60" column="29" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa0bcbdbf6ebd17e4888cced4736420f7" kindref="member">Azure::Storage::Blobs::BlobClient::DownloadTo</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::Storage::Blobs::Models::BlobHttpHeaders</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers"/>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>AppendBlob</edgelabel>
+          <edgelabel>BlockBlob</edgelabel>
+          <edgelabel>PageBlob</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Storage::Blobs::Models::DownloadBlobDetails</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>HttpHeaders</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::DownloadBlobToResult</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>BlobType</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Details</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="35" column="7" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="36" bodyend="61"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a75ee0ae5d1c394260f54bdd9c628a934" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobToResult</scope><name>BlobSize</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a777dd59b4a4b5ef6c2b3444bc46c878a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobToResult</scope><name>BlobType</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a8cbdcf405b1c0e4670b99534d6fd3f91" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobToResult</scope><name>ContentRange</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1ad3ea2d96703016bcdd5707e6853fba3f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobToResult</scope><name>Details</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_to_result_1a0ce99d552dde891ac20edced6b65bb0e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobToResult</scope><name>TransactionalContentHash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

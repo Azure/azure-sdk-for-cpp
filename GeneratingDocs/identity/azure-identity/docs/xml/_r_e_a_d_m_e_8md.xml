@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_r_e_a_d_m_e_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Azure<sp/>Identity<sp/>client<sp/>library<sp/>for<sp/>C++</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>Azure<sp/>Identity<sp/>library<sp/>provides<sp/>Microsoft<sp/>Entra<sp/>ID<sp/>([formerly<sp/>Azure<sp/>Active<sp/>Directory](https://learn.microsoft.com/azure/active-directory/fundamentals/new-name))<sp/>token<sp/>authentication<sp/>support<sp/>across<sp/>the<sp/>Azure<sp/>SDK.<sp/>It<sp/>provides<sp/>a<sp/>set<sp/>of<sp/>`TokenCredential`<sp/>implementations<sp/>which<sp/>can<sp/>be<sp/>used<sp/>to<sp/>construct<sp/>Azure<sp/>SDK<sp/>clients<sp/>which<sp/>support<sp/>Microsoft<sp/>Entra<sp/>token<sp/>authentication.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>library<sp/>follows<sp/>the<sp/>[Azure<sp/>SDK<sp/>Design<sp/>Guidelines<sp/>for<sp/>C++][azure_sdk_cpp_development_guidelines].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>[Source<sp/>code][source]<sp/>|<sp/>[API<sp/>reference<sp/>documentation][doxygen]<sp/>|<sp/>[Microsoft<sp/>Entra<sp/>ID<sp/>documentation][meid_doc]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Getting<sp/>started</highlight></codeline>
+<codeline><highlight class="normal">###<sp/>Include<sp/>the<sp/>package</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>easiest<sp/>way<sp/>to<sp/>acquire<sp/>the<sp/>C++<sp/>SDK<sp/>is<sp/>leveraging<sp/>vcpkg<sp/>package<sp/>manager.<sp/>See<sp/>the<sp/>corresponding<sp/>[Azure<sp/>SDK<sp/>for<sp/>C++<sp/>readme<sp/>section][azsdk_vcpkg_install].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>install<sp/>Azure<sp/>Identity<sp/>package<sp/>via<sp/>vcpkg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cmd</highlight></codeline>
+<codeline><highlight class="normal">&gt;<sp/>vcpkg<sp/>install<sp/>azure-identity-cpp</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then,<sp/>use<sp/>in<sp/>your<sp/>CMake<sp/>file:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```CMake</highlight></codeline>
+<codeline><highlight class="normal">find_package(azure-identity-cpp<sp/>CONFIG<sp/>REQUIRED)</highlight></codeline>
+<codeline><highlight class="normal">target_link_libraries(&lt;your<sp/>project<sp/>name&gt;<sp/>PRIVATE<sp/>Azure::azure-identity)</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Prerequisites</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>An<sp/>[Azure<sp/>subscription][azure_sub].</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>The<sp/>[Azure<sp/>CLI][azure_cli]<sp/>can<sp/>also<sp/>be<sp/>useful<sp/>for<sp/>authenticating<sp/>in<sp/>a<sp/>development<sp/>environment,<sp/>creating<sp/>accounts,<sp/>and<sp/>managing<sp/>account<sp/>roles.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Authenticate<sp/>the<sp/>client</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">When<sp/>debugging<sp/>and<sp/>executing<sp/>code<sp/>locally<sp/>it<sp/>is<sp/>typical<sp/>for<sp/>a<sp/>developer<sp/>to<sp/>use<sp/>their<sp/>own<sp/>account<sp/>for<sp/>authenticating<sp/>calls<sp/>to<sp/>Azure<sp/>services.<sp/>There<sp/>are<sp/>several<sp/>developer<sp/>tools<sp/>which<sp/>can<sp/>be<sp/>used<sp/>to<sp/>perform<sp/>this<sp/>authentication<sp/>in<sp/>your<sp/>development<sp/>environment.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">####<sp/>Authenticate<sp/>via<sp/>the<sp/>Azure<sp/>CLI</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Developers<sp/>can<sp/>use<sp/>the<sp/>[Azure<sp/>CLI][azure_cli]<sp/>to<sp/>authenticate.<sp/>Applications<sp/>using<sp/>the<sp/>`DefaultAzureCredential`<sp/>or<sp/>the<sp/>`AzureCliCredential`<sp/>can<sp/>then<sp/>use<sp/>this<sp/>account<sp/>to<sp/>authenticate<sp/>calls<sp/>in<sp/>their<sp/>application<sp/>when<sp/>running<sp/>locally.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>authenticate<sp/>with<sp/>the<sp/>[Azure<sp/>CLI][azure_cli],<sp/>users<sp/>can<sp/>run<sp/>the<sp/>command<sp/>`az<sp/>login`.<sp/>For<sp/>users<sp/>running<sp/>on<sp/>a<sp/>system<sp/>with<sp/>a<sp/>default<sp/>web<sp/>browser,<sp/>the<sp/>Azure<sp/>CLI<sp/>will<sp/>launch<sp/>the<sp/>browser<sp/>to<sp/>authenticate<sp/>the<sp/>user.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Key<sp/>concepts</highlight></codeline>
+<codeline><highlight class="normal">###<sp/>Credentials</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">A<sp/>credential<sp/>is<sp/>a<sp/>class<sp/>which<sp/>contains<sp/>or<sp/>can<sp/>obtain<sp/>the<sp/>data<sp/>needed<sp/>for<sp/>a<sp/>service<sp/>client<sp/>to<sp/>authenticate<sp/>requests.<sp/>Service<sp/>clients<sp/>across<sp/>Azure<sp/>SDK<sp/>accept<sp/>credentials<sp/>when<sp/>they<sp/>are<sp/>constructed,<sp/>and<sp/>service<sp/>clients<sp/>use<sp/>those<sp/>credentials<sp/>to<sp/>authenticate<sp/>requests<sp/>to<sp/>the<sp/>service.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>Azure<sp/>Identity<sp/>library<sp/>focuses<sp/>on<sp/>OAuth<sp/>authentication<sp/>with<sp/>Microsoft<sp/>Entra<sp/>ID,<sp/>and<sp/>it<sp/>offers<sp/>a<sp/>variety<sp/>of<sp/>credential<sp/>classes<sp/>capable<sp/>of<sp/>acquiring<sp/>a<sp/>Microsoft<sp/>Entra<sp/>token<sp/>to<sp/>authenticate<sp/>service<sp/>requests.<sp/>All<sp/>of<sp/>the<sp/>credential<sp/>classes<sp/>in<sp/>this<sp/>library<sp/>are<sp/>implementations<sp/>of<sp/>the<sp/>`TokenCredential`<sp/>abstract<sp/>class<sp/>in<sp/>[azure-core][azure_core_library],<sp/>and<sp/>any<sp/>of<sp/>them<sp/>can<sp/>be<sp/>used<sp/>by<sp/>to<sp/>construct<sp/>service<sp/>clients<sp/>capable<sp/>of<sp/>authenticating<sp/>with<sp/>a<sp/>`TokenCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">See<sp/>[Credential<sp/>Classes](#credential-classes)<sp/>for<sp/>a<sp/>complete<sp/>listing<sp/>of<sp/>available<sp/>credential<sp/>types.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>DefaultAzureCredential</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`DefaultAzureCredential`<sp/>combines<sp/>credentials<sp/>commonly<sp/>used<sp/>to<sp/>authenticate<sp/>when<sp/>deployed,<sp/>with<sp/>credentials<sp/>used<sp/>to<sp/>authenticate<sp/>in<sp/>a<sp/>development<sp/>environment.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&gt;<sp/>Note:<sp/>`DefaultAzureCredential`<sp/>is<sp/>intended<sp/>to<sp/>simplify<sp/>getting<sp/>started<sp/>with<sp/>the<sp/>SDK<sp/>by<sp/>handling<sp/>common<sp/>scenarios<sp/>with<sp/>reasonable<sp/>default<sp/>behaviors.<sp/>It<sp/>is<sp/>not<sp/>recommended<sp/>to<sp/>use<sp/>it<sp/>in<sp/>production.<sp/>Developers<sp/>who<sp/>want<sp/>more<sp/>control<sp/>or<sp/>whose<sp/>scenario<sp/>isn&apos;t<sp/>served<sp/>by<sp/>the<sp/>default<sp/>settings<sp/>should<sp/>use<sp/>other<sp/>credential<sp/>types.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>`DefaultAzureCredential`<sp/>attempts<sp/>to<sp/>authenticate<sp/>via<sp/>the<sp/>following<sp/>mechanisms,<sp/>in<sp/>this<sp/>order,<sp/>stopping<sp/>when<sp/>one<sp/>succeeds:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![DefaultAzureCredential<sp/>authentication<sp/>flow][default_azure_credential_auth_flow]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">1.<sp/>**Environment**<sp/>-<sp/>The<sp/>`DefaultAzureCredential`<sp/>will<sp/>read<sp/>account<sp/>information<sp/>specified<sp/>via<sp/>[environment<sp/>variables](#environment-variables)<sp/>and<sp/>use<sp/>it<sp/>to<sp/>authenticate.</highlight></codeline>
+<codeline><highlight class="normal">1.<sp/>**Workload<sp/>Identity<sp/>Credential**<sp/>-<sp/>If<sp/>the<sp/>developer<sp/>authenticates<sp/>using<sp/>a<sp/>Kubernetes<sp/>service<sp/>account<sp/>token.</highlight></codeline>
+<codeline><highlight class="normal">1.<sp/>**Azure<sp/>CLI**<sp/>-<sp/>If<sp/>the<sp/>developer<sp/>has<sp/>authenticated<sp/>an<sp/>account<sp/>via<sp/>the<sp/>Azure<sp/>CLI<sp/>`az<sp/>login`<sp/>command,<sp/>the<sp/>`DefaultAzureCredential`<sp/>will<sp/>authenticate<sp/>with<sp/>that<sp/>account.</highlight></codeline>
+<codeline><highlight class="normal">1.<sp/>**Managed<sp/>Identity**<sp/>-<sp/>If<sp/>the<sp/>application<sp/>is<sp/>deployed<sp/>to<sp/>an<sp/>Azure<sp/>host<sp/>with<sp/>Managed<sp/>Identity<sp/>enabled,<sp/>the<sp/>`DefaultAzureCredential`<sp/>will<sp/>authenticate<sp/>with<sp/>that<sp/>account.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Even<sp/>though<sp/>the<sp/>credentials<sp/>being<sp/>used<sp/>and<sp/>their<sp/>order<sp/>is<sp/>documented,<sp/>it<sp/>may<sp/>change<sp/>from<sp/>release<sp/>to<sp/>release.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`DefaultAzureCredential`<sp/>intends<sp/>to<sp/>provide<sp/>a<sp/>credential<sp/>that<sp/>&quot;just<sp/>works<sp/>out<sp/>of<sp/>the<sp/>box<sp/>and<sp/>without<sp/>requiring<sp/>any<sp/>information&quot;,<sp/>if<sp/>only<sp/>the<sp/>environment<sp/>is<sp/>set<sp/>up<sp/>sufficiently<sp/>for<sp/>the<sp/>credential<sp/>to<sp/>work.<sp/>Therefore,<sp/>it<sp/>could<sp/>be<sp/>simple<sp/>to<sp/>use,<sp/>but<sp/>since<sp/>it<sp/>uses<sp/>a<sp/>chain<sp/>of<sp/>credentials,<sp/>it<sp/>could<sp/>be<sp/>a<sp/>bit<sp/>complicated<sp/>to<sp/>diagnose<sp/>if<sp/>the<sp/>environment<sp/>setup<sp/>is<sp/>not<sp/>sufficient.<sp/>To<sp/>help<sp/>with<sp/>this,<sp/>`DefaultAzureCredential`<sp/>code<sp/>paths<sp/>are<sp/>instrumented<sp/>with<sp/>[log<sp/>messages](#troubleshooting).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">See<sp/>the<sp/>[code<sp/>samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity/samples).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Chained<sp/>Token<sp/>Credential</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`ChainedTokenCredential`<sp/>allows<sp/>users<sp/>to<sp/>set<sp/>up<sp/>custom<sp/>authentication<sp/>flow<sp/>consisting<sp/>of<sp/>multiple<sp/>credentials.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">An<sp/>example<sp/>below<sp/>demonstrates<sp/>using<sp/>`ChainedTokenCredential`<sp/>which<sp/>will<sp/>attempt<sp/>to<sp/>authenticate<sp/>using<sp/>`EnvironmentCredential`,<sp/>and<sp/>fall<sp/>back<sp/>to<sp/>authenticate<sp/>using<sp/>`ManagedIdentityCredential`.</highlight></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>A<sp/>configuration<sp/>demonstrated<sp/>below<sp/>would<sp/>authenticate<sp/>using<sp/>EnvironmentCredential<sp/>if<sp/>it<sp/>is</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>available,<sp/>and<sp/>if<sp/>it<sp/>is<sp/>not<sp/>available,<sp/>would<sp/>fall<sp/>back<sp/>to<sp/>use<sp/>AzureCliCredential,<sp/>and<sp/>then<sp/>to</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>ManagedIdentityCredential.</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>chainedTokenCredential<sp/>=<sp/>std::make_shared&lt;Azure::Identity::ChainedTokenCredential&gt;(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Identity::ChainedTokenCredential::Sources{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::make_shared&lt;Azure::Identity::EnvironmentCredential&gt;(),</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::make_shared&lt;Azure::Identity::AzureCliCredential&gt;(),</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::make_shared&lt;Azure::Identity::ManagedIdentityCredential&gt;()});</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Azure::Service::Client<sp/>azureServiceClient(&quot;serviceUrl&quot;,<sp/>chainedTokenCredential);</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Managed<sp/>Identity<sp/>Support</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>[Managed<sp/>identity<sp/>authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)<sp/>is<sp/>supported<sp/>via<sp/>the<sp/>`ManagedIdentityCredential`<sp/>for<sp/>the<sp/>following<sp/>Azure<sp/>Services:</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Azure<sp/>App<sp/>Service<sp/>and<sp/>Azure<sp/>Functions](https://docs.microsoft.com/azure/app-service/overview-managed-identity)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Azure<sp/>Cloud<sp/>Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Azure<sp/>Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Azure<sp/>Virtual<sp/>Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Environment<sp/>Variables</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`DefaultAzureCredential`<sp/>and<sp/>`EnvironmentCredential`<sp/>can<sp/>be<sp/>configured<sp/>with<sp/>environment<sp/>variables.<sp/>Each<sp/>type<sp/>of<sp/>authentication<sp/>requires<sp/>values<sp/>for<sp/>specific<sp/>variables:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Service<sp/>principal<sp/>with<sp/>secret</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">|Variable<sp/>name|Value</highlight></codeline>
+<codeline><highlight class="normal">|-|-</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_TENANT_ID`|ID<sp/>of<sp/>the<sp/>application&apos;s<sp/>Microsoft<sp/>Entra<sp/>tenant</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_CLIENT_ID`|ID<sp/>of<sp/>a<sp/>Microsoft<sp/>Entra<sp/>application</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_CLIENT_SECRET`|one<sp/>of<sp/>the<sp/>application&apos;s<sp/>client<sp/>secrets</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_AUTHORITY_HOST`|(optional)<sp/>[authentication<sp/>authority<sp/>URL](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Service<sp/>principal<sp/>with<sp/>certificate</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">|variable<sp/>name|Value</highlight></codeline>
+<codeline><highlight class="normal">|-|-</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_CLIENT_ID`|ID<sp/>of<sp/>a<sp/>Microsoft<sp/>Entra<sp/>application</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_TENANT_ID`|ID<sp/>of<sp/>the<sp/>application&apos;s<sp/>Microsoft<sp/>Entra<sp/>tenant</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_CLIENT_CERTIFICATE_PATH`|path<sp/>to<sp/>a<sp/>PFX<sp/>or<sp/>PEM-encoded<sp/>certificate<sp/>file<sp/>including<sp/>private<sp/>key</highlight></codeline>
+<codeline><highlight class="normal">|`AZURE_AUTHORITY_HOST`|(optional)<sp/>[authentication<sp/>authority<sp/>URL](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Configuration<sp/>is<sp/>attempted<sp/>in<sp/>the<sp/>above<sp/>order.<sp/>For<sp/>example,<sp/>if<sp/>values<sp/>for<sp/>a<sp/>client<sp/>secret<sp/>and<sp/>certificate<sp/>are<sp/>both<sp/>present,<sp/>the<sp/>client<sp/>secret<sp/>will<sp/>be<sp/>used.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Credential<sp/>classes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Authenticate<sp/>Azure-hosted<sp/>applications</highlight></codeline>
+<codeline><highlight class="normal">|Credential<sp/>|<sp/>Usage</highlight></codeline>
+<codeline><highlight class="normal">|-|-</highlight></codeline>
+<codeline><highlight class="normal">|`DefaultAzureCredential`|Provides<sp/>a<sp/>simplified<sp/>authentication<sp/>experience<sp/>to<sp/>quickly<sp/>start<sp/>developing<sp/>applications<sp/>run<sp/>in<sp/>Azure.</highlight></codeline>
+<codeline><highlight class="normal">|`ChainedTokenCredential`|Allows<sp/>users<sp/>to<sp/>define<sp/>custom<sp/>authentication<sp/>flows<sp/>composing<sp/>multiple<sp/>credentials.</highlight></codeline>
+<codeline><highlight class="normal">|`ManagedIdentityCredential`|Authenticates<sp/>the<sp/>managed<sp/>identity<sp/>of<sp/>an<sp/>Azure<sp/>resource.</highlight></codeline>
+<codeline><highlight class="normal">|`EnvironmentCredential`|Authenticates<sp/>a<sp/>service<sp/>principal<sp/>or<sp/>user<sp/>via<sp/>credential<sp/>information<sp/>specified<sp/>in<sp/>environment<sp/>variables.</highlight></codeline>
+<codeline><highlight class="normal">|`WorkloadIdentityCredential`|Authenticate<sp/>a<sp/>workload<sp/>identity<sp/>on<sp/>Kubernetes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Authenticate<sp/>service<sp/>principals</highlight></codeline>
+<codeline><highlight class="normal">|Credential<sp/>|<sp/>Usage</highlight></codeline>
+<codeline><highlight class="normal">|-|-</highlight></codeline>
+<codeline><highlight class="normal">|`ClientSecretCredential`|Authenticates<sp/>a<sp/>service<sp/>principal<sp/>[using<sp/>a<sp/>secret](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals).</highlight></codeline>
+<codeline><highlight class="normal">|`ClientCertificateCredential`|Authenticates<sp/>a<sp/>service<sp/>principal<sp/>[using<sp/>a<sp/>certificate](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Authenticate<sp/>via<sp/>development<sp/>tools</highlight></codeline>
+<codeline><highlight class="normal">|Credential<sp/>|<sp/>Usage</highlight></codeline>
+<codeline><highlight class="normal">|-|-</highlight></codeline>
+<codeline><highlight class="normal">|`AzureCliCredential`|Authenticates<sp/>in<sp/>a<sp/>development<sp/>environment<sp/>[with<sp/>the<sp/>Azure<sp/>CLI](https://learn.microsoft.com/cli/azure/authenticate-azure-cli).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Troubleshooting</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">1.<sp/>Azure<sp/>Identity<sp/>[SDK<sp/>log<sp/>messages](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages)<sp/>contain<sp/>disgnostic<sp/>information,<sp/>and<sp/>start<sp/>with<sp/>&quot;`Identity:<sp/>`&quot;.</highlight></codeline>
+<codeline><highlight class="normal">1.<sp/>Credentials<sp/>raise<sp/>exceptions<sp/>either<sp/>when<sp/>they<sp/>fail<sp/>to<sp/>authenticate<sp/>or<sp/>cannot<sp/>execute<sp/>authentication.<sp/>When<sp/>a<sp/>credential<sp/>fails<sp/>to<sp/>authenticate,<sp/>an<sp/>`AuthenticationException`<sp/>is<sp/>thrown.<sp/>The<sp/>exception<sp/>has<sp/>the<sp/>`what()`<sp/>function<sp/>that<sp/>provides<sp/>more<sp/>information<sp/>about<sp/>the<sp/>failure.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Contributing</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>details<sp/>on<sp/>contributing<sp/>to<sp/>this<sp/>repository,<sp/>see<sp/>the<sp/>[contributing<sp/>guide][azure_sdk_for_cpp_contributing].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>project<sp/>welcomes<sp/>contributions<sp/>and<sp/>suggestions.<sp/><sp/>Most<sp/>contributions<sp/>require<sp/>you<sp/>to<sp/>agree<sp/>to<sp/>a</highlight></codeline>
+<codeline><highlight class="normal">Contributor<sp/>License<sp/>Agreement<sp/>(CLA)<sp/>declaring<sp/>that<sp/>you<sp/>have<sp/>the<sp/>right<sp/>to,<sp/>and<sp/>actually<sp/>do,<sp/>grant<sp/>us</highlight></codeline>
+<codeline><highlight class="normal">the<sp/>rights<sp/>to<sp/>use<sp/>your<sp/>contribution.<sp/>For<sp/>details,<sp/>visit<sp/>the<sp/>[Contributor<sp/>License<sp/>Agreement](https://cla.microsoft.com).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">When<sp/>you<sp/>submit<sp/>a<sp/>pull<sp/>request,<sp/>a<sp/>CLA-bot<sp/>will<sp/>automatically<sp/>determine<sp/>whether<sp/>you<sp/>need<sp/>to<sp/>provide</highlight></codeline>
+<codeline><highlight class="normal">a<sp/>CLA<sp/>and<sp/>decorate<sp/>the<sp/>PR<sp/>appropriately<sp/>(e.g.,<sp/>label,<sp/>comment).<sp/>Simply<sp/>follow<sp/>the<sp/>instructions</highlight></codeline>
+<codeline><highlight class="normal">provided<sp/>by<sp/>the<sp/>bot.<sp/>You<sp/>will<sp/>only<sp/>need<sp/>to<sp/>do<sp/>this<sp/>once<sp/>across<sp/>all<sp/>repos<sp/>using<sp/>our<sp/>CLA.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>project<sp/>has<sp/>adopted<sp/>the<sp/>[Microsoft<sp/>Open<sp/>Source<sp/>Code<sp/>of<sp/>Conduct](https://opensource.microsoft.com/codeofconduct/).</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>more<sp/>information<sp/>see<sp/>the<sp/>[Code<sp/>of<sp/>Conduct<sp/>FAQ](https://opensource.microsoft.com/codeofconduct/faq/)<sp/>or</highlight></codeline>
+<codeline><highlight class="normal">contact<sp/>[opencode@microsoft.com](mailto:opencode@microsoft.com)<sp/>with<sp/>any<sp/>additional<sp/>questions<sp/>or<sp/>comments.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Additional<sp/>Helpful<sp/>Links<sp/>for<sp/>Contributors</highlight></codeline>
+<codeline><highlight class="normal">Many<sp/>people<sp/>all<sp/>over<sp/>the<sp/>world<sp/>have<sp/>helped<sp/>make<sp/>this<sp/>project<sp/>better.<sp/><sp/>You&apos;ll<sp/>want<sp/>to<sp/>check<sp/>out:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>[What<sp/>are<sp/>some<sp/>good<sp/>first<sp/>issues<sp/>for<sp/>new<sp/>contributors<sp/>to<sp/>the<sp/>repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[How<sp/>to<sp/>build<sp/>and<sp/>test<sp/>your<sp/>change][azure_sdk_for_cpp_contributing_developer_guide]</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[How<sp/>you<sp/>can<sp/>make<sp/>a<sp/>change<sp/>happen!][azure_sdk_for_cpp_contributing_pull_requests]</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>Frequently<sp/>Asked<sp/>Questions<sp/>(FAQ)<sp/>and<sp/>Conceptual<sp/>Topics<sp/>in<sp/>the<sp/>detailed<sp/>[Azure<sp/>SDK<sp/>for<sp/>C++<sp/>wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;!--<sp/>###<sp/>Community--&gt;</highlight></codeline>
+<codeline><highlight class="normal">###<sp/>Reporting<sp/>security<sp/>issues<sp/>and<sp/>security<sp/>bugs</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Security<sp/>issues<sp/>and<sp/>bugs<sp/>should<sp/>be<sp/>reported<sp/>privately,<sp/>via<sp/>email,<sp/>to<sp/>the<sp/>Microsoft<sp/>Security<sp/>Response<sp/>Center<sp/>(MSRC)<sp/>&lt;secure@microsoft.com&gt;.<sp/>You<sp/>should<sp/>receive<sp/>a<sp/>response<sp/>within<sp/>24<sp/>hours.<sp/>If<sp/>for<sp/>some<sp/>reason<sp/>you<sp/>do<sp/>not,<sp/>please<sp/>follow<sp/>up<sp/>via<sp/>email<sp/>to<sp/>ensure<sp/>we<sp/>received<sp/>your<sp/>original<sp/>message.<sp/>Further<sp/>information,<sp/>including<sp/>the<sp/>MSRC<sp/>PGP<sp/>key,<sp/>can<sp/>be<sp/>found<sp/>in<sp/>the<sp/>[Security<sp/>TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>License</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Azure<sp/>SDK<sp/>for<sp/>C++<sp/>is<sp/>licensed<sp/>under<sp/>the<sp/>[MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt)<sp/>license.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;!--<sp/>LINKS<sp/>--&gt;</highlight></codeline>
+<codeline><highlight class="normal">[azure_cli]:<sp/>https://learn.microsoft.com/cli/azure</highlight></codeline>
+<codeline><highlight class="normal">[azsdk_vcpkg_install]:<sp/>https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing_developer_guide]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_for_cpp_contributing_pull_requests]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests</highlight></codeline>
+<codeline><highlight class="normal">[azure_sdk_cpp_development_guidelines]:<sp/>https://azure.github.io/azure-sdk/cpp_introduction.html</highlight></codeline>
+<codeline><highlight class="normal">[default_azure_credential_auth_flow]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/img/mermaidjs/DefaultAzureCredentialAuthFlow.svg</highlight></codeline>
+<codeline><highlight class="normal">[source]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity</highlight></codeline>
+<codeline><highlight class="normal">[meid_doc]:<sp/>https://learn.microsoft.com/azure/active-directory/</highlight></codeline>
+<codeline><highlight class="normal">[azure_core_library]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core</highlight></codeline>
+<codeline><highlight class="normal">[doxygen]:<sp/>https://azure.github.io/azure-sdk-for-cpp/</highlight></codeline>
+    </programlisting>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>

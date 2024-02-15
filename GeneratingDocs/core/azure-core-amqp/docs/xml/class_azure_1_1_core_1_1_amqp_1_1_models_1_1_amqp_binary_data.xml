@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpBinaryData</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; std::uint8_t &gt;, AmqpBinaryData &gt;</basecompoundref>
+    <includes refid="amqp__value_8hpp" local="no">amqp_value.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1aae9cbf115c65d11b351940ed18b973d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</definition>
+        <argsstring>()</argsstring>
+        <name>AmqpBinaryData</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="786" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="786" bodyend="786"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab9cfaf587ffd763230ce6aa8293fe772" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Amqp::Models::AmqpBinaryData::~AmqpBinaryData</definition>
+        <argsstring>()=default</argsstring>
+        <name>~AmqpBinaryData</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::~AmqpBinaryData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="787" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a025a92ebc7f0ee0c0da5ebfe376930f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</definition>
+        <argsstring>(initializer_type const &amp;values)</argsstring>
+        <name>AmqpBinaryData</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</qualifiedname>
+        <param>
+          <type>initializer_type const &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> object with an initializer list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="789" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="789" bodyend="789"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a2ca2c8927d3d899a9b2ef4116c93fc56" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</definition>
+        <argsstring>(std::vector&lt; std::uint8_t &gt; const &amp;values)</argsstring>
+        <name>AmqpBinaryData</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</qualifiedname>
+        <param>
+          <type>std::vector&lt; std::uint8_t &gt; const &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> from a vector of bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="791" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="791" bodyend="791"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a0ccd18c704d1e57ee3017299838b3dde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</definition>
+        <argsstring>(const AmqpBinaryData &amp;other)=default</argsstring>
+        <name>AmqpBinaryData</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="794" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a111fe76cddad90c6f01884d0aa912df6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &amp;</type>
+        <definition>AmqpBinaryData &amp; Azure::Core::Amqp::Models::AmqpBinaryData::operator=</definition>
+        <argsstring>(const AmqpBinaryData &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="797" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a9d69397e1ace81489b6c61d13d3fcffd" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</definition>
+        <argsstring>(AmqpBinaryData &amp;&amp;other) noexcept=default</argsstring>
+        <name>AmqpBinaryData</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="800" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ad5692f2e6c9321bee661d25aa650a120" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &amp;</type>
+        <definition>AmqpBinaryData &amp; Azure::Core::Amqp::Models::AmqpBinaryData::operator=</definition>
+        <argsstring>(AmqpBinaryData &amp;&amp;other) noexcept=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="803" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab58435dba93389225699a80380c4c526" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> &amp;</type>
+        <definition>AmqpBinaryData &amp; Azure::Core::Amqp::Models::AmqpBinaryData::operator=</definition>
+        <argsstring>(std::vector&lt; std::uint8_t &gt; const &amp;values)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::operator=</qualifiedname>
+        <param>
+          <type>std::vector&lt; std::uint8_t &gt; const &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Assign a vector of bytes to the current <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="806" column="20" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="806" bodyend="810"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a7d32e346fdfe40a0c3be351690fb6221" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>AmqpBinaryData</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpBinaryData::AmqpBinaryData</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref> object from an existing uAMQP AMQP_VALUE item. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this does NOT capture the passed in AMQP_VALUE object, the caller is responsible for freeing that object.</para>
+</simplesect>
+<simplesect kind="remark"><para>This is an internal accessor and should never be used by code outside the AMQP implementation.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP &quot;binary&quot; value to capture. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="822" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="916" bodyend="931"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An AMQP binary value, a sequence of octets. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Defined in <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-binary">AMQP Core Types section 1.6.19</ulink>. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; std::uint8_t &gt;, AmqpBinaryData &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpBinaryData</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; std::uint8_t &gt;, AmqpBinaryData &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpBinaryData</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="783" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="784" bodyend="823"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1aae9cbf115c65d11b351940ed18b973d2" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>AmqpBinaryData</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a025a92ebc7f0ee0c0da5ebfe376930f7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>AmqpBinaryData</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a2ca2c8927d3d899a9b2ef4116c93fc56" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>AmqpBinaryData</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a0ccd18c704d1e57ee3017299838b3dde" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>AmqpBinaryData</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a9d69397e1ace81489b6c61d13d3fcffd" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>AmqpBinaryData</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a7d32e346fdfe40a0c3be351690fb6221" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>AmqpBinaryData</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a111fe76cddad90c6f01884d0aa912df6" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ad5692f2e6c9321bee661d25aa650a120" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab58435dba93389225699a80380c4c526" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab9cfaf587ffd763230ce6aa8293fe772" prot="public" virt="virtual"><scope>Azure::Core::Amqp::Models::AmqpBinaryData</scope><name>~AmqpBinaryData</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

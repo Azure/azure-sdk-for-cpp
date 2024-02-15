@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_a8cc8f7ff322334a2a50a34fe37fffca" kind="dir">
+    <compoundname>inc/azure/core/credentials</compoundname>
+    <innerfile refid="credentials_8hpp">credentials.hpp</innerfile>
+    <innerfile refid="token__credential__options_8hpp">token_credential_options.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/credentials/"/>
+  </compounddef>
+</doxygen>

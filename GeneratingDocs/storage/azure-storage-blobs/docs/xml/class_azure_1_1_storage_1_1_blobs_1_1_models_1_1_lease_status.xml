@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::LeaseStatus</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a0bae0dce3e7c48f83e383fe2ec0a5ca9" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref></type>
+        <definition>const LeaseStatus Azure::Storage::Blobs::Models::LeaseStatus::Locked</definition>
+        <argsstring></argsstring>
+        <name>Locked</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::Locked</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref>: Locked </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="316" column="59" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a52412bf783c4ce00c817acaaf94982d2" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref></type>
+        <definition>const LeaseStatus Azure::Storage::Blobs::Models::LeaseStatus::Unlocked</definition>
+        <argsstring></argsstring>
+        <name>Unlocked</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::Unlocked</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref>: Unlocked </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="318" column="59" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="318" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a1d3342999336728dd73aeaebd0fac01c" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::LeaseStatus::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="321" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="321" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a9344a29cf31e7690875e72fc01972523" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::LeaseStatus::LeaseStatus</definition>
+        <argsstring>()=default</argsstring>
+        <name>LeaseStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::LeaseStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="306" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a8a840d655312f3380379a4225b78083a" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::LeaseStatus::LeaseStatus</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>LeaseStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::LeaseStatus</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="308" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="308" bodyend="308"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a323c6cc8df576357b4624237187d0b3b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::LeaseStatus::operator==</definition>
+        <argsstring>(const LeaseStatus &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="310" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="310" bodyend="310"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a3175d7046fe586a864fadaa59decc9ec" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::LeaseStatus::operator!=</definition>
+        <argsstring>(const LeaseStatus &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">LeaseStatus</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="312" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="312" bodyend="312"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a90f8d19742c47bffa24077b6febc7843" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::LeaseStatus::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseStatus::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="314" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="314" bodyend="314"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The current lease status of the blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::LeaseStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Locked</edgelabel>
+          <edgelabel>Unlocked</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="303" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="303" bodyend="322"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a9344a29cf31e7690875e72fc01972523" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>LeaseStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a8a840d655312f3380379a4225b78083a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>LeaseStatus</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a0bae0dce3e7c48f83e383fe2ec0a5ca9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>Locked</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a1d3342999336728dd73aeaebd0fac01c" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a3175d7046fe586a864fadaa59decc9ec" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a323c6cc8df576357b4624237187d0b3b" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a90f8d19742c47bffa24077b6febc7843" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status_1a52412bf783c4ce00c817acaaf94982d2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseStatus</scope><name>Unlocked</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

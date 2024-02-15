@@ -1,0 +1,304 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_c_h_a_n_g_e_l_o_g_8md" kind="file" language="Markdown">
+    <compoundname>CHANGELOG.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Release<sp/>History</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.7.0-beta.3<sp/>(Unreleased)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.7.0-beta.2<sp/>(2024-02-09)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4474]](https://github.com/Azure/azure-sdk-for-cpp/issues/4474)<sp/>Enable<sp/>proactive<sp/>renewal<sp/>of<sp/>Managed<sp/>Identity<sp/>tokens.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.7.0-beta.1<sp/>(2024-01-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5116]](https://github.com/Azure/azure-sdk-for-cpp/issues/5116)<sp/>`AzureCliCredential`:<sp/>Added<sp/>support<sp/>for<sp/>the<sp/>new<sp/>response<sp/>field<sp/>which<sp/>represents<sp/>token<sp/>expiration<sp/>timestamp<sp/>as<sp/>time<sp/>zone<sp/>agnostic<sp/>value.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5075]](https://github.com/Azure/azure-sdk-for-cpp/issues/5075)<sp/>`AzureCliCredential`<sp/>assumes<sp/>token<sp/>expiration<sp/>time<sp/>without<sp/>local<sp/>time<sp/>zone<sp/>adjustment.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#5141]](https://github.com/Azure/azure-sdk-for-cpp/issues/5141)<sp/>Added<sp/>error<sp/>response<sp/>details<sp/>to<sp/>the<sp/>`AuthenticationException`<sp/>thrown<sp/>when<sp/>the<sp/>authority<sp/>host<sp/>returns<sp/>error<sp/>response.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.6.0<sp/>(2023-11-10)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`WorkloadIdentityCredential`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>When<sp/>one<sp/>of<sp/>the<sp/>credentials<sp/>within<sp/>`DefaultAzureCredential`<sp/>is<sp/>successful,<sp/>it<sp/>gets<sp/>re-used<sp/>during<sp/>all<sp/>subsequent<sp/>attempts<sp/>to<sp/>get<sp/>the<sp/>token.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Updated<sp/>`ClientSecretCredentialOptions`<sp/>and<sp/>`ClientCertificateCredentialOptions`<sp/>to<sp/>read<sp/>the<sp/>default<sp/>value<sp/>for<sp/>the<sp/>authority<sp/>host<sp/>option<sp/>from<sp/>the<sp/>environment<sp/>variable<sp/>first.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>`WorkloadIdentityCredential`<sp/>to<sp/>the<sp/>`DefaultAzureCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Do<sp/>not<sp/>throw<sp/>an<sp/>exception<sp/>during<sp/>`AzureCliCredential`<sp/>construction,<sp/>but<sp/>rather<sp/>delay<sp/>it<sp/>to<sp/>the<sp/>`GetToken()`<sp/>call.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Harden<sp/>checks<sp/>for<sp/>the<sp/>tenant<sp/>ID.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Disallow<sp/>space<sp/>character<sp/>when<sp/>validating<sp/>tenant<sp/>id<sp/>and<sp/>scopes<sp/>as<sp/>input<sp/>for<sp/>`AzureCliCredential`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>authority<sp/>host<sp/>url<sp/>validation<sp/>to<sp/>reject<sp/>non-HTTPS<sp/>schemes.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084)<sp/>Remove<sp/>OpenSSL<sp/>dependency<sp/>on<sp/>Windows.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[teo-tsirpanis](https://github.com/teo-tsirpanis)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>default<sp/>values<sp/>to<sp/>some<sp/>`WorkloadIdentityCredentialOptions`<sp/>fields<sp/>such<sp/>as<sp/>authority<sp/>host<sp/>by<sp/>reading<sp/>them<sp/>from<sp/>the<sp/>environment.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>logging<sp/>to<sp/>`WorkloadIdentityCredential`<sp/>to<sp/>help<sp/>with<sp/>debugging.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Create<sp/>separate<sp/>lists<sp/>of<sp/>characters<sp/>that<sp/>are<sp/>allowed<sp/>within<sp/>tenant<sp/>ids<sp/>and<sp/>scopes<sp/>in<sp/>`AzureCliCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Identity<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Theodore<sp/>Tsirpanis<sp/>_([GitHub](https://github.com/teo-tsirpanis))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.6.0-beta.3<sp/>(2023-10-12)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Change<sp/>the<sp/>default<sp/>value<sp/>for<sp/>the<sp/>authority<sp/>host<sp/>option<sp/>to<sp/>be<sp/>read<sp/>from<sp/>the<sp/>environment<sp/>variable<sp/>first.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Do<sp/>not<sp/>throw<sp/>an<sp/>exception<sp/>during<sp/>`AzureCliCredential`<sp/>construction,<sp/>but<sp/>rather<sp/>delay<sp/>it<sp/>to<sp/>the<sp/>`GetToken()`<sp/>call.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.6.0-beta.2<sp/>(2023-09-13)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>support<sp/>for<sp/>reading<sp/>the<sp/>tenant<sp/>id,<sp/>client<sp/>id,<sp/>and<sp/>the<sp/>token<sp/>file<sp/>path<sp/>for<sp/>`WorkloadIdentityCredential`<sp/>from<sp/>the<sp/>environment<sp/>variables.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Modify<sp/>the<sp/>order<sp/>of<sp/>the<sp/>credentials<sp/>used<sp/>within<sp/>the<sp/>`DefaultAzureCredential`<sp/>to<sp/>be<sp/>consistent<sp/>with<sp/>other<sp/>languages.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>`WorkloadIdentityCredential`<sp/>to<sp/>the<sp/>`DefaultAzureCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084)<sp/>Remove<sp/>OpenSSL<sp/>dependency<sp/>on<sp/>Windows.<sp/>(A<sp/>community<sp/>contribution,<sp/>courtesy<sp/>of<sp/>_[teo-tsirpanis](https://github.com/teo-tsirpanis)_)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Acknowledgments</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Thank<sp/>you<sp/>to<sp/>our<sp/>developer<sp/>community<sp/>members<sp/>who<sp/>helped<sp/>to<sp/>make<sp/>Azure<sp/>Identity<sp/>better<sp/>with<sp/>their<sp/>contributions<sp/>to<sp/>this<sp/>release:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Theodore<sp/>Tsirpanis<sp/>_([GitHub](https://github.com/teo-tsirpanis))_</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.6.0-beta.1<sp/>(2023-08-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>`WorkloadIdentityCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.5.1<sp/>(2023-07-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4723]](https://github.com/Azure/azure-sdk-for-cpp/issues/4723)<sp/>Accept<sp/>a<sp/>wider<sp/>variety<sp/>of<sp/>token<sp/>responses.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.5.0<sp/>(2023-05-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>challenge-based<sp/>and<sp/>multi-tenant<sp/>authentication.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`DefaultAzureCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443)<sp/>Fixed<sp/>potentially<sp/>high<sp/>CPU<sp/>usage<sp/>on<sp/>Windows.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>diagnostics<sp/>to<sp/>utilize<sp/>`Azure::Core::Credentials::TokenCredential::GetCredentialName()`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>log<sp/>messages.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.5.0-beta.2<sp/>(2023-04-06)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>support<sp/>for<sp/>challenge-based<sp/>and<sp/>multi-tenant<sp/>authentication.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443)<sp/>Fixed<sp/>potentially<sp/>high<sp/>CPU<sp/>usage<sp/>on<sp/>Windows.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>diagnostics<sp/>to<sp/>utilize<sp/>`Azure::Core::Credentials::TokenCredential::GetCredentialName()`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.5.0-beta.1<sp/>(2023-03-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`DefaultAzureCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Improved<sp/>log<sp/>messages.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.4.0<sp/>(2023-02-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>token<sp/>caching.<sp/>To<sp/>benefit<sp/>from<sp/>it,<sp/>share<sp/>the<sp/>`shared_ptr`<sp/>to<sp/>the<sp/>same<sp/>credential<sp/>instance<sp/>between<sp/>multiple<sp/>client<sp/>instances.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>Azure<sp/>CLI<sp/>Credential.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>authority<sp/>host<sp/>overriding<sp/>support<sp/>for<sp/>`ClientCertificateCredential`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>Azure<sp/>Stack<sp/>support<sp/>for<sp/>`ClientCertificateCredential`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>Azure<sp/>App<sp/>Service<sp/>API<sp/>version<sp/>`2019-08-01`<sp/>support<sp/>for<sp/>`ManagedIdentityCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.4.0-beta.3<sp/>(2023-01-10)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>Azure<sp/>CLI<sp/>Credential.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>authority<sp/>host<sp/>overriding<sp/>support<sp/>for<sp/>`ClientCertificateCredential`.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>Azure<sp/>Stack<sp/>support<sp/>for<sp/>`ClientCertificateCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Changed<sp/>token<sp/>cache<sp/>mode<sp/>to<sp/>per-credential-instance.<sp/>In<sp/>order<sp/>to<sp/>get<sp/>benefits<sp/>from<sp/>token<sp/>caching,<sp/>share<sp/>the<sp/>same<sp/>credential<sp/>between<sp/>multiple<sp/>client<sp/>instances.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>token<sp/>cache<sp/>support<sp/>to<sp/>all<sp/>credentials.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.4.0-beta.2<sp/>(2022-11-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>token<sp/>caching.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.4.0-beta.1<sp/>(2022-06-30)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>Azure<sp/>App<sp/>Service<sp/>API<sp/>version<sp/>`2019-08-01`<sp/>support<sp/>for<sp/>`ManagedIdentityCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.3.0<sp/>(2022-06-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ClientCertificateCredential`,<sp/>and<sp/>updated<sp/>`EnvironmentCredential`<sp/>to<sp/>support<sp/>client<sp/>certificate<sp/>authentication.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ChainedTokenCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.3.0-beta.2<sp/>(2022-05-10)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ClientCertificateCredential`,<sp/>and<sp/>updated<sp/>`EnvironmentCredential`<sp/>to<sp/>support<sp/>client<sp/>certificate<sp/>authentication.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.3.0-beta.1<sp/>(2022-04-05)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ChainedTokenCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.2.0<sp/>(2022-03-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">No<sp/>changes<sp/>since<sp/>`1.2.0-beta.1`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.2.0-beta.1<sp/>(2022-02-08)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Enabled<sp/>`EnvironmentCredential`<sp/>and<sp/>`ManagedIdentityCredential`<sp/>to<sp/>work<sp/>on<sp/>UWP.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.1.1<sp/>(2022-01-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>[2741](https://github.com/Azure/azure-sdk-for-cpp/issues/2741)<sp/>Fixed<sp/>linking<sp/>problem<sp/>when<sp/>Azure<sp/>SDK<sp/>is<sp/>built<sp/>as<sp/>DLL.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.1.0<sp/>(2021-08-10)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ManagedIdentityCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>minor<sp/>memory<sp/>leak<sp/>when<sp/>obtaining<sp/>a<sp/>token.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.1.0-beta.1<sp/>(2021-07-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`ManagedIdentityCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Fixed<sp/>minor<sp/>memory<sp/>leak<sp/>when<sp/>obtaining<sp/>a<sp/>token.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0<sp/>(2021-06-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">No<sp/>API<sp/>changes<sp/>since<sp/>`1.0.0-beta.6`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.6<sp/>(2021-05-18)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`final`<sp/>specifier<sp/>to<sp/>classes<sp/>and<sp/>structures<sp/>that<sp/>are<sp/>are<sp/>not<sp/>expected<sp/>to<sp/>be<sp/>inheritable<sp/>at<sp/>the<sp/>moment.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.5<sp/>(2021-04-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>Active<sp/>Directory<sp/>Federation<sp/>Service<sp/>(ADFS)<sp/>support<sp/>to<sp/>`ClientSecretCredential`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`Azure::Identity::PackageVersion`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.4<sp/>(2021-03-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Added<sp/>`Azure::Identity::PackageVersion`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`TransportPolicyOptions`<sp/>from<sp/>`ClientSecretCredentialOptions`.<sp/>Updated<sp/>the<sp/>options<sp/>to<sp/>derive<sp/>from<sp/>`ClientOptions`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.3<sp/>(2021-02-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>`ClientSecretCredential`<sp/>constructor<sp/>takes<sp/>`ClientSecretCredentialOptions`<sp/>struct<sp/>instead<sp/>of<sp/>authority<sp/>host<sp/>string.<sp/>`TokenCredentialOptions`<sp/>struct<sp/>has<sp/>authority<sp/>host<sp/>string<sp/>as<sp/>data<sp/>member.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.2<sp/>(2021-01-13)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Moved<sp/>`Azure::Identity::Version`,<sp/>defined<sp/>in<sp/>`azure/identity/version.hpp`<sp/>to<sp/>the<sp/>`Azure::Identity::Details`<sp/>namespace.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes<sp/>and<sp/>Improvements</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Add<sp/>high-level<sp/>and<sp/>simplified<sp/>identity.hpp<sp/>file<sp/>for<sp/>simpler<sp/>include<sp/>experience<sp/>for<sp/>customers.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.1<sp/>(2020-11-11)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>New<sp/>Features</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>Client<sp/>Secret<sp/>Credential.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Support<sp/>for<sp/>Environment<sp/>Credential.</highlight></codeline>
+    </programlisting>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

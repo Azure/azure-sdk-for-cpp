@@ -1,0 +1,351 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_cryptography_1_1_hash" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Azure::Core::Cryptography::Hash</compoundname>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" prot="public" virt="non-virtual">Azure::Core::Cryptography::Md5Hash</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_cryptography_1_1__internal_1_1_sha1_hash" prot="public" virt="non-virtual">Azure::Core::Cryptography::_internal::Sha1Hash</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_cryptography_1_1__internal_1_1_sha256_hash" prot="public" virt="non-virtual">Azure::Core::Cryptography::_internal::Sha256Hash</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_cryptography_1_1__internal_1_1_sha384_hash" prot="public" virt="non-virtual">Azure::Core::Cryptography::_internal::Sha384Hash</derivedcompoundref>
+    <derivedcompoundref refid="class_azure_1_1_core_1_1_cryptography_1_1__internal_1_1_sha512_hash" prot="public" virt="non-virtual">Azure::Core::Cryptography::_internal::Sha512Hash</derivedcompoundref>
+    <includes refid="hash_8hpp" local="no">hash.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a81ee971e2a5f21fc2f913395b0f7f396" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Core::Cryptography::Hash::m_isDone</definition>
+        <argsstring></argsstring>
+        <name>m_isDone</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::m_isDone</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="105" column="10" bodyfile="inc/azure/core/cryptography/hash.hpp" bodystart="105" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ad91a23277675cf03163e92cc159be7d0" prot="private" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Azure::Core::Cryptography::Hash::OnAppend</definition>
+        <argsstring>(const uint8_t *data, size_t length)=0</argsstring>
+        <name>OnAppend</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::OnAppend</qualifiedname>
+        <reimplementedby refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a6784a00f3b595ec0ec8f47693546a494">OnAppend</reimplementedby>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Used to append partial binary input data to compute the hash in a streaming fashion. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Once all the data has been added, call <ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" kindref="member">Azure::Core::Cryptography::Hash::Final()</ref> to get the computed hash value. </para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pointer to the current block of binary data that is used for hash calculation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the data provided. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="36" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a63ddc8aadc46c0441870c1caad24ca79" prot="private" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>virtual std::vector&lt; uint8_t &gt; Azure::Core::Cryptography::Hash::OnFinal</definition>
+        <argsstring>(const uint8_t *data, size_t length)=0</argsstring>
+        <name>OnFinal</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::OnFinal</qualifiedname>
+        <reimplementedby refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a3d3b8a5a776ee3a4e8cb2247755f8e99">OnFinal</reimplementedby>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Computes the hash value of the specified binary input data, including any previously appended. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pointer to binary data to compute the hash value for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the data provided. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The computed hash value corresponding to the input provided including any previously appended. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="46" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a2a645ad0e5b4df4a5d3ec0a090d1fd5c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Cryptography::Hash::Hash</definition>
+        <argsstring>(Hash const &amp;)=delete</argsstring>
+        <name>Hash</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::Hash</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kindref="compound">Hash</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+<para><computeroutput>Hash</computeroutput> does not allow copy construction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="111" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a1bfa37485e2b750a90f70647b0ecf6a9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Cryptography::Hash::operator=</definition>
+        <argsstring>(Hash const &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kindref="compound">Hash</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+<para><computeroutput>Hash</computeroutput> does not allow assignment. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="117" column="10"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a713b9700af1c65cd6fff998d8e91cfd1" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Cryptography::Hash::Hash</definition>
+        <argsstring>()=default</argsstring>
+        <name>Hash</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::Hash</qualifiedname>
+        <briefdescription>
+<para>Constructs a default instance of <computeroutput>Hash</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="53" column="5"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ac3c9cb8298ea1f02b9751d2aeada5e28" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Core::Cryptography::Hash::Append</definition>
+        <argsstring>(const uint8_t *data, size_t length)</argsstring>
+        <name>Append</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::Append</qualifiedname>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Used to append partial binary input data to compute the hash in a streaming fashion. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Once all the data has been added, call <ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" kindref="member">Azure::Core::Cryptography::Hash::Final()</ref> to get the computed hash value. </para>
+</simplesect>
+<simplesect kind="remark"><para>Do not call this function after a call to <ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" kindref="member">Azure::Core::Cryptography::Hash::Final()</ref>. </para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pointer to the current block of binary data that is used for hash calculation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the data provided. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="65" column="10" bodyfile="inc/azure/core/cryptography/hash.hpp" bodystart="65" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aae186272ffc97535f4c289803ea3bed7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Cryptography::Hash::Final</definition>
+        <argsstring>(const uint8_t *data, size_t length)</argsstring>
+        <name>Final</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::Final</qualifiedname>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Computes the hash value of the specified binary input data, including any previously appended. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Do not call this function multiple times. </para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pointer to the last block of binary data to compute the hash value for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the data provided. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The computed hash value corresponding to the input provided, including any previously appended. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="81" column="17" bodyfile="inc/azure/core/cryptography/hash.hpp" bodystart="81" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt; uint8_t &gt; Azure::Core::Cryptography::Hash::Final</definition>
+        <argsstring>()</argsstring>
+        <name>Final</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::Final</qualifiedname>
+        <briefdescription>
+<para>Computes the hash value of all the binary input data appended to the instance so far. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Use <ref refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ac3c9cb8298ea1f02b9751d2aeada5e28" kindref="member">Azure::Core::Cryptography::Hash::Append()</ref> to add more partial data before calling this function. </para>
+</simplesect>
+<simplesect kind="remark"><para>Do not call this function multiple times. </para>
+</simplesect>
+<simplesect kind="return"><para>The computed hash value corresponding to the input provided. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="96" column="17" bodyfile="inc/azure/core/cryptography/hash.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a5d4a624d64e23e0063fd9a3f9bfee3aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Cryptography::Hash::~Hash</definition>
+        <argsstring>()=default</argsstring>
+        <name>~Hash</name>
+        <qualifiedname>Azure::Core::Cryptography::Hash::~Hash</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>Hash</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/cryptography/hash.hpp" line="102" column="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents the base class for hash algorithms which map binary data of an arbitrary length to small binary data of a fixed length. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::Cryptography::Hash</label>
+        <link refid="class_azure_1_1_core_1_1_cryptography_1_1_hash"/>
+      </node>
+      <node id="2">
+        <label>Azure::Core::Cryptography::Md5Hash</label>
+        <link refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::Core::Cryptography::_internal::Sha1Hash</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Azure::Core::Cryptography::_internal::Sha256Hash</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Azure::Core::Cryptography::_internal::Sha384Hash</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Azure::Core::Cryptography::_internal::Sha512Hash</label>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="inc/azure/core/cryptography/hash.hpp" line="26" column="3" bodyfile="inc/azure/core/cryptography/hash.hpp" bodystart="26" bodyend="118"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ac3c9cb8298ea1f02b9751d2aeada5e28" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>Append</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aae186272ffc97535f4c289803ea3bed7" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>Final</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" prot="public" virt="non-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>Final</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a713b9700af1c65cd6fff998d8e91cfd1" prot="protected" virt="non-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>Hash</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a2a645ad0e5b4df4a5d3ec0a090d1fd5c" prot="private" virt="non-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>Hash</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a81ee971e2a5f21fc2f913395b0f7f396" prot="private" virt="non-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>m_isDone</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ad91a23277675cf03163e92cc159be7d0" prot="private" virt="pure-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>OnAppend</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a63ddc8aadc46c0441870c1caad24ca79" prot="private" virt="pure-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>OnFinal</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a1bfa37485e2b750a90f70647b0ecf6a9" prot="private" virt="non-virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a5d4a624d64e23e0063fd9a3f9bfee3aa" prot="public" virt="virtual"><scope>Azure::Core::Cryptography::Hash</scope><name>~Hash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

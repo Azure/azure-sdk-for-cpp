@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::LeaseDurationType</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a549549136536dcf463c316a7fae8235a" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref></type>
+        <definition>const LeaseDurationType Azure::Storage::Blobs::Models::LeaseDurationType::Infinite</definition>
+        <argsstring></argsstring>
+        <name>Infinite</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::Infinite</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref>: Infinite </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="368" column="65" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="368" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a0641ad89e66ca14510fe2369a6e4536c" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref></type>
+        <definition>const LeaseDurationType Azure::Storage::Blobs::Models::LeaseDurationType::Fixed</definition>
+        <argsstring></argsstring>
+        <name>Fixed</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::Fixed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref>: Fixed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="370" column="65" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="370" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1af15faa16ea7e3a3e4f74a446b732468e" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::LeaseDurationType::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="373" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="373" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a8ca6225c22935a37bb6ae0aaee459971" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::LeaseDurationType::LeaseDurationType</definition>
+        <argsstring>()=default</argsstring>
+        <name>LeaseDurationType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::LeaseDurationType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="358" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1ae392b0d9d34b401419313114a252c090" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::LeaseDurationType::LeaseDurationType</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>LeaseDurationType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::LeaseDurationType</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="360" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="360" bodyend="360"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1ae40c12b0be353998b850320806dd9ae4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::LeaseDurationType::operator==</definition>
+        <argsstring>(const LeaseDurationType &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="362" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="362" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a3659ff6b7aa048d199fd49a05cdf4fbe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::LeaseDurationType::operator!=</definition>
+        <argsstring>(const LeaseDurationType &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="364" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="364" bodyend="364"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1aa512c7721186b149d0c8184ae5e583e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::LeaseDurationType::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::LeaseDurationType::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="366" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="366" bodyend="366"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>When a blob is leased, specifies whether the lease is of infinite or fixed duration. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::LeaseDurationType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Fixed</edgelabel>
+          <edgelabel>Infinite</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="355" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="355" bodyend="374"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a0641ad89e66ca14510fe2369a6e4536c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>Fixed</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a549549136536dcf463c316a7fae8235a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>Infinite</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a8ca6225c22935a37bb6ae0aaee459971" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>LeaseDurationType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1ae392b0d9d34b401419313114a252c090" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>LeaseDurationType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1af15faa16ea7e3a3e4f74a446b732468e" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1a3659ff6b7aa048d199fd49a05cdf4fbe" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1ae40c12b0be353998b850320806dd9ae4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type_1aa512c7721186b149d0c8184ae5e583e4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::LeaseDurationType</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

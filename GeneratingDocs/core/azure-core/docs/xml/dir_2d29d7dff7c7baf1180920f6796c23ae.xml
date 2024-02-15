@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_2d29d7dff7c7baf1180920f6796c23ae" kind="dir">
+    <compoundname>src/http</compoundname>
+    <innerdir refid="dir_f375df7cdb07aec5e8f5ec64fd47cac7">src/http/curl</innerdir>
+    <innerdir refid="dir_a7bb69ec52c5df340e69756891192a78">src/http/winhttp</innerdir>
+    <innerfile refid="bearer__token__authentication__policy_8cpp">bearer_token_authentication_policy.cpp</innerfile>
+    <innerfile refid="http_8cpp">http.cpp</innerfile>
+    <innerfile refid="http__sanitizer_8cpp">http_sanitizer.cpp</innerfile>
+    <innerfile refid="log__policy_8cpp">log_policy.cpp</innerfile>
+    <innerfile refid="policy_8cpp">policy.cpp</innerfile>
+    <innerfile refid="raw__response_8cpp">raw_response.cpp</innerfile>
+    <innerfile refid="request_8cpp">request.cpp</innerfile>
+    <innerfile refid="request__activity__policy_8cpp">request_activity_policy.cpp</innerfile>
+    <innerfile refid="retry__policy_8cpp">retry_policy.cpp</innerfile>
+    <innerfile refid="telemetry__policy_8cpp">telemetry_policy.cpp</innerfile>
+    <innerfile refid="transport__policy_8cpp">transport_policy.cpp</innerfile>
+    <innerfile refid="url_8cpp">url.cpp</innerfile>
+    <innerfile refid="user__agent_8cpp">user_agent.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/http/"/>
+  </compounddef>
+</doxygen>

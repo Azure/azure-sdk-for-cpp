@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::GeoReplication</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_1aaa280ebe3888afcb3a4a9fd7ebdb2f06" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status" kindref="compound">GeoReplicationStatus</ref></type>
+        <definition>GeoReplicationStatus Azure::Storage::Blobs::Models::GeoReplication::Status</definition>
+        <argsstring></argsstring>
+        <name>Status</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplication::Status</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The status of the secondary location. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="282" column="28" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_1a8b8a1ee8ec8a50a1442631c010ba2dc4" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; DateTime &gt;</type>
+        <definition>Nullable&lt;DateTime&gt; Azure::Storage::Blobs::Models::GeoReplication::LastSyncedOn</definition>
+        <argsstring></argsstring>
+        <name>LastSyncedOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::GeoReplication::LastSyncedOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A GMT date/time value, to the second. All primary writes preceding this value are guaranteed to be available for read operations at the secondary. Primary writes after this point in time may or may not be available for reads. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="288" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="288" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Geo-Replication information for the Secondary Storage Service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::GeoReplication</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Status</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::GeoReplicationStatus</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Bootstrap</edgelabel>
+          <edgelabel>Live</edgelabel>
+          <edgelabel>Unavailable</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="277" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="278" bodyend="289"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_1a8b8a1ee8ec8a50a1442631c010ba2dc4" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplication</scope><name>LastSyncedOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_geo_replication_1aaa280ebe3888afcb3a4a9fd7ebdb2f06" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::GeoReplication</scope><name>Status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

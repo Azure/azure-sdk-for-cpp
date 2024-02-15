@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="logger_8hpp" kind="file" language="C++">
+    <compoundname>logger.hpp</compoundname>
+    <includes local="no">functional</includes>
+    <includes local="no">string</includes>
+    <includedby refid="core_8hpp" local="yes">inc/azure/core.hpp</includedby>
+    <includedby refid="log_8hpp" local="yes">inc/azure/core/internal/diagnostics/log.hpp</includedby>
+    <includedby refid="win__http__transport_8cpp" local="yes">src/http/winhttp/win_http_transport.cpp</includedby>
+    <includedby refid="logger_8cpp" local="yes">src/logger.cpp</includedby>
+    <includedby refid="environment__log__level__listener_8hpp" local="yes">src/private/environment_log_level_listener.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>inc/azure/core/diagnostics/logger.hpp</label>
+        <link refid="logger_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>functional</label>
+      </node>
+      <node id="3">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core.hpp</label>
+        <link refid="core_8hpp_source"/>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/diagnostics/logger.hpp</label>
+        <link refid="logger_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/internal/diagnostics/log.hpp</label>
+        <link refid="log_8hpp_source"/>
+      </node>
+      <node id="4">
+        <label>src/private/environment_log_level_listener.hpp</label>
+        <link refid="environment__log__level__listener_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger" prot="public">Azure::Core::Diagnostics::Logger</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_diagnostics">Azure::Core::Diagnostics</innernamespace>
+    <briefdescription>
+<para>Handling log messages from <ref refid="namespace_azure" kindref="compound">Azure</ref> SDK. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;functional&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_azure" kindref="compound">Azure</ref><sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Diagnostics<sp/>{</highlight></codeline>
+<codeline lineno="18" refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger" kindref="compound">Logger</ref><sp/>final<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/core/azure-core/src/main/java/com/azure/core/util/logging/LogLevel.java</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" kindref="member">Level</ref><sp/>:<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569ad4a9fa383ab700c5bdd6f31cf7df0faf" kindref="member">Verbose</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a5391f9a882a54c787b206138ed6d28b0" kindref="member">Informational</ref><sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a0eaadb4fcb48a0a0ed7bc9868be9fbaa" kindref="member">Warning</ref><sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a902b0d55fddef6f8d651fe1035b7d4bd" kindref="member">Error</ref><sp/>=<sp/>4,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a6e5b3340f691b3003ce0c0f4354d74b3" kindref="member">SetListener</ref>(std::function&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">(<ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" kindref="member">Level</ref><sp/>level,<sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>message)&gt;<sp/>listener);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a04c04d487a84eb71da1951acff3a6660" kindref="member">SetLevel</ref>(<ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" kindref="member">Level</ref><sp/>level);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger" kindref="compound">Logger</ref>()<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger" kindref="compound">~Logger</ref>()<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Diagnostics</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/diagnostics/logger.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_5aa8da9880e3aea594defbce06a314ae" kind="dir">
+    <compoundname>inc/azure/core/http</compoundname>
+    <innerdir refid="dir_0b7bac4e7418249bab601828e98356c2">inc/azure/core/http/policies</innerdir>
+    <innerfile refid="curl__transport_8hpp">curl_transport.hpp</innerfile>
+    <innerfile refid="http_8hpp">http.hpp</innerfile>
+    <innerfile refid="http__status__code_8hpp">http_status_code.hpp</innerfile>
+    <innerfile refid="raw__response_8hpp">raw_response.hpp</innerfile>
+    <innerfile refid="transport_8hpp">transport.hpp</innerfile>
+    <innerfile refid="win__http__transport_8hpp">win_http_transport.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/core/http/"/>
+  </compounddef>
+</doxygen>

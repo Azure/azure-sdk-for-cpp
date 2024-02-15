@@ -1,0 +1,550 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="blob__sas__builder_8cpp" kind="file" language="C++">
+    <compoundname>blob_sas_builder.cpp</compoundname>
+    <includes refid="blob__sas__builder_8hpp" local="yes">azure/storage/blobs/blob_sas_builder.hpp</includes>
+    <includes local="no">azure/core/http/http.hpp</includes>
+    <includes local="no">azure/storage/common/crypt.hpp</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>azure/storage/blobs/blob_options.hpp</label>
+        <link refid="blob__options_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>azure/storage/blobs/blob_responses.hpp</label>
+        <link refid="blob__responses_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>azure/storage/blobs/blob_sas_builder.hpp</label>
+        <link refid="blob__sas__builder_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>azure/storage/blobs/rest_client.hpp</label>
+        <link refid="rest__client_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>src/blob_sas_builder.cpp</label>
+        <link refid="blob__sas__builder_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>azure/core/azure_assert.hpp</label>
+      </node>
+      <node id="6">
+        <label>azure/core/case_insensitive_containers.hpp</label>
+      </node>
+      <node id="7">
+        <label>azure/core/context.hpp</label>
+      </node>
+      <node id="8">
+        <label>azure/core/datetime.hpp</label>
+      </node>
+      <node id="9">
+        <label>azure/core/etag.hpp</label>
+      </node>
+      <node id="10">
+        <label>azure/core/http/http.hpp</label>
+      </node>
+      <node id="24">
+        <label>azure/core/internal/client_options.hpp</label>
+      </node>
+      <node id="25">
+        <label>azure/core/internal/extendable_enumeration.hpp</label>
+      </node>
+      <node id="11">
+        <label>azure/core/internal/http/pipeline.hpp</label>
+      </node>
+      <node id="12">
+        <label>azure/core/io/body_stream.hpp</label>
+      </node>
+      <node id="26">
+        <label>azure/core/match_conditions.hpp</label>
+      </node>
+      <node id="27">
+        <label>azure/core/modified_conditions.hpp</label>
+      </node>
+      <node id="13">
+        <label>azure/core/nullable.hpp</label>
+      </node>
+      <node id="33">
+        <label>azure/core/operation.hpp</label>
+      </node>
+      <node id="34">
+        <label>azure/core/paged_response.hpp</label>
+      </node>
+      <node id="14">
+        <label>azure/core/response.hpp</label>
+      </node>
+      <node id="15">
+        <label>azure/core/url.hpp</label>
+      </node>
+      <node id="16">
+        <label>azure/storage/blobs/dll_import_export.hpp</label>
+      </node>
+      <node id="28">
+        <label>azure/storage/common/access_conditions.hpp</label>
+      </node>
+      <node id="36">
+        <label>azure/storage/common/account_sas_builder.hpp</label>
+      </node>
+      <node id="29">
+        <label>azure/storage/common/crypt.hpp</label>
+      </node>
+      <node id="17">
+        <label>azure/storage/common/storage_common.hpp</label>
+      </node>
+      <node id="30">
+        <label>chrono</label>
+      </node>
+      <node id="18">
+        <label>cstdint</label>
+      </node>
+      <node id="19">
+        <label>map</label>
+      </node>
+      <node id="20">
+        <label>memory</label>
+      </node>
+      <node id="31">
+        <label>numeric</label>
+      </node>
+      <node id="21">
+        <label>string</label>
+      </node>
+      <node id="35">
+        <label>thread</label>
+      </node>
+      <node id="22">
+        <label>type_traits</label>
+      </node>
+      <node id="23">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage">Azure::Storage</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_storage_1_1_sas">Azure::Storage::Sas</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;azure/storage/blobs/blob_sas_builder.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/http/http.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/storage/common/crypt.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>cSpell:ignore<sp/>rscc,<sp/>rscd,<sp/>rsce,<sp/>rscl,<sp/>rsct,<sp/>skoid,<sp/>sktid<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Storage<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Sas<sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>SasVersion<sp/>=<sp/>Blobs::_detail::ApiVersion;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>BlobSasResourceToString(BlobSasResource<sp/>resource)</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(resource<sp/>==<sp/>BlobSasResource::BlobContainer)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;c&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(resource<sp/>==<sp/>BlobSasResource::Blob)</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;b&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(resource<sp/>==<sp/>BlobSasResource::BlobSnapshot)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;bs&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(resource<sp/>==<sp/>BlobSasResource::BlobVersion)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;bv&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::invalid_argument(</highlight><highlight class="stringliteral">&quot;Unknown<sp/>BlobSasResource<sp/>value.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>}<sp/></highlight><highlight class="comment">//<sp/>namespace</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a576bd2495f51c20c19c4aa188ff50313" kindref="member">BlobSasBuilder::SetPermissions</ref>(BlobContainerSasPermissions<sp/>permissions)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>Permissions.clear();</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>order<sp/>matters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::Read)<sp/>==<sp/>BlobContainerSasPermissions::Read)</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;r&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::Add)<sp/>==<sp/>BlobContainerSasPermissions::Add)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;a&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::Create)<sp/>==<sp/>BlobContainerSasPermissions::Create)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;c&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::Write)<sp/>==<sp/>BlobContainerSasPermissions::Write)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::Delete)<sp/>==<sp/>BlobContainerSasPermissions::Delete)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;d&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::DeleteVersion)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>==<sp/>BlobContainerSasPermissions::DeleteVersion)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::PermanentDelete)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>==<sp/>BlobContainerSasPermissions::PermanentDelete)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::List)<sp/>==<sp/>BlobContainerSasPermissions::List)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;l&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::Tags)<sp/>==<sp/>BlobContainerSasPermissions::Tags)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;t&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobContainerSasPermissions::SetImmutabilityPolicy)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>==<sp/>BlobContainerSasPermissions::SetImmutabilityPolicy)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;i&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a576bd2495f51c20c19c4aa188ff50313" kindref="member">BlobSasBuilder::SetPermissions</ref>(BlobSasPermissions<sp/>permissions)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>Permissions.clear();</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>order<sp/>matters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::Read)<sp/>==<sp/>BlobSasPermissions::Read)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;r&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::Add)<sp/>==<sp/>BlobSasPermissions::Add)</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;a&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::Create)<sp/>==<sp/>BlobSasPermissions::Create)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;c&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::Write)<sp/>==<sp/>BlobSasPermissions::Write)</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::Delete)<sp/>==<sp/>BlobSasPermissions::Delete)</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;d&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::DeleteVersion)<sp/>==<sp/>BlobSasPermissions::DeleteVersion)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::PermanentDelete)<sp/>==<sp/>BlobSasPermissions::PermanentDelete)</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::Tags)<sp/>==<sp/>BlobSasPermissions::Tags)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;t&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((permissions<sp/>&amp;<sp/>BlobSasPermissions::SetImmutabilityPolicy)</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>==<sp/>BlobSasPermissions::SetImmutabilityPolicy)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Permissions<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;i&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a9fa261c75b49cf2ed22c689df90b0fa9" kindref="member">BlobSasBuilder::GenerateSasToken</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>StorageSharedKeyCredential&amp;<sp/>credential)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>canonicalName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;/blob/&quot;</highlight><highlight class="normal"><sp/>+<sp/>credential.AccountName<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1af70c9f6e9aaae4b29c153c713f25cc7f" kindref="member">BlobContainerName</ref>;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::Blob<sp/>||<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobSnapshot</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>||<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobVersion)</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>canonicalName<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;/&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5da56debca7f3a3691f9f197cf893a68" kindref="member">BlobName</ref>;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>protocol<sp/>=<sp/>_detail::SasProtocolToString(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5e1d5fc0f61dfb9018745da8411fdd63" kindref="member">Protocol</ref>);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>resource<sp/>=<sp/>BlobSasResourceToString(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref>);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>snapshotVersion;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobSnapshot)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>snapshotVersion<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a4a67c781a007cc4c068b5363db5a082e" kindref="member">Snapshot</ref>;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobVersion)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>snapshotVersion<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aefd5551b5f6f9acca91b68887d817f3e" kindref="member">BlobVersionId</ref>;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>startsOnStr<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a54ead79e95c82f7e19f670b3945ca4b9" kindref="member">StartsOn</ref>.HasValue()</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a54ead79e95c82f7e19f670b3945ca4b9" kindref="member">StartsOn</ref>.Value().ToString(</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::DateTime::DateFormat::Rfc3339,<sp/>Azure::DateTime::TimeFractionFormat::Truncate)</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>expiresOnStr<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a7013729acb32beb758e1c84fe053598b" kindref="member">Identifier</ref>.empty()</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a86e11b38e3bd588addd5ffb0b7ccdb65" kindref="member">ExpiresOn</ref>.ToString(</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::DateTime::DateFormat::Rfc3339,<sp/>Azure::DateTime::TimeFractionFormat::Truncate)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>stringToSign<sp/>=<sp/>Permissions<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>startsOnStr<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>expiresOnStr<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>canonicalName<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a7013729acb32beb758e1c84fe053598b" kindref="member">Identifier</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.HasValue()<sp/>?<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.Value()<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>protocol<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>SasVersion<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>resource<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>snapshotVersion<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" kindref="member">EncryptionScope</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" kindref="member">CacheControl</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" kindref="member">ContentDisposition</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" kindref="member">ContentEncoding</ref></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" kindref="member">ContentLanguage</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" kindref="member">ContentType</ref>;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>signature<sp/>=<sp/>Azure::Core::Convert::Base64Encode(_internal::HmacSha256(</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;uint8_t&gt;(stringToSign.begin(),<sp/>stringToSign.end()),</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Core::Url<sp/>builder;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sv&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(SasVersion));</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;spr&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(protocol));</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!startsOnStr.empty())</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;st&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(startsOnStr));</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!expiresOnStr.empty())</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;se&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(expiresOnStr));</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.HasValue())</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sip&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.Value()));</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a7013729acb32beb758e1c84fe053598b" kindref="member">Identifier</ref>.empty())</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;si&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a7013729acb32beb758e1c84fe053598b" kindref="member">Identifier</ref>));</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sr&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(resource));</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Permissions.empty())</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sp&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(Permissions));</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sig&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(signature));</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" kindref="member">CacheControl</ref>.empty())</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rscc&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" kindref="member">CacheControl</ref>));</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" kindref="member">ContentDisposition</ref>.empty())</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rscd&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" kindref="member">ContentDisposition</ref>));</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" kindref="member">ContentEncoding</ref>.empty())</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rsce&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" kindref="member">ContentEncoding</ref>));</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" kindref="member">ContentLanguage</ref>.empty())</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rscl&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" kindref="member">ContentLanguage</ref>));</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" kindref="member">ContentType</ref>.empty())</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rsct&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" kindref="member">ContentType</ref>));</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" kindref="member">EncryptionScope</ref>.empty())</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;ses&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" kindref="member">EncryptionScope</ref>));</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>builder.GetAbsoluteUrl();</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a9fa261c75b49cf2ed22c689df90b0fa9" kindref="member">BlobSasBuilder::GenerateSasToken</ref>(</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Blobs::Models::UserDelegationKey&amp;<sp/>userDelegationKey,</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>accountName)</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>canonicalName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;/blob/&quot;</highlight><highlight class="normal"><sp/>+<sp/>accountName<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1af70c9f6e9aaae4b29c153c713f25cc7f" kindref="member">BlobContainerName</ref>;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::Blob<sp/>||<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobSnapshot</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>||<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobVersion)</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>canonicalName<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;/&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5da56debca7f3a3691f9f197cf893a68" kindref="member">BlobName</ref>;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>protocol<sp/>=<sp/>_detail::SasProtocolToString(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a5e1d5fc0f61dfb9018745da8411fdd63" kindref="member">Protocol</ref>);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>resource<sp/>=<sp/>BlobSasResourceToString(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref>);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>snapshotVersion;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobSnapshot)</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>snapshotVersion<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a4a67c781a007cc4c068b5363db5a082e" kindref="member">Snapshot</ref>;</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ad618d55dbdf5655c51711c646851dbb7" kindref="member">Resource</ref><sp/>==<sp/>BlobSasResource::BlobVersion)</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>snapshotVersion<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aefd5551b5f6f9acca91b68887d817f3e" kindref="member">BlobVersionId</ref>;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>startsOnStr<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a54ead79e95c82f7e19f670b3945ca4b9" kindref="member">StartsOn</ref>.HasValue()</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a54ead79e95c82f7e19f670b3945ca4b9" kindref="member">StartsOn</ref>.Value().ToString(</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::DateTime::DateFormat::Rfc3339,<sp/>Azure::DateTime::TimeFractionFormat::Truncate)</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>expiresOnStr<sp/>=<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a86e11b38e3bd588addd5ffb0b7ccdb65" kindref="member">ExpiresOn</ref>.ToString(</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::DateTime::DateFormat::Rfc3339,<sp/>Azure::DateTime::TimeFractionFormat::Truncate);</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>signedStartsOnStr<sp/>=<sp/>userDelegationKey.SignedStartsOn.ToString(</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::DateTime::DateFormat::Rfc3339,<sp/>Azure::DateTime::TimeFractionFormat::Truncate);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>signedExpiresOnStr<sp/>=<sp/>userDelegationKey.SignedExpiresOn.ToString(</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::DateTime::DateFormat::Rfc3339,<sp/>Azure::DateTime::TimeFractionFormat::Truncate);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>stringToSign<sp/>=<sp/>Permissions<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>startsOnStr<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>expiresOnStr<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>canonicalName<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>userDelegationKey.SignedObjectId<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>userDelegationKey.SignedTenantId<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>signedStartsOnStr<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>signedExpiresOnStr</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>userDelegationKey.SignedService<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>userDelegationKey.SignedVersion</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n\n\n\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.HasValue()<sp/>?<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.Value()<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>protocol<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>SasVersion<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>resource<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/>snapshotVersion<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" kindref="member">EncryptionScope</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" kindref="member">CacheControl</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" kindref="member">ContentDisposition</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" kindref="member">ContentEncoding</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" kindref="member">ContentLanguage</ref></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" kindref="member">ContentType</ref>;</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>signature<sp/>=<sp/>Azure::Core::Convert::Base64Encode(_internal::HmacSha256(</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;uint8_t&gt;(stringToSign.begin(),<sp/>stringToSign.end()),</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Azure::Core::Convert::Base64Decode(userDelegationKey.Value)));</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/>Azure::Core::Url<sp/>builder;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sv&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(SasVersion));</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sr&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(resource));</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!startsOnStr.empty())</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;st&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(startsOnStr));</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;se&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(expiresOnStr));</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sp&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(Permissions));</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.HasValue())</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sip&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aa223b9b01dafc76ac3e1808147424817" kindref="member">IPRange</ref>.Value()));</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;spr&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(protocol));</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;skoid&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(userDelegationKey.SignedObjectId));</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;sktid&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(userDelegationKey.SignedTenantId));</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;skt&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(signedStartsOnStr));</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;ske&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(signedExpiresOnStr));</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;sks&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(userDelegationKey.SignedService));</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;skv&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" kindref="member">CacheControl</ref>.empty())</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rscc&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a6496a6ca13d65a86a2b99581f0fef8c0" kindref="member">CacheControl</ref>));</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" kindref="member">ContentDisposition</ref>.empty())</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rscd&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1aae6806c3a7b307aa98c812aa78d43b5a" kindref="member">ContentDisposition</ref>));</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" kindref="member">ContentEncoding</ref>.empty())</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rsce&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1adf59113b0b7d779cd6be82baf2fb20ed" kindref="member">ContentEncoding</ref>));</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" kindref="member">ContentLanguage</ref>.empty())</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rscl&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a8b7b82089eaccb814f751e7f7895a5ad" kindref="member">ContentLanguage</ref>));</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" kindref="member">ContentType</ref>.empty())</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;rsct&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1a79544effba1a62285d6002e4a679d6eb" kindref="member">ContentType</ref>));</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" kindref="member">EncryptionScope</ref>.empty())</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;ses&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(<ref refid="struct_azure_1_1_storage_1_1_sas_1_1_blob_sas_builder_1ae067f69e0ccdba239e5ef44ce8fa48af" kindref="member">EncryptionScope</ref>));</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/>builder.AppendQueryParameter(</highlight><highlight class="stringliteral">&quot;sig&quot;</highlight><highlight class="normal">,<sp/>_internal::UrlEncodeQueryParameter(signature));</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>builder.GetAbsoluteUrl();</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="326"><highlight class="normal">}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Storage::Sas</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="src/blob_sas_builder.cpp"/>
+  </compounddef>
+</doxygen>

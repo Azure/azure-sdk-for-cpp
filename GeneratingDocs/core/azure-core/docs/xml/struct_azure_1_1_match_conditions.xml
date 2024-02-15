@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_match_conditions" kind="struct" language="C++" prot="public">
+    <compoundname>Azure::MatchConditions</compoundname>
+    <includes refid="match__conditions_8hpp" local="no">match_conditions.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_match_conditions_1a325c57f358adf5053a19e7b82f18eacf" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref></type>
+        <definition>ETag Azure::MatchConditions::IfMatch</definition>
+        <argsstring></argsstring>
+        <name>IfMatch</name>
+        <qualifiedname>Azure::MatchConditions::IfMatch</qualifiedname>
+        <briefdescription>
+<para>Optionally limit requests to resources that match the value specified. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/match_conditions.hpp" line="33" column="8" bodyfile="inc/azure/core/match_conditions.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_match_conditions_1a3d881b70eb6e974c75561b29ba1ac56d" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_e_tag" kindref="compound">ETag</ref></type>
+        <definition>ETag Azure::MatchConditions::IfNoneMatch</definition>
+        <argsstring></argsstring>
+        <name>IfNoneMatch</name>
+        <qualifiedname>Azure::MatchConditions::IfNoneMatch</qualifiedname>
+        <briefdescription>
+<para>Optionally limit requests to resources that do not match the value specified. Specify <ref refid="class_azure_1_1_e_tag_1a5264a49bd00787f15735f3798537b3b2" kindref="member">ETag::Any()</ref> to limit requests to resources that do not exist. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/match_conditions.hpp" line="39" column="8" bodyfile="inc/azure/core/match_conditions.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_azure_1_1_match_conditions_1a36b6ab0609622f36838647b52c8d98b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::MatchConditions::~MatchConditions</definition>
+        <argsstring>()=default</argsstring>
+        <name>~MatchConditions</name>
+        <qualifiedname>Azure::MatchConditions::~MatchConditions</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>MatchConditions</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/match_conditions.hpp" line="27" column="11"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Specifies HTTP options for conditional requests. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::ETag</label>
+        <link refid="class_azure_1_1_e_tag"/>
+      </node>
+      <node id="1">
+        <label>Azure::MatchConditions</label>
+        <link refid="struct_azure_1_1_match_conditions"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>IfMatch</edgelabel>
+          <edgelabel>IfNoneMatch</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/match_conditions.hpp" line="21" column="1" bodyfile="inc/azure/core/match_conditions.hpp" bodystart="22" bodyend="40"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_match_conditions_1a325c57f358adf5053a19e7b82f18eacf" prot="public" virt="non-virtual"><scope>Azure::MatchConditions</scope><name>IfMatch</name></member>
+      <member refid="struct_azure_1_1_match_conditions_1a3d881b70eb6e974c75561b29ba1ac56d" prot="public" virt="non-virtual"><scope>Azure::MatchConditions</scope><name>IfNoneMatch</name></member>
+      <member refid="struct_azure_1_1_match_conditions_1a36b6ab0609622f36838647b52c8d98b4" prot="public" virt="virtual"><scope>Azure::MatchConditions</scope><name>~MatchConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

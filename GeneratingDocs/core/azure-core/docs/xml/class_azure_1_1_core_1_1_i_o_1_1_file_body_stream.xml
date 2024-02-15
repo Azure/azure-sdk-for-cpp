@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::IO::FileBodyStream</compoundname>
+    <basecompoundref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" prot="public" virt="non-virtual">Azure::Core::IO::BodyStream</basecompoundref>
+    <includes refid="body__stream_8hpp" local="no">body_stream.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1aa0822bda8c457c95c6fb0d3600a8c190" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; _internal::RandomAccessFileBodyStream &gt;</type>
+        <definition>std::unique_ptr&lt;_internal::RandomAccessFileBodyStream&gt; Azure::Core::IO::FileBodyStream::m_randomAccessFileBodyStream</definition>
+        <argsstring></argsstring>
+        <name>m_randomAccessFileBodyStream</name>
+        <qualifiedname>Azure::Core::IO::FileBodyStream::m_randomAccessFileBodyStream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="256" column="21" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="256" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1adf94a325fdd49c9ae5258e3dbbd85699" prot="private" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t FileBodyStream::OnRead</definition>
+        <argsstring>(uint8_t *buffer, size_t count, Azure::Core::Context const &amp;context) override</argsstring>
+        <name>OnRead</name>
+        <qualifiedname>Azure::Core::IO::FileBodyStream::OnRead</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a806f13d7e3fa1cc91b4b316ccd164d49">OnRead</reimplements>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_context" kindref="compound">Azure::Core::Context</ref> const &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Read portion of data into a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>This is the <computeroutput>OnRead</computeroutput> implementation that all derived classes need to provide.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a byte buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer to read the data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A context to control the request lifetime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of bytes read. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="258" column="12" bodyfile="src/io/body_stream.cpp" bodystart="187" bodyend="190"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a31798d744f57846908d91dbbb1ae8d83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FileBodyStream::FileBodyStream</definition>
+        <argsstring>(const std::string &amp;filename)</argsstring>
+        <name>FileBodyStream</name>
+        <qualifiedname>Azure::Core::IO::FileBodyStream::FileBodyStream</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>filename</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>FileBodyStream</computeroutput> from a file name. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>filename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to a file name string used to identify the file, which needs to have the necessary file path specified to locate the file.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="remark"><para>The <ref refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream" kindref="compound">Azure::Core::IO::FileBodyStream</ref> owns the file object and is responsible for opening and closing the file.</para>
+</simplesect>
+<simplesect kind="remark"><para>Do not write to the file while it is being used by the stream. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="272" column="5" bodyfile="src/io/body_stream.cpp" bodystart="94" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1af7ef6faea4939b9e1d789f41aa019d99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FileBodyStream::~FileBodyStream</definition>
+        <argsstring>()</argsstring>
+        <name>~FileBodyStream</name>
+        <qualifiedname>Azure::Core::IO::FileBodyStream::~FileBodyStream</qualifiedname>
+        <briefdescription>
+<para>Closes the file and cleans up any resources. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="278" column="5" bodyfile="src/io/body_stream.cpp" bodystart="170" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a6a508b86596a8c482ccf2b50f051a620" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void FileBodyStream::Rewind</definition>
+        <argsstring>() override</argsstring>
+        <name>Rewind</name>
+        <qualifiedname>Azure::Core::IO::FileBodyStream::Rewind</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a52c2ce02e8a7dec1f55276f664c7c8b6">Rewind</reimplements>
+        <briefdescription>
+<para>Rewind seeks the current stream to the start of the file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="281" column="10" bodyfile="src/io/body_stream.cpp" bodystart="192" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a4c9ea3f7f807238a662e75d7fa7e72da" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>int64_t</type>
+        <definition>int64_t FileBodyStream::Length</definition>
+        <argsstring>() const override</argsstring>
+        <name>Length</name>
+        <qualifiedname>Azure::Core::IO::FileBodyStream::Length</qualifiedname>
+        <reimplements refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a2e73f394ca060cf94146e03d5cf46d74">Length</reimplements>
+        <briefdescription>
+<para>Get the length of the data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Used with the HTTP <computeroutput>Content-Length</computeroutput> header. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/io/body_stream.hpp" line="283" column="13" bodyfile="src/io/body_stream.cpp" bodystart="194" bodyend="194"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A concrete implementation of <ref refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kindref="compound">Azure::Core::IO::BodyStream</ref> used for reading data from a file. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::IO::BodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::IO::FileBodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::IO::BodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream"/>
+      </node>
+      <node id="1">
+        <label>Azure::Core::IO::FileBodyStream</label>
+        <link refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/io/body_stream.hpp" line="247" column="3" bodyfile="inc/azure/core/io/body_stream.hpp" bodystart="247" bodyend="284"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a31798d744f57846908d91dbbb1ae8d83" prot="public" virt="non-virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>FileBodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a4c9ea3f7f807238a662e75d7fa7e72da" prot="public" virt="virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>Length</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1aa0822bda8c457c95c6fb0d3600a8c190" prot="private" virt="non-virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>m_randomAccessFileBodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1adf94a325fdd49c9ae5258e3dbbd85699" prot="private" virt="virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>OnRead</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ab7c962004d984d3bd1d32f33e6aa485d" prot="public" virt="non-virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>Read</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ac02611cf3f72c181dcf393c571df6226" prot="public" virt="non-virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>ReadToCount</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a6d2138790b0c79e24f7fbc0f776bb069" prot="public" virt="non-virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>ReadToEnd</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a6a508b86596a8c482ccf2b50f051a620" prot="public" virt="virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>Rewind</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a54e16528af689c00f5190858fff85e92" prot="public" virt="virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>~BodyStream</name></member>
+      <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1af7ef6faea4939b9e1d789f41aa019d99" prot="public" virt="non-virtual"><scope>Azure::Core::IO::FileBodyStream</scope><name>~FileBodyStream</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

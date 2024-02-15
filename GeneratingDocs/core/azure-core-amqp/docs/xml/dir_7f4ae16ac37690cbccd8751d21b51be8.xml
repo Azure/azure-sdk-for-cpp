@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_7f4ae16ac37690cbccd8751d21b51be8" kind="dir">
+    <compoundname>src/models/private</compoundname>
+    <innerdir refid="dir_b7102ff027806dab764db33a4f91f286">src/models/private/performatives</innerdir>
+    <innerfile refid="error__impl_8hpp">error_impl.hpp</innerfile>
+    <innerfile refid="header__impl_8hpp">header_impl.hpp</innerfile>
+    <innerfile refid="message__impl_8hpp">message_impl.hpp</innerfile>
+    <innerfile refid="properties__impl_8hpp">properties_impl.hpp</innerfile>
+    <innerfile refid="source__impl_8hpp">source_impl.hpp</innerfile>
+    <innerfile refid="target__impl_8hpp">target_impl.hpp</innerfile>
+    <innerfile refid="value__impl_8hpp">value_impl.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/models/private/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::BlockListType</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a516d83bd8683711daaed10a5938dffc0" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref></type>
+        <definition>const BlockListType Azure::Storage::Blobs::Models::BlockListType::Committed</definition>
+        <argsstring></argsstring>
+        <name>Committed</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::Committed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref>: Committed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3358" column="61" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3358" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1ad275502e0afd3fc1445065ef8889ebf0" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref></type>
+        <definition>const BlockListType Azure::Storage::Blobs::Models::BlockListType::Uncommitted</definition>
+        <argsstring></argsstring>
+        <name>Uncommitted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::Uncommitted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref>: Uncommitted </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3360" column="61" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3360" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a94d7cf1a31684b6fa59b15ecdd9d6005" prot="public" static="yes" mutable="no">
+        <type>AZ_STORAGE_BLOBS_DLLEXPORT static const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref></type>
+        <definition>const BlockListType Azure::Storage::Blobs::Models::BlockListType::All</definition>
+        <argsstring></argsstring>
+        <name>All</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::All</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constant value of type <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref>: All </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3362" column="61" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3362" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1aad0c744d0b4eb59e41ab66e7003c9f0f" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Storage::Blobs::Models::BlockListType::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3365" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3365" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a80f5345329a64c418b9b85670f81a7d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlockListType::BlockListType</definition>
+        <argsstring>()=default</argsstring>
+        <name>BlockListType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::BlockListType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref> instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3348" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a70f0ce3eb473983b5e79d57606d694f9" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::Models::BlockListType::BlockListType</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>BlockListType</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::BlockListType</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref> from a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3350" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3350" bodyend="3350"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1ad64a838fcffc96e63a42349321fc28c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlockListType::operator==</definition>
+        <argsstring>(const BlockListType &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3352" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3352" bodyend="3352"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a90cc78423710c0dfcc324a2eb4cddbb7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::BlockListType::operator!=</definition>
+        <argsstring>(const BlockListType &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Compares with another <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type" kindref="compound">BlockListType</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3354" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3354" bodyend="3354"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a01ad508ea4cf8c02e6373885fe1f85e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Storage::Blobs::Models::BlockListType::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::BlockListType::ToString</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the value to a string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="3356" column="25" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3356" bodyend="3356"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Specifies whether to return the list of committed blocks, the list of uncommitted blocks, or both lists together. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::BlockListType</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>All</edgelabel>
+          <edgelabel>Committed</edgelabel>
+          <edgelabel>Uncommitted</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="3345" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="3345" bodyend="3366"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a94d7cf1a31684b6fa59b15ecdd9d6005" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>All</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a80f5345329a64c418b9b85670f81a7d8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>BlockListType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a70f0ce3eb473983b5e79d57606d694f9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>BlockListType</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a516d83bd8683711daaed10a5938dffc0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>Committed</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1aad0c744d0b4eb59e41ab66e7003c9f0f" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a90cc78423710c0dfcc324a2eb4cddbb7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1ad64a838fcffc96e63a42349321fc28c1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1a01ad508ea4cf8c02e6373885fe1f85e8" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>ToString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_block_list_type_1ad275502e0afd3fc1445065ef8889ebf0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::BlockListType</scope><name>Uncommitted</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

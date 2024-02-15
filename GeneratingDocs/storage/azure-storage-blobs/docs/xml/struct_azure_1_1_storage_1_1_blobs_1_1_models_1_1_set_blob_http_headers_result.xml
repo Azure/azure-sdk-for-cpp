@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result_1ae46de8a96576a77079184dffc4a003ce" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2058" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2058" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result_1a40a6bbc02adf3bc45725159a402ab3b1" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2064" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2064" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result_1a4c968b576e2b11ebcbbb66f17ab2e812" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int64_t &gt;</type>
+        <definition>Nullable&lt;int64_t&gt; Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult::SequenceNumber</definition>
+        <argsstring></argsstring>
+        <name>SequenceNumber</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult::SequenceNumber</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current sequence number for a page blob. This header is not returned for block blobs or append blobs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="2069" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2069" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a913e1aca81833426ec8b621531c9b4a5" kindref="member">Azure::Storage::Blobs::BlobClient::SetHttpHeaders</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="2052" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="2053" bodyend="2070"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result_1ae46de8a96576a77079184dffc4a003ce" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result_1a40a6bbc02adf3bc45725159a402ab3b1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_set_blob_http_headers_result_1a4c968b576e2b11ebcbbb66f17ab2e812" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::SetBlobHttpHeadersResult</scope><name>SequenceNumber</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,971 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="amqp__value_8hpp" kind="file" language="C++">
+    <compoundname>amqp_value.hpp</compoundname>
+    <includes refid="amqp__header_8hpp" local="yes">amqp_header.hpp</includes>
+    <includes local="no">azure/core/diagnostics/logger.hpp</includes>
+    <includes local="no">azure/core/internal/diagnostics/log.hpp</includes>
+    <includes local="no">azure/core/internal/unique_handle.hpp</includes>
+    <includes local="no">azure/core/uuid.hpp</includes>
+    <includes local="no">array</includes>
+    <includes local="no">chrono</includes>
+    <includes local="no">cstddef</includes>
+    <includes local="no">cstdint</includes>
+    <includes local="no">exception</includes>
+    <includes local="no">functional</includes>
+    <includes local="no">list</includes>
+    <includes local="no">map</includes>
+    <includes local="no">string</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="amqp_8hpp" local="yes">inc/azure/core/amqp.hpp</includedby>
+    <includedby refid="connection_8hpp" local="yes">inc/azure/core/amqp/internal/connection.hpp</includedby>
+    <includedby refid="endpoint_8hpp" local="yes">inc/azure/core/amqp/internal/endpoint.hpp</includedby>
+    <includedby refid="link_8hpp" local="yes">inc/azure/core/amqp/internal/link.hpp</includedby>
+    <includedby refid="message__receiver_8hpp" local="yes">inc/azure/core/amqp/internal/message_receiver.hpp</includedby>
+    <includedby refid="message__sender_8hpp" local="yes">inc/azure/core/amqp/internal/message_sender.hpp</includedby>
+    <includedby refid="amqp__error_8hpp" local="yes">inc/azure/core/amqp/internal/models/amqp_error.hpp</includedby>
+    <includedby refid="message__source_8hpp" local="yes">inc/azure/core/amqp/internal/models/message_source.hpp</includedby>
+    <includedby refid="message__target_8hpp" local="yes">inc/azure/core/amqp/internal/models/message_target.hpp</includedby>
+    <includedby refid="messaging__values_8hpp" local="yes">inc/azure/core/amqp/internal/models/messaging_values.hpp</includedby>
+    <includedby refid="amqp__transfer_8hpp" local="yes">inc/azure/core/amqp/internal/models/performatives/amqp_transfer.hpp</includedby>
+    <includedby refid="session_8hpp" local="yes">inc/azure/core/amqp/internal/session.hpp</includedby>
+    <includedby refid="amqp__message_8hpp" local="yes">inc/azure/core/amqp/models/amqp_message.hpp</includedby>
+    <includedby refid="amqp__properties_8hpp" local="yes">inc/azure/core/amqp/models/amqp_properties.hpp</includedby>
+    <includedby refid="connection_8cpp" local="yes">src/amqp/connection.cpp</includedby>
+    <includedby refid="link__impl_8hpp" local="yes">src/amqp/private/link_impl.hpp</includedby>
+    <includedby refid="amqp__detach_8cpp" local="yes">src/models/amqp_detach.cpp</includedby>
+    <includedby refid="amqp__error_8cpp" local="yes">src/models/amqp_error.cpp</includedby>
+    <includedby refid="amqp__header_8cpp" local="yes">src/models/amqp_header.cpp</includedby>
+    <includedby refid="amqp__message_8cpp" local="yes">src/models/amqp_message.cpp</includedby>
+    <includedby refid="amqp__properties_8cpp" local="yes">src/models/amqp_properties.cpp</includedby>
+    <includedby refid="amqp__transfer_8cpp" local="yes">src/models/amqp_transfer.cpp</includedby>
+    <includedby refid="amqp__value_8cpp" local="yes">src/models/amqp_value.cpp</includedby>
+    <includedby refid="value__impl_8hpp" local="yes">src/models/private/value_impl.hpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>amqp_header.hpp</label>
+        <link refid="amqp__header_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/amqp/models/amqp_value.hpp</label>
+        <link refid="amqp__value_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>array</label>
+      </node>
+      <node id="10">
+        <label>azure/core/diagnostics/logger.hpp</label>
+      </node>
+      <node id="11">
+        <label>azure/core/internal/diagnostics/log.hpp</label>
+      </node>
+      <node id="12">
+        <label>azure/core/internal/unique_handle.hpp</label>
+      </node>
+      <node id="3">
+        <label>azure/core/nullable.hpp</label>
+      </node>
+      <node id="13">
+        <label>azure/core/uuid.hpp</label>
+      </node>
+      <node id="4">
+        <label>chrono</label>
+      </node>
+      <node id="5">
+        <label>cstddef</label>
+      </node>
+      <node id="6">
+        <label>cstdint</label>
+      </node>
+      <node id="7">
+        <label>exception</label>
+      </node>
+      <node id="15">
+        <label>functional</label>
+      </node>
+      <node id="16">
+        <label>list</label>
+      </node>
+      <node id="17">
+        <label>map</label>
+      </node>
+      <node id="8">
+        <label>stdexcept</label>
+      </node>
+      <node id="18">
+        <label>string</label>
+      </node>
+      <node id="9">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core/amqp.hpp</label>
+        <link refid="amqp_8hpp_source"/>
+      </node>
+      <node id="13">
+        <label>inc/azure/core/amqp/internal/claims_based_security.hpp</label>
+        <link refid="claims__based__security_8hpp_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/amqp/internal/connection.hpp</label>
+        <link refid="connection_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>inc/azure/core/amqp/internal/endpoint.hpp</label>
+        <link refid="endpoint_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>inc/azure/core/amqp/internal/link.hpp</label>
+        <link refid="link_8hpp_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>inc/azure/core/amqp/internal/management.hpp</label>
+        <link refid="management_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>inc/azure/core/amqp/internal/message_receiver.hpp</label>
+        <link refid="message__receiver_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>inc/azure/core/amqp/internal/message_sender.hpp</label>
+        <link refid="message__sender_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>inc/azure/core/amqp/internal/models/amqp_error.hpp</label>
+        <link refid="amqp__error_8hpp_source"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>inc/azure/core/amqp/internal/models/message_source.hpp</label>
+        <link refid="message__source_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>inc/azure/core/amqp/internal/models/message_target.hpp</label>
+        <link refid="message__target_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>inc/azure/core/amqp/internal/models/messaging_values.hpp</label>
+        <link refid="messaging__values_8hpp_source"/>
+      </node>
+      <node id="19">
+        <label>inc/azure/core/amqp/internal/models/performatives/amqp_detach.hpp</label>
+        <link refid="amqp__detach_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>inc/azure/core/amqp/internal/models/performatives/amqp_transfer.hpp</label>
+        <link refid="amqp__transfer_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>inc/azure/core/amqp/internal/session.hpp</label>
+        <link refid="session_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>inc/azure/core/amqp/models/amqp_message.hpp</label>
+        <link refid="amqp__message_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>inc/azure/core/amqp/models/amqp_properties.hpp</label>
+        <link refid="amqp__properties_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/amqp/models/amqp_value.hpp</label>
+        <link refid="amqp__value_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>src/amqp/private/claims_based_security_impl.hpp</label>
+        <link refid="claims__based__security__impl_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>src/amqp/private/connection_impl.hpp</label>
+        <link refid="connection__impl_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>src/amqp/private/link_impl.hpp</label>
+        <link refid="link__impl_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>src/amqp/private/management_impl.hpp</label>
+        <link refid="management__impl_8hpp_source"/>
+      </node>
+      <node id="8">
+        <label>src/amqp/private/message_receiver_impl.hpp</label>
+        <link refid="message__receiver__impl_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>src/amqp/private/message_sender_impl.hpp</label>
+        <link refid="message__sender__impl_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>src/amqp/private/session_impl.hpp</label>
+        <link refid="session__impl_8hpp_source"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>src/models/private/error_impl.hpp</label>
+        <link refid="error__impl_8hpp_source"/>
+      </node>
+      <node id="30">
+        <label>src/models/private/message_impl.hpp</label>
+        <link refid="message__impl_8hpp_source"/>
+      </node>
+      <node id="20">
+        <label>src/models/private/performatives/detach_impl.hpp</label>
+        <link refid="detach__impl_8hpp_source"/>
+      </node>
+      <node id="28">
+        <label>src/models/private/performatives/transfer_impl.hpp</label>
+        <link refid="transfer__impl_8hpp_source"/>
+      </node>
+      <node id="32">
+        <label>src/models/private/properties_impl.hpp</label>
+        <link refid="properties__impl_8hpp_source"/>
+      </node>
+      <node id="23">
+        <label>src/models/private/source_impl.hpp</label>
+        <link refid="source__impl_8hpp_source"/>
+      </node>
+      <node id="25">
+        <label>src/models/private/target_impl.hpp</label>
+        <link refid="target__impl_8hpp_source"/>
+      </node>
+      <node id="33">
+        <label>src/models/private/value_impl.hpp</label>
+        <link refid="value__impl_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" prot="public">Azure::Core::Amqp::Models::AmqpValue</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" prot="public">Azure::Core::Amqp::Models::AmqpArray</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" prot="public">Azure::Core::Amqp::Models::AmqpMap</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" prot="public">Azure::Core::Amqp::Models::AmqpList</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" prot="public">Azure::Core::Amqp::Models::AmqpBinaryData</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" prot="public">Azure::Core::Amqp::Models::AmqpSymbol</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" prot="public">Azure::Core::Amqp::Models::AmqpTimestamp</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" prot="public">Azure::Core::Amqp::Models::AmqpComposite</innerclass>
+    <innerclass refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" prot="public">Azure::Core::Amqp::Models::AmqpDescribed</innerclass>
+    <innernamespace refid="namespace_azure">Azure</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core">Azure::Core</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp">Azure::Core::Amqp</innernamespace>
+    <innernamespace refid="namespace_azure_1_1_core_1_1_amqp_1_1_models">Azure::Core::Amqp::Models</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;amqp_header.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/diagnostics/logger.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/internal/diagnostics/log.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/internal/unique_handle.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;azure/core/uuid.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;array&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;chrono&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstddef&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdint&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;exception&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;functional&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;list&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;map&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_detail<sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpValueImpl;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpValueFactory;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">}}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models::_detail</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_internal<sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>TerminusDurability<sp/>:<sp/>std::uint32_t</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>None<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>Configuration<sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>UnsettledState<sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Note<sp/>:<sp/>Should<sp/>be<sp/>an<sp/>extendable<sp/>Enumeration.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>TerminusExpiryPolicy</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>LinkDetach,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>SessionEnd,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>ConnectionClose,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>Never,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">}}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models::_internal</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>AmqpValueType</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>Invalid,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>Null,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>Bool,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>Ubyte,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>Ushort,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>Uint,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>Ulong,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>Byte,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>Short,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>Int,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>Long,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>Float,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>Double,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>Char,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>Timestamp,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>Uuid,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>Binary,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>String,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>Symbol,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>List,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>Map,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>Array,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>Described,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>Composite,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>Unknown,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>AmqpValueType<sp/>value);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpArray;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpMap;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpList;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpBinaryData;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpSymbol;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpTimestamp;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpComposite;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpDescribed;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/>final<sp/>{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>()<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">~AmqpValue</ref>();</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref>&amp;&amp;<sp/>that)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ac4c079f91aa2a04defa240fc9f61a3d1" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ac4c079f91aa2a04defa240fc9f61a3d1" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref>&amp;&amp;<sp/>that)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>value);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::uint8_t<sp/>value);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::uint16_t<sp/>value);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::uint32_t<sp/>value);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::uint64_t<sp/>value);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::int8_t<sp/>value);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>value);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::int16_t<sp/>value);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::int32_t<sp/>value);</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::int64_t<sp/>value);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>value);</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>value);</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(</highlight><highlight class="keywordtype">char32_t</highlight><highlight class="normal"><sp/>value);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(Azure::Core::Uuid<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1af306ad4dec39d773feb5e1091e5fe296" kindref="member">operator==</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a362beb6833c1f6fdb3fe3d662fe85985" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a362beb6833c1f6fdb3fe3d662fe85985" kindref="member">operator!=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>==<sp/>that);<sp/>};</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae66032a774e411c626d17b845f312a83" kindref="member">operator&lt;</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpValueType<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a28f919886a954983daecddbf09920501" kindref="member">GetType</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abdcd809a3402b4c3e2afd5a4314abba5" kindref="member">IsNull</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>bool()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::uint8_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::int8_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"></highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>char()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"></highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::uint16_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::int16_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::uint32_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::int32_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"></highlight></codeline>
+<codeline lineno="414"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::uint64_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="415"><highlight class="normal"></highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::int64_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"></highlight></codeline>
+<codeline lineno="430"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>float()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="431"><highlight class="normal"></highlight></codeline>
+<codeline lineno="438"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>double()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"></highlight></codeline>
+<codeline lineno="446"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>char32_t()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="447"><highlight class="normal"></highlight></codeline>
+<codeline lineno="454"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::string()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="455"><highlight class="normal"></highlight></codeline>
+<codeline lineno="462"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>Azure::Core::Uuid()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"></highlight></codeline>
+<codeline lineno="470"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aa98eb64c410f7352d17577e2d3f2c79d" kindref="member">AsList</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="471"><highlight class="normal"></highlight></codeline>
+<codeline lineno="478"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a72414b2e7232230e7b4f7695261286a7" kindref="member">AsMap</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="479"><highlight class="normal"></highlight></codeline>
+<codeline lineno="486"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abec632157f1cf77a93e84374bfe0a464" kindref="member">AsArray</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="487"><highlight class="normal"></highlight></codeline>
+<codeline lineno="494"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a7ef61f75f0949c733c01dcf758039e91" kindref="member">AsBinary</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="495"><highlight class="normal"></highlight></codeline>
+<codeline lineno="502"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a611b5f602609c479436a13c20db5d31f" kindref="member">AsTimestamp</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="503"><highlight class="normal"></highlight></codeline>
+<codeline lineno="510"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a27e4816eec8d78b5f04722659ff6b4be" kindref="member">AsSymbol</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="511"><highlight class="normal"></highlight></codeline>
+<codeline lineno="521"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1ae2c96cbca071a1b208664e1898c3d6bf" kindref="member">AsComposite</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="522"><highlight class="normal"></highlight></codeline>
+<codeline lineno="531"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1abd299756a984fa8f324f5d6ff8e15d99" kindref="member">AsDescribed</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="532"><highlight class="normal"></highlight></codeline>
+<codeline lineno="534"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::vector&lt;uint8_t&gt;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a898b83eab2424637b0963dfe67b61c79" kindref="member">Serialize</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="535"><highlight class="normal"></highlight></codeline>
+<codeline lineno="537"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1acb8efae090a763ae07e8b24fe56e46ef" kindref="member">GetSerializedSize</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="538"><highlight class="normal"></highlight></codeline>
+<codeline lineno="544"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a31c5e53b5a318b01986829076cf144c5" kindref="member">Deserialize</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1a4cbb701654ce1ed415fd713ef7629fcf" kindref="member">uint8_t</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">*<sp/>data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="545"><highlight class="normal"></highlight></codeline>
+<codeline lineno="546"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="548"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value_1aeaeb8d5ef2075026ebecd64911bf1e0f" kindref="member">AmqpValue</ref>(std::unique_ptr&lt;Azure::Core::Amqp::Models::_detail::AmqpValueImpl&gt;&amp;&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="549"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;_detail::AmqpValueImpl&gt;<sp/>m_impl;</highlight></codeline>
+<codeline lineno="550"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">_detail::AmqpValueFactory;</highlight></codeline>
+<codeline lineno="551"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="552"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>AmqpValue<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="553"><highlight class="normal"></highlight></codeline>
+<codeline lineno="554"><highlight class="normal">}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="555"><highlight class="normal"></highlight></codeline>
+<codeline lineno="556"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">_detail<sp/>{</highlight></codeline>
+<codeline lineno="557"><highlight class="normal"></highlight></codeline>
+<codeline lineno="563"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ThisType&gt;<sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AmqpCollectionBase<sp/>{</highlight></codeline>
+<codeline lineno="564"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="565"><highlight class="normal"><sp/><sp/><sp/><sp/>T<sp/>m_value;</highlight></codeline>
+<codeline lineno="566"><highlight class="normal"></highlight></codeline>
+<codeline lineno="567"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal">initializer_type<sp/>=<sp/>std::initializer_list&lt;typename<sp/>T::value_type&gt;;</highlight></codeline>
+<codeline lineno="568"><highlight class="normal"></highlight></codeline>
+<codeline lineno="569"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpCollectionBase(initializer_type<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>initializer)<sp/>:<sp/>m_value{initializer}<sp/>{}</highlight></codeline>
+<codeline lineno="570"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpCollectionBase(T<sp/>initializer)<sp/>:<sp/>m_value{initializer}<sp/>{}</highlight></codeline>
+<codeline lineno="571"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpCollectionBase(){};</highlight></codeline>
+<codeline lineno="572"><highlight class="normal"></highlight></codeline>
+<codeline lineno="573"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="574"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpCollectionBase(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpCollectionBase&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="575"><highlight class="normal"></highlight></codeline>
+<codeline lineno="576"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>assignment<sp/>operator</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="577"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpCollectionBase&amp;<sp/>operator=(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AmqpCollectionBase&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="578"><highlight class="normal"></highlight></codeline>
+<codeline lineno="579"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Move<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="580"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpCollectionBase(AmqpCollectionBase&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="581"><highlight class="normal"></highlight></codeline>
+<codeline lineno="582"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Move<sp/>assignment<sp/>operator</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="583"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpCollectionBase&amp;<sp/>operator=(AmqpCollectionBase&amp;&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="584"><highlight class="normal"></highlight></codeline>
+<codeline lineno="585"><highlight class="normal"><sp/><sp/><sp/><sp/>~AmqpCollectionBase()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="586"><highlight class="normal"></highlight></codeline>
+<codeline lineno="587"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="590"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>T<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>&amp;()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value;<sp/>}</highlight></codeline>
+<codeline lineno="591"><highlight class="normal"></highlight></codeline>
+<codeline lineno="593"><highlight class="normal"><sp/><sp/><sp/><sp/>AmqpValue<sp/>AsAmqpValue()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="594"><highlight class="normal"></highlight></codeline>
+<codeline lineno="596"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::size_type<sp/>size()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.size();<sp/>}</highlight></codeline>
+<codeline lineno="597"><highlight class="normal"></highlight></codeline>
+<codeline lineno="602"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::value_type&amp;<sp/>operator[](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::size_type<sp/>pos)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="603"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="604"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.operator[](pos);</highlight></codeline>
+<codeline lineno="605"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="606"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>push_back(</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::value_type&amp;&amp;<sp/>val)<sp/>{<sp/>m_value.push_back(std::move(val));<sp/>}</highlight></codeline>
+<codeline lineno="607"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::const_iterator<sp/>begin()<sp/>const<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.begin();<sp/>}</highlight></codeline>
+<codeline lineno="608"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::const_iterator<sp/>end()<sp/>const<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.end();<sp/>}</highlight></codeline>
+<codeline lineno="609"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>find(T<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>val)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.find(val);<sp/>}</highlight></codeline>
+<codeline lineno="610"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::value_type*<sp/>data()<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.data();<sp/>}</highlight></codeline>
+<codeline lineno="611"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::value_type*<sp/>data()<sp/>const<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.data();<sp/>}</highlight></codeline>
+<codeline lineno="612"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::value_type&amp;<sp/>at(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T::size_type<sp/>pos)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="613"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="614"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.at(pos);</highlight></codeline>
+<codeline lineno="615"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="616"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>operator&lt;(ThisType<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value<sp/>&lt;<sp/>that.m_value;<sp/>}</highlight></codeline>
+<codeline lineno="617"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>operator==(ThisType<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value<sp/>==<sp/>that.m_value;<sp/>}</highlight></codeline>
+<codeline lineno="618"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>operator!=(ThisType<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value<sp/>!=<sp/>that.m_value;<sp/>}</highlight></codeline>
+<codeline lineno="620"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>empty()<sp/>const<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.empty();<sp/>}</highlight></codeline>
+<codeline lineno="621"><highlight class="normal"></highlight></codeline>
+<codeline lineno="622"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="630"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>_detail::AmqpValueImpl()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="631"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="632"><highlight class="normal">}}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models::_detail</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="633"><highlight class="normal"></highlight></codeline>
+<codeline lineno="634"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Azure<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Core<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Amqp<sp/>{<sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Models<sp/>{</highlight></codeline>
+<codeline lineno="639" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref><sp/>final<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>_detail::AmqpCollectionBase&lt;std::vector&lt;AmqpValue&gt;,<sp/>AmqpArray&gt;<sp/>{</highlight></codeline>
+<codeline lineno="640"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="642" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a9b628d82192b468297f802957408ab96" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a9b628d82192b468297f802957408ab96" kindref="member">AmqpArray</ref>()<sp/>:<sp/>AmqpCollectionBase(){};</highlight></codeline>
+<codeline lineno="643"><highlight class="normal"></highlight></codeline>
+<codeline lineno="645"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a9b628d82192b468297f802957408ab96" kindref="member">AmqpArray</ref>(initializer_type<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values);</highlight></codeline>
+<codeline lineno="646"><highlight class="normal"></highlight></codeline>
+<codeline lineno="648" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af02006be760a10cc524e105f076e3eda" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af02006be760a10cc524e105f076e3eda" kindref="member">~AmqpArray</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="649"><highlight class="normal"></highlight></codeline>
+<codeline lineno="651" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a4747ac5db8e06ff57738363b3a330f80" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a4747ac5db8e06ff57738363b3a330f80" kindref="member">AmqpArray</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="652"><highlight class="normal"></highlight></codeline>
+<codeline lineno="654" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52cd61a003434fe7b3c2db4b7f0932ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52cd61a003434fe7b3c2db4b7f0932ec" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="655"><highlight class="normal"></highlight></codeline>
+<codeline lineno="657" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a12bf8129bf237000ad747ab1e22940a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a12bf8129bf237000ad747ab1e22940a4" kindref="member">AmqpArray</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="658"><highlight class="normal"></highlight></codeline>
+<codeline lineno="660" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af0fd842ac85b6886807fd9290f78db60" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af0fd842ac85b6886807fd9290f78db60" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="661"><highlight class="normal"></highlight></codeline>
+<codeline lineno="671"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a9b628d82192b468297f802957408ab96" kindref="member">AmqpArray</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="672"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="673"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="674"><highlight class="normal"></highlight></codeline>
+<codeline lineno="680" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref><sp/>final</highlight></codeline>
+<codeline lineno="681"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>_detail::AmqpCollectionBase&lt;std::map&lt;AmqpValue,<sp/>AmqpValue&gt;,<sp/>AmqpMap&gt;<sp/>{</highlight></codeline>
+<codeline lineno="682"><highlight class="normal"></highlight></codeline>
+<codeline lineno="683"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="685" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1af2205b0d60a8a0a9fe7d67f938c598cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1af2205b0d60a8a0a9fe7d67f938c598cc" kindref="member">AmqpMap</ref>()<sp/>:<sp/>AmqpCollectionBase(){};</highlight></codeline>
+<codeline lineno="686"><highlight class="normal"></highlight></codeline>
+<codeline lineno="688" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1aba8d3e9c270c63b28285fa8f08cb4b44" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1aba8d3e9c270c63b28285fa8f08cb4b44" kindref="member">AmqpMap</ref>(std::initializer_list&lt;std::map&lt;AmqpValue,<sp/>AmqpValue&gt;::value_type&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values)</highlight></codeline>
+<codeline lineno="689"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>AmqpCollectionBase(values)</highlight></codeline>
+<codeline lineno="690"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="691"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="692"><highlight class="normal"></highlight></codeline>
+<codeline lineno="694" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a495bfd3bcab9184ed78920b98bea7a87" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a495bfd3bcab9184ed78920b98bea7a87" kindref="member">AmqpMap</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="695"><highlight class="normal"></highlight></codeline>
+<codeline lineno="697" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a2b778981a79be0e5ce33263206e1b209" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a2b778981a79be0e5ce33263206e1b209" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="698"><highlight class="normal"></highlight></codeline>
+<codeline lineno="700" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1aaebee47954037bf3a91b8aac012348e5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1aaebee47954037bf3a91b8aac012348e5" kindref="member">AmqpMap</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="701"><highlight class="normal"></highlight></codeline>
+<codeline lineno="703" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1ae8eff65267495676c2430786427dd382" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1ae8eff65267495676c2430786427dd382" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">AmqpMap</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="704"><highlight class="normal"></highlight></codeline>
+<codeline lineno="714"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1af2205b0d60a8a0a9fe7d67f938c598cc" kindref="member">AmqpMap</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="715"><highlight class="normal"></highlight></codeline>
+<codeline lineno="716"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map" kindref="compound">~AmqpMap</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="717"><highlight class="normal"></highlight></codeline>
+<codeline lineno="722" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1ab35ac1e7364d5e80cfce62f261d94aa0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(m_value)::mapped_type&amp;<sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal">[](</highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(m_value)::key_type&amp;&amp;<sp/>keyVal)</highlight></codeline>
+<codeline lineno="723"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="724"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.operator[](std::move(keyVal));</highlight></codeline>
+<codeline lineno="725"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="726"><highlight class="normal"></highlight></codeline>
+<codeline lineno="733"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">...<sp/>ValueTypes&gt;</highlight></codeline>
+<codeline lineno="734" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a9479da96da6a102caef0092db07988a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::pair&lt;</highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(m_value)::iterator,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_map_1a9479da96da6a102caef0092db07988a9" kindref="member">emplace</ref>(ValueTypes&amp;&amp;...<sp/>values)</highlight></codeline>
+<codeline lineno="735"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="736"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value.emplace(std::forward&lt;ValueTypes&gt;(values)...);</highlight></codeline>
+<codeline lineno="737"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="738"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="739"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>AmqpMap<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="740"><highlight class="normal"></highlight></codeline>
+<codeline lineno="744" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref><sp/>final<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>_detail::AmqpCollectionBase&lt;std::vector&lt;AmqpValue&gt;,<sp/>AmqpList&gt;<sp/>{</highlight></codeline>
+<codeline lineno="745"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="746"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>()<sp/>:<sp/>AmqpCollectionBase(){};</highlight></codeline>
+<codeline lineno="747"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">~AmqpList</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="749" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1ab50ee879994cadc52d2780343e0fd14d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1ab50ee879994cadc52d2780343e0fd14d" kindref="member">AmqpList</ref>(std::initializer_list&lt;std::vector&lt;AmqpValue&gt;::value_type&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values)</highlight></codeline>
+<codeline lineno="750"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>AmqpCollectionBase(values)</highlight></codeline>
+<codeline lineno="751"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="752"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="753"><highlight class="normal"></highlight></codeline>
+<codeline lineno="755" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a56a30f9ae6866b75075ca3c973bf4645" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a56a30f9ae6866b75075ca3c973bf4645" kindref="member">AmqpList</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="756"><highlight class="normal"></highlight></codeline>
+<codeline lineno="758" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a6adf47d8565feb7472ac3eaf9d69ad04" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a6adf47d8565feb7472ac3eaf9d69ad04" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="759"><highlight class="normal"></highlight></codeline>
+<codeline lineno="761" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeccfcb032c46f1146762c124ad78b87b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1aeccfcb032c46f1146762c124ad78b87b" kindref="member">AmqpList</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="762"><highlight class="normal"></highlight></codeline>
+<codeline lineno="764" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a9bb512bd8561c05719ddda3cee4322c7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list_1a9bb512bd8561c05719ddda3cee4322c7" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="765"><highlight class="normal"></highlight></codeline>
+<codeline lineno="773"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="774"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="775"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_list" kindref="compound">AmqpList</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="776"><highlight class="normal"></highlight></codeline>
+<codeline lineno="783" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref><sp/>final</highlight></codeline>
+<codeline lineno="784"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>_detail::AmqpCollectionBase&lt;std::vector&lt;std::uint8_t&gt;,<sp/>AmqpBinaryData&gt;<sp/>{</highlight></codeline>
+<codeline lineno="785"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="786"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>()<sp/>:<sp/>AmqpCollectionBase(){};</highlight></codeline>
+<codeline lineno="787"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">~AmqpBinaryData</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="789" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a025a92ebc7f0ee0c0da5ebfe376930f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a025a92ebc7f0ee0c0da5ebfe376930f7" kindref="member">AmqpBinaryData</ref>(initializer_type<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values)<sp/>:<sp/>AmqpCollectionBase(values){};</highlight></codeline>
+<codeline lineno="791" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a2ca2c8927d3d899a9b2ef4116c93fc56" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a2ca2c8927d3d899a9b2ef4116c93fc56" kindref="member">AmqpBinaryData</ref>(std::vector&lt;std::uint8_t&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values)<sp/>:<sp/>AmqpCollectionBase(values){};</highlight></codeline>
+<codeline lineno="792"><highlight class="normal"></highlight></codeline>
+<codeline lineno="794" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a0ccd18c704d1e57ee3017299838b3dde" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a0ccd18c704d1e57ee3017299838b3dde" kindref="member">AmqpBinaryData</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="795"><highlight class="normal"></highlight></codeline>
+<codeline lineno="797" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a111fe76cddad90c6f01884d0aa912df6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a111fe76cddad90c6f01884d0aa912df6" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="798"><highlight class="normal"></highlight></codeline>
+<codeline lineno="800" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a9d69397e1ace81489b6c61d13d3fcffd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1a9d69397e1ace81489b6c61d13d3fcffd" kindref="member">AmqpBinaryData</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="801"><highlight class="normal"></highlight></codeline>
+<codeline lineno="803" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ad5692f2e6c9321bee661d25aa650a120" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ad5692f2e6c9321bee661d25aa650a120" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="804"><highlight class="normal"></highlight></codeline>
+<codeline lineno="806" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab58435dba93389225699a80380c4c526" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data_1ab58435dba93389225699a80380c4c526" kindref="member">operator=</ref>(std::vector&lt;std::uint8_t&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values)</highlight></codeline>
+<codeline lineno="807"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="808"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>m_value<sp/>=<sp/>values;</highlight></codeline>
+<codeline lineno="809"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="810"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="811"><highlight class="normal"></highlight></codeline>
+<codeline lineno="822"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_binary_data" kindref="compound">AmqpBinaryData</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="823"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="824"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>AmqpBinaryData<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="825"><highlight class="normal"></highlight></codeline>
+<codeline lineno="833" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref><sp/>final<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>_detail::AmqpCollectionBase&lt;std::string,<sp/>AmqpSymbol&gt;<sp/>{</highlight></codeline>
+<codeline lineno="834"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="835"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>()<sp/>:<sp/>AmqpCollectionBase(){};</highlight></codeline>
+<codeline lineno="836"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">~AmqpSymbol</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="837"><highlight class="normal"></highlight></codeline>
+<codeline lineno="839" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1ae2a9bfdd08a26202276a2665ce8ecd60" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1ae2a9bfdd08a26202276a2665ce8ecd60" kindref="member">AmqpSymbol</ref>(std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values)<sp/>:<sp/>AmqpCollectionBase(values){};</highlight></codeline>
+<codeline lineno="840"><highlight class="normal"></highlight></codeline>
+<codeline lineno="842" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a036a192d5d6cccf2efe3a5693d9926cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a036a192d5d6cccf2efe3a5693d9926cd" kindref="member">AmqpSymbol</ref>(initializer_type<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>initializer)<sp/>:<sp/>AmqpCollectionBase(initializer)<sp/>{}</highlight></codeline>
+<codeline lineno="843"><highlight class="normal"></highlight></codeline>
+<codeline lineno="845" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a26e834a8f0031ee9af49447f33b0066e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a26e834a8f0031ee9af49447f33b0066e" kindref="member">AmqpSymbol</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>values)<sp/>:<sp/>AmqpCollectionBase(values){};</highlight></codeline>
+<codeline lineno="846"><highlight class="normal"></highlight></codeline>
+<codeline lineno="848" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a8ae4cc35ad50e666d31ae0861d0f1b96" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a8ae4cc35ad50e666d31ae0861d0f1b96" kindref="member">AmqpSymbol</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="849"><highlight class="normal"></highlight></codeline>
+<codeline lineno="851" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a1531d2b580e0c5be86427d09f731a22f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a1531d2b580e0c5be86427d09f731a22f" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="852"><highlight class="normal"></highlight></codeline>
+<codeline lineno="854" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a7a4f9aec3778884e02cb3f5a604c6fd6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a7a4f9aec3778884e02cb3f5a604c6fd6" kindref="member">AmqpSymbol</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="855"><highlight class="normal"></highlight></codeline>
+<codeline lineno="857" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1af1fc10c5d04e8bad2d11d9a20f872f0d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1af1fc10c5d04e8bad2d11d9a20f872f0d" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="858"><highlight class="normal"></highlight></codeline>
+<codeline lineno="869"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="870"><highlight class="normal"></highlight></codeline>
+<codeline lineno="876" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a98bcb5021773c243c302706c99356e04" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a98bcb5021773c243c302706c99356e04" kindref="member">operator==</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value<sp/>==<sp/>that.m_value;<sp/>}</highlight></codeline>
+<codeline lineno="882" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89edd90fb86647e55062b0bf8d82738c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol_1a89edd90fb86647e55062b0bf8d82738c" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(m_value)::value_type*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>that)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="883"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="884"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value<sp/>==<sp/>that;</highlight></codeline>
+<codeline lineno="885"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="886"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="887"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>os,<sp/>AmqpSymbol<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="888"><highlight class="normal"></highlight></codeline>
+<codeline lineno="895" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref><sp/>final<sp/>{</highlight></codeline>
+<codeline lineno="896"><highlight class="normal"><sp/><sp/><sp/><sp/>std::chrono::milliseconds<sp/>m_value;</highlight></codeline>
+<codeline lineno="897"><highlight class="normal"></highlight></codeline>
+<codeline lineno="898"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="899"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>();</highlight></codeline>
+<codeline lineno="900"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">~AmqpTimestamp</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="901"><highlight class="normal"></highlight></codeline>
+<codeline lineno="903"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>(std::chrono::milliseconds<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values);</highlight></codeline>
+<codeline lineno="904"><highlight class="normal"></highlight></codeline>
+<codeline lineno="915"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="916"><highlight class="normal"></highlight></codeline>
+<codeline lineno="918" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a3256384d31c8ff3e9e40a6f3f0584d9b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a3256384d31c8ff3e9e40a6f3f0584d9b" kindref="member">AmqpTimestamp</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="919"><highlight class="normal"></highlight></codeline>
+<codeline lineno="921" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1adc96d69146452f65e93a255840512fa8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1adc96d69146452f65e93a255840512fa8" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="922"><highlight class="normal"></highlight></codeline>
+<codeline lineno="924" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a7d1c1d5f817fd4c43f98194a77e19b59" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a7d1c1d5f817fd4c43f98194a77e19b59" kindref="member">AmqpTimestamp</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="925"><highlight class="normal"></highlight></codeline>
+<codeline lineno="927" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1aa1cc2f8fffb34d8e3a0f4ed41c8f1b4c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1aa1cc2f8fffb34d8e3a0f4ed41c8f1b4c" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="928"><highlight class="normal"></highlight></codeline>
+<codeline lineno="938"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>_detail::AmqpValueImpl()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="939"><highlight class="normal"></highlight></codeline>
+<codeline lineno="944"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1ac22f957ac2a1a891dc3aab5ca86205d7" kindref="member">AsAmqpValue</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="945"><highlight class="normal"></highlight></codeline>
+<codeline lineno="949" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a630e40e6e151923089ece5ae56d91c14" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::chrono::milliseconds()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value;<sp/>}</highlight></codeline>
+<codeline lineno="950"><highlight class="normal"></highlight></codeline>
+<codeline lineno="955" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a972ececb135346d8c18aeeea556f15dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp_1a972ececb135346d8c18aeeea556f15dd" kindref="member">operator&lt;</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_timestamp" kindref="compound">AmqpTimestamp</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value<sp/>&lt;<sp/>that.m_value;<sp/>}</highlight></codeline>
+<codeline lineno="956"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="957"><highlight class="normal"></highlight></codeline>
+<codeline lineno="971" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref><sp/>final</highlight></codeline>
+<codeline lineno="972"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>_detail::AmqpCollectionBase&lt;std::vector&lt;AmqpValue&gt;,<sp/>AmqpComposite&gt;<sp/>{</highlight></codeline>
+<codeline lineno="973"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="975" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1af1eaf835a7e462665dec2358cf4523a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1af1eaf835a7e462665dec2358cf4523a3" kindref="member">AmqpComposite</ref>()<sp/>:<sp/>AmqpCollectionBase(){};</highlight></codeline>
+<codeline lineno="976"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">~AmqpComposite</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="977"><highlight class="normal"></highlight></codeline>
+<codeline lineno="979"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1af1eaf835a7e462665dec2358cf4523a3" kindref="member">AmqpComposite</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>descriptor,<sp/>std::initializer_list&lt;AmqpValue&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>values);</highlight></codeline>
+<codeline lineno="980"><highlight class="normal"></highlight></codeline>
+<codeline lineno="982" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a098987570b78dc0393b11fa4dc6df2ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a098987570b78dc0393b11fa4dc6df2ce" kindref="member">AmqpComposite</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="983"><highlight class="normal"></highlight></codeline>
+<codeline lineno="988" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a4cb9055ec312fbc435b7f0f916de34b4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a4cb9055ec312fbc435b7f0f916de34b4" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="989"><highlight class="normal"></highlight></codeline>
+<codeline lineno="993" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aaf0cd6821ba2672994b4d50d3125944c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aaf0cd6821ba2672994b4d50d3125944c" kindref="member">AmqpComposite</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="994"><highlight class="normal"></highlight></codeline>
+<codeline lineno="999" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a95c3304854cfef475bd44919c3986d78" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a95c3304854cfef475bd44919c3986d78" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1000"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1010"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1af1eaf835a7e462665dec2358cf4523a3" kindref="member">AmqpComposite</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="1011"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1016" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a67ab366c75e438410feeacfeb9951e6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1a67ab366c75e438410feeacfeb9951e6b" kindref="member">operator==</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="1017"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="1018"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aa534649f2af9e8019a411a20ee827373" kindref="member">GetDescriptor</ref>()<sp/>==<sp/>that.<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aa534649f2af9e8019a411a20ee827373" kindref="member">GetDescriptor</ref>())</highlight></codeline>
+<codeline lineno="1019"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="1020"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value<sp/>==<sp/>that.m_value;</highlight></codeline>
+<codeline lineno="1021"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="1022"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1023"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="1024"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1029" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1ab51b0959b471073905028ebb10847cd9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1ab51b0959b471073905028ebb10847cd9" kindref="member">operator!=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>==<sp/>that);<sp/>}</highlight></codeline>
+<codeline lineno="1030"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1035" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aa534649f2af9e8019a411a20ee827373" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite_1aa534649f2af9e8019a411a20ee827373" kindref="member">GetDescriptor</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_descriptor;<sp/>}</highlight></codeline>
+<codeline lineno="1036"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1037"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="1047"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>_detail::AmqpValueImpl()<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1048"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1049"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="1050"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/>m_descriptor;</highlight></codeline>
+<codeline lineno="1051"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="1052"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1061" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref><sp/>final<sp/>{</highlight></codeline>
+<codeline lineno="1062"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="1072"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a25f698dc0ffcecc44248f59efb2a5f6e" kindref="member">AmqpDescribed</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>descriptor,<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="1073"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1079" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a006bb1f461b32b30b2939cd30837c542" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a006bb1f461b32b30b2939cd30837c542" kindref="member">AmqpDescribed</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1080"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1085" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1af32840ab35530199d152cc8e63b49083" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1af32840ab35530199d152cc8e63b49083" kindref="member">AmqpDescribed</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1086"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1092" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ac3f1105b9989ae9e1ac7ec55cefaac02" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ac3f1105b9989ae9e1ac7ec55cefaac02" kindref="member">operator=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>&amp;&amp;<sp/>other)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1093"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1099" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a2b825593c7c484a72bfd89f63189fddf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a2b825593c7c484a72bfd89f63189fddf" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">~AmqpDescribed</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a25f698dc0ffcecc44248f59efb2a5f6e" kindref="member">AmqpDescribed</ref>(uint64_t<sp/>descriptor,<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="1111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1121"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a25f698dc0ffcecc44248f59efb2a5f6e" kindref="member">AmqpDescribed</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value);</highlight></codeline>
+<codeline lineno="1122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1127" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8f82d0d7dcbbfc147a7384c671bf8b54" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8f82d0d7dcbbfc147a7384c671bf8b54" kindref="member">operator==</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="1128"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="1129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a6e3fee67f4555555a824e737bbcdb7d7" kindref="member">GetDescriptor</ref>()<sp/>==<sp/>that.<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a6e3fee67f4555555a824e737bbcdb7d7" kindref="member">GetDescriptor</ref>())</highlight></codeline>
+<codeline lineno="1130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="1131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ada178abd35cd4d696bc6d8989fbf9095" kindref="member">GetValue</ref>()<sp/>==<sp/>that.<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ada178abd35cd4d696bc6d8989fbf9095" kindref="member">GetValue</ref>();</highlight></codeline>
+<codeline lineno="1132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="1133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1134"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="1135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1140" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8baa0e9451f97582dea19bb52b35b016" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8baa0e9451f97582dea19bb52b35b016" kindref="member">operator!=</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>==<sp/>that);<sp/>}</highlight></codeline>
+<codeline lineno="1144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1150" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a6e3fee67f4555555a824e737bbcdb7d7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a6e3fee67f4555555a824e737bbcdb7d7" kindref="member">GetDescriptor</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_descriptor;<sp/>}</highlight></codeline>
+<codeline lineno="1151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1156" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ada178abd35cd4d696bc6d8989fbf9095" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ada178abd35cd4d696bc6d8989fbf9095" kindref="member">GetValue</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_value;<sp/>}</highlight></codeline>
+<codeline lineno="1157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>_detail::AmqpValueImpl()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1173"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1afefceee350bece27eab38266df774f31" kindref="member">AsAmqpValue</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1181" refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1aa56548671fd79b944df717e141ef2fb4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1aa56548671fd79b944df717e141ef2fb4" kindref="member">operator&lt;</ref>(<ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>that)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="1182"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="1183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_descriptor<sp/>&lt;<sp/>that.m_descriptor<sp/>?<sp/>true</highlight></codeline>
+<codeline lineno="1184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>m_descriptor<sp/>==<sp/>that.m_descriptor<sp/>?<sp/>m_value<sp/>&lt;<sp/>that.m_value</highlight></codeline>
+<codeline lineno="1185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="1186"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="1187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1188"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="1189"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/>m_descriptor;</highlight></codeline>
+<codeline lineno="1190"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref><sp/>m_value;</highlight></codeline>
+<codeline lineno="1191"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="1192"><highlight class="normal">}}}}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Azure::Core::Amqp::Models</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp"/>
+  </compounddef>
+</doxygen>

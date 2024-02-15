@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="dir_2418dc9715ae31a5fa4d820781d26dc9" kind="dir">
+    <compoundname>inc/azure/storage/blobs</compoundname>
+    <innerfile refid="append__blob__client_8hpp">append_blob_client.hpp</innerfile>
+    <innerfile refid="blob__batch_8hpp">blob_batch.hpp</innerfile>
+    <innerfile refid="blob__client_8hpp">blob_client.hpp</innerfile>
+    <innerfile refid="blob__container__client_8hpp">blob_container_client.hpp</innerfile>
+    <innerfile refid="blob__lease__client_8hpp">blob_lease_client.hpp</innerfile>
+    <innerfile refid="blob__options_8hpp">blob_options.hpp</innerfile>
+    <innerfile refid="blob__responses_8hpp">blob_responses.hpp</innerfile>
+    <innerfile refid="blob__sas__builder_8hpp">blob_sas_builder.hpp</innerfile>
+    <innerfile refid="blob__service__client_8hpp">blob_service_client.hpp</innerfile>
+    <innerfile refid="block__blob__client_8hpp">block_blob_client.hpp</innerfile>
+    <innerfile refid="deferred__response_8hpp">deferred_response.hpp</innerfile>
+    <innerfile refid="page__blob__client_8hpp">page_blob_client.hpp</innerfile>
+    <innerfile refid="rest__client_8hpp">rest_client.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/"/>
+  </compounddef>
+</doxygen>

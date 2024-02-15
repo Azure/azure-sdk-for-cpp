@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_modified_conditions" kind="struct" language="C++" prot="public">
+    <compoundname>Azure::ModifiedConditions</compoundname>
+    <includes refid="modified__conditions_8hpp" local="no">modified_conditions.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_modified_conditions_1a441aae06bc7f0a660fd8750d338c9f5d" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Azure::DateTime&gt; Azure::ModifiedConditions::IfModifiedSince</definition>
+        <argsstring></argsstring>
+        <name>IfModifiedSince</name>
+        <qualifiedname>Azure::ModifiedConditions::IfModifiedSince</qualifiedname>
+        <briefdescription>
+<para>Optionally limit requests to resources that have only been modified since this point in time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/modified_conditions.hpp" line="34" column="19" bodyfile="inc/azure/core/modified_conditions.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_modified_conditions_1a0a09caab12dc71ebb68f2f9972aac7de" prot="public" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_nullable" kindref="compound">Azure::Nullable</ref>&lt; <ref refid="class_azure_1_1_date_time" kindref="compound">Azure::DateTime</ref> &gt;</type>
+        <definition>Azure::Nullable&lt;Azure::DateTime&gt; Azure::ModifiedConditions::IfUnmodifiedSince</definition>
+        <argsstring></argsstring>
+        <name>IfUnmodifiedSince</name>
+        <qualifiedname>Azure::ModifiedConditions::IfUnmodifiedSince</qualifiedname>
+        <briefdescription>
+<para>Optionally limit requests to resources that have remained unmodified. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/modified_conditions.hpp" line="40" column="19" bodyfile="inc/azure/core/modified_conditions.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_azure_1_1_modified_conditions_1a2f80101a5280b593fa9da7fac3eab36c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::ModifiedConditions::~ModifiedConditions</definition>
+        <argsstring>()=default</argsstring>
+        <name>~ModifiedConditions</name>
+        <qualifiedname>Azure::ModifiedConditions::~ModifiedConditions</qualifiedname>
+        <briefdescription>
+<para>Destructs <computeroutput>ModifiedConditions</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/modified_conditions.hpp" line="28" column="11"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Specifies HTTP options for conditional requests based on modification time. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Azure::DateTime</label>
+        <link refid="class_azure_1_1_date_time"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Azure::ModifiedConditions</label>
+        <link refid="struct_azure_1_1_modified_conditions"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>IfModifiedSince</edgelabel>
+          <edgelabel>IfUnmodifiedSince</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Azure::_detail::NontrivialEmptyType</label>
+      </node>
+      <node id="2">
+        <label>Azure::Nullable&lt; Azure::DateTime &gt;</label>
+        <link refid="class_azure_1_1_nullable"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>m_disengaged</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>m_value</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>_detail::Clock::time_point</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/modified_conditions.hpp" line="22" column="1" bodyfile="inc/azure/core/modified_conditions.hpp" bodystart="23" bodyend="41"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_modified_conditions_1a441aae06bc7f0a660fd8750d338c9f5d" prot="public" virt="non-virtual"><scope>Azure::ModifiedConditions</scope><name>IfModifiedSince</name></member>
+      <member refid="struct_azure_1_1_modified_conditions_1a0a09caab12dc71ebb68f2f9972aac7de" prot="public" virt="non-virtual"><scope>Azure::ModifiedConditions</scope><name>IfUnmodifiedSince</name></member>
+      <member refid="struct_azure_1_1_modified_conditions_1a2f80101a5280b593fa9da7fac3eab36c" prot="public" virt="virtual"><scope>Azure::ModifiedConditions</scope><name>~ModifiedConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,496 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::DownloadBlobDetails</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ab143312458b3bae9694f3974099528f6" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::Models::DownloadBlobDetails::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1592" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1592" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1aefb9fb822e7bf31dd711ee895badd6e1" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::DownloadBlobDetails::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob&apos;s metadata or properties, changes the last-modified time of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1598" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1598" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a929f534e912a4ed5be75d0e927eb1882" prot="public" static="no" mutable="no">
+        <type>DateTime</type>
+        <definition>DateTime Azure::Storage::Blobs::Models::DownloadBlobDetails::CreatedOn</definition>
+        <argsstring></argsstring>
+        <name>CreatedOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CreatedOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date and time at which the blob was created. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1602" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1602" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ab48908fef04aa84d34d45853155b0c9d" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; DateTime &gt;</type>
+        <definition>Nullable&lt;DateTime&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::ExpiresOn</definition>
+        <argsstring></argsstring>
+        <name>ExpiresOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::ExpiresOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The time this blob will expire. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1606" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1606" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1afdc885ac232d422936de4a002f339569" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; DateTime &gt;</type>
+        <definition>Nullable&lt;DateTime&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::LastAccessedOn</definition>
+        <argsstring></argsstring>
+        <name>LastAccessedOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::LastAccessedOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>UTC date/time value generated by the service that indicates the time at which the blob was last read or written to. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1611" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1611" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ada1e9e3f14fab4d40b0f1a06ed38fcd6" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers" kindref="compound">BlobHttpHeaders</ref></type>
+        <definition>BlobHttpHeaders Azure::Storage::Blobs::Models::DownloadBlobDetails::HttpHeaders</definition>
+        <argsstring></argsstring>
+        <name>HttpHeaders</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::HttpHeaders</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Standard HTTP properties supported by containers and blobs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1615" column="23" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1615" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a781f42f502d88f23ff0f9dd1201197fa" prot="public" static="no" mutable="no">
+        <type>Core::CaseInsensitiveMap</type>
+        <definition>Core::CaseInsensitiveMap Azure::Storage::Blobs::Models::DownloadBlobDetails::Metadata</definition>
+        <argsstring></argsstring>
+        <name>Metadata</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::Metadata</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A set of name-value pairs associated with this blob or blob container. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1619" column="32" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1619" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a38d8e0d16877224f119237be6713c9a9" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int64_t &gt;</type>
+        <definition>Nullable&lt;int64_t&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::SequenceNumber</definition>
+        <argsstring></argsstring>
+        <name>SequenceNumber</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::SequenceNumber</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current sequence number for a page blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1623" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1623" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1abb54f18e5a45a418c3100a1a5e6c4e9a" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int32_t &gt;</type>
+        <definition>Nullable&lt;int32_t&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::CommittedBlockCount</definition>
+        <argsstring></argsstring>
+        <name>CommittedBlockCount</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CommittedBlockCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of committed blocks present in the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1627" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1627" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1eaed2049e3b5c353001774a35ffedea" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; bool &gt;</type>
+        <definition>Nullable&lt;bool&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::IsSealed</definition>
+        <argsstring></argsstring>
+        <name>IsSealed</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::IsSealed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If the blob has been sealed. This value is null for block blobs or page blobs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1631" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1631" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a5c0c39ef69fc3e6535f9a40a99c81fd3" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_duration_type" kindref="compound">LeaseDurationType</ref> &gt;</type>
+        <definition>Nullable&lt;LeaseDurationType&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::LeaseDuration</definition>
+        <argsstring></argsstring>
+        <name>LeaseDuration</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::LeaseDuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>When a blob is leased, specifies whether the lease is of infinite or fixed duration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1635" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1635" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1af0e1cfc75d269111ab47a8dde78cf8e1" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_state" kindref="compound">Models::LeaseState</ref> &gt;</type>
+        <definition>Nullable&lt;Models::LeaseState&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::LeaseState</definition>
+        <argsstring></argsstring>
+        <name>LeaseState</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::LeaseState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current lease state of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1639" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1639" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a869f74c6396770a0310498d6343b8070" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_lease_status" kindref="compound">Models::LeaseStatus</ref> &gt;</type>
+        <definition>Nullable&lt;Models::LeaseStatus&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::LeaseStatus</definition>
+        <argsstring></argsstring>
+        <name>LeaseStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::LeaseStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current lease status of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1643" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1643" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a291e06c4837ca85a9d5db0e33302785c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::DownloadBlobDetails::IsServerEncrypted</definition>
+        <argsstring></argsstring>
+        <name>IsServerEncrypted</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::IsServerEncrypted</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if the blob data and metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1649" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1649" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1abcb1a67da5e056ac92a3b493a5c5d139" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::vector&lt; uint8_t &gt; &gt;</type>
+        <definition>Nullable&lt;std::vector&lt;uint8_t&gt; &gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::EncryptionKeySha256</definition>
+        <argsstring></argsstring>
+        <name>EncryptionKeySha256</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::EncryptionKeySha256</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SHA-256 hash of the encryption key used to encrypt the blob data and metadata. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1653" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1653" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1aa58d78d0c67759d90e10ed22989106d5" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::EncryptionScope</definition>
+        <argsstring></argsstring>
+        <name>EncryptionScope</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::EncryptionScope</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Name of the encryption scope used to encrypt the blob data and metadata. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1657" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1657" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ad96c250d1a8b084a30703625c4fc47ac" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::ObjectReplicationDestinationPolicyId</definition>
+        <argsstring></argsstring>
+        <name>ObjectReplicationDestinationPolicyId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::ObjectReplicationDestinationPolicyId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Only valid when Object Replication is enabled and current blob is the destination. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1661" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1661" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a37efd6a9518eb937acd97b81cc8545e0" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_object_replication_policy" kindref="compound">ObjectReplicationPolicy</ref> &gt;</type>
+        <definition>std::vector&lt;ObjectReplicationPolicy&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::ObjectReplicationSourceProperties</definition>
+        <argsstring></argsstring>
+        <name>ObjectReplicationSourceProperties</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::ObjectReplicationSourceProperties</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Only valid when Object Replication is enabled and current blob is the source. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1665" column="19" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1665" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1c5f8181e276e3572a628028109f1426" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int32_t &gt;</type>
+        <definition>Nullable&lt;int32_t&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::TagCount</definition>
+        <argsstring></argsstring>
+        <name>TagCount</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::TagCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of tags associated with the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1669" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1669" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a63cddfa42b61ff66169b55c18d1259d6" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyId</definition>
+        <argsstring></argsstring>
+        <name>CopyId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1674" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1674" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a7619282ab62a791253f2352630899190" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::CopySource</definition>
+        <argsstring></argsstring>
+        <name>CopySource</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CopySource</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1682" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1682" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1a975e9d43dfd5be9f8745c15d32818d" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_models_1_1_copy_status" kindref="compound">Models::CopyStatus</ref> &gt;</type>
+        <definition>Nullable&lt;Models::CopyStatus&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyStatus</definition>
+        <argsstring></argsstring>
+        <name>CopyStatus</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Status of the copy operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1686" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1686" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ad6a31700d0fa0c569344ac4c50ba9375" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyStatusDescription</definition>
+        <argsstring></argsstring>
+        <name>CopyStatusDescription</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyStatusDescription</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1694" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1694" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a9d349931ca787f29f1cb713eca57bb67" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyProgress</definition>
+        <argsstring></argsstring>
+        <name>CopyProgress</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyProgress</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Contains the number of bytes copied and the total bytes in the source in the last attempted Copy Blob operation where this blob was the destination blob. Can show between 0 and Content-Length bytes copied. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1702" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1702" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ab730e5604422334e373049644523a160" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; DateTime &gt;</type>
+        <definition>Nullable&lt;DateTime&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyCompletedOn</definition>
+        <argsstring></argsstring>
+        <name>CopyCompletedOn</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::CopyCompletedOn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Conclusion time of the last attempted Copy Blob operation where this blob was the destination blob. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1710" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1710" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1d55d5719c7a1606acda739c08e81064" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; std::string &gt;</type>
+        <definition>Nullable&lt;std::string&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::VersionId</definition>
+        <argsstring></argsstring>
+        <name>VersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::VersionId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A string value returned by the service that uniquely identifies the blob version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1714" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1714" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a349f7ac54be4c7903c30452f2b82c6dd" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; bool &gt;</type>
+        <definition>Nullable&lt;bool&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::IsCurrentVersion</definition>
+        <argsstring></argsstring>
+        <name>IsCurrentVersion</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::IsCurrentVersion</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether version of this blob is the current version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1718" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1718" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a7247fe1673f13984b5c6845e550572e3" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_immutability_policy" kindref="compound">BlobImmutabilityPolicy</ref> &gt;</type>
+        <definition>Nullable&lt;BlobImmutabilityPolicy&gt; Azure::Storage::Blobs::Models::DownloadBlobDetails::ImmutabilityPolicy</definition>
+        <argsstring></argsstring>
+        <name>ImmutabilityPolicy</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::ImmutabilityPolicy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Immutability policy associated with the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1722" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1722" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a14c9ff5a064bbbae4e351c43a77300c0" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::DownloadBlobDetails::HasLegalHold</definition>
+        <argsstring></argsstring>
+        <name>HasLegalHold</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::DownloadBlobDetails::HasLegalHold</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the blob has a legal hold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="1726" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1726" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Detailed information of the downloaded blob. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::Models::BlobHttpHeaders</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_blob_http_headers"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::Models::DownloadBlobDetails</label>
+        <link refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>HttpHeaders</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="1586" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="1587" bodyend="1727"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1abb54f18e5a45a418c3100a1a5e6c4e9a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CommittedBlockCount</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ab730e5604422334e373049644523a160" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CopyCompletedOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a63cddfa42b61ff66169b55c18d1259d6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CopyId</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a9d349931ca787f29f1cb713eca57bb67" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CopyProgress</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a7619282ab62a791253f2352630899190" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CopySource</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1a975e9d43dfd5be9f8745c15d32818d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CopyStatus</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ad6a31700d0fa0c569344ac4c50ba9375" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CopyStatusDescription</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a929f534e912a4ed5be75d0e927eb1882" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>CreatedOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1abcb1a67da5e056ac92a3b493a5c5d139" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>EncryptionKeySha256</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1aa58d78d0c67759d90e10ed22989106d5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>EncryptionScope</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ab143312458b3bae9694f3974099528f6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>ETag</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ab48908fef04aa84d34d45853155b0c9d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>ExpiresOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a14c9ff5a064bbbae4e351c43a77300c0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>HasLegalHold</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ada1e9e3f14fab4d40b0f1a06ed38fcd6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>HttpHeaders</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a7247fe1673f13984b5c6845e550572e3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>ImmutabilityPolicy</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a349f7ac54be4c7903c30452f2b82c6dd" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>IsCurrentVersion</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1eaed2049e3b5c353001774a35ffedea" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>IsSealed</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a291e06c4837ca85a9d5db0e33302785c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>IsServerEncrypted</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1afdc885ac232d422936de4a002f339569" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>LastAccessedOn</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1aefb9fb822e7bf31dd711ee895badd6e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>LastModified</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a5c0c39ef69fc3e6535f9a40a99c81fd3" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>LeaseDuration</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1af0e1cfc75d269111ab47a8dde78cf8e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>LeaseState</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a869f74c6396770a0310498d6343b8070" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>LeaseStatus</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a781f42f502d88f23ff0f9dd1201197fa" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>Metadata</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1ad96c250d1a8b084a30703625c4fc47ac" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>ObjectReplicationDestinationPolicyId</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a37efd6a9518eb937acd97b81cc8545e0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>ObjectReplicationSourceProperties</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a38d8e0d16877224f119237be6713c9a9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>SequenceNumber</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1c5f8181e276e3572a628028109f1426" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>TagCount</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_download_blob_details_1a1d55d5719c7a1606acda739c08e81064" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::DownloadBlobDetails</scope><name>VersionId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

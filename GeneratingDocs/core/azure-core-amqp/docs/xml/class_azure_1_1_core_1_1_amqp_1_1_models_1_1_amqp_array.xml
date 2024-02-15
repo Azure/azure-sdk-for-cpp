@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpArray</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; AmqpValue &gt;, AmqpArray &gt;</basecompoundref>
+    <includes refid="amqp__value_8hpp" local="no">amqp_value.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a9b628d82192b468297f802957408ab96" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</definition>
+        <argsstring>()</argsstring>
+        <name>AmqpArray</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</qualifiedname>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="642" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="642" bodyend="642"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52e3f499ec6b2d2667757d634a5a8b91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</definition>
+        <argsstring>(initializer_type const &amp;values)</argsstring>
+        <name>AmqpArray</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</qualifiedname>
+        <param>
+          <type>initializer_type const &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> object with an initializer list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="645" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="777" bodyend="790"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af02006be760a10cc524e105f076e3eda" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Azure::Core::Amqp::Models::AmqpArray::~AmqpArray</definition>
+        <argsstring>()=default</argsstring>
+        <name>~AmqpArray</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::~AmqpArray</qualifiedname>
+        <briefdescription>
+<para>Destroy an array. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="648" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a4747ac5db8e06ff57738363b3a330f80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</definition>
+        <argsstring>(const AmqpArray &amp;other)=default</argsstring>
+        <name>AmqpArray</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="651" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52cd61a003434fe7b3c2db4b7f0932ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> &amp;</type>
+        <definition>AmqpArray &amp; Azure::Core::Amqp::Models::AmqpArray::operator=</definition>
+        <argsstring>(const AmqpArray &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="654" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a12bf8129bf237000ad747ab1e22940a4" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</definition>
+        <argsstring>(AmqpArray &amp;&amp;other) noexcept=default</argsstring>
+        <name>AmqpArray</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="657" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af0fd842ac85b6886807fd9290f78db60" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> &amp;</type>
+        <definition>AmqpArray &amp; Azure::Core::Amqp::Models::AmqpArray::operator=</definition>
+        <argsstring>(AmqpArray &amp;&amp;other) noexcept=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="660" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a334a1250797a27e9a400a8bbc4de7605" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>AmqpArray</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpArray::AmqpArray</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array" kindref="compound">AmqpArray</ref> object from an existing uAMQP AMQP_VALUE item. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this does NOT capture the passed in AMQP_VALUE object, the caller is responsible for freeing that object.</para>
+</simplesect>
+<simplesect kind="remark"><para>This is an internal accessor and should never be used by code outside the AMQP implementation.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP array value to capture. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="671" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="757" bodyend="776"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents an AMQP array. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>An AMQP array is an aggregate of value types, all of which are of the same type. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; AmqpValue &gt;, AmqpArray &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpArray</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::Amqp::Models::_detail::AmqpCollectionBase&lt; std::vector&lt; AmqpValue &gt;, AmqpArray &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Amqp::Models::AmqpArray</label>
+        <link refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="639" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="639" bodyend="672"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a9b628d82192b468297f802957408ab96" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>AmqpArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52e3f499ec6b2d2667757d634a5a8b91" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>AmqpArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a4747ac5db8e06ff57738363b3a330f80" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>AmqpArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a12bf8129bf237000ad747ab1e22940a4" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>AmqpArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a334a1250797a27e9a400a8bbc4de7605" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>AmqpArray</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1a52cd61a003434fe7b3c2db4b7f0932ec" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af0fd842ac85b6886807fd9290f78db60" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_array_1af02006be760a10cc524e105f076e3eda" prot="public" virt="virtual"><scope>Azure::Core::Amqp::Models::AmqpArray</scope><name>~AmqpArray</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

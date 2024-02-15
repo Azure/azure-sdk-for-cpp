@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::GetPageRangesPagedResponse</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Azure::Core::PagedResponse&lt; GetPageRangesPagedResponse &gt;</basecompoundref>
+    <includes refid="blob__responses_8hpp" local="no">blob_responses.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a2ccab4472993ae111c42646d811b1807" prot="public" static="no" mutable="no">
+        <type>Azure::ETag</type>
+        <definition>Azure::ETag Azure::Storage::Blobs::GetPageRangesPagedResponse::ETag</definition>
+        <argsstring></argsstring>
+        <name>ETag</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::ETag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ETag contains a value that you can use to perform operations conditionally. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="414" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="414" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1ae320637f755d235e11ef0df21f207de0" prot="public" static="no" mutable="no">
+        <type>Azure::DateTime</type>
+        <definition>Azure::DateTime Azure::Storage::Blobs::GetPageRangesPagedResponse::LastModified</definition>
+        <argsstring></argsstring>
+        <name>LastModified</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::LastModified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The date/time that the blob was last modified. The date format follows RFC 1123. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="419" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="419" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a9e975cbe7a617fdefc9cc9104faf5ca7" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t Azure::Storage::Blobs::GetPageRangesPagedResponse::BlobSize</definition>
+        <argsstring></argsstring>
+        <name>BlobSize</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::BlobSize</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the blob. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="424" column="15" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="424" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1af071619d782f9db3e7feb0eae7eb15a9" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; Azure::Core::Http::HttpRange &gt;</type>
+        <definition>std::vector&lt;Azure::Core::Http::HttpRange&gt; Azure::Storage::Blobs::GetPageRangesPagedResponse::PageRanges</definition>
+        <argsstring></argsstring>
+        <name>PageRanges</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::PageRanges</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Page range items. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="429" column="19" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="429" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a2cbab16668d5d0c8c317b73d00b8d1f2" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;PageBlobClient&gt; Azure::Storage::Blobs::GetPageRangesPagedResponse::m_pageBlobClient</definition>
+        <argsstring></argsstring>
+        <name>m_pageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::m_pageBlobClient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="434" column="23" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="434" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1aa7705995d21c639b761abcfcd356e08f" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_options" kindref="compound">GetPageRangesOptions</ref></type>
+        <definition>GetPageRangesOptions Azure::Storage::Blobs::GetPageRangesPagedResponse::m_operationOptions</definition>
+        <argsstring></argsstring>
+        <name>m_operationOptions</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::m_operationOptions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="435" column="28" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="435" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1aec731219bc893c0748c01ce34ae93df4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class PageBlobClient</definition>
+        <argsstring></argsstring>
+        <name>PageBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::PageBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client" kindref="compound">PageBlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="437" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="437" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a39b39b6ea6becf2523c222397272978f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Azure::Core::PagedResponse&lt; GetPageRangesPagedResponse &gt;</definition>
+        <argsstring></argsstring>
+        <name>Azure::Core::PagedResponse&lt; GetPageRangesPagedResponse &gt;</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::PagedResponse&lt; GetPageRangesPagedResponse &gt;</qualifiedname>
+        <param>
+          <type>Azure::Core::PagedResponse&lt; <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response" kindref="compound">GetPageRangesPagedResponse</ref> &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="437" column="20" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="438" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a0c2cefb3a4af6093baca37ee488716e0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Azure::Storage::Blobs::GetPageRangesPagedResponse::OnNextPage</definition>
+        <argsstring>(const Azure::Core::Context &amp;context)</argsstring>
+        <name>OnNextPage</name>
+        <qualifiedname>Azure::Storage::Blobs::GetPageRangesPagedResponse::OnNextPage</qualifiedname>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_responses.hpp" line="432" column="12" bodyfile="src/blob_responses.cpp" bodystart="101" bodyend="105"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Response type for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_page_blob_client_1a66ff58b911a581c07cfef2f980132551" kindref="member">Azure::Storage::Blobs::PageBlobClient::GetPageRanges</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; GetPageRangesPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::GetPageRangesPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Core::PagedResponse&lt; GetPageRangesPagedResponse &gt;</label>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::GetPageRangesPagedResponse</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/blob_responses.hpp" line="408" column="5" bodyfile="inc/azure/storage/blobs/blob_responses.hpp" bodystart="409" bodyend="439"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a39b39b6ea6becf2523c222397272978f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>Azure::Core::PagedResponse&lt; GetPageRangesPagedResponse &gt;</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a9e975cbe7a617fdefc9cc9104faf5ca7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>BlobSize</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a2ccab4472993ae111c42646d811b1807" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>ETag</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1ae320637f755d235e11ef0df21f207de0" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>LastModified</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1aa7705995d21c639b761abcfcd356e08f" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>m_operationOptions</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a2cbab16668d5d0c8c317b73d00b8d1f2" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>m_pageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1a0c2cefb3a4af6093baca37ee488716e0" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>OnNextPage</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1aec731219bc893c0748c01ce34ae93df4" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>PageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_get_page_ranges_paged_response_1af071619d782f9db3e7feb0eae7eb15a9" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::GetPageRangesPagedResponse</scope><name>PageRanges</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

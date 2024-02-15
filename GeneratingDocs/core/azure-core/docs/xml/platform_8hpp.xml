@@ -1,0 +1,417 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="platform_8hpp" kind="file" language="C++">
+    <compoundname>platform.hpp</compoundname>
+    <includedby refid="core_8hpp" local="yes">inc/azure/core.hpp</includedby>
+    <includedby refid="azure__assert_8hpp" local="yes">inc/azure/core/azure_assert.hpp</includedby>
+    <includedby refid="curl__transport_8hpp" local="yes">inc/azure/core/http/curl_transport.hpp</includedby>
+    <includedby refid="win__http__transport_8hpp" local="yes">inc/azure/core/http/win_http_transport.hpp</includedby>
+    <includedby refid="body__stream_8hpp" local="yes">inc/azure/core/io/body_stream.hpp</includedby>
+    <includedby refid="uuid_8hpp" local="yes">inc/azure/core/uuid.hpp</includedby>
+    <includedby refid="base64_8cpp" local="yes">src/base64.cpp</includedby>
+    <includedby refid="md5_8cpp" local="yes">src/cryptography/md5.cpp</includedby>
+    <includedby refid="sha__hash_8cpp" local="no">src/cryptography/sha_hash.cpp</includedby>
+    <includedby refid="datetime_8cpp" local="yes">src/datetime.cpp</includedby>
+    <includedby refid="environment_8cpp" local="yes">src/environment.cpp</includedby>
+    <includedby refid="curl_8cpp" local="yes">src/http/curl/curl.cpp</includedby>
+    <includedby refid="transport__policy_8cpp" local="yes">src/http/transport_policy.cpp</includedby>
+    <includedby refid="user__agent_8cpp" local="yes">src/http/user_agent.cpp</includedby>
+    <includedby refid="body__stream_8cpp" local="yes">src/io/body_stream.cpp</includedby>
+    <includedby refid="random__access__file__body__stream_8cpp" local="yes">src/io/random_access_file_body_stream.cpp</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>inc/azure/core.hpp</label>
+        <link refid="core_8hpp_source"/>
+      </node>
+      <node id="3">
+        <label>inc/azure/core/azure_assert.hpp</label>
+        <link refid="azure__assert_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>inc/azure/core/context.hpp</label>
+        <link refid="context_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>inc/azure/core/credentials/credentials.hpp</label>
+        <link refid="credentials_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>inc/azure/core/credentials/token_credential_options.hpp</label>
+        <link refid="token__credential__options_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>inc/azure/core/cryptography/hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>inc/azure/core/etag.hpp</label>
+        <link refid="etag_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>inc/azure/core/exception.hpp</label>
+        <link refid="exception_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>inc/azure/core/http/curl_transport.hpp</label>
+        <link refid="curl__transport_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>inc/azure/core/http/http.hpp</label>
+        <link refid="http_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>inc/azure/core/http/policies/policy.hpp</label>
+        <link refid="policy_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>inc/azure/core/http/raw_response.hpp</label>
+        <link refid="raw__response_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>inc/azure/core/http/transport.hpp</label>
+        <link refid="transport_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>inc/azure/core/http/win_http_transport.hpp</label>
+        <link refid="win__http__transport_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>inc/azure/core/internal/client_options.hpp</label>
+        <link refid="client__options_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>inc/azure/core/internal/credentials/authorization_challenge_parser.hpp</label>
+        <link refid="authorization__challenge__parser_8hpp"/>
+      </node>
+      <node id="31">
+        <label>inc/azure/core/internal/cryptography/sha_hash.hpp</label>
+        <link refid="sha__hash_8hpp_source"/>
+      </node>
+      <node id="14">
+        <label>inc/azure/core/internal/http/pipeline.hpp</label>
+        <link refid="pipeline_8hpp"/>
+      </node>
+      <node id="27">
+        <label>inc/azure/core/internal/io/null_body_stream.hpp</label>
+        <link refid="null__body__stream_8hpp"/>
+      </node>
+      <node id="35">
+        <label>inc/azure/core/internal/json/json_optional.hpp</label>
+        <link refid="json__optional_8hpp"/>
+      </node>
+      <node id="15">
+        <label>inc/azure/core/internal/tracing/service_tracing.hpp</label>
+        <link refid="service__tracing_8hpp_source"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>inc/azure/core/internal/tracing/tracing_impl.hpp</label>
+        <link refid="tracing__impl_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>inc/azure/core/io/body_stream.hpp</label>
+        <link refid="body__stream_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>inc/azure/core/match_conditions.hpp</label>
+        <link refid="match__conditions_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>inc/azure/core/modified_conditions.hpp</label>
+        <link refid="modified__conditions_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>inc/azure/core/nullable.hpp</label>
+        <link refid="nullable_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>inc/azure/core/operation.hpp</label>
+        <link refid="operation_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>inc/azure/core/paged_response.hpp</label>
+        <link refid="paged__response_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>inc/azure/core/platform.hpp</label>
+        <link refid="platform_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>inc/azure/core/response.hpp</label>
+        <link refid="response_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>inc/azure/core/tracing/tracing.hpp</label>
+        <link refid="tracing_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>inc/azure/core/uuid.hpp</label>
+        <link refid="uuid_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>src/http/curl/curl_connection_pool_private.hpp</label>
+        <link refid="curl__connection__pool__private_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>src/http/curl/curl_connection_private.hpp</label>
+        <link refid="curl__connection__private_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>src/http/curl/curl_session_private.hpp</label>
+        <link refid="curl__session__private_8hpp"/>
+      </node>
+      <node id="16">
+        <label>src/http/user_agent.cpp</label>
+        <link refid="user__agent_8cpp"/>
+      </node>
+      <node id="11">
+        <label>src/http/winhttp/win_http_request.hpp</label>
+        <link refid="win__http__request_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <briefdescription>
+<para>Platform-specific macros. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>Microsoft<sp/>Corporation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Licensed<sp/>under<sp/>the<sp/>MIT<sp/>License.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>proper<sp/>way<sp/>to<sp/>check<sp/>for<sp/>&quot;UWP/NOT<sp/>UWP&quot;<sp/>(*):</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/>1.<sp/>Include<sp/>this<sp/>file,<sp/>so<sp/>that<sp/>AZ_PLATFORM_WINDOWS<sp/>becomes<sp/>available.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">//<sp/>2.<sp/>Include<sp/>windows.h<sp/>(**)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//<sp/>3.<sp/>Use<sp/>&quot;#if<sp/>!defined(WINAPI_PARTITION_DESKTOP)<sp/>||<sp/>WINAPI_PARTITION_DESKTOP&quot;<sp/>(***)<sp/>as<sp/>a<sp/>condition</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/>meant<sp/>to<sp/>detect<sp/>as<sp/>fully-featured<sp/>Win32<sp/>API<sp/>(i.e.<sp/>registry<sp/>access,<sp/>FileOpen()<sp/>etc.)<sp/>=<sp/>&quot;NOT<sp/>UWP&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(4.)<sp/>&quot;#else&quot;<sp/>you<sp/>are<sp/>on<sp/>&quot;UWP&quot;<sp/>(*)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//<sp/>5.<sp/>Some<sp/>features<sp/>(i.e.<sp/>WinHTTP)<sp/>may<sp/>have<sp/>support<sp/>for<sp/>some<sp/>non-traditional-Win32<sp/>desktops,<sp/>yet<sp/>not</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>entirety<sp/>of<sp/>&quot;UWP&quot;(*).<sp/>For<sp/>example,<sp/>WinHTTP<sp/>would<sp/>currently<sp/>compile<sp/>and<sp/>work<sp/>on<sp/>the<sp/>following:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/>WINAPI_PARTITION_DESKTOP,<sp/>WINAPI_PARTITION_SYSTEM,<sp/>WINAPI_PARTITION_GAMES,<sp/>so<sp/>more<sp/>complex</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/>conditions<sp/>are<sp/>possible<sp/>(****).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//<sp/>--</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(*)<sp/>-<sp/>&quot;UWP&quot;<sp/>is<sp/>oversimplification,<sp/>we<sp/>use<sp/>it<sp/>in<sp/>this<sp/>comment<sp/>as<sp/>an<sp/>umbrella<sp/>term<sp/>to<sp/>represent<sp/>all</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>Windows<sp/>platforms<sp/>(UWP<sp/>itself,<sp/>Phone<sp/>OS,<sp/>Windows<sp/>Store,<sp/>etc)<sp/>that<sp/>do<sp/>not<sp/>allow<sp/>some<sp/>Win32</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">//<sp/>APIs<sp/>such<sp/>as<sp/>registry<sp/>access.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(**)<sp/>-<sp/>Including<sp/>windows.h<sp/>brings<sp/>up<sp/>WINAPI_PARTITION_DESKTOP<sp/>macro<sp/>(***).<sp/>The<sp/>reason<sp/>we<sp/>don&apos;t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/>simply<sp/>include<sp/>windows.h<sp/>in<sp/>this<sp/>header<sp/>and<sp/>declare<sp/>some<sp/>sort<sp/>of<sp/>a<sp/>&quot;AZ_PLATFORM_WINDOWS_UWP&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">//<sp/>macro<sp/>in<sp/>this<sp/>file<sp/>is<sp/>that<sp/>some<sp/>places<sp/>do<sp/>need<sp/>to<sp/>include<sp/>windows.h<sp/>when<sp/>WIN32_LEAN_AND_MEAN<sp/>is</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="comment">//<sp/>defined,<sp/>others<sp/>do<sp/>not.<sp/>So<sp/>we<sp/>defer<sp/>this<sp/>to<sp/>each<sp/>Azure<sp/>SDK<sp/>.cpp<sp/>to<sp/>do<sp/>the<sp/>inclusion<sp/>as<sp/>it<sp/>best</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="comment">//<sp/>fits.<sp/>Plus,<sp/>theoretically,<sp/>you<sp/>may<sp/>want<sp/>to<sp/>check<sp/>for<sp/>AZ_PLATFORM_WINDOWS,<sp/>yet<sp/>you<sp/>don&apos;t<sp/>need</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>anything<sp/>from<sp/>windows.h<sp/>header.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(***)<sp/>-<sp/>What<sp/>is<sp/>happening<sp/>here:<sp/>&quot;WINAPI_PARTITION_DESKTOP&quot;<sp/>may<sp/>not<sp/>be<sp/>defined<sp/>on<sp/>some<sp/>old<sp/>Windows</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/>SDKs<sp/>that<sp/>existed<sp/>before<sp/>a<sp/>concept<sp/>of<sp/>&quot;UWP&quot;<sp/>came<sp/>out.<sp/>Those<sp/>are<sp/>your<sp/>traditional<sp/>&quot;Full<sp/>Win32<sp/>API&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/>platforms<sp/>(Windows<sp/>7?).<sp/>But<sp/>IF<sp/>&quot;WINAPI_PARTITION_DESKTOP&quot;<sp/>is<sp/>defined,<sp/>then<sp/>it<sp/>can<sp/>be</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/>either<sp/>0<sp/>or<sp/>1<sp/>(simply<sp/>put).<sp/>For<sp/>example,<sp/>if<sp/>we<sp/>are<sp/>being<sp/>compiled<sp/>for<sp/>the<sp/>&quot;traditional&quot;<sp/>Windows</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/>10<sp/>desktop,<sp/>it<sp/>has<sp/>a<sp/>&quot;Full<sp/>WIn32<sp/>API&quot;,<sp/>it<sp/>has<sp/>WINAPI_PARTITION_DESKTOP<sp/>defined,<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/>WINAPI_PARTITION_DESKTOP<sp/>evaluates<sp/>to<sp/>1.<sp/>Otherwise,<sp/>it<sp/>is<sp/>a<sp/>UWP,<sp/>which<sp/>also<sp/>has</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/>WINAPI_PARTITION_DESKTOP<sp/>defined,<sp/>but<sp/>it<sp/>evaluates<sp/>as<sp/>0.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(****)<sp/>-<sp/>vcpkg<sp/>could<sp/>be<sp/>limiting<sp/>the<sp/>default<sp/>option,<sp/>because<sp/>at<sp/>the<sp/>moment<sp/>it<sp/>only<sp/>distinguishes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/>between<sp/>&quot;UWP&quot;<sp/>and<sp/>&quot;Not<sp/>UWP&quot;.<sp/>So,<sp/>if<sp/>we<sp/>have<sp/>a<sp/>default<sp/>option<sp/>indicating<sp/>whether<sp/>to<sp/>build<sp/>WinHTTP,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>best<sp/>we<sp/>can<sp/>do<sp/>is<sp/>to<sp/>enable<sp/>build<sp/>by<sp/>default<sp/>on<sp/>(windows&amp;!uwp).<sp/>We<sp/>can&apos;t<sp/>remove<sp/>the<sp/>&quot;!uwp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/>part,<sp/>because<sp/>on<sp/>some<sp/>partitions<sp/>compilation<sp/>will<sp/>fail.<sp/>However,<sp/>there<sp/>is<sp/>always<sp/>an<sp/>option<sp/>for</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>customer<sp/>to<sp/>run<sp/>&quot;vcpkg<sp/>install<sp/>azure-core-cpp[winhttp]&quot;<sp/>manually,<sp/>and<sp/>the<sp/>build<sp/>attempt<sp/>will</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/>be<sp/>made<sp/>(even<sp/>if<sp/>targeting<sp/>macOS<sp/>or<sp/>Linux).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(_WIN32)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AZ_PLATFORM_WINDOWS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined(__unix__)<sp/>||<sp/>defined(__unix)<sp/>||<sp/>(defined(__APPLE__)<sp/>&amp;&amp;<sp/>defined(__MACH__))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AZ_PLATFORM_POSIX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(__APPLE__)<sp/>||<sp/>defined(__MACH__)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AZ_PLATFORM_MAC</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AZ_PLATFORM_LINUX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="inc/azure/core/platform.hpp"/>
+  </compounddef>
+</doxygen>

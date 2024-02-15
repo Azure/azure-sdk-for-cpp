@@ -1,0 +1,475 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Amqp::Models::AmqpDescribed</compoundname>
+    <includes refid="amqp__value_8hpp" local="no">amqp_value.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a12cf8b406b65a53796d80a8f87364777" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref></type>
+        <definition>AmqpValue Azure::Core::Amqp::Models::AmqpDescribed::m_descriptor</definition>
+        <argsstring></argsstring>
+        <name>m_descriptor</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::m_descriptor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1189" column="15" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a835eb976b35250d6b81ab3013e29cdd3" prot="private" static="no" mutable="no">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref></type>
+        <definition>AmqpValue Azure::Core::Amqp::Models::AmqpDescribed::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1190" column="15" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1190" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a25f698dc0ffcecc44248f59efb2a5f6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</definition>
+        <argsstring>(AmqpSymbol const &amp;descriptor, AmqpValue const &amp;value)</argsstring>
+        <name>AmqpDescribed</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_symbol" kindref="compound">AmqpSymbol</ref> const &amp;</type>
+          <declname>descriptor</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>By convention, AMQP Descriptor values are either symbolic or numeric. Other types are reserved.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>descriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the Descriptor for the described value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the Value for the described value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1072" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="1083" bodyend="1086"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a006bb1f461b32b30b2939cd30837c542" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</definition>
+        <argsstring>(AmqpDescribed &amp;&amp;other) noexcept=default</argsstring>
+        <name>AmqpDescribed</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object by moving the contents of another <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1079" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1af32840ab35530199d152cc8e63b49083" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</definition>
+        <argsstring>(const AmqpDescribed &amp;other)=default</argsstring>
+        <name>AmqpDescribed</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor for <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1085" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ac3f1105b9989ae9e1ac7ec55cefaac02" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> &amp;</type>
+        <definition>AmqpDescribed &amp; Azure::Core::Amqp::Models::AmqpDescribed::operator=</definition>
+        <argsstring>(AmqpDescribed &amp;&amp;other) noexcept=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator for <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>reference to this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1092" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a2b825593c7c484a72bfd89f63189fddf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> &amp;</type>
+        <definition>AmqpDescribed &amp; Azure::Core::Amqp::Models::AmqpDescribed::operator=</definition>
+        <argsstring>(const AmqpDescribed &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator for <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>reference to this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1099" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a49194b652ab4bdaf8dcef111c612ce87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpDescribed::~AmqpDescribed</definition>
+        <argsstring>()=default</argsstring>
+        <name>~AmqpDescribed</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::~AmqpDescribed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1101" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a590fffbc228398575be02194a58f2f62" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</definition>
+        <argsstring>(uint64_t descriptor, AmqpValue const &amp;value)</argsstring>
+        <name>AmqpDescribed</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</qualifiedname>
+        <param>
+          <type>uint64_t</type>
+          <declname>descriptor</declname>
+        </param>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object with a 64bit descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>descriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the Descriptor for the described value. The descriptor value SHOULD be one of the values from the AMQP specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the Value for the described value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1110" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="1087" bodyend="1090"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a9e3efe17252602c4ebf67635006d3c38" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</definition>
+        <argsstring>(AmqpValue const &amp;value)</argsstring>
+        <name>AmqpDescribed</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::AmqpDescribed</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> object from an existing uAMQP AMQP_VALUE item. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>Note that this does NOT capture the passed in AMQP_VALUE object, the caller is responsible for freeing that object.</para>
+</simplesect>
+<simplesect kind="remark"><para>This is an internal accessor and should never be used by code outside the AMQP implementation.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the AMQP array value to capture. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1121" column="5" bodyfile="src/models/amqp_value.cpp" bodystart="1060" bodyend="1081"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8f82d0d7dcbbfc147a7384c671bf8b54" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpDescribed::operator==</definition>
+        <argsstring>(AmqpDescribed const &amp;that) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::operator==</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> value with another. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1127" column="10" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1127" bodyend="1134"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8baa0e9451f97582dea19bb52b35b016" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpDescribed::operator!=</definition>
+        <argsstring>(AmqpDescribed const &amp;that) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::operator!=</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> value with another. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1140" column="10" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1140" bodyend="1140"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a832318ebc5b108bfa9411a4dd21b845a" prot="public" static="no" const="yes" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Amqp::Models::AmqpDescribed::operator AmqpValue const</definition>
+        <argsstring>() const</argsstring>
+        <name>operator AmqpValue const</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::operator AmqpValue const</qualifiedname>
+        <briefdescription>
+<para>Convert an existing <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_composite" kindref="compound">AmqpComposite</ref> to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1144" column="14" bodyfile="src/models/amqp_value.cpp" bodystart="1108" bodyend="1111"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a6e3fee67f4555555a824e737bbcdb7d7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+        <definition>AmqpValue const  &amp; Azure::Core::Amqp::Models::AmqpDescribed::GetDescriptor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDescriptor</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::GetDescriptor</qualifiedname>
+        <briefdescription>
+<para>Returns the descriptor for this composite type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The descriptor for this composite type. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1150" column="21" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1150" bodyend="1150"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ada178abd35cd4d696bc6d8989fbf9095" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> const &amp;</type>
+        <definition>AmqpValue const  &amp; Azure::Core::Amqp::Models::AmqpDescribed::GetValue</definition>
+        <argsstring>() const</argsstring>
+        <name>GetValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::GetValue</qualifiedname>
+        <briefdescription>
+<para>Returns the descriptor for this composite type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The descriptor for this composite type. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1156" column="21" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1156" bodyend="1156"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1afefceee350bece27eab38266df774f31" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref></type>
+        <definition>AmqpValue Azure::Core::Amqp::Models::AmqpDescribed::AsAmqpValue</definition>
+        <argsstring>() const</argsstring>
+        <name>AsAmqpValue</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::AsAmqpValue</qualifiedname>
+        <briefdescription>
+<para>Convert this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> to an <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>An <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_value" kindref="compound">AmqpValue</ref> containing this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1173" column="15" bodyfile="src/models/amqp_value.cpp" bodystart="1103" bodyend="1106"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1aa56548671fd79b944df717e141ef2fb4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Amqp::Models::AmqpDescribed::operator&lt;</definition>
+        <argsstring>(AmqpDescribed const &amp;that) const</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>Azure::Core::Amqp::Models::AmqpDescribed::operator&lt;</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> const &amp;</type>
+          <declname>that</declname>
+        </param>
+        <briefdescription>
+<para>Compare this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> value with another. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>that</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if this <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> is less than the other. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1181" column="5" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1181" bodyend="1186"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An <ref refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described" kindref="compound">AmqpDescribed</ref> represents an AMQP described type. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="remark"><para>An <ulink url="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#doc-idp38080">AMQP Described type</ulink> is a tuple consisting of a type and a &quot;descriptor&quot; for that type. The &quot;descriptor&quot; indicates that the AMQP object is a representation of the type. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="inc/azure/core/amqp/models/amqp_value.hpp" line="1061" column="3" bodyfile="inc/azure/core/amqp/models/amqp_value.hpp" bodystart="1061" bodyend="1191"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a25f698dc0ffcecc44248f59efb2a5f6e" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>AmqpDescribed</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a006bb1f461b32b30b2939cd30837c542" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>AmqpDescribed</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1af32840ab35530199d152cc8e63b49083" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>AmqpDescribed</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a590fffbc228398575be02194a58f2f62" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>AmqpDescribed</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a9e3efe17252602c4ebf67635006d3c38" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>AmqpDescribed</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1afefceee350bece27eab38266df774f31" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>AsAmqpValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a6e3fee67f4555555a824e737bbcdb7d7" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>GetDescriptor</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ada178abd35cd4d696bc6d8989fbf9095" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>GetValue</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a12cf8b406b65a53796d80a8f87364777" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>m_descriptor</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a835eb976b35250d6b81ab3013e29cdd3" prot="private" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a832318ebc5b108bfa9411a4dd21b845a" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>operator AmqpValue const</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8baa0e9451f97582dea19bb52b35b016" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1aa56548671fd79b944df717e141ef2fb4" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>operator&lt;</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1ac3f1105b9989ae9e1ac7ec55cefaac02" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a2b825593c7c484a72bfd89f63189fddf" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a8f82d0d7dcbbfc147a7384c671bf8b54" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_core_1_1_amqp_1_1_models_1_1_amqp_described_1a49194b652ab4bdaf8dcef111c612ce87" prot="public" virt="non-virtual"><scope>Azure::Core::Amqp::Models::AmqpDescribed</scope><name>~AmqpDescribed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

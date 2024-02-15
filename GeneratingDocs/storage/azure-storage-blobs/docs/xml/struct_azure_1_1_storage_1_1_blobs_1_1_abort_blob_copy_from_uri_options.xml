@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_abort_blob_copy_from_uri_options" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::AbortBlobCopyFromUriOptions</compoundname>
+    <includes refid="blob__options_8hpp" local="no">blob_options.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_abort_blob_copy_from_uri_options_1a2fb203f47d133b44dd6b787adc388e99" prot="public" static="no" mutable="no">
+        <type>LeaseAccessConditions</type>
+        <definition>LeaseAccessConditions Azure::Storage::Blobs::AbortBlobCopyFromUriOptions::AccessConditions</definition>
+        <argsstring></argsstring>
+        <name>AccessConditions</name>
+        <qualifiedname>Azure::Storage::Blobs::AbortBlobCopyFromUriOptions::AccessConditions</qualifiedname>
+        <briefdescription>
+<para>Optional conditions that must be met to perform this operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/blob_options.hpp" line="653" column="27" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="653" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional parameters for <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a128e9bdfdd7bd7b7125aada157b2734a" kindref="member">Azure::Storage::Blobs::BlobClient::AbortCopyFromUri</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/blob_options.hpp" line="648" column="3" bodyfile="inc/azure/storage/blobs/blob_options.hpp" bodystart="649" bodyend="654"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_abort_blob_copy_from_uri_options_1a2fb203f47d133b44dd6b787adc388e99" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::AbortBlobCopyFromUriOptions</scope><name>AccessConditions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

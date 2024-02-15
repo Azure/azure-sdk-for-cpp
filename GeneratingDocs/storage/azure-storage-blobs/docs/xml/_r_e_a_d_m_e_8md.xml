@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_r_e_a_d_m_e_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Azure<sp/>Storage<sp/>Blobs<sp/>Client<sp/>Library<sp/>for<sp/>C++</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Azure<sp/>Blob<sp/>storage<sp/>is<sp/>Microsoft&apos;s<sp/>object<sp/>storage<sp/>solution<sp/>for<sp/>the<sp/>cloud.<sp/>Blob<sp/>storage<sp/>is<sp/>optimized<sp/>for<sp/>storing<sp/>massive<sp/>amounts<sp/>of<sp/>unstructured<sp/>data.<sp/>Unstructured<sp/>data<sp/>is<sp/>data<sp/>that<sp/>does<sp/>not<sp/>adhere<sp/>to<sp/>a<sp/>particular<sp/>data<sp/>model<sp/>or<sp/>definition,<sp/>such<sp/>as<sp/>text<sp/>or<sp/>binary<sp/>data.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Getting<sp/>started</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Install<sp/>the<sp/>package</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>easiest<sp/>way<sp/>to<sp/>acquire<sp/>the<sp/>C++<sp/>SDK<sp/>is<sp/>leveraging<sp/>vcpkg<sp/>package<sp/>manager.<sp/>See<sp/>the<sp/>corresponding<sp/>[Azure<sp/>SDK<sp/>for<sp/>C++<sp/>readme<sp/>section][azsdk_vcpkg_install].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>install<sp/>Azure<sp/>Storage<sp/>packages<sp/>via<sp/>vcpkg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```batch</highlight></codeline>
+<codeline><highlight class="normal">vcpkg<sp/>install<sp/>azure-storage-blobs-cpp</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then,<sp/>use<sp/>in<sp/>your<sp/>CMake<sp/>file:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```CMake</highlight></codeline>
+<codeline><highlight class="normal">find_package(azure-storage-blobs-cpp<sp/>CONFIG<sp/>REQUIRED)</highlight></codeline>
+<codeline><highlight class="normal">target_link_libraries(&lt;your<sp/>project<sp/>name&gt;<sp/>PRIVATE<sp/>Azure::azure-storage-blobs)</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Prerequisites</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">You<sp/>need<sp/>an<sp/>Azure<sp/>subscription<sp/>and<sp/>a<sp/>[Storage<sp/>Account][storage_account_overview]<sp/>to<sp/>use<sp/>this<sp/>package.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>create<sp/>a<sp/>new<sp/>Storage<sp/>Account,<sp/>you<sp/>can<sp/>use<sp/>the<sp/>[Azure<sp/>Portal][create_account_with_azure_portal],<sp/>[Azure<sp/>PowerShell][create_account_with_powershell],<sp/>or<sp/>the<sp/>[Azure<sp/>CLI][create_account_with_azure_cli].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Build<sp/>from<sp/>Source</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">First,<sp/>download<sp/>the<sp/>repository<sp/>to<sp/>your<sp/>local<sp/>folder:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```batch</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>clone<sp/>https://github.com/Azure/azure-sdk-for-cpp.git</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Create<sp/>a<sp/>new<sp/>folder<sp/>under<sp/>the<sp/>root<sp/>directory<sp/>of<sp/>local<sp/>cloned<sp/>repo,<sp/>switch<sp/>into<sp/>this<sp/>folder<sp/>and<sp/>run<sp/>below<sp/>commands:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Windows:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```batch</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>..<sp/>-A<sp/>x64</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.<sp/>--target<sp/>azure-storage-blobs</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">or<sp/>Unix:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```batch</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>..<sp/>-DCMAKE_BUILD_TYPE=Debug</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.<sp/>--target<sp/>azure-storage-blobs</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Key<sp/>concepts</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Blob<sp/>storage<sp/>is<sp/>designed<sp/>for:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Serving<sp/>images<sp/>or<sp/>documents<sp/>directly<sp/>to<sp/>a<sp/>browser.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Storing<sp/>files<sp/>for<sp/>distributed<sp/>access.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Streaming<sp/>video<sp/>and<sp/>audio.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Writing<sp/>to<sp/>log<sp/>files.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Storing<sp/>data<sp/>for<sp/>backup<sp/>and<sp/>restore,<sp/>disaster<sp/>recovery,<sp/>and<sp/>archiving.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Storing<sp/>data<sp/>for<sp/>analysis<sp/>by<sp/>an<sp/>on-premises<sp/>or<sp/>Azure-hosted<sp/>service.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Blob<sp/>storage<sp/>offers<sp/>three<sp/>types<sp/>of<sp/>resources:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>storage<sp/>account<sp/>used<sp/>via<sp/>`BlobServiceClient`</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>container<sp/>in<sp/>the<sp/>storage<sp/>account<sp/>used<sp/>via<sp/>`BlobContainerClient`</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>blob<sp/>in<sp/>a<sp/>container<sp/>used<sp/>via<sp/>`BlobClient`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Learn<sp/>more<sp/>about<sp/>options<sp/>for<sp/>authentication<sp/>(including<sp/>Connection<sp/>Strings,<sp/>Shared<sp/>Key,<sp/>Shared<sp/>Key<sp/>Signatures,<sp/>Active<sp/>Directory,<sp/>and<sp/>anonymous<sp/>public<sp/>access)<sp/>in<sp/>our<sp/>[samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs/samples).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Thread<sp/>safety</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>guarantee<sp/>that<sp/>all<sp/>client<sp/>instance<sp/>methods<sp/>are<sp/>thread-safe<sp/>and<sp/>independent<sp/>of<sp/>each<sp/>other<sp/>([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)).<sp/>This<sp/>ensures<sp/>that<sp/>the<sp/>recommendation<sp/>of<sp/>reusing<sp/>client<sp/>instances<sp/>is<sp/>always<sp/>safe,<sp/>even<sp/>across<sp/>threads.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Additional<sp/>concepts</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Client<sp/>Options<sp/>|<sp/>[Accessing<sp/>the<sp/>response](https://github.com/Azure/azure-sdk-for-cpp#response-t-model-types)<sp/>|<sp/>[Long-running<sp/>operations](https://github.com/Azure/azure-sdk-for-cpp#long-running-operations)<sp/>|<sp/>Handling<sp/>failures</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Uploading<sp/>a<sp/>blob</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>std::string<sp/>connectionString<sp/>=<sp/>&quot;&lt;connection_string&gt;&quot;;</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>std::string<sp/>containerName<sp/>=<sp/>&quot;sample-container&quot;;</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>std::string<sp/>blobName<sp/>=<sp/>&quot;sample-blob&quot;;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>containerClient<sp/>=<sp/>BlobContainerClient::CreateFromConnectionString(connectionString,<sp/>containerName);</highlight></codeline>
+<codeline><highlight class="normal">containerClient.CreateIfNotExists();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">BlockBlobClient<sp/>blobClient<sp/>=<sp/>containerClient.GetBlockBlobClient(blobName);</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>upload<sp/>from<sp/>local<sp/>file</highlight></codeline>
+<codeline><highlight class="normal">blobClient.UploadFrom(localFilePath);</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>or<sp/>upload<sp/>from<sp/>memory<sp/>buffer</highlight></codeline>
+<codeline><highlight class="normal">blobClinet.UploadFrom(bufferPtr,<sp/>bufferLength);</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Downloading<sp/>a<sp/>blob</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>download<sp/>to<sp/>local<sp/>file</highlight></codeline>
+<codeline><highlight class="normal">blobClient.DownloadTo(localFilePath);</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>or<sp/>download<sp/>to<sp/>memory<sp/>buffer</highlight></codeline>
+<codeline><highlight class="normal">blobClinet.DownloadTo(bufferPtr,<sp/>bufferLength);</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Enumerating<sp/>blobs</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">for<sp/>(auto<sp/>blobPage<sp/>=<sp/>containerClient.ListBlobs();<sp/>blobPage.HasPage();<sp/>blobPage.MoveToNextPage())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>for<sp/>(auto&amp;<sp/>blob<sp/>:<sp/>blobPage.Blobs)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Below<sp/>is<sp/>what<sp/>you<sp/>want<sp/>to<sp/>do<sp/>with<sp/>each<sp/>blob</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;blob:<sp/>&quot;<sp/>&lt;&lt;<sp/>blob.Name<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Troubleshooting</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">All<sp/>Blob<sp/>service<sp/>operations<sp/>will<sp/>throw<sp/>a<sp/>[StorageException](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)</highlight></codeline>
+<codeline><highlight class="normal">on<sp/>failure<sp/>with<sp/>helpful<sp/>[ErrorCode](https://learn.microsoft.com/rest/api/storageservices/blob-service-error-codes)s.</highlight></codeline>
+<codeline><highlight class="normal">Many<sp/>of<sp/>these<sp/>errors<sp/>are<sp/>recoverable.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cpp</highlight></codeline>
+<codeline><highlight class="normal">try</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>containerClient.Delete();</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">catch<sp/>(Azure::Storage::StorageException&amp;<sp/>e)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>if<sp/>(e.ErrorCode<sp/>==<sp/>&quot;ContainerNotFound&quot;)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>ignore<sp/>the<sp/>error<sp/>if<sp/>the<sp/>container<sp/>does<sp/>not<sp/>exist.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>else</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>handle<sp/>other<sp/>errors<sp/>here</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Next<sp/>steps</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Get<sp/>started<sp/>with<sp/>our<sp/>[Blob<sp/>samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs/samples):</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">1.<sp/>[Upload<sp/>and<sp/>download<sp/>blobs](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/samples/blob_getting_started.cpp)</highlight></codeline>
+<codeline><highlight class="normal">2.<sp/>[List<sp/>operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/samples/blob_list_operation.cpp)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Contributing</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">See<sp/>the<sp/>[Storage<sp/>CONTRIBUTING.md][storage_contrib]<sp/>for<sp/>details<sp/>on<sp/>building,</highlight></codeline>
+<codeline><highlight class="normal">testing,<sp/>and<sp/>contributing<sp/>to<sp/>these<sp/>libraries.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>project<sp/>welcomes<sp/>contributions<sp/>and<sp/>suggestions.<sp/><sp/>Most<sp/>contributions<sp/>require</highlight></codeline>
+<codeline><highlight class="normal">you<sp/>to<sp/>agree<sp/>to<sp/>a<sp/>Contributor<sp/>License<sp/>Agreement<sp/>(CLA)<sp/>declaring<sp/>that<sp/>you<sp/>have</highlight></codeline>
+<codeline><highlight class="normal">the<sp/>right<sp/>to,<sp/>and<sp/>actually<sp/>do,<sp/>grant<sp/>us<sp/>the<sp/>rights<sp/>to<sp/>use<sp/>your<sp/>contribution.<sp/>For</highlight></codeline>
+<codeline><highlight class="normal">details,<sp/>visit<sp/>[cla.microsoft.com][cla].</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>project<sp/>has<sp/>adopted<sp/>the<sp/>[Microsoft<sp/>Open<sp/>Source<sp/>Code<sp/>of<sp/>Conduct][coc].</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>more<sp/>information<sp/>see<sp/>the<sp/>[Code<sp/>of<sp/>Conduct<sp/>FAQ][coc_faq]</highlight></codeline>
+<codeline><highlight class="normal">or<sp/>contact<sp/>[opencode@microsoft.com][coc_contact]<sp/>with<sp/>any</highlight></codeline>
+<codeline><highlight class="normal">additional<sp/>questions<sp/>or<sp/>comments.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;!--<sp/>LINKS<sp/>--&gt;</highlight></codeline>
+<codeline><highlight class="normal">[azsdk_vcpkg_install]:<sp/>https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk</highlight></codeline>
+<codeline><highlight class="normal">[storage_account_overview]:<sp/>https://learn.microsoft.com/azure/storage/common/storage-account-overview</highlight></codeline>
+<codeline><highlight class="normal">[create_account_with_azure_portal]:<sp/>https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal</highlight></codeline>
+<codeline><highlight class="normal">[create_account_with_powershell]:<sp/>https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell</highlight></codeline>
+<codeline><highlight class="normal">[create_account_with_azure_cli]:<sp/>https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli</highlight></codeline>
+<codeline><highlight class="normal">[storage_contrib]:<sp/>https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md</highlight></codeline>
+<codeline><highlight class="normal">[cla]:<sp/>https://cla.microsoft.com</highlight></codeline>
+<codeline><highlight class="normal">[coc]:<sp/>https://opensource.microsoft.com/codeofconduct/</highlight></codeline>
+<codeline><highlight class="normal">[coc_faq]:<sp/>https://opensource.microsoft.com/codeofconduct/faq/</highlight></codeline>
+<codeline><highlight class="normal">[coc_contact]:<sp/>mailto:opencode@microsoft.com</highlight></codeline>
+    </programlisting>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_transport_exception" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::TransportException</compoundname>
+    <basecompoundref refid="class_azure_1_1_core_1_1_request_failed_exception" prot="public" virt="non-virtual">Azure::Core::RequestFailedException</basecompoundref>
+    <includes refid="http_8hpp" local="no">http.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_transport_exception_1a18ce94b6424ef69aa4fbcc8a80104db2" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::TransportException::TransportException</definition>
+        <argsstring>(std::string const &amp;what)</argsstring>
+        <name>TransportException</name>
+        <qualifiedname>Azure::Core::Http::TransportException::TransportException</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>what</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>TransportException</computeroutput> with a <computeroutput>message</computeroutput> string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="remark"><para>The transport policy will throw this error whenever the transport adapter fail to perform a request.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>what</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The explanatory string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="66" column="14" bodyfile="inc/azure/core/http/http.hpp" bodystart="66" bodyend="68"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An error while sending the HTTP request with the transport adapter. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::Http::TransportException</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_transport_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::RequestFailedException</label>
+        <link refid="class_azure_1_1_core_1_1_request_failed_exception"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::runtime_error</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>HttpStatusCode</label>
+      </node>
+      <node id="1">
+        <label>Azure::Core::Http::TransportException</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_transport_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Azure::Core::RequestFailedException</label>
+        <link refid="class_azure_1_1_core_1_1_request_failed_exception"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>StatusCode</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::runtime_error</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/http/http.hpp" line="56" column="3" bodyfile="inc/azure/core/http/http.hpp" bodystart="56" bodyend="69"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1ab8a93e876193535ec4e3c406981ed7f4" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>ClientRequestId</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a7a94fb270077a498054481f054f78bd9" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>ErrorCode</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a5e8fcb788cc82fd39743eb6bded735ac" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>Message</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a91012bd8bc80210d9d7ea1c202d0b909" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a15b5421596c0af28206377e752125250" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>operator=</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a63efd3133353568a5c66689104fcce5d" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>RawResponse</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1acea16c223d4984edba510194eb543bd1" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>ReasonPhrase</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a136d07c3c2f88cce26af988d6925a069" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1adc2eb2d6a7c324cdbaab257d15a19090" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a23e0a8f5928f2e05a4309343175c95fd" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1afb9d780714108f89754768b55b804918" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>RequestFailedException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1ab29a5ed734d872052ac6353e30f47426" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>RequestId</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a04b1b6357f6b8395efa99ac001f24ee7" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>StatusCode</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_transport_exception_1a18ce94b6424ef69aa4fbcc8a80104db2" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>TransportException</name></member>
+      <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a33eed01d1c2eb23f440c2715ccd7a58e" prot="public" virt="non-virtual"><scope>Azure::Core::Http::TransportException</scope><name>~RequestFailedException</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

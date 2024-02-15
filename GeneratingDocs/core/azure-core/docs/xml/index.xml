@@ -1,0 +1,966 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.10.0" xml:lang="en-US">
+  <compound refid="struct_azure_1_1_core_1_1_credentials_1_1_access_token" kind="struct"><name>Azure::Core::Credentials::AccessToken</name>
+    <member refid="struct_azure_1_1_core_1_1_credentials_1_1_access_token_1a72eb9e34fd0874370565d4538c0cd00e" kind="variable"><name>Token</name></member>
+    <member refid="struct_azure_1_1_core_1_1_credentials_1_1_access_token_1aeaa6df8b69d108f5b9004fc5542407b8" kind="variable"><name>ExpiresOn</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_credentials_1_1_authentication_exception" kind="class"><name>Azure::Core::Credentials::AuthenticationException</name>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_authentication_exception_1ae4d1d9f459fdfc5488f357f3424d3154" kind="variable"><name>m_what</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_authentication_exception_1a415cfbec35e1fcadd861fddf7829e2e5" kind="function"><name>AuthenticationException</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_authentication_exception_1a6f8589b51a51db2b0e1e81bd72ae479f" kind="function"><name>what</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream" kind="class"><name>Azure::Core::IO::BodyStream</name>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a806f13d7e3fa1cc91b4b316ccd164d49" kind="function"><name>OnRead</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a54e16528af689c00f5190858fff85e92" kind="function"><name>~BodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a2e73f394ca060cf94146e03d5cf46d74" kind="function"><name>Length</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a52c2ce02e8a7dec1f55276f664c7c8b6" kind="function"><name>Rewind</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ab7c962004d984d3bd1d32f33e6aa485d" kind="function"><name>Read</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1ac02611cf3f72c181dcf393c571df6226" kind="function"><name>ReadToCount</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_body_stream_1a6d2138790b0c79e24f7fbc0f776bb069" kind="function"><name>ReadToEnd</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_context" kind="class"><name>Azure::Core::Context</name>
+    <member refid="class_azure_1_1_core_1_1_context_1a0c8236b45a3f96801d20ed9056107d44" kind="variable"><name>m_contextSharedState</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1aac55e9cad63f64d4a3e407154c0cd0b3" kind="variable"><name>ApplicationContext</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1a38f866aaff500608d0373a4682417a49" kind="function"><name>Context</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1ab158c637c5e299c323bec474cccd2611" kind="function"><name>Context</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1a570378f71f4d923f16974cb5f92ee9d3" kind="function"><name>WithDeadline</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1a9d1a4f785ea71043920be592f789e87b" kind="function"><name>WithValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1af27222eb504319f458057565af0c640f" kind="function"><name>GetDeadline</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1a44896de14f31ec4e45ba5f0beaa99326" kind="function"><name>TryGetValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1a3ac7608f0afbe908aef54bee7bf9ad5b" kind="function"><name>Cancel</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1ada5850b1bb2ad455c4fc1595ae75d66f" kind="function"><name>IsCancelled</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1a08e3e60c70888f118ea0038a8b5e8df2" kind="function"><name>ThrowIfCancelled</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state" kind="struct"><name>Azure::Core::Context::ContextSharedState</name>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a35619416dc682073360b775802d7d3dd" kind="variable"><name>Parent</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1ace7e0f2731f03360ba9f5f8d3652aef9" kind="variable"><name>Deadline</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a3bd25943b5f306a9b123930fd81db749" kind="variable"><name>TraceProvider</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1aca3a3af0774cfcda691569c8840e6afa" kind="variable"><name>Key</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a2bd1dd3cb544886b808a8421a76f5e85" kind="variable"><name>Value</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a6b0d69be03cd87e052154805c75bb4e2" kind="function"><name>ToDateTimeRepresentation</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1ab9dd9300a0b331775f65e8a8e8003ed4" kind="function"><name>FromDateTimeRepresentation</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1a636e1f6a07ad054807e307c1d5c59a9a" kind="function"><name>ContextSharedState</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1acabb055dc51a91870cff67a4385b2df9" kind="function"><name>ContextSharedState</name></member>
+    <member refid="struct_azure_1_1_core_1_1_context_1_1_context_shared_state_1aa380d16b5aee6bd0fdf5899c63a013b4" kind="function"><name>ContextSharedState</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_convert" kind="class"><name>Azure::Core::Convert</name>
+    <member refid="class_azure_1_1_core_1_1_convert_1a2509eeb8935fcd948a3221c57b10b985" kind="function"><name>Convert</name></member>
+    <member refid="class_azure_1_1_core_1_1_convert_1a234ed21aa82069684c1a6e0d9dff49fb" kind="function"><name>Base64Encode</name></member>
+    <member refid="class_azure_1_1_core_1_1_convert_1acc0edb30faaee964913dd4497ba1748a" kind="function"><name>Base64Decode</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_curl_connection" kind="class"><name>Azure::Core::Http::CurlConnection</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1adfeb9b403f7be590e6c7374eb965563d" kind="variable"><name>m_handle</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a857be7b7e84d3ed2b580e9b045421ce6" kind="variable"><name>m_curlSocket</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1adbaca9188258070f0bc1788a5cdd4495" kind="variable"><name>m_lastUseTime</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a709bae41ea402f2755052b061c99b566" kind="variable"><name>m_connectionKey</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a4a0f5648394f5300ef178973bde80419" kind="variable"><name>m_enableCrlValidation</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ac96cef535eff259f705b9615db9639f4" kind="variable"><name>m_allowFailedCrlRetrieval</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a1d4ff6da3282d15ddcf74e0063db962d" kind="function"><name>CurlLoggingCallback</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ad939c5a185376b5e4b22c73b24fc57e7" kind="function"><name>CurlSslCtxCallback</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a383b372d494972bd8b8bf80f2f72e3d7" kind="function"><name>SslCtxCallback</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a6879ac2cad06b069bd6e56df4189d200" kind="function"><name>VerifyCertificateError</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1ae028bfff06339fae9b1486bc34d9e42e" kind="function"><name>CurlConnection</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a4d52d51c148ceb82858f0dd6de83f317" kind="function"><name>~CurlConnection</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a2b8da0ad12d29ac85ce8334e9bb2b177" kind="function"><name>GetConnectionKey</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a1ccde96315ab2370ced8bcfc87cc1556" kind="function"><name>UpdateLastUsageTime</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a011c45dd8398536a6eda1dde6e8a4cb4" kind="function"><name>IsExpired</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a39ec5246e8cab60c9229acee7f2f8ce7" kind="function"><name>ReadFromSocket</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_connection_1a38965e729c4fb3fb234f1753562e7116" kind="function"><name>SendBuffer</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection" kind="class"><name>Azure::Core::Http::CurlNetworkConnection</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a7152da2d7f48dfb3d49e6f7a87744cfa" kind="variable"><name>m_isShutDown</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a8748df2b1bf8402584acb0249b8b1844" kind="function"><name>~CurlNetworkConnection</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a1ec150945dfb9ad8831cec9c2d2d5109" kind="function"><name>GetConnectionKey</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a33c469afabc2ff3dd0b096a03e0cb0cf" kind="function"><name>UpdateLastUsageTime</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a53e781c7fa6b1a875998f84c62581f05" kind="function"><name>IsExpired</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a70019a25e47e49fb9b91c6d79d89cf89" kind="function"><name>ReadFromSocket</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1afbc09222e1cd35e2173b397153015501" kind="function"><name>SendBuffer</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1a6f47fb11d68a6e40de30cc1b172ef6a4" kind="function"><name>Shutdown</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_network_connection_1acd1b6bbeb9cd1229c48d276064610458" kind="function"><name>IsShutdown</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_curl_session" kind="class"><name>Azure::Core::Http::CurlSession</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ae3778a135fa83746efc77c360a88393d" kind="enum"><name>SessionState</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ae3778a135fa83746efc77c360a88393da8b73b304074fd2f4fa2a0f606956ae17" kind="enumvalue"><name>PERFORM</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ae3778a135fa83746efc77c360a88393dab8f87bd0ae829f0fa0fcaa1a0a2bf91e" kind="enumvalue"><name>STREAMING</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a7e6c9a401178ea3964958717282872be" kind="enum"><name>ResponseParserState</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a7e6c9a401178ea3964958717282872bea61386e8f85dfd630abd7ea3afb6472b6" kind="enumvalue"><name>StatusLine</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a7e6c9a401178ea3964958717282872bea883d7615c4d2de3fa1218f1298c46d0e" kind="enumvalue"><name>Headers</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a7e6c9a401178ea3964958717282872bea17d326d45a19e3fa18214a1110a3b08f" kind="enumvalue"><name>EndOfHeaders</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a6a1d66b277c6d739a429873d13937314" kind="variable"><name>m_sessionState</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a402887408e9047871948c6b54d21966f" kind="variable"><name>m_connection</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a95aa1b97045a0e4a8d68812b97a9b486" kind="variable"><name>m_response</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ae1a32b41d21684d04ba531951b832b43" kind="variable"><name>m_request</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a80cdacb0f2136fc1987f6b956fad0b97" kind="variable"><name>m_bodyStartInBuffer</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ad82eabc21b14a7e22c254fa068243d4a" kind="variable"><name>m_innerBufferSize</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1af380343c49531c80e3233ac669731693" kind="variable"><name>m_isChunkedResponseType</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a9d71aa2cf2706c41968cffe5ccef32a5" kind="variable"><name>m_contentLength</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a95afc4d115f05b6c2b4f2a13b83d7007" kind="variable"><name>m_chunkSize</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ad35301ccf09be1a1785954757b0bd13d" kind="variable"><name>m_sessionTotalRead</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a653fa71fddae62af853802ec719d3c33" kind="variable"><name>m_connectionUpgraded</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a1fee6256f660a6b6f07832154b7326e2" kind="variable"><name>m_readBuffer</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a175ed65e72ed0685ec32f2bd08d67b5d" kind="variable"><name>m_lastStatusCode</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a6641efc184c7c67c661aac56316f1120" kind="variable"><name>m_keepAlive</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a331f99d562d3858c9531c935c2b1c7d1" kind="variable"><name>m_httpProxy</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a249409f981db13d6da79e32aa2e9e51f" kind="variable"><name>m_httpProxyUser</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ade423349a4ded1b6217df8948c0f0710" kind="variable"><name>m_httpProxyPassword</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a9feac22a9d0addaee3121329f947c03b" kind="function"><name>ReadExpected</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ac310a7fe3ecb6b791e8d326cb91779d2" kind="function"><name>ReadCRLF</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a8270d2fded1a396967563c71edfcbac8" kind="function"><name>SendRawHttp</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a243b3a3cdbc3fd05c56ad9662cde9969" kind="function"><name>UploadBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a7985f3d0f5f2fb622d0146767c58ef5c" kind="function"><name>ReadStatusLineAndHeadersFromRawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ad8d1e01553b233f57fa99451a0331099" kind="function"><name>ParseChunkSize</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a97fd5aa3ad38744dc74028c9bbebaad3" kind="function"><name>IsEOF</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ab6e3d5e52bd439061419b51e3b133e6a" kind="function"><name>OnRead</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a8983fda0b8e7f0ad5da7b51abfb7169a" kind="function"><name>GetHTTPMessagePreBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a9e0b008044346b07b902f356fefb5822" kind="function"><name>GetHeadersAsString</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1ac8b8c2c2f4bc8df836deebcc64b734ee" kind="function"><name>SetHeader</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a6b2ef37014a0eb9f0baa2629e8fd749c" kind="function"><name>CurlSession</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a4a09de0caf474853fbfc0768b5dd3fea" kind="function"><name>~CurlSession</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a86bc473a6a09215453abf4e3f063b194" kind="function"><name>Perform</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a88a6369b4b0acc9c79705dd15083bf0f" kind="function"><name>ExtractResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a6d8958274c0aa258f1127558b78d9cb8" kind="function"><name>Length</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1a68641a2a760a2bd4a9962ebbcb042608" kind="function"><name>ExtractConnection</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_curl_transport" kind="class"><name>Azure::Core::Http::CurlTransport</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a584ac33b2fefa57dbef9ff66fbf770a9" kind="variable"><name>m_options</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1ab413838dbe9298dced850c6fc25f5d37" kind="function"><name>OnUpgradedConnection</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a5ad6635c2f4f80164d95db832e13e83b" kind="function"><name>CurlTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1ab262ee5e4b98d00e3ca448402951cfed" kind="function"><name>CurlTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1a5ec0198b7d400faff38599b52f174512" kind="function"><name>~CurlTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_transport_1aa6a92d65b363e50a2293b6bada21ef3e" kind="function"><name>Send</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options" kind="struct"><name>Azure::Core::Http::CurlTransportOptions</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1ac6eb38a8ef89772e7e24f77950d550e9" kind="variable"><name>Proxy</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1a6d0619f5f09ffdcc9a7fb87b97b59a1d" kind="variable"><name>ProxyUsername</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1aa6718b6de792b57dccf7b7648f43f2d9" kind="variable"><name>ProxyPassword</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1aa0559cf03611e7b68f42094991e208fe" kind="variable"><name>CAInfo</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1a7e43d75e4f8ecfb96322d5b92b2aee17" kind="variable"><name>CAPath</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1a6822790c8f34f241ddd5261b54b05c66" kind="variable"><name>HttpKeepAlive</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1a4be09cd52603cc58eeb66139650d7d16" kind="variable"><name>SslVerifyPeer</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1a8e5e6b74029a927bb6635eeff2a898fd" kind="variable"><name>SslOptions</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1ab78a134dd0c79a4a391f0f2cd55e9843" kind="variable"><name>NoSignal</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1adef7d1b687f06d8072888c14dfbbc856" kind="variable"><name>ConnectionTimeout</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_options_1aaeda7fcfc4ac51ac45966d34464d5b50" kind="variable"><name>EnableCurlTracing</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options" kind="struct"><name>Azure::Core::Http::CurlTransportSslOptions</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a5d3fc54773da96c6477e3f938b73ddc5" kind="variable"><name>EnableCertificateRevocationListCheck</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a11ebd05e5f58f37a9f6f77aa6f9a4b5d" kind="variable"><name>AllowFailedCrlRetrieval</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_curl_transport_ssl_options_1a11f843c6a50fbf433a4cb95a0b90b2da" kind="variable"><name>PemEncodedExpectedRootCertificates</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_date_time" kind="class"><name>Azure::DateTime</name>
+    <member refid="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507" kind="enum"><name>TimeFractionFormat</name></member>
+    <member refid="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507ad2036c99295a7229c20dfecbbb2eb11f" kind="enumvalue"><name>DropTrailingZeros</name></member>
+    <member refid="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507ac2d00adea7dc680aca053d273a441d57" kind="enumvalue"><name>AllDigits</name></member>
+    <member refid="class_azure_1_1_date_time_1a5f0fff7186f08a21b26057923d3c6507aa8156810bfee2bd2b44765b9e91db3bd" kind="enumvalue"><name>Truncate</name></member>
+    <member refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5" kind="enum"><name>DateFormat</name></member>
+    <member refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5a550760bbd51d117ffb22059b91d79d9f" kind="enumvalue"><name>Rfc1123</name></member>
+    <member refid="class_azure_1_1_date_time_1a9dd0e5265e6c5cf2ef419a30b7f806e5ac8d161c49f2f3a896d3848046f84feaa" kind="enumvalue"><name>Rfc3339</name></member>
+    <member refid="class_azure_1_1_date_time_1a2e4202c1f6f506ce580388ce4d938e6a" kind="variable"><name>SystemClockEpoch</name></member>
+    <member refid="class_azure_1_1_date_time_1ae082c2befd1e5ae7ea500ed0288cafeb" kind="function"><name>DateTime</name></member>
+    <member refid="class_azure_1_1_date_time_1a31b926a5511f4c117c7c80a3ad7d9f9c" kind="function"><name>ThrowIfUnsupportedYear</name></member>
+    <member refid="class_azure_1_1_date_time_1a8eb68f8551a7a238c41c6f03946b68d9" kind="function"><name>GetDateTimeParts</name></member>
+    <member refid="class_azure_1_1_date_time_1a09f30f83292b531179df535a7dd3e2f9" kind="function"><name>ToStringRfc1123</name></member>
+    <member refid="class_azure_1_1_date_time_1a4a47aa28681164fad63a17ff3b04df02" kind="function"><name>DateTime</name></member>
+    <member refid="class_azure_1_1_date_time_1a31d945351b8c6061a69f1954a5984432" kind="function"><name>DateTime</name></member>
+    <member refid="class_azure_1_1_date_time_1a2fd52469cf778230bcc178d7795c98c1" kind="function"><name>DateTime</name></member>
+    <member refid="class_azure_1_1_date_time_1a480dea5c0d4099e8c0a91194eece5b91" kind="function"><name>DateTime</name></member>
+    <member refid="class_azure_1_1_date_time_1a47ebd257a65488440d2a00bdde9342d2" kind="function"><name>operator std::chrono::system_clock::time_point</name></member>
+    <member refid="class_azure_1_1_date_time_1aea9897a8e5668dc7ba30fa631d27482b" kind="function"><name>ToString</name></member>
+    <member refid="class_azure_1_1_date_time_1a09adcc030765e491d9f340db5e8a0db7" kind="function"><name>ToString</name></member>
+    <member refid="class_azure_1_1_date_time_1abe9f1e977e70d30c8efada1f41b4b30f" kind="function"><name>Parse</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_e_tag" kind="class"><name>Azure::ETag</name>
+    <member refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2e" kind="enum"><name>ETagComparison</name></member>
+    <member refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2eac43e0fd449c758dab8f891d8e19eb1a9" kind="enumvalue"><name>Strong</name></member>
+    <member refid="class_azure_1_1_e_tag_1abbf0e171ca0781b2b0ac043f57480f2ea7324e3727807d95037eb19d304fd91ec" kind="enumvalue"><name>Weak</name></member>
+    <member refid="class_azure_1_1_e_tag_1a305e59369525f9916bc3bcaf941ac479" kind="variable"><name>m_value</name></member>
+    <member refid="class_azure_1_1_e_tag_1a8a099159c1206da752cee1a13a5c5f07" kind="function"><name>Equals</name></member>
+    <member refid="class_azure_1_1_e_tag_1a5264a49bd00787f15735f3798537b3b2" kind="function"><name>Any</name></member>
+    <member refid="class_azure_1_1_e_tag_1a5f51ee1a9eaf64372d8cc1d00d1042a6" kind="function"><name>ETag</name></member>
+    <member refid="class_azure_1_1_e_tag_1ae17064a85468c70b9ae5e1c739f29282" kind="function"><name>ETag</name></member>
+    <member refid="class_azure_1_1_e_tag_1a36ae96279fde0e6c22585b15ccb340fe" kind="function"><name>HasValue</name></member>
+    <member refid="class_azure_1_1_e_tag_1a9fc3b3c367ce24ee19b430c8cb36fe9c" kind="function"><name>ToString</name></member>
+    <member refid="class_azure_1_1_e_tag_1aab47574005070ae685e98aa33427ebf6" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_e_tag_1a83cf243c393b71b92aebcf0eb8b9f786" kind="function"><name>operator!=</name></member>
+    <member refid="class_azure_1_1_e_tag_1a7e9e0a1e0fe067280a029140d0410aee" kind="function"><name>IsWeak</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream" kind="class"><name>Azure::Core::IO::FileBodyStream</name>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1aa0822bda8c457c95c6fb0d3600a8c190" kind="variable"><name>m_randomAccessFileBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1adf94a325fdd49c9ae5258e3dbbd85699" kind="function"><name>OnRead</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a31798d744f57846908d91dbbb1ae8d83" kind="function"><name>FileBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1af7ef6faea4939b9e1d789f41aa019d99" kind="function"><name>~FileBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a6a508b86596a8c482ccf2b50f051a620" kind="function"><name>Rewind</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_file_body_stream_1a4c9ea3f7f807238a662e75d7fa7e72da" kind="function"><name>Length</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_cryptography_1_1_hash" kind="class"><name>Azure::Core::Cryptography::Hash</name>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a81ee971e2a5f21fc2f913395b0f7f396" kind="variable"><name>m_isDone</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ad91a23277675cf03163e92cc159be7d0" kind="function"><name>OnAppend</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a63ddc8aadc46c0441870c1caad24ca79" kind="function"><name>OnFinal</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a2a645ad0e5b4df4a5d3ec0a090d1fd5c" kind="function"><name>Hash</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a1bfa37485e2b750a90f70647b0ecf6a9" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a713b9700af1c65cd6fff998d8e91cfd1" kind="function"><name>Hash</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1ac3c9cb8298ea1f02b9751d2aeada5e28" kind="function"><name>Append</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aae186272ffc97535f4c289803ea3bed7" kind="function"><name>Final</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1aca46d119e62d3e34126adc07a9917414" kind="function"><name>Final</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_hash_1a5d4a624d64e23e0063fd9a3f9bfee3aa" kind="function"><name>~Hash</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_http_method" kind="class"><name>Azure::Core::Http::HttpMethod</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1ada8654593eac435bae2a7a44d80592c5" kind="variable"><name>Get</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a2e526e34bd316e1a4984524efa25f515" kind="variable"><name>Head</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1ab323913669a353f2f39c96b82a2841ac" kind="variable"><name>Post</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a9a4dc215ef7e998073d584efc991cb8b" kind="variable"><name>Put</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a214b92af05937d6685990909fbc2432b" kind="variable"><name>Delete</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a1d4836af87109f9114bff66cfa8bc92d" kind="variable"><name>Patch</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1ab4386f58cab4f3cbd95aab05ee1a1fea" kind="variable"><name>Options</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a1e56d6a5bb89fdd3cef7e90902f52eb0" kind="variable"><name>m_value</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a0fe0adc3ebc9e9d7deee51f2887ea4dc" kind="function"><name>HttpMethod</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a4b8361490adcd7f95ebc773ec5727af2" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a568a9b89fec9c5dd891f54026dfbfbf3" kind="function"><name>operator!=</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a354e1fd2e96072492a5971ee84350d13" kind="function"><name>ToString</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy" kind="class"><name>Azure::Core::Http::Policies::HttpPolicy</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1ae7cff2dc6590af4427a41d7eaeabc886" kind="function"><name>Send</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a3ac12b6638c7bd3d63823ce74309cd6b" kind="function"><name>~HttpPolicy</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a9a3b46c83e17a3f1f4b44fbb0f724129" kind="function"><name>Clone</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a3c0015149b62cd05c18ee02ecbdbc5ac" kind="function"><name>HttpPolicy</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1ab0181d999f0091c4482b3fd225245c26" kind="function"><name>HttpPolicy</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1a610652f959893897ebe4538bcaf441f6" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_http_policy_1aade142834e113c84d2bfe4165fcbd257" kind="function"><name>HttpPolicy</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_http_range" kind="struct"><name>Azure::Core::Http::HttpRange</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_http_range_1af06b65e86a32a3e071c352fa5bce5366" kind="variable"><name>Offset</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_http_range_1a091897cf2777bfe8ca7ae3f21eff8222" kind="variable"><name>Length</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_http_transport" kind="class"><name>Azure::Core::Http::HttpTransport</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1aab0a38b3e67079a9ede743c3e8de909d" kind="function"><name>Send</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a4c0b2905624416efe1f77e6ef244c0e9" kind="function"><name>~HttpTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a76c34f294158836f72741cc90e4b480f" kind="function"><name>HttpTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1af7fadcff099af67a5e3732642cc42c78" kind="function"><name>HttpTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a0c6eb7479b5ef2e7359ec5f42fc404b8" kind="function"><name>HttpTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a44e0b2695aa316451ffe3c68e5e3ee30" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_http_transport_1a8b47565baf7018fdfcad475b9c5d6615" kind="function"><name>HasWebSocketSupport</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_context_1_1_key" kind="class"><name>Azure::Core::Context::Key</name>
+    <member refid="class_azure_1_1_core_1_1_context_1_1_key_1a136961c2fec87c4c89cefb600b51582c" kind="variable"><name>m_uniqueAddress</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1_1_key_1ab0c8f5747cd1fd131b814cfa116bacc4" kind="function"><name>Key</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1_1_key_1a85075dfa54631252f8679c6ea898874f" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_context_1_1_key_1a5e1c8a86a492b259ba93296ba2fd0757" kind="function"><name>operator!=</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger" kind="class"><name>Azure::Core::Diagnostics::Logger</name>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569" kind="enum"><name>Level</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569ad4a9fa383ab700c5bdd6f31cf7df0faf" kind="enumvalue"><name>Verbose</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a5391f9a882a54c787b206138ed6d28b0" kind="enumvalue"><name>Informational</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a0eaadb4fcb48a0a0ed7bc9868be9fbaa" kind="enumvalue"><name>Warning</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1acd22a5abeec67ee2b56ef08de0c9c569a902b0d55fddef6f8d651fe1035b7d4bd" kind="enumvalue"><name>Error</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a6e5b3340f691b3003ce0c0f4354d74b3" kind="function"><name>SetListener</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a04c04d487a84eb71da1951acff3a6660" kind="function"><name>SetLevel</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a1682b820de5464aac021f735965f67fa" kind="function"><name>Logger</name></member>
+    <member refid="class_azure_1_1_core_1_1_diagnostics_1_1_logger_1a2bac1281230c720f7778fbe19c930c5a" kind="function"><name>~Logger</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options" kind="struct"><name>Azure::Core::Http::Policies::LogOptions</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options_1a37d9d65f2d6c3885ecffb4a46f7f4500" kind="variable"><name>AllowedHttpQueryParameters</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_log_options_1a9771bcc330799bca14a2b5c50bc20866" kind="variable"><name>AllowedHttpHeaders</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_match_conditions" kind="struct"><name>Azure::MatchConditions</name>
+    <member refid="struct_azure_1_1_match_conditions_1a325c57f358adf5053a19e7b82f18eacf" kind="variable"><name>IfMatch</name></member>
+    <member refid="struct_azure_1_1_match_conditions_1a3d881b70eb6e974c75561b29ba1ac56d" kind="variable"><name>IfNoneMatch</name></member>
+    <member refid="struct_azure_1_1_match_conditions_1a36b6ab0609622f36838647b52c8d98b4" kind="function"><name>~MatchConditions</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash" kind="class"><name>Azure::Core::Cryptography::Md5Hash</name>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a59fc596fdff4ae4f38168f1aa077a54e" kind="variable"><name>m_implementation</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a69388cd5feec924cfbf0bb12c8798cb7" kind="function"><name>Md5Hash</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a68d53cb85f27357ab1dbd236b0940b04" kind="function"><name>~Md5Hash</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a3d3b8a5a776ee3a4e8cb2247755f8e99" kind="function"><name>OnFinal</name></member>
+    <member refid="class_azure_1_1_core_1_1_cryptography_1_1_md5_hash_1a6784a00f3b595ec0ec8f47693546a494" kind="function"><name>OnAppend</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream" kind="class"><name>Azure::Core::IO::MemoryBodyStream</name>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1af6a72049ce593aa0e8f03da98e750081" kind="variable"><name>m_data</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1a153072c1a56ba372b45e573a3ba610b7" kind="variable"><name>m_length</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1a1847dda986b7a2400c2fe9cdd23b0097" kind="variable"><name>m_offset</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1a289b2a5d988730f4aac8aece3d3fdcb7" kind="function"><name>OnRead</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1a4dd2752f1e167883adaeefb421a013a7" kind="function"><name>MemoryBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1a291590d5e3e38886515c8e03931eccc5" kind="function"><name>MemoryBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1a98f048b5c0e5b8daa7bc9aca396f00f8" kind="function"><name>MemoryBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1aea97ce29a09c0b32a518f7195a9ea8bc" kind="function"><name>Length</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_memory_body_stream_1acf45328737df39d5ad836644be607f41" kind="function"><name>Rewind</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_modified_conditions" kind="struct"><name>Azure::ModifiedConditions</name>
+    <member refid="struct_azure_1_1_modified_conditions_1a441aae06bc7f0a660fd8750d338c9f5d" kind="variable"><name>IfModifiedSince</name></member>
+    <member refid="struct_azure_1_1_modified_conditions_1a0a09caab12dc71ebb68f2f9972aac7de" kind="variable"><name>IfUnmodifiedSince</name></member>
+    <member refid="struct_azure_1_1_modified_conditions_1a2f80101a5280b593fa9da7fac3eab36c" kind="function"><name>~ModifiedConditions</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy" kind="class"><name>Azure::Core::Http::Policies::NextHttpPolicy</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a5fe4fd0e29cc7e9d1aca10838be9c3ed" kind="variable"><name>m_index</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a076c0712d5c2bc9659b8dfa85689ab5d" kind="variable"><name>m_policies</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a9563e99253733b0ed54cd0f467e72afe" kind="function"><name>NextHttpPolicy</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_policies_1_1_next_http_policy_1a9c1768b963eade38336239f48d471097" kind="function"><name>Send</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_nullable" kind="class"><name>Azure::Nullable</name>
+    <member refid="class_azure_1_1_nullable_1a79bcb1c4eb4fd85df010fae635fc6260" kind="variable"><name>m_disengaged</name></member>
+    <member refid="class_azure_1_1_nullable_1a73ffd96428fc63312b5f94d198dcbc63" kind="variable"><name>m_value</name></member>
+    <member refid="class_azure_1_1_nullable_1a45ac1f04cb981a2771ff4e85cfac08d9" kind="variable"><name></name></member>
+    <member refid="class_azure_1_1_nullable_1a56f8d958f38817da42712c46e22efc90" kind="variable"><name>m_hasValue</name></member>
+    <member refid="class_azure_1_1_nullable_1ab1032d685f3d89d91986c3896b88803d" kind="function"><name>Nullable</name></member>
+    <member refid="class_azure_1_1_nullable_1aa3b67f518c6b9451a052188f0482ad18" kind="function"><name>Nullable</name></member>
+    <member refid="class_azure_1_1_nullable_1a2d64ebe47430d86eac341d620c8d1c30" kind="function"><name>Nullable</name></member>
+    <member refid="class_azure_1_1_nullable_1aa0e7ba20ce95e979bc7450f532ad56b4" kind="function"><name>Nullable</name></member>
+    <member refid="class_azure_1_1_nullable_1ad8625cdd03c048fcd14836c5a0e98874" kind="function"><name>~Nullable</name></member>
+    <member refid="class_azure_1_1_nullable_1af73e1a55d0306d9002b02cc70cdfe5d2" kind="function"><name>Reset</name></member>
+    <member refid="class_azure_1_1_nullable_1ab5af88a2c22ea9bc2eb9c9404a9227cd" kind="function"><name>Swap</name></member>
+    <member refid="class_azure_1_1_nullable_1a9184df0f6056498df5fb9622d49b9a01" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_nullable_1a2094d9d0a555c15b22178168a7589dad" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_nullable_1a7b2657e238de56221f903b135cdaae44" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_nullable_1ab8e5d08de8f40fd0edd53868c6c757a8" kind="function"><name>Emplace</name></member>
+    <member refid="class_azure_1_1_nullable_1a9a0c797c4eb208551e045de2d97809f7" kind="function"><name>HasValue</name></member>
+    <member refid="class_azure_1_1_nullable_1a97723b8e1d2c4043c751a159697ba0c6" kind="function"><name>Value</name></member>
+    <member refid="class_azure_1_1_nullable_1a99fd0eee11cb24372bfa8b72c964252a" kind="function"><name>Value</name></member>
+    <member refid="class_azure_1_1_nullable_1af891adde37c391b34b5529fd11218fd2" kind="function"><name>Value</name></member>
+    <member refid="class_azure_1_1_nullable_1a0081534f590dc332391440478e05d6f5" kind="function"><name>operator bool</name></member>
+    <member refid="class_azure_1_1_nullable_1a9503e5d99362c845c193a180cd56243d" kind="function"><name>operator-&gt;</name></member>
+    <member refid="class_azure_1_1_nullable_1a10588327aa097a16979bd8e0922afa4b" kind="function"><name>operator-&gt;</name></member>
+    <member refid="class_azure_1_1_nullable_1aeb6beec913524bdb1f068687746f9ad4" kind="function"><name>operator*</name></member>
+    <member refid="class_azure_1_1_nullable_1ac4c6c4b3d5ad7ebcd3c36052b992f8ed" kind="function"><name>operator*</name></member>
+    <member refid="class_azure_1_1_nullable_1a75a6159e00082a40582322be816562c6" kind="function"><name>operator*</name></member>
+    <member refid="class_azure_1_1_nullable_1abf7a0ba296829896efafa19544be5ef9" kind="function"><name>operator*</name></member>
+    <member refid="class_azure_1_1_nullable_1a6cb17c73e74a65db4defbae1ce74a1c1" kind="function"><name>ValueOr</name></member>
+    <member refid="class_azure_1_1_nullable_1ae15748b7abfcb2a6a2c4dd72f2f8c3ec" kind="function"><name>ValueOr</name></member>
+    <member refid="class_azure_1_1_nullable_1a528123fd139cf279c4652467d7a448d9" kind="friend"><name>swap</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_operation" kind="class"><name>Azure::Core::Operation</name>
+    <member refid="class_azure_1_1_core_1_1_operation_1a0c40e6a0933c30778d70eaec93cd3505" kind="variable"><name>m_rawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a645caf9042b301b2b415bd8aa8da2827" kind="variable"><name>m_status</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1acc6f2a48739c62db894132f80c11f6c9" kind="function"><name>PollInternal</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a147de21857cb62ba8e477e8cb28b8dd2" kind="function"><name>PollUntilDoneInternal</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a312893cd16c059e68452febbb755619a" kind="function"><name>GetRawResponseInternal</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a0c025983fa1ec8d2c6077afc1d21e7d9" kind="function"><name>Operation</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a5aa096d3962f075a0fed8476556660ac" kind="function"><name>Operation</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a6fca7590de4fa9bb25ba343b055059b9" kind="function"><name>Operation</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1ac406eeda5d1990d72466a968eb76b1a5" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a991d84dd39866eb035d57d9429a629e8" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a6fc4a704f20ce6fc4cf172f57d9579b6" kind="function"><name>~Operation</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1ad92b8b97a7e0f1ef24a051132d447cef" kind="function"><name>Value</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a44883c43c2dd4ca3e0273735ec506999" kind="function"><name>GetResumeToken</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1ae04fa8a5e2e1f751ea299eda037f8b41" kind="function"><name>GetRawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1aacfb286b1cdc3ea5586fb62ad8721b5e" kind="function"><name>Status</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a29f86ab638e03051f6c5aedf34f3497a" kind="function"><name>IsDone</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1ae55c2a76868dd21105094b6f7b21e0d0" kind="function"><name>HasValue</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a7bc97d4a9d65bf1112adc5f248e90312" kind="function"><name>Poll</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a38ea4f1b10e44616d091bfddff7bd2d5" kind="function"><name>Poll</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1ae6919591c1f99490df704c744d347451" kind="function"><name>PollUntilDone</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_1a1dd3436f91112ebb63d540b9926b2c34" kind="function"><name>PollUntilDone</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_operation_cancelled_exception" kind="class"><name>Azure::Core::OperationCancelledException</name>
+    <member refid="class_azure_1_1_core_1_1_operation_cancelled_exception_1a34ca809dfec39ec947a49cbbf7841b2a" kind="function"><name>OperationCancelledException</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_operation_status" kind="class"><name>Azure::Core::OperationStatus</name>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a526841f14133451599f16dcd68b37fa2" kind="variable"><name>m_value</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a4471070aefea912692f1190405550e64" kind="variable"><name>NotStarted</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1aa5ca5ff7d5ef74f8752ef359279d4907" kind="variable"><name>Running</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1ada164a4a4d1337d9bf4ff5d508cbcd79" kind="variable"><name>Succeeded</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a3e0ef8283acb83a152df895053913aed" kind="variable"><name>Cancelled</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a2f7201bae9065bd77dd1461bce481542" kind="variable"><name>Failed</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a634d16311a526d2a4c220d8fde1d0f09" kind="function"><name>OperationStatus</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a6b57cbf7976f72aaf7c43511a4986465" kind="function"><name>OperationStatus</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a9c2d67564dd194914e394b3b79b7f6c1" kind="function"><name>OperationStatus</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a8bc56741a8c391ea8b88755f94bf83cf" kind="function"><name>operator==</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1aea5ada253ccc20e8f9fd43056a3bf92f" kind="function"><name>operator!=</name></member>
+    <member refid="class_azure_1_1_core_1_1_operation_status_1a070f8e27cd5265c2ff554db980b91cbc" kind="function"><name>Get</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_paged_response" kind="class"><name>Azure::Core::PagedResponse</name>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a5b8dca23e1d50b9e543a57370823087b" kind="variable"><name>m_hasPage</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a7130db25dd1ab171818b38a29b0c5e25" kind="variable"><name>CurrentPageToken</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a2c30229b5c25fe6d984ae85d92ff38c2" kind="variable"><name>NextPageToken</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a8f6d994c3784918caac862fd7c64c116" kind="variable"><name>RawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a75be341ab9c1e777fd1ecc96f359e4a5" kind="function"><name>PagedResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1ae5fbd2f1d9060b6c714f495105bc7e49" kind="function"><name>PagedResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a1318df2afc520592939df8a02548b032" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1afd14ac53847596903a1d6fc5b3e4ff5d" kind="function"><name>~PagedResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a141d5d914a9e1e440da4526a0ca20932" kind="function"><name>HasPage</name></member>
+    <member refid="class_azure_1_1_core_1_1_paged_response_1a4a4acdaf4aed625e4d9bdfece37bfa01" kind="function"><name>MoveToNextPage</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream" kind="class"><name>Azure::Core::IO::ProgressBodyStream</name>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a94ce6502c2d345586fe5d657662c09fc" kind="variable"><name>m_bodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a986e9effe7d8cf7933e15308c6d137c7" kind="variable"><name>m_bytesTransferred</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a3daa28ab376acad09e3a9a1ee1edf694" kind="variable"><name>m_callback</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1aea89198752057ba92e085f89757b9d1a" kind="function"><name>OnRead</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a5fb7d977f6401dde5c1b606b4749e97d" kind="function"><name>ProgressBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a95177a860fe067590a2504387936d63c" kind="function"><name>Rewind</name></member>
+    <member refid="class_azure_1_1_core_1_1_i_o_1_1_progress_body_stream_1a3acf5936e8f21a28e75388b4740acd8f" kind="function"><name>Length</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_raw_response" kind="class"><name>Azure::Core::Http::RawResponse</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a7294023bdb96b3d5a6ed2163fc6c6b54" kind="variable"><name>m_majorVersion</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a03939c24abdb1ac3b2ce660a76a0dfe7" kind="variable"><name>m_minorVersion</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1aafb9a91458d2f0f5767fd862536f27b7" kind="variable"><name>m_statusCode</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a796167f6d9c3864027b24f832747e3b3" kind="variable"><name>m_reasonPhrase</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a4b6783c003e8727310bebbefef715a4c" kind="variable"><name>m_headers</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a09aee6c81e3bd93e3cde0128a8d1ef11" kind="variable"><name>m_bodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ac0a5c8f9063a80b4d96a011eea920c0e" kind="variable"><name>m_body</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a8cd153dda8fe9da55d96aebd395a4885" kind="function"><name>RawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ac35fd1a5a2f42b386943a49e646a92b1" kind="function"><name>RawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ab638b2dde4b0b9a26305c6ed2b40c737" kind="function"><name>RawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a5e6a91e4017e57653574ac4c63dea2a3" kind="function"><name>RawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1af3eadb243305d7f88764bc3f8e832074" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1afa32efb2740edc35c4f9e1a9ea0d6e5a" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a9c26c70d38445a96462013029f57555a" kind="function"><name>~RawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a5265579e09f5254509c9aa40ff16ce7d" kind="function"><name>SetHeader</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1af12357c369ecf7071416b97697868cfa" kind="function"><name>SetBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a4669c61fbdd1916c7cb4951d990a91a5" kind="function"><name>SetBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a174ddd85ba65cfdbd7825122d95865ed" kind="function"><name>GetStatusCode</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a88fa464a1d143ba3bae4324ececb36e9" kind="function"><name>GetReasonPhrase</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1aaceb17666be80a87f0789713ce70a8f3" kind="function"><name>GetHeaders</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a879d23bf6f97bba416f20154a84375ea" kind="function"><name>ExtractBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1a0a311a484a0db448de034b8919644929" kind="function"><name>GetBody</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_raw_response_1ad2fcb8d21da70fefbb620156ec957a15" kind="function"><name>GetBody</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_request" kind="class"><name>Azure::Core::Http::Request</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a9fd1bc3264efffc579493243e80ed1da" kind="variable"><name>m_method</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ab7cdc37abc27a7ad358cfba810a529e5" kind="variable"><name>m_url</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a7b8c1a44aa46bd593be959a280ba2cf4" kind="variable"><name>m_headers</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a7f75941110ac60e289c26a977369dbb5" kind="variable"><name>m_retryHeaders</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ab6fe91bfce79f8ba42d07ab52591c175" kind="variable"><name>m_bodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ac91751288f47f9256793664f34bd9fbe" kind="variable"><name>m_retryModeEnabled</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a33c9af223b431fbb7b321f60bada6705" kind="variable"><name>m_shouldBufferResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a3a9c8c935dbf43f28aa8f89d95b3c274" kind="function"><name>StartTry</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ad84b62ca2ea5ef08ff85ded91c7783f1" kind="function"><name>Request</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a5587e1d3c3a96d87975a22a6f419f74c" kind="function"><name>Request</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a0796aaa004d8df2962ecec9afe4c67dd" kind="function"><name>Request</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a2a0f814ae40f49d0226ad98ea3b40e39" kind="function"><name>Request</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1afea0c98e7e3ceace622958a59c6c44b7" kind="function"><name>SetHeader</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a809dd9ab456cdcbb3c9e7a98a555854b" kind="function"><name>GetHeader</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ab979a9f34f26d37566a263b297e78404" kind="function"><name>RemoveHeader</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a8a9ed25368d3e3e4dfb22f2ab329c448" kind="function"><name>GetMethod</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a8da634936a1c7bf5a48782a534988454" kind="function"><name>GetHeaders</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ad6a43a06e13ea601c6c5a2889d053fe2" kind="function"><name>GetBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a62c8dc26508af3aa0fd78eb6aeea8dd3" kind="function"><name>GetBodyStream</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1ac60bcb59c7e6340c83d4de8d65e28db2" kind="function"><name>ShouldBufferResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a6cda1c14edbd6c5283be6014fe37a4dd" kind="function"><name>GetUrl</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_request_1a54b9c7d4b31e67088338c0b360bc5392" kind="function"><name>GetUrl</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_request_failed_exception" kind="class"><name>Azure::Core::RequestFailedException</name>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a63efd3133353568a5c66689104fcce5d" kind="variable"><name>RawResponse</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a04b1b6357f6b8395efa99ac001f24ee7" kind="variable"><name>StatusCode</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1acea16c223d4984edba510194eb543bd1" kind="variable"><name>ReasonPhrase</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1ab8a93e876193535ec4e3c406981ed7f4" kind="variable"><name>ClientRequestId</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1ab29a5ed734d872052ac6353e30f47426" kind="variable"><name>RequestId</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a7a94fb270077a498054481f054f78bd9" kind="variable"><name>ErrorCode</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a5e8fcb788cc82fd39743eb6bded735ac" kind="variable"><name>Message</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a136d07c3c2f88cce26af988d6925a069" kind="function"><name>RequestFailedException</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1adc2eb2d6a7c324cdbaab257d15a19090" kind="function"><name>RequestFailedException</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a23e0a8f5928f2e05a4309343175c95fd" kind="function"><name>RequestFailedException</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1afb9d780714108f89754768b55b804918" kind="function"><name>RequestFailedException</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a91012bd8bc80210d9d7ea1c202d0b909" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a15b5421596c0af28206377e752125250" kind="function"><name>operator=</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a33eed01d1c2eb23f440c2715ccd7a58e" kind="function"><name>~RequestFailedException</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a460a3c512c45aaab8f6588748074ae87" kind="function"><name>GetRawResponseField</name></member>
+    <member refid="class_azure_1_1_core_1_1_request_failed_exception_1a23c9ab3b68cba67dadf8a99ca25f0091" kind="function"><name>GetRawResponseErrorMessage</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_response" kind="class"><name>Azure::Response</name>
+    <member refid="class_azure_1_1_response_1a1255aa09b307bfbbeb0613526ac88dd7" kind="variable"><name>Value</name></member>
+    <member refid="class_azure_1_1_response_1acbf2f2476eecdff336882895b813239e" kind="variable"><name>RawResponse</name></member>
+    <member refid="class_azure_1_1_response_1a065023c9314d24f63b7df1d332c1169a" kind="function"><name>Response</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser" kind="class"><name>Azure::Core::Http::CurlSession::ResponseBufferParser</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a63bbebc1fe73e45995108cf2551f10c9" kind="variable"><name>state</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a0512753f84e5fc839cbb0726b3190293" kind="variable"><name>m_response</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab7e7eae2fecacfa520a30541dc2ed0a4" kind="variable"><name>m_parseCompleted</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a61a2f3a41ddbf157a130e1922ce5fdfe" kind="variable"><name>m_delimiterStartInPrevPosition</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a811bef719179065cc3ad93c277201736" kind="variable"><name>m_internalBuffer</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a97271538b22ad96379646db5f6916359" kind="function"><name>BuildStatusCode</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab50766f2d3cebcb6720fa8fd0361327f" kind="function"><name>BuildHeader</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1ab9930e2e50f97e2f5deeee680746e268" kind="function"><name>ResponseBufferParser</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a4dc77e0174381c495fe672540bcc5118" kind="function"><name>Parse</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1aaf3267f6ad92fff40cfbbb9586d8950c" kind="function"><name>IsParseCompleted</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_curl_session_1_1_response_buffer_parser_1a16d06c242be4560e41727bd47019f8c1" kind="function"><name>ExtractResponse</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options" kind="struct"><name>Azure::Core::Http::Policies::RetryOptions</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a1ae346a844eeeee69972acbdc5bd92e3" kind="variable"><name>MaxRetries</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a06ba92fd6194748cabd32bc78390e348" kind="variable"><name>RetryDelay</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a5f90051b3513321e14d257298723b615" kind="variable"><name>MaxRetryDelay</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_retry_options_1a88c82f2eeb65eb9b7819e1c55dcf86ae" kind="variable"><name>StatusCodes</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options" kind="struct"><name>Azure::Core::Http::Policies::TelemetryOptions</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options_1a5f09a2eb13d3e872468c21aa6603deaf" kind="variable"><name>ApplicationId</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_telemetry_options_1ad7c977da6f746fe19b77f1b5ecd8dc96" kind="variable"><name>TracingProvider</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential" kind="class"><name>Azure::Core::Credentials::TokenCredential</name>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1a8d6eec9dcbe6c6027777f33742e4b6e9" kind="variable"><name>m_credentialName</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1a7713fe4a861d1529c90c9ed2a2257d4e" kind="function"><name>GetToken</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1a3aace73a3af5bb0c4a7692a396856025" kind="function"><name>GetCredentialName</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1aef6eb5be7b25eda86fce046ec20fb6e4" kind="function"><name>~TokenCredential</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1aa02b876720b99d5003c4eae7b38462cf" kind="function"><name>TokenCredential</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1a804d54f8e363ca038ee43578e1209b61" kind="function"><name>TokenCredential</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1ac122d73a2789e4583c2f16feb522cfd9" kind="function"><name>TokenCredential</name></member>
+    <member refid="class_azure_1_1_core_1_1_credentials_1_1_token_credential_1a032e96924ac6844fdef76a5d5693605d" kind="function"><name>operator=</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_credentials_1_1_token_credential_options" kind="struct"><name>Azure::Core::Credentials::TokenCredentialOptions</name>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_credentials_1_1_token_request_context" kind="struct"><name>Azure::Core::Credentials::TokenRequestContext</name>
+    <member refid="struct_azure_1_1_core_1_1_credentials_1_1_token_request_context_1a0b0fec8289053afc4dcb8a65722eed08" kind="variable"><name>Scopes</name></member>
+    <member refid="struct_azure_1_1_core_1_1_credentials_1_1_token_request_context_1a8d79a1e56dfc4ae8b5d4b836d1fba22d" kind="variable"><name>MinimumExpiration</name></member>
+    <member refid="struct_azure_1_1_core_1_1_credentials_1_1_token_request_context_1aaa2e2bae2a7f766651ad873218b6f42c" kind="variable"><name>TenantId</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_tracing_1_1_tracer_provider" kind="class"><name>Azure::Core::Tracing::TracerProvider</name>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_transport_exception" kind="class"><name>Azure::Core::Http::TransportException</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_transport_exception_1a18ce94b6424ef69aa4fbcc8a80104db2" kind="function"><name>TransportException</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options" kind="struct"><name>Azure::Core::Http::Policies::TransportOptions</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1ab25c172097ae8c8b86b9d26265397b84" kind="variable"><name>HttpProxy</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1af07684ad257ce136b94aa2b83c17b772" kind="variable"><name>ProxyUserName</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a2aa3c57ba8e4e21b76c67a0c1fa623ad" kind="variable"><name>ProxyPassword</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a810a2213c70ab96dc5b46f54114da57c" kind="variable"><name>EnableCertificateRevocationListCheck</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a0ee73cd033f55386522d129b9c13af0e" kind="variable"><name>DisableTlsCertificateValidation</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a9c3f25825627b024790cb13fb58fe837" kind="variable"><name>ExpectedTlsRootCertificate</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_policies_1_1_transport_options_1a117e90dea642f92200ba49afbf4ffc3a" kind="variable"><name>Transport</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_url" kind="class"><name>Azure::Core::Url</name>
+    <member refid="class_azure_1_1_core_1_1_url_1aff066437288b3258b7ef59fc4785087f" kind="variable"><name>m_scheme</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a0197017de1a576f6052ec9641b2d1192" kind="variable"><name>m_host</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1afd667eb5e4b87983e736ef28948fdecd" kind="variable"><name>m_port</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a78e82074adab6dee1270a9a495bdf310" kind="variable"><name>m_encodedPath</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a0e5500c645ae44971dd1d42709b1070c" kind="variable"><name>m_encodedQueryParameters</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a00e015f12f37b9afd03544b42d193d12" kind="function"><name>GetUrlWithoutQuery</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a85c0e4e77027dc7407d8ed3001dd7c89" kind="function"><name>AppendQueryParameters</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1aba20d44d6724194e0e0b3e7095dc3e1a" kind="function"><name>Decode</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a0106c6aedc2eceb0b8f2410c32ebd8ea" kind="function"><name>Encode</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a23fbff4e754d18602f9a9e361ac2e327" kind="function"><name>Url</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a208ba7e3b7868145181f844500f3dc4c" kind="function"><name>Url</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a7dc569d2c6f25a95df9d5c5a62afc717" kind="function"><name>SetScheme</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1adad0f462a391e619644a1b64be2c1da2" kind="function"><name>SetHost</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a417410d68be3066878748f871348b3b3" kind="function"><name>SetPort</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1aa8a555680713c54ec99a64a7176d2d49" kind="function"><name>SetPath</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1aafafcb3c20b2663251ed254e6e65ab0c" kind="function"><name>SetQueryParameters</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1aef3df635805705f5a8f6bd998179cc4b" kind="function"><name>AppendPath</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a7c0512da23c15239de458db36e235c33" kind="function"><name>AppendQueryParameter</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a77ee4eabf6e8bc547f1a293655b1e818" kind="function"><name>RemoveQueryParameter</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a78f71c6e36a35efe1d2597cadd728320" kind="function"><name>GetHost</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1aabedcc05b33d53e7dca291c0d39c83cf" kind="function"><name>GetPath</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1aaad8684cf7519832b6aa49f8d121fbab" kind="function"><name>GetPort</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1ab8dd37022c4c6036d59a4992a3607ffc" kind="function"><name>GetQueryParameters</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a92fd65dfc4bb0e0b1f418e519e7f7445" kind="function"><name>GetScheme</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1ab589b1eaf6f8cbe2dc86ec5678b465f0" kind="function"><name>GetRelativeUrl</name></member>
+    <member refid="class_azure_1_1_core_1_1_url_1a68990d32c4bb0229f28cf384d0380c47" kind="function"><name>GetAbsoluteUrl</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_uuid" kind="class"><name>Azure::Core::Uuid</name>
+    <member refid="class_azure_1_1_core_1_1_uuid_1aca736c92bc6e6914b1e0a4f2c5e571fb" kind="variable"><name>UuidSize</name></member>
+    <member refid="class_azure_1_1_core_1_1_uuid_1a40564655fd941d7f782796a84bc20321" kind="variable"><name>m_uuid</name></member>
+    <member refid="class_azure_1_1_core_1_1_uuid_1afab7ad47828399c8cbbce803846a25b7" kind="function"><name>Uuid</name></member>
+    <member refid="class_azure_1_1_core_1_1_uuid_1a711b5a31244382863c81000a7245f182" kind="function"><name>ToString</name></member>
+    <member refid="class_azure_1_1_core_1_1_uuid_1a89f5d7ef27af38bbcd0676444a087269" kind="function"><name>AsArray</name></member>
+    <member refid="class_azure_1_1_core_1_1_uuid_1a911dd11d09db4ed8ef0fd157a9de678f" kind="function"><name>CreateUuid</name></member>
+    <member refid="class_azure_1_1_core_1_1_uuid_1aee8d5f158b0e2721faefb2e7ad1d694b" kind="function"><name>CreateFromArray</name></member>
+  </compound>
+  <compound refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport" kind="class"><name>Azure::Core::Http::WinHttpTransport</name>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a675c29ea1935236efdb42ea6ec11ff05" kind="variable"><name>m_options</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a0cc727df79cb4078cf43a6426f099d7c" kind="variable"><name>m_sessionHandle</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1acaee4432eed73c3949ae4b7efd792c61" kind="function"><name>CreateSessionHandle</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a9a8c8ea1c768960921779a12cac36a56" kind="function"><name>CreateConnectionHandle</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1ac6987407944e2100e45a96ad7fce459e" kind="function"><name>CreateRequestHandle</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a37fc9adf6f265523d8b3bf2bfd522b1b" kind="function"><name>OnUpgradedConnection</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1afdccf1e994704ce177d2139479a24c9d" kind="function"><name>GetErrorAndThrow</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1af91879ab9fa7b1fcd2bc0a95b99bc808" kind="function"><name>WinHttpTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1aa6a7fa2fdbe8cef1dd53ca9ed141bf6c" kind="function"><name>WinHttpTransport</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a2cda516cd5af67b09bd02d65d443b446" kind="function"><name>Send</name></member>
+    <member refid="class_azure_1_1_core_1_1_http_1_1_win_http_transport_1a0f62089549f733e1ef42e9574186c64b" kind="function"><name>~WinHttpTransport</name></member>
+  </compound>
+  <compound refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options" kind="struct"><name>Azure::Core::Http::WinHttpTransportOptions</name>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a61b3b8519a98c64c6204ebab417c248b" kind="variable"><name>IgnoreUnknownCertificateAuthority</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a8b9852962aaf01fdd50271ec945cd037" kind="variable"><name>IgnoreInvalidCertificateCommonName</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a841ee45e1fa533932f96c4e59a21598f" kind="variable"><name>EnableSystemDefaultProxy</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a1d00f0e086279a56eb3135331d6d0ca1" kind="variable"><name>EnableCertificateRevocationListCheck</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aaee8369faa29d288f349fc88e04a1462" kind="variable"><name>ProxyInformation</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1aa2b08dcb78deb040e044538ddfb20536" kind="variable"><name>ProxyUserName</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1ab34db2c7c64b9e85b4e3b1e67816bacb" kind="variable"><name>ProxyPassword</name></member>
+    <member refid="struct_azure_1_1_core_1_1_http_1_1_win_http_transport_options_1a49e20549ca5ccd9dcbc0a7ac08c08976" kind="variable"><name>ExpectedTlsRootCertificates</name></member>
+  </compound>
+  <compound refid="namespace_0d50" kind="namespace"><name>@50</name>
+  </compound>
+  <compound refid="namespace_0d52" kind="namespace"><name>@52</name>
+  </compound>
+  <compound refid="namespace_0d55" kind="namespace"><name>@55</name>
+  </compound>
+  <compound refid="namespace_0d57" kind="namespace"><name>@57</name>
+  </compound>
+  <compound refid="namespace_0d60" kind="namespace"><name>@60</name>
+  </compound>
+  <compound refid="namespace_0d61" kind="namespace"><name>@61</name>
+    <member refid="namespace_0d61_1a20f1cd6a173dc34139ba3999d99cc803" kind="enum"><name>PollSocketDirection</name></member>
+    <member refid="namespace_0d61_1a20f1cd6a173dc34139ba3999d99cc803a7a1a5f3e79fdc91edf2f5ead9d66abb4" kind="enumvalue"><name>Read</name></member>
+    <member refid="namespace_0d61_1a20f1cd6a173dc34139ba3999d99cc803a1129c0e4d43f2d121652a7302712cff6" kind="enumvalue"><name>Write</name></member>
+  </compound>
+  <compound refid="namespace_0d65" kind="namespace"><name>@65</name>
+  </compound>
+  <compound refid="namespace_0d66" kind="namespace"><name>@66</name>
+  </compound>
+  <compound refid="namespace_0d67" kind="namespace"><name>@67</name>
+  </compound>
+  <compound refid="namespace_0d70" kind="namespace"><name>@70</name>
+  </compound>
+  <compound refid="namespace_0d72" kind="namespace"><name>@72</name>
+  </compound>
+  <compound refid="namespace_0d75" kind="namespace"><name>@75</name>
+  </compound>
+  <compound refid="namespace_0d76" kind="namespace"><name>@76</name>
+  </compound>
+  <compound refid="namespace_0d78" kind="namespace"><name>@78</name>
+  </compound>
+  <compound refid="namespace_0d81" kind="namespace"><name>@81</name>
+  </compound>
+  <compound refid="namespace_azure" kind="namespace"><name>Azure</name>
+    <member refid="namespace_azure_1ad5f802a27f1622bcffc8f6bfd20bbbf0" kind="function"><name>operator==</name></member>
+    <member refid="namespace_azure_1aac14644b6a38606b2e4fd57580b832a3" kind="function"><name>operator&lt;</name></member>
+    <member refid="namespace_azure_1a40c71f411622d257183ce5466ced4014" kind="function"><name>operator&lt;=</name></member>
+    <member refid="namespace_azure_1a8832e28c92a8f5e0bfeec8c472e263ba" kind="function"><name>operator!=</name></member>
+    <member refid="namespace_azure_1a7752c823acda5b4e260716b587c58f94" kind="function"><name>operator&gt;</name></member>
+    <member refid="namespace_azure_1a67661c8f8de216401061590d5a5fa352" kind="function"><name>operator&gt;=</name></member>
+    <member refid="namespace_azure_1aeabed2737401e81de437422df6f154c1" kind="function"><name>operator==</name></member>
+    <member refid="namespace_azure_1a8acbef4b5fbd8a2a6bcfd74a3ebe8c9b" kind="function"><name>operator!=</name></member>
+    <member refid="namespace_azure_1abb7c58568e4970a697a304e7e912fd1f" kind="function"><name>operator&lt;</name></member>
+    <member refid="namespace_azure_1a35b2a6d5662a1dc95d9b9f1a60c60dc2" kind="function"><name>operator&lt;=</name></member>
+    <member refid="namespace_azure_1a489f78638457fc1c4f263f51d0cfb381" kind="function"><name>operator&gt;</name></member>
+    <member refid="namespace_azure_1abb600836cfa0cbe98b3987b562512007" kind="function"><name>operator&gt;=</name></member>
+  </compound>
+  <compound refid="namespace_azure_1_1_core" kind="namespace"><name>Azure::Core</name>
+    <member refid="case__insensitive__containers_8hpp_1ac9d40862622f82bd626f492a7b03adc9" kind="typedef"><name>CaseInsensitiveMap</name></member>
+    <member refid="case__insensitive__containers_8hpp_1a0b4687777bf2e07429813314673d8609" kind="typedef"><name>CaseInsensitiveSet</name></member>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_credentials" kind="namespace"><name>Azure::Core::Credentials</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_cryptography" kind="namespace"><name>Azure::Core::Cryptography</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_diagnostics" kind="namespace"><name>Azure::Core::Diagnostics</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_http" kind="namespace"><name>Azure::Core::Http</name>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9d" kind="enum"><name>HttpStatusCode</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da6adf97f83acf6453d4a6a4b1070f3754" kind="enumvalue"><name>None</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa0bfb8e59e6c13fc8d990781f77694fe" kind="enumvalue"><name>Continue</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da548c5a637eddf65132b21411aeafc6a1" kind="enumvalue"><name>SwitchingProtocols</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da643562a9ae7099c8aabfdc93478db117" kind="enumvalue"><name>Processing</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da7ff9f49506fe347fab32eb5ff72feda9" kind="enumvalue"><name>EarlyHints</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa60852f204ed8028c1c58808b746d115" kind="enumvalue"><name>Ok</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0eceeb45861f9585dd7a97a3e36f85c6" kind="enumvalue"><name>Created</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da382ab522931673c11e398ead1b7b1678" kind="enumvalue"><name>Accepted</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da2d0ea43e788b779c0aec92366b711c2f" kind="enumvalue"><name>NonAuthoritativeInformation</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dacd447f1ec89f564ebac583d60087df12" kind="enumvalue"><name>NoContent</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4e9202c31896211f63be5b7345a897ed" kind="enumvalue"><name>ResetContent</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da750de7eda10d780b3bbaefb57128c24b" kind="enumvalue"><name>PartialContent</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0790a60654c0b2939299af967571e59b" kind="enumvalue"><name>MultiStatus</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac549fc73e09b412a8451b1648820acf2" kind="enumvalue"><name>AlreadyReported</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa3abca599dedd534e63c999418d70f45" kind="enumvalue"><name>IMUsed</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa589749d075c3423333bdc93e3b4e774" kind="enumvalue"><name>MultipleChoices</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da32638c25f4c913fce6214c2c4afff9dc" kind="enumvalue"><name>MovedPermanently</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da5d695cc28c6a7ea955162fbdd0ae42b9" kind="enumvalue"><name>Found</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da7843649eb3841f496a79303fd815029e" kind="enumvalue"><name>SeeOther</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac169e6d9a1b9442001384de8dcf49ab9" kind="enumvalue"><name>NotModified</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0a272f25fd5e8a06065ef8ee41a88bea" kind="enumvalue"><name>UseProxy</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da1b73a351faf2b550d06fae9cc6e0a894" kind="enumvalue"><name>TemporaryRedirect</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac13fb7996808b1abe56e3ae4da84fb4a" kind="enumvalue"><name>PermanentRedirect</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da9edf8fbf00a57d95a0af4923c9a1ec6f" kind="enumvalue"><name>BadRequest</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dae06d1ba70f1331e9f9a113cc2f887d3f" kind="enumvalue"><name>Unauthorized</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4c99006c75b53fe48865cdfa0ac065ba" kind="enumvalue"><name>PaymentRequired</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da722969577a96ca3953e84e3d949dee81" kind="enumvalue"><name>Forbidden</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da38c300f4fc9ce8a77aad4a30de05cad8" kind="enumvalue"><name>NotFound</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8ba68fee5542f5fd071aed140c39bd8e" kind="enumvalue"><name>MethodNotAllowed</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf83a928e6a3f3b502ffadd2a414ce48c" kind="enumvalue"><name>NotAcceptable</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da59a2898a8bf9da75a5855e76110f06f2" kind="enumvalue"><name>ProxyAuthenticationRequired</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3632c2e4e6225d4d9fcd2a6fd2c65048" kind="enumvalue"><name>RequestTimeout</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf1d4ac54357cc0932f385d56814ba7e4" kind="enumvalue"><name>Conflict</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0b497b33b1a05057bc1634e607170bf6" kind="enumvalue"><name>Gone</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8282fb93cb1cf45b135ea191668ca583" kind="enumvalue"><name>LengthRequired</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3542a02d18f11f46d53990d91752a6d4" kind="enumvalue"><name>PreconditionFailed</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0234a767e9c5c06cdaf290cc9b690b34" kind="enumvalue"><name>PayloadTooLarge</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf72866c1bbf28a47b9bb1c8846e03313" kind="enumvalue"><name>UriTooLong</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa3219a6843adbb23de79b4df9c307f5d" kind="enumvalue"><name>UnsupportedMediaType</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da9283ef01c36e7e4793b3e1395d764dfe" kind="enumvalue"><name>RangeNotSatisfiable</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da6af78095a2be4a230ba87f03dd131830" kind="enumvalue"><name>ExpectationFailed</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dac110d06054539d0031cbefdf78d1fdd6" kind="enumvalue"><name>MisdirectedRequest</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dabcc63308f9773c816911ce819b314e2c" kind="enumvalue"><name>UnprocessableEntity</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dad0f2e5376298c880665077b565ffd7dd" kind="enumvalue"><name>Locked</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da3e30483e6f8d532c08ac164aebf039fd" kind="enumvalue"><name>FailedDependency</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daed92d2533f798942f53b2033050f5ddd" kind="enumvalue"><name>TooEarly</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dae0eaea96be1ec038b859e02cc5330827" kind="enumvalue"><name>UpgradeRequired</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da4dd7ee1fe9fa9f29e190b416122146df" kind="enumvalue"><name>PreconditionRequired</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dab00b00233255c3551697fe613001265d" kind="enumvalue"><name>TooManyRequests</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da01d50823ab04e988e893bc17c2d55f24" kind="enumvalue"><name>RequestHeaderFieldsTooLarge</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daf7c925b24caa71cd7097be57c4de6130" kind="enumvalue"><name>UnavailableForLegalReasons</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daecbf01325f1c744e9d7bb586ac2eb5ed" kind="enumvalue"><name>InternalServerError</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da997ca4ce119685f40f03a9a8a6c5346e" kind="enumvalue"><name>NotImplemented</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0e7c9ad08be0653518bf456c9994ace5" kind="enumvalue"><name>BadGateway</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da2a4581043d849bcb0e4747970ef1489b" kind="enumvalue"><name>ServiceUnavailable</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9dada405cbc74723dfdda615e3f679ef2be" kind="enumvalue"><name>GatewayTimeout</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da56a7a02e415f5bf106088218f646c04f" kind="enumvalue"><name>HttpVersionNotSupported</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da0af1f043b1bc6980b5cffce0d83f4736" kind="enumvalue"><name>VariantAlsoNegotiates</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daead0064570e2f25592cd76e0e69565a5" kind="enumvalue"><name>InsufficientStorage</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9daa2d07eb3939ad55d4acd3ed81291c61a" kind="enumvalue"><name>LoopDetected</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da8eff020959c41ba903e16d966855ce03" kind="enumvalue"><name>NotExtended</name></member>
+    <member refid="http__status__code_8hpp_1a60337476811e1ccf9ed39ce13f678d9da52066ff32b30f46d30b87007cacf8f79" kind="enumvalue"><name>NetworkAuthenticationRequired</name></member>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_http_1_1_0d61" kind="namespace"><name>Azure::Core::Http::@61</name>
+    <member refid="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103" kind="enum"><name>CrlFormat</name></member>
+    <member refid="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103a9d4d43de68f0b3555d5a5ef5dc05bb95" kind="enumvalue"><name>Http</name></member>
+    <member refid="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103a000005d77b9eb5d8c5bafd1e64ce3c11" kind="enumvalue"><name>Asn1</name></member>
+    <member refid="namespace_azure_1_1_core_1_1_http_1_1_0d61_1af6612aee7f9aa6dad22e4924abd55103ac888957bb6d2fe3bdac6000656d3e2fe" kind="enumvalue"><name>PEM</name></member>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_http_1_1_policies" kind="namespace"><name>Azure::Core::Http::Policies</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_i_o" kind="namespace"><name>Azure::Core::IO</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_json" kind="namespace"><name>Azure::Core::Json</name>
+  </compound>
+  <compound refid="namespace_azure_1_1_core_1_1_tracing" kind="namespace"><name>Azure::Core::Tracing</name>
+  </compound>
+  <compound refid="namespacestd" kind="namespace"><name>std</name>
+  </compound>
+  <compound refid="_c_h_a_n_g_e_l_o_g_8md" kind="file"><name>CHANGELOG.md</name>
+  </compound>
+  <compound refid="core_8hpp" kind="file"><name>core.hpp</name>
+  </compound>
+  <compound refid="azure__assert_8hpp" kind="file"><name>azure_assert.hpp</name>
+    <member refid="azure__assert_8hpp_1a23ae14b8c5b65e95fa2c61417450d840" kind="define"><name>AZURE_ASSERT</name></member>
+    <member refid="azure__assert_8hpp_1a9e91c95a63cb50551fd21d8b0bc1096d" kind="define"><name>AZURE_ASSERT_MSG</name></member>
+    <member refid="azure__assert_8hpp_1a62e51b93e8aa4affe5e7f2ec2b9dacf6" kind="define"><name>AZURE_ASSERT_FALSE</name></member>
+    <member refid="azure__assert_8hpp_1a89e2bf005c01baa889835e8c3cb243a1" kind="define"><name>AZURE_UNREACHABLE_CODE</name></member>
+    <member refid="azure__assert_8hpp_1a2eb54ee0be853c80af6fd4b8d705b358" kind="define"><name>AZURE_NOT_IMPLEMENTED</name></member>
+  </compound>
+  <compound refid="base64_8hpp" kind="file"><name>base64.hpp</name>
+  </compound>
+  <compound refid="case__insensitive__containers_8hpp" kind="file"><name>case_insensitive_containers.hpp</name>
+  </compound>
+  <compound refid="context_8hpp" kind="file"><name>context.hpp</name>
+  </compound>
+  <compound refid="credentials_8hpp" kind="file"><name>credentials.hpp</name>
+  </compound>
+  <compound refid="token__credential__options_8hpp" kind="file"><name>token_credential_options.hpp</name>
+  </compound>
+  <compound refid="hash_8hpp" kind="file"><name>hash.hpp</name>
+  </compound>
+  <compound refid="datetime_8hpp" kind="file"><name>datetime.hpp</name>
+  </compound>
+  <compound refid="logger_8hpp" kind="file"><name>logger.hpp</name>
+  </compound>
+  <compound refid="etag_8hpp" kind="file"><name>etag.hpp</name>
+  </compound>
+  <compound refid="exception_8hpp" kind="file"><name>exception.hpp</name>
+  </compound>
+  <compound refid="curl__transport_8hpp" kind="file"><name>curl_transport.hpp</name>
+  </compound>
+  <compound refid="http_8hpp" kind="file"><name>http.hpp</name>
+  </compound>
+  <compound refid="http__status__code_8hpp" kind="file"><name>http_status_code.hpp</name>
+  </compound>
+  <compound refid="policy_8hpp" kind="file"><name>policy.hpp</name>
+    <member refid="policy_8hpp_1a8fdb3bdd9092e835bb253e12f13a5042" kind="function"><name>AzureSdkGetCustomHttpTransport</name></member>
+  </compound>
+  <compound refid="raw__response_8hpp" kind="file"><name>raw_response.hpp</name>
+  </compound>
+  <compound refid="transport_8hpp" kind="file"><name>transport.hpp</name>
+  </compound>
+  <compound refid="win__http__transport_8hpp" kind="file"><name>win_http_transport.hpp</name>
+  </compound>
+  <compound refid="client__options_8hpp" kind="file"><name>client_options.hpp</name>
+  </compound>
+  <compound refid="contract_8hpp" kind="file"><name>contract.hpp</name>
+    <member refid="contract_8hpp_1a78d22d21588757fdfd9513fb1a5d9ee3" kind="define"><name>AZ_CONTRACT</name></member>
+    <member refid="contract_8hpp_1a36bca978167027bd09eccf5881fa3df7" kind="define"><name>AZ_CONTRACT_ARG_NOT_NULL</name></member>
+  </compound>
+  <compound refid="authorization__challenge__parser_8hpp" kind="file"><name>authorization_challenge_parser.hpp</name>
+  </compound>
+  <compound refid="sha__hash_8hpp" kind="file"><name>sha_hash.hpp</name>
+  </compound>
+  <compound refid="global__exception_8hpp" kind="file"><name>global_exception.hpp</name>
+  </compound>
+  <compound refid="log_8hpp" kind="file"><name>log.hpp</name>
+  </compound>
+  <compound refid="environment_8hpp" kind="file"><name>environment.hpp</name>
+  </compound>
+  <compound refid="extendable__enumeration_8hpp" kind="file"><name>extendable_enumeration.hpp</name>
+  </compound>
+  <compound refid="http__sanitizer_8hpp" kind="file"><name>http_sanitizer.hpp</name>
+  </compound>
+  <compound refid="pipeline_8hpp" kind="file"><name>pipeline.hpp</name>
+  </compound>
+  <compound refid="user__agent_8hpp" kind="file"><name>user_agent.hpp</name>
+  </compound>
+  <compound refid="null__body__stream_8hpp" kind="file"><name>null_body_stream.hpp</name>
+  </compound>
+  <compound refid="json__optional_8hpp" kind="file"><name>json_optional.hpp</name>
+  </compound>
+  <compound refid="json__serializable_8hpp" kind="file"><name>json_serializable.hpp</name>
+  </compound>
+  <compound refid="strings_8hpp" kind="file"><name>strings.hpp</name>
+  </compound>
+  <compound refid="service__tracing_8hpp" kind="file"><name>service_tracing.hpp</name>
+  </compound>
+  <compound refid="tracing__impl_8hpp" kind="file"><name>tracing_impl.hpp</name>
+  </compound>
+  <compound refid="unique__handle_8hpp" kind="file"><name>unique_handle.hpp</name>
+  </compound>
+  <compound refid="body__stream_8hpp" kind="file"><name>body_stream.hpp</name>
+  </compound>
+  <compound refid="match__conditions_8hpp" kind="file"><name>match_conditions.hpp</name>
+  </compound>
+  <compound refid="modified__conditions_8hpp" kind="file"><name>modified_conditions.hpp</name>
+  </compound>
+  <compound refid="nullable_8hpp" kind="file"><name>nullable.hpp</name>
+  </compound>
+  <compound refid="operation_8hpp" kind="file"><name>operation.hpp</name>
+  </compound>
+  <compound refid="operation__status_8hpp" kind="file"><name>operation_status.hpp</name>
+  </compound>
+  <compound refid="paged__response_8hpp" kind="file"><name>paged_response.hpp</name>
+  </compound>
+  <compound refid="platform_8hpp" kind="file"><name>platform.hpp</name>
+  </compound>
+  <compound refid="response_8hpp" kind="file"><name>response.hpp</name>
+  </compound>
+  <compound refid="tracing_8hpp" kind="file"><name>tracing.hpp</name>
+  </compound>
+  <compound refid="url_8hpp" kind="file"><name>url.hpp</name>
+  </compound>
+  <compound refid="uuid_8hpp" kind="file"><name>uuid.hpp</name>
+  </compound>
+  <compound refid="_r_e_a_d_m_e_8md" kind="file"><name>README.md</name>
+  </compound>
+  <compound refid="azure__assert_8cpp" kind="file"><name>azure_assert.cpp</name>
+  </compound>
+  <compound refid="base64_8cpp" kind="file"><name>base64.cpp</name>
+  </compound>
+  <compound refid="context_8cpp" kind="file"><name>context.cpp</name>
+  </compound>
+  <compound refid="authorization__challenge__parser_8cpp" kind="file"><name>authorization_challenge_parser.cpp</name>
+  </compound>
+  <compound refid="md5_8cpp" kind="file"><name>md5.cpp</name>
+  </compound>
+  <compound refid="sha__hash_8cpp" kind="file"><name>sha_hash.cpp</name>
+  </compound>
+  <compound refid="datetime_8cpp" kind="file"><name>datetime.cpp</name>
+  </compound>
+  <compound refid="environment_8cpp" kind="file"><name>environment.cpp</name>
+  </compound>
+  <compound refid="environment__log__level__listener_8cpp" kind="file"><name>environment_log_level_listener.cpp</name>
+  </compound>
+  <compound refid="etag_8cpp" kind="file"><name>etag.cpp</name>
+  </compound>
+  <compound refid="exception_8cpp" kind="file"><name>exception.cpp</name>
+  </compound>
+  <compound refid="bearer__token__authentication__policy_8cpp" kind="file"><name>bearer_token_authentication_policy.cpp</name>
+  </compound>
+  <compound refid="curl_8cpp" kind="file"><name>curl.cpp</name>
+    <member refid="curl_8cpp_1ab6f5bfda651f4ce91f6f433951d8402e" kind="function"><name>CreateHTTPResponse</name></member>
+    <member refid="curl_8cpp_1a019fc87d24aff532876959b017cd40ab" kind="function"><name>CreateHTTPResponse</name></member>
+  </compound>
+  <compound refid="curl__connection__pool__private_8hpp" kind="file"><name>curl_connection_pool_private.hpp</name>
+  </compound>
+  <compound refid="curl__connection__private_8hpp" kind="file"><name>curl_connection_private.hpp</name>
+    <member refid="curl__connection__private_8hpp_1ae681945a2cf88d6337137dc0260a1545" kind="typedef"><name>X509_STORE_CTX</name></member>
+  </compound>
+  <compound refid="curl__session__private_8hpp" kind="file"><name>curl_session_private.hpp</name>
+  </compound>
+  <compound refid="http_8cpp" kind="file"><name>http.cpp</name>
+  </compound>
+  <compound refid="http__sanitizer_8cpp" kind="file"><name>http_sanitizer.cpp</name>
+  </compound>
+  <compound refid="log__policy_8cpp" kind="file"><name>log_policy.cpp</name>
+  </compound>
+  <compound refid="policy_8cpp" kind="file"><name>policy.cpp</name>
+  </compound>
+  <compound refid="raw__response_8cpp" kind="file"><name>raw_response.cpp</name>
+  </compound>
+  <compound refid="request_8cpp" kind="file"><name>request.cpp</name>
+  </compound>
+  <compound refid="request__activity__policy_8cpp" kind="file"><name>request_activity_policy.cpp</name>
+  </compound>
+  <compound refid="retry__policy_8cpp" kind="file"><name>retry_policy.cpp</name>
+  </compound>
+  <compound refid="telemetry__policy_8cpp" kind="file"><name>telemetry_policy.cpp</name>
+  </compound>
+  <compound refid="transport__policy_8cpp" kind="file"><name>transport_policy.cpp</name>
+  </compound>
+  <compound refid="url_8cpp" kind="file"><name>url.cpp</name>
+  </compound>
+  <compound refid="user__agent_8cpp" kind="file"><name>user_agent.cpp</name>
+  </compound>
+  <compound refid="win__http__request_8hpp" kind="file"><name>win_http_request.hpp</name>
+    <member refid="win__http__request_8hpp_1ac7bef5d85e3dcd73eef56ad39ffc84a9" kind="define"><name>WIN32_LEAN_AND_MEAN</name></member>
+    <member refid="win__http__request_8hpp_1a9f918755b601cf4bffca775992e6fb90" kind="define"><name>NOMINMAX</name></member>
+  </compound>
+  <compound refid="win__http__transport_8cpp" kind="file"><name>win_http_transport.cpp</name>
+    <member refid="win__http__transport_8cpp_1ac7bef5d85e3dcd73eef56ad39ffc84a9" kind="define"><name>WIN32_LEAN_AND_MEAN</name></member>
+    <member refid="win__http__transport_8cpp_1a9f918755b601cf4bffca775992e6fb90" kind="define"><name>NOMINMAX</name></member>
+    <member refid="win__http__transport_8cpp_1aada2a854b8411ce2aadc131ab5c3167d" kind="define"><name>APPEND_ENUM_STRING</name></member>
+  </compound>
+  <compound refid="body__stream_8cpp" kind="file"><name>body_stream.cpp</name>
+  </compound>
+  <compound refid="random__access__file__body__stream_8cpp" kind="file"><name>random_access_file_body_stream.cpp</name>
+  </compound>
+  <compound refid="logger_8cpp" kind="file"><name>logger.cpp</name>
+  </compound>
+  <compound refid="operation__status_8cpp" kind="file"><name>operation_status.cpp</name>
+  </compound>
+  <compound refid="environment__log__level__listener_8hpp" kind="file"><name>environment_log_level_listener.hpp</name>
+  </compound>
+  <compound refid="tracing_8cpp" kind="file"><name>tracing.cpp</name>
+  </compound>
+  <compound refid="uuid_8cpp" kind="file"><name>uuid.cpp</name>
+  </compound>
+  <compound refid="md__c_h_a_n_g_e_l_o_g" kind="page"><name>md__c_h_a_n_g_e_l_o_g</name>
+  </compound>
+  <compound refid="deprecated" kind="page"><name>deprecated</name>
+  </compound>
+  <compound refid="dir_7d6893ff7a5980c9033ed77439b5f032" kind="dir"><name>inc/azure</name>
+  </compound>
+  <compound refid="dir_06ad7f09ade60a1ced0a4e3dcb3d1625" kind="dir"><name>inc/azure/core</name>
+  </compound>
+  <compound refid="dir_a8cc8f7ff322334a2a50a34fe37fffca" kind="dir"><name>inc/azure/core/credentials</name>
+  </compound>
+  <compound refid="dir_651c3aca977d9e392ffdedf661d89149" kind="dir"><name>inc/azure/core/internal/credentials</name>
+  </compound>
+  <compound refid="dir_cfb14614ce6e90ad60ab940420bd67b4" kind="dir"><name>src/credentials</name>
+  </compound>
+  <compound refid="dir_cd38344297a017debf1ad1e1976f1427" kind="dir"><name>inc/azure/core/cryptography</name>
+  </compound>
+  <compound refid="dir_54f9d91896843a9787506f3c865be103" kind="dir"><name>inc/azure/core/internal/cryptography</name>
+  </compound>
+  <compound refid="dir_33d951cc4565d7cdca16056a0c6f7383" kind="dir"><name>src/cryptography</name>
+  </compound>
+  <compound refid="dir_f375df7cdb07aec5e8f5ec64fd47cac7" kind="dir"><name>src/http/curl</name>
+  </compound>
+  <compound refid="dir_9f538fb3cd1d0d1419459089d67ff38b" kind="dir"><name>inc/azure/core/diagnostics</name>
+  </compound>
+  <compound refid="dir_1bc691dfb177674896a497185f13bd11" kind="dir"><name>inc/azure/core/internal/diagnostics</name>
+  </compound>
+  <compound refid="dir_5aa8da9880e3aea594defbce06a314ae" kind="dir"><name>inc/azure/core/http</name>
+  </compound>
+  <compound refid="dir_f5764dd13d206f57b7a95970cc075f6b" kind="dir"><name>inc/azure/core/internal/http</name>
+  </compound>
+  <compound refid="dir_2d29d7dff7c7baf1180920f6796c23ae" kind="dir"><name>src/http</name>
+  </compound>
+  <compound refid="dir_bfccd401955b95cf8c75461437045ac0" kind="dir"><name>inc</name>
+  </compound>
+  <compound refid="dir_74d6d341cb4e7e7b4498e1cf6aa278fc" kind="dir"><name>inc/azure/core/internal</name>
+  </compound>
+  <compound refid="dir_1e3489a5ca9a00cc2a8c26298554b465" kind="dir"><name>inc/azure/core/internal/io</name>
+  </compound>
+  <compound refid="dir_fbb34b4d8e97d2aef2890a91f35309b9" kind="dir"><name>inc/azure/core/io</name>
+  </compound>
+  <compound refid="dir_c184e51c84f2c3f0345bbc8a0d75d3e1" kind="dir"><name>src/io</name>
+  </compound>
+  <compound refid="dir_bba90c550a81782f6fcf6c90f01cc5ec" kind="dir"><name>inc/azure/core/internal/json</name>
+  </compound>
+  <compound refid="dir_0b7bac4e7418249bab601828e98356c2" kind="dir"><name>inc/azure/core/http/policies</name>
+  </compound>
+  <compound refid="dir_d49b597d86ed44de6eb8a459f0ed40df" kind="dir"><name>src/private</name>
+  </compound>
+  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>src</name>
+  </compound>
+  <compound refid="dir_5afe09e1cffb80b89f80fb381e258d86" kind="dir"><name>inc/azure/core/internal/tracing</name>
+  </compound>
+  <compound refid="dir_3c286591724a5035eca77d120b9aff18" kind="dir"><name>inc/azure/core/tracing</name>
+  </compound>
+  <compound refid="dir_8c27da8e777a7195961d7f24190c7014" kind="dir"><name>src/tracing</name>
+  </compound>
+  <compound refid="dir_a7bb69ec52c5df340e69756891192a78" kind="dir"><name>src/http/winhttp</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

@@ -1,0 +1,972 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::BlockBlobClient</compoundname>
+    <basecompoundref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" prot="public" virt="non-virtual">Azure::Storage::Blobs::BlobClient</basecompoundref>
+    <includes refid="block__blob__client_8hpp" local="no">block_blob_client.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1ae8d394bf44caeb3293234aee29f825ae" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class BlobClient</definition>
+        <argsstring></argsstring>
+        <name>BlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::BlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="259" column="18" bodyfile="inc/azure/storage/blobs/block_blob_client.hpp" bodystart="259" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a81fbafc67b667d7eb4e76e31b19c3aad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Files::DataLake::DataLakeFileClient</definition>
+        <argsstring></argsstring>
+        <name>Files::DataLake::DataLakeFileClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::DataLakeFileClient</qualifiedname>
+        <param>
+          <type>Files::DataLake::DataLakeFileClient</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="260" column="18" bodyfile="inc/azure/storage/blobs/block_blob_client.hpp" bodystart="260" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a4d39b7e0352381b13d61c2ba91893eb2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref></type>
+        <definition>BlockBlobClient Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString</definition>
+        <argsstring>(const std::string &amp;connectionString, const std::string &amp;blobContainerName, const std::string &amp;blobName, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>CreateFromConnectionString</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>connectionString</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobContainerName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>connectionString</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A connection string includes the authentication information required for your application to access data in an Azure Storage account at runtime. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobContainerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the container containing this blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blobName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of this blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="44" column="28" bodyfile="src/block_blob_client.cpp" bodystart="31" bodyend="40"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a831709122522a0aa4ca1e074ee4429c6" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, std::shared_ptr&lt; StorageSharedKeyCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>BlockBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; StorageSharedKeyCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A URL referencing the blob that includes the name of the account, the name of the container, and the name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared key credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="61" column="14" bodyfile="src/block_blob_client.cpp" bodystart="42" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a9bcce2d59c5de02c1b90684248838610" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, std::shared_ptr&lt; Core::Credentials::TokenCredential &gt; credential, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>BlockBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; Core::Credentials::TokenCredential &gt;</type>
+          <declname>credential</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A URL referencing the blob that includes the name of the account, the name of the container, and the name of the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>credential</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The token credential used to sign requests. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="76" column="14" bodyfile="src/block_blob_client.cpp" bodystart="50" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a8721b2aae44070f880caf5087631d55e" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</definition>
+        <argsstring>(const std::string &amp;blobUrl, const BlobClientOptions &amp;options=BlobClientOptions())</argsstring>
+        <name>BlockBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blobUrl</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_blob_client_options" kindref="compound">BlobClientOptions</ref>()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize a new instance of <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A URL referencing the blob that includes the name of the account, the name of the container, and the name of the blob, and possibly also a SAS token. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional client options that define the transport pipeline policies for authentication, retries, etc., that are applied to every request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="91" column="14" bodyfile="src/block_blob_client.cpp" bodystart="58" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a274b750987d7b4109c461084b873ff33" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref></type>
+        <definition>BlockBlobClient Azure::Storage::Blobs::BlockBlobClient::WithSnapshot</definition>
+        <argsstring>(const std::string &amp;snapshot) const</argsstring>
+        <name>WithSnapshot</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::WithSnapshot</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>snapshot</declname>
+        </param>
+        <briefdescription>
+<para>Initializes a new instance of the <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> class with an identical URL source but the specified snapshot timestamp. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>snapshot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The snapshot identifier. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> instance. </para>
+</simplesect>
+<simplesect kind="remark"><para>Pass empty string to remove the snapshot returning the base blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="104" column="21" bodyfile="src/block_blob_client.cpp" bodystart="65" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1aaad7e18c6fa0c0ed553fe5251d6be2d6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref></type>
+        <definition>BlockBlobClient Azure::Storage::Blobs::BlockBlobClient::WithVersionId</definition>
+        <argsstring>(const std::string &amp;versionId) const</argsstring>
+        <name>WithVersionId</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::WithVersionId</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>versionId</declname>
+        </param>
+        <briefdescription>
+<para>Creates a clone of this instance that references a version ID rather than the base blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>versionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The version ID returning a URL to the base blob. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> instance. </para>
+</simplesect>
+<simplesect kind="remark"><para>Pass empty string to remove the version ID returning the base blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="114" column="21" bodyfile="src/block_blob_client.cpp" bodystart="80" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a4c914625a21b4b9cf6081fc13bda9e5d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_result" kindref="compound">Models::UploadBlockBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::UploadBlockBlobResult &gt; Azure::Storage::Blobs::BlockBlobClient::Upload</definition>
+        <argsstring>(Azure::Core::IO::BodyStream &amp;content, const UploadBlockBlobOptions &amp;options=UploadBlockBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Upload</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::Upload</qualifiedname>
+        <param>
+          <type>Azure::Core::IO::BodyStream &amp;</type>
+          <declname>content</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_options" kindref="compound">UploadBlockBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_options" kindref="compound">UploadBlockBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>content</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A BodyStream containing the content to upload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A UploadBlockBlobResult describing the state of the updated block blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="125" column="21" bodyfile="src/block_blob_client.cpp" bodystart="95" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a400fd66a74a7fae192d4934332ed5321" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_result" kindref="compound">Models::UploadBlockBlobFromResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::UploadBlockBlobFromResult &gt; Azure::Storage::Blobs::BlockBlobClient::UploadFrom</definition>
+        <argsstring>(const uint8_t *buffer, size_t bufferSize, const UploadBlockBlobFromOptions &amp;options=UploadBlockBlobFromOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>UploadFrom</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::UploadFrom</qualifiedname>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bufferSize</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options" kindref="compound">UploadBlockBlobFromOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options" kindref="compound">UploadBlockBlobFromOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A memory buffer containing the content to upload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bufferSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the memory buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A UploadBlockBlobFromResult describing the state of the updated block blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="140" column="21" bodyfile="src/block_blob_client.cpp" bodystart="148" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a8145e9b2118d0eb6efe4fab10ca82b1f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_result" kindref="compound">Models::UploadBlockBlobFromResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::UploadBlockBlobFromResult &gt; Azure::Storage::Blobs::BlockBlobClient::UploadFrom</definition>
+        <argsstring>(const std::string &amp;fileName, const UploadBlockBlobFromOptions &amp;options=UploadBlockBlobFromOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>UploadFrom</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::UploadFrom</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>fileName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options" kindref="compound">UploadBlockBlobFromOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_options" kindref="compound">UploadBlockBlobFromOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>fileName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A file containing the content to upload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A UploadBlockBlobFromResult describing the state of the updated block blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="155" column="21" bodyfile="src/block_blob_client.cpp" bodystart="239" bodyend="332"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a64761feab5444ba8737f5a43267aaeb2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_upload_block_blob_from_uri_result" kindref="compound">Models::UploadBlockBlobFromUriResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::UploadBlockBlobFromUriResult &gt; Azure::Storage::Blobs::BlockBlobClient::UploadFromUri</definition>
+        <argsstring>(const std::string &amp;sourceUri, const UploadBlockBlobFromUriOptions &amp;options=UploadBlockBlobFromUriOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>UploadFromUri</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::UploadFromUri</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>sourceUri</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options" kindref="compound">UploadBlockBlobFromUriOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_upload_block_blob_from_uri_options" kindref="compound">UploadBlockBlobFromUriOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new Block Blob where the contents of the blob are read from a given URL. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sourceUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the URL of the source blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A UploadBlockBlobFromUriResult describing the state of the updated block blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="168" column="21" bodyfile="src/block_blob_client.cpp" bodystart="334" bodyend="389"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a428813fece0e45f8094f81ce3920221c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_stage_block_result" kindref="compound">Models::StageBlockResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::StageBlockResult &gt; Azure::Storage::Blobs::BlockBlobClient::StageBlock</definition>
+        <argsstring>(const std::string &amp;blockId, Azure::Core::IO::BodyStream &amp;content, const StageBlockOptions &amp;options=StageBlockOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>StageBlock</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::StageBlock</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blockId</declname>
+        </param>
+        <param>
+          <type>Azure::Core::IO::BodyStream &amp;</type>
+          <declname>content</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options" kindref="compound">StageBlockOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_options" kindref="compound">StageBlockOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new block as part of a block blob&apos;s staging area to be eventually committed via the CommitBlockList operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blockId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A valid Base64 string value that identifies the block. Prior to encoding, the string must be less than or equal to 64 bytes in size. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>content</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A BodyStream containing the content to upload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A StageBlockResult describing the state of the updated block. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="184" column="21" bodyfile="src/block_blob_client.cpp" bodystart="391" bodyend="422"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a9fd2e9aa4d024e99641aa3cc426766c5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_stage_block_from_uri_result" kindref="compound">Models::StageBlockFromUriResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::StageBlockFromUriResult &gt; Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri</definition>
+        <argsstring>(const std::string &amp;blockId, const std::string &amp;sourceUri, const StageBlockFromUriOptions &amp;options=StageBlockFromUriOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>StageBlockFromUri</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>blockId</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>sourceUri</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options" kindref="compound">StageBlockFromUriOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_stage_block_from_uri_options" kindref="compound">StageBlockFromUriOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Creates a new block to be committed as part of a blob where the contents are read from the sourceUri. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blockId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A valid Base64 string value that identifies the block. Prior to encoding, the string must be less than or equal to 64 bytes in size. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sourceUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Specifies the uri of the source blob. The value may be a uri of up to 2 KB in length that specifies a blob. The source blob must either be public or must be authenticated via a shared access signature. If the source blob is public, no authentication is required to perform the operation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A StageBlockFromUriResult describing the state of the updated block blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="204" column="21" bodyfile="src/block_blob_client.cpp" bodystart="424" bodyend="473"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a5e47df66b82d5832cf2268d9a991c924" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_commit_block_list_result" kindref="compound">Models::CommitBlockListResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::CommitBlockListResult &gt; Azure::Storage::Blobs::BlockBlobClient::CommitBlockList</definition>
+        <argsstring>(const std::vector&lt; std::string &gt; &amp;blockIds, const CommitBlockListOptions &amp;options=CommitBlockListOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>CommitBlockList</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::CommitBlockList</qualifiedname>
+        <param>
+          <type>const std::vector&lt; std::string &gt; &amp;</type>
+          <declname>blockIds</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options" kindref="compound">CommitBlockListOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_commit_block_list_options" kindref="compound">CommitBlockListOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Writes a blob by specifying the list of block IDs that make up the blob. In order to be written as part of a blob, a block must have been successfully written to the server in a prior StageBlock operation. You can call CommitBlockList to update a blob by uploading only those blocks that have changed, then committing the new and existing blocks together. You can do this by specifying whether to commit a block from the committed block list or from the uncommitted block list, or to commit the most recently uploaded version of the block, whichever list it may belong to. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blockIds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base64 encoded block IDs to indicate that make up the blob. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A CommitBlobBlockListResult describing the state of the updated block blob. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="224" column="21" bodyfile="src/block_blob_client.cpp" bodystart="475" bodyend="514"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a32ca7784588c0bf6c7d739533be7b07f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_get_block_list_result" kindref="compound">Models::GetBlockListResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::GetBlockListResult &gt; Azure::Storage::Blobs::BlockBlobClient::GetBlockList</definition>
+        <argsstring>(const GetBlockListOptions &amp;options=GetBlockListOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>GetBlockList</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::GetBlockList</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options" kindref="compound">GetBlockListOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_get_block_list_options" kindref="compound">GetBlockListOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Retrieves the list of blocks that have been uploaded as part of a block blob. There are two block lists maintained for a blob. The Committed Block list has blocks that have been successfully committed to a given blob with CommitBlockList. The Uncommitted Block list has blocks that have been uploaded for a blob using StageBlock, but that have not yet been committed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A GetBlobBlockListResult describing requested block list. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="240" column="21" bodyfile="src/block_blob_client.cpp" bodystart="516" bodyend="526"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a6188259279eab1bd8dbff684258ea673" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Azure::Response&lt; <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_query_blob_result" kindref="compound">Models::QueryBlobResult</ref> &gt;</type>
+        <definition>Azure::Response&lt; Models::QueryBlobResult &gt; Azure::Storage::Blobs::BlockBlobClient::Query</definition>
+        <argsstring>(const std::string &amp;querySqlExpression, const QueryBlobOptions &amp;options=QueryBlobOptions(), const Azure::Core::Context &amp;context=Azure::Core::Context()) const</argsstring>
+        <name>Query</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::Query</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>querySqlExpression</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_query_blob_options" kindref="compound">QueryBlobOptions</ref> &amp;</type>
+          <declname>options</declname>
+          <defval><ref refid="struct_azure_1_1_storage_1_1_blobs_1_1_query_blob_options" kindref="compound">QueryBlobOptions</ref>()</defval>
+        </param>
+        <param>
+          <type>const Azure::Core::Context &amp;</type>
+          <declname>context</declname>
+          <defval>Azure::Core::Context()</defval>
+        </param>
+        <briefdescription>
+<para>Returns the result of a query against the blob. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>querySqlExpression</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The query expression in SQL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional parameters to execute this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for cancelling long running operations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A QueryBlobResult describing the query result. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="252" column="21" bodyfile="src/block_blob_client.cpp" bodystart="528" bodyend="669"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a21699888a99eefd84bbef7a96d2e61bc" prot="private" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</definition>
+        <argsstring>(BlobClient blobClient)</argsstring>
+        <name>BlockBlobClient</name>
+        <qualifiedname>Azure::Storage::Blobs::BlockBlobClient::BlockBlobClient</qualifiedname>
+        <param>
+          <type><ref refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client" kindref="compound">BlobClient</ref></type>
+          <declname>blobClient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="258" column="14" bodyfile="src/block_blob_client.cpp" bodystart="63" bodyend="63"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The <ref refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client" kindref="compound">BlockBlobClient</ref> allows you to manipulate Azure Storage block blobs. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Block blobs let you upload large blobs efficiently. Block blobs are comprised of blocks, each of which is identified by a block ID. You create or modify a block blob by writing a set of blocks and committing them by their block IDs. Each block can be a different size.</para>
+<para>When you upload a block to a blob in your storage account, it is associated with the specified block blob, but it does not become part of the blob until you commit a list of blocks that includes the new block&apos;s ID. New blocks remain in an uncommitted state until they are specifically committed or discarded. Writing a block does not update the last modified time of an existing blob. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlockBlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Azure::Storage::Blobs::BlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client"/>
+      </node>
+      <node id="1">
+        <label>Azure::Storage::Blobs::BlockBlobClient</label>
+        <link refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/storage/blobs/block_blob_client.hpp" line="31" column="3" bodyfile="inc/azure/storage/blobs/block_blob_client.hpp" bodystart="31" bodyend="261"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a128e9bdfdd7bd7b7125aada157b2734a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>AbortCopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a88846b9248a67b05abb25c791a8f9524" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>AsAppendBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1acea541c3a579cf4bd279c328c88d2cd6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>AsBlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a0b2c93bb3026f146c72bffcbccf32b54" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>AsPageBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1ae8d394bf44caeb3293234aee29f825ae" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a648f91be2338d9726c8145ba214ac978" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa96e47997fba9d786c78fb7d451f335e" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa224db3a62b18fe4636bafc40388e2b4" prot="public" virt="non-virtual" ambiguityscope="Azure::Storage::Blobs::BlobClient::"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a831709122522a0aa4ca1e074ee4429c6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a9bcce2d59c5de02c1b90684248838610" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a8721b2aae44070f880caf5087631d55e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a21699888a99eefd84bbef7a96d2e61bc" prot="private" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>BlockBlobClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a5e47df66b82d5832cf2268d9a991c924" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>CommitBlockList</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a267904b7db1f9e53632dc551aaea037c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>CopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a4d39b7e0352381b13d61c2ba91893eb2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>CreateFromConnectionString</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a05131f0bfc5f8b6d32c98f18d6d450a7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>CreateSnapshot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ac121df9f5dfcdeb80f47b50543df0984" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>Delete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a17a5c20b7cee4478d5a33409440fea8d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>DeleteIfExists</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a13aefc1ffba111e1a40c6fab1b9e99e1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>DeleteImmutabilityPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aee72db03143c80da4da4acb3e4c3673d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>Download</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa0bcbdbf6ebd17e4888cced4736420f7" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>DownloadTo</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa7c42e08951121a5f683e3e93bdc17c1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>DownloadTo</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a81fbafc67b667d7eb4e76e31b19c3aad" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>Files::DataLake::DataLakeFileClient</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a32ca7784588c0bf6c7d739533be7b07f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>GetBlockList</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a305bf8f65dc35944e706df2d2791a3a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>GetProperties</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a314dab2e7c92c0044045e2bcbae63f58" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>GetTags</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aebb3229526e303cc615aa69d78503063" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>GetUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aa765e21c8d0527fa727999530bc562d7" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>m_blobUrl</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a5231380a85d877a46b806a5ca316ef1f" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>m_customerProvidedKey</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a3a6762883174de1e74f4aa7f888ff2c2" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>m_encryptionScope</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1afc38d8187d60217d1e8143996ec7df90" prot="protected" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>m_pipeline</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a6188259279eab1bd8dbff684258ea673" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>Query</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ad9104f59eef0ef11d1599fa0de03d5bb" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>SetAccessTier</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a913e1aca81833426ec8b621531c9b4a5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>SetHttpHeaders</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1ade112c37b5858590349a2b5e46fd5709" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>SetImmutabilityPolicy</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a7617dfc40b61d67af2cb8cfd53771da1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>SetLegalHold</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a76301e79fa60cae85be9fca9072042a1" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>SetMetadata</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1a9c0bed9f975d4462ac7cb28f24963a77" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>SetTags</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a428813fece0e45f8094f81ce3920221c" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>StageBlock</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a9fd2e9aa4d024e99641aa3cc426766c5" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>StageBlockFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1af1c432cf82637be1c954b94ea57fee1a" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>StartCopyFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1abbe7d6e85fe6945188e97eead63b1e7f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>Undelete</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a4c914625a21b4b9cf6081fc13bda9e5d" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>Upload</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a400fd66a74a7fae192d4934332ed5321" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>UploadFrom</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a8145e9b2118d0eb6efe4fab10ca82b1f" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>UploadFrom</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a64761feab5444ba8737f5a43267aaeb2" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>UploadFromUri</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1a274b750987d7b4109c461084b873ff33" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>WithSnapshot</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_block_blob_client_1aaad7e18c6fa0c0ed553fe5251d6be2d6" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>WithVersionId</name></member>
+      <member refid="class_azure_1_1_storage_1_1_blobs_1_1_blob_client_1aba0c132a169d0dd59d6f69bd31381b0d" prot="public" virt="virtual"><scope>Azure::Storage::Blobs::BlockBlobClient</scope><name>~BlobClient</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="_c_h_a_n_g_e_l_o_g_8md" kind="file" language="Markdown">
+    <compoundname>CHANGELOG.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Release<sp/>History</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.5<sp/>(Unreleased)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Bugs<sp/>Fixed</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.4<sp/>(2023-02-02)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Aligned<sp/>OpenTelemetry<sp/>tracing<sp/>infrastructure<sp/>with<sp/>OpenTelemetry<sp/>1.17.0<sp/>conventions<sp/>for<sp/>use<sp/>with<sp/>Azure<sp/>Monitor.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Suppress<sp/>several<sp/>warnings<sp/>from<sp/>opentelemetry-cpp<sp/>package.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.3<sp/>(2022-08-04)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>hard<sp/>dependency<sp/>on<sp/>`opentelemetry-cpp`<sp/>package<sp/>version.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.2<sp/>(2022-06-30)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Breaking<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>`Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider`<sp/>type<sp/>can<sp/>only<sp/>be<sp/>instantiated<sp/>via<sp/>a<sp/>factory<sp/>method:<sp/>`OpenTelemetryProvider::Create()`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Other<sp/>Changes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Removed<sp/>`_internal`<sp/>APIs<sp/>from<sp/>the<sp/>public<sp/>API<sp/>surface.<sp/>Also<sp/>removed<sp/>most<sp/>of<sp/>the<sp/>`_internal`<sp/>APIs<sp/>from<sp/>the<sp/>public<sp/>`opentelemetry.hpp`<sp/>headers.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>1.0.0-beta.1<sp/>(2022-06-07)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Features<sp/>Added</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Initial<sp/>release</highlight></codeline>
+    </programlisting>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

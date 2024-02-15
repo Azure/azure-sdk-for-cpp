@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy" kind="struct" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Storage::Blobs::Models::RetentionPolicy</compoundname>
+    <includes refid="rest__client_8hpp" local="no">rest_client.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy_1a5c7444f2d1438ed190136a29a45b1b0e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Azure::Storage::Blobs::Models::RetentionPolicy::IsEnabled</definition>
+        <argsstring></argsstring>
+        <name>IsEnabled</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RetentionPolicy::IsEnabled</qualifiedname>
+        <initializer>= bool()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether a retention policy is enabled for the storage service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="95" column="12" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy_1a999e82de7f816c77b13c95394a03fb57" prot="public" static="no" mutable="no">
+        <type>Nullable&lt; int32_t &gt;</type>
+        <definition>Nullable&lt;int32_t&gt; Azure::Storage::Blobs::Models::RetentionPolicy::Days</definition>
+        <argsstring></argsstring>
+        <name>Days</name>
+        <qualifiedname>Azure::Storage::Blobs::Models::RetentionPolicy::Days</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates the number of days that metrics or logging or soft-deleted data should be retained. All data older than this value will be deleted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/storage/blobs/rest_client.hpp" line="100" column="16" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="100" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The retention policy which determines how long the associated data should persist. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="inc/azure/storage/blobs/rest_client.hpp" line="90" column="5" bodyfile="inc/azure/storage/blobs/rest_client.hpp" bodystart="91" bodyend="101"/>
+    <listofallmembers>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy_1a999e82de7f816c77b13c95394a03fb57" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RetentionPolicy</scope><name>Days</name></member>
+      <member refid="struct_azure_1_1_storage_1_1_blobs_1_1_models_1_1_retention_policy_1a5c7444f2d1438ed190136a29a45b1b0e" prot="public" virt="non-virtual"><scope>Azure::Storage::Blobs::Models::RetentionPolicy</scope><name>IsEnabled</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

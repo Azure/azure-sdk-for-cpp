@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_operation_cancelled_exception" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::OperationCancelledException</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::runtime_error</basecompoundref>
+    <includes refid="context_8hpp" local="no">context.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_operation_cancelled_exception_1a34ca809dfec39ec947a49cbbf7841b2a" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::OperationCancelledException::OperationCancelledException</definition>
+        <argsstring>(std::string const &amp;what)</argsstring>
+        <name>OperationCancelledException</name>
+        <qualifiedname>Azure::Core::OperationCancelledException::OperationCancelledException</qualifiedname>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>what</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an <computeroutput><ref refid="class_azure_1_1_core_1_1_operation_cancelled_exception" kindref="compound">OperationCancelledException</ref></computeroutput> with message string as the description. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>what</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The explanatory string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/context.hpp" line="40" column="14" bodyfile="inc/azure/core/context.hpp" bodystart="40" bodyend="40"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>An exception thrown when an operation is cancelled. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Azure::Core::OperationCancelledException</label>
+        <link refid="class_azure_1_1_core_1_1_operation_cancelled_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::runtime_error</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::OperationCancelledException</label>
+        <link refid="class_azure_1_1_core_1_1_operation_cancelled_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::runtime_error</label>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/context.hpp" line="33" column="3" bodyfile="inc/azure/core/context.hpp" bodystart="33" bodyend="41"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_operation_cancelled_exception_1a34ca809dfec39ec947a49cbbf7841b2a" prot="public" virt="non-virtual"><scope>Azure::Core::OperationCancelledException</scope><name>OperationCancelledException</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

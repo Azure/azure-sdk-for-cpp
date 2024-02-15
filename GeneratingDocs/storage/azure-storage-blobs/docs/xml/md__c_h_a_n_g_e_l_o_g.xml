@@ -1,0 +1,624 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="md__c_h_a_n_g_e_l_o_g" kind="page">
+    <compoundname>md__c_h_a_n_g_e_l_o_g</compoundname>
+    <title>Release History</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md__c_h_a_n_g_e_l_o_g_1release-history"/> </para>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md12110-beta1-unreleased">
+<title>12.11.0-beta.1 (Unreleased)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added">
+<title>Features Added</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes">
+<title>Breaking Changes</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed">
+<title>Bugs Fixed</title></sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes">
+<title>Other Changes</title></sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md12100-2023-11-07">
+<title>12.10.0 (2023-11-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-1">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Features in <computeroutput>12.10.0-beta.1</computeroutput> are now generally available.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md12100-beta1-2023-10-17">
+<title>12.10.0-beta.1 (2023-10-17)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-2">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added new extendable enum <computeroutput>BlobAudience</computeroutput></para>
+</listitem><listitem><para>Added new field <computeroutput>Audience</computeroutput> in <computeroutput>BlobClientOptions</computeroutput></para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1290-2023-09-12">
+<title>12.9.0 (2023-09-12)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-3">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Features in <computeroutput>12.9.0-beta.1</computeroutput> and <computeroutput>12.9.0-beta.2</computeroutput> are now generally available.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1290-beta2-2023-08-12">
+<title>12.9.0-beta.2 (2023-08-12)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-4">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>TenantId can now be discovered through the service challenge response, when using a TokenCredential for authorization.<itemizedlist>
+<listitem><para>A new property is now available on <computeroutput>BlobClientOptions</computeroutput> called <computeroutput>EnableTenantDiscovery</computeroutput>. If set to <computeroutput>true</computeroutput>, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Added a new field <computeroutput>SourceAuthorization</computeroutput> in options for copy operations, which can be used to specify authorization for copy source.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1290-beta1-2023-08-08">
+<title>12.9.0-beta.1 (2023-08-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-5">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>RehydratePendingToCold</computeroutput> value to <computeroutput>ArchiveStatus</computeroutput> enum.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-1">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed a bug where <computeroutput>PageBlobClient::GetPageRangesDiff</computeroutput> and <computeroutput>PageBlobClient::GetManagedDiskPageRangesDiff</computeroutput> crash when getting the second page.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1280-2023-07-11">
+<title>12.8.0 (2023-07-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-6">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Features in <computeroutput>12.8.0-beta.1</computeroutput> are now generally available.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1280-beta1-2023-05-31">
+<title>12.8.0-beta.1 (2023-05-31)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-7">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Bumped up API version to <computeroutput>2022-11-02</computeroutput>.</para>
+</listitem><listitem><para>Content length limit for <computeroutput>AppendBlobClient::AppendBlock()</computeroutput> and <computeroutput>AppendBlobClient::AppendBlockFromUri()</computeroutput> was raised from 4 MiB to 100 MiB.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1270-2023-03-07">
+<title>12.7.0 (2023-03-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-8">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Features in <computeroutput>12.7.0.beta.1</computeroutput> are now generally available.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1270-beta1-2023-02-07">
+<title>12.7.0-beta.1 (2023-02-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-9">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Bumped up API version to <computeroutput>2021-12-02</computeroutput>.</para>
+</listitem><listitem><para>Added support for new access tier <computeroutput>Cold</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-2">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed a bug where setting premium page blob tier operations always fail.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1262-2022-10-11">
+<title>12.6.2 (2022-10-11)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-1">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>No public changes in this release.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1261-2022-09-16">
+<title>12.6.1 (2022-09-16)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-2">
+<title>Other changes</title><para><itemizedlist>
+<listitem><para>No public changes in this release.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1260-2022-09-06">
+<title>12.6.0 (2022-09-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-10">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Features in <computeroutput>12.6.0.beta.1</computeroutput> are now generally available.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-3">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Empty file or existing file won&apos;t be created/overwritten if the blob to be downloaded doesn&apos;t exist.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1260-beta1-2022-08-09">
+<title>12.6.0-beta.1 (2022-08-09)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-11">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Bumped up API version to <computeroutput>2021-04-10</computeroutput>.</para>
+</listitem><listitem><para>Added support for encryption scope SAS (<computeroutput>ses</computeroutput> query parameter in SAS token).</para>
+</listitem><listitem><para>Added encryption scope support for <computeroutput>BlobClient::CopyFromUri()</computeroutput>.</para>
+</listitem><listitem><para>Added support for filtering blobs on container level.</para>
+</listitem><listitem><para>Added support for tags copy mode (replace or copy from source) when copying blobs from URL.</para>
+</listitem><listitem><para>Added support for permanent delete permission in SAS.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-4">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed listing blobs failure when blob name contains invalid characters in xml.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1250-2022-08-08">
+<title>12.5.0 (2022-08-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-12">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Features in <computeroutput>12.5.0.beta1</computeroutput> and <computeroutput>12.5.0.beta2</computeroutput> are now generally available.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1250-beta2-2022-07-07">
+<title>12.5.0-beta.2 (2022-07-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-13">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added support for Blob Batch.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1250-beta1-2022-06-07">
+<title>12.5.0-beta.1 (2022-06-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-14">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Bumped up API version to <computeroutput>2020-10-02</computeroutput>.</para>
+</listitem><listitem><para>Added new API: <computeroutput>BlockBlobClient::Query()</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>ContinuationToken</computeroutput> and <computeroutput>PageSizeHint</computeroutput> in <computeroutput>GetPageRangesOptions</computeroutput>.</para>
+</listitem><listitem><para>Added support for listing system containers.</para>
+</listitem><listitem><para>Added support for listing deleted root blob with active versions.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1240-2022-04-06">
+<title>12.4.0 (2022-04-06)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-3">
+<title>Other changes</title><para><itemizedlist>
+<listitem><para>No public changes in this release.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1240-beta1-2022-03-09">
+<title>12.4.0-beta.1 (2022-03-09)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-15">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Bumped up API version to <computeroutput>2020-08-04</computeroutput>.</para>
+</listitem><listitem><para>Bumped up SAS token version to <computeroutput>2020-08-04</computeroutput>.</para>
+</listitem><listitem><para>Added support for immutability policy.</para>
+</listitem><listitem><para>New API: <computeroutput>BlobClient::CopyFromUri()</computeroutput>, <computeroutput>BlobClient::SetImmutabilityPolicy()</computeroutput>, <computeroutput>BlobClient::DeleteImmutabilityPolicy()</computeroutput>, <computeroutput>BlobClient::SetLegalHold()</computeroutput>, <computeroutput>BlockBlobClient::UploadFromUri()</computeroutput> and <computeroutput>BlobServiceClient::RenameBlobContainer()</computeroutput>.</para>
+</listitem><listitem><para>Added lease access condition support for <computeroutput>BlobClient::SetTags()</computeroutput> and <computeroutput>BlobClient::GetTags()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1230-2022-02-14">
+<title>12.3.0 (2022-02-14)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-16">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>VersionId</computeroutput> in <computeroutput>SetBlobMetadataResult</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1221-2021-11-08">
+<title>12.2.1 (2021-11-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-4">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para><computeroutput>DefaultEncryptionScope</computeroutput> and <computeroutput>PreventEncryptionScopeOverride</computeroutput> in <computeroutput>BlobContainerProperties</computeroutput> were changed to optional.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1220-2021-09-08">
+<title>12.2.0 (2021-09-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-1">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para><computeroutput>StartsOn</computeroutput> and <computeroutput>ExpiresOn</computeroutput> in <computeroutput>SignedIdentifier</computeroutput> were changed to nullable.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-5">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed a bug where prefix cannot contain <computeroutput>&amp;</computeroutput> when listing blobs.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-5">
+<title>Other Changes</title><para><itemizedlist>
+<listitem><para>Create less threads if there isn&apos;t too much data to transfer.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1210-2021-08-10">
+<title>12.1.0 (2021-08-10)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1features-added-17">
+<title>Features Added</title><para><itemizedlist>
+<listitem><para>Added lease ID access condition and tags access condition for <computeroutput>BlobClient::SetAccessTier()</computeroutput>.</para>
+</listitem><listitem><para>Added source ETag access conditions and last-modified access conditions for <computeroutput>PageBlobClient::UploadPagesFromUri()</computeroutput>.</para>
+</listitem><listitem><para>Added three new fields <computeroutput>IsServerEncrypted</computeroutput>, <computeroutput>EncryptionKeySha256</computeroutput> and <computeroutput>EncryptionScope</computeroutput> into <computeroutput>SetBlobMetadataResult</computeroutput>.</para>
+</listitem><listitem><para>Added support for setting blob tags when creating or copying blobs.</para>
+</listitem><listitem><para>Added new fields <computeroutput>AccessTierChangedOn</computeroutput>, <computeroutput>ArchiveStatus</computeroutput>, <computeroutput>RehydratePriority</computeroutput>, <computeroutput>CopyId</computeroutput>, <computeroutput>CopySource</computeroutput>, <computeroutput>CopyStatus</computeroutput>, <computeroutput>CopyStatusDescription</computeroutput>, <computeroutput>IsIncrementalCopy</computeroutput>, <computeroutput>IncrementalCopyDestinationSnapshot</computeroutput>, <computeroutput>CopyProgress</computeroutput>, <computeroutput>CopyCompletedOn</computeroutput>, <computeroutput>Tags</computeroutput>, <computeroutput>DeletedOn</computeroutput> and <computeroutput>RemainingRetentionDays</computeroutput> into <computeroutput>BlobItemDetails</computeroutput>.</para>
+</listitem><listitem><para>Added support for including blob tags when listing blobs.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bugs-fixed-6">
+<title>Bugs Fixed</title><para><itemizedlist>
+<listitem><para>Fixed a bug where lease ID didn&apos;t work for <computeroutput>BlobContainerClient::GetAccessPolicy()</computeroutput>.</para>
+</listitem><listitem><para>Fixed a bug where sequence number access conditions didn&apos;t work for page blob operations.</para>
+</listitem><listitem><para>Fixed a bug where <computeroutput>BlobItemDetails::EncryptionKeySha256</computeroutput> was always null because it wasn&apos;t correctly parsed from xml.</para>
+</listitem><listitem><para>Fixed a bug where <computeroutput>BlockBlobClient::GetBlockList</computeroutput> threw exception if the blob is not committed.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1201-2021-07-07">
+<title>12.0.1 (2021-07-07)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-2021-06-08">
+<title>12.0.0 (2021-06-08)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Added and updated some samples.</para>
+</listitem><listitem><para>Fixed a read consistency issue.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-beta11-2021-05-19">
+<title>12.0.0-beta.11 (2021-05-19)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-2">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>final</computeroutput> specifier to classes and structures that are are not expected to be inheritable at the moment.</para>
+</listitem><listitem><para>Renamed <computeroutput>HasMorePages()</computeroutput> in paged response to <computeroutput>HasPage()</computeroutput>.</para>
+</listitem><listitem><para>Default chunk size for concurrent upload was changed to nullable.</para>
+</listitem><listitem><para><computeroutput>BlobLeaseClient::Change()</computeroutput> updates internal lease id.</para>
+</listitem><listitem><para>Removed <computeroutput>ContentType</computeroutput> from <computeroutput>GetBlockListResult</computeroutput>.</para>
+</listitem><listitem><para>Moved <computeroutput>GetPageRangesResult</computeroutput> to detail namespace.</para>
+</listitem><listitem><para><computeroutput>BlobServiceClient::UndeleteBlobContainer</computeroutput> doesn&apos;t support restoring a deleted container under a different name anymore.</para>
+</listitem><listitem><para>Changed the type of block count to <computeroutput>int32_t</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-beta10-2021-04-16">
+<title>12.0.0-beta.10 (2021-04-16)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-3">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>Azure::Storage::Blobs::PackageVersion</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>GetUserDelegationKeyOptions::startsOn</computeroutput> to <computeroutput>StartsOn</computeroutput>.</para>
+</listitem><listitem><para>Replaced all paginated collection functions that have the SinglePage suffix with pageable functions returning a <computeroutput>PagedResponse&lt;T&gt;</computeroutput>-derived type. The options are also renamed accordingly.<itemizedlist>
+<listitem><para><computeroutput>BlobServiceClient::ListBlobContainers()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobServiceClient::FindBlobsByTags()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobContainerClient::ListBlobs()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobContainerClient::ListBlobsByHierarchy()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::GetPageRanges()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::GetPageRangesDiff()</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::GetManagedDiskPageRangesDiff()</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Renamed <computeroutput>FilterBlobItem</computeroutput> to <computeroutput>TaggedBlobItem</computeroutput>.<itemizedlist>
+<listitem><para><computeroutput>FindBlobsByTags()</computeroutput> now returns <computeroutput>FindBlobsByTagsPagedResponse</computeroutput> and the field <computeroutput>FindBlobsByTagsSinglePageResult::Items</computeroutput> was renamed to <computeroutput>FindBlobsByTagsPagedResponse::TaggedBlobs</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-beta9-2021-03-23">
+<title>12.0.0-beta.9 (2021-03-23)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added support for telemetry options.</para>
+</listitem><listitem><para>Added <computeroutput>Azure::Storage::Blobs::PackageVersion</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>ShareFileClient::GetRangeListDiff</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-4">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Changed the return type of <computeroutput>StartCopyFromUri</computeroutput> and <computeroutput>StartCopyIncremental</computeroutput> API from a <computeroutput>Response&lt;T&gt;</computeroutput> to the particular <computeroutput>Operation&lt;T&gt;</computeroutput> type called <computeroutput>StartBlobCopyOperation</computeroutput> directly.</para>
+</listitem><listitem><para>String conversion functions of extensible enums were renamed from <computeroutput>Get()</computeroutput> to <computeroutput>ToString()</computeroutput>.</para>
+</listitem><listitem><para>Moved <computeroutput>SecondaryHostForRetryReads</computeroutput> out of retry options, now it&apos;s under <computeroutput>BlobClientOptions</computeroutput>.</para>
+</listitem><listitem><para>Changed the return types of the following APIs:<itemizedlist>
+<listitem><para><computeroutput>BlobServiceClient::DeleteBlobContainer</computeroutput> now returns <computeroutput>DeleteBlobContainerResult</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobServiceClient::GetUserDelegationKey</computeroutput> now returns <computeroutput>UserDelegationKey</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobServiceClient::GetProperties</computeroutput> now returns <computeroutput>BlobServiceProperties</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobServiceClient::GetAccountInfo</computeroutput> now returns <computeroutput>AccountInfo</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobServiceClient::GetStatistics</computeroutput> now returns <computeroutput>ServiceStatistics</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobContainerClient::DeleteBlob</computeroutput> now returns <computeroutput>DeleteBlobResult</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobContainerClient::GetProperties</computeroutput> now returns <computeroutput>BlobContainerProperties</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobContainerClient::GetAccessPolicy</computeroutput> now returns <computeroutput>BlobContainerAccessPolicy</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobClient::GetProperties</computeroutput> now returns <computeroutput>BlobProperties</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobClinet::GetTags</computeroutput> now returns <computeroutput>std::map&lt;std::string, std::string&gt;</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobClient::AbortCopyFromUri</computeroutput> now returns <computeroutput>AbortBlobCopyFromUriResult</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::UploadPages</computeroutput> now returns <computeroutput>UploadPagesResult</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::UploadPagesFromUri</computeroutput> now returns <computeroutput>UploadPagesFromUriResult</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::ClearPages</computeroutput> now returns <computeroutput>ClearPagesResult</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::GetPageRanges</computeroutput>, <computeroutput>PageBlobClient::GetPageRangesDiff</computeroutput> and <computeroutput>PageBlobClient::GetManagedDiskPageRangesDiff</computeroutput> now return <computeroutput>GetPageRangesResult</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Renamed some options:<itemizedlist>
+<listitem><para>Renamed <computeroutput>UploadPageBlobPagesOptions</computeroutput> to <computeroutput>UploadPagesOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>UploadPageBlobPagesFromUriOptions</computeroutput> to <computeroutput>UploadPagesFromUriOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>ClearPageBlobPagesOptions</computeroutput> to <computeroutput>ClearPagesOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>GetPageBlobPageRangesOptions</computeroutput> to <computeroutput>GetPageRangesOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>StartCopyBlobFromUriOptions</computeroutput> to <computeroutput>StartBlobCopyFromUriOptions</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>StartCopyPageBlobIncrementalOptions</computeroutput> to <computeroutput>StartBlobCopyIncrementalOptions</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Removed <computeroutput>Blob</computeroutput> from the name of lease options and return types, like <computeroutput>AcquireBlobLeaseOptions</computeroutput> was renamed to <computeroutput>AcquireLeaseOptions</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>Blob</computeroutput> prefix from the name of structs <computeroutput>BlobGeoReplication</computeroutput>, <computeroutput>BlobLeaseStatus</computeroutput>, <computeroutput>BlobLeaseState</computeroutput>, <computeroutput>BlobLeaseDurationType</computeroutput>, <computeroutput>BlobAnalyticsLogging</computeroutput>, <computeroutput>BlobMetrics</computeroutput>, <computeroutput>BlobCorsRule</computeroutput>, <computeroutput>BlobRetentionPolicy</computeroutput>, <computeroutput>BlobStaticWebsite</computeroutput>, <computeroutput>BlobArchiveStatus</computeroutput> and <computeroutput>BlobGeoReplicationStatus</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>RequestId</computeroutput> from return types.</para>
+</listitem><listitem><para>Changed <computeroutput>BodyStream</computeroutput> parameter of <computeroutput>UploadBlob</computeroutput>, <computeroutput>Upload</computeroutput>, <computeroutput>UploadPages</computeroutput> and <computeroutput>AppendBlock</computeroutput>functions from pointer to reference.</para>
+</listitem><listitem><para>Renamed access tier members in return types and options from <computeroutput>Tier</computeroutput> to <computeroutput>AccessTier</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>BlockListTypeOption</computeroutput> to <computeroutput>BlockListType</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-beta8-2021-02-12">
+<title>12.0.0-beta.8 (2021-02-12)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-5">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Removed <computeroutput>BreakBlobLeaseResult::Leasetime</computeroutput>.</para>
+</listitem><listitem><para>Moved <computeroutput>Azure::Core::Context</computeroutput> out of options bag of each API, and make it the last optional parameter.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-beta7-2021-02-03">
+<title>12.0.0-beta.7 (2021-02-03)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-1">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>RequestId</computeroutput> in API return types.</para>
+</listitem><listitem><para>Added some new properties in <computeroutput>GetBlobPropertiesResult</computeroutput>, <computeroutput>DownloadBlobResult</computeroutput> and <computeroutput>DownloadBlobToResult</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>RangeHashAlgorithm</computeroutput> in <computeroutput>DownloadBlobOptions</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>UploadBlob</computeroutput> in <computeroutput>BlobContainerClient</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-6">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para><computeroutput>UserDelegationKey</computeroutput> was changed to a member of <computeroutput>GetUserDelegationKeyResult</computeroutput> rather than a typedef like before.</para>
+</listitem><listitem><para><computeroutput>AccessType</computeroutput> in <computeroutput>CreateBlobContainerOptions</computeroutput> was changed to non-nullable.</para>
+</listitem><listitem><para><computeroutput>ListType</computeroutput> in <computeroutput>GetBlockListOptions</computeroutput> was changed to non-nullable.</para>
+</listitem><listitem><para>Added <computeroutput>BlobLeaseClient</computeroutput>, all lease related APIs are moved to <computeroutput>BlobLeaseClient</computeroutput>.</para>
+</listitem><listitem><para>Type for lease duration in requests was changed to <computeroutput>std::chrono::seconds</computeroutput>, in response was changed to enum.</para>
+</listitem><listitem><para><computeroutput>PublicAccessType::Private</computeroutput> was renamed to <computeroutput>PublicAccessType::None</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>startsOn</computeroutput> parameter for <computeroutput>GetUserDelegationKey</computeroutput> was changed to optional.</para>
+</listitem><listitem><para>Removed <computeroutput>IfUnmodifiedSince</computeroutput> from <computeroutput>SetBlobContainerMetadataOptions</computeroutput>.</para>
+</listitem><listitem><para>Return types of <computeroutput>BlobClient::StartCopyFromUri</computeroutput> and <computeroutput>PageBlobClient::StartCopyIncremental</computeroutput> were changed to <computeroutput>StartCopyBlobResult</computeroutput>, supporting poll operations.</para>
+</listitem><listitem><para>Fixed typo <computeroutput>Expiries</computeroutput> in model types.</para>
+</listitem><listitem><para>Removed <computeroutput>PreviousContinuationToken</computeroutput> from <computeroutput>ListBlobContainersSinglePageResult</computeroutput>, <computeroutput>ListBlobsByHierarchySinglePageResult</computeroutput> and <computeroutput>ListBlobsSinglePageResult</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>ListBlobContainersIncludeItem</computeroutput> was renamed to <computeroutput>ListBlobContainersIncludeFlags</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>ListBlobsIncludeItem</computeroutput> was renamed to <computeroutput>ListBlobsIncludeFlags</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>Concurrency</computeroutput>, <computeroutput>ChunkSize</computeroutput> and <computeroutput>InitialChunkSize</computeroutput> were moved into <computeroutput>DownloadBlobToOptions::TansferOptions</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>Concurrency</computeroutput>, <computeroutput>ChunkSize</computeroutput> and <computeroutput>SingleUploadThreshold</computeroutput> were moved into <computeroutput>UploadBlockBlobFromOptions::TransferOptions</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>TagValue</computeroutput> from <computeroutput>FilterBlobItem</computeroutput>, removed <computeroutput>Where</computeroutput> from <computeroutput>FindBlobsByTagsSinglePageResult</computeroutput>.</para>
+</listitem><listitem><para>Type for ETag was changed to <computeroutput>Azure::Core::ETag</computeroutput>.</para>
+</listitem><listitem><para>Removed <computeroutput>BlobPrefix</computeroutput> struct, use <computeroutput>std::string</computeroutput> instead.</para>
+</listitem><listitem><para>Refined <computeroutput>BlobContainerItem</computeroutput>, <computeroutput>BlobItem</computeroutput>, <computeroutput>DownloadBlobResult</computeroutput> and <computeroutput>DownloadBlobToResult</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-beta6-2021-01-14">
+<title>12.0.0-beta.6 (2021-01-14)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-2">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added <computeroutput>CreateIfNotExists</computeroutput> and <computeroutput>DeleteIfExists</computeroutput> for blob containers and blobs.</para>
+</listitem><listitem><para>Added <computeroutput>IsHierarchicalNamespaceEnabled</computeroutput> in <computeroutput>GetAccountInfoResult</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>PageBlobClient::GetPageRangesDiff</computeroutput> and <computeroutput>PageBlobClient::GetManagedDiskPageRangesDiff</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>CreateBlobContainer</computeroutput>, <computeroutput>DeleteBlobContainer</computeroutput>, <computeroutput>UndeleteBlobContainer</computeroutput> into <computeroutput>BlobServiceClient</computeroutput>.</para>
+</listitem><listitem><para>Added <computeroutput>DeleteBlob</computeroutput> to <computeroutput>BlobContainerClient</computeroutput>.</para>
+</listitem><listitem><para>Support setting blob SAS permission with a raw string.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-7">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Renamed <computeroutput>AppendBlobAccessConditions::MaxSize</computeroutput> to <computeroutput>IfMaxSizeLessThanOrEqual</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>AppendBlobAccessConditions::AppendPosition</computeroutput> to <computeroutput>IfAppendPositionEqual</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobServiceProperties.DefaultServiceVersion</computeroutput> is now nullable.</para>
+</listitem><listitem><para>Renamed <computeroutput>DeleteBlobSubRequest::containerName</computeroutput> to <computeroutput>blobContainerName</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>SetBlobAccessTierSubRequest::containerName</computeroutput> to <computeroutput>blobContainerName</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>BlobSasBuilder::ContainerName</computeroutput> to <computeroutput>BlobContainerName</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>BlobSasResource::Container</computeroutput> to <computeroutput>BlobContainer</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>AccountSasResource::Container</computeroutput> to <computeroutput>BlobContainer</computeroutput></para>
+</listitem><listitem><para>Renamed some structs:<itemizedlist>
+<listitem><para><computeroutput>CreateContainerResult</computeroutput> to <computeroutput>CreateBlobContainerOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>CreateContainerOptions</computeroutput> to <computeroutput>CreateBlobContainerOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>DeleteContainerResult</computeroutput> to <computeroutput>DeleteBlobContainerResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>DeleteContainerOptions</computeroutput> to <computeroutput>DeleteBlobContainerOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>GetContainerPropertiesResult</computeroutput> to <computeroutput>GetBlobContainerPropertiesResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>GetContainerPropertiesOptions</computeroutput> to <computeroutput>GetBlobContainerPropertiesOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>SetContainerMetadataResult</computeroutput> to <computeroutput>SetBlobContainerMetadataResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>SetContainerMetadataOptions</computeroutput> to <computeroutput>SetBlobContainerMetadataOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>GetContainerAccessPolicyResult</computeroutput> to <computeroutput>GetBlobContainerAccessPolicyResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>GetContainerAccessPolicyOptions</computeroutput> to <computeroutput>GetBlobContainerAccessPolicyOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>SetContainerAccessPolicyResult</computeroutput> to <computeroutput>SetBlobContainerAccessPolicyResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>SetContainerAccessPolicyOptions</computeroutput> to <computeroutput>SetBlobContainerAccessPolicyOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>AcquireContainerLeaseResult</computeroutput> to <computeroutput>AcquireBlobContainerLeaseResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>AcquireContainerLeaseOptions</computeroutput> to <computeroutput>AcquireBlobContainerLeaseOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>RenewContainerLeaseResult</computeroutput> to <computeroutput>RenewBlobContainerLeaseResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>RenewContainerLeaseOptions</computeroutput> to <computeroutput>RenewBlobContainerLeaseOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>ReleaseContainerLeaseResult</computeroutput> to <computeroutput>ReleaseBlobContainerLeaseResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>ReleaseContainerLeaseOptions</computeroutput> to <computeroutput>ReleaseBlobContainerLeaseOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>ChangeContainerLeaseResult</computeroutput> to <computeroutput>ChangeBlobContainerLeaseResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>ChangeContainerLeaseOptions</computeroutput> to <computeroutput>ChangeBlobContainerLeaseOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>BreakContainerLeaseResult</computeroutput> to <computeroutput>BreakBlobContainerLeaseResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>BreakContainerLeaseOptions</computeroutput> to <computeroutput>BreakBlobContainerLeaseOptions</computeroutput></para>
+</listitem><listitem><para><computeroutput>ContainerAccessConditions</computeroutput> to <computeroutput>BlobContainerAccessConditions</computeroutput></para>
+</listitem><listitem><para><computeroutput>ListContainersSegmentResult</computeroutput> to <computeroutput>ListBlobContainersSegmentResult</computeroutput></para>
+</listitem><listitem><para><computeroutput>ListContainersSegmentOptions</computeroutput> to <computeroutput>ListBlobContainersSegmentOptions</computeroutput></para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>API signature for <computeroutput>CommitBlockList</computeroutput> has changed. <computeroutput>BlockType</computeroutput> doesn&apos;t need to be specified anymore.</para>
+</listitem><listitem><para><computeroutput>PageBlobClient::GetPageRanges</computeroutput> doesn&apos;t support getting difference between current blob and a snapshot anymore. Use <computeroutput>PageBlobClient::GetPageRangesDiff</computeroutput> instead.</para>
+</listitem><listitem><para>Moved Blob SAS into <computeroutput>Azure::Storage::Sas</computeroutput> namespace.</para>
+</listitem><listitem><para>Replaced all transactional content MD5/CRC64 with the <computeroutput>ContentHash</computeroutput> struct.</para>
+</listitem><listitem><para><computeroutput>EncryptionKeySha256</computeroutput> is changed to binary (<computeroutput>std::vector&lt;uint8_t&gt;</computeroutput>).</para>
+</listitem><listitem><para><computeroutput>ContentMd5</computeroutput> HTTP header is renamed to <computeroutput>ContentHash</computeroutput>, the type is also changed to <computeroutput>ContentHash</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>ServerEncrypted</computeroutput> fields are renamed to <computeroutput>IsServerEncrypted</computeroutput>, and changed to non-nullable type.</para>
+</listitem><listitem><para>Added <computeroutput>Is</computeroutput> prefix to bool variable names. Like <computeroutput>IsAccessTierInferred</computeroutput>, <computeroutput>IsDeleted</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>IsServerEncrypted</computeroutput>, <computeroutput>EncryptionKeySha256</computeroutput> and <computeroutput>EncryptionScope</computeroutput> are removed from <computeroutput>ClearPageBlobPagesResult</computeroutput>, since they are never returned from storage server.</para>
+</listitem><listitem><para><computeroutput>ListBlobsFlatSegment</computeroutput> is renamed to <computeroutput>ListBlobsSinglePage</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>ListBlobsByHierarchySegment</computeroutput> is renamed to <computeroutput>ListBlobsByHierarchySinglePage</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>ListBlobContainersSegment</computeroutput> is renamed to <computeroutput>ListBlobContainersSinglePage</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>FindBlobsByTags</computeroutput> is renamed to <computeroutput>FindBlobsByTagsSinglePage</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>MaxResults</computeroutput> in list APIs are renamed to <computeroutput>PageSizeHint</computeroutput>.</para>
+</listitem><listitem><para>All date time related strings are now changed to <computeroutput>Azure::Core::DateTime</computeroutput> type.</para>
+</listitem><listitem><para>Replaced <computeroutput>std::pair&lt;int64_t, int64_t&gt;</computeroutput> with <computeroutput>Azure::Core::Http::Range</computeroutput> to denote blob ranges.</para>
+</listitem><listitem><para>Made version strings private by moving them into the <computeroutput>Details</computeroutput> namespace.</para>
+</listitem><listitem><para>Replaced scoped enums that don&apos;t support bitwise operations with extensible enum.</para>
+</listitem><listitem><para>Continuation token of result types are changed to nullable.</para>
+</listitem><listitem><para>Renamed <computeroutput>Models::DeleteSnapshotsOption::Only</computeroutput> to <computeroutput>OnlySnapshots</computeroutput>.</para>
+</listitem><listitem><para>Renamed <computeroutput>SourceConditions</computeroutput> in API options to <computeroutput>SourceAccessConditions</computeroutput>.</para>
+</listitem><listitem><para>Removed Blob Batch.</para>
+</listitem><listitem><para><computeroutput>DownloadBlobResult::Content-Range</computeroutput> is changed to an <computeroutput>Azure::Core::Http::Range</computeroutput>, an extra field <computeroutput>BlobSize</computeroutput> is added.</para>
+</listitem><listitem><para>Removed <computeroutput>Undelete</computeroutput> from <computeroutput>BlobContainerClient</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobRetentionPolicy::Enabled</computeroutput> is renamed to <computeroutput>BlobRetentionPolicy::IsEnabled</computeroutput>, <computeroutput>BlobStaticWebsite::Enabled</computeroutput> is renamed to <computeroutput>BlobStaticWebsite::IsEnabled</computeroutput>.</para>
+</listitem><listitem><para>Changed type for metadata to case-insensitive <computeroutput>std::map</computeroutput>.</para>
+</listitem><listitem><para>Changed parameter type for token credential from <computeroutput>Azure::Identity::ClientSecretCredential</computeroutput> to <computeroutput>Azure::Core::TokenCredential</computeroutput>.</para>
+</listitem><listitem><para>Renamed member function <computeroutput>GetUri</computeroutput> of client types to <computeroutput>GetUrl</computeroutput>.</para>
+</listitem><listitem><para><computeroutput>BlobClient::GetBlockBlobClient</computeroutput>, <computeroutput>BlobClient::GetAppendBlobClient</computeroutput> and <computeroutput>BlobClient::GetPageBlobClient</computeroutput> are renamed to <computeroutput>BlobClient::AsBlockBlobClient</computeroutput>, <computeroutput>BlobClient::AsAppendBlobClient</computeroutput> and <computeroutput>BlobClient::AsPageBlobClient</computeroutput> respectively.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md1200-beta5-2020-11-13">
+<title>12.0.0-beta.5 (2020-11-13)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-3">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Support for replaceable HTTP transport layer.</para>
+</listitem><listitem><para>Add <computeroutput>version.hpp</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-8">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Move header <computeroutput>azure/storage/blobs/blob.hpp</computeroutput> to <computeroutput><ref refid="blobs_8hpp_source" kindref="compound">azure/storage/blobs.hpp</ref></computeroutput>.</para>
+</listitem><listitem><para>Service API return types which are typically suffixed with <computeroutput>Result</computeroutput> are moved to the <computeroutput>Models</computeroutput> sub-namespaces and everything else from the protocol layer is made private by moving to the <computeroutput>Details</computeroutput> namespace.</para>
+</listitem><listitem><para>Make XML serializer and deserializer private by moving them to the <computeroutput>Details</computeroutput> namespace.</para>
+</listitem><listitem><para>Remove <computeroutput>BlockBlobClientOptions</computeroutput>, <computeroutput>AppendBlobClientOptions</computeroutput> and <computeroutput>PageBlobClientOptions</computeroutput>, use <computeroutput>BlobClientOptions</computeroutput> instead.</para>
+</listitem><listitem><para>Rename <computeroutput>BlobSasBuilder::ToSasQueryParameters</computeroutput> to <computeroutput>BlobSasBuilder::GenerateSasToken</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1other-changes-and-improvements-1">
+<title>Other Changes and Improvements</title><para><itemizedlist>
+<listitem><para>Default uploading/downloading concurrency is changed from 1 to 5.</para>
+</listitem><listitem><para>Remove support for specifying SAS version.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta4-2020-10-16">
+<title>1.0.0-beta.4 (2020-10-16)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-4">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Bump up API version to 2020-02-10.</para>
+</listitem><listitem><para>Support for Last Accessting Time.</para>
+</listitem><listitem><para>Add TagCount and ExpiryTime in the responses of getting properties and downloading blobs.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1breaking-changes-9">
+<title>Breaking Changes</title><para><itemizedlist>
+<listitem><para>Variable name change: BreakContainerLeaseOptions::breakPeriod -&gt; BreakContainerLeaseOptions::BreakPeriod.</para>
+</listitem><listitem><para>Variable name change: BreakBlobLeaseOptions::breakPeriod -&gt; BreakBlobLeaseOptions::BreakPeriod.</para>
+</listitem><listitem><para>CreateFromConnectionString now accepts unencoded blob name.</para>
+</listitem><listitem><para>TagConditions is changed to nullable.</para>
+</listitem><listitem><para>Variable name change: <computeroutput>Marker</computeroutput> is renamed to <computeroutput>ContinuationToken</computeroutput> for <computeroutput>ListContainersSegmentOptions</computeroutput>, <computeroutput>FindBlobsByTagsOptions</computeroutput> and <computeroutput>ListBlobsSegmentOptions</computeroutput>.</para>
+</listitem><listitem><para>Variable name change: <computeroutput>Marker</computeroutput> is renamed to <computeroutput>PreviousContinuationToken</computeroutput>, <computeroutput>NextMarker</computeroutput> is renamed to <computeroutput>ContinuationToken</computeroutput> for <computeroutput>FilterBlobsSegmentResult</computeroutput>, <computeroutput>ListContainersSegmentResult</computeroutput>, <computeroutput>ListBlobsByHierarchySegmentResult</computeroutput> and <computeroutput>ListBlobsFlatSegmentResult</computeroutput>.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="md__c_h_a_n_g_e_l_o_g_1bug-fixes-1">
+<title>Bug Fixes</title><para><itemizedlist>
+<listitem><para>Unencoded Container/Blob name is now encoded.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta2-2020-09-09">
+<title>1.0.0-beta.2 (2020-09-09)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-5">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Support for Blob Batch.</para>
+</listitem><listitem><para>Support for Blob Index.</para>
+</listitem><listitem><para>Release based on azure-core_1.0.0-beta.1.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+<sect1 id="md__c_h_a_n_g_e_l_o_g_1autotoc_md100-beta1-2020-08-28">
+<title>1.0.0-beta.1 (2020-08-28)</title><sect2 id="md__c_h_a_n_g_e_l_o_g_1new-features-6">
+<title>New Features</title><para><itemizedlist>
+<listitem><para>Added support for Blob features:<itemizedlist>
+<listitem><para>BlobServiceClient::ListBlobContainersSegment</para>
+</listitem><listitem><para>BlobServiceClient::GetUserDelegationKey</para>
+</listitem><listitem><para>BlobServiceClient::SetProperties</para>
+</listitem><listitem><para>BlobServiceClient::GetProperties</para>
+</listitem><listitem><para>BlobServiceClient::GetAccountInfo</para>
+</listitem><listitem><para>BlobServiceClient::GetStatistics</para>
+</listitem><listitem><para>BlobContainerClient::Create</para>
+</listitem><listitem><para>BlobContainerClient::Delete</para>
+</listitem><listitem><para>BlobContainerClient::GetProperties</para>
+</listitem><listitem><para>BlobContainerClient::SetMetadata</para>
+</listitem><listitem><para>BlobContainerClient::ListBlobsFlat</para>
+</listitem><listitem><para>BlobContainerClient::ListBlobsByHierarchy</para>
+</listitem><listitem><para>BlobContainerClient::Undelete</para>
+</listitem><listitem><para>BlobContainerClient::GetAccessPolicy</para>
+</listitem><listitem><para>BlobContainerClient::SetAccessPolicy</para>
+</listitem><listitem><para>BlobClient::GetProperties</para>
+</listitem><listitem><para>BlobClient::SetHttpHeaders</para>
+</listitem><listitem><para>BlobClient::SetMetadata</para>
+</listitem><listitem><para>BlobClient::SetAccessTier</para>
+</listitem><listitem><para>BlobClient::StartCopyFromUri</para>
+</listitem><listitem><para>BlobClient::AbortCopyFromUri</para>
+</listitem><listitem><para>BlobClient::Download</para>
+</listitem><listitem><para>BlobClient::DownloadToFile</para>
+</listitem><listitem><para>BlobClient::DownloadToBuffer</para>
+</listitem><listitem><para>BlobClient::CreateSnapshot</para>
+</listitem><listitem><para>BlobClient::Delete</para>
+</listitem><listitem><para>BlobClient::Undelete</para>
+</listitem><listitem><para>BlockBlobClient::Upload</para>
+</listitem><listitem><para>BlockBlobClient::UploadFromFile</para>
+</listitem><listitem><para>BlockBlobClient::UploadFromBuffer</para>
+</listitem><listitem><para>BlockBlobClient::StageBlock</para>
+</listitem><listitem><para>BlockBlobClient::StageBlockFromUri</para>
+</listitem><listitem><para>BlockBlobClient::CommitBlockList</para>
+</listitem><listitem><para>BlockBlobClient::GetBlockList</para>
+</listitem><listitem><para>AppendBlobClient::Create</para>
+</listitem><listitem><para>AppendBlobClient::AppendBlock</para>
+</listitem><listitem><para>AppendBlobClient::AppendBlockFromUri</para>
+</listitem><listitem><para>AppendBlobClient::Seal</para>
+</listitem><listitem><para>PageBlobClient::Create</para>
+</listitem><listitem><para>PageBlobClient::UploadPages</para>
+</listitem><listitem><para>PageBlobClient::UploadPagesFromUri</para>
+</listitem><listitem><para>PageBlobClient::ClearPages</para>
+</listitem><listitem><para>PageBlobClient::Resize</para>
+</listitem><listitem><para>PageBlobClient::GetPageRanges</para>
+</listitem><listitem><para>PageBlobClient::StartCopyIncremental</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Support for blob versioning.</para>
+</listitem><listitem><para>Support for blob lease and container lease.</para>
+</listitem><listitem><para>Support for account SAS and blob SAS.</para>
+</listitem><listitem><para>Support for transactional checksum. </para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+</sect1>
+    </detaileddescription>
+    <location file="CHANGELOG.md"/>
+  </compounddef>
+</doxygen>

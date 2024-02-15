@@ -1,0 +1,275 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.10.0" xml:lang="en-US">
+  <compounddef id="class_azure_1_1_core_1_1_http_1_1_http_method" kind="class" language="C++" prot="public" final="yes">
+    <compoundname>Azure::Core::Http::HttpMethod</compoundname>
+    <includes refid="http_8hpp" local="no">http.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1ada8654593eac435bae2a7a44d80592c5" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT static const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>const HttpMethod HttpMethod::Get</definition>
+        <argsstring></argsstring>
+        <name>Get</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::Get</qualifiedname>
+        <briefdescription>
+<para>The representation of a <computeroutput>GET</computeroutput> HTTP method based on [RFC 7231] (<ulink url="https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.1">https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.1</ulink>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="130" column="47" bodyfile="inc/azure/core/http/http.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a2e526e34bd316e1a4984524efa25f515" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT static const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>const HttpMethod HttpMethod::Head</definition>
+        <argsstring></argsstring>
+        <name>Head</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::Head</qualifiedname>
+        <briefdescription>
+<para>The representation of a <computeroutput>HEAD</computeroutput> HTTP method based on [RFC 7231] (<ulink url="https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.2">https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.2</ulink>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="136" column="47" bodyfile="inc/azure/core/http/http.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1ab323913669a353f2f39c96b82a2841ac" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT static const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>const HttpMethod HttpMethod::Post</definition>
+        <argsstring></argsstring>
+        <name>Post</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::Post</qualifiedname>
+        <briefdescription>
+<para>The representation of a <computeroutput>POST</computeroutput> HTTP method based on [RFC 7231] (<ulink url="https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.3">https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.3</ulink>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="142" column="47" bodyfile="inc/azure/core/http/http.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a9a4dc215ef7e998073d584efc991cb8b" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT static const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>const HttpMethod HttpMethod::Put</definition>
+        <argsstring></argsstring>
+        <name>Put</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::Put</qualifiedname>
+        <briefdescription>
+<para>The representation of a <computeroutput>PUT</computeroutput> HTTP method based on [RFC 7231] (<ulink url="https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.4">https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.4</ulink>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="148" column="47" bodyfile="inc/azure/core/http/http.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a214b92af05937d6685990909fbc2432b" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT static const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>const HttpMethod HttpMethod::Delete</definition>
+        <argsstring></argsstring>
+        <name>Delete</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::Delete</qualifiedname>
+        <briefdescription>
+<para>The representation of a <computeroutput>DELETE</computeroutput> HTTP method based on [RFC 7231] (<ulink url="https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.5">https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.5</ulink>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="154" column="47" bodyfile="inc/azure/core/http/http.hpp" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a1d4836af87109f9114bff66cfa8bc92d" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT static const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>const HttpMethod HttpMethod::Patch</definition>
+        <argsstring></argsstring>
+        <name>Patch</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::Patch</qualifiedname>
+        <briefdescription>
+<para>The representation of a <computeroutput>PATCH</computeroutput> HTTP method based on [RFC 5789] (<ulink url="https://datatracker.ietf.org/doc/html/rfc5789">https://datatracker.ietf.org/doc/html/rfc5789</ulink>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="160" column="47" bodyfile="inc/azure/core/http/http.hpp" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1ab4386f58cab4f3cbd95aab05ee1a1fea" prot="public" static="yes" mutable="no">
+        <type>AZ_CORE_DLLEXPORT static const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref></type>
+        <definition>const HttpMethod HttpMethod::Options</definition>
+        <argsstring></argsstring>
+        <name>Options</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::Options</qualifiedname>
+        <briefdescription>
+<para>The representation of an <computeroutput>OPTIONS</computeroutput> HTTP method based on [RFC 2616] (<ulink url="https://datatracker.ietf.org/doc/html/rfc2616">https://datatracker.ietf.org/doc/html/rfc2616</ulink>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="166" column="47" bodyfile="inc/azure/core/http/http.hpp" bodystart="166" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a1e56d6a5bb89fdd3cef7e90902f52eb0" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Azure::Core::Http::HttpMethod::m_value</definition>
+        <argsstring></argsstring>
+        <name>m_value</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::m_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="169" column="17" bodyfile="inc/azure/core/http/http.hpp" bodystart="169" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a0fe0adc3ebc9e9d7deee51f2887ea4dc" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Azure::Core::Http::HttpMethod::HttpMethod</definition>
+        <argsstring>(std::string value)</argsstring>
+        <name>HttpMethod</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::HttpMethod</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Constructs <computeroutput>HttpMethod</computeroutput> from string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Won&apos;t check if <computeroutput>value</computeroutput> is a known <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref> defined as per any RFC.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A given string to represent the <computeroutput>HttpMethod</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="103" column="14" bodyfile="inc/azure/core/http/http.hpp" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a4b8361490adcd7f95ebc773ec5727af2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::HttpMethod::operator==</definition>
+        <argsstring>(const HttpMethod &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Compares two instances of <computeroutput>HttpMethod</computeroutput> for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Some <computeroutput>HttpMethod</computeroutput> instance to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if instances are equal; otherwise, <computeroutput>false</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="111" column="10" bodyfile="inc/azure/core/http/http.hpp" bodystart="111" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a568a9b89fec9c5dd891f54026dfbfbf3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Azure::Core::Http::HttpMethod::operator!=</definition>
+        <argsstring>(const HttpMethod &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_azure_1_1_core_1_1_http_1_1_http_method" kindref="compound">HttpMethod</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Compares two instances of <computeroutput>HttpMethod</computeroutput> for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Some <computeroutput>HttpMethod</computeroutput> instance to compare with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>false</computeroutput> if instances are equal; otherwise, <computeroutput>true</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="119" column="10" bodyfile="inc/azure/core/http/http.hpp" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="class_azure_1_1_core_1_1_http_1_1_http_method_1a354e1fd2e96072492a5971ee84350d13" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; Azure::Core::Http::HttpMethod::ToString</definition>
+        <argsstring>() const</argsstring>
+        <name>ToString</name>
+        <qualifiedname>Azure::Core::Http::HttpMethod::ToString</qualifiedname>
+        <briefdescription>
+<para>Returns the <computeroutput>HttpMethod</computeroutput> represented as a string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="inc/azure/core/http/http.hpp" line="124" column="23" bodyfile="inc/azure/core/http/http.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The method to be performed on the resource identified by the <ref refid="class_azure_1_1_core_1_1_http_1_1_request" kindref="compound">Request</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Azure::Core::Http::HttpMethod</label>
+        <link refid="class_azure_1_1_core_1_1_http_1_1_http_method"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Delete</edgelabel>
+          <edgelabel>Get</edgelabel>
+          <edgelabel>Head</edgelabel>
+          <edgelabel>Options</edgelabel>
+          <edgelabel>Patch</edgelabel>
+          <edgelabel>Post</edgelabel>
+          <edgelabel>Put</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="inc/azure/core/http/http.hpp" line="94" column="3" bodyfile="inc/azure/core/http/http.hpp" bodystart="94" bodyend="170"/>
+    <listofallmembers>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a214b92af05937d6685990909fbc2432b" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>Delete</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1ada8654593eac435bae2a7a44d80592c5" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>Get</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a2e526e34bd316e1a4984524efa25f515" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>Head</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a0fe0adc3ebc9e9d7deee51f2887ea4dc" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>HttpMethod</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a1e56d6a5bb89fdd3cef7e90902f52eb0" prot="private" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>m_value</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a568a9b89fec9c5dd891f54026dfbfbf3" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>operator!=</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a4b8361490adcd7f95ebc773ec5727af2" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>operator==</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1ab4386f58cab4f3cbd95aab05ee1a1fea" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>Options</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a1d4836af87109f9114bff66cfa8bc92d" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>Patch</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1ab323913669a353f2f39c96b82a2841ac" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>Post</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a9a4dc215ef7e998073d584efc991cb8b" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>Put</name></member>
+      <member refid="class_azure_1_1_core_1_1_http_1_1_http_method_1a354e1fd2e96072492a5971ee84350d13" prot="public" virt="non-virtual"><scope>Azure::Core::Http::HttpMethod</scope><name>ToString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
