@@ -10,43 +10,37 @@ Tests:
   - Test: delay
     Class: delay
     Arguments:
-    - -m 100
-    - -n 1000
-    - -t 500
+    - --m 100 --n 1000 --t 500
 
   - Test: exception
     Class: exception
     Arguments:
+    - --e 1
     
   - Test: extendedOptions
     Class: extendedOptions
     Arguments:
-    - -e 1
+    - --e 1
 
   - Test: json
     Class: json
     Arguments:
-    - --action serialize
-    - --size 1000
-  
-  - Test: json
-    Class: json
-    Arguments:
-    - --action deserialize
-    - --size 1000  
+    - --action serialize --size 1000
+    - --action deserialize --size 1000  
 
   - Test: noOp
     Class: noOp
     Arguments:
-    - -e 1
+    - --e 1
 
   - Test: nullable
     Class: nullable
     Arguments:
+    - --e 1
     
   - Test: uuid
     Class: uuid
     Arguments:
-    - -c 1000
+    - --c 1
 
     

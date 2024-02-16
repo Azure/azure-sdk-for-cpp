@@ -77,14 +77,14 @@ namespace Azure { namespace Core { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       return {
-          {"InitialDelayMs", {"-m"}, "Initial delay (in milliseconds). Default to 1000 (1sec)", 1},
+          {"InitialDelayMs", {"--m"}, "Initial delay (in milliseconds). Default to 1000 (1sec)", 1},
           {"InstanceGrowthFactor",
-           {"-n"},
+           {"--n"},
            "Instance growth factor. The delay of instance N will be (InitialDelayMS * "
            "(InstanceGrowthFactor ^ InstanceCount)). Default to 1",
            1},
           {"IterationGrowthFactor",
-           {"-t"},
+           {"--t"},
            "Initial delay (in milliseconds). The delay of iteration N will be (InitialDelayMS * "
            "(IterationGrowthFactor ^ IterationCount)). Default to 1",
            1}};
