@@ -42,5 +42,3 @@ Tests:
     Class: uuid
     Arguments:
     - --c 1
-
-    
