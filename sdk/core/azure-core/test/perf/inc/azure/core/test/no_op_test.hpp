@@ -13,7 +13,7 @@
 
 #include <memory>
 
-namespace Azure { namespace Perf { namespace Test {
+namespace Azure { namespace Core { namespace Test {
 
   /**
    * @brief The no op test is an empty test used to measure the performance framework alone.
@@ -45,7 +45,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"extraOption", {"-e"}, "Example for extended option for test.", 1}};
+      return {{"extraOption", {"--e"}, "Example for extended option for test.", 1}};
     }
 
     /**
@@ -59,9 +59,9 @@ namespace Azure { namespace Perf { namespace Test {
           "NoOp",
           "Simplest test to measure the performance framework speed.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Perf::Test::NoOp>(options);
+            return std::make_unique<Azure::Core::Test::NoOp>(options);
           }};
     }
   };
 
-}}} // namespace Azure::Perf::Test
+}}} // namespace Azure::Core::Test

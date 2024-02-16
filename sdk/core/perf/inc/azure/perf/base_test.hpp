@@ -127,7 +127,11 @@ namespace Azure { namespace Perf {
      */
     virtual std::vector<Azure::Perf::TestOption> GetTestOptions()
     {
-      return std::vector<Azure::Perf::TestOption>();
+      return {
+          {"extraOption",
+           {"--e"},
+           "Example for extended option for test.Needed to be run by the perf tool.",
+           1}};
     }
 
     /**
