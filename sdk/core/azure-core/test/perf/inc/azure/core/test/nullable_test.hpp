@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {
-          "NullableTest",
+          "nullable",
           "Measures the overhead of using nullable objects",
           [](Azure::Perf::TestOptions options) {
             return std::make_unique<Azure::Core::Test::NullableTest>(options);

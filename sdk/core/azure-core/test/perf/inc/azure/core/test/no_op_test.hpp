@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief An example of a performance test that defines a test option.
+ * @brief Define an empty test.
  *
  */
 
@@ -12,30 +12,28 @@
 #include <azure/perf.hpp>
 
 #include <memory>
-#include <vector>
 
-namespace Azure { namespace Perf { namespace Test {
+namespace Azure { namespace Core { namespace Test {
 
   /**
-   * @brief A performance test that defines a test option.
+   * @brief The no op test is an empty test used to measure the performance framework alone.
    *
    */
-  class ExtendedOptionsTest : public Azure::Perf::PerfTest {
+  class NoOp : public Azure::Perf::PerfTest {
   public:
     /**
-     * @brief Construct a new Extended Options Test object.
+     * @brief Construct a new No Op test.
      *
-     * @param options The command-line parsed options.
+     * @param options The test options.
      */
-    ExtendedOptionsTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
+    NoOp(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
     /**
-     * @brief The test definition
+     * @brief Define an empty test.
      *
      */
     void Run(Azure::Core::Context const&) override
-    {
-      // Get the option or a default value of 0
+    { // Get the option or a default value of 0
       auto myTestOption = m_options.GetOptionOrDefault("extraOption", 0);
       (void)myTestOption;
     }
@@ -58,13 +56,12 @@ namespace Azure { namespace Perf { namespace Test {
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {
-          "extendedOptions",
-          "Demostrate how to include a test option to a test and measures how expensive is to do "
-          "it.",
+          "NoOp",
+          "Simplest test to measure the performance framework speed.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Perf::Test::ExtendedOptionsTest>(options);
+            return std::make_unique<Azure::Core::Test::NoOp>(options);
           }};
     }
   };
 
-}}} // namespace Azure::Perf::Test
+}}} // namespace Azure::Core::Test

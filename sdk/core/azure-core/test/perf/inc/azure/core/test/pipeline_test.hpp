@@ -189,7 +189,7 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {
-          "PipelineBaseTest",
+          "pipelineBase",
           "Measures HTTP pipeline and policies performance",
           [](Azure::Perf::TestOptions options) {
             return std::make_unique<Azure::Core::Test::PipelineTest>(options);

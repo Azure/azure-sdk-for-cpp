@@ -1,13 +1,41 @@
 Service: core
 
-Project: azure-perf-test
+Project: azure-core-perf
 
 PackageVersions:
-- azure-core-cpp: 1.7.2
+- azure-core-cpp: 1.11.0
 - azure-core-cpp: source
 
 Tests:
+  - Test: delay
+    Class: delay
+    Arguments:
+    - -m 100
+    - -n 1000
+    - -t 500
+
+  - Test: exception
+    Class: exception
+    Arguments:
+    
   - Test: extendedOptions
     Class: extendedOptions
+    Arguments:
+    - -e 1
+
+  - Test: json
+    Class: json
+    Arguments:
+    - --action serialize
+    - --size 1000
+  
+  - Test: json
+    Class: json
+    Arguments:
+    - --action deserialize
+    - --size 1000  
+
+  - Test: noOp
+    Class: noOp
     Arguments:
     - -e 1

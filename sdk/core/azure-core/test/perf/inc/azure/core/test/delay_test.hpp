@@ -17,7 +17,7 @@
 #include <thread>
 #include <vector>
 
-namespace Azure { namespace Perf { namespace Test {
+namespace Azure { namespace Core { namespace Test {
 
   namespace _detail {
     static std::atomic_uint64_t DelayTestInstanceCount(0);
@@ -101,9 +101,9 @@ namespace Azure { namespace Perf { namespace Test {
           "delay",
           "The no op test with a configurable time delay for the main test loop.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Perf::Test::DelayTest>(options);
+            return std::make_unique<Azure::Core::Test::DelayTest>(options);
           }};
     }
   };
 
-}}} // namespace Azure::Perf::Test
+}}} // namespace Azure::Core::Test

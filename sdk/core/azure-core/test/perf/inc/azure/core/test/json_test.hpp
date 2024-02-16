@@ -310,7 +310,7 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {
-          "JsonTest",
+          "json",
           "Measures Json serialize/deserialize performance",
           [](Azure::Perf::TestOptions options) {
             return std::make_unique<Azure::Core::Test::JsonTest>(options);
