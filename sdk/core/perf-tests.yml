@@ -39,3 +39,14 @@ Tests:
     Class: noOp
     Arguments:
     - -e 1
+
+  - Test: nullable
+    Class: nullable
+    Arguments:
+    
+  - Test: uuid
+    Class: uuid
+    Arguments:
+    - -c 1000
+
+    
