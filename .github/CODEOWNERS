@@ -12,12 +12,12 @@
 # Samples
 /samples/                @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
 
-# AzureSDKOwners: @gearama
+# AzureSdkOwners: @gearama
 # ServiceLabel: %Azure.Core
 # PRLabel: %Azure.Core
 /sdk/core/               @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
 
-# AzureSDKOwners: @ahsonkhan
+# AzureSdkOwners: @ahsonkhan
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
 /sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @gearama @LarryOsterman @Azure/azure-sdk-write-identity
@@ -26,32 +26,35 @@
 # Client SDKs
 ###########
 
-# AzureSDKOwners: @LarryOsterman
+# ServiceOwners: @gkostal @anilba06 @ahmadmsft
 # ServiceLabel: %Attestation
+
 # PRLabel: %Attestation
 /sdk/attestation/        @gkostal @anilba06 @ahmadmsft @LarryOsterman @rickwinter
 
-# AzureSDKOwners: @LarryOsterman
+# AzureSdkOwners: @LarryOsterman
 # ServiceLabel: %Event Hubs
 # PRLabel: %Event Hubs
 /sdk/eventhubs/           @LarryOsterman @antkmsft @ahsonkhan @gearama @RickWinter
 
-# AzureSDKOwners: @gearama
+# AzureSdkOwners: @gearama
 # ServiceLabel:  %KeyVault
 # PRLabel: %KeyVault
 /sdk/keyvault/           @gearama @antkmsft @rickwinter @LarryOsterman
 
-# AzureSDKOwners: @gearama
+# ServiceOwners:@vinjiang @Jinming-Hu @EmmaZhu 
 # ServiceLabel: %Storage
+
 # PRLabel: %Storage
 /sdk/storage/            @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @gearama @LarryOsterman @microzchang
 
-# AzureSDKOwners: @gearama
+# AzureSdkOwners: @gearama
 # ServiceLabel: %Tables
 # PRLabel: %Tables
 /sdk/tables/            @gearama @LarryOsterman @antkmsft @ahsonkhan
 
-# AzureSDKOwners: @danieljurek
+# AzureSdkOwners: @danieljurek
+# ServiceLabel: %EngSys
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter
 
