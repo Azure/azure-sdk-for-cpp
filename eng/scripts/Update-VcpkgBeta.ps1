@@ -77,9 +77,15 @@ try {
     $rawVcpkgConfig = Get-Content -Raw -Path $vcpkgConfigPath
     $vcpkgConfig = ConvertFrom-Json $rawVcpkgConfig
 
+    $azSdkRepoBaseline = (Get-Content $PSScriptRoot/../../vcpkg.json -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json).'builtin-baseline'
+    if ($azSdkRepoBaseline -and $vcpkgConfig.'default-registry'.baseline) {
+        $vcpkgConfig.'default-registry'.baseline = $azSdkRepoBaseline
+    }
+
     $vcpkgConfig.registries[0].baseline = $baseHash
     if (!($vcpkgConfig.registries[0].packages -contains $VcpkgPortName)) {
         $vcpkgConfig.registries[0].packages += $VcpkgPortName
+        $vcpkgConfig.registries[0].packages = $vcpkgConfig.registries[0].packages | Sort-Object
     }
 
     $vcpkgConfigJson = ConvertTo-Json $vcpkgConfig -Depth 100

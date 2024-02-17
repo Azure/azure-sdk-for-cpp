@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"count", {"-c"}, "The number of uuid objects to be created.", 1, true}};
+      return {{"count", {"--c"}, "The number of uuid objects to be created.", 1, true}};
     }
 
     /**

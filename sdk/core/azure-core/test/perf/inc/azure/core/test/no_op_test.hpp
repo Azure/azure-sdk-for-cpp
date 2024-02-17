@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"extraOption", {"-e"}, "Example for extended option for test.", 1}};
+      return {{"extraOption", {"--e"}, "Example for extended option for test.", 1}};
     }
 
     /**
