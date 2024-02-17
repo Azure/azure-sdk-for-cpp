@@ -49,7 +49,6 @@ Tests:
     Arguments:
     - --test-proxies http://127.0.0.1:5000 --count 100 --policies LogPolicy,TestPolicy
 
-    
   - Test: uuid
     Class: uuid
     Arguments:
