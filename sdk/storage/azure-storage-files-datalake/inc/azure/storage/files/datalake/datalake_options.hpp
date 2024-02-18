@@ -774,7 +774,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * be returned as Azure Active Directory Object IDs. The default value is false. Note that group
      * and application Object IDs are not translated because they do not have unique friendly names.
      */
-    Nullable<bool> UserPrincipalName;
+    Nullable<bool> IncludeUserPrincipalName;
   };
 
   /**
@@ -795,7 +795,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * be returned as Azure Active Directory Object IDs. The default value is false. Note that group
      * and application Object IDs are not translated because they do not have unique friendly names.
      */
-    Nullable<bool> UserPrincipalName;
+    Nullable<bool> IncludeUserPrincipalName;
   };
 
   /**
@@ -828,7 +828,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * be returned as Azure Active Directory Object IDs. The default value is false. Note that group
      * and application Object IDs are not translated because they do not have unique friendly names.
      */
-    Nullable<bool> UserPrincipalName;
+    Nullable<bool> IncludeUserPrincipalName;
   };
 
   /**

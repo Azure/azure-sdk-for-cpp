@@ -3675,7 +3675,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<bool> RangeGetContentMD5;
         Nullable<bool> RangeGetContentCRC64;
-        Nullable<bool> UserPrincipalName;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
@@ -3684,6 +3683,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<bool> UserPrincipalName;
       };
       static Response<Models::DownloadBlobResult> Download(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3698,12 +3698,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
-        Nullable<bool> UserPrincipalName;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<bool> UserPrincipalName;
       };
       static Response<Models::BlobProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,

@@ -799,7 +799,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * is true, the valid changed ranges for the file will be returned. If the value is false, the
      * operation will result in a failure with 409 (Conflict) response.
      */
-    Azure::Nullable<bool> SupportRename;
+    Azure::Nullable<bool> IncludeRenames;
   };
 
   /**

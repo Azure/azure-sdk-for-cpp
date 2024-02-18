@@ -496,7 +496,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::GetPathPropertiesOptions options;
 
     // UserPrincipalName = true
-    options.UserPrincipalName = true;
+    options.IncludeUserPrincipalName = true;
     auto properties = m_pathClient->GetProperties(options).Value;
     ASSERT_TRUE(properties.Acls.HasValue() && !properties.Acls.Value().empty());
     EXPECT_TRUE(properties.Owner.HasValue());
@@ -509,7 +509,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(it, acls.end());
 
     // UserPrincipalName = false
-    options.UserPrincipalName = false;
+    options.IncludeUserPrincipalName = false;
     properties = m_pathClient->GetProperties(options).Value;
     ASSERT_TRUE(properties.Acls.HasValue() && !properties.Acls.Value().empty());
     EXPECT_TRUE(properties.Owner.HasValue());
@@ -536,7 +536,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::GetPathAccessControlListOptions options;
 
     // UserPrincipalName = true
-    options.UserPrincipalName = true;
+    options.IncludeUserPrincipalName = true;
     auto properties = m_pathClient->GetAccessControlList(options).Value;
     ASSERT_TRUE(!properties.Acls.empty());
     // Validate that the user principal name is returned
@@ -546,7 +546,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(it, acls.end());
 
     // UserPrincipalName = false
-    options.UserPrincipalName = false;
+    options.IncludeUserPrincipalName = false;
     properties = m_pathClient->GetAccessControlList(options).Value;
     ASSERT_TRUE(!properties.Acls.empty());
     // Validate that the user principal name is returned
