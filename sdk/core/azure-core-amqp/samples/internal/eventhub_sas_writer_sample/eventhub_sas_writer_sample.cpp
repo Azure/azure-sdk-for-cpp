@@ -30,8 +30,8 @@ int main()
       credential->GetHostName(), credential, connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-  sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
-  sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+  sessionOptions.InitialIncomingWindowSize = (std::numeric_limits<int32_t>::max)();
+  sessionOptions.InitialOutgoingWindowSize = (std::numeric_limits<uint16_t>::max)();
 
   Azure::Core::Amqp::_internal::Session session(connection.CreateSession(sessionOptions));
 
@@ -44,7 +44,7 @@ int main()
   senderOptions.Name = "sender-link";
   senderOptions.MessageSource = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
-  senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+  senderOptions.MaxMessageSize = (std::numeric_limits<uint16_t>::max)();
   Azure::Core::Amqp::_internal::MessageSender sender(
       session.CreateMessageSender(entityPath, senderOptions, nullptr));
 

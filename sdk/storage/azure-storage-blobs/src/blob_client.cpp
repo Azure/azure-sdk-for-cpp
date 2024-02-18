@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
+      firstChunkLength = (std::min)(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadBlobOptions firstChunkOptions;
@@ -346,16 +346,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
       {
-        blobRangeSize = std::min(blobRangeSize, options.Range.Value().Length.Value());
+        blobRangeSize = (std::min)(blobRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
     {
       blobRangeSize = blobSize;
     }
-    firstChunkLength = std::min(firstChunkLength, blobRangeSize);
+    firstChunkLength = (std::min)(firstChunkLength, blobRangeSize);
 
-    if (static_cast<uint64_t>(blobRangeSize) > std::numeric_limits<size_t>::max()
+    if (static_cast<uint64_t>(blobRangeSize) > (std::numeric_limits<size_t>::max)()
         || static_cast<size_t>(blobRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
@@ -433,7 +433,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t firstChunkLength = options.TransferOptions.InitialChunkSize;
     if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Range.Value().Length.Value());
+      firstChunkLength = (std::min)(firstChunkLength, options.Range.Value().Length.Value());
     }
 
     DownloadBlobOptions firstChunkOptions;
@@ -453,14 +453,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Range.HasValue() && options.Range.Value().Length.HasValue())
       {
-        blobRangeSize = std::min(blobRangeSize, options.Range.Value().Length.Value());
+        blobRangeSize = (std::min)(blobRangeSize, options.Range.Value().Length.Value());
       }
     }
     else
     {
       blobRangeSize = blobSize;
     }
-    firstChunkLength = std::min(firstChunkLength, blobRangeSize);
+    firstChunkLength = (std::min)(firstChunkLength, blobRangeSize);
 
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                _internal::FileWriter& fileWriter,

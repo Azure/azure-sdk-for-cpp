@@ -51,7 +51,7 @@ Url::Url(std::string const& url)
     // stoi will throw out_of_range when `int` is overflow, but we need to throw if uint16 is
     // overflow
     {
-      constexpr auto const MaxPortNumberSupported = std::numeric_limits<uint16_t>::max();
+      constexpr auto const MaxPortNumberSupported = (std::numeric_limits<uint16_t>::max)();
       if (portNumber > MaxPortNumberSupported)
       {
         throw std::out_of_range(

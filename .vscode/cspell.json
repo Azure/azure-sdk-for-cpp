@@ -41,7 +41,8 @@
     "eng/CredScanSuppression.json",
     "**/test/ut/recordings/*.json",
     "sdk/core/azure-core-amqp/vendor/**/*",
-    "sdk/storage/*/NOTICE.txt"
+    "sdk/storage/*/NOTICE.txt",
+    "sdk/tables/*/NOTICE.txt"
   ],
   // * Unless configured otherwise, these words are not case sensitive
   // * Alphabetize the list when making changes so the list is easier for future
@@ -74,11 +75,13 @@
     "azsdkengsys",
     "azurecr",
     "azuresdk",
+    "azuresdkdocs",
     "azuresdkforcpp",
     "azurl",
     "centralindia",
     "centralus",
     "centraluseuap",
+    "Chelnokov",
     "Chukwu",
     "cmake",
     "CMOCKA",
@@ -114,6 +117,7 @@
     "fibonacci",
     "francecentral",
     "gcovr",
+    "gearama",
     "githubio",
     "gmock",
     "gtest",
@@ -146,13 +150,16 @@
     "LPWSTR",
     "MAKELANGID",
     "mbedtls",
+    "mchelnokov",
     "mbps",
     "MHSM",
     "mmdc",
+    "mmspecial",
     "moxygen",
     "MSAL",
     "msft",
     "MSRC",
+    "Mykhailo",
     "nbio",
     "ncus",
     "Niels",
@@ -168,6 +175,7 @@
     "nostd",
     "nread",
     "NTSTATUS",
+    "odata",
     "Oaep",
     "OIDC",
     "okhttp",
@@ -194,6 +202,7 @@
     "rtti",
     "rwxrw",
     "sasia",
+    "sbom",
     "Schonberger",
     "scus",
     "SDDL",
@@ -210,6 +219,7 @@
     "stoull",
     "STREQ",
     "Sutou",
+    "testid",
     "swedencentral",
     "switzerlandnorth",
     "switzerlandwest",
@@ -243,6 +253,7 @@
     "Wunused",
     "xbox",
     "Xclang",
+    "xcode",
     "XSMB",
     "zulu"
   ],
@@ -251,7 +262,14 @@
       "filename": "CMakePresets.json",
       "words": [
         "ASAN",
+        "asan",
         "fsanitize"
+      ]
+    },
+    {
+      "filename": ".clang-format",
+      "words": [
+        "Dont"
       ]
     },
     {
@@ -265,6 +283,7 @@
     {
       "filename": "**/eng/**",
       "words": [
+        "azblob",
         "TEAMPROJECTID",
         "issecret",
         "PSScriptRoot",
@@ -343,6 +362,14 @@
     },
     {
       "filename": "**/sdk/storage/test-resources.json",
+      "words": [
+        "bfqt",
+        "rwdlacup",
+        "pfile"
+      ]
+    },
+    {
+      "filename": "**/sdk/tables/test-resources.json",
       "words": [
         "bfqt",
         "rwdlacup",

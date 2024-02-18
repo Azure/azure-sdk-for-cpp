@@ -9,6 +9,7 @@
 #include "azure_c_shared_utility/xio.h"
 #include "azure_c_shared_utility/xlogging.h"
 #include "azure_c_shared_utility/tickcounter.h"
+#include "azure_c_shared_utility/safe_math.h"
 
 #include "azure_uamqp_c/connection.h"
 #include "azure_uamqp_c/frame_codec.h"
@@ -36,6 +37,7 @@ typedef struct ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_TAG
     void* context;
 } ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION;
 
+#define ENDPOINT_UNUSED_CHANNEL 0xffff
 typedef struct ENDPOINT_INSTANCE_TAG
 {
     uint16_t incoming_channel;
@@ -46,6 +48,27 @@ typedef struct ENDPOINT_INSTANCE_TAG
     CONNECTION_HANDLE connection;
 } ENDPOINT_INSTANCE;
 
+
+typedef struct CHANNEL_TABLE_ENTRY_TAG
+{
+    uint16_t outgoing_channel;
+    uint16_t incoming_channel;
+    bool is_endpoint_live;
+} CHANNEL_TABLE_ENTRY;
+
+typedef struct CHANNEL_TABLE_TABLE_TAG
+{
+    // The entries in the channels map are initialized to ENDPOINT_UNUSED_CHANNEL. If a channel is in use, the entry is set to the channel number.
+    // When a remote BEGIN message is received (when the ENDPOINT_INSTANCE incoming_channel is set), the entry is set to the *incoming* 
+    // channel number, this allows us to free the channel when an 
+    // incoming END is received.
+    // When a channel is freed, the entry is set back to ENDPOINT_UNUSED_CHANNEL.
+    //
+    CHANNEL_TABLE_ENTRY* channels;
+	uint32_t capacity;
+	uint32_t size;
+} CHANNEL_TABLE;
+
 typedef struct CONNECTION_INSTANCE_TAG
 {
     XIO_HANDLE io;
@@ -53,6 +76,7 @@ typedef struct CONNECTION_INSTANCE_TAG
     CONNECTION_STATE connection_state;
     FRAME_CODEC_HANDLE frame_codec;
     AMQP_FRAME_CODEC_HANDLE amqp_frame_codec;
+    CHANNEL_TABLE channel_table;
     ENDPOINT_INSTANCE** endpoints;
     uint32_t endpoint_count;
     char* host_name;
@@ -89,6 +113,244 @@ typedef struct CONNECTION_INSTANCE_TAG
     unsigned int is_remote_frame_received : 1;
     unsigned int is_trace_on : 1;
 } CONNECTION_INSTANCE;
+
+#define INITIAL_CHANNEL_TABLE_CAPACITY 16
+
+static int channel_table_initialize(CHANNEL_TABLE* channel_table)
+{
+	int result;
+
+    // Codes_S_R_S_CONNECTION_01_253: [The channel_table shall be initialized with a capacity of INITIAL_CHANNEL_TABLE_CAPACITY handles.]
+	channel_table->channels = (CHANNEL_TABLE_ENTRY*)malloc(sizeof(CHANNEL_TABLE_ENTRY) * INITIAL_CHANNEL_TABLE_CAPACITY);
+	if (channel_table->channels == NULL)
+	{
+		LogError("Cannot allocate memory for handle table");
+		result = MU_FAILURE;
+	}
+	else
+	{
+    for (uint16_t i = 0; i < INITIAL_CHANNEL_TABLE_CAPACITY; i++)
+		{
+			channel_table->channels[i].outgoing_channel = ENDPOINT_UNUSED_CHANNEL;
+			channel_table->channels[i].incoming_channel = ENDPOINT_UNUSED_CHANNEL;
+			channel_table->channels[i].is_endpoint_live = false;
+		}
+		channel_table->capacity = 16;
+		channel_table->size = 0;
+		result = 0;
+	}
+
+	return result;
+}
+
+static int channel_table_destroy(CHANNEL_TABLE* channel_table)
+{
+    int result;
+
+	if (channel_table->channels!= NULL)
+	{
+		free(channel_table->channels);
+	}
+
+	channel_table->capacity = 0;
+	channel_table->size = 0;
+	channel_table->channels= NULL;
+
+	result = 0;
+
+	return result;
+}
+
+static int channel_table_allocate(CHANNEL_TABLE* channel_table, uint16_t* h)
+{
+	int result=0;
+
+    if (h == NULL)
+    {
+        LogError("Null handle in handle_table_allocate");
+        result = MU_FAILURE;
+    }
+    else
+    {
+        *h = 0;
+        if (channel_table->size == channel_table->capacity)
+        {
+            if (channel_table->capacity == UINT16_MAX)
+            {
+                LogError("Cannot allocate more channels");
+                result = MU_FAILURE;
+            }
+            else
+            {
+                uint32_t new_capacity = channel_table->capacity + INITIAL_CHANNEL_TABLE_CAPACITY;
+                if (channel_table->capacity >= UINT16_MAX)
+                {
+                    new_capacity = UINT16_MAX;
+                }
+                CHANNEL_TABLE_ENTRY* new_channels = (CHANNEL_TABLE_ENTRY*)realloc(
+                    channel_table->channels, sizeof(CHANNEL_TABLE_ENTRY) * new_capacity);
+                if (new_channels == NULL)
+                {
+                    LogError("Cannot reallocate memory for handle table");
+                    result = MU_FAILURE;
+                }
+                else
+                {
+                    channel_table->channels = new_channels;
+                    channel_table->capacity = new_capacity;
+                    // Ensure the newly resized part of the handle table is empty.
+                    uint32_t i = channel_table->size;
+                    do
+                    {
+                        channel_table->channels[i].outgoing_channel = ENDPOINT_UNUSED_CHANNEL;
+                        channel_table->channels[i].incoming_channel = ENDPOINT_UNUSED_CHANNEL;
+                        channel_table->channels[i].is_endpoint_live = false;
+                        i++;
+                    } while (i < channel_table->capacity);
+                }
+            }
+        }
+        if (!result)
+        {
+            // Look for an empty slot in the table. If none is found, add to the end of the table.
+            uint32_t i = 0;
+            for (; i < channel_table->size; i++)
+            {
+                if (channel_table->channels[i].outgoing_channel == ENDPOINT_UNUSED_CHANNEL)
+                {
+                    break;
+                }
+            }
+            // If we didn't find a hole, we need to increase the size of the table by 1.
+            if (i == channel_table->size)
+            {
+                channel_table->size++;
+            }
+
+            *h = (uint16_t)i;
+            channel_table->channels[i].outgoing_channel = (uint16_t)i;
+            channel_table->channels[i].is_endpoint_live = true;
+
+        }
+    }
+
+	return result;
+}
+
+
+/* Set the incoming channel for the outgoing channel. 
+* This is used when a BEGIN frame is received.
+* The incoming channel is the channel number used by the remote peer.
+* The outgoing channel is the channel number used by the local peer.
+*/
+static int channel_table_set_incoming_channel(CHANNEL_TABLE* channel_table, uint16_t outgoing_channel, uint16_t incoming_channel)
+{
+	int result = 0;
+
+    // Ensure that the outgoing channel is "reasonable".
+	if (outgoing_channel >= channel_table->size)
+	{
+		LogError("Incoming channel out of range");
+		result = MU_FAILURE;
+	}
+    // Ensure that the outgoing channel is allocated in the table.
+    else if (channel_table->channels[outgoing_channel].outgoing_channel != outgoing_channel)
+    {
+        LogError("Outgoing Channel is not allocated.");
+        result = MU_FAILURE;
+    }
+    //else if (channel_table->channels[outgoing_channel].is_endpoint_live == false)
+    //{
+    //    LogError("Outgoing Channel does not have an endpoint.");
+    //    result = MU_FAILURE;
+    //}
+    else
+	{
+		channel_table->channels[outgoing_channel].incoming_channel = incoming_channel;
+		result = 0;
+	}
+
+	return result;
+}
+
+static int channel_table_release_endpoint(CHANNEL_TABLE* channel_table, uint16_t outgoing_channel)
+{
+  int result = 0;
+
+  // Ensure that the outgoing channel is "reasonable".
+  if (outgoing_channel >= channel_table->size)
+  {
+    LogError("Incoming channel out of range");
+    result = MU_FAILURE;
+  }
+  // Ensure that the outgoing channel is allocated in the table.
+  else if (channel_table->channels[outgoing_channel].outgoing_channel != outgoing_channel)
+  {
+    LogError("Outgoing Channel is not allocated.");
+    result = MU_FAILURE;
+  }
+  else if (channel_table->channels[outgoing_channel].is_endpoint_live == false)
+  {
+    LogError("Outgoing Channel does not have an endpoint.");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    channel_table->channels[outgoing_channel].is_endpoint_live = false;
+    result = 0;
+  }
+  return result;
+}
+
+
+static int channel_table_find_outgoing_channel_from_incoming_channel(CHANNEL_TABLE*channel_table, uint16_t incoming_channel, uint16_t *outgoing_channel, bool*endpoint_is_live)
+{
+    int result = 0;
+
+    size_t i = 0;
+    for (; i < channel_table->size; i++)
+    {
+        if (channel_table->channels[i].incoming_channel == incoming_channel)
+		{
+			*outgoing_channel = channel_table->channels[i].outgoing_channel;
+            *endpoint_is_live = channel_table->channels[i].is_endpoint_live;
+            result = 0;
+            break;
+		}
+    }
+    if (i == channel_table->size)
+    {
+        LogError("Could not find incoming channel %hu", incoming_channel);
+        result = MU_FAILURE;
+	}
+
+	return result;
+}
+
+static int channel_table_free(CHANNEL_TABLE* channel_table, uint16_t channel)
+{
+	int result=0;
+
+    if (channel > channel_table->size)
+    {
+        LogError("Channel out of range");
+        result = MU_FAILURE;
+    }
+    else if (channel_table->channels[channel].outgoing_channel == ENDPOINT_UNUSED_CHANNEL)
+    {
+        LogError("Channel is already free");
+        result = MU_FAILURE;
+    }
+    else
+    {
+		channel_table->channels[channel].outgoing_channel = ENDPOINT_UNUSED_CHANNEL;
+        channel_table->channels[channel].incoming_channel = ENDPOINT_UNUSED_CHANNEL;
+        channel_table->channels[channel].is_endpoint_live = false;
+        result = 0;
+    }
+
+	return result;
+}
 
 /* Codes_S_R_S_CONNECTION_01_258: [on_connection_state_changed shall be invoked whenever the connection state changes.]*/
 static void connection_set_state(CONNECTION_HANDLE connection, CONNECTION_STATE connection_state)
@@ -208,7 +470,7 @@ static const char* get_frame_type_as_string(AMQP_VALUE descriptor)
 }
 #endif // NO_LOGGING
 
-static void log_incoming_frame(AMQP_VALUE performative)
+static void log_incoming_frame(uint16_t channel, AMQP_VALUE performative)
 {
 #ifdef NO_LOGGING
     UNUSED(performative);
@@ -221,6 +483,7 @@ static void log_incoming_frame(AMQP_VALUE performative)
     else
     {
         char* performative_as_string;
+        LOG(AZ_LOG_TRACE, 0, "%hu:", channel)
         LOG(AZ_LOG_TRACE, 0, "<- ");
         LOG(AZ_LOG_TRACE, 0, "%s", (char*)get_frame_type_as_string(descriptor));
         performative_as_string = NULL;
@@ -233,7 +496,7 @@ static void log_incoming_frame(AMQP_VALUE performative)
 #endif
 }
 
-static void log_outgoing_frame(AMQP_VALUE performative)
+static void log_outgoing_frame(uint16_t channel, AMQP_VALUE performative)
 {
 #ifdef NO_LOGGING
     UNUSED(performative);
@@ -246,6 +509,7 @@ static void log_outgoing_frame(AMQP_VALUE performative)
     else
     {
         char* performative_as_string;
+        LOG(AZ_LOG_TRACE, 0, "%hu:", channel)
         LOG(AZ_LOG_TRACE, 0, "-> ");
         LOG(AZ_LOG_TRACE, 0, "%s", (char*)get_frame_type_as_string(descriptor));
         performative_as_string = NULL;
@@ -429,7 +693,7 @@ static int send_open_frame(CONNECTION_HANDLE connection)
                     {
                         if (connection->is_trace_on == 1)
                         {
-                            log_outgoing_frame(open_performative_value);
+                            log_outgoing_frame(0xffff, open_performative_value);
                         }
 
                         /* Codes_S_R_S_CONNECTION_01_046: [OPEN SENT In this state the connection headers have been exchanged. An open frame has been sent to the peer but no open frame has yet been received.] */
@@ -492,7 +756,7 @@ static int send_close_frame(CONNECTION_HANDLE connection, ERROR_HANDLE error_han
                 {
                     if (connection->is_trace_on == 1)
                     {
-                        log_outgoing_frame(close_performative_value);
+                        log_outgoing_frame(0xffff, close_performative_value);
                     }
 
                     result = 0;
@@ -840,7 +1104,7 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
 
                     if (connection->is_trace_on == 1)
                     {
-                        log_incoming_frame(performative);
+                        log_incoming_frame(channel, performative);
                     }
 
                     if (is_open_type_by_descriptor(descriptor))
@@ -1013,16 +1277,21 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                 }
                                 else
                                 {
-                                    uint16_t remote_channel;
+                                    uint16_t remote_channel = 0xffff;
                                     ENDPOINT_HANDLE new_endpoint = NULL;
                                     bool remote_begin = false;
 
+                                    // If there is no remote channel in the begin, this is an incoming session BEGIN operation on a listening
+                                    // connection.
                                     if (begin_get_remote_channel(begin, &remote_channel) != 0)
                                     {
                                         remote_begin = true;
+
                                         if (connection->on_new_endpoint != NULL)
                                         {
                                             new_endpoint = connection_create_endpoint(connection);
+                                            new_endpoint->incoming_channel = channel;
+                                            channel_table_set_incoming_channel(&connection->channel_table, new_endpoint->outgoing_channel, channel);
                                             if (!connection->on_new_endpoint(connection->on_new_endpoint_callback_context, new_endpoint))
                                             {
                                                 connection_destroy_endpoint(new_endpoint);
@@ -1036,10 +1305,12 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                         ENDPOINT_INSTANCE* session_endpoint = find_session_endpoint_by_outgoing_channel(connection, remote_channel);
                                         if (session_endpoint == NULL)
                                         {
-                                            LogError("Cannot create session endpoint");
+                                            LogError("Cannot find session endpoint corresponding to remote channel %hu", remote_channel);
                                         }
                                         else
                                         {
+                                            // Update the channel table to reflect the incoming channel number.
+                                            channel_table_set_incoming_channel(&connection->channel_table, session_endpoint->outgoing_channel, channel);
                                             session_endpoint->incoming_channel = channel;
                                             session_endpoint->on_endpoint_frame_received(session_endpoint->callback_context, performative, payload_size, payload_bytes);
                                         }
@@ -1048,6 +1319,8 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                     {
                                         if (new_endpoint != NULL)
                                         {
+                                            // Update the channel table to reflect the incoming channel number.
+                                            channel_table_set_incoming_channel(&connection->channel_table, new_endpoint->outgoing_channel, channel);
                                             new_endpoint->incoming_channel = channel;
                                             new_endpoint->on_endpoint_frame_received(new_endpoint->callback_context, performative, payload_size, payload_bytes);
                                         }
@@ -1059,10 +1332,31 @@ static void on_amqp_frame_received(void* context, uint16_t channel, AMQP_VALUE p
                                 break;
                             }
 
+                            case AMQP_END: {
+                                // When we receive an "end" frame, we need to find the session endpoint that corresponds to the incoming channel number.
+                                // Once we find it, we need to update the channel table to reflect that the incoming and outgoing channel numbers is no
+                                // longer in use.
+                                uint16_t outgoing_channel;
+                                bool endpoint_is_live = false;
+                                if (channel_table_find_outgoing_channel_from_incoming_channel(&connection->channel_table, channel, &outgoing_channel, &endpoint_is_live) != 0)
+								{
+									LogError("Cannot find outgoing channel for incoming channel %u", (unsigned int)channel);
+								}
+								else
+								{
+                                    channel_table_free(&connection->channel_table, outgoing_channel);
+                                    // If the endpoint associated with the incoming endpoint is no longer live, we should ignore the END frame.
+                                    if (!endpoint_is_live)
+                                    {
+                                        LogInfo("END received, but endpoint is not live. Ignoring.");
+                                        break;
+                                    }
+								}
+                            }
+                            // fallthrough
                             case AMQP_FLOW:
                             case AMQP_TRANSFER:
                             case AMQP_DISPOSITION:
-                            case AMQP_END:
                             case AMQP_ATTACH:
                             case AMQP_DETACH:
                             {
@@ -1228,48 +1522,10 @@ CONNECTION_HANDLE connection_create2(XIO_HANDLE xio, const char* hostname, const
                             }
                             else
                             {
-                                (void)memcpy(connection->container_id, container_id, container_id_length + 1);
-
-                                /* Codes_S_R_S_CONNECTION_01_173: [<field name="max-frame-size" type="uint" default="4294967295"/>] */
-                                connection->max_frame_size = 4294967295u;
-                                /* Codes: [<field name="channel-max" type="ushort" default="65535"/>] */
-                                connection->channel_max = 65535;
-
-                                /* Codes_S_R_S_CONNECTION_01_175: [<field name="idle-time-out" type="milliseconds"/>] */
-                                /* Codes_S_R_S_CONNECTION_01_192: [A value of zero is the same as if it was not set (null).] */
-                                connection->idle_timeout = 0;
-                                connection->remote_idle_timeout = 0;
-                                connection->remote_idle_timeout_send_frame_millisecond = 0;
-                                connection->idle_timeout_empty_frame_send_ratio = 0.5;
-
-                                connection->endpoint_count = 0;
-                                connection->endpoints = NULL;
-                                connection->header_bytes_received = 0;
-                                connection->is_remote_frame_received = 0;
-                                connection->properties = NULL;
-
-                                connection->is_underlying_io_open = 0;
-                                connection->remote_max_frame_size = 512;
-                                connection->is_trace_on = 0;
-
-                                /* Mark that settings have not yet been set by the user */
-                                connection->idle_timeout_specified = 0;
-
-                                connection->on_new_endpoint = on_new_endpoint;
-                                connection->on_new_endpoint_callback_context = callback_context;
-
-                                connection->on_connection_close_received_event_subscription.on_connection_close_received = NULL;
-                                connection->on_connection_close_received_event_subscription.context = NULL;
-
-                                connection->on_io_error = on_io_error;
-                                connection->on_io_error_callback_context = on_io_error_context;
-                                connection->on_connection_state_changed = on_connection_state_changed;
-                                connection->on_connection_state_changed_callback_context = on_connection_state_changed_context;
-
-                                if (tickcounter_get_current_ms(connection->tick_counter, &connection->last_frame_received_time) != 0)
+                                if (channel_table_initialize(&connection->channel_table)
+                                    != 0)
                                 {
-                                    LogError("Could not retrieve time for last frame received time");
-                                    tickcounter_destroy(connection->tick_counter);
+                                    LogError("Cannot initialize endpoint handle table");
                                     free(connection->container_id);
                                     free(connection->host_name);
                                     amqp_frame_codec_destroy(connection->amqp_frame_codec);
@@ -1279,10 +1535,81 @@ CONNECTION_HANDLE connection_create2(XIO_HANDLE xio, const char* hostname, const
                                 }
                                 else
                                 {
-                                    connection->last_frame_sent_time = connection->last_frame_received_time;
+                                    (void)memcpy(
+                                        connection->container_id,
+                                        container_id,
+                                        container_id_length + 1);
 
-                                    /* Codes_S_R_S_CONNECTION_01_072: [When connection_create succeeds, the state of the connection shall be CONNECTION_STATE_START.] */
-                                    connection_set_state(connection, CONNECTION_STATE_START);
+                                    /* Codes_S_R_S_CONNECTION_01_173: [<field name="max-frame-size"
+                                     * type="uint" default="4294967295"/>] */
+                                    connection->max_frame_size = 4294967295u;
+                                    /* Codes: [<field name="channel-max" type="ushort"
+                                     * default="65535"/>] */
+                                    connection->channel_max = 65535;
+
+                                    /* Codes_S_R_S_CONNECTION_01_175: [<field name="idle-time-out"
+                                     * type="milliseconds"/>] */
+                                    /* Codes_S_R_S_CONNECTION_01_192: [A value of zero is the same as if
+                                     * it was not set (null).] */
+                                    connection->idle_timeout = 0;
+                                    connection->remote_idle_timeout = 0;
+                                    connection->remote_idle_timeout_send_frame_millisecond = 0;
+                                    connection->idle_timeout_empty_frame_send_ratio = 0.5;
+
+                                    connection->endpoint_count = 0;
+                                    connection->endpoints = NULL;
+                                    connection->header_bytes_received = 0;
+                                    connection->is_remote_frame_received = 0;
+                                    connection->properties = NULL;
+
+                                    connection->is_underlying_io_open = 0;
+                                    connection->remote_max_frame_size = 512;
+                                    connection->is_trace_on = 0;
+
+                                    /* Mark that settings have not yet been set by the user */
+                                    connection->idle_timeout_specified = 0;
+
+                                    connection->on_new_endpoint = on_new_endpoint;
+                                    connection->on_new_endpoint_callback_context = callback_context;
+
+                                    connection->on_connection_close_received_event_subscription
+                                        .on_connection_close_received
+                                        = NULL;
+                                    connection->on_connection_close_received_event_subscription.context
+                                        = NULL;
+
+                                    connection->on_io_error = on_io_error;
+                                    connection->on_io_error_callback_context = on_io_error_context;
+                                    connection->on_connection_state_changed
+                                        = on_connection_state_changed;
+                                    connection->on_connection_state_changed_callback_context
+                                        = on_connection_state_changed_context;
+
+                                    if (tickcounter_get_current_ms(
+                                            connection->tick_counter,
+                                            &connection->last_frame_received_time)
+                                        != 0)
+                                    {
+                                        LogError(
+                                            "Could not retrieve time for last frame received time");
+                                        tickcounter_destroy(connection->tick_counter);
+                                        free(connection->container_id);
+                                        free(connection->host_name);
+                                        amqp_frame_codec_destroy(connection->amqp_frame_codec);
+                                        frame_codec_destroy(connection->frame_codec);
+                                        free(connection);
+                                        connection = NULL;
+                                    }
+                                    else
+                                    {
+                                        connection->last_frame_sent_time
+                                            = connection->last_frame_received_time;
+
+                                        /* Codes_S_R_S_CONNECTION_01_072: [When connection_create
+                                         * succeeds, the state of the connection shall be
+                                         * CONNECTION_STATE_START.] */
+                                        connection_set_state(connection, CONNECTION_STATE_START);
+                                    }
                                 }
                             }
                         }
@@ -1313,6 +1640,7 @@ void connection_destroy(CONNECTION_HANDLE connection)
         amqp_frame_codec_destroy(connection->amqp_frame_codec);
         frame_codec_destroy(connection->frame_codec);
         tickcounter_destroy(connection->tick_counter);
+        channel_table_destroy(&connection->channel_table);
         if (connection->properties != NULL)
         {
             amqpvalue_destroy(connection->properties);
@@ -1867,57 +2195,60 @@ ENDPOINT_HANDLE connection_create_endpoint(CONNECTION_HANDLE connection)
         }
         else
         {
-            uint32_t i = 0;
-
             /* Codes_S_R_S_CONNECTION_01_128: [The lowest number outgoing channel shall be associated with the newly created endpoint.] */
-            for (i = 0; i < connection->endpoint_count; i++)
+            uint16_t outgoing_channel = 0;
+            if (channel_table_allocate(&connection->channel_table, &outgoing_channel))
             {
-                if (connection->endpoints[i]->outgoing_channel > i)
-                {
-                    /* found a gap in the sorted endpoint array */
-                    break;
-                }
-            }
-
-            /* Codes_S_R_S_CONNECTION_01_127: [On success, connection_create_endpoint shall return a non-NULL handle to the newly created endpoint.] */
-            result = (ENDPOINT_HANDLE)calloc(1, sizeof(ENDPOINT_INSTANCE));
-            /* Codes_S_R_S_CONNECTION_01_196: [If memory cannot be allocated for the new endpoint, connection_create_endpoint shall fail and return NULL.] */
-            if (result == NULL)
-            {
-                LogError("Cannot allocate memory for endpoint");
+                LogError("Unable to allocate outgoing channel");
+                result = NULL;
             }
             else
             {
-                ENDPOINT_HANDLE* new_endpoints;
-
-                result->on_endpoint_frame_received = NULL;
-                result->on_connection_state_changed = NULL;
-                result->callback_context = NULL;
-                result->outgoing_channel = (uint16_t)i;
-                result->connection = connection;
-
-                /* Codes_S_R_S_CONNECTION_01_197: [The newly created endpoint shall be added to the endpoints list, so that it can be tracked.] */
-                new_endpoints = (ENDPOINT_HANDLE*)realloc(connection->endpoints, sizeof(ENDPOINT_HANDLE) * ((size_t)connection->endpoint_count + 1));
-                if (new_endpoints == NULL)
+                /* Codes_S_R_S_CONNECTION_01_127: [On success, connection_create_endpoint shall
+                 * return a non-NULL handle to the newly created endpoint.] */
+                result = (ENDPOINT_HANDLE)calloc(1, sizeof(ENDPOINT_INSTANCE));
+                /* Codes_S_R_S_CONNECTION_01_196: [If memory cannot be allocated for the new
+                 * endpoint, connection_create_endpoint shall fail and return NULL.] */
+                if (result == NULL)
                 {
-                    /* Tests_S_R_S_CONNECTION_01_198: [If adding the endpoint to the endpoints list tracked by the connection fails, connection_create_endpoint shall fail and return NULL.] */
-                    LogError("Cannot reallocate memory for connection endpoints");
-                    free(result);
-                    result = NULL;
+                    LogError("Cannot allocate memory for endpoint");
                 }
                 else
                 {
-                    connection->endpoints = new_endpoints;
+                    ENDPOINT_HANDLE* new_endpoints;
 
-                    if (i < connection->endpoint_count)
+                    result->on_endpoint_frame_received = NULL;
+                    result->on_connection_state_changed = NULL;
+                    result->callback_context = NULL;
+                    result->outgoing_channel = outgoing_channel;
+                    result->incoming_channel = ENDPOINT_UNUSED_CHANNEL;
+                    result->connection = connection;
+
+                    /* Codes_S_R_S_CONNECTION_01_197: [The newly created endpoint shall be added to
+                     * the endpoints list, so that it can be tracked.] */
+                    new_endpoints = (ENDPOINT_HANDLE*)realloc(
+                        connection->endpoints,
+                        sizeof(ENDPOINT_HANDLE) * ((size_t)connection->endpoint_count + 1));
+                    if (new_endpoints == NULL)
                     {
-                        (void)memmove(&connection->endpoints[i + 1], &connection->endpoints[i], sizeof(ENDPOINT_INSTANCE*) * (connection->endpoint_count - i));
+                        /* Tests_S_R_S_CONNECTION_01_198: [If adding the endpoint to the endpoints
+                         * list tracked by the connection fails, connection_create_endpoint shall
+                         * fail and return NULL.] */
+                        LogError("Cannot reallocate memory for connection endpoints");
+                        channel_table_free(&connection->channel_table, outgoing_channel);
+                        free(result);
+                        result = NULL;
                     }
+                    else
+                    {
+                        // Insert the new endpoint at the end of the set of endpoints.
+                        connection->endpoints = new_endpoints;
+                        connection->endpoints[connection->endpoint_count] = result;
+                        connection->endpoint_count++;
 
-                    connection->endpoints[i] = result;
-                    connection->endpoint_count++;
-
-                    /* Codes_S_R_S_CONNECTION_01_112: [connection_create_endpoint shall create a new endpoint that can be used by a session.] */
+                        /* Codes_S_R_S_CONNECTION_01_112: [connection_create_endpoint shall create a
+                         * new endpoint that can be used by a session.] */
+                    }
                 }
             }
         }
@@ -1944,6 +2275,15 @@ int connection_start_endpoint(ENDPOINT_HANDLE endpoint, ON_ENDPOINT_FRAME_RECEIV
         endpoint->on_connection_state_changed = on_connection_state_changed;
         endpoint->callback_context = context;
 
+        /* If the connection is currently opened, tell the endpoint that the connection is open so that it can start processing the session. */
+        if (endpoint->connection->connection_state == CONNECTION_STATE_OPENED)
+        {
+            endpoint->on_connection_state_changed(
+                endpoint->callback_context,
+                endpoint->connection->connection_state,
+                CONNECTION_STATE_OPEN_SENT); // Fake the transition between "Open Sent" and "Opened" because session is only triggered on state changes.
+        }
+
         result = 0;
     }
 
@@ -1964,6 +2304,24 @@ int connection_endpoint_get_incoming_channel(ENDPOINT_HANDLE endpoint, uint16_t*
     else
     {
         *incoming_channel = endpoint->incoming_channel;
+        result = 0;
+    }
+
+    return result;
+}
+
+int connection_endpoint_get_outgoing_channel(ENDPOINT_HANDLE endpoint, uint16_t* outgoing_channel)
+{
+    int result;
+
+    if ((endpoint == NULL) || (outgoing_channel == NULL))
+    {
+        LogError("Bad arguments: endpoint = %p, outgoing_channel = %p", endpoint, outgoing_channel);
+        result = MU_FAILURE;
+    }
+    else
+    {
+        *outgoing_channel = endpoint->outgoing_channel;
         result = 0;
     }
 
@@ -1995,6 +2353,9 @@ void connection_destroy_endpoint(ENDPOINT_HANDLE endpoint)
         if (i < connection->endpoint_count)
         {
             // endpoint found
+
+            // Let the channel table know that the endpoint is gone. We keep it allocated until an END frame is received, or the connection is destroyed.
+    	    channel_table_release_endpoint(&connection->channel_table, connection->endpoints[i]->outgoing_channel);
             if (connection->endpoint_count == 1)
             {
                 free(connection->endpoints);
@@ -2009,7 +2370,6 @@ void connection_destroy_endpoint(ENDPOINT_HANDLE endpoint)
                 {
                     (void)memmove(connection->endpoints + i, connection->endpoints + i + 1, sizeof(ENDPOINT_HANDLE) * (connection->endpoint_count - i - 1));
                 }
-
                 new_endpoints = (ENDPOINT_HANDLE*)realloc(connection->endpoints, (connection->endpoint_count - 1) * sizeof(ENDPOINT_HANDLE));
                 if (new_endpoints != NULL)
                 {
@@ -2066,7 +2426,7 @@ int connection_encode_frame(ENDPOINT_HANDLE endpoint, AMQP_VALUE performative, P
             {
                 if (connection->is_trace_on == 1)
                 {
-                    log_outgoing_frame(performative);
+                    log_outgoing_frame(endpoint->outgoing_channel, performative);
                 }
 
                 if (tickcounter_get_current_ms(connection->tick_counter, &connection->last_frame_sent_time) != 0)

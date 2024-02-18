@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
     if (static_cast<uint64_t>(options.TransferOptions.SingleUploadThreshold)
-        > std::numeric_limits<size_t>::max())
+        > (std::numeric_limits<size_t>::max)())
     {
       throw Azure::Core::RequestFailedException("Single upload threshold is too big");
     }
@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       int64_t minChunkSize = (bufferSize + MaxBlockNumber - 1) / MaxBlockNumber;
       minChunkSize = (minChunkSize + BlockGrainSize - 1) / BlockGrainSize * BlockGrainSize;
-      chunkSize = std::max(DefaultStageBlockSize, minChunkSize);
+      chunkSize = (std::max)(DefaultStageBlockSize, minChunkSize);
     }
     if (chunkSize > MaxStageBlockSize)
     {
@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       int64_t minChunkSize = (fileReader.GetFileSize() + MaxBlockNumber - 1) / MaxBlockNumber;
       minChunkSize = (minChunkSize + BlockGrainSize - 1) / BlockGrainSize * BlockGrainSize;
-      chunkSize = std::max(DefaultStageBlockSize, minChunkSize);
+      chunkSize = (std::max)(DefaultStageBlockSize, minChunkSize);
     }
     if (chunkSize > MaxStageBlockSize)
     {

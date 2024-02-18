@@ -6,40 +6,57 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
-/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
+/**                      @rickwinter @LarryOsterman
+/sdk/                    @rickwinter @LarryOsterman
 
 # Samples
-/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
+/samples/                @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
 
+# AzureSdkOwners: @gearama
+# ServiceLabel: %Azure.Core
 # PRLabel: %Azure.Core
-/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
+/sdk/core/               @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
 
+# AzureSdkOwners: @ahsonkhan
+# ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
-/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama @LarryOsterman @Azure/azure-sdk-write-identity
+/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @gearama @LarryOsterman @Azure/azure-sdk-write-identity
 
 ###########
 # Client SDKs
 ###########
 
-# PRLabel: %Attestation
-/sdk/attestation/        @LarryOsterman @gkostal @anilba06 @ahmadmsft @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
+# ServiceOwners: @gkostal @anilba06 @ahmadmsft
+# ServiceLabel: %Attestation
 
+# PRLabel: %Attestation
+/sdk/attestation/        @gkostal @anilba06 @ahmadmsft @LarryOsterman @rickwinter
+
+# AzureSdkOwners: @LarryOsterman
+# ServiceLabel: %Event Hubs
+# PRLabel: %Event Hubs
+/sdk/eventhubs/           @LarryOsterman @antkmsft @ahsonkhan @gearama @RickWinter
+
+# AzureSdkOwners: @gearama
+# ServiceLabel:  %KeyVault
 # PRLabel: %KeyVault
 /sdk/keyvault/           @gearama @antkmsft @rickwinter @LarryOsterman
 
+# ServiceOwners:@vinjiang @Jinming-Hu @EmmaZhu 
+# ServiceLabel: %Storage
+
 # PRLabel: %Storage
-/sdk/storage/            @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @vhvb1989 @gearama @LarryOsterman @microzchang
+/sdk/storage/            @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @gearama @LarryOsterman @microzchang
 
+# AzureSdkOwners: @gearama
+# ServiceLabel: %Tables
+# PRLabel: %Tables
+/sdk/tables/            @gearama @LarryOsterman @antkmsft @ahsonkhan
+
+# AzureSdkOwners: @danieljurek
+# ServiceLabel: %EngSys
 # PRLabel: %EngSys
-/sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter 
-
-################
-# Automation
-################
-
-# Git Hub integration and bot rules
-/.github/                @jsquire @rickwinter @ronniegeraghty
+/sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter
 
 ###########
 # Eng Sys

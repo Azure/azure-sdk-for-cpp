@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
     auto cancelTimepoint = context.GetDeadline();
-    if (cancelTimepoint == Azure::DateTime::max())
+    if (cancelTimepoint == (Azure::DateTime::max)())
     {
       request.GetUrl().RemoveQueryParameter(HttpQueryTimeout);
     }
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace _internal {
                 .count()
           : -1;
       request.GetUrl().AppendQueryParameter(
-          HttpQueryTimeout, std::to_string(std::max(numSeconds, int64_t(1))));
+          HttpQueryTimeout, std::to_string((std::max)(numSeconds, int64_t(1))));
     }
 
     std::string client_request_id;

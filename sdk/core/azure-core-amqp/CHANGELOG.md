@@ -1,6 +1,44 @@
 # Release History
 
-## 1.0.0-beta.6 (Unreleased)
+## 1.0.0-beta.8 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- Claims Based Security authentication now longer throws a `std::runtime_error`, and instead follows the pattern of the rest of the AMQP library and returns an error.
+- Authentication now throws `Azure::Core::Credentials::AuthenticationException` instead of `std::runtime_error`.
+- Added `Cancelled` status to `CbsOperationResult` and `ManagementOperationStatus`.
+
+### Bugs Fixed
+
+- [[#5284]](https://github.com/Azure/azure-sdk-for-cpp/issues/5284) [azure-identity][azure-messaging-eventhubs] Impossible to catch exception resulting in SIGABRT signal.
+- [[#5297]](https://github.com/Azure/azure-sdk-for-cpp/issues/5297): Enabled multiple simultaneous `ExecuteOperation` calls.
+- Fixed crash when Link Detach message is received while link is being destroyed.
+
+### Other Changes
+
+- `std::ostream` inserter for message body no longer prints the body of the message.
+- Tidied up the output of the `AmqpMessage` `std::ostream` inserter.
+- Added several `std::ostream` inserters.
+- Pass numeric values to `std::ostream` inserters by value not by reference.
+
+## 1.0.0-beta.7 (2024-02-02)
+
+### Features Added
+
+- The `Close` method on AMQP Message Sender and Message Receiver now blocks until the client receives a `DETACH` response from the remote node.
+
+### Breaking Changes
+
+- The `Close` method on AMQP Message Sender and Message Receiver now accepts an `Azure::Core::Context` parameter. This parameter is defaulted so this change should not affect existing code.
+
+### Bugs Fixed
+
+- Fixed uAMQP connection channel so that a channel is released when an END performative is received from the remote node instead of when the END performative is sent to the remote node.
+- Enabled more than one uAMQP session to be created on a single connection.
+
+## 1.0.0-beta.6 (2024-01-11)
 
 ### Features Added
 
@@ -14,8 +52,7 @@
 
 - Fixed several memory leaks.
 - AMQP Link Credits now work as expected.
-
-### Other Changes
+- Integrated the fix for NVD - CVE-2024-21646.
 
 ## 1.0.0-beta.5 (2023-11-07)
 

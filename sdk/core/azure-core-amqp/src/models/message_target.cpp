@@ -9,6 +9,7 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
+
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
 

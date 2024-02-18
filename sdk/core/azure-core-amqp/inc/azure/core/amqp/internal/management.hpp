@@ -26,6 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Error,
     FailedBadStatus,
     InstanceClosed,
+    Cancelled,
   };
 
   enum class ManagementOpenStatus
@@ -176,8 +177,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /**
      * @brief Close the management instance.
+     *
+     * @param context Context for the operation.
      */
-    void Close();
+    void Close(Context const& context = {});
 
     /**
      * @brief Execute a management operation.

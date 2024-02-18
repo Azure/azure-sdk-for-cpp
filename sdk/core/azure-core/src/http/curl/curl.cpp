@@ -154,7 +154,7 @@ int pollSocketUntilEventOrTimeout(
     // Before doing any work, check to make sure that the context hasn't already been cancelled.
     context.ThrowIfCancelled();
     int pollTimeoutMs = static_cast<int>(
-        std::min(
+        (std::min)(
             pollInterval, std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now))
             .count());
 #if defined(AZ_PLATFORM_POSIX)
@@ -1283,11 +1283,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
   key.append(",");
-#if defined(AZ_PLATFORM_LINUX)
   key.append(!options.CAPath.empty() ? options.CAPath : "0");
-#else
-  key.append("0"); // CAPath is always empty on Windows;
-#endif
   key.append(",");
   key.append(
       options.Proxy.HasValue() ? (options.Proxy.Value().empty() ? "NoProxy" : options.Proxy.Value())
@@ -2136,8 +2132,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     HttpStatusCode lastStatusCode)
 {
   auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
-  // laststatusCode = 0
-  if (code < 200 || code >= 300)
+  if ((code < 200 || code >= 300) && lastStatusCode != HttpStatusCode::NotFound)
   {
     // A handler with previous response with Error can't be re-use.
     return;
@@ -2320,7 +2315,6 @@ CurlConnection::CurlConnection(
     }
   }
 
-#if defined(AZ_PLATFORM_LINUX)
   if (!options.CAPath.empty())
   {
     if (!SetLibcurlOption(m_handle, CURLOPT_CAPATH, options.CAPath.c_str(), &result))
@@ -2331,7 +2325,6 @@ CurlConnection::CurlConnection(
           + std::string(curl_easy_strerror(result)));
     }
   }
-#endif
 
 #if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())

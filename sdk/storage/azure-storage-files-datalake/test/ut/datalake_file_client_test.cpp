@@ -821,10 +821,10 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<uint8_t> downloadBuffer;
       std::vector<uint8_t> expectedData = blobContent;
       int64_t blobSize = blobContent.size();
-      int64_t actualDownloadSize = std::min(downloadSize, blobSize);
+      int64_t actualDownloadSize = (std::min)(downloadSize, blobSize);
       if (offset.HasValue() && length.HasValue())
       {
-        actualDownloadSize = std::min(length.Value(), blobSize - offset.Value());
+        actualDownloadSize = (std::min)(length.Value(), blobSize - offset.Value());
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
@@ -896,10 +896,10 @@ namespace Azure { namespace Storage { namespace Test {
       }
       std::vector<uint8_t> expectedData = blobContent;
       int64_t blobSize = blobContent.size();
-      int64_t actualDownloadSize = std::min(downloadSize, blobSize);
+      int64_t actualDownloadSize = (std::min)(downloadSize, blobSize);
       if (offset.HasValue() && length.HasValue())
       {
-        actualDownloadSize = std::min(length.Value(), blobSize - offset.Value());
+        actualDownloadSize = (std::min)(length.Value(), blobSize - offset.Value());
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(

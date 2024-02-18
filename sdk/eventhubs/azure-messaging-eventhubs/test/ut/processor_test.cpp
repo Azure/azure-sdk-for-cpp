@@ -121,7 +121,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       producerOptions.Name = "Producer for LoadBalancerTest";
       ProducerClient producerClient{connectionString, eventHubName, producerOptions};
 
-#if PROCESSOR_ON_TEST_THREAD
       std::thread processEventsThread([&]() {
         std::set<std::string> partitionsAcquired;
         std::vector<std::thread> processEventsThreads;
@@ -160,43 +159,50 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       processor.Run(context);
 
       processEventsThread.join();
-#else
+    }
+
+    void TestWithLoadBalancerSingleThreaded(Models::ProcessorStrategy processorStrategy)
+    {
+      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
+          Azure::DateTime::clock::now() + std::chrono::minutes(5));
+
+      std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+      std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
+
+      std::string const connectionString = GetEnv("EVENTHUB_CONNECTION_STRING");
+      Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
+      consumerClientOptions.ApplicationID
+          = testing::UnitTest::GetInstance()->current_test_info()->name();
+      consumerClientOptions.Name = testing::UnitTest::GetInstance()->current_test_info()->name();
+
+      std::string containerName{GetRandomName("proctest")};
+
+      // Create the checkpoint store
+      std::shared_ptr<CheckpointStore> checkpointStore{std::make_shared<TestCheckpointStore>()};
+      GTEST_LOG_(INFO) << "Checkpoint store created";
+
+      std::shared_ptr<ConsumerClient> consumerClient{std::make_shared<ConsumerClient>(
+          connectionString, eventHubName, consumerGroup, consumerClientOptions)};
+      GTEST_LOG_(INFO) << "Consumer Client created";
+
+      ProcessorOptions processorOptions;
+      processorOptions.LoadBalancingStrategy = processorStrategy;
+      processorOptions.UpdateInterval = std::chrono::milliseconds(1000);
+
+      Processor processor{consumerClient, checkpointStore, processorOptions};
+
+      // Warm up the consumer client - establish connection to the server, etc.
+      auto eventHubProperties = consumerClient->GetEventHubProperties(context);
+
+      ProducerClientOptions producerOptions;
+      producerOptions.Name = "Producer for LoadBalancerTest";
+      ProducerClient producerClient{connectionString, eventHubName, producerOptions};
+
       // Run the processor on a background thread and the test on the foreground.
       processor.Start(context);
 
-#if ASYNC_PROCESS_EVENTS
       std::set<std::string> partitionsAcquired;
-      std::vector<std::thread> processEventsThreads;
-      // When we exit the process thread, cancel the context to unblock the processor.
-      //      scope_guard onExit([&context] { context.Cancel(); });
-
-      WaitGroup waitGroup;
-      for (auto const& partitionId : eventHubProperties.PartitionIds)
-      {
-        std::shared_ptr<ProcessorPartitionClient> partitionClient
-            = processor.NextPartitionClient(context);
-        waitGroup.AddWaiter();
-        ASSERT_EQ(partitionsAcquired.find(partitionId), partitionsAcquired.end())
-            << "No previous client for " << partitionClient->PartitionId();
-        processEventsThreads.push_back(
-            std::thread([&waitGroup, &producerClient, partitionClient, &context, this] {
-              scope_guard onExit([&] { waitGroup.CompleteWaiter(); });
-              ProcessEventsForLoadBalancerTest(producerClient, partitionClient, context);
-            }));
-      }
-      // Block until all the events have been processed.
-      waitGroup.Wait();
-
-      // And wait until all the threads have completed.
-      for (auto& thread : processEventsThreads)
-      {
-        if (thread.joinable())
-        {
-          thread.join();
-        }
-      }
-#else
-      std::set<std::string> partitionsAcquired;
+      // Iterate over the partitions, processing events until we've received all of them.
       for (auto const& partitionId : eventHubProperties.PartitionIds)
       {
         std::shared_ptr<ProcessorPartitionClient> partitionClient
@@ -204,12 +210,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         ASSERT_EQ(partitionsAcquired.find(partitionId), partitionsAcquired.end())
             << "No previous client for " << partitionClient->PartitionId();
 
-        ProcessEventsForLoadBalancerTest(producerClient, partitionClient, context);
+        ProcessEventsForLoadBalancerTestSingleThreaded(producerClient, partitionClient, context);
       }
-#endif
       // Stop the processor, we're done with the test.
       processor.Stop();
-#endif
     }
 
     void TestPartitionAcquisition(Models::ProcessorStrategy processorStrategy)
@@ -274,7 +278,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         const int32_t batchSize = 1000;
         EXPECT_EQ(0, expectedEventsCount % batchSize)
             << "Keep the math simple - even # of messages for each batch";
-#if ASYNC_GENERATE_EVENTS
         std::thread produceEvents([&, partitionClient]() {
           // Wait for 10 seconds for all of the consumer clients to be spun up.
           GTEST_LOG_(INFO)
@@ -307,7 +310,56 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             GTEST_LOG_(FATAL) << "Exception thrown sending messages" << ex.what();
           }
         });
-#else
+        std::vector<std::shared_ptr<const Models::ReceivedEventData>> allEvents;
+        while (!context.IsCancelled())
+        {
+          auto receiveContext
+              = context.WithDeadline(Azure::DateTime::clock::now() + std::chrono::seconds(50));
+          GTEST_LOG_(INFO) << "Receive up to 100 events with a 50 second timeout on partition "
+                           << partitionClient->PartitionId();
+          auto events = partitionClient->ReceiveEvents(100, receiveContext);
+          if (events.size() != 0)
+          {
+            GTEST_LOG_(INFO) << "Processing " << events.size() << " events for partition "
+                             << partitionClient->PartitionId();
+            allEvents.insert(allEvents.end(), events.begin(), events.end());
+            GTEST_LOG_(INFO) << "Updating checkpoint for partition "
+                             << partitionClient->PartitionId();
+            partitionClient->UpdateCheckpoint(events.back(), context);
+            if (allEvents.size() == expectedEventsCount)
+            {
+              GTEST_LOG_(INFO) << "Received all expected events; returning.";
+              if (produceEvents.joinable())
+              {
+                produceEvents.join();
+              }
+              return;
+            }
+          }
+        }
+      }
+      catch (std::runtime_error const& ex)
+      {
+        GTEST_LOG_(FATAL) << "Exception thrown receiving messages." << ex.what();
+        producerContext.Cancel();
+      }
+    }
+
+    void ProcessEventsForLoadBalancerTestSingleThreaded(
+        ProducerClient& producerClient,
+        std::shared_ptr<ProcessorPartitionClient> partitionClient,
+        Azure::Core::Context const& context)
+    {
+      Azure::Core::Context producerContext{context};
+      try
+      {
+        // initialize any resources needed to process the partition
+        // This is the equivalent to PartitionOpen
+        GTEST_LOG_(INFO) << "Started processing partition " << partitionClient->PartitionId();
+        const int32_t expectedEventsCount = 1000;
+        const int32_t batchSize = 1000;
+        EXPECT_EQ(0, expectedEventsCount % batchSize)
+            << "Keep the math simple - even # of messages for each batch";
         try
         {
           GTEST_LOG_(INFO) << "Generate " << std::dec << expectedEventsCount << " events in "
@@ -334,7 +386,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         {
           GTEST_LOG_(FATAL) << "Exception thrown sending messages" << ex.what();
         }
-#endif
+
         std::vector<std::shared_ptr<const Models::ReceivedEventData>> allEvents;
         while (!context.IsCancelled())
         {
@@ -354,9 +406,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             if (allEvents.size() == expectedEventsCount)
             {
               GTEST_LOG_(INFO) << "Received all expected events; returning.";
-#if ASYNC_GENERATE_EVENTS
-              produceEvents.join();
-#endif
               return;
             }
           }
@@ -581,15 +630,29 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     while (!partitionClients.empty())
     {
       auto partitionClientIterator = partitionClients.begin();
-      auto partitionClient = partitionClientIterator->second;
+      std::shared_ptr<ProcessorPartitionClient> partitionClient;
       if (partitionClientIterator != partitionClients.end())
       {
+        partitionClient = partitionClientIterator->second;
         partitionClients.erase(partitionClientIterator);
       }
-      partitionClient->Close();
+      // Don't re-use the context variable here, because it's been canceled.
+      if (partitionClient)
+      {
+        partitionClient->Close();
+      }
     }
 
     processor.Stop();
+  }
+
+  TEST_F(ProcessorTest, Processor_SingleThreaded_Balanced_LIVEONLY_)
+  {
+    TestWithLoadBalancerSingleThreaded(Models::ProcessorStrategy::ProcessorStrategyBalanced);
+  }
+  TEST_F(ProcessorTest, Processor_SingleThreaded_Greedy_LIVEONLY_)
+  {
+    TestWithLoadBalancerSingleThreaded(Models::ProcessorStrategy::ProcessorStrategyGreedy);
   }
 
   TEST_F(ProcessorTest, Processor_Balanced_LIVEONLY_)

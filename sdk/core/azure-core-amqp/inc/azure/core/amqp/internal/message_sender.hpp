@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/amqp/internal/amqp_settle_mode.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "cancellable.hpp"
@@ -30,6 +31,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Timeout,
     Cancelled,
   };
+  std::ostream& operator<<(std::ostream& stream, MessageSendStatus status);
+
   enum class MessageSenderState
   {
     Invalid,
@@ -39,14 +42,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Closing,
     Error,
   };
-  std::ostream& operator<<(std::ostream& stream, MessageSenderState const& state);
-
-  enum class SenderSettleMode
-  {
-    Unsettled,
-    Settled,
-    Mixed,
-  };
+  std::ostream& operator<<(std::ostream& stream, MessageSenderState state);
 
   class MessageSender;
   class MessageSenderEvents {
@@ -59,7 +55,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSenderState newState,
         MessageSenderState oldState)
         = 0;
-    virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) = 0;
+    virtual void OnMessageSenderDisconnected(
+        MessageSender const& sender,
+        Models::_internal::AmqpError const& error)
+        = 0;
   };
 
   struct MessageSenderOptions final
@@ -140,7 +139,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Closes a message sender.
      *
      */
-    void Close();
+    void Close(Context const& context = {});
+
+    /** @brief Gets the name of the underlying link.
+     *
+     * @return The name of the underlying link object.
+     */
+    std::string GetLinkName() const;
 
     /** @brief Returns the link negotiated maximum message size
      *

@@ -1,12 +1,26 @@
 # Release History
 
-## 1.7.0-beta.1 (Unreleased)
+## 1.7.0-beta.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.7.0-beta.2 (2024-02-09)
+
+### Features Added
+
+- [[#4474]](https://github.com/Azure/azure-sdk-for-cpp/issues/4474) Enable proactive renewal of Managed Identity tokens.
+
+## 1.7.0-beta.1 (2024-01-11)
 
 ### Features Added
 
 - [[#5116]](https://github.com/Azure/azure-sdk-for-cpp/issues/5116) `AzureCliCredential`: Added support for the new response field which represents token expiration timestamp as time zone agnostic value.
-
-### Breaking Changes
 
 ### Bugs Fixed
 

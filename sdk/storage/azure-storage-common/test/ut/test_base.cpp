@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Test {
   uint64_t StorageTest::RandomInt(uint64_t minNumber, uint64_t maxNumber)
   {
     uint64_t val = m_randomGenerator();
-    if (minNumber == 0 && maxNumber == std::numeric_limits<decltype(maxNumber)>::max())
+    if (minNumber == 0 && maxNumber == (std::numeric_limits<decltype(maxNumber)>::max)())
     {
       return val;
     }
@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Test {
     while (start_addr + rand_int_size <= end_addr)
     {
       *reinterpret_cast<uint64_t*>(start_addr)
-          = RandomInt(0ULL, std::numeric_limits<uint64_t>::max());
+          = RandomInt(0ULL, (std::numeric_limits<uint64_t>::max)());
       start_addr += rand_int_size;
     }
     while (start_addr < end_addr)

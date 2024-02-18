@@ -8,7 +8,6 @@
 #include "models/management_models.hpp"
 
 #include <azure/core/amqp.hpp>
-#include <azure/core/amqp/internal/management.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -17,6 +16,9 @@
 #include <iostream>
 
 namespace Azure { namespace Messaging { namespace EventHubs {
+  namespace _detail {
+    class EventHubsPropertiesClient;
+  } // namespace _detail
 
   /**@brief Contains options for the ProducerClient creation
    */
@@ -49,7 +51,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string const& GetEventHubName() { return m_eventHub; }
 
     /** Get Retry options for this ProducerClient */
-    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions()
+    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() const
     {
       return m_producerClientOptions.RetryOptions;
     }
@@ -178,10 +180,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
 
-    std::mutex m_sessionsLock;
+    std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
-    Azure::Core::Amqp::_internal::Connection CreateConnection();
+    std::mutex m_propertiesClientLock;
+    std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
+
+    Azure::Core::Amqp::_internal::Connection CreateConnection() const;
     Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
 
     // Ensure that the connection for this producer has been established.
@@ -192,6 +197,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context = {});
+
+    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient();
 
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);

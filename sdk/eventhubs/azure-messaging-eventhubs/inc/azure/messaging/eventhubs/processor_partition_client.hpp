@@ -58,14 +58,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// Returns the partition ID associated with this ProcessorPartitionClient.
     std::string PartitionId() const { return m_partitionId; }
 
-    /** Closes the partition client.     */
-    void Close()
+    /** @brief Closes the partition client.
+     *
+     * @param context The context to pass to the close operation.
+     */
+    void Close(Core::Context const& context = {})
     {
       if (m_cleanupFunc)
       {
         m_cleanupFunc();
       }
-      m_partitionClient->Close();
+      m_partitionClient->Close(context);
     }
 
   private:

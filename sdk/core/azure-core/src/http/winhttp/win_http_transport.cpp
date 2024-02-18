@@ -14,6 +14,13 @@
 #include "win_http_request.hpp"
 #endif
 
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
 #include <Windows.h>
 
 #include <algorithm>
@@ -421,6 +428,15 @@ std::string GetErrorMessage(DWORD error)
 
     errorMessage += ": ";
     errorMessage += errorString.get();
+    // If the end of the error message is a CRLF, remove it.
+    if (errorMessage.back() == '\n')
+    {
+      errorMessage.erase(errorMessage.size() - 1);
+      if (errorMessage.back() == '\r')
+      {
+        errorMessage.erase(errorMessage.size() - 1);
+      }
+    }
   }
   errorMessage += '.';
   return errorMessage;
@@ -475,15 +491,24 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       if (waitResult == WAIT_TIMEOUT)
       {
         // If the request was cancelled while we were waiting, throw an exception.
+        if (context.IsCancelled())
+        {
+          Log::Stream(Logger::Level::Error)
+              << "Request was cancelled while waiting for action to complete." << std::endl;
+        }
         context.ThrowIfCancelled();
       }
       else if (waitResult != WAIT_OBJECT_0)
       {
+        Log::Stream(Logger::Level::Error)
+            << "WaitForSingleObject failed with error code " << GetLastError() << std::endl;
         return false;
       }
     } while (waitResult != WAIT_OBJECT_0);
     if (m_stowedError != NO_ERROR)
     {
+      Log::Stream(Logger::Level::Error)
+          << "Action completed with error: " << GetErrorMessage(m_stowedError);
       return false;
     }
     return true;
@@ -504,13 +529,21 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   }
   void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
   {
-    // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
-    // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
-    // state before the lock is released.
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
-    std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
-    m_stowedErrorInformation = stowedErrorInformation;
-    m_stowedError = stowedError;
+    if (m_expectedStatus != WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
+    {
+      // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
+      // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
+      // state before the lock is released.
+      auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+      std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
+      m_stowedErrorInformation = stowedErrorInformation;
+      m_stowedError = stowedError;
+    }
+    else
+    {
+      Log::Write(
+          Logger::Level::Verbose, "Received error while closing: " + std::to_string(stowedError));
+    }
   }
 
   DWORD WinHttpAction::GetStowedError()
@@ -546,10 +579,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     {
       return;
     }
-
+    WinHttpAction* httpAction = reinterpret_cast<WinHttpAction*>(dwContext);
     try
     {
-      WinHttpAction* httpAction = reinterpret_cast<WinHttpAction*>(dwContext);
       httpAction->OnHttpStatusOperation(
           hInternet, internetStatus, statusInformation, statusInformationLength);
     }
@@ -560,6 +592,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           Logger::Level::Error,
           "Request Failed Exception Thrown: " + std::string(rfe.what()) + rfe.Message);
       WinHttpCloseHandle(hInternet);
+      httpAction->m_httpRequest->MarkRequestHandleClosed();
     }
     catch (std::exception const& ex)
     {
@@ -567,7 +600,28 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       Log::Write(Logger::Level::Error, "Exception Thrown: " + std::string(ex.what()));
     }
   }
-
+  namespace {
+    std::string WinHttpAsyncResultToString(DWORD_PTR result)
+    {
+      switch (result)
+      {
+        case API_RECEIVE_RESPONSE:
+          return "API_RECEIVE_RESPONSE";
+        case API_QUERY_DATA_AVAILABLE:
+          return "API_QUERY_DATA_AVAILABLE";
+        case API_READ_DATA:
+          return "API_READ_DATA";
+        case API_WRITE_DATA:
+          return "API_WRITE_DATA";
+        case API_SEND_REQUEST:
+          return "API_SEND_REQUEST";
+        case API_GET_PROXY_FOR_URL:
+          return "API_GET_PROXY_FOR_URL";
+        default:
+          return "Unknown (" + std::to_string(result) + ")";
+      }
+    }
+  } // namespace
   /**
    * @brief HTTP Callback to enable private certificate checks.
    *
@@ -599,8 +653,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       WINHTTP_ASYNC_RESULT* asyncResult = static_cast<WINHTTP_ASYNC_RESULT*>(statusInformation);
       Log::Write(
           Logger::Level::Error,
-          "Request error. " + GetErrorMessage(asyncResult->dwError) + " "
-              + std::to_string(asyncResult->dwResult));
+          "Request error: " + GetErrorMessage(asyncResult->dwError)
+              + " Failing API: " + WinHttpAsyncResultToString(asyncResult->dwResult));
       CompleteActionWithError(asyncResult->dwResult, asyncResult->dwError);
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDING_REQUEST)
@@ -999,13 +1053,27 @@ _detail::WinHttpRequest::~WinHttpRequest()
   if (!m_requestHandleClosed)
   {
     Log::Write(
-        Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
+        Logger::Level::Informational,
+        "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
 
     // Close the outstanding request handle, waiting until the HANDLE_CLOSING status is received.
-    m_httpAction->WaitForAction(
-        [this]() { m_requestHandle.reset(); },
-        WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
-        Azure::Core::Context{});
+    if (!m_httpAction->WaitForAction(
+            [this]() {
+              auto requestHandle = m_requestHandle.release();
+              if (!WinHttpCloseHandle(requestHandle))
+              {
+                Log::Write(
+                    Logger::Level::Error,
+                    "Error closing WinHTTP handle: " + GetErrorMessage(GetLastError()));
+              }
+            },
+
+            WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
+            Azure::Core::Context{}))
+    {
+      Log::Write(Logger::Level::Error, "Error while closing the request handle.");
+    }
+    Log::Write(Logger::Level::Informational, "WinHttpRequest::~WinHttpRequest. Handle closed.");
   }
 }
 

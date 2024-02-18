@@ -10,6 +10,7 @@
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "mock_amqp_server.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
@@ -56,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session1{connection.CreateSession({})};
       Session session2{connection.CreateSession({})};
 
-      session1.End("", "");
+      EXPECT_ANY_THROW(session1.End("", ""));
     }
   }
 
@@ -69,7 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       // Verify defaults are something "reasonable".
       EXPECT_EQ(1, session.GetIncomingWindow());
-      EXPECT_EQ(std::numeric_limits<uint32_t>::max(), session.GetHandleMax());
+      EXPECT_EQ((std::numeric_limits<uint32_t>::max)(), session.GetHandleMax());
       EXPECT_EQ(1, session.GetOutgoingWindow());
     }
 
@@ -201,6 +202,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session{connection.CreateSession()};
 
       session.Begin();
+      session.End();
     }
 
     {
@@ -211,6 +213,70 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
 
     listener.Stop();
+  }
+
+  TEST_F(TestSessions, MultipleSessionBeginEnd)
+  {
+
+    MessageTests::AmqpServerMock mockServer;
+    mockServer.EnableTrace(false);
+    mockServer.StartListening();
+
+    // Create a connection
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    connectionOptions.EnableTrace = true;
+
+    class OutgoingConnectionEvents : public ConnectionEvents {
+      /** @brief Called when the connection state changes.
+       *
+       * @param newState The new state of the connection.
+       * @param oldState The previous state of the connection.
+       */
+      void OnConnectionStateChanged(
+          Connection const&,
+          ConnectionState newState,
+          ConnectionState oldState) override
+      {
+        GTEST_LOG_(INFO) << "Connection state changed. OldState: " << oldState << " -> "
+                         << newState;
+      };
+
+      /** @brief called when an I/O error has occurred on the connection.
+       *
+       */
+      void OnIOError(Connection const&) override { GTEST_LOG_(INFO) << "Connection IO Error."; };
+    };
+
+    OutgoingConnectionEvents connectionEvents;
+    Azure::Core::Amqp::_internal::Connection connection(
+        "localhost", nullptr, connectionOptions, &connectionEvents);
+
+    connection.Open();
+
+    {
+      constexpr const size_t sessionCount = 30;
+      GTEST_LOG_(INFO) << "Opening " << sessionCount << " sessions.";
+      std::vector<Session> sessions;
+      for (size_t i = 0; i < sessionCount; i += 1)
+      {
+        sessions.push_back(connection.CreateSession());
+        sessions.back().Begin();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      }
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+      GTEST_LOG_(INFO) << "Closing " << sessionCount << " sessions.";
+      for (auto& session : sessions)
+      {
+        session.End();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      }
+    }
+    connection.Close();
+
+    mockServer.StopListening();
   }
 #endif // !AZ_PLATFORM_MAC
 }}}} // namespace Azure::Core::Amqp::Tests

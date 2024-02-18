@@ -70,6 +70,10 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param expiresOnPropertyNames Names of properties in the JSON object that represent token
      * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse the
      * corresponding property will be made. Empty string elements will be ignored.
+     * @param refreshInPropertyName Name of a property in the JSON object that represents when to
+     * refresh the token in number of seconds from now.
+     * @param proactiveRenewal A value to indicate whether to refresh tokens, proactively, with half
+     * lifetime or not.
      * @param utcDiffSeconds Optional. If not 0, it represents the difference between the UTC and a
      * desired time zone, in seconds. Then, should an RFC3339 timestamp come without a time zone
      * information, a corresponding time zone offset will be applied to such timestamp.
@@ -88,6 +92,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& accessTokenPropertyName,
         std::string const& expiresInPropertyName,
         std::vector<std::string> const& expiresOnPropertyNames,
+        std::string const& refreshInPropertyName = "",
+        bool proactiveRenewal = false,
         int utcDiffSeconds = 0);
 
     /**
@@ -101,6 +107,10 @@ namespace Azure { namespace Identity { namespace _detail {
      * @param expiresOnPropertyName Name of a property in the JSON object that represents token
      * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse it is
      * made.
+     * @param refreshInPropertyName Name of a property in the JSON object that represents
+     * when to refresh the token in number of seconds from now.
+     * @param proactiveRenewal A value to indicate whether to refresh tokens, proactively, with half
+     * lifetime or not.
      *
      * @return A successfully parsed access token.
      *
@@ -110,13 +120,17 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& jsonString,
         std::string const& accessTokenPropertyName,
         std::string const& expiresInPropertyName,
-        std::string const& expiresOnPropertyName)
+        std::string const& expiresOnPropertyName,
+        std::string const& refreshInPropertyName = "",
+        bool proactiveRenewal = false)
     {
       return ParseToken(
           jsonString,
           accessTokenPropertyName,
           expiresInPropertyName,
-          std::vector<std::string>{expiresOnPropertyName});
+          std::vector<std::string>{expiresOnPropertyName},
+          refreshInPropertyName,
+          proactiveRenewal);
     }
 
     /**
@@ -169,6 +183,8 @@ namespace Azure { namespace Identity { namespace _detail {
      * @brief Gets an authentication token.
      *
      * @param context A context to control the request lifetime.
+     * @param proactiveRenewal A value to indicate whether to refresh tokens, proactively, with half
+     * lifetime or not.
      * @param createRequest A function to create a token request.
      * @param shouldRetry A function to determine whether a response should be retried with
      * another request.
@@ -177,6 +193,7 @@ namespace Azure { namespace Identity { namespace _detail {
      */
     Core::Credentials::AccessToken GetToken(
         Core::Context const& context,
+        bool proactiveRenewal,
         std::function<std::unique_ptr<TokenRequest>()> const& createRequest,
         std::function<std::unique_ptr<TokenRequest>(
             Core::Http::HttpStatusCode statusCode,

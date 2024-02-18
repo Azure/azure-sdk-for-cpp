@@ -61,6 +61,7 @@ find_package(azure_c_shared_utility CONFIG REQUIRED)
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp.hpp
     inc/azure/core/amqp/dll_import_export.hpp
+    inc/azure/core/amqp/internal/amqp_settle_mode.hpp
     inc/azure/core/amqp/internal/cancellable.hpp
     inc/azure/core/amqp/internal/claims_based_security.hpp
     inc/azure/core/amqp/internal/common/async_operation_queue.hpp
@@ -79,6 +80,8 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/internal/models/message_source.hpp
     inc/azure/core/amqp/internal/models/message_target.hpp
     inc/azure/core/amqp/internal/models/messaging_values.hpp
+    inc/azure/core/amqp/internal/models/performatives/amqp_detach.hpp
+    inc/azure/core/amqp/internal/models/performatives/amqp_transfer.hpp
     inc/azure/core/amqp/internal/network/amqp_header_detect_transport.hpp
     inc/azure/core/amqp/internal/network/sasl_transport.hpp
     inc/azure/core/amqp/internal/network/socket_listener.hpp
@@ -112,10 +115,12 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/private/unique_handle.hpp
     src/amqp/session.cpp
     src/common/global_state.cpp
+    src/models/amqp_detach.cpp
     src/models/amqp_error.cpp
     src/models/amqp_header.cpp
     src/models/amqp_message.cpp
     src/models/amqp_properties.cpp
+    src/models/amqp_transfer.cpp
     src/models/amqp_value.cpp
     src/models/message_source.cpp
     src/models/message_target.cpp
@@ -123,11 +128,14 @@ set(AZURE_CORE_AMQP_SOURCE
     src/models/private/error_impl.hpp
     src/models/private/header_impl.hpp
     src/models/private/message_impl.hpp
+    src/models/private/performatives/detach_impl.hpp
+    src/models/private/performatives/transfer_impl.hpp
     src/models/private/properties_impl.hpp
     src/models/private/source_impl.hpp
     src/models/private/target_impl.hpp
     src/models/private/value_impl.hpp
     src/network/amqp_header_transport.cpp
+    src/network/private/transport_impl.hpp
     src/network/private/transport_impl.hpp
     src/network/sasl_transport.cpp
     src/network/socket_listener.cpp
@@ -136,6 +144,7 @@ set(AZURE_CORE_AMQP_SOURCE
     src/network/transport.cpp
     src/private/package_version.hpp
 )
+
 
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
 
