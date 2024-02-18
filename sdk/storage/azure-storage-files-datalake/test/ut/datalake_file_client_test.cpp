@@ -737,7 +737,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::DownloadFileOptions options;
 
     // UserPrincipalName = true
-    options.UserPrincipalName = true;
+    options.IncludeUserPrincipalName = true;
     auto downloadResult = m_fileClient->Download(options).Value;
     ASSERT_TRUE(
         downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
@@ -751,7 +751,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(it, acls.end());
 
     // UserPrincipalName = false
-    options.UserPrincipalName = false;
+    options.IncludeUserPrincipalName = false;
     downloadResult = m_fileClient->Download(options).Value;
     ASSERT_TRUE(
         downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());

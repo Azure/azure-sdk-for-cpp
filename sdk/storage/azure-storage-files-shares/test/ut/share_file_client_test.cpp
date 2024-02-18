@@ -927,14 +927,14 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::GetFileRangeListResult result;
 
     // SupportRename == true
-    options.SupportRename = true;
+    options.IncludeRenames = true;
     EXPECT_NO_THROW(result = fileClient.GetRangeListDiff(snapshot, options).Value);
     EXPECT_EQ(1U, result.Ranges.size());
     EXPECT_EQ(64, result.Ranges[0].Offset);
     EXPECT_TRUE(result.Ranges[0].Length.HasValue());
 
     // SupportRename == false
-    options.SupportRename = false;
+    options.IncludeRenames = false;
     EXPECT_THROW(fileClient.GetRangeListDiff(snapshot, options), StorageException);
   }
 

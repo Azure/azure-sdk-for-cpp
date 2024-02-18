@@ -3633,10 +3633,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-range-get-content-crc64",
             options.RangeGetContentCRC64.Value() ? "true" : "false");
       }
-      if (options.UserPrincipalName.HasValue())
-      {
-        request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
-      }
       if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
       {
         request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
@@ -3677,6 +3673,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
       request.SetHeader("x-ms-version", "2023-11-03");
+      if (options.UserPrincipalName.HasValue())
+      {
+        request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (!(httpStatusCode == Core::Http::HttpStatusCode::Ok
@@ -3928,10 +3928,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
       }
-      if (options.UserPrincipalName.HasValue())
-      {
-        request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
-      }
       if (options.IfModifiedSince.HasValue())
       {
         request.SetHeader(
@@ -3957,6 +3953,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
       request.SetHeader("x-ms-version", "2023-11-03");
+      if (options.UserPrincipalName.HasValue())
+      {
+        request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)

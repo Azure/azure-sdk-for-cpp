@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2024-05-04/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-12-02/blob.json
 ```
 
 ## ModelFour Options
@@ -397,6 +397,14 @@ directive:
       $.BlobCacheControl["required"] = true;
       $.MaxResults["x-ms-client-name"] = "MaxResults";
       $.BlobPublicAccess["required"] = true;
+      $.UserPrincipalName = {
+          "name": "x-ms-upn",
+          "x-ms-client-name": "UserPrincipalName",
+          "in": "header",
+          "required": false,
+          "type": "boolean",
+          "x-ms-parameter-location": "method"
+        }
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -964,6 +972,10 @@ directive:
         }
       };
   - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}"].get.parameters
+    transform: >
+      $.push({"$ref": "#/parameters/UserPrincipalName"});
+  - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}"].get.responses
     transform: >
       $["200"].schema = {"$ref": "#/definitions/DownloadBlobResult"};
@@ -1027,6 +1039,10 @@ directive:
 
 ```yaml
 directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}"].head.parameters
+    transform: >
+      $.push({"$ref": "#/parameters/UserPrincipalName"});
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}"].head.responses
     transform: >
@@ -1859,6 +1875,7 @@ directive:
     where: $.parameters
     transform: >
       $.ListBlobsShowOnly.description = "Include this parameter to specify one or more datasets to include in the response.";
+      $.UserPrincipalName.description = "Optional. Valid only when Hierarchical Namespace is enabled for the account. If \"true\", the user identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User Principal Names.  If \"false\", the values will be returned as Azure Active Directory Object IDs. The default value is false. Note that group and application Object IDs are not translated because they do not have unique friendly names."
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >

@@ -5,7 +5,7 @@
 ### Features Added
 
 - Bumped up API version to `2023-11-03`.
-- Added new field `UserPrincipalName` in `GetPathPropertiesOptions` and `DownloadFileOptions`.
+- Added new field `IncludeUserPrincipalName` in `GetPathAccessControlListOptions`, `GetPathPropertiesOptions` and `DownloadFileOptions`.
 - Added new field `Acls` in `PathProperties` and `DownloadFileDetails`.
 
 ### Breaking Changes

@@ -196,10 +196,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     {
-      bool userPrincipalName = false;
-      if (context.TryGetValue(_detail::DataLakeInteroperabilityExtraOptionsKey, userPrincipalName))
+      bool includeUserPrincipalName = false;
+      if (context.TryGetValue(
+              _detail::DataLakeInteroperabilityExtraOptionsKey, includeUserPrincipalName))
       {
-        protocolLayerOptions.UserPrincipalName = userPrincipalName;
+        protocolLayerOptions.UserPrincipalName = includeUserPrincipalName;
       }
     }
     if (m_customerProvidedKey.HasValue())
@@ -547,10 +548,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     {
-      bool userPrincipalName = false;
-      if (context.TryGetValue(_detail::DataLakeInteroperabilityExtraOptionsKey, userPrincipalName))
+      bool includeUserPrincipalName = false;
+      if (context.TryGetValue(
+              _detail::DataLakeInteroperabilityExtraOptionsKey, includeUserPrincipalName))
       {
-        protocolLayerOptions.UserPrincipalName = userPrincipalName;
+        protocolLayerOptions.UserPrincipalName = includeUserPrincipalName;
       }
     }
     if (m_customerProvidedKey.HasValue())
