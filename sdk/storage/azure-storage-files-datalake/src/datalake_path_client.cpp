@@ -349,10 +349,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto response = m_blobClient.GetProperties(
         blobOptions,
-        options.UserPrincipalName.HasValue() ? context.WithValue(
+        options.IncludeUserPrincipalName.HasValue() ? context.WithValue(
             Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
-            options.UserPrincipalName.Value())
-                                             : context);
+            options.IncludeUserPrincipalName.Value())
+                                                    : context);
     Models::PathProperties ret;
     ret.ETag = std::move(response.Value.ETag);
     ret.LastModified = std::move(response.Value.LastModified);
@@ -421,7 +421,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.Upn = options.UserPrincipalName;
+    protocolLayerOptions.Upn = options.IncludeUserPrincipalName;
     auto response = _detail::PathClient::GetAccessControlList(
         *m_pipeline, m_pathUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
     Azure::Nullable<std::vector<Models::Acl>> acl;
