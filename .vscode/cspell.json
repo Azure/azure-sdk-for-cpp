@@ -344,6 +344,17 @@
       ]
     },
     {
+      "filename": "**/sdk/eventhubs/azure-messaging-eventhubs/test/**/*",
+      "words": [
+        "otlp",
+        "Otlp",
+        "OTLP",
+        "exportings",
+        "ricab",
+        "noarg"
+      ]
+    },
+    {
       "filename": "**/sdk/identity/azure-identity/**",
       "words": [
         "meid",
