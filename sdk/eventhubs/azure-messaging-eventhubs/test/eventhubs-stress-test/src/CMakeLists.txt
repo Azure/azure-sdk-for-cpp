@@ -13,7 +13,6 @@ find_package(opentelemetry-cpp CONFIG REQUIRED)
 find_package(protobuf)
 find_package(nlohmann_json)
 find_package(CURL)
-find_package(gRPC)
 
 set(INCLUDE_FILES 
   inc/eventhubs_stress_scenarios.hpp

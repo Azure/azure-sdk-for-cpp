@@ -96,7 +96,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
     }
 
-    void Close(Azure::Core::Context const& context)
+    void Close(Azure::Core::Context const& context = {})
     {
       for (auto& sender : m_senders)
       {
