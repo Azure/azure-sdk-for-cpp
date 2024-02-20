@@ -2,17 +2,9 @@
 // Licensed under the MIT License.
 
 /**
- * @brief Validates the Azure Core transport adapters with fault responses from server.
- *
- * @note This test requires the Http-fault-injector
- * (https://github.com/Azure/azure-sdk-tools/tree/main/tools/http-fault-injector) running. Follow
- * the instructions to install and run the server before running this test.
+ * @brief Stress framework for EventHubs service client.
  *
  */
-
-#define REQUESTS 100
-#define WARMUP 100
-#define ROUNDS 100
 
 #include "argagg.hpp"
 #include "batch_stress_tests.hpp"
@@ -58,6 +50,7 @@ void InitTracer()
   trace::Provider::SetTracerProvider(provider);
 }
 
+// On debug builds, we log to the console. On release builds, we log to OpenTelemetry.
 #if defined(_DEBUG)
 constexpr const bool LogDefault = true;
 #else
@@ -68,22 +61,24 @@ bool LogToConsole{LogDefault};
 
 void InitLogger()
 {
-  opentelemetry::exporter::otlp::OtlpHttpLogRecordExporterOptions logger_opts;
-
   if (LogToConsole)
   {
     std::cout << "Using console to export log records." << std::endl;
   }
   else
   {
+    opentelemetry::exporter::otlp::OtlpHttpLogRecordExporterOptions logger_opts;
+
     std::cout << "Using " << logger_opts.url << " to export log records." << std::endl;
     logger_opts.console_debug = false;
+
     // Create OTLP exporter instance
     auto exporter = otlp::OtlpHttpLogRecordExporterFactory::Create(logger_opts);
     auto processor = logs_sdk::SimpleLogRecordProcessorFactory::Create(std::move(exporter));
     std::shared_ptr<logs::LoggerProvider> provider
         = logs_sdk::LoggerProviderFactory::Create(std::move(processor));
 
+    // Set the global log provider.
     logs::Provider::SetLoggerProvider(provider);
 
     // Integrate the azure logging diagnostics with the OpenTelemetry logger provider we just
@@ -172,16 +167,11 @@ int main(int argc, char** argv)
         std::make_shared<BatchStressTest>(),
     };
 
+    // Determine the stress scenario to run.
+    // Parse the command line in "positional only" mode. The first argument is the scenario name.
     std::shared_ptr<EventHubsStressScenario> scenario;
     {
       argagg::parser argparser;
-      //{
-      //    {
-      //        {"scenario", {"-s", "--scenario"}, "Scenario to run", 1},
-      //        {"console", {"--console"}, "Log output traces to console", 0},
-      //        {"help", {"-?", "-h", "--help"}, "This help message.", 0},
-      //    },
-      //};
 
       argagg::parser_results args;
       try
@@ -208,6 +198,7 @@ int main(int argc, char** argv)
         Usage(argparser, scenarios);
         return -1;
       }
+
       for (const auto& scenarioToCheck : scenarios)
       {
         if (CompareString(scenarioToCheck->GetStressScenarioName(), scenarioName))
@@ -224,24 +215,31 @@ int main(int argc, char** argv)
         {
           std::cerr << "    " << scenarioToCheck->GetStressScenarioName();
         }
+
+        Usage(argparser, scenarios);
         return -1;
       }
     }
 
     std::cout << "Running stress scenario " << scenario->GetStressScenarioName() << std::endl;
 
-    // Now we know the scenario, reparse the command line using the scenario specific options.
+    // Now we know the scenario, reparse the command line using the scenario specific options. We
+    // also support
     auto scenarioOptions{scenario->GetScenarioOptions()};
     argagg::parser argparser{{
         {"console", {"--console"}, "Log output traces to console", 0},
         {"help", {"-?", "-h", "--help"}, "This help message.", 0},
         {"verbose", {"-v", "--verbose"}, "Enable verbose logging", 0},
     }};
+
+    // Add the scenario specific options to the parser.
     for (const auto& option : scenarioOptions)
     {
       argparser.definitions.push_back(
           {option.Name, option.Activators, option.HelpMessage, option.ExpectedArgs});
     }
+
+    // Re-parse the command line with this scenario's options.
     argagg::parser_results args;
     try
     {
@@ -255,14 +253,18 @@ int main(int argc, char** argv)
 
       return -1;
     }
+
     // Log to the console or to OpenTelemetry logs.
     LogToConsole = args["console"].as<bool>(LogDefault);
+
     if (args.has_option("help"))
     {
       Usage(argparser, scenarios);
       return 0;
     }
 
+    // Initialize OpenTelemetry Tracers and Loggers.
+    // TBD: Metrics.
     InitTracer();
     InitLogger();
 
@@ -275,11 +277,6 @@ int main(int argc, char** argv)
       Azure::Core::Diagnostics::Logger::SetLevel(
           Azure::Core::Diagnostics::Logger::Level::Informational);
     }
-
-    auto tracer{trace::Provider::GetTracerProvider()->GetTracer(EventHubsLoggerName)};
-    auto logger{opentelemetry::logs::Provider::GetLoggerProvider()->GetLogger(EventHubsLoggerName)};
-
-    logger->Log(opentelemetry::logs::Severity::kDebug, "Starting test.");
 
     std::cout << "===\tINITIALIZE TEST\t===" << std::endl;
     scenario->Initialize(args);
