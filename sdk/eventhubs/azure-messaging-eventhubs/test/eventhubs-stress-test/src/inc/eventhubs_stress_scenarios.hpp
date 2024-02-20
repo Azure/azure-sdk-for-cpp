@@ -57,5 +57,5 @@ public:
   virtual void Cleanup() = 0;
 
 protected:
-  ~EventHubsStressScenario(){};
+  virtual ~EventHubsStressScenario(){};
 };

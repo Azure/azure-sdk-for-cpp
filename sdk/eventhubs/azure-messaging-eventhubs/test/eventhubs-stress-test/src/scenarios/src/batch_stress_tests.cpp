@@ -136,7 +136,7 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   m_maxTimeouts = parserResults["MaxTimeouts"].as<uint32_t>(DefaultMaxTimeouts);
   m_verbose = parserResults["verbose"].as<bool>(false);
   m_useSasCredential = parserResults["UseSasCredential"].as<bool>(true);
-  if (m_rounds == -1)
+  if (m_rounds == 0xffffffff)
   {
     m_rounds = (std::numeric_limits<uint32_t>::max)();
   }
@@ -315,8 +315,8 @@ void BatchStressTest::ConsumeForBatchTester(
 
   do
   {
-
-    auto receiveContext = context.WithDeadline(Azure::DateTime::clock::now() + m_batchDuration);
+    auto duration = std::chrono::system_clock::now() + m_batchDuration;
+    auto receiveContext = context.WithDeadline(duration);
 
     try
     {
