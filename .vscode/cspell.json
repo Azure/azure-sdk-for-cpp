@@ -424,7 +424,8 @@
     {
       "filename": "**/vcpkg.json",
       "words": [
-        "umock"
+        "umock",
+        "otlp"
       ]
     }
   ],
