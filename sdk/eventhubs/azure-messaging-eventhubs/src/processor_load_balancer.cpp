@@ -122,7 +122,7 @@ std::vector<Azure::Messaging::EventHubs::Models::Ownership> ProcessorLoadBalance
   std::vector<Models::Ownership> randomOwnerships;
   std::vector<Models::Ownership> remainingOwnerships = ownerships;
 
-  size_t numOwnerships = std::min(ownerships.size(), count);
+  size_t numOwnerships = (std::min)(ownerships.size(), count);
 
   for (size_t i = 0; i < numOwnerships; i++)
   {

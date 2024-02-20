@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       const auto requestHeaders = request.GetHeaders();
       int64_t requestOffset = 0;
-      int64_t requestLength = std::numeric_limits<int64_t>::max();
+      int64_t requestLength = (std::numeric_limits<int64_t>::max)();
       {
         std::string rangeStr;
         if (requestHeaders.find("Range") != requestHeaders.end())
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Test {
               }
               auto response = std::make_unique<Core::Http::RawResponse>(
                   Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
-              int64_t bodyLength = std::min(
+              int64_t bodyLength = (std::min)(
                   static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
               auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                   reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Test {
             }
             auto response = std::make_unique<Core::Http::RawResponse>(
                 Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
-            int64_t bodyLength = std::min(
+            int64_t bodyLength = (std::min)(
                 static_cast<int64_t>(m_secondaryContent->length()) - requestOffset, requestLength);
             auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                 reinterpret_cast<const uint8_t*>(m_secondaryContent->data() + requestOffset),
@@ -430,7 +430,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), RandomString(), RandomString(), clientOptions);
     std::string downloadBuffer;
-    downloadBuffer.resize(std::max(primaryContent.size(), secondaryContent.size()));
+    downloadBuffer.resize((std::max)(primaryContent.size(), secondaryContent.size()));
     Blobs::DownloadBlobToOptions options;
     options.TransferOptions.InitialChunkSize = 2;
     options.TransferOptions.ChunkSize = 2;

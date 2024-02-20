@@ -79,7 +79,7 @@ Demonstrates writing messages to the Azure Event Hubs service using the AMQP pro
   senderOptions.Name = "sender-link";
   senderOptions.MessageSource = "source";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
-  senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+  senderOptions.MaxMessageSize = (std::numeric_limits<uint16_t>::max)();
 
   Azure::Core::Amqp::_internal::MessageSender sender(
       session, credentials->GetEntityPath(), senderOptions, nullptr);

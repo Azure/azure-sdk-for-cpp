@@ -308,7 +308,7 @@ AccessToken TokenCredentialImpl::ParseToken(
         if (value <= MaxExpirationInSeconds)
         {
           static_assert(
-              MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
+              MaxExpirationInSeconds <= (std::numeric_limits<std::int32_t>::max)(),
               "Can safely cast to int32");
 
           accessToken.ExpiresOn += std::chrono::seconds(static_cast<std::int32_t>(value));
@@ -335,7 +335,7 @@ AccessToken TokenCredentialImpl::ParseToken(
         if (value <= MaxExpirationInSeconds)
         {
           static_assert(
-              MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
+              MaxExpirationInSeconds <= (std::numeric_limits<std::int32_t>::max)(),
               "Can safely cast to int32");
 
           auto expiresInSeconds = std::chrono::seconds(static_cast<std::int32_t>(value));
@@ -356,7 +356,7 @@ AccessToken TokenCredentialImpl::ParseToken(
       {
         // 'expires_in' as numeric string (seconds until expiration)
         static_assert(
-            MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
+            MaxExpirationInSeconds <= (std::numeric_limits<std::int32_t>::max)(),
             "Can safely cast to int32");
 
         auto expiresInSeconds = std::chrono::seconds(static_cast<std::int32_t>(
@@ -495,8 +495,8 @@ std::string PrintSanitizedJsonObject(json const& jsonObject, bool printString, i
              std::function<std::string()>([&]() -> std::string {
                return std::to_string(ParseNumericExpiration(
                    stringValue,
-                   std::numeric_limits<std::int64_t>::max(),
-                   std::numeric_limits<std::int64_t>::min()));
+                   (std::numeric_limits<std::int64_t>::max)(),
+                   (std::numeric_limits<std::int64_t>::min)()));
              }),
              std::function<std::string()>([&]() -> std::string {
                return DateTime::Parse(stringValue, DateTime::DateFormat::Rfc1123)

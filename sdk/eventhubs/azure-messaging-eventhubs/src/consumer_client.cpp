@@ -108,7 +108,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize
-        = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+        = static_cast<uint32_t>((std::numeric_limits<int32_t>::max)());
 
     return m_connections.at(partitionId).CreateSession(sessionOptions);
   }

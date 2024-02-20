@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
   {
-    if (length > std::numeric_limits<DWORD>::max())
+    if (length > (std::numeric_limits<DWORD>::max)())
     {
       throw std::runtime_error("Failed to write file.");
     }
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
   {
-    if (offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
+    if (offset > static_cast<int64_t>((std::numeric_limits<off_t>::max)()))
     {
       throw std::runtime_error("Failed to write file.");
     }
