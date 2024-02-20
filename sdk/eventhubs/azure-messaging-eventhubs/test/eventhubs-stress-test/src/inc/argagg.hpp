@@ -814,7 +814,7 @@ inline bool cmd_line_arg_is_option_flag(const char* s)
   auto len = std::strlen(s);
 
   // The shortest possible flag has two characters: a hyphen and an
-  // alpha-numeric character.
+  // alpha-numeric character or ?
   if (len < 2)
   {
     return false;
@@ -850,7 +850,7 @@ inline bool cmd_line_arg_is_option_flag(const char* s)
   // The first character of the flag name must be alpha-numeric. This is to
   // prevent things like "---a" from being valid flags.
   len = std::strlen(name);
-  if (!std::isalnum(static_cast<unsigned char>(name[0])))
+  if (!std::isalnum(static_cast<unsigned char>(name[0])) && name[0] != '?')
   {
     return false;
   }
@@ -958,7 +958,7 @@ inline bool is_valid_flag_definition(const char* s)
 
 inline bool flag_is_short(const char* s)
 {
-  return s[0] == '-' && std::isalnum(static_cast<unsigned char>(s[1]));
+  return s[0] == '-' && (std::isalnum(static_cast<unsigned char>(s[1])) || s[1]=='?');
 }
 
 inline bool parser_map::known_short_flag(const char flag) const
@@ -1218,7 +1218,7 @@ inline parser_results parser::parse(int argc, const char** argv, bool posOnly) c
       {
         const auto short_flag = arg_i_cstr[sf_idx];
 
-        if (!std::isalnum(static_cast<unsigned char>(short_flag)))
+        if (!std::isalnum(static_cast<unsigned char>(short_flag)) && short_flag != '?')
         {
           std::ostringstream msg;
           msg << "found non-alphanumeric character '" << arg_i_cstr[sf_idx] << "' in flag group '"

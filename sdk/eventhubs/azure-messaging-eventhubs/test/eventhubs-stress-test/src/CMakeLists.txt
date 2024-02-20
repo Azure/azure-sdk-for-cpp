@@ -17,13 +17,16 @@ find_package(gRPC)
 
 set(INCLUDE_FILES 
   inc/eventhubs_stress_scenarios.hpp
-  scenarios/inc/produceconsumeevents.hpp
+  scenarios/inc/event_sender.hpp
+  scenarios/inc/opentelemetry_helpers.hpp
+  scenarios/inc/batch_stress_tests.hpp
   )
 
 
 set(SOURCE_FILES
   eventhubs_stress_test.cpp
-  scenarios/src/produceconsumeevents.cpp
+  scenarios/src/opentelemetry_helpers.cpp
+  scenarios/src/batch_stress_tests.cpp
   )
 
 

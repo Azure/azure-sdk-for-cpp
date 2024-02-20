@@ -94,11 +94,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ~ProducerClient()
     {
+    }
+
+    void Close(Azure::Core::Context const& context)
+    {
       for (auto& sender : m_senders)
       {
-        sender.second.Close();
+        sender.second.Close(context);
       }
       m_senders.clear();
+      //    for (auto& session : m_sessions)
+  //    {
+		//session.second.Close(context);
+	 // }
+  //    for (auto& connection : m_connections)
+  //    {
+		//connection.second.Close(context);
+	 // }
     }
 
     /** @brief Create a new EventDataBatch to be sent to the Event Hub.

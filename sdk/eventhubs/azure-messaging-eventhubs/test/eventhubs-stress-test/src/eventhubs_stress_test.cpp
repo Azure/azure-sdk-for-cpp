@@ -15,13 +15,13 @@
 #define ROUNDS 100
 
 #include "argagg.hpp"
+#include "batch_stress_tests.hpp"
 #include "eventhubs_stress_scenarios.hpp"
 #include "opentelemetry/sdk/logs/simple_log_record_processor_factory.h"
-#include "produceconsumeevents.hpp"
 
+#include <algorithm>
 #include <cctype>
 #include <iostream>
-#include <algorithm>
 #include <memory>
 
 #include <opentelemetry/exporters/otlp/otlp_http_exporter_factory.h>
@@ -45,9 +45,10 @@ namespace logs = opentelemetry::logs;
 namespace otlp = opentelemetry::exporter::otlp;
 namespace internal_log = opentelemetry::sdk::common::internal_log;
 
-opentelemetry::exporter::otlp::OtlpHttpExporterOptions opts;
 void InitTracer()
 {
+  opentelemetry::exporter::otlp::OtlpHttpExporterOptions opts;
+
   // Create OTLP exporter instance
   auto exporter = otlp::OtlpHttpExporterFactory::Create(opts);
   auto processor = trace_sdk::SimpleSpanProcessorFactory::Create(std::move(exporter));
@@ -57,114 +58,36 @@ void InitTracer()
   trace::Provider::SetTracerProvider(provider);
 }
 
-opentelemetry::exporter::otlp::OtlpHttpLogRecordExporterOptions logger_opts;
+#if defined(_DEBUG)
+constexpr const bool LogDefault = true;
+#else
+constexpr const bool LogDefault = false;
+#endif
+
+bool LogToConsole{LogDefault};
+
 void InitLogger()
 {
+  opentelemetry::exporter::otlp::OtlpHttpLogRecordExporterOptions logger_opts;
 
-  std::cout << "Using " << logger_opts.url << " to export log records." << std::endl;
-  logger_opts.console_debug = false;
-  // Create OTLP exporter instance
-  auto exporter = otlp::OtlpHttpLogRecordExporterFactory::Create(logger_opts);
-  auto processor = logs_sdk::SimpleLogRecordProcessorFactory::Create(std::move(exporter));
-  std::shared_ptr<logs::LoggerProvider> provider
-      = logs_sdk::LoggerProviderFactory::Create(std::move(processor));
-
-  logs::Provider::SetLoggerProvider(provider);
-}
-
-void CleanupTracer()
-{
-  // We call ForceFlush to prevent to cancel running exportings, It's optional.
-  opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> provider
-      = trace::Provider::GetTracerProvider();
-  if (provider)
+  if (LogToConsole)
   {
-    static_cast<trace_sdk::TracerProvider*>(provider.get())->ForceFlush();
+    std::cout << "Using console to export log records." << std::endl;
   }
-
-  std::shared_ptr<opentelemetry::trace::TracerProvider> none;
-  trace::Provider::SetTracerProvider(none);
-}
-
-void Usage(argagg::parser const& argparser)
-{
-  argagg::fmt_ostream fmt(std::cerr);
-  fmt << "Usage azure-messaging-eventhubs-stress-test [options] " << std::endl << argparser;
-}
-
-bool CompareString(std::string lhs, std::string rhs)
-{
-  std::transform(lhs.begin(), lhs.end(), lhs.begin(), tolower);
-  std::transform(rhs.begin(), rhs.end(), rhs.begin(), tolower);
-  return lhs == rhs;
-}
-
-  int main(int argc, char** argv)
-{
-  try
+  else
   {
-    std::vector<std::shared_ptr<EventHubsStressScenario>> scenarios{
-        std::make_shared<ProduceConsumeEvents>(),
-    };
+    std::cout << "Using " << logger_opts.url << " to export log records." << std::endl;
+    logger_opts.console_debug = false;
+    // Create OTLP exporter instance
+    auto exporter = otlp::OtlpHttpLogRecordExporterFactory::Create(logger_opts);
+    auto processor = logs_sdk::SimpleLogRecordProcessorFactory::Create(std::move(exporter));
+    std::shared_ptr<logs::LoggerProvider> provider
+        = logs_sdk::LoggerProviderFactory::Create(std::move(processor));
 
-    argagg::parser argparser{
-        {{"scenario", {"-s", "--scenario"}, "Scenario to run", 1},
-         {"warmups", {"-w", "--warmups"}, "Number of pre-measurement iterations to run", 1},
-         {"rounds", {"-r", "--rounds"}, "Number of iterations iterations to run the test", 1},
-         {"requests", {"-R", "--requests"}, "Number of requests per round", 1},
-         {"help", {"-?", "--help"}, "This help message.", 0}}};
+    logs::Provider::SetLoggerProvider(provider);
 
-    argagg::parser_results args;
-    try
-    {
-      args = argparser.parse(argc, argv);
-    }
-    catch (const std::exception& e)
-    {
-      std::cerr << "Exception thrown parsing command line: " << e.what();
-
-      Usage(argparser);
-
-      return -1;
-    }
-
-    if (args.has_option("help"))
-    {
-      Usage(argparser);
-      return -1;
-    }
-
-    auto rounds = args["rounds"].as<int>(ROUNDS);
-    auto warmup = args["warmups"].as<int>(WARMUP);
-    auto scenarioName = args["scenario"].as<std::string>("produceconsumeevents");
-
-    std::shared_ptr<EventHubsStressScenario> scenario;
-    for (const auto& scenarioToCheck : scenarios)
-    {
-      if (CompareString(scenarioToCheck->GetStressScenarioName(), scenarioName))
-      {
-        scenario = scenarioToCheck;
-        break;
-      }
-    }
-    if (!scenario)
-    {
-      std::cerr << "Unknown scenario name " << scenarioName << "." << std::endl;
-      std::cerr << "Known scenarios are:" << std::endl;
-      for (const auto& scenarioToCheck : scenarios)
-      {
-        std::cerr << "    " << scenarioToCheck->GetStressScenarioName();
-      }
-      return -1;
-    }
-
-    std::cout << "Running stress scenario " << scenario->GetStressScenarioName() << std::endl;
-
-    InitTracer();
-    InitLogger();
-
-    Azure::Core::Diagnostics::Logger::SetLevel(
-        Azure::Core::Diagnostics::Logger::Level::Informational);
+    // Integrate the azure logging diagnostics with the OpenTelemetry logger provider we just
+    // created.
     Azure::Core::Diagnostics::Logger::SetListener(
         [](Azure::Core::Diagnostics::Logger::Level level, std::string const& message) {
           logs::Severity logSeverity{logs::Severity::kInvalid};
@@ -189,50 +112,187 @@ bool CompareString(std::string lhs, std::string rhs)
         });
 
     internal_log::GlobalLogHandler::SetLogLevel(internal_log::LogLevel::Error);
+  }
+}
+
+void CleanupTracer()
+{
+  // We call ForceFlush to prevent to cancel running exportings, It's optional.
+  opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> provider
+      = trace::Provider::GetTracerProvider();
+  if (provider)
+  {
+    static_cast<trace_sdk::TracerProvider*>(provider.get())->ForceFlush();
+  }
+
+  std::shared_ptr<opentelemetry::trace::TracerProvider> none;
+  trace::Provider::SetTracerProvider(none);
+}
+
+void Usage(
+    argagg::parser const& argparser,
+    const std::vector<std::shared_ptr<EventHubsStressScenario>>& scenarios)
+{
+  argagg::fmt_ostream fmt(std::cerr);
+  fmt << "Usage azure-messaging-eventhubs-stress-test [options] " << std::endl << argparser;
+
+  fmt << std::endl;
+  fmt << "Scenario Options:" << std::endl;
+  for (const auto& scenario : scenarios)
+  {
+    fmt << "Scenario: " << scenario->GetStressScenarioName() << std::endl;
+    for (const auto& option : scenario->GetScenarioOptions())
+    {
+      fmt << "    ";
+      for (auto& arg : option.Activators)
+      {
+        fmt << arg;
+        if (arg != option.Activators.back())
+        {
+          fmt << ", ";
+        }
+      }
+      fmt << "\n        " << option.HelpMessage << '\n';
+    }
+  }
+}
+
+bool CompareString(std::string lhs, std::string rhs)
+{
+  std::transform(lhs.begin(), lhs.end(), lhs.begin(), tolower);
+  std::transform(rhs.begin(), rhs.end(), rhs.begin(), tolower);
+  return lhs == rhs;
+}
+
+int main(int argc, char** argv)
+{
+  try
+  {
+    std::vector<std::shared_ptr<EventHubsStressScenario>> scenarios{
+        std::make_shared<BatchStressTest>(),
+    };
+
+    std::shared_ptr<EventHubsStressScenario> scenario;
+    {
+      argagg::parser argparser;
+      //{
+      //    {
+      //        {"scenario", {"-s", "--scenario"}, "Scenario to run", 1},
+      //        {"console", {"--console"}, "Log output traces to console", 0},
+      //        {"help", {"-?", "-h", "--help"}, "This help message.", 0},
+      //    },
+      //};
+
+      argagg::parser_results args;
+      try
+      {
+        args = argparser.parse(argc, argv, true);
+      }
+      catch (const std::exception& e)
+      {
+        std::cerr << "Exception thrown parsing command line: " << e.what();
+
+        Usage(argparser, scenarios);
+
+        return -1;
+      }
+
+      std::string scenarioName;
+      if (args.pos.size() > 0)
+      {
+        scenarioName = args.pos[0];
+      }
+      else
+      {
+        std::cerr << "No scenario name provided." << std::endl;
+        Usage(argparser, scenarios);
+        return -1;
+      }
+      for (const auto& scenarioToCheck : scenarios)
+      {
+        if (CompareString(scenarioToCheck->GetStressScenarioName(), scenarioName))
+        {
+          scenario = scenarioToCheck;
+          break;
+        }
+      }
+      if (!scenario)
+      {
+        std::cerr << "Unknown scenario name " << scenarioName << "." << std::endl;
+        std::cerr << "Known scenarios are:" << std::endl;
+        for (const auto& scenarioToCheck : scenarios)
+        {
+          std::cerr << "    " << scenarioToCheck->GetStressScenarioName();
+        }
+        return -1;
+      }
+    }
+
+    std::cout << "Running stress scenario " << scenario->GetStressScenarioName() << std::endl;
+
+    // Now we know the scenario, reparse the command line using the scenario specific options.
+    auto scenarioOptions{scenario->GetScenarioOptions()};
+    argagg::parser argparser{{
+        {"console", {"--console"}, "Log output traces to console", 0},
+        {"help", {"-?", "-h", "--help"}, "This help message.", 0},
+        {"verbose", {"-v", "--verbose"}, "Enable verbose logging", 0},
+    }};
+    for (const auto& option : scenarioOptions)
+    {
+      argparser.definitions.push_back(
+          {option.Name, option.Activators, option.HelpMessage, option.ExpectedArgs});
+    }
+    argagg::parser_results args;
+    try
+    {
+      args = argparser.parse(argc, argv);
+    }
+    catch (const std::exception& e)
+    {
+      std::cerr << "Exception thrown parsing command line: " << e.what();
+
+      Usage(argparser, scenarios);
+
+      return -1;
+    }
+    // Log to the console or to OpenTelemetry logs.
+    LogToConsole = args["console"].as<bool>(LogDefault);
+    if (args.has_option("help"))
+    {
+      Usage(argparser, scenarios);
+      return 0;
+    }
+
+    InitTracer();
+    InitLogger();
+
+    if (args.has_option("verbose"))
+    {
+      Azure::Core::Diagnostics::Logger::SetLevel(Azure::Core::Diagnostics::Logger::Level::Verbose);
+    }
+    else
+    {
+      Azure::Core::Diagnostics::Logger::SetLevel(
+          Azure::Core::Diagnostics::Logger::Level::Informational);
+    }
 
     auto tracer{trace::Provider::GetTracerProvider()->GetTracer(EventHubsLoggerName)};
     auto logger{opentelemetry::logs::Provider::GetLoggerProvider()->GetLogger(EventHubsLoggerName)};
 
     logger->Log(opentelemetry::logs::Severity::kDebug, "Starting test.");
 
-    auto span{tracer->StartSpan("span 1")};
-    auto scope{trace::Tracer::WithActiveSpan(span)};
+    std::cout << "===\tINITIALIZE TEST\t===" << std::endl;
+    scenario->Initialize(args);
 
-    span->AddEvent("EventHubs Stress started.");
+    std::cout << "===\tRUN TEST\t===" << std::endl;
+    scenario->Run();
 
-    std::cout << "--------------\tSTARTING TEST\t--------------" << std::endl;
-    scenario->Initialize();
-    std::cout << "--------------\tPRE WARMUP\t--------------" << std::endl;
-    {
-      trace::StartSpanOptions spanOptions;
-      spanOptions.parent = span->GetContext();
-      spanOptions.kind = trace::SpanKind::kClient;
-      std::map<std::string, size_t> attributes{{"iterations", warmup}};
-      auto warmupSpan{tracer->StartSpan("Warmup", attributes, spanOptions)};
-      auto warmupScope{trace::Tracer::WithActiveSpan(warmupSpan)};
-
-      warmupSpan->AddEvent("Begin Warmup.");
-      scenario->Warmup(warmup);
-      warmupSpan->AddEvent("End Warmup.");
-      warmupSpan->End();
-    }
-    std::cout << "--------------\tPOST WARMUP\t--------------" << std::endl;
-
-    for (int i = 0; i < rounds; i++)
-    {
-      std::cout << "--------------\tTEST ITERATION:" << i << "\t--------------" << std::endl;
-
-      scenario->Run(REQUESTS);
-
-      std::cout << "--------------\tDONE ITERATION:" << i << "\t--------------" << std::endl;
-    }
-
+    std::cout << "===\tCLEANUP TEST\t===" << std::endl;
     scenario->Cleanup();
   }
   catch (std::exception const& ex)
   {
     std::cerr << "Test failed due to exception thrown: " << ex.what() << std::endl;
-
   }
   CleanupTracer();
   return 0;
