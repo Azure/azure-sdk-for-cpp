@@ -344,7 +344,7 @@
       ]
     },
     {
-      "filename": "**/sdk/eventhubs/azure-messaging-eventhubs/test/**/*",
+      "filename": "**/sdk/eventhubs/azure-messaging-eventhubs/**/*",
       "words": [
         "otlp",
         "Otlp",
