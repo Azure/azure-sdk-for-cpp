@@ -18,8 +18,7 @@ spec:
           cpu: "0.5"
       env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-#          value: "InstrumentationKey=74b963eb-44c8-4d4d-987d-9a8b4cb2c787;IngestionEndpoint=https://westus3-1.in.applicationinsights.azure.com/"
-          value: "InstrumentationKey=92d986a9-78e2-41de-b25b-21bea2e1d7cc;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+          value: "TO BE FILLED IN LATER."
     - name: main
       image: {{ .Stress.imageTag }}
       imagePullPolicy: Always
