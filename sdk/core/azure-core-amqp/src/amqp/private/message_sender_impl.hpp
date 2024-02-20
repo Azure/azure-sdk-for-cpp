@@ -9,7 +9,6 @@
 
 #include <azure_uamqp_c/message_sender.h>
 
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
   {

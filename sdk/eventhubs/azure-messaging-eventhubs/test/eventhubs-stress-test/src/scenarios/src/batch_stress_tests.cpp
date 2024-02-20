@@ -108,7 +108,8 @@ std::vector<EventHubsScenarioOptions> BatchScenarioOptions{
 
 // Default option values.
 
-// Note that the DefaultNumberToSend value is artificially reduced to 100 until the MessageSender::Open code fully supports Open.
+// Note that the DefaultNumberToSend value is artificially reduced to 100 until the
+// MessageSender::Open code fully supports Open.
 constexpr const std::uint32_t DefaultNumberToSend = /*1000000*/ 100;
 constexpr const std::uint32_t DefaultBatchSize = 1000;
 constexpr const std::uint32_t DefaultPrefetch = 0;

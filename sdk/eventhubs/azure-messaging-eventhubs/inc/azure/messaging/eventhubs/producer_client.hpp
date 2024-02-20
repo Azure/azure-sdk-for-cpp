@@ -92,9 +92,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         ProducerClientOptions options = {});
 
-    ~ProducerClient()
-    {
-    }
+    ~ProducerClient() {}
 
     void Close(Azure::Core::Context const& context = {})
     {
@@ -104,13 +102,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       m_senders.clear();
       //    for (auto& session : m_sessions)
-  //    {
-		//session.second.Close(context);
-	 // }
-  //    for (auto& connection : m_connections)
-  //    {
-		//connection.second.Close(context);
-	 // }
+      //    {
+      // session.second.Close(context);
+      // }
+      //    for (auto& connection : m_connections)
+      //    {
+      // connection.second.Close(context);
+      // }
     }
 
     /** @brief Create a new EventDataBatch to be sent to the Event Hub.

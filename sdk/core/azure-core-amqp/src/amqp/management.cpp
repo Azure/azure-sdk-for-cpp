@@ -11,7 +11,6 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
-
 #include <iostream>
 #include <memory>
 #include <string>

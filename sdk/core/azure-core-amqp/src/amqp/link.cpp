@@ -12,7 +12,6 @@
 #include "private/link_impl.hpp"
 #include "private/session_impl.hpp"
 
-
 #include <azure_uamqp_c/link.h>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {

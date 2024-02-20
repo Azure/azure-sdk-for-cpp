@@ -938,7 +938,7 @@ inline bool is_valid_flag_definition(const char* s)
   // prevent things like "---a" from being valid flags.
   // We do want to allow '?' as the first character of a flag name for help.
   len = std::strlen(name);
-  if (!std::isalnum(static_cast<unsigned char>(name[0])) && name[0] !='?')
+  if (!std::isalnum(static_cast<unsigned char>(name[0])) && name[0] != '?')
   {
     return false;
   }
@@ -958,7 +958,7 @@ inline bool is_valid_flag_definition(const char* s)
 
 inline bool flag_is_short(const char* s)
 {
-  return s[0] == '-' && (std::isalnum(static_cast<unsigned char>(s[1])) || s[1]=='?');
+  return s[0] == '-' && (std::isalnum(static_cast<unsigned char>(s[1])) || s[1] == '?');
 }
 
 inline bool parser_map::known_short_flag(const char flag) const

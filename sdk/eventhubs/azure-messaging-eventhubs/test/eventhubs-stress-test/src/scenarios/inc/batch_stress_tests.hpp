@@ -49,8 +49,7 @@ private:
       Azure::Messaging::EventHubs::Models::StartPosition,
       Azure::Messaging::EventHubs::Models::EventHubPartitionProperties>
   SendMessages();
-  void ReceiveMessages(
-      Azure::Messaging::EventHubs::Models::StartPosition const& startPosition);
+  void ReceiveMessages(Azure::Messaging::EventHubs::Models::StartPosition const& startPosition);
   void ConsumeForBatchTester(
       uint32_t round,
       Azure::Messaging::EventHubs::ConsumerClient& client,

@@ -5,7 +5,7 @@
 
 #include "argagg.hpp"
 
-constexpr const char * EventHubsLoggerName = "eventhubs_stress_test";
+constexpr const char* EventHubsLoggerName = "eventhubs_stress_test";
 
 extern bool LogToConsole;
 
