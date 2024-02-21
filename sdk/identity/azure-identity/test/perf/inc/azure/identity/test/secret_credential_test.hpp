@@ -43,6 +43,7 @@ namespace Azure { namespace Identity { namespace Test {
       m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
       if (!m_options.GetOptionOrDefault<bool>("Cache", false))
       {
+        // having this set ignores the credentials cache and forces a new token to be requested
         m_tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
       }
       m_credential = std::make_unique<Azure::Identity::ClientSecretCredential>(
