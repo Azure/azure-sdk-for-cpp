@@ -22,43 +22,34 @@ namespace Azure { namespace Identity { namespace Test {
    * @brief A test to measure the authentication token performance.
    *
    */
-  class SecretCredentialTest : public Azure::Perf::PerfTest {
+  class EnvironmentCredentialTest : public Azure::Perf::PerfTest {
   private:
-    std::string m_tenantId;
-    std::string m_clientId;
-    std::string m_secret;
     Core::Credentials::TokenRequestContext m_tokenRequestContext;
     std::unique_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
 
   public:
     /**
-     * @brief Get the Id and secret
+     * @brief Setup the test
      *
      */
     void Setup() override
     {
-      m_tenantId = m_options.GetMandatoryOption<std::string>("TenantId");
-      m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
-      m_secret = m_options.GetMandatoryOption<std::string>("Secret");
       m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
       if (!m_options.GetOptionOrDefault<bool>("Cache", false))
       {
         // having this set ignores the credentials cache and forces a new token to be requested
         m_tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
       }
-      m_credential = std::make_unique<Azure::Identity::ClientSecretCredential>(
-          m_tenantId,
-          m_clientId,
-          m_secret,
+      m_credential = std::make_unique<Azure::Identity::EnvironmentCredential>(
           InitClientOptions<Azure::Core::Credentials::TokenCredentialOptions>());
     }
 
     /**
-     * @brief Construct a new SecretCredentialTest test.
+     * @brief Construct a new EnvironmentCredentialTest test.
      *
      * @param options The test options.
      */
-    SecretCredentialTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
+    EnvironmentCredentialTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
     /**
      * @brief Define the test
@@ -79,10 +70,8 @@ namespace Azure { namespace Identity { namespace Test {
     {
       return {
           {"Cache", {"--cache"}, "Use credential cache.", 1, false},
-          {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, true},
           {"Scope", {"--scope"}, "One scope to request access to.", 1, true},
-          {"Secret", {"--secret"}, "The secret for authentication.", 1, true, true},
-          {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, true}};
+      };
     }
 
     /**
@@ -93,10 +82,10 @@ namespace Azure { namespace Identity { namespace Test {
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {
-          "SecretCredential",
+          "EnvironmentCredential",
           "Get a token using a secret client token credential.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Identity::Test::SecretCredentialTest>(options);
+            return std::make_unique<Azure::Identity::Test::EnvironmentCredentialTest>(options);
           }};
     }
   };

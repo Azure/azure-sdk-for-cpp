@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_IDENTITY_PERF_TEST_HEADER
+  inc/azure/identity/test/client_certificate_credential_test.hpp
+  inc/azure/identity/test/environment_credential_test.hpp
   inc/azure/identity/test/secret_credential_test.hpp
 )
 
