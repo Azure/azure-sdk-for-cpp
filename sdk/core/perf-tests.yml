@@ -21,6 +21,12 @@ Tests:
     Class: extendedOptions
     Arguments:
     - --e 1
+  
+  - Test: httpTransport
+    Class: httpTransport
+    Arguments:
+    - --test-proxies http://127.0.0.1:5000 --method GET --transport curl 
+    - --test-proxies http://127.0.0.1:5000 --method POST --transport curl
 
   - Test: json
     Class: json
@@ -38,6 +44,11 @@ Tests:
     Arguments:
     - --e 1
     
+  - Test: pipelineBase
+    Class: pipelineBase
+    Arguments:
+    - --test-proxies http://127.0.0.1:5000 --count 100 --policies LogPolicy,TestPolicy
+
   - Test: uuid
     Class: uuid
     Arguments:
