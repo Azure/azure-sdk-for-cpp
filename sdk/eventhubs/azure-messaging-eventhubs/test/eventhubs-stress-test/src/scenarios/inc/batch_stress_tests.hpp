@@ -54,7 +54,7 @@ private:
       uint32_t round,
       Azure::Messaging::EventHubs::ConsumerClient& client,
       Azure::Messaging::EventHubs::Models::StartPosition const& startPosition,
-      Azure::Core::Context const& context);
+      Azure::Core::Context const& context) const;
 
   // Inherited via EventHubsStressScenario
   const std::string& GetStressScenarioName() override;
