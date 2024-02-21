@@ -529,13 +529,21 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   }
   void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
   {
-    // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
-    // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
-    // state before the lock is released.
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
-    std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
-    m_stowedErrorInformation = stowedErrorInformation;
-    m_stowedError = stowedError;
+    if (m_expectedStatus != WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
+    {
+      // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
+      // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
+      // state before the lock is released.
+      auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+      std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
+      m_stowedErrorInformation = stowedErrorInformation;
+      m_stowedError = stowedError;
+    }
+    else
+    {
+      Log::Write(
+          Logger::Level::Verbose, "Received error while closing: " + std::to_string(stowedError));
+    }
   }
 
   DWORD WinHttpAction::GetStowedError()
@@ -571,10 +579,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     {
       return;
     }
-
+    WinHttpAction* httpAction = reinterpret_cast<WinHttpAction*>(dwContext);
     try
     {
-      WinHttpAction* httpAction = reinterpret_cast<WinHttpAction*>(dwContext);
       httpAction->OnHttpStatusOperation(
           hInternet, internetStatus, statusInformation, statusInformationLength);
     }
@@ -585,6 +592,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           Logger::Level::Error,
           "Request Failed Exception Thrown: " + std::string(rfe.what()) + rfe.Message);
       WinHttpCloseHandle(hInternet);
+      httpAction->m_httpRequest->MarkRequestHandleClosed();
     }
     catch (std::exception const& ex)
     {

@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"count", {"-c"}, "The number of uuid objects to be created.", 1, true}};
+      return {{"count", {"--c"}, "The number of uuid objects to be created.", 1, true}};
     }
 
     /**
@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {
-          "UuidTest",
+          "uuid",
           "Measures the overhead of using Uuid objects",
           [](Azure::Perf::TestOptions options) {
             return std::make_unique<Azure::Core::Test::UuidTest>(options);
