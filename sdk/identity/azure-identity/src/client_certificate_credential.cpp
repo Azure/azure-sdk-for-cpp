@@ -503,7 +503,7 @@ AccessToken ClientCertificateCredential::GetToken(
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
   return m_tokenCache.GetToken(scopesStr, tenantId, tokenRequestContext.MinimumExpiration, [&]() {
-    return m_tokenCredentialImpl->GetToken(context, [&]() {
+    return m_tokenCredentialImpl->GetToken(context, false, [&]() {
       auto body = m_requestBody;
       if (!scopesStr.empty())
       {

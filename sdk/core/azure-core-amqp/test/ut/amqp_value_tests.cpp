@@ -25,16 +25,25 @@ protected:
   void TearDown() override {}
 };
 
+#define TEST_OSTREAM_INSERTER(VALUE, EXPECTED) \
+  { \
+    std::stringstream ss; \
+    ss << VALUE.GetType(); \
+    EXPECT_EQ(EXPECTED, ss.str()); \
+  }
+
 TEST_F(TestValues, SimpleCreate)
 {
   {
     AmqpValue value;
     EXPECT_EQ(AmqpValueType::Null, value.GetType());
   }
+
   {
     AmqpValue value{true};
     EXPECT_EQ(AmqpValueType::Bool, value.GetType());
     EXPECT_TRUE(value);
+    TEST_OSTREAM_INSERTER(value, "Bool");
   }
   {
     AmqpValue value{false};
@@ -43,6 +52,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<char>(value));
     EXPECT_ANY_THROW((void)static_cast<std::int8_t>(value));
+    TEST_OSTREAM_INSERTER(value, "Bool");
   }
   {
     EXPECT_LT(AmqpValue(false), AmqpValue(true));
@@ -50,6 +60,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value{};
     EXPECT_TRUE(value.IsNull());
+    TEST_OSTREAM_INSERTER(value, "Null");
   }
 
   {
@@ -57,6 +68,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Byte, value.GetType());
     EXPECT_EQ(-17, static_cast<int8_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
+    TEST_OSTREAM_INSERTER(value, "Byte");
     EXPECT_LT(AmqpValue{static_cast<int8_t>(-18)}, value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_ANY_THROW((void)static_cast<unsigned char>(value));
@@ -75,6 +87,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value{static_cast<uint8_t>(255)};
     EXPECT_EQ(AmqpValueType::Ubyte, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Ubyte");
     EXPECT_EQ(255, static_cast<uint8_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -84,6 +97,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value{'D'};
     EXPECT_EQ(AmqpValueType::Byte, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Byte");
     EXPECT_EQ(static_cast<char>(68), static_cast<std::int8_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     char ch{value};
@@ -95,6 +109,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value{static_cast<uint16_t>(65535)};
     EXPECT_EQ(AmqpValueType::Ushort, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Ushort");
     EXPECT_EQ(65535, static_cast<uint16_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -103,6 +118,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value{static_cast<int16_t>(32767)};
     EXPECT_EQ(AmqpValueType::Short, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Short");
     EXPECT_EQ(32767, static_cast<int16_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -112,6 +128,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value(32);
     EXPECT_EQ(AmqpValueType::Int, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Int");
     EXPECT_EQ(32, static_cast<int32_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -120,6 +137,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value(32u);
     EXPECT_EQ(AmqpValueType::Uint, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Uint");
     EXPECT_EQ(32u, static_cast<uint32_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -129,6 +147,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value(static_cast<int64_t>(32ll));
     EXPECT_EQ(AmqpValueType::Long, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Long");
     EXPECT_EQ(32ll, static_cast<int64_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -137,6 +156,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value(static_cast<uint64_t>(39ull));
     EXPECT_EQ(AmqpValueType::Ulong, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Ulong");
     EXPECT_EQ(39ull, static_cast<uint64_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -146,6 +166,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value(39.0f);
     EXPECT_EQ(AmqpValueType::Float, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Float");
     EXPECT_EQ(39.0f, static_cast<float>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -154,6 +175,7 @@ TEST_F(TestValues, SimpleCreate)
   {
     AmqpValue value(39.0);
     EXPECT_EQ(AmqpValueType::Double, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Double");
     EXPECT_EQ(39.0, static_cast<double>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -162,6 +184,7 @@ TEST_F(TestValues, SimpleCreate)
 
   {
     AmqpValue value(39.0);
+    TEST_OSTREAM_INSERTER(value, "Double");
     double d{value};
     EXPECT_EQ(39.0, d);
     EXPECT_TRUE(AmqpValue() < value);
@@ -171,6 +194,7 @@ TEST_F(TestValues, SimpleCreate)
     AmqpValue value(std::string("Fred"));
     std::string fredP(value);
     EXPECT_EQ(AmqpValueType::String, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "String");
     EXPECT_EQ(std::string("Fred"), fredP);
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -180,6 +204,7 @@ TEST_F(TestValues, SimpleCreate)
     AmqpValue value("Fred");
     std::string fredP(value);
     EXPECT_EQ(AmqpValueType::String, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "String");
     EXPECT_EQ(std::string("Fred"), fredP);
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -189,6 +214,7 @@ TEST_F(TestValues, SimpleCreate)
     Azure::Core::Uuid uuid = Azure::Core::Uuid::CreateUuid();
     AmqpValue value(uuid);
     EXPECT_EQ(AmqpValueType::Uuid, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Uuid");
     EXPECT_EQ(uuid.ToString(), static_cast<Azure::Core::Uuid>(value).ToString());
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
@@ -215,6 +241,8 @@ TEST_F(TestValues, TestBinary)
     binaryData.push_back('a');
     binaryData.push_back(3);
     AmqpValue value{binaryData.AsAmqpValue()};
+    EXPECT_EQ(AmqpValueType::Binary, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Binary");
 
     EXPECT_FALSE(value < binaryData.AsAmqpValue());
 
@@ -251,6 +279,7 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValue('a'), list1[3]);
 
     AmqpValue value{list1.AsAmqpValue()};
+    TEST_OSTREAM_INSERTER(value, "List");
     const AmqpList list2(value);
 
     EXPECT_FALSE(value < list1.AsAmqpValue());
@@ -272,6 +301,7 @@ TEST_F(TestValues, TestList)
     test.push_back(desc.AsAmqpValue());
     EXPECT_EQ(1, test.size());
     EXPECT_EQ(AmqpValueType::Described, test[0].GetType());
+    TEST_OSTREAM_INSERTER(test[0], "Described");
 
     AmqpList list2{test};
     EXPECT_EQ(1, list2.size());
@@ -310,6 +340,7 @@ TEST_F(TestValues, TestMap)
 
     // Now round-trip the map through an AMQP value and confirm that the values persist.
     AmqpValue valueOfMap = map1.AsAmqpValue();
+    TEST_OSTREAM_INSERTER(valueOfMap, "Map");
     AmqpMap map2(valueOfMap);
     EXPECT_FALSE(valueOfMap < map1.AsAmqpValue());
 
@@ -327,6 +358,7 @@ TEST_F(TestValues, TestArray)
 
   AmqpValue value = array1.AsAmqpValue();
   EXPECT_EQ(AmqpValueType::Array, value.GetType());
+  TEST_OSTREAM_INSERTER(value, "Array");
 
   const AmqpArray array2 = value.AsArray();
   EXPECT_EQ(5, array2.size());
@@ -351,6 +383,7 @@ TEST_F(TestValues, TestChar)
 {
   {
     AmqpValue value{U'\U0001f34c'};
+    TEST_OSTREAM_INSERTER(value, "Char");
     EXPECT_EQ(U'\U0001f34c', static_cast<char32_t>(value));
     EXPECT_EQ(AmqpValueType::Char, value.GetType());
     EXPECT_FALSE(static_cast<char32_t>(value) < U'\U0001f34c');
@@ -369,6 +402,7 @@ TEST_F(TestValues, TestTimestamp)
     AmqpTimestamp value{timeNow};
     EXPECT_EQ(static_cast<std::chrono::milliseconds>(value), timeNow);
     AmqpValue av{value.AsAmqpValue()};
+    TEST_OSTREAM_INSERTER(av, "Timestamp");
 
     AmqpTimestamp ts2{av.AsTimestamp()};
     EXPECT_EQ(timeNow, static_cast<std::chrono::milliseconds>(ts2));
@@ -386,7 +420,8 @@ TEST_F(TestValues, TestSymbol)
     AmqpSymbol value("timeNow");
     EXPECT_EQ(value, "timeNow");
     EXPECT_FALSE(value < AmqpSymbol("timeNow"));
-    GTEST_LOG_(INFO) << "Symbol value: " << value;
+    AmqpValue av{value.AsAmqpValue()};
+    TEST_OSTREAM_INSERTER(av, "Symbol");
   }
   {
     AmqpValue boolValue{false};
@@ -425,6 +460,7 @@ TEST_F(TestValues, TestCompositeValue)
   {
     AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
     AmqpValue value = compositeVal.AsAmqpValue();
+    TEST_OSTREAM_INSERTER(value, "Composite");
     AmqpComposite testVal(value.AsComposite());
 
     EXPECT_EQ(compositeVal.size(), testVal.size());
@@ -447,6 +483,7 @@ TEST_F(TestValues, TestDescribed)
 
     AmqpValue value = described1.AsAmqpValue();
     EXPECT_EQ(AmqpValueType::Described, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Described");
 
     AmqpDescribed described2 = value.AsDescribed();
     EXPECT_EQ(AmqpValueType::Described, value.GetType());
