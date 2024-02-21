@@ -13,6 +13,7 @@ using Azure::Core::Context;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Credentials::_detail::AuthorizationChallengeHelper;
+using Azure::Core::Http::Request;
 using Azure::Core::Http::RawResponse;
 using Azure::Core::Http::Policies::NextHttpPolicy;
 
@@ -83,7 +84,7 @@ void ApplyBearerToken(
 
 void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
     Request& request,
-    Credentials::TokenRequestContext const& tokenRequestContext,
+    TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
   DateTime const currentTime = std::chrono::system_clock::now();
