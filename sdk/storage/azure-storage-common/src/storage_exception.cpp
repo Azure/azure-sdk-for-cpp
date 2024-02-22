@@ -141,7 +141,8 @@ namespace Azure { namespace Storage {
       }
     }
 
-    if (errorCode.empty() && response->GetHeaders().find("x-ms-error-code") != response->GetHeaders().end())
+    if (errorCode.empty()
+        && response->GetHeaders().find("x-ms-error-code") != response->GetHeaders().end())
     {
       errorCode = response->GetHeaders().at("x-ms-error-code");
     }
