@@ -101,6 +101,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         sender.second.Close(context);
       }
       m_senders.clear();
+      // Other possible things we might want to do in close, but cannot quite do yet because it doesn't necessarily work correctly.
       //    for (auto& session : m_sessions)
       //    {
       // session.second.Close(context);

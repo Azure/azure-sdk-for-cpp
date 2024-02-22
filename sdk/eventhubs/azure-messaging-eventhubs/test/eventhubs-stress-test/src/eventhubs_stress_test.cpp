@@ -112,7 +112,7 @@ void InitLogger()
 
 void CleanupTracer()
 {
-  // We call ForceFlush to prevent to cancel running exportings, It's optional.
+  // We call ForceFlush to prevent to cancel running exports, It's optional.
   opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> provider
       = trace::Provider::GetTracerProvider();
   if (provider)
