@@ -94,6 +94,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ~ProducerClient() {}
 
+    /** @brief Close all the connections and sessions.
+     *
+     * @param context Context for the operation can be used for request cancellation.
+     */
     void Close(Azure::Core::Context const& context = {})
     {
       for (auto& sender : m_senders)

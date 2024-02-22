@@ -297,7 +297,7 @@ void BatchStressTest::ConsumeForBatchTester(
     uint32_t round,
     ConsumerClient& client,
     Models::StartPosition const& startPosition,
-    Azure::Core::Context const& context)
+    Azure::Core::Context const& context) const
 {
   std::unique_ptr<PartitionClient> partitionClient;
   {

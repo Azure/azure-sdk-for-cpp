@@ -26,4 +26,4 @@ Obviously after logging in to the acr "az acr login -n <acr>"
 
 To use another image you will need to go to line 12 in deploy job and update with your new file. 
 
-Once the deploy succeeds run " kubectl logs -n azuresdkforcpp -f eventhubs-stress-test" to grab the logs in real time .
+After deployment succeeds, run " kubectl logs -n azuresdkforcpp -f eventhubs-stress-test" to grab the logs in real time .
