@@ -1,0 +1,23 @@
+Service: identity
+
+Project: azure-identity-perf
+
+PrimaryPackage: azure-identity-cpp
+
+PackageVersions:
+- azure-identity-cpp: 1.6.0
+- azure-identity-cpp: source
+
+Tests:
+- Test: ClientCertificateCredential
+  Class: ClientCertificateCredential
+  Arguments:
+  - --parallel 4
+- Test: EnvironmentCredential
+  Class: EnvironmentCredential
+  Arguments:
+  - --parallel 4
+- Test: SecretCredential
+  Class: SecretCredential
+  Arguments:
+  - --parallel 4
