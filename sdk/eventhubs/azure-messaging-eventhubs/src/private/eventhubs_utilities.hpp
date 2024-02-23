@@ -232,7 +232,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         m_managementClient = std::make_unique<Azure::Core::Amqp::_internal::ManagementClient>(
             m_session.CreateManagementClient(m_eventHub, managementClientOptions));
 
-        m_managementClient->Open(context);
+        auto openResult{m_managementClient->Open(context)};
+        if (openResult != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
+        {
+          throw std::runtime_error("Could not open Management client");
+        }
         m_managementClientIsOpen = true;
       }
     }

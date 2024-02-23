@@ -171,7 +171,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       Azure::Core::Amqp::_internal::MessageSender sender
           = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions, nullptr);
-      sender.Open(context);
+      auto openResult{sender.Open(context)};
+      if (!openResult)
+      {
+        throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+            CreateEventHubsException(openResult);
+      }
       m_senders.emplace(partitionId, std::move(sender));
     }
   }

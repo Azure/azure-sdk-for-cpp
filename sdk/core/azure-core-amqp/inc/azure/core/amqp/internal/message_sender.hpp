@@ -17,6 +17,14 @@
 
 #include <tuple>
 
+#if defined(TESTING_BUILD)
+// Define the test classes dependant on this class here.
+namespace Azure { namespace Core { namespace Amqp { namespace Tests { namespace MessageTests {
+  class AmqpServerMock;
+  class MockServiceEndpoint;
+}}}}} // namespace Azure::Core::Amqp::Tests::MessageTests
+#endif // TESTING_BUILD
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class MessageSenderImpl;
   class MessageSenderFactory;
@@ -133,13 +141,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Opens a message sender.
      *
      * @param context The context to use for the operation.
+     *
+     * @return An error if the operation was not successful.
      */
-    void Open(Context const& context = {});
+    AZURE_NODISCARD Models::_internal::AmqpError Open(Context const& context = {});
 
     /** @brief Closes a message sender.
      *
+     * @return An error if the operation was not successful.
      */
-    void Close(Context const& context = {});
+    Models::_internal::AmqpError Close(Context const& context = {});
 
     /** @brief Gets the name of the underlying link.
      *
@@ -160,11 +171,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A tuple containing the status of the send operation and the send disposition.
      */
-    std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
+    AZURE_NODISCARD std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context = {});
 
   private:
+    // Half-open the message sender (does not block waiting on the Open to complete).
+    AZURE_NODISCARD Models::_internal::AmqpError HalfOpen(Context const& context = {});
     /** @brief Construct a MessageSender from a low level message sender implementation.
      *
      * @remarks This function should never be called by a user. It is used internally by the SDK.
@@ -173,5 +186,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     friend class _detail::MessageSenderFactory;
     std::shared_ptr<_detail::MessageSenderImpl> m_impl;
+#if TESTING_BUILD
+    friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
+    friend class Azure::Core::Amqp::Tests::MessageTests::MockServiceEndpoint;
+    friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
+#endif // TESTING_BUILD
   };
 }}}} // namespace Azure::Core::Amqp::_internal

@@ -49,7 +49,15 @@ int main()
       session.CreateMessageSender(entityPath, senderOptions, nullptr));
 
   // Open the connection to the remote.
-  sender.Open();
+  if (auto err = sender.Open())
+  {
+	std::cout << "Sender is open" << std::endl;
+  }
+  else
+  {
+	std::cout << "Sender failed to open" << err << std::endl;
+  }
+      
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 

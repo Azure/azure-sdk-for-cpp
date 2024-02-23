@@ -33,7 +33,11 @@ EventHubProperties GetEventHubProperties(
   Azure::Core::Amqp::_internal::ManagementClient managementClient(
       session.CreateManagementClient(eventHubName, managementClientOptions));
 
-  managementClient.Open();
+  auto openResult{managementClient.Open()};
+  if (openResult != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
+  {
+	throw std::runtime_error("Failed to open management client");
+  }
 
   // Send a message to the management endpoint to retrieve the properties of the eventhub.
   Azure::Core::Amqp::Models::AmqpMessage message;
@@ -105,7 +109,11 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
   Azure::Core::Amqp::_internal::ManagementClient managementClient(
       session.CreateManagementClient(eventHubName, managementClientOptions));
 
-  managementClient.Open(context);
+  auto managementOpenResult{managementClient.Open(context)};
+  if (managementOpenResult != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
+  {
+	throw std::runtime_error("Failed to open management client");
+  }
 
   // Send a message to the management endpoint to retrieve the properties of the eventhub.
   Azure::Core::Amqp::Models::AmqpMessage message;

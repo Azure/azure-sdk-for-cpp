@@ -50,8 +50,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl(MessageSenderImpl&&) noexcept = delete;
     MessageSenderImpl& operator=(MessageSenderImpl&&) noexcept = delete;
 
-    void Open(Context const& context);
-    void Close(Context const& context);
+    Models::_internal::AmqpError Open(bool blockingOpen, Context const& context);
+    Models::_internal::AmqpError Close(Context const& context);
     std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context);
@@ -86,6 +86,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::AmqpError>
         m_sendCompleteQueue;
 
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
+        m_openQueue;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
         m_closeQueue;
     _internal::MessageSenderState m_currentState{};

@@ -50,8 +50,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return stream;
   }
 
-  void MessageSender::Open(Context const& context) { m_impl->Open(context); }
-  void MessageSender::Close(Context const& context) { m_impl->Close(context); }
+  Models::_internal::AmqpError MessageSender::Open(Context const& context)
+  {
+    return m_impl->Open(false, context);
+  }
+  Models::_internal::AmqpError MessageSender::HalfOpen(Context const& context)
+  {
+    return m_impl->Open(true, context);
+  }
+  Models::_internal::AmqpError MessageSender::Close(Context const& context)
+  {
+    return m_impl->Close(context);
+  }
   std::tuple<MessageSendStatus, Models::_internal::AmqpError> MessageSender::Send(
       Models::AmqpMessage const& message,
       Context const& context)
@@ -155,11 +165,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::_internal::AzureNoReturnPath("MessageSenderImpl is being destroyed while open.");
     }
 
-    if (m_messageSender)
-    {
-      m_messageSender.reset();
-    }
-
     if (m_link)
     {
       // Unsubscribe from any detach events before clearing out the event handler to short-circuit
@@ -167,6 +172,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_link->UnsubscribeFromDetachEvent();
 
       m_link.reset();
+    }
+
+    if (m_messageSender)
+    {
+      m_messageSender.reset();
     }
   }
 
@@ -279,13 +289,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       if (newState == MESSAGE_SENDER_STATE_ERROR)
       {
-        sender->m_sendCompleteQueue.CompleteOperation(
-            _internal::MessageSendStatus::Error,
-            {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
-             "Message Sender unexpectedly entered the Error State.",
-             {}});
+        if (oldState == MESSAGE_SENDER_STATE_OPENING)
+        {
+          sender->m_openQueue.CompleteOperation(Models::_internal::AmqpError{
+              Models::_internal::AmqpErrorCondition::InternalError,
+              "Message Sender entered the Error State.",
+              {}});
+        }
+        else
+        {
+          sender->m_sendCompleteQueue.CompleteOperation(
+              _internal::MessageSendStatus::Error,
+              {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
+               "Message Sender unexpectedly entered the Error State.",
+               {}});
+        }
       }
 
+      // If we're transitioning from Opening to Open, we're done with the open operation.
+      if (oldState == MESSAGE_SENDER_STATE_OPENING && newState == MESSAGE_SENDER_STATE_OPEN)
+      {
+        sender->m_openQueue.CompleteOperation(Models::_internal::AmqpError{});
+      }
       if (oldState == MESSAGE_SENDER_STATE_CLOSING && newState == MESSAGE_SENDER_STATE_IDLE)
       {
         sender->m_closeQueue.CompleteOperation(Models::_internal::AmqpError{});
@@ -293,8 +318,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void MessageSenderImpl::Open(Context const& context)
+  Models::_internal::AmqpError MessageSenderImpl::Open(bool halfOpen, Context const& context)
   {
+    Models::_internal::AmqpError rv;
     if (m_options.EnableTrace)
     {
       Log::Stream(Logger::Level::Verbose)
@@ -307,47 +333,91 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->GetConnection()->AuthenticateAudience(
           m_session, static_cast<std::string>(m_target.GetAddress()), context);
     }
-
-    auto lock{m_session->GetConnection()->Lock()};
-    if (m_link == nullptr)
+    if (m_senderOpen)
     {
-      CreateLink();
+      throw std::runtime_error("Message sender is already open.");
     }
-
-    if (m_messageSender == nullptr)
     {
-      m_messageSender.reset(
-          messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
-    }
-    if (messagesender_open(m_messageSender.get()))
-    {
+      auto lock{m_session->GetConnection()->Lock()};
+      if (m_link == nullptr)
+      {
+        CreateLink();
+      }
 
-      auto err = errno;
+      if (m_messageSender == nullptr)
+      {
+        m_messageSender.reset(
+            messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
+      }
+      if (messagesender_open(m_messageSender.get()))
+      {
+
+        auto err = errno;
 #if defined(AZ_PLATFORM_WINDOWS)
-      char buf[256];
-      strerror_s(buf, sizeof(buf), err);
+        char buf[256];
+        strerror_s(buf, sizeof(buf), err);
 #else
-      std::string buf{strerror(err)};
+        std::string buf{strerror(err)};
 #endif
-      throw std::runtime_error(
-          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
-    }
+        throw std::runtime_error(
+            "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
+      }
 
-    // Mark the connection as async so that we can use the async APIs.
-    if (m_options.EnableTrace)
+      // Mark the connection as async so that we can use the async APIs.
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
+      }
+      m_session->GetConnection()->EnableAsyncOperation(true);
+
+      // Enable async on the link as well.
+      Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
+    }
+    if (!halfOpen)
     {
-      Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
+      auto result = m_openQueue.WaitForResult(context);
+      if (!result || std::get<0>(*result))
+      {
+
+        if (m_options.EnableTrace)
+        {
+          Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
+        }
+        m_session->GetConnection()->EnableAsyncOperation(false);
+
+        // Clean up from changes made earlier in the open, since the open was not successful.
+        auto lock{m_session->GetConnection()->Lock()};
+
+        m_link->UnsubscribeFromDetachEvent();
+
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+            m_link); // This will ensure that the link is cleaned up on the next poll()
+
+        messagesender_close(m_messageSender.get());
+        m_link.reset();
+        m_messageSender.reset();
+        if (!result)
+        {
+          throw Azure::Core::OperationCancelledException(
+              "Message sender open operation cancelled.");
+        }
+        else
+        {
+          rv = std::move(std::get<0>(*result));
+        }
+      }
     }
-    m_session->GetConnection()->EnableAsyncOperation(true);
-
-    // Enable async on the link as well.
-    Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
-
-    m_senderOpen = true;
+    // If the open was successful, then we're in the open state.
+    if (!rv)
+    {
+      m_senderOpen = true;
+    }
+    return rv;
   }
 
-  void MessageSenderImpl::Close(Context const& context)
+  Models::_internal::AmqpError MessageSenderImpl::Close(Context const& context)
   {
+    Models::_internal::AmqpError rv;
     if (m_senderOpen)
     {
       if (m_options.EnableTrace)
@@ -392,7 +462,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         if (std::get<0>(*result))
         {
-          throw std::runtime_error("Error closing message sender");
+          rv = std::move(std::get<0>(*result));
         }
       }
 
@@ -414,6 +484,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       m_senderOpen = false;
     }
+
+    return rv;
   }
 
   void MessageSenderImpl::OnLinkDetached(Models::_internal::AmqpError const& error)
@@ -438,6 +510,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       // When we've received a link detached, we can complete the close.
       m_closeQueue.CompleteOperation(error);
+      m_openQueue.CompleteOperation(error);
     }
   }
 

@@ -64,3 +64,25 @@ namespace Azure { namespace Core { namespace _internal {
 #define AZURE_UNREACHABLE_CODE() ::Azure::Core::_internal::AzureNoReturnPath("unreachable code!")
 /** @brief Indicate that the function is not implemented. */
 #define AZURE_NOT_IMPLEMENTED() ::Azure::Core::_internal::AzureNoReturnPath("not implemented code!")
+
+#if __cplusplus >= 201703L
+// C++17 or later - use [[nodiscard]].
+#define AZURE_NODISCARD [[nodiscard]]
+#else
+#if defined(_MSC_VER)
+// MSVC >= 1911, use [[nodiscard]]
+#if  _MSC_VER >= 1911
+#define AZURE_NODISCARD [[nodiscard]]
+#else
+// MSVC < 1911, use _Check_return_
+#define AZURE_NODISCARD _Check_return_
+#endif
+#elif defined(__GNUC__) && __GNUC__ >= 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+// GCC 3.4 or higher, use __attribute__((warn_unused_result)).
+#define AZURE_NODISCARD __attribute__(__warn_unused_result__)
+#elif defined(__clang__)
+#define AZURE_NODISCARD __attribute__(__warn_unused_result__)
+#else
+#define AZURE_NODISCARD
+#endif
+#endif // __cplusplus >= 201703L

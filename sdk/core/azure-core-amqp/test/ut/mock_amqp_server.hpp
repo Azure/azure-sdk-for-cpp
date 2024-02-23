@@ -65,10 +65,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       const std::string& GetName() const { return m_name; }
 
       bool OnLinkAttached(
-          _internal::Session const& session,
+          Azure::Core::Amqp::_internal::Session const& session,
           std::string const& linkName,
-          _internal::LinkEndpoint& linkEndpoint,
-          _internal::SessionRole role,
+          Azure::Core::Amqp::_internal::LinkEndpoint& linkEndpoint,
+          Azure::Core::Amqp::_internal::SessionRole role,
           Models::_internal::MessageSource const& source,
           Models::_internal::MessageTarget const& target)
       {
@@ -91,7 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             senderOptions.InitialDeliveryCount = 0;
             m_sender[linkName] = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
                 session.CreateMessageSender(linkEndpoint, target, senderOptions, this));
-            m_sender[linkName]->Open();
+            (void)m_sender[linkName]->HalfOpen();
           }
           else
           {
@@ -286,7 +286,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           auto senderDisconnected = m_messageSenderDisconnectedQueue.TryWaitForResult();
           if (senderDisconnected)
           {
-            auto senderName = std::get<0>(*senderDisconnected);
+            std::string senderName = std::get<0>(*senderDisconnected);
             GTEST_LOG_(INFO) << "Sender disconnected: " << senderName;
             std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> sender{
                 m_sender[senderName].release()};
@@ -297,7 +297,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           auto receiverDisconnected = m_messageReceiverDisconnectedQueue.TryWaitForResult();
           if (receiverDisconnected)
           {
-            auto receiverName = std::get<0>(*receiverDisconnected);
+            std::string receiverName = std::get<0>(*receiverDisconnected);
             GTEST_LOG_(INFO) << "Receiver disconnected: " << receiverName;
             std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> receiver{
                 m_receiver[receiverName].release()};
