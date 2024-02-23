@@ -91,7 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             senderOptions.InitialDeliveryCount = 0;
             m_sender[linkName] = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
                 session.CreateMessageSender(linkEndpoint, target, senderOptions, this));
-            (void)m_sender[linkName]->HalfOpen();
+            (void)!m_sender[linkName]->HalfOpen();
           }
           else
           {

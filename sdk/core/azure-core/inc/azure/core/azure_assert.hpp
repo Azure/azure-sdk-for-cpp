@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace _internal {
 #endif
 #elif defined(__GNUC__) && __GNUC__ >= 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
 // GCC 3.4 or higher, use __attribute__((warn_unused_result)).
-#define AZURE_NODISCARD __attribute__(__warn_unused_result__)
+#define AZURE_NODISCARD __attribute__((__warn_unused_result__))
 #elif defined(__clang__)
 #define AZURE_NODISCARD __attribute__(__warn_unused_result__)
 #else

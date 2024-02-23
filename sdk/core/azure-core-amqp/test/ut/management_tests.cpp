@@ -233,7 +233,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     try
     {
-      EXPECT_THROW((void)management.Open(), Azure::Core::Credentials::AuthenticationException);
+      ManagementOpenStatus openResult{ManagementOpenStatus::Error};
+      EXPECT_THROW(openResult = management.Open(), Azure::Core::Credentials::AuthenticationException);
+      EXPECT_EQ(openResult, ManagementOpenStatus::Error);
 
       management.Close();
     }
@@ -325,7 +327,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // There's nobody to respond, so we expect this to time out.
     Azure::Core::Context context;
-    EXPECT_ANY_THROW((void)management.ExecuteOperation(
+    ManagementOperationResult result;
+    EXPECT_ANY_THROW(result = management.ExecuteOperation(
         "Test",
         "Test",
         "Test",
