@@ -3,6 +3,10 @@
   "version-string": "1.0.0",
   "dependencies": [
     "azure-core-cpp",
-    "azure-core-amqp-cpp"
+    "azure-core-amqp-cpp",
+    {
+      "name": "opentelemetry-cpp",
+      "features": [ "otlp-http" ]
+    }
   ]
 }

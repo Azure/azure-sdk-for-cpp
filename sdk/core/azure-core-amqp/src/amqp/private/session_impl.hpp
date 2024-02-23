@@ -10,10 +10,8 @@
 
 #include <azure_uamqp_c/session.h>
 
-#include <chrono>
 #include <memory>
 #include <string>
-#include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<SESSION_INSTANCE_TAG>

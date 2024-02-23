@@ -4,13 +4,10 @@
 #pragma once
 
 #include "azure/core/amqp/internal/message_sender.hpp"
-#include "claims_based_security_impl.hpp"
 #include "link_impl.hpp"
 #include "unique_handle.hpp"
 
 #include <azure_uamqp_c/message_sender.h>
-
-#include <tuple>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>

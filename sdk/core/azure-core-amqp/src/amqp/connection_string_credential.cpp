@@ -4,20 +4,16 @@
 #include "azure/core/amqp/internal/connection_string_credential.hpp"
 
 #include "azure/core/amqp/internal/connection.hpp"
-#include "azure/core/amqp/internal/models/amqp_protocol.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/url.hpp>
 
-#include <azure_c_shared_utility/azure_base64.h>
-#include <azure_c_shared_utility/buffer_.h>
 #include <azure_c_shared_utility/sastoken.h>
 #include <azure_c_shared_utility/strings.h>
 #include <azure_c_shared_utility/urlencode.h>
 
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 #include <unordered_map>
 #include <vector>
