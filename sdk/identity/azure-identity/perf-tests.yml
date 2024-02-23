@@ -13,8 +13,10 @@ Tests:
   Class: EnvironmentCredential
   Arguments:
   - --cache 0 --test-proxies http://127.0.0.1:5000
+  - --cache 1 --test-proxies http://127.0.0.1:5000
  
 - Test: SecretCredential
   Class: SecretCredential
   Arguments:
   - --cache 0 --test-proxies http://127.0.0.1:5000
+  - --cache 1 --test-proxies http://127.0.0.1:5000
