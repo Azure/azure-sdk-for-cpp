@@ -149,6 +149,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         PartitionClientOptions const& options = {},
         Azure::Core::Context const& context = {});
 
+    /**
+     * @brief Closes the consumer client canceling any operations outstanding on any of the existing
+     * partition clients.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     */
+    void Close(Azure::Core::Context const& context);
+
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
      *
