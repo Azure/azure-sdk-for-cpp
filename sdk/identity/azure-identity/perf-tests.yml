@@ -1,0 +1,22 @@
+Service: identity
+
+Project: azure-identity-perf
+
+PrimaryPackage: azure-identity-cpp
+
+PackageVersions:
+- azure-identity-cpp: 1.6.0
+- azure-identity-cpp: source
+
+Tests:
+- Test: EnvironmentCredential
+  Class: EnvironmentCredential
+  Arguments:
+  - --cache 0
+  - --test-proxies http://127.0.0.1:5000
+ 
+- Test: SecretCredential
+  Class: SecretCredential
+  Arguments:
+  - --cache 0
+  - --test-proxies http://127.0.0.1:5000
