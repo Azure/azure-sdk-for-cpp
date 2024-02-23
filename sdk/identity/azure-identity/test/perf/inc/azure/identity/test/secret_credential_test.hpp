@@ -9,9 +9,10 @@
 
 #pragma once
 
+#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/perf.hpp>
-#include <azure/core/internal/environment.hpp>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -40,7 +41,7 @@ namespace Azure { namespace Identity { namespace Test {
       m_tenantId = Azure::Core::_internal::Environment::GetVariable("AZURE_TENANT_ID");
       m_clientId = Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_ID");
       m_secret = Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_SECRET");
-      
+
       m_tokenRequestContext.Scopes.push_back(
           m_options.GetOptionOrDefault<std::string>("Scope", "https://attest.azure.net/.default"));
       if (!m_options.GetOptionOrDefault<bool>("Cache", false))

@@ -9,9 +9,10 @@
 
 #pragma once
 
+#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/perf.hpp>
-#include <azure/core/internal/environment.hpp>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -71,8 +72,7 @@ namespace Azure { namespace Identity { namespace Test {
     {
       return {
           {"Cache", {"--cache"}, "Use credential cache.", 1, false},
-          {"Scope", {"--scope"}, "One scope to request access to.", 1, false}
-      };
+          {"Scope", {"--scope"}, "One scope to request access to.", 1, false}};
     }
 
     /**
