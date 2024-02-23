@@ -661,7 +661,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       try
       {
         Credentials::TokenRequestContext requestContext;
-        bool isSasToken = IsSasCredential();
 
         requestContext.Scopes = m_options.AuthenticationScopes;
         auto accessToken{GetCredential()->GetToken(requestContext, context)};
