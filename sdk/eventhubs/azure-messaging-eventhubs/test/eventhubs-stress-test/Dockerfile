@@ -6,7 +6,7 @@ FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04 as build
 
 # install the mem check tool along side the other deps
 RUN apt-get update -y
-RUN apt-get install -y gcc cmake make g++ git zip unzip build-essential pkg-config wget curl valgrind
+RUN apt-get install -y gcc cmake make g++ git zip unzip build-essential pkg-config wget curl valgrind python3
 RUN wget -O vcpkg.tar.gz https://github.com/microsoft/vcpkg/archive/master.tar.gz
 RUN mkdir /opt/vcpkg
 RUN tar xf vcpkg.tar.gz --strip-components=1 -C /opt/vcpkg
@@ -22,7 +22,7 @@ WORKDIR /build
 # version of the packages that will be fetched.
 # So when building from root we need to match the two values. When not building from root if the vcpkg file
 # does not specify a baseline the value set in the cmake file will ensure that we are at the desired level.
-RUN cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON /src
+RUN --mount=type=cache,target=/root/.cache/vcpkg/archives --mount=type=cache,target=/root/.m2 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON /src 
 RUN cmake --build . --target azure-messaging-eventhubs-stress-test
 
 FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04
@@ -32,7 +32,7 @@ RUN apt-get install -y valgrind
 WORKDIR /
 
 # copy the target binary
-COPY --from=build ./build/sdk/eventhubs/azure-messaging-eventhubs/test/eventhubs-stress-test/azure-messaging-eventhubs-stress-test ./azure-messaging-eventhubs-stress-test
+COPY --from=build ./build/sdk/eventhubs/azure-messaging-eventhubs/test/eventhubs-stress-test/src/azure-messaging-eventhubs-stress-test ./azure-messaging-eventhubs-stress-test
 RUN chmod +x ./azure-messaging-eventhubs-stress-test
 
 CMD ./azure-messaging-eventhubs-stress-test

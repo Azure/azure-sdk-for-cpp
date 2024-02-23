@@ -10,7 +10,7 @@ matrix:
       image: Dockerfile
       imageBuildDir: "../../../../../"
   scenarios:
-    constantDetach:
+    produceConsumeEvents:
       testTarget: azure-messaging-eventhubs-stress-test
       memory: "1.5Gi"
     

@@ -6,17 +6,29 @@ metadata:
   labels:
     chaos: "{{ default false .Stress.chaos }}"
 spec:
+  shareProcessNamespace: true
   containers:
+    - name: otel-collector
+#      image: mcr.microsoft.com/oss/otel/opentelemetry-collector-contrib:0.94.0
+      image: stresspgs7b6dif73rup6.azurecr.io/stress/opentelemetry-collector-contrib-shell:0.94.0
+      imagePullPolicy: Always
+      resources:
+        limits:
+          memory: 500Mi
+          cpu: "0.5"
+      env:
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          value: "TO BE FILLED IN LATER."
     - name: main
       image: {{ .Stress.imageTag }}
       imagePullPolicy: Always
-      command:
-        [
-          "valgrind",
-          "--tool=memcheck",
-          "-s",
-          "./azure-messaging-eventhubs-stress-test",
-        ]
+      command: ['bash', '-c']
+      args:
+        - |
+          set -a;
+          source $ENV_FILE;
+          ./azure-messaging-eventhubs-stress-test produce BatchStressTest;
+          kill `pidof otelcol-contrib`;
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
       resources:
         limits:

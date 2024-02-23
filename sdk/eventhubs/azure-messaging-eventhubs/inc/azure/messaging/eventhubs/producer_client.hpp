@@ -92,13 +92,29 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         ProducerClientOptions options = {});
 
-    ~ProducerClient()
+    ~ProducerClient() {}
+
+    /** @brief Close all the connections and sessions.
+     *
+     * @param context Context for the operation can be used for request cancellation.
+     */
+    void Close(Azure::Core::Context const& context = {})
     {
       for (auto& sender : m_senders)
       {
-        sender.second.Close();
+        sender.second.Close(context);
       }
       m_senders.clear();
+      // Other possible things we might want to do in close, but cannot quite do yet because it
+      // doesn't necessarily work correctly.
+      //    for (auto& session : m_sessions)
+      //    {
+      // session.second.Close(context);
+      // }
+      //    for (auto& connection : m_connections)
+      //    {
+      // connection.second.Close(context);
+      // }
     }
 
     /** @brief Create a new EventDataBatch to be sent to the Event Hub.

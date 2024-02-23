@@ -344,6 +344,17 @@
       ]
     },
     {
+      "filename": "**/sdk/eventhubs/azure-messaging-eventhubs/**/*",
+      "words": [
+        "otlp",
+        "Otlp",
+        "OTLP",
+        "exportings",
+        "ricab",
+        "noarg"
+      ]
+    },
+    {
       "filename": "**/sdk/identity/azure-identity/**",
       "words": [
         "meid",
@@ -413,7 +424,8 @@
     {
       "filename": "**/vcpkg.json",
       "words": [
-        "umock"
+        "umock",
+        "otlp"
       ]
     }
   ],

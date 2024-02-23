@@ -3,17 +3,13 @@
 
 #include "azure/core/amqp/internal/management.hpp"
 
-#include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
-#include "azure/core/amqp/internal/session.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "private/connection_impl.hpp"
 #include "private/management_impl.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-
-#include <azure_uamqp_c/amqp_management.h>
 
 #include <iostream>
 #include <memory>

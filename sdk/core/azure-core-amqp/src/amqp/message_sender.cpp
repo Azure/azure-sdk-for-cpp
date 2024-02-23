@@ -7,16 +7,12 @@
 #include "../models/private/error_impl.hpp"
 #include "../models/private/message_impl.hpp"
 #include "../models/private/value_impl.hpp"
-#include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/common/completion_operation.hpp"
-#include "azure/core/amqp/internal/models/messaging_values.hpp"
-#include "azure/core/amqp/internal/session.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "private/connection_impl.hpp"
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
 
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/platform.hpp>
