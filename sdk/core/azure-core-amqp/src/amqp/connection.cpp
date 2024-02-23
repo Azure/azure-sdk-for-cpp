@@ -662,10 +662,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Credentials::TokenRequestContext requestContext;
         bool isSasToken = IsSasCredential();
-        if (isSasToken)
-        {
-          requestContext.MinimumExpiration = std::chrono::minutes(60);
-        }
+
         requestContext.Scopes = m_options.AuthenticationScopes;
         auto accessToken{GetCredential()->GetToken(requestContext, context)};
 
