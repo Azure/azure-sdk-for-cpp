@@ -9,15 +9,14 @@ PackageVersions:
 - azure-identity-cpp: source
 
 Tests:
-- Test: ClientCertificateCredential
-  Class: ClientCertificateCredential
-  Arguments:
-  - --parallel 4
 - Test: EnvironmentCredential
   Class: EnvironmentCredential
   Arguments:
-  - --parallel 4
+  - --cache 0
+  - --test-proxies http://127.0.0.1:5000
+ 
 - Test: SecretCredential
   Class: SecretCredential
   Arguments:
-  - --parallel 4
+  - --cache 0
+  - --test-proxies http://127.0.0.1:5000

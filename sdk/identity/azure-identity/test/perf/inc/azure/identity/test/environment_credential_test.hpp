@@ -11,7 +11,7 @@
 
 #include <azure/identity.hpp>
 #include <azure/perf.hpp>
-
+#include <azure/core/internal/environment.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -34,7 +34,8 @@ namespace Azure { namespace Identity { namespace Test {
      */
     void Setup() override
     {
-      m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
+      m_tokenRequestContext.Scopes.push_back(
+          m_options.GetOptionOrDefault<std::string>("Scope", "https://attest.azure.net/.default"));
       if (!m_options.GetOptionOrDefault<bool>("Cache", false))
       {
         // having this set ignores the credentials cache and forces a new token to be requested
@@ -70,7 +71,7 @@ namespace Azure { namespace Identity { namespace Test {
     {
       return {
           {"Cache", {"--cache"}, "Use credential cache.", 1, false},
-          {"Scope", {"--scope"}, "One scope to request access to.", 1, true},
+          {"Scope", {"--scope"}, "One scope to request access to.", 1, false}
       };
     }
 
