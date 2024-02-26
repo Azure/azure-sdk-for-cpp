@@ -36,7 +36,7 @@ EventHubProperties GetEventHubProperties(
   auto openResult{managementClient.Open()};
   if (openResult != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
   {
-	throw std::runtime_error("Failed to open management client");
+    throw std::runtime_error("Failed to open management client");
   }
 
   // Send a message to the management endpoint to retrieve the properties of the eventhub.
@@ -112,7 +112,7 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
   auto managementOpenResult{managementClient.Open(context)};
   if (managementOpenResult != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
   {
-	throw std::runtime_error("Failed to open management client");
+    throw std::runtime_error("Failed to open management client");
   }
 
   // Send a message to the management endpoint to retrieve the properties of the eventhub.
@@ -142,7 +142,7 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto &body = result.Message->GetBodyAsAmqpValue();
+    auto& body = result.Message->GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");

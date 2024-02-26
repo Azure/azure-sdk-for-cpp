@@ -514,9 +514,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     };
 
     class AmqpServerMock final : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
-                           public Azure::Core::Amqp::_internal::ConnectionEvents,
-                           public Azure::Core::Amqp::_internal::ConnectionEndpointEvents,
-                           public Azure::Core::Amqp::_internal::SessionEvents {
+                                 public Azure::Core::Amqp::_internal::ConnectionEvents,
+                                 public Azure::Core::Amqp::_internal::ConnectionEndpointEvents,
+                                 public Azure::Core::Amqp::_internal::SessionEvents {
     public:
       AmqpServerMock(
           std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())

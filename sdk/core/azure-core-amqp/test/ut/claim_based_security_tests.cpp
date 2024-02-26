@@ -4,9 +4,9 @@
 #include "mock_amqp_server.hpp"
 
 #include <azure/core/amqp/internal/claims_based_security.hpp>
+#include <azure/core/amqp/internal/common/global_state.hpp>
 #include <azure/core/amqp/internal/connection.hpp>
 #include <azure/core/amqp/internal/message_receiver.hpp>
-#include <azure/core/amqp/internal/common/global_state.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/platform.hpp>

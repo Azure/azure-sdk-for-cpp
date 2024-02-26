@@ -51,13 +51,12 @@ int main()
   // Open the connection to the remote.
   if (auto err = sender.Open())
   {
-	std::cout << "Sender is open" << std::endl;
+    std::cout << "Sender is open" << std::endl;
   }
   else
   {
-	std::cout << "Sender failed to open" << err << std::endl;
+    std::cout << "Sender failed to open" << err << std::endl;
   }
-      
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 
