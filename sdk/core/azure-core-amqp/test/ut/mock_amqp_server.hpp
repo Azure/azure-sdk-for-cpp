@@ -513,7 +513,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
     };
 
-    class AmqpServerMock : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
+    class AmqpServerMock final : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
                            public Azure::Core::Amqp::_internal::ConnectionEvents,
                            public Azure::Core::Amqp::_internal::ConnectionEndpointEvents,
                            public Azure::Core::Amqp::_internal::SessionEvents {
@@ -539,6 +539,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         options.ListenerContext = m_listenerContext;
         AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
       }
+
+      virtual ~AmqpServerMock() { StopListening(); }
 
       void AddServiceEndpoint(std::shared_ptr<MockServiceEndpoint> const& endpoint)
       {

@@ -3,8 +3,8 @@
 
 #include "batch_stress_tests.hpp"
 
-#include "opentelemetry_helpers.hpp"
 #include "scope_guard.hpp"
+#include "shared_functions.hpp"
 
 #include <azure/identity/environment_credential.hpp>
 
@@ -110,7 +110,7 @@ std::vector<EventHubsScenarioOptions> BatchScenarioOptions{
 
 // Note that the DefaultNumberToSend value is artificially reduced to 100 until the
 // MessageSender::Open code fully supports Open.
-constexpr const std::uint32_t DefaultNumberToSend = /*1000000*/ 100;
+constexpr const std::uint32_t DefaultNumberToSend = 1000000;
 constexpr const std::uint32_t DefaultBatchSize = 1000;
 constexpr const std::uint32_t DefaultPrefetch = 0;
 constexpr const auto DefaultDuration = std::chrono::seconds(60);
@@ -154,8 +154,12 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   span.first->SetAttribute("Verbose", m_verbose);
   span.first->SetAttribute("UseSasCredential", m_useSasCredential);
 
-  //    m_sleepAfter =
-  //    parserResults["SleepAfter"].as<std::chrono::system_clock::duration>(std::chrono::seconds(0));
+  if (parserResults.has_option("SleepAfter"))
+  {
+    m_sleepAfterFunction
+        = GetSleepAfterFunction(parserResults["SleepAfter"].as<std::chrono::system_clock::duration>(
+            std::chrono::seconds(0)));
+  }
 
   m_eventHubName = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
 
@@ -191,6 +195,12 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
 
 void BatchStressTest::Run()
 {
+  auto scopeGuard{sg::make_scope_guard([&]() {
+    if (m_sleepAfterFunction)
+    {
+      m_sleepAfterFunction({});
+    }
+  })};
   std::cout << "Run " << std::endl;
   auto sendOutput = SendMessages();
   std::cout << "Starting receive tests for partition " << m_partitionId << std::endl;

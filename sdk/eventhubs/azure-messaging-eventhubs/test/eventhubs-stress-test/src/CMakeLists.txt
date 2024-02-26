@@ -18,16 +18,15 @@ find_package(CURL)
 
 set(INCLUDE_FILES 
   inc/eventhubs_stress_scenarios.hpp
-  scenarios/inc/event_sender.hpp
-  scenarios/inc/opentelemetry_helpers.hpp
   scenarios/inc/batch_stress_tests.hpp
+  scenarios/inc/shared_functions.hpp
   )
 
 
 set(SOURCE_FILES
   eventhubs_stress_test.cpp
-  scenarios/src/opentelemetry_helpers.cpp
   scenarios/src/batch_stress_tests.cpp
+  scenarios/src/shared_functions.cpp
   )
 
 

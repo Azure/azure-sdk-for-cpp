@@ -85,7 +85,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ProducerClient::Send(Models::EventData const& eventData, Core::Context const& context)
   {
     auto batch = CreateBatch(EventDataBatchOptions{}, context);
-    if (!batch.TryAddMessage(eventData))
+    if (!batch.TryAdd(eventData))
     {
       throw std::runtime_error("Could not add message to batch.");
     }
@@ -99,7 +99,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     auto batch = CreateBatch(EventDataBatchOptions{}, context);
     for (const auto& data : eventData)
     {
-      if (!batch.TryAddMessage(data))
+      if (!batch.TryAdd(data))
       {
         throw std::runtime_error("Could not add message to batch.");
       }
@@ -172,7 +172,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Amqp::_internal::MessageSender sender
           = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions, nullptr);
       auto openResult{sender.Open(context)};
-      if (!openResult)
+      if (openResult)
       {
         throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
             CreateEventHubsException(openResult);

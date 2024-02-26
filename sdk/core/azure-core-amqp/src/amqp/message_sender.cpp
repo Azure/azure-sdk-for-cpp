@@ -234,7 +234,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_link->SetSenderSettleMode(m_options.SettleMode);
   }
 
-  std::uint64_t MessageSenderImpl::GetMaxMessageSize() const { return m_link->GetMaxMessageSize(); }
+  std::uint64_t MessageSenderImpl::GetMaxMessageSize() const
+  {
+    if (!m_senderOpen)
+    {
+      throw std::runtime_error("Message sender is not open.");
+    }
+    // Get the max message size from the link (which is the max frame size for the link
+    // endpoint) and the peer (which is the max frame size for the other end of the connection).
+    //
+    auto linkSize{m_link->GetMaxMessageSize()};
+    auto peerSize{m_link->GetPeerMaxMessageSize()};
+
+    // Return the smaller of the two values
+    return (std::min)(linkSize, peerSize);
+  }
 
   _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
   {

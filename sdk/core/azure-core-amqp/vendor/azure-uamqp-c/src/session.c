@@ -1247,7 +1247,6 @@ void session_set_link_endpoint_callback(LINK_ENDPOINT_HANDLE link_endpoint, ON_L
 
 void session_destroy_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
 {
-  LOG(AZ_LOG_INFO, LOG_LINE, "session_destroy_link_endpoint: %p", link_endpoint);
     if (link_endpoint != NULL)
     {
         LINK_ENDPOINT_INSTANCE* endpoint_instance = (LINK_ENDPOINT_INSTANCE*)link_endpoint;

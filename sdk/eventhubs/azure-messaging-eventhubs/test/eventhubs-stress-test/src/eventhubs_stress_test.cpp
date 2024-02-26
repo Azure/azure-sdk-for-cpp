@@ -180,7 +180,7 @@ int main(int argc, char** argv)
       }
       catch (const std::exception& e)
       {
-        std::cerr << "Exception thrown parsing command line: " << e.what();
+        std::cerr << "Exception thrown parsing scenario command line: " << e.what() << std::endl;
 
         Usage(argparser, scenarios);
 
@@ -247,7 +247,7 @@ int main(int argc, char** argv)
     }
     catch (const std::exception& e)
     {
-      std::cerr << "Exception thrown parsing command line: " << e.what();
+      std::cerr << "Exception thrown parsing command line: " << e.what() << std::endl;
 
       Usage(argparser, scenarios);
 

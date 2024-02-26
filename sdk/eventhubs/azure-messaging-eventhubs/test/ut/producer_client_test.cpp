@@ -15,8 +15,7 @@
 
 // cspell: ignore edboptions
 
-class ProducerClientTest : public EventHubsTestBase {
-};
+class ProducerClientTest : public EventHubsTestBase {};
 
 TEST_F(ProducerClientTest, ConnectionStringNoEntityPath)
 {
@@ -81,11 +80,11 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   edboptions2.PartitionId = "2";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch2{client.CreateBatch(edboptions2)};
 
-  eventBatch.TryAddMessage(message1);
-  eventBatch.TryAddMessage(message2);
+  EXPECT_TRUE(eventBatch.TryAdd(message1));
+  EXPECT_TRUE(eventBatch.TryAdd(message2));
 
-  eventBatch2.TryAddMessage(message3);
-  eventBatch2.TryAddMessage(message2);
+  EXPECT_TRUE(eventBatch2.TryAdd(message3));
+  EXPECT_TRUE(eventBatch2.TryAdd(message2));
 
   for (int i = 0; i < 5; i++)
   {

@@ -142,7 +142,7 @@ std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message->GetBodyAsAmqpValue();
+    auto &body = result.Message->GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");
