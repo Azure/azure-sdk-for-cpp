@@ -30,7 +30,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
       Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
-      EXPECT_TRUE(eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData("Hello world!")));
+      EXPECT_TRUE(
+          eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData("Hello world!")));
       EXPECT_NO_THROW(producer.Send(eventBatch));
     }
 
@@ -66,7 +67,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
       Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
-      EXPECT_TRUE(eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData({1, 2, 3, 4, 5})));
+      EXPECT_TRUE(
+          eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData({1, 2, 3, 4, 5})));
       EXPECT_NO_THROW(producer.Send(eventBatch));
     }
 

@@ -15,7 +15,8 @@
 
 // cspell: ignore edboptions
 
-class ProducerClientTest : public EventHubsTestBase {};
+class ProducerClientTest : public EventHubsTestBase {
+};
 
 TEST_F(ProducerClientTest, ConnectionStringNoEntityPath)
 {

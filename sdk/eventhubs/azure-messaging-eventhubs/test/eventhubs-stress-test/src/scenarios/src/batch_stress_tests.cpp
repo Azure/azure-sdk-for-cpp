@@ -228,7 +228,7 @@ BatchStressTest::SendMessages()
     producerClient = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
         m_eventHubNamespace,
         m_eventHubName,
-//        std::make_shared<Azure::Identity::EnvironmentCredential>());
+        //        std::make_shared<Azure::Identity::EnvironmentCredential>());
         std::make_shared<Azure::Identity::DefaultAzureCredential>());
   }
   Azure::Core::Context context;

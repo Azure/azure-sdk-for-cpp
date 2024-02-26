@@ -35,7 +35,6 @@ private:
   bool m_verbose{false};
   bool m_useSasCredential{false};
   std::function<void(Azure::Core::Context)> m_sleepAfterFunction;
-  
 
   std::string m_scenarioName{"BatchStressTest"};
 
