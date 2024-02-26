@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where exception error code was not parsed for `HEAD` requests.
+
 ### Other Changes
 
 ### Acknowledgments
