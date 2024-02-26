@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// cspell: words gearamaeh1
+// cspell: words
 
 #include "eventhubs_test_base.hpp"
 
@@ -42,10 +42,10 @@ TEST_F(ProducerClientTest, TokenCredential_LIVEONLY_)
       GetEnv("EVENTHUBS_CLIENT_ID"),
       GetEnv("EVENTHUBS_CLIENT_SECRET"))};
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+  std::string eventHubHost{GetEnv("EVENTHUBS_HOST")};
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.ApplicationID = "appId";
-  Azure::Messaging::EventHubs::ProducerClient client{
-      "gearamaeh1.servicebus.windows.net", eventHubName, credential};
+  Azure::Messaging::EventHubs::ProducerClient client{eventHubHost, eventHubName, credential};
   EXPECT_EQ(eventHubName, client.GetEventHubName());
 }
 

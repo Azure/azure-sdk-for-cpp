@@ -6,6 +6,7 @@
 #include "scope_guard.hpp"
 #include "shared_functions.hpp"
 
+#include <azure/identity/default_azure_credential.hpp>
 #include <azure/identity/environment_credential.hpp>
 
 using namespace Azure::Messaging::EventHubs;
@@ -136,7 +137,7 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   m_partitionId = parserResults["PartitionId"].as<std::string>(DefaultPartitionId);
   m_maxTimeouts = parserResults["MaxTimeouts"].as<uint32_t>(DefaultMaxTimeouts);
   m_verbose = parserResults["verbose"].as<bool>(false);
-  m_useSasCredential = parserResults["UseSasCredential"].as<bool>(true);
+  m_useSasCredential = parserResults["UseSasCredential"].as<bool>(false);
   if (m_rounds == 0xffffffff)
   {
     m_rounds = (std::numeric_limits<uint32_t>::max)();
@@ -227,7 +228,8 @@ BatchStressTest::SendMessages()
     producerClient = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
         m_eventHubNamespace,
         m_eventHubName,
-        std::make_shared<Azure::Identity::EnvironmentCredential>());
+//        std::make_shared<Azure::Identity::EnvironmentCredential>());
+        std::make_shared<Azure::Identity::DefaultAzureCredential>());
   }
   Azure::Core::Context context;
   auto scopeGuard{
