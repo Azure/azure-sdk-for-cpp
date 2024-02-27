@@ -57,7 +57,3 @@ stages:
         Value: "Bogus Certificate"
       - Name: ISOLATED_SIGNING_KEY
         Value: "Bogus Key"
-      EnvVars:
-        AZURE_CLIENT_ID: ${ATTESTATION_CLIENT_ID}
-        AZURE_TENANT_ID: ${ATTESTATION_TENANT_ID}
-        AZURE_CLIENT_SECRET: ${ATTESTATION_CLIENT_SECRET}
