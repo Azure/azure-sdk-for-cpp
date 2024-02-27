@@ -48,7 +48,7 @@ namespace Azure {
       m_vaultUrl = m_options.GetOptionOrDefault<std::string>(
           "vaultUrl", Environment::GetVariable("AZURE_KEYVAULT_URL"));
       m_credential = GetTestCredential();
-      
+
       m_client = std::make_unique<Azure::Security::KeyVault::Certificates::CertificateClient>(
           m_vaultUrl,
           m_credential,

@@ -257,7 +257,6 @@ namespace Azure { namespace Perf {
     }
   };
 
-
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> BaseTest::GetTestCredential()
   {
     if (m_testCredential)
@@ -298,7 +297,7 @@ namespace Azure { namespace Perf {
     }
   }
 
-      /**
+  /**
    * @brief Utility function used by tests to retrieve env vars
    *
    * @param name Environment variable name to retrieve.
@@ -359,6 +358,5 @@ namespace Azure { namespace Perf {
 
     return ret;
   }
-
 
 }} // namespace Azure::Perf

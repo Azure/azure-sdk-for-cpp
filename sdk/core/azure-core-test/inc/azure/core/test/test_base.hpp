@@ -243,7 +243,7 @@ namespace Azure { namespace Core { namespace Test {
         }
         catch (std::runtime_error const&)
         {
-		}
+        }
         if (clientSecret.empty())
         {
           m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();

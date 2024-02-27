@@ -54,7 +54,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // Options and credential for the client
       KeyClientOptions options;
       m_credential = GetTestCredential();
-      
+
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
           Azure::Security::KeyVault::Keys::KeyClient,
