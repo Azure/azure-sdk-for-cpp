@@ -192,9 +192,9 @@ The file relevant for us is the Cpp.cs file which defines how to build, run, and
 
 ## Running local 
 ### Option 1
-Tests can be ran locally using the perf test executable that is built from the CMake file. passing along the required parametes such as test name and test related arguments. 
+Tests can be ran locally using the perf test executable that is built from the CMake file. passing along the required parameters such as test name and test related arguments. 
 
-E.G. Adding to lanch.vs.json the following configuration 
+E.G. Adding to launch.vs.json the following configuration 
 ```bash
 {
   "type": "default",
@@ -212,7 +212,7 @@ E.G. Adding to lanch.vs.json the following configuration
   ]
 }
 ```
-will aloow you to run/debug the HttpTransport test using POST method, winhttp transport and a test proxy server running on localhost:5000.
+will allow you to run/debug the HttpTransport test using POST method, winhttp transport and a test proxy server running on localhost:5000.
 ### Option 2
 the second options to run the tests locally you can use the perf automation tool and pass along the parameters required to run the required tests. 
 E.G. In order to run the tests from azure-core-perf project you can pass the following debug command line arguments to the perf automation tool. 
