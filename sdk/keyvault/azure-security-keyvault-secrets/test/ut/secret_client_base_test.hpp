@@ -49,9 +49,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
       // Options and credential for the client
       SecretClientOptions options;
-      m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-
+      m_credential = GetTestCredential();
+      
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
           Azure::Security::KeyVault::Secrets::SecretClient,

@@ -38,10 +38,7 @@ TEST_F(ProducerClientTest, ConnectionStringEntityPath)
 
 TEST_F(ProducerClientTest, TokenCredential_LIVEONLY_)
 {
-  auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      GetEnv("EVENTHUBS_TENANT_ID"),
-      GetEnv("EVENTHUBS_CLIENT_ID"),
-      GetEnv("EVENTHUBS_CLIENT_SECRET"))};
+  auto credential{GetTestCredential()};
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.ApplicationID = "appId";

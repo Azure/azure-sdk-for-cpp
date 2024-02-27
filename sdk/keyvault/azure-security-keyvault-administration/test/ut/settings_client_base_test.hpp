@@ -59,8 +59,7 @@ namespace Azure {
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
       // Options and credential for the client
       SettingsClientOptions options;
-      m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+      m_credential = GetTestCredential();
 
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<

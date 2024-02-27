@@ -158,17 +158,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(ConsumerClientTest, GetPartitionPropertiesClientSecret_LIVEONLY_)
   {
-    auto credentials
-    {
-#if 0
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("EVENTHUBS_TENANT_ID"),
-        GetEnv("EVENTHUBS_CLIENT_ID"),
-        GetEnv("EVENTHUBS_CLIENT_SECRET"))
-#else
-      std::make_shared<Azure::Identity::DefaultAzureCredential>()
-#endif
-    };
+    auto credentials{GetTestCredential()};
     std::string eventHubName{GetEnv("EVENTHUB_NAME")};
     std::string hostName{GetEnv("EVENTHUBS_HOST")};
     std::string consumerGroup{GetEnv("EVENTHUB_CONSUMER_GROUP")};

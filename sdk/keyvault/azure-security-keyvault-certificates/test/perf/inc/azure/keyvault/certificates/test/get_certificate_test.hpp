@@ -35,10 +35,7 @@ namespace Azure {
   private:
     std::string m_vaultUrl;
     std::string m_certificateName;
-    std::string m_tenantId;
-    std::string m_clientId;
-    std::string m_secret;
-    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::unique_ptr<Azure::Security::KeyVault::Certificates::CertificateClient> m_client;
 
   public:
@@ -50,14 +47,8 @@ namespace Azure {
     {
       m_vaultUrl = m_options.GetOptionOrDefault<std::string>(
           "vaultUrl", Environment::GetVariable("AZURE_KEYVAULT_URL"));
-      m_tenantId = m_options.GetOptionOrDefault<std::string>(
-          "TenantId", Environment::GetVariable("AZURE_TENANT_ID"));
-      m_clientId = m_options.GetOptionOrDefault<std::string>(
-          "ClientId", Environment::GetVariable("AZURE_CLIENT_ID"));
-      m_secret = m_options.GetOptionOrDefault<std::string>(
-          "Secret", Environment::GetVariable("AZURE_CLIENT_SECRET"));
-      m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          m_tenantId, m_clientId, m_secret);
+      m_credential = GetTestCredential();
+      
       m_client = std::make_unique<Azure::Security::KeyVault::Certificates::CertificateClient>(
           m_vaultUrl,
           m_credential,
