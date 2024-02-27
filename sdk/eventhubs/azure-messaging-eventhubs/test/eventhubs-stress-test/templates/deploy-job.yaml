@@ -9,16 +9,14 @@ spec:
   shareProcessNamespace: true
   containers:
     - name: otel-collector
-#      image: mcr.microsoft.com/oss/otel/opentelemetry-collector-contrib:0.94.0
-      image: stresspgs7b6dif73rup6.azurecr.io/stress/opentelemetry-collector-contrib-shell:0.94.0
+      image: azsdkengsys.azurecr.io/stress/otelcollector:0.94.0
+      image: 
       imagePullPolicy: Always
       resources:
         limits:
           memory: 500Mi
           cpu: "0.5"
-      env:
-        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-          value: "TO BE FILLED IN LATER."
+      {{- include "stress-test-addons.container-env" . | nindent 6 }}
     - name: main
       image: {{ .Stress.imageTag }}
       imagePullPolicy: Always
