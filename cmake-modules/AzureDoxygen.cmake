@@ -26,7 +26,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         # classes and enums directly into the documentation.
         set(DOXYGEN_INLINE_SOURCES NO)
         set(DOXYGEN_MARKDOWN_ID_STYLE GITHUB)
-        # Used to correctly expand macros like _azure_NON_FINAL_FOR_TESTS when generated docs.
+        # Used to correctly expand macros like _azure_NON_FINAL_FOR_TESTS when generating docs.
         set(DOXYGEN_MACRO_EXPANSION YES)
         # Skip generating docs for json, test, samples, and private files.
         set(DOXYGEN_EXCLUDE_PATTERNS
