@@ -239,11 +239,10 @@ Once you have everything in place create a pipeline using the definition in your
 
 To test intermediate definitions of your pipeline you can run the https://dev.azure.com/azure-sdk/internal/_build?definitionId=5121 pipeline and set the proper values for the cpp node( make sure to deselect all other languages except cpp unless you want to run them).
 
-In case you need to validate a set of changes using an existing pipeline you can go to an existing perf pipeline press Run , in the dialog presented enter the following data : 
-    - Branch/Tag : refs/pull/<PR_NUMBER>/merge
-    - Commit : <COMMIT_HASH> 
+To validate a set of changes using an existing pipeline, navigate to an existing perf pipeline and press `Run`.  Enter the following information in the presented dialog: 
+    - Branch/Tag: refs/pull/<PR_NUMBER>/merge
+    - Commit: <COMMIT_HASH> 
+    - The remaining arguments can be left as default. 
 
-The rest of the arguments can be let as default. 
-
-Press run and wait for the pipeline to finish.
+Press `Run` and wait for the pipeline to finish.
   
