@@ -11,6 +11,8 @@
 #endif
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/identity/client_secret_credential.hpp>
+#include <azure/identity/default_azure_credential.hpp>
 
 #include <functional>
 #include <string>
@@ -232,6 +234,129 @@ namespace Azure { namespace Perf {
         m_isPlayBackMode = false;
       }
     }
+  }
+
+  class TestNonExpiringCredential final : public Core::Credentials::TokenCredential {
+  public:
+    TestNonExpiringCredential() : TokenCredential("TestNonExpiringCredential") {}
+
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override
+    {
+      Core::Credentials::AccessToken accessToken;
+      accessToken.Token = "magicToken";
+      accessToken.ExpiresOn = (DateTime::max)();
+
+      if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
+      {
+        accessToken.ExpiresOn = (DateTime::min)();
+      }
+
+      return accessToken;
+    }
+  };
+
+  std::shared_ptr<Azure::Core::Credentials::TokenCredential> BaseTest::GetTestCredential()
+  {
+    if (m_testCredential)
+    {
+      return m_testCredential;
+    }
+    if (m_isPlayBackMode)
+    {
+      // Playback mode uses:
+      //  - never-expiring test credential to never require a token
+      return std::make_shared<TestNonExpiringCredential>();
+    }
+    else
+    {
+      std::string clientSecret;
+      try
+      {
+        clientSecret = GetEnv("AZURE_CLIENT_SECRET");
+      }
+      catch (std::runtime_error&)
+      {
+      }
+      catch (...)
+      {
+        throw;
+      }
+      if (clientSecret.empty())
+      {
+        m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+      }
+      else
+      {
+        m_testCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), clientSecret);
+      }
+
+      return m_testCredential;
+    }
+  }
+
+  /**
+   * @brief Utility function used by tests to retrieve env vars
+   *
+   * @param name Environment variable name to retrieve.
+   *
+   * @return The value of the environment variable retrieved.
+   *
+   * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID, or AZURE_CLIENT_SECRET are not available in the
+   * environment, the AZURE_SERVICE_DIRECTORY environment variable is used to set those values
+   * with the values emitted by the New-TestResources.ps1 script.
+   *
+   * @note The Azure CI pipeline upper cases all environment variables defined in the pipeline.
+   * Since some operating systems have case sensitive environment variables, on debug builds,
+   * this function ensures that the environment variable being retrieved is all upper case.
+   *
+   */
+  std::string BaseTest::GetEnv(std::string const& name)
+  {
+#if !defined(NDEBUG)
+    // The azure CI pipeline uppercases all EnvVar values from ci.yml files.
+    // That means that any mixed case strings will not be found when run from the CI
+    // pipeline. Check to make sure that the developer only passed in an upper case environment
+    // variable.
+    {
+      if (name != Azure::Core::_internal::StringExtensions::ToUpper(name))
+      {
+        throw std::runtime_error("All Azure SDK environment variables must be all upper case.");
+      }
+    }
+#endif
+    auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
+    if (ret.empty())
+    {
+      static const char azurePrefix[] = "AZURE_";
+      if (!m_isPlayBackMode && name.find(azurePrefix) == 0)
+      {
+        std::string serviceDirectory
+            = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
+        if (serviceDirectory.empty())
+        {
+          throw std::runtime_error(
+              "Could not find a value for " + name
+              + " and AZURE_SERVICE_DIRECTORY was not defined. Define either " + name
+              + " or AZURE_SERVICE_DIRECTORY to resolve.");
+        }
+        // Upper case the serviceName environment variable because all ci.yml environment
+        // variables are upper cased.
+        std::string serviceDirectoryEnvVar
+            = Azure::Core::_internal::StringExtensions::ToUpper(serviceDirectory);
+        serviceDirectoryEnvVar += name.substr(sizeof(azurePrefix) - 2);
+        ret = Azure::Core::_internal::Environment::GetVariable(serviceDirectoryEnvVar.c_str());
+        if (!ret.empty())
+        {
+          return ret;
+        }
+      }
+      throw std::runtime_error("Missing required environment variable: " + name);
+    }
+
+    return ret;
   }
 
 }} // namespace Azure::Perf
