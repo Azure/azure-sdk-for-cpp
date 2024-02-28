@@ -17,6 +17,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/internal/testing_macro.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/response.hpp>
 
@@ -34,11 +35,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the KeyVaultKey.
    */
-  class KeyClient
-#if !defined(TESTING_BUILD)
-      final
-#endif
-  {
+  class KeyClient _azure_NON_FINAL_FOR_TESTS {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     /** @brief the base URL for this keyvault instance. */

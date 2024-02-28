@@ -10,6 +10,7 @@
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/internal/testing_macro.hpp>
 
 #include <chrono>
 #include <functional>
@@ -24,21 +25,17 @@ namespace Azure { namespace Identity { namespace _detail {
    * @brief Access token cache.
    *
    */
-  class TokenCache
-#if !defined(TESTING_BUILD)
-      final
-#endif
-  {
-#if !defined(TESTING_BUILD)
+  class TokenCache _azure_NON_FINAL_FOR_TESTS {
+#if !defined(_azure_TESTING_BUILD)
   private:
 #else
   protected:
 #endif
     // A test hook that gets invoked before cache write lock gets acquired.
-    virtual void OnBeforeCacheWriteLock() const {};
+    _azure_VIRTUAL_FOR_TESTS void OnBeforeCacheWriteLock() const {};
 
     // A test hook that gets invoked before item write lock gets acquired.
-    virtual void OnBeforeItemWriteLock() const {};
+    _azure_VIRTUAL_FOR_TESTS void OnBeforeItemWriteLock() const {};
 
     struct CacheKey
     {

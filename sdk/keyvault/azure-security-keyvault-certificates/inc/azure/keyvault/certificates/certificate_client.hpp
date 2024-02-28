@@ -16,6 +16,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/internal/testing_macro.hpp>
 #include <azure/core/response.hpp>
 
 #include <memory>
@@ -33,11 +34,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    *
    * @details The client supports retrieving KeyVaultCertificate.
    */
-  class CertificateClient
-#if !defined(TESTING_BUILD)
-      final
-#endif
-  {
+  class CertificateClient _azure_NON_FINAL_FOR_TESTS {
     friend class CreateCertificateOperation;
 
 #if defined(TESTING_BUILD)
