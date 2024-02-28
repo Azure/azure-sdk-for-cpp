@@ -300,6 +300,7 @@ namespace Azure { namespace Data { namespace Tables {
     Models::QueryEntitiesPagedResponse QueryEntities(
         Models::QueryEntitiesOptions const& options = {},
         Core::Context const& context = {});
+
     /**
      * @brief Creates a new transaction.
      *
@@ -391,14 +392,14 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief List tables.
+     * @brief Query tables.
      *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return List tables paged response.
      */
-    Models::ListTablesPagedResponse ListTables(
-        const Models::ListTablesOptions& options = {},
+    Models::QueryTablesPagedResponse QueryTables(
+        const Models::QueryTablesOptions& options = {},
         const Azure::Core::Context& context = {}) const;
 
     /**

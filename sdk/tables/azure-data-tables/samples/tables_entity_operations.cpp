@@ -36,7 +36,7 @@ int main()
   tableClient.Create();
 
   // list tables
-  auto tables = tableServiceClient.ListTables();
+  auto tables = tableServiceClient.QueryTables();
   for (auto table : tables.Tables)
   {
     std::cout << table.TableName << std::endl;

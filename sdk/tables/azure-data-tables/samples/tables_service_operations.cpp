@@ -31,8 +31,8 @@ int main()
 {
   auto tableServiceClient = TableServicesClient::CreateFromConnectionString(GetConnectionString());
 
-  // list tables
-  auto tables = tableServiceClient.ListTables();
+  // query tables
+  auto tables = tableServiceClient.QueryTables();
 
   // print table names
   for (auto table : tables.Tables)

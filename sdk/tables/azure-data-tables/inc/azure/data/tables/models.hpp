@@ -54,41 +54,45 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Include this parameter to specify that the tables' metadata be returned as part of
      * the response body.
      */
-    enum class ListTablesIncludeFlags
+    enum class QueryTablesIncludeFlags
     {
       None = 0,
       Metadata = 1,
     };
-    inline ListTablesIncludeFlags operator|(ListTablesIncludeFlags lhs, ListTablesIncludeFlags rhs)
+    inline QueryTablesIncludeFlags operator|(
+        QueryTablesIncludeFlags lhs,
+        QueryTablesIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListTablesIncludeFlags>;
-      return static_cast<ListTablesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
+      using type = std::underlying_type_t<QueryTablesIncludeFlags>;
+      return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
     }
-    inline ListTablesIncludeFlags& operator|=(
-        ListTablesIncludeFlags& lhs,
-        ListTablesIncludeFlags rhs)
+    inline QueryTablesIncludeFlags& operator|=(
+        QueryTablesIncludeFlags& lhs,
+        QueryTablesIncludeFlags rhs)
     {
       lhs = lhs | rhs;
       return lhs;
     }
-    inline ListTablesIncludeFlags operator&(ListTablesIncludeFlags lhs, ListTablesIncludeFlags rhs)
+    inline QueryTablesIncludeFlags operator&(
+        QueryTablesIncludeFlags lhs,
+        QueryTablesIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListTablesIncludeFlags>;
-      return static_cast<ListTablesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
+      using type = std::underlying_type_t<QueryTablesIncludeFlags>;
+      return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
     }
-    inline ListTablesIncludeFlags& operator&=(
-        ListTablesIncludeFlags& lhs,
-        ListTablesIncludeFlags rhs)
+    inline QueryTablesIncludeFlags& operator&=(
+        QueryTablesIncludeFlags& lhs,
+        QueryTablesIncludeFlags rhs)
     {
       lhs = lhs & rhs;
       return lhs;
     }
 
     /**
-     * @brief List Tables options.
+     * @brief Query Tables options.
      *
      */
-    struct ListTablesOptions final
+    struct QueryTablesOptions final
     {
       /**
        * @brief Specifies a string that filters the results to return only tables whose name
@@ -113,17 +117,17 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * @brief Specifies that the table's metadata be returned.
        */
-      Models::ListTablesIncludeFlags Include = Models::ListTablesIncludeFlags::None;
+      Models::QueryTablesIncludeFlags Include = Models::QueryTablesIncludeFlags::None;
     };
 
     /**
-     * @brief List tables paged response.
+     * @brief Query tables paged response.
      */
-    class ListTablesPagedResponse final
-        : public Azure::Core::PagedResponse<ListTablesPagedResponse> {
+    class QueryTablesPagedResponse final
+        : public Azure::Core::PagedResponse<QueryTablesPagedResponse> {
 
       friend class Azure::Data::Tables::TableServicesClient;
-      friend class Azure::Core::PagedResponse<ListTablesPagedResponse>;
+      friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
 
     public:
       /**
@@ -147,7 +151,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       std::shared_ptr<TableServicesClient> m_tableServiceClient;
       /** Operation options */
-      ListTablesOptions m_operationOptions;
+      QueryTablesOptions m_operationOptions;
 
     private:
       void OnNextPage(const Azure::Core::Context& context);

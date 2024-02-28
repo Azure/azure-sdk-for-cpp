@@ -185,9 +185,9 @@ namespace Azure { namespace Data { namespace Test {
 
       auto createResponse = m_tableClient->Create();
 
-      Azure::Data::Tables::Models::ListTablesOptions listOptions;
+      Azure::Data::Tables::Models::QueryTablesOptions listOptions;
 
-      auto listResponse = m_tableServiceClient->ListTables(listOptions);
+      auto listResponse = m_tableServiceClient->QueryTables(listOptions);
 
       for (auto table : listResponse.Tables)
       {

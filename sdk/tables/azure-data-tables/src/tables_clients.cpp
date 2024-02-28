@@ -472,14 +472,14 @@ Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
   return Response<Models::Table>(std::move(response), std::move(rawResponse));
 }
 
-void Models::ListTablesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+void Models::QueryTablesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   m_operationOptions.ContinuationToken = NextPageToken;
-  *this = m_tableServiceClient->ListTables(m_operationOptions, context);
+  *this = m_tableServiceClient->QueryTables(m_operationOptions, context);
 }
 
-Models::ListTablesPagedResponse TableServicesClient::ListTables(
-    Models::ListTablesOptions const& options,
+Models::QueryTablesPagedResponse TableServicesClient::QueryTables(
+    Models::QueryTablesOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto url = m_url;
@@ -498,7 +498,7 @@ Models::ListTablesPagedResponse TableServicesClient::ListTables(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::ListTablesPagedResponse response;
+  Models::QueryTablesPagedResponse response;
   {
     auto const& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
