@@ -51,7 +51,7 @@ endif()
 
 # make sure that users can consume the project as a library.
 add_library (Azure::Perf ALIAS azure-perf)
-target_link_libraries(azure-perf PUBLIC azure-core)
+target_link_libraries(azure-perf PUBLIC azure-core azure-identity)
 create_map_file(azure-perf azure-perf.map)
 
 set_target_properties(azure-perf PROPERTIES FOLDER "Core")

@@ -32,9 +32,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     std::string m_eventHubConnectionString;
     std::string m_partitionId;
     std::string m_checkpointStoreConnectionString;
-    std::string m_tenantId;
-    std::string m_clientId;
-    std::string m_secret;
     uint32_t m_numberToSend;
     uint32_t m_batchSize;
     uint32_t m_prefetchCount;
@@ -42,7 +39,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     uint32_t m_paddingBytes{};
     uint32_t m_maxDeadlineExceeded{};
 
-    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> m_client;
 
   public:
@@ -69,17 +66,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
       m_partitionId = m_options.GetOptionOrDefault<std::string>("PartitionId", "0");
       m_maxDeadlineExceeded = m_options.GetOptionOrDefault<uint32_t>("MaxTimeouts", 10);
 
-      m_tenantId = m_options.GetOptionOrDefault<std::string>(
-          "TenantId", Azure::Core::_internal::Environment::GetVariable("AZURE_TENANT_ID"));
-      m_clientId = m_options.GetOptionOrDefault<std::string>(
-          "ClientId", Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_ID"));
-      m_secret = m_options.GetOptionOrDefault<std::string>(
-          "Secret", Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_SECRET"));
-
       if (m_eventHubConnectionString.empty())
       {
-        m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            m_tenantId, m_clientId, m_secret);
+        m_credential = GetTestCredential();
 
         m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
             m_eventHubConnectionString, m_eventHubName, m_credential);

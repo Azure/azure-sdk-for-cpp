@@ -92,7 +92,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         ProducerClientOptions options = {});
 
-    ~ProducerClient() {}
+    ~ProducerClient() { Close(); }
 
     /** @brief Close all the connections and sessions.
      *
@@ -105,8 +105,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         sender.second.Close(context);
       }
       m_senders.clear();
-      // Other possible things we might want to do in close, but cannot quite do yet because it
-      // doesn't necessarily work correctly.
+
+      // Close needs to tear down all outstanding sessions and connections, but the functionality to
+      // tear these down isn't complete yet.
       //    for (auto& session : m_sessions)
       //    {
       // session.second.Close(context);

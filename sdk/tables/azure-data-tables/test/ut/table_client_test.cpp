@@ -42,10 +42,7 @@ namespace Azure { namespace Data { namespace Test {
                   GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, tableClientOptions));
           break;
         case AuthType::Key:
-          m_credential = CreateClientSecretCredential(
-              GetEnv("STORAGE_TENANT_ID"),
-              GetEnv("STORAGE_CLIENT_ID"),
-              GetEnv("STORAGE_CLIENT_SECRET"));
+          m_credential = GetTestCredential();
           m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
               Azure::Data::Tables::TableServicesClient(
                   "https://" + GetAccountName() + ".table.core.windows.net/",
