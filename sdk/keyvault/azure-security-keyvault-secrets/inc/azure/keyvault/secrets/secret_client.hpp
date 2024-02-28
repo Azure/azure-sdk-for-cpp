@@ -43,7 +43,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * restoring, and listing the secret.
    */
   class SecretClient
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
       final
 #endif
   {
