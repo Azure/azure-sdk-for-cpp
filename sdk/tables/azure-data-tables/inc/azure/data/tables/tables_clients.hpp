@@ -193,22 +193,6 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Create the table indicated in the tableName field of the client.
-     *
-     * @param context for canceling long running operations.
-     * @return Create table result.
-     */
-    Response<Models::Table> Create(Core::Context const& context = {});
-
-    /**
-     * @brief Delete the table indicated in the tableName field of the client.
-     *
-     * @param context for canceling long running operations.
-     * @return Delete table result.
-     */
-    Response<Models::DeleteResult> Delete(Core::Context const& context = {});
-
-    /**
      * @brief Get table access policy.
      *
      * @param context for canceling long running operations.
@@ -390,6 +374,25 @@ namespace Azure { namespace Data { namespace Tables {
     static TableServicesClient CreateFromConnectionString(
         const std::string& connectionString,
         const TableClientOptions& options = {});
+
+    /**
+     * @brief Create the table indicated in the tableName field of the client.
+     *
+     * @param context for canceling long running operations.
+     * @param tableName The name of the table to be created.
+     * @return Create table result.
+     */
+    Response<Models::Table> CreateTable(std::string tableName, Core::Context const& context = {});
+
+    /**
+     * @brief Delete the table indicated in the tableName field of the client.
+     *
+     * @param context for canceling long running operations.
+     * @param tableName The name of the table to be deleted.
+     * @return Delete table result.
+     */
+    Response<Models::DeleteResult> DeleteTable(std::string tableName, Core::Context const& context = {});
+
 
     /**
      * @brief Query tables.

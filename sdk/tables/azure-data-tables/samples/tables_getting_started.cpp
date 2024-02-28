@@ -33,7 +33,7 @@ int main()
   auto tableClient = TableClient::CreateFromConnectionString(GetConnectionString(), TableName);
 
   // create new table
-  tableClient.Create();
+  tableServiceClient.CreateTable(TableName);
 
   // query tables
   auto tables = tableServiceClient.QueryTables();
@@ -44,6 +44,6 @@ int main()
     std::cout << table.TableName << std::endl;
   }
   // delete existing table
-  tableClient.Delete();
+  tableServiceClient.DeleteTable(TableName);
   return 0;
 }

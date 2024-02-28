@@ -429,12 +429,12 @@ TableClient TableClient::CreateFromConnectionString(
   }
 }
 
-Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
+Azure::Response<Models::Table> TableServicesClient::CreateTable(std::string tableName, Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("Tables");
 
-  std::string jsonBody = Serializers::Create(m_tableName);
+  std::string jsonBody = Serializers::Create(tableName);
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
@@ -585,10 +585,10 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
   return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::DeleteResult> TableClient::Delete(Core::Context const& context)
+Azure::Response<Models::DeleteResult> TableServicesClient::DeleteTable(std::string tableName, Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("Tables('" + m_tableName + "')");
+  url.AppendPath("Tables('" + tableName + "')");
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 

@@ -33,7 +33,7 @@ int main()
   auto tableClient = TableClient::CreateFromConnectionString(GetConnectionString(), TableName);
 
   // create new table
-  tableClient.Create();
+  tableServiceClient.CreateTable(TableName);
 
   // list tables
   auto tables = tableServiceClient.QueryTables();
@@ -67,6 +67,6 @@ int main()
   auto deleteResponse = tableClient.DeleteEntity(entity);
 
   // delete existing table
-  tableClient.Delete();
+  tableServiceClient.DeleteTable(TableName);
   return 0;
 }
