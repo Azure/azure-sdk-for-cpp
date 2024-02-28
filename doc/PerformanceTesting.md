@@ -238,3 +238,12 @@ The parameters of interest here are :
 Once you have everything in place create a pipeline using the definition in your in the cpp repo by going to https://dev.azure.com/azure-sdk/internal/_build?definitionScope=%5Cperf and create a new one under the cpp node. 
 
 To test intermediate definitions of your pipeline you can run the https://dev.azure.com/azure-sdk/internal/_build?definitionId=5121 pipeline and set the proper values for the cpp node( make sure to deselect all other languages except cpp unless you want to run them).
+
+In case you need to validate a set of changes using an existing pipeline you can go to an existing perf pipeline press Run , in the dialog presented enter the following data : 
+    - Branch/Tag : refs/pull/<PR_NUMBER>/merge
+    - Commit : <COMMIT_HASH> 
+
+The rest of the arguments can be let as default. 
+
+Press run and wait for the pipeline to finish.
+  
