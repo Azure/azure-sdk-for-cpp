@@ -36,7 +36,8 @@ void RandomBuffer(uint8_t* buffer, size_t length)
     *(start_addr++) = RandomChar();
   }
 
-  std::uniform_int_distribution<uint64_t> distribution(0ULL, std::numeric_limits<uint64_t>::max());
+  std::uniform_int_distribution<uint64_t> distribution(
+      0ULL, (std::numeric_limits<uint64_t>::max)());
   while (start_addr + rand_int_size <= end_addr)
   {
     *reinterpret_cast<uint64_t*>(start_addr) = distribution(random_generator);
@@ -70,7 +71,7 @@ size_t Azure::Perf::RandomStream::CircularStream::OnRead(
     return 0;
   }
 
-  size_t toRead = std::min(count, available);
+  size_t toRead = (std::min)(count, available);
   auto read = m_memoryStream.Read(buffer, toRead, context);
 
   // Circurl implementation. Rewind the stream every time we reach the end

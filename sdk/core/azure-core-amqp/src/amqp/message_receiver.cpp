@@ -8,24 +8,18 @@
 
 #include "../models/private/message_impl.hpp"
 #include "../models/private/value_impl.hpp"
-#include "azure/core/amqp/internal/connection.hpp"
-#include "azure/core/amqp/internal/connection_string_credential.hpp"
 #include "azure/core/amqp/internal/link.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
-#include "azure/core/amqp/internal/session.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "private/message_receiver_impl.hpp"
 
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/platform.hpp>
 
 #include <azure_uamqp_c/message_receiver.h>
 
-#include <iostream>
 #include <memory>
-#include <sstream>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
@@ -219,7 +213,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
-      m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
+      m_link->SetMaxMessageSize((std::numeric_limits<uint64_t>::max)());
     }
     if (m_options.MaxLinkCredit != 0)
     {

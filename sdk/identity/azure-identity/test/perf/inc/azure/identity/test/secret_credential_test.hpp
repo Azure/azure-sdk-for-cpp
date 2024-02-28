@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/perf.hpp>
 
@@ -37,12 +38,15 @@ namespace Azure { namespace Identity { namespace Test {
      */
     void Setup() override
     {
-      m_tenantId = m_options.GetMandatoryOption<std::string>("TenantId");
-      m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
-      m_secret = m_options.GetMandatoryOption<std::string>("Secret");
-      m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
+      m_tenantId = Azure::Core::_internal::Environment::GetVariable("AZURE_TENANT_ID");
+      m_clientId = Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_ID");
+      m_secret = Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_SECRET");
+
+      m_tokenRequestContext.Scopes.push_back(
+          m_options.GetOptionOrDefault<std::string>("Scope", "https://attest.azure.net/.default"));
       if (!m_options.GetOptionOrDefault<bool>("Cache", false))
       {
+        // having this set ignores the credentials cache and forces a new token to be requested
         m_tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
       }
       m_credential = std::make_unique<Azure::Identity::ClientSecretCredential>(
@@ -78,10 +82,7 @@ namespace Azure { namespace Identity { namespace Test {
     {
       return {
           {"Cache", {"--cache"}, "Use credential cache.", 1, false},
-          {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, true},
-          {"Scope", {"--scope"}, "One scope to request access to.", 1, true},
-          {"Secret", {"--secret"}, "The secret for authentication.", 1, true, true},
-          {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, true}};
+          {"Scope", {"--scope"}, "The secret for authentication.", 1, false}};
     }
 
     /**

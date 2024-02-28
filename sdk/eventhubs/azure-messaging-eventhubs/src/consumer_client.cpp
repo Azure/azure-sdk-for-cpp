@@ -67,6 +67,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     };
   }
 
+  void ConsumerClient::Close(Azure::Core::Context const& context)
+  {
+    for (auto& sender : m_receivers)
+    {
+      sender.second.Close(context);
+    }
+    m_receivers.clear();
+  }
+
   Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection(
       std::string const& partitionId) const
   {
@@ -99,7 +108,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize
-        = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+        = static_cast<uint32_t>((std::numeric_limits<int32_t>::max)());
 
     return m_connections.at(partitionId).CreateSession(sessionOptions);
   }

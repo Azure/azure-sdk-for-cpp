@@ -13,6 +13,13 @@
 #include "azure/core/http/win_http_transport.hpp"
 #include "azure/core/url.hpp"
 
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
 #include <Windows.h>
 
 #include <memory>
@@ -178,7 +185,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         WinHttpTransportOptions const& options);
 
     ~WinHttpRequest();
-
+    void MarkRequestHandleClosed() { m_requestHandleClosed = true; };
     void Upload(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void SendRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void ReceiveResponse(Azure::Core::Context const& context);

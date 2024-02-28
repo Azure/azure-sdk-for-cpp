@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {
-          "HTTPTransportTest",
+          "httpTransport",
           "Measures HTTP transport performance",
           [](Azure::Perf::TestOptions options) {
             return std::make_unique<Azure::Core::Test::HTTPTransportTest>(options);

@@ -117,6 +117,7 @@
     "fibonacci",
     "francecentral",
     "gcovr",
+    "gearama",
     "githubio",
     "gmock",
     "gtest",
@@ -282,6 +283,7 @@
     {
       "filename": "**/eng/**",
       "words": [
+        "azblob",
         "TEAMPROJECTID",
         "issecret",
         "PSScriptRoot",
@@ -339,6 +341,17 @@
         "sjoubert",
         "sourav",
         "Sylvain"
+      ]
+    },
+    {
+      "filename": "**/sdk/eventhubs/azure-messaging-eventhubs/**/*",
+      "words": [
+        "otlp",
+        "Otlp",
+        "OTLP",
+        "exportings",
+        "ricab",
+        "noarg"
       ]
     },
     {
@@ -411,7 +424,8 @@
     {
       "filename": "**/vcpkg.json",
       "words": [
-        "umock"
+        "umock",
+        "otlp"
       ]
     }
   ],

@@ -17,7 +17,7 @@
 #include <thread>
 #include <vector>
 
-namespace Azure { namespace Perf { namespace Test {
+namespace Azure { namespace Core { namespace Test {
 
   namespace _detail {
     static std::atomic_uint64_t DelayTestInstanceCount(0);
@@ -77,14 +77,14 @@ namespace Azure { namespace Perf { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       return {
-          {"InitialDelayMs", {"-m"}, "Initial delay (in milliseconds). Default to 1000 (1sec)", 1},
+          {"InitialDelayMs", {"--m"}, "Initial delay (in milliseconds). Default to 1000 (1sec)", 1},
           {"InstanceGrowthFactor",
-           {"-n"},
+           {"--n"},
            "Instance growth factor. The delay of instance N will be (InitialDelayMS * "
            "(InstanceGrowthFactor ^ InstanceCount)). Default to 1",
            1},
           {"IterationGrowthFactor",
-           {"-t"},
+           {"--t"},
            "Initial delay (in milliseconds). The delay of iteration N will be (InitialDelayMS * "
            "(IterationGrowthFactor ^ IterationCount)). Default to 1",
            1}};
@@ -101,9 +101,9 @@ namespace Azure { namespace Perf { namespace Test {
           "delay",
           "The no op test with a configurable time delay for the main test loop.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Perf::Test::DelayTest>(options);
+            return std::make_unique<Azure::Core::Test::DelayTest>(options);
           }};
     }
   };
 
-}}} // namespace Azure::Perf::Test
+}}} // namespace Azure::Core::Test

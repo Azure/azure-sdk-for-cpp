@@ -14,7 +14,7 @@
 #include <memory>
 #include <vector>
 
-namespace Azure { namespace Perf { namespace Test {
+namespace Azure { namespace Core { namespace Test {
 
   /**
    * @brief A performance test that defines a test option.
@@ -47,7 +47,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"extraOption", {"-e"}, "Example for extended option for test.", 1}};
+      return {{"extraOption", {"--e"}, "Example for extended option for test.", 1}};
     }
 
     /**
@@ -62,9 +62,9 @@ namespace Azure { namespace Perf { namespace Test {
           "Demostrate how to include a test option to a test and measures how expensive is to do "
           "it.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Perf::Test::ExtendedOptionsTest>(options);
+            return std::make_unique<Azure::Core::Test::ExtendedOptionsTest>(options);
           }};
     }
   };
 
-}}} // namespace Azure::Perf::Test
+}}} // namespace Azure::Core::Test

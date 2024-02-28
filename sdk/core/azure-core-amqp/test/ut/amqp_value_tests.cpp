@@ -1237,7 +1237,7 @@ template <typename T> T GenerateRandomValue()
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<T> dis(
-      std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+      (std::numeric_limits<T>::min)(), (std::numeric_limits<T>::max)());
   return dis(gen);
 }
 

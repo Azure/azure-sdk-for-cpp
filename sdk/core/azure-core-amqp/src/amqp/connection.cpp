@@ -15,7 +15,6 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/url.hpp>
 #include <azure/core/uuid.hpp>
 
 #include <azure_uamqp_c/connection.h>
@@ -662,11 +661,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       try
       {
         Credentials::TokenRequestContext requestContext;
-        bool isSasToken = IsSasCredential();
-        if (isSasToken)
-        {
-          requestContext.MinimumExpiration = std::chrono::minutes(60);
-        }
+
         requestContext.Scopes = m_options.AuthenticationScopes;
         auto accessToken{GetCredential()->GetToken(requestContext, context)};
 

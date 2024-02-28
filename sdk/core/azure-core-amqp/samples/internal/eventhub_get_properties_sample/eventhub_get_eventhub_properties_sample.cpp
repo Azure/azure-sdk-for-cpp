@@ -187,8 +187,8 @@ int main()
 
   // Establish a session to the eventhub.
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-  sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
-  sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+  sessionOptions.InitialIncomingWindowSize = (std::numeric_limits<int32_t>::max)();
+  sessionOptions.InitialOutgoingWindowSize = (std::numeric_limits<uint16_t>::max)();
   Azure::Core::Amqp::_internal::Session session(connection.CreateSession(sessionOptions));
 
   auto eventHubProperties = GetEventHubProperties(session, eventhubsEntity);

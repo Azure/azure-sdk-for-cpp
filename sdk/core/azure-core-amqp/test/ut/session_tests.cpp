@@ -70,7 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       // Verify defaults are something "reasonable".
       EXPECT_EQ(1, session.GetIncomingWindow());
-      EXPECT_EQ(std::numeric_limits<uint32_t>::max(), session.GetHandleMax());
+      EXPECT_EQ((std::numeric_limits<uint32_t>::max)(), session.GetHandleMax());
       EXPECT_EQ(1, session.GetOutgoingWindow());
     }
 

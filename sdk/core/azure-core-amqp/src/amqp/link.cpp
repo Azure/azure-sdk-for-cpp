@@ -7,18 +7,12 @@
 #include "../models/private/performatives/transfer_impl.hpp"
 #include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/common/completion_operation.hpp"
-#include "azure/core/amqp/internal/message_receiver.hpp"
-#include "azure/core/amqp/internal/message_sender.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
-#include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "private/link_impl.hpp"
 #include "private/session_impl.hpp"
 
-#include <azure_uamqp_c/amqp_definitions_sequence_no.h>
-
 #include <azure_uamqp_c/link.h>
-#include <azure_uamqp_c/session.h>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if defined(TESTING_BUILD)

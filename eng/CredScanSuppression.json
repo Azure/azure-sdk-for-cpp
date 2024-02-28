@@ -8,6 +8,10 @@
     {
       "file": [ "sdk/attestation/azure-security-attestation/test/ut/crypto_test_collateral.cpp" ],
       "_justification": "File contains a PEM encoded RSA private key used by test code."
+    },
+    {
+      "file": [ "sdk/identity/azure-identity/test/perf/inc/azure/identity/test/externals/perf.combo.pem" ],
+      "_justification": "File contains a PEM encoded RSA private key used by perf test code."
     }
   ]
 }

@@ -40,11 +40,11 @@ namespace Azure { namespace Core { namespace Test {
     {
       Core::Credentials::AccessToken accessToken;
       accessToken.Token = "magicToken";
-      accessToken.ExpiresOn = DateTime::max();
+      accessToken.ExpiresOn = (DateTime::max)();
 
       if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
       {
-        accessToken.ExpiresOn = DateTime::min();
+        accessToken.ExpiresOn = (DateTime::min)();
       }
 
       return accessToken;

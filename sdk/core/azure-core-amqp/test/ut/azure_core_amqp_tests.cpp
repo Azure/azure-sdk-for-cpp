@@ -12,6 +12,7 @@
 #if defined(AZ_PLATFORM_WINDOWS)
 #if defined(_DEBUG) && defined(_MSC_VER)
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <windows.h>
 // MSVC CRT error callback.
 // This function is called when a CRT error is detected.

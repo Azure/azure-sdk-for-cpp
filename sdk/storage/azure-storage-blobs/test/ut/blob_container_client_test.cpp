@@ -1468,4 +1468,25 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlobContainerClient(m_blobContainerClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(containerClient.GetProperties(), StorageException);
   }
+
+  TEST_F(BlobContainerClientTest, ErrorCode)
+  {
+    auto inexistent = m_blobContainerClient->GetBlobClient(RandomString());
+    try
+    {
+      inexistent.GetProperties();
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ(e.ErrorCode, "BlobNotFound");
+    }
+    try
+    {
+      inexistent.Download();
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ(e.ErrorCode, "BlobNotFound");
+    }
+  }
 }}} // namespace Azure::Storage::Test

@@ -14,7 +14,7 @@
 
 #include <memory>
 
-namespace Azure { namespace Perf { namespace Test {
+namespace Azure { namespace Core { namespace Test {
 
   /**
    * @brief Measures the overhead of creating, throwing, and catching an exception (compared to
@@ -57,9 +57,9 @@ namespace Azure { namespace Perf { namespace Test {
           "exception",
           "Measure how the impact of catching a runtime exception.",
           [](Azure::Perf::TestOptions options) {
-            return std::make_unique<Azure::Perf::Test::ExceptionTest>(options);
+            return std::make_unique<Azure::Core::Test::ExceptionTest>(options);
           }};
     }
   };
 
-}}} // namespace Azure::Perf::Test
+}}} // namespace Azure::Core::Test
