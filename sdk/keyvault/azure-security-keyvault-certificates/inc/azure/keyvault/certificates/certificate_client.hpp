@@ -34,7 +34,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    *
    * @details The client supports retrieving KeyVaultCertificate.
    */
-  class CertificateClient _azure_NON_FINAL_FOR_TESTS {
+  class CertificateClient
+#if !defined(TESTING_BUILD)
+      final
+#endif
+  {
     friend class CreateCertificateOperation;
 
 #if defined(TESTING_BUILD)

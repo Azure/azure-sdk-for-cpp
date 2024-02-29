@@ -25,7 +25,11 @@ namespace Azure { namespace Identity { namespace _detail {
    * @brief Access token cache.
    *
    */
-  class TokenCache _azure_NON_FINAL_FOR_TESTS {
+  class TokenCache
+#if !defined(TESTING_BUILD)
+      final
+#endif
+  {
 #if !defined(_azure_TESTING_BUILD)
   private:
 #else

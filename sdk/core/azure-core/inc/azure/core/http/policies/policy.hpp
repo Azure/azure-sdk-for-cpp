@@ -372,7 +372,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy _azure_NON_FINAL_FOR_TESTS : public HttpPolicy {
+    class RetryPolicy
+#if !defined(TESTING_BUILD)
+        final
+#endif
+        : public HttpPolicy {
 
 #if defined(_azure_TESTING_BUILD)
       // make tests classes friends to validate RetryPolicy

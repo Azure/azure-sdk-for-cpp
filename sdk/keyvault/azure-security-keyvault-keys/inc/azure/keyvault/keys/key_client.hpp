@@ -35,7 +35,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the KeyVaultKey.
    */
-  class KeyClient _azure_NON_FINAL_FOR_TESTS {
+  class KeyClient
+#if !defined(TESTING_BUILD)
+      final
+#endif
+  {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     /** @brief the base URL for this keyvault instance. */

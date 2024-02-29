@@ -15,13 +15,6 @@
 #if defined(_azure_TESTING_BUILD)
 
 /**
- * @brief If we are testing, we want to make sure that classes are not final, by default.
- */
-#if !defined(_azure_NON_FINAL_FOR_TESTS)
-#define _azure_NON_FINAL_FOR_TESTS
-#endif
-
-/**
  * @brief If we are testing, we want to make sure methods can be made virtual, for mocking.
  */
 #if !defined(_azure_VIRTUAL_FOR_TESTS)
@@ -29,13 +22,6 @@
 #endif
 
 #else
-
-/**
- * @brief If we are not testing, we want to make sure that classes are final, by default.
- */
-#if !defined(_azure_NON_FINAL_FOR_TESTS)
-#define _azure_NON_FINAL_FOR_TESTS final
-#endif
 
 /**
  * @brief If we are not testing, we don't need to make methods virtual for mocking.

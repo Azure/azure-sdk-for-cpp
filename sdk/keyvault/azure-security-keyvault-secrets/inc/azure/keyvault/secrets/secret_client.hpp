@@ -43,8 +43,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the secret.
    */
-  class SecretClient _azure_NON_FINAL_FOR_TESTS {
-
+  class SecretClient
+#if !defined(TESTING_BUILD)
+      final
+#endif
+  {
   private:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
