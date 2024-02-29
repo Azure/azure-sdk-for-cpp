@@ -963,12 +963,12 @@ inline bool flag_is_short(const char* s)
 
 inline bool parser_map::known_short_flag(const char flag) const
 {
-  return this->short_map[flag] != nullptr;
+  return this->short_map[static_cast<size_t>(flag)] != nullptr;
 }
 
 inline const definition* parser_map::get_definition_for_short_flag(const char flag) const
 {
-  return this->short_map[flag];
+  return this->short_map[static_cast<size_t>(flag)];
 }
 
 inline bool parser_map::known_long_flag(const std::string& flag) const
@@ -1014,7 +1014,7 @@ inline parser_map validate_definitions(const std::vector<definition>& definition
 
       if (flag_is_short(flag.data()))
       {
-        const int short_flag_letter = flag[1];
+        const size_t short_flag_letter = static_cast<size_t>(flag[1]);
         const auto existing_short_flag = map.short_map[short_flag_letter];
         bool short_flag_already_exists = (existing_short_flag != nullptr);
         if (short_flag_already_exists)
