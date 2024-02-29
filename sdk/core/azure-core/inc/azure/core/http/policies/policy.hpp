@@ -16,7 +16,7 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/http/http_sanitizer.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
-#include "azure/core/internal/testing_macro.hpp"
+#include "azure/core/testing_macro.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>

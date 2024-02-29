@@ -10,7 +10,7 @@
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
-#include <azure/core/internal/testing_macro.hpp>
+#include <azure/core/testing_macro.hpp>
 
 #include <chrono>
 #include <functional>
