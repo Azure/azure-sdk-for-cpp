@@ -96,7 +96,6 @@ set(
     inc/azure/core/internal/json/json_optional.hpp
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/strings.hpp
-    inc/azure/core/internal/testing_macro.hpp
     inc/azure/core/internal/tracing/service_tracing.hpp
     inc/azure/core/internal/tracing/tracing_impl.hpp
     inc/azure/core/internal/unique_handle.hpp
@@ -110,6 +109,7 @@ set(
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
     inc/azure/core/rtti.hpp
+    inc/azure/core/testing_macro.hpp
     inc/azure/core/tracing/tracing.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
