@@ -963,12 +963,16 @@ inline bool flag_is_short(const char* s)
 
 inline bool parser_map::known_short_flag(const char flag) const
 {
-  return this->short_map[static_cast<size_t>(flag)] != nullptr;
+  const size_t index = static_cast<size_t>(static_cast<unsigned char>(flag));
+  const definition* const def = this->short_map[index];
+  return def != nullptr;
 }
 
 inline const definition* parser_map::get_definition_for_short_flag(const char flag) const
 {
-  return this->short_map[static_cast<size_t>(flag)];
+  const size_t index = static_cast<size_t>(static_cast<unsigned char>(flag));
+  const definition* const def = this->short_map[index];
+  return def;
 }
 
 inline bool parser_map::known_long_flag(const std::string& flag) const
