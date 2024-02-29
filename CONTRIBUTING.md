@@ -135,7 +135,7 @@ The following CMake options are available for adding/removing project features.
 </tr>
 <tr>
 <td>BUILD_TESTING</td>
-<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test. <br> <strong>Note:</strong> This CMake option is meant for unit testing only for contributors, and the SDK built with this flag on is not supported for production use. </td>
+<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test. <br> <strong>Note:</strong> The BUILD_TESTING option is provided only for contributors to this repo to perform unit testing.  The flag should NEVER be enabled in production code and the use of it in such situations is NOT supported. </td>
 <td>OFF</td>
 </tr>
 <tr>
