@@ -18,8 +18,8 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/testing_macro.hpp>
 #include <azure/core/response.hpp>
+#include <azure/core/testing_macro.hpp>
 
 #include <stdint.h>
 #include <string>
