@@ -125,6 +125,8 @@ The static code analysis is `ON` for the CI pipelines. You can turn this feature
 
 The following CMake options are available for adding/removing project features.
 
+**Note:** These CMake options are meant for contributors to the repo, and not end users.
+
 <table>
 <tr>
 <td>Option</td>
@@ -133,7 +135,7 @@ The following CMake options are available for adding/removing project features.
 </tr>
 <tr>
 <td>BUILD_TESTING</td>
-<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test.</td>
+<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test. <br> <strong>Note:</strong> This CMake option is meant for unit testing only for contributors, and the SDK built with this flag on is not supported for production use. </td>
 <td>OFF</td>
 </tr>
 <tr>
