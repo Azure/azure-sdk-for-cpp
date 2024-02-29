@@ -112,7 +112,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * @brief Specifies the maximum number of tables to return.
        */
-      Azure::Nullable<int32_t> PageSizeHint;
+      Azure::Nullable<std::int32_t> PageSizeHint;
 
       /**
        * @brief Specifies that the table's metadata be returned.
@@ -170,7 +170,7 @@ namespace Azure { namespace Data { namespace Tables {
        * Indicates the number of days that metrics or logging or soft-deleted data should be
        * retained. All data older than this value will be deleted.
        */
-      Nullable<int32_t> Days;
+      Nullable<std::int32_t> Days;
     };
 
     /**
@@ -257,7 +257,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * The maximum amount time that a browser should cache the preflight OPTIONS request.
        */
-      int32_t MaxAgeInSeconds = int32_t();
+      std::int32_t MaxAgeInSeconds = int32_t();
     };
 
     /**
@@ -490,7 +490,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @param other Upsert Entity options.
        */
-      CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
+      explicit CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
     /**
