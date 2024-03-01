@@ -12,7 +12,7 @@
 
 #include <chrono>
 
-#ifdef _azure_TESTING_BUILD_AMQP
+#ifdef _azure_TESTING_BUILD
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class ProcessorLoadBalancerTest_Greedy_EnoughUnownedPartitions_Test;
   class ProcessorLoadBalancerTest_Balanced_UnownedPartitions_Test;
@@ -63,7 +63,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
    * between multiple Processor instances, even in separate processes or on separate machines.
    */
   class ProcessorLoadBalancer final {
-#ifdef _azure_TESTING_BUILD_AMQP
+#ifdef _azure_TESTING_BUILD
     friend class Test::ProcessorLoadBalancerTest_Greedy_EnoughUnownedPartitions_Test;
     friend class Test::ProcessorLoadBalancerTest_Balanced_UnownedPartitions_Test;
     friend class Test::ProcessorLoadBalancerTest_Greedy_ForcedToSteal_Test;

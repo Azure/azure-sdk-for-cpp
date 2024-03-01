@@ -7,7 +7,7 @@
 cmake_minimum_required (VERSION 3.13)
 
 if(BUILD_TESTING)
-  add_compile_definitions(_azure_TESTING_BUILD_AMQP)
+  add_compile_definitions(_azure_TESTING_BUILD)
   if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()

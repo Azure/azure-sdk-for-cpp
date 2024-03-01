@@ -7,7 +7,7 @@
 #include <chrono>
 #include <functional>
 
-#if defined(_azure_TESTING_BUILD_AMQP)
+#if defined(_azure_TESTING_BUILD)
 // Define the class used from tests to validate retry enabled
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal { namespace Test {
   class RetryOperationTest_ShouldRetryTrue1_Test;
@@ -18,7 +18,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
 #endif
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
   class RetryOperation {
-#if defined(_azure_TESTING_BUILD_AMQP)
+#if defined(_azure_TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Messaging::EventHubs::_internal::Test::
         RetryOperationTest_ShouldRetryTrue1_Test;
