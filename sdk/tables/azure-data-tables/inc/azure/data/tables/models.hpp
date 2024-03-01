@@ -22,7 +22,6 @@ namespace Azure { namespace Data { namespace Tables {
   class TableClient;
 
   namespace Models {
-
     /**
      * @brief Table definition struct.
      */
@@ -352,6 +351,42 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
+     * @brief Table Entity Data Type.
+     */
+    class TableEntityDataType final {
+    public:
+      /** Constructs a new TableEntityDataType instance */
+      TableEntityDataType() = default;
+      /** Constructs a new TableEntityDataType from a string. */
+      explicit TableEntityDataType(std::string value) : m_value(std::move(value)) {}
+      /** Compares with another TableEntityDataType. */
+      bool operator==(const TableEntityDataType& other) const { return m_value == other.m_value; }
+      /** Compares with another TableEntityDataType. */
+      bool operator!=(const TableEntityDataType& other) const { return !(*this == other); }
+      /** Converts the value to a string. */
+      const std::string& ToString() const { return m_value; }
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBinary;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBoolean;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDateTime;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDouble;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmGuid;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt32;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt64;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmString;
+
+    private:
+      std::string m_value;
+    };
+
+    /**
      * @brief Geo-Replication information for the Secondary Storage Service.
      */
     struct GeoReplication final
@@ -454,6 +489,12 @@ namespace Azure { namespace Data { namespace Tables {
        * ETag
        */
       Azure::Nullable<std::string> ETag;
+
+      /**
+	   * @brief Table Entity data type.
+	   *
+	   */
+      TableEntityDataType DataType;
     };
 
     /**

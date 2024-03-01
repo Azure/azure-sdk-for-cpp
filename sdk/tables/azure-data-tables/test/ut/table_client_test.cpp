@@ -422,12 +422,12 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityQuery)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
+    //if (GetParam() == AuthType::Key
+    //    && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    //{
+    //  EXPECT_TRUE(true);
+    //  return;
+    //}
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.PartitionKey = "P1";

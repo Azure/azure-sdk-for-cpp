@@ -66,6 +66,7 @@ set(
     src/account_sas_builder.cpp
     src/credentials/shared_key_credential.cpp
     src/cryptography/hmacsha256.cpp
+    src/models.cpp
     src/policies/shared_key_lite_policy.cpp
     src/policies/shared_key_policy.cpp
     src/policies/switch_to_secondary_policy.cpp

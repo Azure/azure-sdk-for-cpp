@@ -616,19 +616,7 @@ Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
   auto url = m_url;
   url.AppendPath(m_tableName);
 
-  std::string jsonBody;
-  {
-    auto jsonRoot = Core::Json::_internal::json::object();
-
-    jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
-    jsonRoot["RowKey"] = tableEntity.RowKey;
-    for (auto entry : tableEntity.Properties)
-    {
-      jsonRoot[entry.first] = entry.second;
-    }
-
-    jsonBody = jsonRoot.dump();
-  }
+  std::string jsonBody = Serializers::CreateEntity(tableEntity);
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
@@ -865,43 +853,17 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
     if (!jsonRoot.contains("value"))
     {
-      response.TableEntities.emplace_back(DeserializeEntity(jsonRoot));
+      response.TableEntities.emplace_back(Serializers::DeserializeEntity(jsonRoot));
     }
     else
     {
       for (auto value : jsonRoot["value"])
       {
-        response.TableEntities.emplace_back(DeserializeEntity(value));
+        response.TableEntities.emplace_back(Serializers::DeserializeEntity(value));
       }
     }
   }
   return response;
-}
-
-Models::TableEntity TableClient::DeserializeEntity(Azure::Core::Json::_internal::json json)
-{
-  Models::TableEntity tableEntity{};
-  if (json.contains("PartitionKey"))
-  {
-    tableEntity.PartitionKey = json["PartitionKey"].get<std::string>();
-  }
-  if (json.contains("PartitionKey"))
-  {
-    tableEntity.RowKey = json["RowKey"].get<std::string>();
-  }
-  if (json.contains("PartitionKey"))
-  {
-    tableEntity.ETag = json["odata.etag"].get<std::string>();
-  }
-  for (auto properties : json.get<std::map<std::string, std::string>>())
-  {
-    if (properties.first != "odata.metadata" && properties.first != "PartitionKey"
-        && properties.first != "RowKey" && properties.first != "odata.etag")
-    {
-      tableEntity.Properties[properties.first] = properties.second;
-    }
-  }
-  return tableEntity;
 }
 
 Transaction TableClient::CreateTransaction(std::string const& partitionKey)

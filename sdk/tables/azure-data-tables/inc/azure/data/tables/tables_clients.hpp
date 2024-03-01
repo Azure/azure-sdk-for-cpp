@@ -308,7 +308,6 @@ namespace Azure { namespace Data { namespace Tables {
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_tableName;
-    Models::TableEntity DeserializeEntity(Azure::Core::Json::_internal::json json);
   };
 
   /**
