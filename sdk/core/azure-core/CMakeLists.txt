@@ -96,6 +96,7 @@ set(
     inc/azure/core/internal/json/json_optional.hpp
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/strings.hpp
+    inc/azure/core/internal/test_hooks.hpp
     inc/azure/core/internal/tracing/service_tracing.hpp
     inc/azure/core/internal/tracing/tracing_impl.hpp
     inc/azure/core/internal/unique_handle.hpp
@@ -205,6 +206,7 @@ az_rtti_setup(
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(TESTING_BUILD)
+  add_compile_definitions(_azure_TESTING_BUILD)
   
   if (NOT AZ_ALL_LIBRARIES)
     include(AddGoogleTest)
