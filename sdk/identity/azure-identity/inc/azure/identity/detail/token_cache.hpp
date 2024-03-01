@@ -10,6 +10,7 @@
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/internal/test_hooks.hpp>
 
 #include <chrono>
 #include <functional>
@@ -19,26 +20,30 @@
 #include <string>
 #include <tuple>
 
+#if defined(_azure_TESTING_BUILD)
+// Define the class used from tests to validate retry policy
+namespace Azure { namespace Identity { namespace Test {
+  class TestableTokenCache;
+}}} // namespace Azure::Identity::Test
+#endif
+
 namespace Azure { namespace Identity { namespace _detail {
   /**
    * @brief Access token cache.
    *
    */
-  class TokenCache
-#if !defined(_azure_TESTING_BUILD)
-      final
+  class TokenCache _azure_NON_FINAL_FOR_TESTS {
+
+#if defined(_azure_TESTING_BUILD)
+    friend class Azure::Identity::Test::TestableTokenCache;
 #endif
-  {
-#if !defined(_azure_TESTING_BUILD)
+
   private:
-#else
-  protected:
-#endif
     // A test hook that gets invoked before cache write lock gets acquired.
-    virtual void OnBeforeCacheWriteLock() const {};
+    _azure_VIRTUAL_FOR_TESTS void OnBeforeCacheWriteLock() const {};
 
     // A test hook that gets invoked before item write lock gets acquired.
-    virtual void OnBeforeItemWriteLock() const {};
+    _azure_VIRTUAL_FOR_TESTS void OnBeforeItemWriteLock() const {};
 
     struct CacheKey
     {
@@ -63,7 +68,6 @@ namespace Azure { namespace Identity { namespace _detail {
     mutable std::map<CacheKey, std::shared_ptr<CacheValue>, CacheKeyComparator> m_cache;
     mutable std::shared_timed_mutex m_cacheMutex;
 
-  private:
     TokenCache(TokenCache const&) = delete;
     TokenCache& operator=(TokenCache const&) = delete;
 

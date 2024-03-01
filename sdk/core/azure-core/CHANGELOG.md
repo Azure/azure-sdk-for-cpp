@@ -8,7 +8,13 @@
 
 ### Bugs Fixed
 
-### Other Changes
+- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/5371) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[morten-ofstad](https://github.com/morten-ofstad)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Morten Ofstad _([GitHub](https://github.com/morten-ofstad))_
 
 ## 1.11.2 (2024-02-16)
 

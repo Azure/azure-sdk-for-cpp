@@ -16,6 +16,7 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity/client_secret_credential.hpp>
+#include <azure/identity/default_azure_credential.hpp>
 
 #include <chrono>
 #include <memory>
@@ -41,6 +42,8 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     bool m_wasSkipped = false;
+
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_testCredential;
 
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
@@ -219,11 +222,12 @@ namespace Azure { namespace Core { namespace Test {
       return options;
     }
 
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> CreateClientSecretCredential(
-        std::string const& tenantId,
-        std::string const& clientId,
-        std::string const& clientSecret)
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> GetTestCredential()
     {
+      if (m_testCredential)
+      {
+        return m_testCredential;
+      }
       if (m_testContext.IsPlaybackMode())
       {
         // Playback mode uses:
@@ -232,8 +236,25 @@ namespace Azure { namespace Core { namespace Test {
       }
       else
       {
-        return std::make_shared<Azure::Identity::ClientSecretCredential>(
-            tenantId, clientId, clientSecret);
+        std::string clientSecret;
+        try
+        {
+          clientSecret = GetEnv("AZURE_CLIENT_SECRET");
+        }
+        catch (std::runtime_error const&)
+        {
+        }
+        if (clientSecret.empty())
+        {
+          m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+        }
+        else
+        {
+          m_testCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+              GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), clientSecret);
+        }
+
+        return m_testCredential;
       }
     }
 

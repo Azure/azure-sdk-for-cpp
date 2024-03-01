@@ -125,6 +125,8 @@ The static code analysis is `ON` for the CI pipelines. You can turn this feature
 
 The following CMake options are available for adding/removing project features.
 
+**Note:** These CMake options are meant for contributors to the repo, and not end users.
+
 <table>
 <tr>
 <td>Option</td>
@@ -133,7 +135,7 @@ The following CMake options are available for adding/removing project features.
 </tr>
 <tr>
 <td>BUILD_TESTING</td>
-<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test.</td>
+<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test. <br> <strong>Note:</strong> The BUILD_TESTING option is provided only for contributors to this repo to perform unit testing.  The flag should NEVER be enabled in production code and the use of it in such situations is NOT supported. </td>
 <td>OFF</td>
 </tr>
 <tr>
@@ -205,12 +207,12 @@ Some environment variables are expected to be defined for some test binaries. Fo
 
 Even for running on `PLAYBACK` mode, the env configuration is mandatory. This is because a test case does not know about the test modes. A test case will always look for the environment configuration to connect/authenticate to Azure.
 
-Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuarion for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
+Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuration for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
 
 ##### Test-Proxy 
 
 Recording and playing back tests depends on an external tool called "test-proxy" (see doc/TestProxy.md)
-You can start this tool manually or autmatically as part of you development flow. 
+You can start this tool manually or automatically as part of you development flow. 
 For automatic start you will need to set the environment variable "AZURE_TEST_USE_TEST_PROXY" to value "ON".
 
 ##### Running tests
@@ -268,7 +270,7 @@ When code samples take dependencies, readers should be able to use the material 
 
 Samples may take the following categories of dependencies:
 
-- **Open-source** : Open source offerings that use an [Open Source Initiative (OSI) approved license](https://opensource.org/licenses). Any component whose license isn't OSI-approved is considered a commercial offering. Prefer OSS projects that are members of any of the [OSS foundations that Microsoft is part of](https://opensource.microsoft.com/ecosystem/). Prefer permissive licenses for libraries, like [MIT](https://opensource.org/licenses/MIT) and [Apache 2](https://opensource.org/licenses/Apache-2.0). Copy-left licenses like [GPL](https://opensource.org/licenses/gpl-license) are acceptable for tools, and OSs. [Kubernetes](https://github.com/kubernetes/kubernetes), [Linux](https://github.com/torvalds/linux), and [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) are examples of this license type. Links to open source components should be to where the source is hosted, including any applicable license, such as a GitHub repository (or similar).
+- **Open-source** : Open source offerings that use an [Open Source Initiative (OSI) approved license](https://opensource.org/licenses). Any component whose license isn't OSI-approved is considered a commercial offering. Prefer OSS projects that are members of any of the [OSS foundations that Microsoft is part of](https://opensource.microsoft.com/ecosystem/). Prefer permissive licenses for libraries, like [MIT](https://opensource.org/licenses/MIT) and [Apache 2](https://opensource.org/licenses/Apache-2.0). Copy-left licenses like [GPLv3](https://opensource.org/license/gpl-3-0) are acceptable for tools, and OSs. [Kubernetes](https://github.com/kubernetes/kubernetes), [Linux](https://github.com/torvalds/linux), and [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) are examples of this license type. Links to open source components should be to where the source is hosted, including any applicable license, such as a GitHub repository (or similar).
 
 - **Commercial**: Commercial offerings that enable readers to learn from our content without unnecessary extra costs. Typically, the offering has some form of a community edition, or a free trial sufficient for its use in content. A commercial license may be a form of dual-license, or tiered license. Links to commercial components should be to the commercial site for the software, even if the source software is hosted publicly on GitHub (or similar).
 

@@ -96,6 +96,7 @@ set(
     inc/azure/core/internal/json/json_optional.hpp
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/strings.hpp
+    inc/azure/core/internal/test_hooks.hpp
     inc/azure/core/internal/tracing/service_tracing.hpp
     inc/azure/core/internal/tracing/tracing_impl.hpp
     inc/azure/core/internal/unique_handle.hpp

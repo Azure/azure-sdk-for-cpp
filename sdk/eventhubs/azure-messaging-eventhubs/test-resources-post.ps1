@@ -8,8 +8,7 @@
 param (
     [hashtable] $DeploymentOutputs,
     [string] $TenantId,
-    [string] $TestApplicationId,
-    [string] $TestApplicationSecret
+    [string] $TestApplicationId
 )
 
 Write-Verbose "Sleeping for 60 seconds to let RBAC replicate"
