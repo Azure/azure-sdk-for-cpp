@@ -16,7 +16,7 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/http/http_sanitizer.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
-#include "azure/core/internal/testing_macro.hpp"
+#include "azure/core/internal/test_hooks.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -375,7 +375,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     class RetryPolicy _azure_NON_FINAL_FOR_TESTS : public HttpPolicy {
 
 #if defined(_azure_TESTING_BUILD)
-      // make tests classes friends to validate RetryPolicy
       friend class Azure::Core::Test::RetryPolicyTest;
       friend class Azure::Core::Test::RetryLogic;
 #endif

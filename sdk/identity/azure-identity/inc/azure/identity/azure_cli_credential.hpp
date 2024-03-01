@@ -13,7 +13,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/datetime.hpp>
-#include <azure/core/internal/testing_macro.hpp>
+#include <azure/core/internal/test_hooks.hpp>
 
 #include <chrono>
 #include <string>

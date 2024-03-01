@@ -17,7 +17,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/testing_macro.hpp>
+#include <azure/core/internal/test_hooks.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/response.hpp>
 
