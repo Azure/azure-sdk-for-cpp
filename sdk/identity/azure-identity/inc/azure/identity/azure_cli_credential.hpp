@@ -9,11 +9,11 @@
 #pragma once
 
 #include "azure/identity/detail/token_cache.hpp"
-#include "azure/identity/dll_import_export.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/internal/test_hooks.hpp>
 
 #include <chrono>
 #include <string>
@@ -56,11 +56,7 @@ namespace Azure { namespace Identity {
    * @brief Enables authentication to Microsoft Entra ID using Azure CLI to obtain an access
    * token.
    */
-  class AzureCliCredential
-#if !defined(_azure_TESTING_BUILD)
-      final
-#endif
-      : public Core::Credentials::TokenCredential {
+  class AzureCliCredential _azure_NON_FINAL_FOR_TESTS : public Core::Credentials::TokenCredential {
 
 #if defined(_azure_TESTING_BUILD)
     friend class Azure::Identity::Test::AzureCliTestCredential;
