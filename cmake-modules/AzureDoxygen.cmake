@@ -27,7 +27,13 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_INLINE_SOURCES NO)
         set(DOXYGEN_MARKDOWN_ID_STYLE GITHUB)
         # Used to correctly expand macros like _azure_NON_FINAL_FOR_TESTS when generating docs.
+        # Using EXPAND_ONLY_PREDEF to limit macro expansion to the macros specified with the PREDEFINED tags.
         set(DOXYGEN_MACRO_EXPANSION YES)
+        set(EXPAND_ONLY_PREDEF YES)
+        set(DOXYGEN_PREDEFINED 
+            _azure_NON_FINAL_FOR_TESTS=final
+            _azure_VIRTUAL_FOR_TESTS=
+            )
         # Skip generating docs for json, test, samples, and private files.
         set(DOXYGEN_EXCLUDE_PATTERNS
             json.hpp
