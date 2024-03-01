@@ -429,7 +429,9 @@ TableClient TableClient::CreateFromConnectionString(
   }
 }
 
-Azure::Response<Models::Table> TableServicesClient::CreateTable(std::string tableName, Core::Context const& context)
+Azure::Response<Models::Table> TableServicesClient::CreateTable(
+    std::string tableName,
+    Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("Tables");
@@ -585,7 +587,9 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
   return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::DeleteResult> TableServicesClient::DeleteTable(std::string tableName, Core::Context const& context)
+Azure::Response<Models::DeleteResult> TableServicesClient::DeleteTable(
+    std::string tableName,
+    Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("Tables('" + tableName + "')");

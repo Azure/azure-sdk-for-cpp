@@ -491,9 +491,9 @@ namespace Azure { namespace Data { namespace Tables {
       Azure::Nullable<std::string> ETag;
 
       /**
-	   * @brief Table Entity data type.
-	   *
-	   */
+       * @brief Table Entity data type.
+       *
+       */
       TableEntityDataType DataType;
     };
 

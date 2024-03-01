@@ -390,8 +390,9 @@ namespace Azure { namespace Data { namespace Tables {
      * @param tableName The name of the table to be deleted.
      * @return Delete table result.
      */
-    Response<Models::DeleteResult> DeleteTable(std::string tableName, Core::Context const& context = {});
-
+    Response<Models::DeleteResult> DeleteTable(
+        std::string tableName,
+        Core::Context const& context = {});
 
     /**
      * @brief Query tables.
