@@ -9,8 +9,6 @@ project(azure-messaging-eventhubs-stress-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(WITH_STL ON)
-
 find_package(opentelemetry-cpp CONFIG REQUIRED)
 find_package(protobuf)
 find_package(nlohmann_json)
