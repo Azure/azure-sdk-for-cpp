@@ -126,7 +126,6 @@ az_rtti_setup(
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
-  add_compile_definitions(TESTING_BUILD)
   add_compile_definitions(_azure_TESTING_BUILD)
 
   # tests
