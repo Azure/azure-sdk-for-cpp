@@ -31,7 +31,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   };
 
-  TEST_F(CheckpointStoreTest, TestCheckpoints_LIVEONLY_)
+  TEST_F(CheckpointStoreTest, TestCheckpoints)
   {
     std::string const testName = GetRandomName();
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
