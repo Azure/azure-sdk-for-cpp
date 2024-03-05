@@ -14,11 +14,13 @@
 #pragma warning(disable : 4244)
 #pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
+
 #include <opentelemetry/common/kv_properties.h>
 #include <opentelemetry/trace/provider.h>
 #include <opentelemetry/trace/span.h>
 #include <opentelemetry/trace/tracer.h>
 #include <opentelemetry/trace/tracer_provider.h>
+
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif

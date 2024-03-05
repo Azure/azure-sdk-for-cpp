@@ -16,13 +16,14 @@
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/internal/test_hooks.hpp>
 #include <azure/core/response.hpp>
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
   namespace Test {
     class KeyVaultCertificateClientTest;
   }
@@ -33,14 +34,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    *
    * @details The client supports retrieving KeyVaultCertificate.
    */
-  class CertificateClient
-#if !defined(TESTING_BUILD)
-      final
-#endif
-  {
+  class CertificateClient final {
     friend class CreateCertificateOperation;
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
     friend class Test::KeyVaultCertificateClientTest;
 #endif
 

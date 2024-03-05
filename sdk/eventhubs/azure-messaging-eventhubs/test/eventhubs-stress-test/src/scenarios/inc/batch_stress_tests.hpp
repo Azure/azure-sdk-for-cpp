@@ -8,7 +8,20 @@
 #include <azure/messaging/eventhubs/consumer_client.hpp>
 #include <azure/messaging/eventhubs/producer_client.hpp>
 
+#if defined(_MSC_VER)
+// The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
+// the warnings across the includes.
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4244)
+#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
+#endif
+
 #include <opentelemetry/trace/tracer.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 class BatchStressTest : public EventHubsStressScenario {
 public:

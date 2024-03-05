@@ -16,6 +16,15 @@
 #include <iostream>
 #include <memory>
 
+#if defined(_MSC_VER)
+// The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
+// the warnings across the includes.
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4244)
+#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
+#endif
+
 #include <opentelemetry/exporters/otlp/otlp_http_exporter_factory.h>
 #include <opentelemetry/exporters/otlp/otlp_http_exporter_options.h>
 #include <opentelemetry/exporters/otlp/otlp_http_log_record_exporter_factory.h>
@@ -29,6 +38,10 @@
 #include <opentelemetry/sdk/trace/tracer_provider.h>
 #include <opentelemetry/sdk/trace/tracer_provider_factory.h>
 #include <opentelemetry/trace/provider.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 namespace trace_sdk = opentelemetry::sdk::trace;
 namespace trace = opentelemetry::trace;
