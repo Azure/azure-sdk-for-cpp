@@ -5,7 +5,7 @@
  * @file
  * @brief This file is used to define internal-only macros that are used to control the behavior of
  * the Azure SDK when running tests, to allow mocking within tests.
- * The macros in this file should NOT be used by anyone outside this repo.
+ * The macros in this file should NOT be used by anyone outside this repo. 
  */
 
 #pragma once
