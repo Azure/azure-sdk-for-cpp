@@ -35,7 +35,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
   };
 
-  TEST_F(BlobCheckpointStoreTest, TestCheckpoints)
+  TEST_F(BlobCheckpointStoreTest, TestCheckpoints_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
@@ -87,7 +87,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
 
-  TEST_F(BlobCheckpointStoreTest, TestOwnerships)
+  TEST_F(BlobCheckpointStoreTest, TestOwnerships_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
     auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
