@@ -16,6 +16,7 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/http/http_sanitizer.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
+#include "azure/core/internal/test_hooks.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -29,6 +30,14 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#if defined(_azure_TESTING_BUILD)
+// Define the class used from tests to validate retry policy
+namespace Azure { namespace Core { namespace Test {
+  class RetryPolicyTest;
+  class RetryLogic;
+}}} // namespace Azure::Core::Test
+#endif
 
 /**
  * A function that should be implemented and linked to the end-user application in order to override
@@ -363,11 +372,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy
-#if !defined(TESTING_BUILD)
-        final
+    class RetryPolicy _azure_NON_FINAL_FOR_TESTS : public HttpPolicy {
+
+#if defined(_azure_TESTING_BUILD)
+      friend class Azure::Core::Test::RetryPolicyTest;
+      friend class Azure::Core::Test::RetryLogic;
 #endif
-        : public HttpPolicy {
+
     private:
       RetryOptions m_retryOptions;
 
@@ -402,14 +413,14 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        */
       static int32_t GetRetryCount(Context const& context);
 
-    protected:
-      virtual bool ShouldRetryOnTransportFailure(
+    private:
+      _azure_VIRTUAL_FOR_TESTS bool ShouldRetryOnTransportFailure(
           RetryOptions const& retryOptions,
           int32_t attempt,
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
 
-      virtual bool ShouldRetryOnResponse(
+      _azure_VIRTUAL_FOR_TESTS bool ShouldRetryOnResponse(
           RawResponse const& response,
           RetryOptions const& retryOptions,
           int32_t attempt,

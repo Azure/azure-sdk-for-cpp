@@ -15,6 +15,7 @@
 #pragma warning(disable : 4244)
 #pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
+
 #include <opentelemetry/exporters/memory/in_memory_span_data.h>
 #include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
 #include <opentelemetry/exporters/ostream/span_exporter.h>
@@ -23,6 +24,7 @@
 #include <opentelemetry/sdk/trace/processor.h>
 #include <opentelemetry/sdk/trace/simple_processor.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
+
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
