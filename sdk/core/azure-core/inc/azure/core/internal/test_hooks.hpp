@@ -41,7 +41,7 @@
  * @brief If we are not testing, we don't need to make methods virtual for mocking.
  */
 #if !defined(_azure_VIRTUAL_FOR_TESTS)
-#define _azure_VIRTUAL_FOR_TESTS
+#define _azure_VIRTUAL_FOR_TESTS virtual
 #endif
 
 #endif
