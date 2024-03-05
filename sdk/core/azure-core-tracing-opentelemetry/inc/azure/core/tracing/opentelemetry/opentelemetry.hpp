@@ -17,7 +17,6 @@
 #pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
 
-
 #include <opentelemetry/trace/provider.h>
 #include <opentelemetry/trace/tracer_provider.h>
 
