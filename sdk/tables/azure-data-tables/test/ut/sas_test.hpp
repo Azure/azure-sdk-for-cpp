@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "azure/data/tables/account_sas_builder.hpp"
 #include "azure/data/tables/table_sas_builder.hpp"
 #include "test/ut/test_base.hpp"
 

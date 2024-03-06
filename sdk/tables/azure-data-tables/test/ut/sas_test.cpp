@@ -10,7 +10,7 @@
 using namespace Azure::Data::Tables::Sas;
 
 namespace Azure { namespace Data { namespace Test {
-  TEST(SasTest, TableSasBuilderTest)
+  TEST(SasTest, TableSasBuilderTestAllSet)
   {
     TableSasBuilder sasBuilder;
     sasBuilder.SetPermissions(TableSasPermissions::All);
@@ -34,5 +34,79 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
     EXPECT_EQ(sasParts.at("sip"), "iprange");
     EXPECT_EQ(sasParts.at("spr"), "https,http");
+    EXPECT_FALSE(sasParts.at("sig").empty());
   }
-}}}// namespace Azure::Data::Test
+
+  TEST(SasTest, TableSasBuilderTestMin)
+  {
+    TableSasBuilder sasBuilder;
+    sasBuilder.ExpiresOn
+        = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
+    std::string key = "accountKey";
+    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+        "accountName",
+        Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
+    auto sasToken = sasBuilder.GenerateSasToken(cred);
+    auto sasParts = SasTest::ParseQueryParameters(sasToken);
+    EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
+    EXPECT_EQ(sasParts.at("spr"), "https");
+    EXPECT_FALSE(sasParts.at("sig").empty());
+  }
+
+  TEST(SasTest, AccountSasBuilderTestAllSet)
+  {
+    AccountSasBuilder sasBuilder;
+    sasBuilder.SetPermissions(AccountSasPermissions::All);
+    sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
+    sasBuilder.StartsOn
+        = Azure::DateTime::Parse("2020-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
+    sasBuilder.ExpiresOn
+        = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
+    sasBuilder.IPRange = "iprange";
+    sasBuilder.EncryptionScope = "myScope";
+    sasBuilder.ResourceTypes = AccountSasResource::All;
+    sasBuilder.Services = AccountSasServices::All;
+    
+    std::string key = "accountKey";
+    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+        "accountName",
+        Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
+    auto sasToken = sasBuilder.GenerateSasToken(cred);
+    auto sasParts = SasTest::ParseQueryParameters(sasToken);
+ 
+    EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
+    EXPECT_EQ(sasParts.at("ses"), "myScope");
+    EXPECT_FALSE(sasParts.at("sig").empty());
+    EXPECT_EQ(sasParts.at("sip"), "iprange");
+    EXPECT_EQ(sasParts.at("sp"), "rwdxylacupitf");
+    EXPECT_EQ(sasParts.at("spr"), "https,http");
+    EXPECT_EQ(sasParts.at("srt"), "sco");
+    EXPECT_EQ(sasParts.at("ss"), "bqft");
+    EXPECT_EQ(sasParts.at("st"), "2020-08-18T00:00:00Z");
+    EXPECT_EQ(sasParts.at("sv"), "2023-08-03");
+
+  }
+
+  TEST(SasTest, AccountSasBuilderTestMin)
+  {
+    AccountSasBuilder sasBuilder;
+    sasBuilder.SetPermissions(AccountSasPermissions::All);
+    sasBuilder.ExpiresOn
+        = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
+    
+    std::string key = "accountKey";
+    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+        "accountName",
+        Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
+    auto sasToken = sasBuilder.GenerateSasToken(cred);
+    auto sasParts = SasTest::ParseQueryParameters(sasToken);
+
+    EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
+    EXPECT_FALSE(sasParts.at("sig").empty());
+    EXPECT_EQ(sasParts.at("sp"), "rwdxylacupitf");
+    EXPECT_EQ(sasParts.at("spr"), "https");
+    EXPECT_EQ(sasParts.at("srt"), "o");
+    EXPECT_EQ(sasParts.at("ss"), "ft");
+    EXPECT_EQ(sasParts.at("sv"), "2023-08-03");
+  }
+}}} // namespace Azure::Data::Test
