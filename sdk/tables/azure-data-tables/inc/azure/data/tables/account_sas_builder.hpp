@@ -293,6 +293,4 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   private:
     std::string Permissions;
   };
-
-  typedef AccountSasBuilder TableSasBuilder;
 }}}} // namespace Azure::Data::Tables::Sas
