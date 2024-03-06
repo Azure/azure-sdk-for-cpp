@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
 #include "azure/data/tables/account_sas_builder.hpp"
+#include "azure/data/tables/credentials/shared_key_credential.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
@@ -14,9 +14,9 @@
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
   /**
-  * @brief Defines the protocols permitted for Storage requests made with a shared
-  * access signature.
-  */ 
+   * @brief Defines the protocols permitted for Storage requests made with a shared
+   * access signature.
+   */
   enum class TableSasProtocol
   {
     /**
@@ -36,11 +36,10 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     Https = 2
   };
 
-
   /**
-  * @brief Contains the list of
-  * permissions that can be set for a table's access policy.  
-  */
+   * @brief Contains the list of
+   * permissions that can be set for a table's access policy.
+   */
   enum class TableSasPermissions
   {
     /**
@@ -83,7 +82,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     return static_cast<TableSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-    /**
+  /**
    * @brief TableSasBuilder is used to generate a Shared Access Signature (SAS) for an Azure
    * Storage Tables.
    */

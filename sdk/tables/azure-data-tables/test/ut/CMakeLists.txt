@@ -17,6 +17,7 @@ SetUpTestProxy("sdk/tables")
 add_executable (
   azure-data-tables-test
     macro_guard.cpp
+    sas_test.cpp
     serializers_test.hpp
     serializers_test.cpp
     shared_key_lite_policy_test.cpp

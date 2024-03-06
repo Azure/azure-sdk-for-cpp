@@ -47,10 +47,8 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
         ? StartsOn.Value().ToString(
             Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
-    std::string expiresOnStr = Identifier.empty()
-        ? ExpiresOn.ToString(
-            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
-        : "";
+    std::string expiresOnStr = ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
@@ -63,8 +61,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv",
-        Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(
-            SasVersion));
+        Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(SasVersion));
     builder.AppendQueryParameter(
         "spr",
         Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(protocol));
