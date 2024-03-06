@@ -64,14 +64,14 @@ namespace Azure { namespace Data { namespace Test {
     sasBuilder.EncryptionScope = "myScope";
     sasBuilder.ResourceTypes = AccountSasResource::All;
     sasBuilder.Services = AccountSasServices::All;
-    
+
     std::string key = "accountKey";
     Azure::Data::Tables::Credentials::SharedKeyCredential cred(
         "accountName",
         Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
     auto sasToken = sasBuilder.GenerateSasToken(cred);
     auto sasParts = SasTest::ParseQueryParameters(sasToken);
- 
+
     EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
     EXPECT_EQ(sasParts.at("ses"), "myScope");
     EXPECT_FALSE(sasParts.at("sig").empty());
@@ -82,7 +82,6 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(sasParts.at("ss"), "bqft");
     EXPECT_EQ(sasParts.at("st"), "2020-08-18T00:00:00Z");
     EXPECT_EQ(sasParts.at("sv"), "2023-08-03");
-
   }
 
   TEST(SasTest, AccountSasBuilderTestMin)
@@ -91,7 +90,7 @@ namespace Azure { namespace Data { namespace Test {
     sasBuilder.SetPermissions(AccountSasPermissions::All);
     sasBuilder.ExpiresOn
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
-    
+
     std::string key = "accountKey";
     Azure::Data::Tables::Credentials::SharedKeyCredential cred(
         "accountName",
