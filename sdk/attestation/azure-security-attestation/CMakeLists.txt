@@ -100,6 +100,7 @@ az_rtti_setup(
 )
 
 if(BUILD_TESTING)
+    add_compile_definitions(_azure_TESTING_BUILD)
     # tests
     add_subdirectory(test/ut)
 endif()
