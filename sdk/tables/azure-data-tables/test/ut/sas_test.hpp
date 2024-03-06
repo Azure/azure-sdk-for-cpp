@@ -32,20 +32,20 @@ namespace Azure { namespace Data { namespace Test {
     }
 
     static std::map<std::string, std::string> ParseQueryParameters(const std::string& query)
-	{
-	  std::map<std::string, std::string> result;
+    {
+      std::map<std::string, std::string> result;
 
-	  auto parameters = SplitString(query, '&');
-	  for (const auto& p : parameters)
-	  {
-		auto keyValue = SplitString(p, '=');
-		if (keyValue.size() == 2)
-		{
-		  result[keyValue[0]] = keyValue[1];
-		}
-	  }
+      auto parameters = SplitString(query, '&');
+      for (const auto& p : parameters)
+      {
+        auto keyValue = SplitString(p, '=');
+        if (keyValue.size() == 2)
+        {
+          result[keyValue[0]] = keyValue[1];
+        }
+      }
 
-	  return result;
-	}
+      return result;
+    }
   };
 }}} // namespace Azure::Data::Test

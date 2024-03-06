@@ -35,5 +35,4 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(sasParts.at("sip"), "iprange");
     EXPECT_EQ(sasParts.at("spr"), "https,http");
   }
-
-}}} // namespace Azure::Data::Test
+}}}// namespace Azure::Data::Test
