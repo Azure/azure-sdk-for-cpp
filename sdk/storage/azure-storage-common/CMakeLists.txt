@@ -125,6 +125,7 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-common azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
+  add_compile_definitions(_azure_TESTING_BUILD)
   add_subdirectory(test/ut)
 endif()
 
