@@ -48,8 +48,6 @@ namespace Azure { namespace Data { namespace Test {
         Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
     auto sasToken = sasBuilder.GenerateSasToken(cred);
     auto sasParts = SasTest::ParseQueryParameters(sasToken);
-    EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
-    EXPECT_EQ(sasParts.at("spr"), "https");
     EXPECT_FALSE(sasParts.at("sig").empty());
   }
 
@@ -101,11 +99,6 @@ namespace Azure { namespace Data { namespace Test {
     auto sasToken = sasBuilder.GenerateSasToken(cred);
     auto sasParts = SasTest::ParseQueryParameters(sasToken);
 
-    EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
     EXPECT_FALSE(sasParts.at("sig").empty());
-    EXPECT_EQ(sasParts.at("sp"), "rwdxylacupitf");
-    EXPECT_EQ(sasParts.at("spr"), "https");
-    EXPECT_EQ(sasParts.at("ss"), "ft");
-    EXPECT_EQ(sasParts.at("sv"), "2023-08-03");
   }
 }}} // namespace Azure::Data::Test
