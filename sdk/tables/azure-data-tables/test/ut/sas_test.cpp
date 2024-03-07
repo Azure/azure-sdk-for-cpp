@@ -22,6 +22,10 @@ namespace Azure { namespace Data { namespace Test {
     sasBuilder.Identifier = "myIdentifier";
     sasBuilder.IPRange = "iprange";
     sasBuilder.TableName = "myTableName";
+    sasBuilder.RowKeyEnd = "myRowKeyEnd";
+    sasBuilder.RowKeyStart = "myRowKeyStart";
+    sasBuilder.PartitionKeyStart = "myStartPartitionKey";
+    sasBuilder.PartitionKeyEnd = "myEndPartitionKey";
     std::string key = "accountKey";
     Azure::Data::Tables::Credentials::SharedKeyCredential cred(
         "accountName",
@@ -31,10 +35,14 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(sasParts.at("si"), "myIdentifier");
     EXPECT_EQ(sasParts.at("sp"), "raud");
     EXPECT_EQ(sasParts.at("st"), "2020-08-18T00:00:00Z");
-    EXPECT_EQ(sasParts.at("?se"), "2022-08-18T00:00:00Z");
+    EXPECT_EQ(sasParts.at("se"), "2022-08-18T00:00:00Z");
     EXPECT_EQ(sasParts.at("sip"), "iprange");
     EXPECT_EQ(sasParts.at("spr"), "https,http");
     EXPECT_FALSE(sasParts.at("sig").empty());
+    EXPECT_EQ(sasParts.at("srk"), "myRowKeyStart");
+    EXPECT_EQ(sasParts.at("erk"), "myRowKeyEnd");
+    EXPECT_EQ(sasParts.at("spk"), "myStartPartitionKey");
+    EXPECT_EQ(sasParts.at("?epk"), "myEndPartitionKey");
   }
 
   TEST(SasTest, TableSasBuilderTestMin)

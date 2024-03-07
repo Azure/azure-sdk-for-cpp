@@ -127,6 +127,26 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     std::string TableName;
 
     /**
+     * @brief The optional start of the partition key values range being made available.
+     */
+    std::string PartitionKeyStart;
+
+    /**
+     * @brief The optional end of the partition key values range being made available.
+     */
+    std::string PartitionKeyEnd;
+
+    /**
+     * @brief The optional start of the row key values range being made available.
+     */
+    std::string RowKeyStart;
+
+    /**
+     * @brief The optional end of the partition key values range being made available.
+     */
+    std::string RowKeyEnd;
+
+    /**
      * @brief Sets the permissions for the table SAS.
      *
      * @param permissions The allowed permissions.
