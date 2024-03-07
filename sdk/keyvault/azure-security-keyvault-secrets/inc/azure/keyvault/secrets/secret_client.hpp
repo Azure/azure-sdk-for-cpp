@@ -18,7 +18,6 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/test_hooks.hpp>
 #include <azure/core/response.hpp>
 
 #include <stdint.h>
@@ -43,7 +42,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the secret.
    */
-  class SecretClient final {
+  class SecretClient
+#if !defined(TESTING_BUILD)
+      final
+#endif
+  {
 
   private:
     // Using a shared pipeline for a client to share it with LRO (like delete key)

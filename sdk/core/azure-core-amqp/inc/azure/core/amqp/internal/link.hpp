@@ -70,7 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class LinkEvents {
   public:
     virtual Models::AmqpValue OnTransferReceived(
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
         Link const& link,
 #else
         std::shared_ptr<LinkImpl> link,
@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         const unsigned char* payloadBytes)
         = 0;
     virtual void OnLinkStateChanged(
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
         Link const& link,
 #else
         std::shared_ptr<LinkImpl> link,
@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         LinkState previousLinkState)
         = 0;
     virtual void OnLinkFlowOn(
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
         Link const& link
 #else
         std::shared_ptr<LinkImpl> link
@@ -99,7 +99,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     virtual ~LinkEvents() = default;
   };
 
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
 
   class Link final {
   public:
@@ -172,5 +172,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::shared_ptr<LinkImpl> m_impl;
   };
-#endif // defined(_azure_TESTING_BUILD)
+#endif // defined(TESTING_BUILD)
 }}}} // namespace Azure::Core::Amqp::_detail
