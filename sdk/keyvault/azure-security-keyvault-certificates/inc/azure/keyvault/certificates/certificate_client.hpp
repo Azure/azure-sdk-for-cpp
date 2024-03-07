@@ -23,7 +23,7 @@
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
   namespace Test {
     class KeyVaultCertificateClientTest;
   }
@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   class CertificateClient _azure_NON_FINAL_FOR_TESTS {
     friend class CreateCertificateOperation;
 
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
     friend class Test::KeyVaultCertificateClientTest;
 #endif
 
