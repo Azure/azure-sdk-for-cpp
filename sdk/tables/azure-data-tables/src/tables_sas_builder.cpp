@@ -59,17 +59,17 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
         Azure::Data::Tables::_detail::Cryptography::HmacSha256::Compute(
             std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
             Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
-    
+
     Azure::Core::Url builder;
-    
+
     builder.AppendQueryParameter(
         "sv",
         Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(SasVersion));
-    
+
     builder.AppendQueryParameter(
         "spr",
         Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(protocol));
-    
+
     if (!startsOnStr.empty())
     {
       builder.AppendQueryParameter(
@@ -77,7 +77,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
           Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(
               startsOnStr));
     }
-    
+
     if (!expiresOnStr.empty())
     {
       builder.AppendQueryParameter(
@@ -85,7 +85,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
           Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(
               expiresOnStr));
     }
-    
+
     if (IPRange.HasValue())
     {
       builder.AppendQueryParameter(
@@ -93,7 +93,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
           Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(
               IPRange.Value()));
     }
-    
+
     if (!Identifier.empty())
     {
       builder.AppendQueryParameter(
@@ -101,7 +101,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
           Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(
               Identifier));
     }
-    
+
     if (!Permissions.empty())
     {
       builder.AppendQueryParameter(
@@ -109,11 +109,11 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
           Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(
               Permissions));
     }
-    
+
     builder.AppendQueryParameter(
         "sig",
         Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(signature));
-    
+
     if (!PartitionKeyStart.empty())
     {
       builder.AppendQueryParameter(
