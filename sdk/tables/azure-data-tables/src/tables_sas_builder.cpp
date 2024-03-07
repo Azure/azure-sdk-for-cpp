@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/table_sas_builder.hpp"
+#include "azure/data/tables/tables_sas_builder.hpp"
 
 #include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
 #include "azure/data/tables/internal/cryptography/url_encode.hpp"
@@ -14,29 +14,29 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     constexpr static const char* SasVersion = "2023-08-03";
   }
 
-  void TableSasBuilder::SetPermissions(TableSasPermissions permissions)
+  void TablesSasBuilder::SetPermissions(TablesSasPermissions permissions)
   {
     Permissions.clear();
     // The order matters
-    if ((permissions & TableSasPermissions::Read) == TableSasPermissions::Read)
+    if ((permissions & TablesSasPermissions::Read) == TablesSasPermissions::Read)
     {
       Permissions += "r";
     }
-    if ((permissions & TableSasPermissions::Add) == TableSasPermissions::Add)
+    if ((permissions & TablesSasPermissions::Add) == TablesSasPermissions::Add)
     {
       Permissions += "a";
     }
-    if ((permissions & TableSasPermissions::Update) == TableSasPermissions::Update)
+    if ((permissions & TablesSasPermissions::Update) == TablesSasPermissions::Update)
     {
       Permissions += "u";
     }
-    if ((permissions & TableSasPermissions::Delete) == TableSasPermissions::Delete)
+    if ((permissions & TablesSasPermissions::Delete) == TablesSasPermissions::Delete)
     {
       Permissions += "d";
     }
   }
 
-  std::string TableSasBuilder::GenerateSasToken(
+  std::string TablesSasBuilder::GenerateSasToken(
       const Azure::Data::Tables::Credentials::SharedKeyCredential& credential)
   {
     std::string canonicalName = "/table/" + credential.AccountName + "/" + TableName;

@@ -17,7 +17,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
    * @brief Defines the protocols permitted for Storage requests made with a shared
    * access signature.
    */
-  enum class TableSasProtocol
+  enum class TablesSasProtocol
   {
     /**
      * @brief No protocol has been specified. If no value is specified,
@@ -40,7 +40,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
    * @brief Contains the list of
    * permissions that can be set for a table's access policy.
    */
-  enum class TableSasPermissions
+  enum class TablesSasPermissions
   {
     /**
      * @brief Indicates that Read is permitted.
@@ -69,24 +69,24 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   };
 
   /** @brief Bitwise OR of two values*/
-  inline TableSasPermissions operator|(TableSasPermissions lhs, TableSasPermissions rhs)
+  inline TablesSasPermissions operator|(TablesSasPermissions lhs, TablesSasPermissions rhs)
   {
-    using type = std::underlying_type_t<TableSasPermissions>;
-    return static_cast<TableSasPermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
+    using type = std::underlying_type_t<TablesSasPermissions>;
+    return static_cast<TablesSasPermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
   /** @brief Bitwise AND of two values*/
-  inline TableSasPermissions operator&(TableSasPermissions lhs, TableSasPermissions rhs)
+  inline TablesSasPermissions operator&(TablesSasPermissions lhs, TablesSasPermissions rhs)
   {
-    using type = std::underlying_type_t<TableSasPermissions>;
-    return static_cast<TableSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
+    using type = std::underlying_type_t<TablesSasPermissions>;
+    return static_cast<TablesSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
   /**
    * @brief TableSasBuilder is used to generate a Shared Access Signature (SAS) for an Azure
    * Storage Tables.
    */
-  struct TableSasBuilder final
+  struct TablesSasBuilder final
   {
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
@@ -131,7 +131,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      *
      * @param permissions The allowed permissions.
      */
-    void SetPermissions(TableSasPermissions permissions);
+    void SetPermissions(TablesSasPermissions permissions);
 
     /**
      * @brief Sets the permissions for the SAS using a raw permissions string.

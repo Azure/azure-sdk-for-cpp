@@ -12,6 +12,6 @@
 #include "azure/data/tables/dll_import_export.hpp"
 #include "azure/data/tables/models.hpp"
 #include "azure/data/tables/rtti.hpp"
-#include "azure/data/tables/table_sas_builder.hpp"
+#include "azure/data/tables/tables_sas_builder.hpp"
 #include "azure/data/tables/tables_clients.hpp"
 #include "azure/data/tables/transactions.hpp"

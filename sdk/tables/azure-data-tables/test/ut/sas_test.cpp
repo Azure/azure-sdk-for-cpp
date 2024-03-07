@@ -12,8 +12,8 @@ using namespace Azure::Data::Tables::Sas;
 namespace Azure { namespace Data { namespace Test {
   TEST(SasTest, TableSasBuilderTestAllSet)
   {
-    TableSasBuilder sasBuilder;
-    sasBuilder.SetPermissions(TableSasPermissions::All);
+    TablesSasBuilder sasBuilder;
+    sasBuilder.SetPermissions(TablesSasPermissions::All);
     sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     sasBuilder.StartsOn
         = Azure::DateTime::Parse("2020-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
@@ -39,7 +39,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST(SasTest, TableSasBuilderTestMin)
   {
-    TableSasBuilder sasBuilder;
+    TablesSasBuilder sasBuilder;
     sasBuilder.ExpiresOn
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
     std::string key = "accountKey";

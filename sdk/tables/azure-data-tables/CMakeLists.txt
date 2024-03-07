@@ -57,7 +57,7 @@ set(
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_clients.hpp
-    inc/azure/data/tables/table_sas_builder.hpp
+    inc/azure/data/tables/tables_sas_builder.hpp
     inc/azure/data/tables/transactions.hpp
     inc/azure/data/tables/credentials/shared_key_credential.hpp
 )
@@ -76,7 +76,7 @@ set(
     src/private/package_version.hpp
     src/serializers.cpp
     src/tables_clients.cpp
-    src/table_sas_builder.cpp
+    src/tables_sas_builder.cpp
     src/transactions.cpp
     src/xml_wrapper.cpp
 )
