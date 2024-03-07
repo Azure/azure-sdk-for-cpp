@@ -43,7 +43,7 @@ bool TryGetNextParameter(StringSpan& headerValue, StringSpan& paramKey, StringSp
 std::string const EmptyString;
 } // namespace
 
-std::string const& AuthorizationChallengeHelper::GetChallenge(Http::RawResponse const& response)
+std::string const& AuthorizationChallengeHelper::GetChallenge(RawResponse const& response)
 {
   // See RFC7235 (https://www.rfc-editor.org/rfc/rfc7235#section-4.1)
   if (response.GetStatusCode() == HttpStatusCode::Unauthorized)

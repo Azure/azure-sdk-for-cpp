@@ -27,12 +27,6 @@
         "description": "The application client ID used to run tests."
       }
     },
-    "testApplicationSecret": {
-      "type": "string",
-      "metadata": {
-        "description": "The application client secret used to run tests."
-      }
-    },
     "enableVersioning": {
       "type": "bool",
       "defaultValue": true
@@ -305,10 +299,6 @@
       "type": "string",
       "value": "[parameters('testApplicationId')]"
     },
-    "STORAGE_CLIENT_SECRET": {
-      "type": "string",
-      "value": "[parameters('testApplicationSecret')]"
-    },
     "ACCOUNT_NAME": {
       "type": "string",
       "value": "[variables('accountName')]"
@@ -352,10 +342,6 @@
     "AAD_CLIENT_ID": {
       "type": "string",
       "value": "[parameters('testApplicationId')]"
-    },
-    "AAD_CLIENT_SECRET": {
-      "type": "string",
-      "value": "[parameters('testApplicationSecret')]"
     },
     "RESOURCE_GROUP": {
       "type": "string",

@@ -21,10 +21,12 @@
 #pragma warning(disable : 4244)
 #pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
+
 #include <opentelemetry/sdk/common/global_log_handler.h>
 #include <opentelemetry/sdk/trace/processor.h>
 #include <opentelemetry/sdk/trace/simple_processor.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
+
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif

@@ -38,16 +38,6 @@
 
 #undef AZ_IDENTITY_BUILT_AS_DLL
 
-#if defined(_azure_TESTING_BUILD)
-#if !defined(_azure_VIRTUAL_FOR_TESTS)
-#define _azure_VIRTUAL_FOR_TESTS virtual
-#endif
-#else
-#if !defined(_azure_VIRTUAL_FOR_TESTS)
-#define _azure_VIRTUAL_FOR_TESTS
-#endif
-#endif
-
 /**
  * @brief Azure SDK abstractions.
  *

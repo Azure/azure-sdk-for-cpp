@@ -16,10 +16,13 @@ endif()
 
 # Include sub-projects.
 if (BUILD_TESTING)
-add_subdirectory ("ut")
-# stress tests are categorized as normal tests.
-add_subdirectory ("eventhubs-stress-test")
+  add_subdirectory ("ut")
+  if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
+  # stress tests are categorized as normal tests.
+    add_subdirectory ("eventhubs-stress-test")
+  endif()
 endif()
+
 if (BUILD_PERFORMANCE_TESTS) 
-add_subdirectory ("perf")
+  add_subdirectory ("perf")
 endif()
