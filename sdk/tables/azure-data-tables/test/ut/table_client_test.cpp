@@ -4,6 +4,7 @@
 #include "table_client_test.hpp"
 
 #include "azure/data/tables/account_sas_builder.hpp"
+#include "azure/data/tables/tables_sas_builder.hpp"
 
 #include <azure/core/internal/strings.hpp>
 
@@ -63,14 +64,20 @@ namespace Azure { namespace Data { namespace Test {
           sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServices::All;
           sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
           sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
-          auto sasToken = sasBuilder.GenerateSasToken(*creds);
+          std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
           m_tableServiceClient
               = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
-                  "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,
+                  serviceUrl,
+                  creds,
+                  sasBuilder,
                   clientOptions));
+
+          Azure::Data::Tables::Sas::TablesSasBuilder tableSasBuilder;
+          tableSasBuilder.Protocol= Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
+          tableSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+          tableSasBuilder.TableName= m_tableName;
           m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
-              "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,
-              m_tableName,
+              serviceUrl,creds,tableSasBuilder,
               tableClientOptions));
           break;
       }

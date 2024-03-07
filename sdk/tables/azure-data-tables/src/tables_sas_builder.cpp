@@ -39,7 +39,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   std::string TablesSasBuilder::GenerateSasToken(
       const Azure::Data::Tables::Credentials::SharedKeyCredential& credential)
   {
-    std::string canonicalName = "/table/" + credential.AccountName + "/" + TableName;
+    std::string canonicalName = GetCanonicalName(credential);
 
     std::string protocol = _detail::SasProtocolToString(Protocol);
 

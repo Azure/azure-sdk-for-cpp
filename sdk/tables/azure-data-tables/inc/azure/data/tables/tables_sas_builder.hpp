@@ -170,6 +170,18 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     std::string GenerateSasToken(
         const Azure::Data::Tables::Credentials::SharedKeyCredential& credential);
 
+    /**
+     * @brief Gets the canonical path for the shared access signature.
+     *
+     * @param credential The storage account's shared key credential.
+     * @return Canonical path.
+     */
+    std::string GetCanonicalName(
+        const Azure::Data::Tables::Credentials::SharedKeyCredential& credential) const
+    {
+      return "/table/" + credential.AccountName + "/" + TableName;
+    }
+
   private:
     std::string Permissions;
   };

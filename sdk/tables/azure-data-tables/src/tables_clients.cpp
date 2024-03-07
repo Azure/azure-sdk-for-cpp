@@ -135,6 +135,17 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies2));
 }
 
+TableServicesClient::TableServicesClient(
+    const std::string& serviceUrl,
+    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+    Azure::Data::Tables::Sas::AccountSasBuilder& sasBuilder,
+    const TableClientOptions& options)
+    : TableServicesClient(
+        std::string{serviceUrl + sasBuilder.GenerateSasToken(*credential)},
+        options)
+{
+}
+
 TableServicesClient TableServicesClient::CreateFromConnectionString(
     const std::string& connectionString,
     const TableClientOptions& options)
@@ -405,6 +416,20 @@ TableClient::TableClient(
       _detail::ApiVersion,
       std::move(perRetryPolicies2),
       std::move(perOperationPolicies2));
+}
+
+TableClient::TableClient(
+    const std::string& serviceUrl,
+    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+    Azure::Data::Tables::Sas::TablesSasBuilder sasBuilder,
+    const TableClientOptions& options)
+    : TableClient(
+        std::string{
+            serviceUrl + sasBuilder.GetCanonicalName(*credential) + "/"
+            + sasBuilder.GenerateSasToken(*credential)},
+        sasBuilder.TableName,
+        options)
+{
 }
 
 TableClient TableClient::CreateFromConnectionString(

@@ -3,8 +3,10 @@
 
 #pragma once
 
+#include "azure/data/tables/account_sas_builder.hpp"
 #include "azure/data/tables/credentials/shared_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
+#include "azure/data/tables/tables_sas_builder.hpp"
 #include "azure/data/tables/transactions.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -176,6 +178,21 @@ namespace Azure { namespace Data { namespace Tables {
         const std::string& tableName,
         std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         std::string url,
+        const TableClientOptions& options = {});
+
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param serviceUrl The service Url
+     * @param credential The shared key credential used to sign requests.
+     * @param sasBuilder The shared access signature builder used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
+    explicit TableClient(
+        const std::string& serviceUrl,
+        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+        Azure::Data::Tables::Sas::TablesSasBuilder sasBuilder,
         const TableClientOptions& options = {});
 
     /**
@@ -362,6 +379,23 @@ namespace Azure { namespace Data { namespace Tables {
         const std::string& serviceUrl,
         std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         const TableClientOptions& options = {});
+
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param serviceUrl A url referencing the table that includes the name of the account and the
+     * name of the table.
+     * @param credential The shared key credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * @param sasBuilder The shared access signature builder used to sign requests.
+     * authentication, retries, etc., that are applied to every request.
+     */
+    explicit TableServicesClient(
+        const std::string& serviceUrl,
+        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+        Azure::Data::Tables::Sas::AccountSasBuilder& sasBuilder,
+        const TableClientOptions& options = {});
+
     /**
      * @brief Initializes a new instance of tableClient.
      *
