@@ -18,7 +18,6 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/test_hooks.hpp>
 #include <azure/core/response.hpp>
 
 #include <stdint.h>

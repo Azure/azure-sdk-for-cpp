@@ -15,7 +15,7 @@
 #include <azure_uamqp_c/link.h>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
   Link::Link(
       _internal::Session const& session,
       std::string const& name,
@@ -475,7 +475,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
 
       return Models::_detail::AmqpValueFactory::ToUamqp(link->m_eventHandler->OnTransferReceived(
-#if defined(_azure_TESTING_BUILD)
+#if defined(TESTING_BUILD)
           Link{link->shared_from_this()},
 #else
           link->shared_from_this(),
