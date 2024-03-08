@@ -11,6 +11,8 @@
 #include "eventhubs_stress_scenarios.hpp"
 #include "opentelemetry/sdk/logs/simple_log_record_processor_factory.h"
 
+#include <azure/core/datetime.hpp>
+
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -50,15 +52,34 @@ namespace logs = opentelemetry::logs;
 namespace otlp = opentelemetry::exporter::otlp;
 namespace internal_log = opentelemetry::sdk::common::internal_log;
 
-void InitTracer()
+auto GetTraceResource(std::string const& stressScenarioName)
+{
+  char hostname[256];
+  if (gethostname(hostname, sizeof(hostname)))
+  {
+    throw std::runtime_error("Failed to get hostname." + std::string(strerror(errno)));
+  }
+
+  auto resource_attributes = opentelemetry::sdk::resource::ResourceAttributes
+    {
+        {"service.name", stressScenarioName},
+        {"service.instance.id", hostname},
+    };
+  return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
+}
+
+void InitTracer(const std::string &stressScenarioName)
 {
   opentelemetry::exporter::otlp::OtlpHttpExporterOptions opts;
 
   // Create OTLP exporter instance
   auto exporter = otlp::OtlpHttpExporterFactory::Create(opts);
   auto processor = trace_sdk::SimpleSpanProcessorFactory::Create(std::move(exporter));
+
+  auto resource{GetTraceResource(stressScenarioName)};
   std::shared_ptr<opentelemetry::trace::TracerProvider> provider
-      = trace_sdk::TracerProviderFactory::Create(std::move(processor));
+      = trace_sdk::TracerProviderFactory::Create(std::move(processor), std::move(resource));
+
   // Set the global trace provider
   trace::Provider::SetTracerProvider(provider);
 }
@@ -72,11 +93,67 @@ constexpr const bool LogDefault = false;
 
 bool LogToConsole{LogDefault};
 
-void InitLogger()
+// Log level textual representation, including space padding, matches slf4j and log4net.
+std::string const ErrorText = "ERROR";
+std::string const WarningText = "WARN ";
+std::string const InformationalText = "INFO ";
+std::string const VerboseText = "DEBUG";
+std::string const UnknownText = "?????";
+
+inline std::string const& LogLevelToConsoleString(Azure::Core::Diagnostics::Logger::Level logLevel)
+{
+  switch (logLevel)
+  {
+    case Azure::Core::Diagnostics::Logger::Level::Error:
+      return ErrorText;
+
+    case Azure::Core::Diagnostics::Logger::Level::Warning:
+      return WarningText;
+
+    case Azure::Core::Diagnostics::Logger::Level::Informational:
+      return InformationalText;
+
+    case Azure::Core::Diagnostics::Logger::Level::Verbose:
+      return VerboseText;
+
+    default:
+      return UnknownText;
+  }
+}
+
+void InitLogger(const std::string& stressScenarioName)
 {
   if (LogToConsole)
   {
     std::cout << "Using console to export log records." << std::endl;
+
+    // Integrate the azure logging diagnostics with the OpenTelemetry logger provider we just
+    // created.
+    Azure::Core::Diagnostics::Logger::SetListener(
+        [](Azure::Core::Diagnostics::Logger::Level level, std::string const& message) {
+          std::cerr << '['
+                    << Azure::DateTime(std::chrono::system_clock::now())
+                           .ToString(
+                               Azure::DateTime::DateFormat::Rfc3339,
+                               Azure::DateTime::TimeFractionFormat::AllDigits)
+                    << " T: " << std::this_thread::get_id() << "] "
+                    << LogLevelToConsoleString(level) << " : " << message;
+
+          // If the message ends with a new line, flush the stream otherwise insert a new line to
+          // terminate the message.
+          //
+          // If the client of the logger APIs is using the stream form of the logger, then it will
+          // insert a \n character when the client uses std::endl. This check ensures that we don't
+          // insert unnecessary new lines.
+          if (!message.empty() && message.back() == '\n')
+          {
+            std::cerr << std::flush;
+          }
+          else
+          {
+            std::cerr << std::endl;
+          }
+        });
   }
   else
   {
@@ -88,8 +165,11 @@ void InitLogger()
     // Create OTLP exporter instance
     auto exporter = otlp::OtlpHttpLogRecordExporterFactory::Create(logger_opts);
     auto processor = logs_sdk::SimpleLogRecordProcessorFactory::Create(std::move(exporter));
+
+    auto resource{GetTraceResource(stressScenarioName)};
+
     std::shared_ptr<logs::LoggerProvider> provider
-        = logs_sdk::LoggerProviderFactory::Create(std::move(processor));
+        = logs_sdk::LoggerProviderFactory::Create(std::move(processor), std::move(resource));
 
     // Set the global log provider.
     logs::Provider::SetLoggerProvider(provider);
@@ -268,7 +348,7 @@ int main(int argc, char** argv)
     }
 
     // Log to the console or to OpenTelemetry logs.
-    LogToConsole = args["console"].as<bool>(LogDefault);
+    LogToConsole = args["console"] ? args["console"] : LogDefault;
 
     if (args.has_option("help"))
     {
@@ -278,11 +358,12 @@ int main(int argc, char** argv)
 
     // Initialize OpenTelemetry Tracers and Loggers.
     // TBD: Metrics.
-    InitTracer();
-    InitLogger();
+    InitTracer(scenario->GetStressScenarioName());
+    InitLogger(scenario->GetStressScenarioName());
 
     if (args.has_option("verbose"))
     {
+      std::cerr << "Verbose logging enabled." << std::endl;
       Azure::Core::Diagnostics::Logger::SetLevel(Azure::Core::Diagnostics::Logger::Level::Verbose);
     }
     else

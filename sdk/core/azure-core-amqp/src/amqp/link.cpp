@@ -334,7 +334,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint64_t peerMax;
     if (link_get_peer_max_message_size(m_link, &peerMax))
     {
-      throw std::runtime_error("Could not get link initial delivery count.");
+      throw std::runtime_error("Could not get peer max message size.");
     }
     return peerMax;
   }

@@ -130,9 +130,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   std::ostream& operator<<(std::ostream& os, EventData const& data)
   {
     os << "EventData: [" << std::endl;
-    os << "  Body: ";
-    Azure::Messaging::EventHubs::_detail::EventHubsUtilities::LogRawBuffer(os, data.Body);
-    os << std::endl;
+//    os << "  Body: ";
+//    Azure::Messaging::EventHubs::_detail::EventHubsUtilities::LogRawBuffer(os, data.Body);
+//    os << std::endl;
     if (!data.Properties.empty())
     {
       os << "  Properties: [";
@@ -162,8 +162,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   std::ostream& operator<<(std::ostream& os, ReceivedEventData const& data)
   {
     os << "EventData: [" << std::endl;
-    os << "  Body: ";
-    Azure::Messaging::EventHubs::_detail::EventHubsUtilities::LogRawBuffer(os, data.Body);
+    os << "  Body: " << data.Body.size() << " bytes" << std::endl;
+//    Azure::Messaging::EventHubs::_detail::EventHubsUtilities::LogRawBuffer(os, data.Body);
     os << std::endl;
     if (!data.Properties.empty())
     {
@@ -211,7 +211,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     {
       os << "  EnqueuedTime: " << data.EnqueuedTime.Value().ToString() << std::endl;
     }
-    os << "Raw Message" << data.GetRawAmqpMessage();
+    os << "Raw Message" << *data.GetRawAmqpMessage();
     os << "]" << std::endl;
 
     return os;

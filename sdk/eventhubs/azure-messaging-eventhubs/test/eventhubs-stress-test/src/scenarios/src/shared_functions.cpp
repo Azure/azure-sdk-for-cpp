@@ -68,6 +68,9 @@ EventSender::SendEventsToPartition(
     auto getPropertiesSpan{CreateStressSpan("SendEventsToPartition::GetPartitionProperties begin")};
     beforeSendProps = producerClient->GetPartitionProperties(senderOptions.PartitionId, context);
   }
+
+  std::cout << "Starting position: " << beforeSendProps << std::endl;
+
   std::vector<uint8_t> bodyData(senderOptions.NumberOfExtraBytes, 'a');
 
   Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
@@ -78,7 +81,7 @@ EventSender::SendEventsToPartition(
   {
     Azure::Messaging::EventHubs::Models::EventData event;
     event.Body = bodyData;
-    event.Properties["Number"] = j;
+    event.Properties["MessageNumber"] = j;
     event.Properties["PartitionID"]
         = static_cast<Azure::Core::Amqp::Models::AmqpValue>(senderOptions.PartitionId);
     if (j == senderOptions.MessageLimit)
@@ -95,6 +98,7 @@ EventSender::SendEventsToPartition(
           std::cerr << "Single message could not fit in batch";
           throw std::runtime_error("Single message could not fit in batch");
         }
+        std::cout << "Batch is full, sending batch and retrying to add message. Batch contains " << batch.NumberOfEvents() << " messages." << std::endl;
         auto sendBatchSpan{CreateStressSpan("SendBatch")};
         {
           producerClient->Send(batch, context);
@@ -105,6 +109,8 @@ EventSender::SendEventsToPartition(
       batchAddMessageSpan.first->SetStatus(opentelemetry::trace::StatusCode::kOk, "OK");
     }
   }
+
+  std::cout << "Flush the final batch with " << batch.NumberOfEvents() << " events." << std::endl;
   if (batch.NumberOfEvents() > 0)
   {
     auto sendBatchSpan{CreateStressSpan("SendBatch")};
@@ -117,16 +123,19 @@ EventSender::SendEventsToPartition(
     auto getPartitionPropertiesSpan{CreateStressSpan("GetPartitionProperties")};
     auto afterSendProps
         = producerClient->GetPartitionProperties(senderOptions.PartitionId, context);
+
     getPartitionPropertiesSpan.first->AddEvent(
         "After Properties", {{"sequenceNumber", beforeSendProps.LastEnqueuedSequenceNumber}});
 
     Azure::Messaging::EventHubs::Models::StartPosition afterStartPosition;
-    afterStartPosition.Inclusive = false;
+    afterStartPosition.Inclusive = true;
     afterStartPosition.SequenceNumber = beforeSendProps.LastEnqueuedSequenceNumber;
 
-    std::cout << "[END] Sending " << senderOptions.MessageLimit << " messages to partition "
+    std::cout << "After sending, partition properties:  " << afterSendProps << std::endl;
+
+    std::cout << "[END] Sent " << senderOptions.MessageLimit << " messages to partition "
               << senderOptions.PartitionId << " with messages of size "
-              << senderOptions.NumberOfExtraBytes << "b" << std::endl;
+              << senderOptions.NumberOfExtraBytes << std::endl;
     return std::make_pair(afterStartPosition, afterSendProps);
   }
 }

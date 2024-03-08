@@ -137,7 +137,7 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   m_partitionId = parserResults["PartitionId"].as<std::string>(DefaultPartitionId);
   m_maxTimeouts = parserResults["MaxTimeouts"].as<uint32_t>(DefaultMaxTimeouts);
   m_verbose = parserResults["verbose"].as<bool>(false);
-  m_useSasCredential = parserResults["UseSasCredential"].as<bool>(false);
+  m_useSasCredential = static_cast<bool>(parserResults["UseSasCredential"]);
   if (m_rounds == 0xffffffff)
   {
     m_rounds = (std::numeric_limits<uint32_t>::max)();
@@ -326,9 +326,13 @@ void BatchStressTest::ConsumeForBatchTester(
   uint32_t numCancels = 0;
   constexpr const uint32_t cancelLimit = 5;
 
+  std::cout << "Receiving events from partition " << m_partitionId << " for round " << round
+              << "starting at " << startPosition << " with a timeout of " << std::chrono::duration_cast<std::chrono::seconds>(m_batchDuration).count() << " seconds" << std::endl;
+
   do
   {
     auto duration = std::chrono::system_clock::now() + m_batchDuration;
+
     auto receiveContext = context.WithDeadline(duration);
 
     try
@@ -336,7 +340,6 @@ void BatchStressTest::ConsumeForBatchTester(
       auto span{CreateStressSpan("ConsumeForBatchTester::ReceiveEvents")};
       auto events = partitionClient->ReceiveEvents(m_batchSize, receiveContext);
       total += events.size();
-      std::cout << "Total: " << total << std::endl;
       if (total >= m_numberToSend)
       {
         break;
