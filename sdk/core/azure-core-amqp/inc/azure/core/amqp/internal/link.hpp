@@ -158,7 +158,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
     std::shared_ptr<LinkImplEvents> m_implEvents;
     std::shared_ptr<LinkImpl> m_impl;
-
   };
 #endif // defined(TESTING_BUILD)
 }}}} // namespace Azure::Core::Amqp::_detail

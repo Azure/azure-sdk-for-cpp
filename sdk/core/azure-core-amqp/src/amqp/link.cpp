@@ -30,11 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       if (m_linkEvents)
       {
-        return m_linkEvents->OnTransferReceived(
-            Link{link},
-            transfer,
-            payloadSize,
-            payloadBytes);
+        return m_linkEvents->OnTransferReceived(Link{link}, transfer, payloadSize, payloadBytes);
       }
       return Models::AmqpValue{};
     }
