@@ -96,7 +96,7 @@ namespace Azure { namespace Core {
           base64 = base64.substr(0, trail);
         }
         std::replace(base64.begin(), base64.end(), '+', '-');
-        std::replace(base64.begin(), base64.end(), '/', '_');
+        // std::replace(base64.begin(), base64.end(), '/', '_');
         return base64;
       }
 
