@@ -315,7 +315,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get HTTP body as #Azure::Core::IO::BodyStream.
      *
      */
-    Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
+    Azure::Core::IO::BodyStream* GetBodyStream() { return nullptr; }
 
     /**
      * @brief Get HTTP body as #Azure::Core::IO::BodyStream.
