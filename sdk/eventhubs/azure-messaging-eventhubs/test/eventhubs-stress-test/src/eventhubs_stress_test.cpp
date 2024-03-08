@@ -12,11 +12,18 @@
 #include "opentelemetry/sdk/logs/simple_log_record_processor_factory.h"
 
 #include <azure/core/datetime.hpp>
+#include <azure/core/platform.hpp>
 
 #include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <memory>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <winsock.h>
+#else // Assume POSIX
+#include <unistd.h>
+#endif
 
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
@@ -57,7 +64,14 @@ auto GetTraceResource(std::string const& stressScenarioName)
   char hostname[256];
   if (gethostname(hostname, sizeof(hostname)))
   {
+#if _MSC_VER
+    char errorBuffer[512];
+    strerror_s(errorBuffer, sizeof(errorBuffer), errno);
+    throw std::runtime_error("Failed to get hostname." + std::string(errorBuffer));
+
+#else
     throw std::runtime_error("Failed to get hostname." + std::string(strerror(errno)));
+#endif
   }
 
   auto resource_attributes = opentelemetry::sdk::resource::ResourceAttributes{

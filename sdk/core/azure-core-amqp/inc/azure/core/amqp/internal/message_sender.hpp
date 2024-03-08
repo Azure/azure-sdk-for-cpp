@@ -186,7 +186,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     friend class _detail::MessageSenderFactory;
     std::shared_ptr<_detail::MessageSenderImpl> m_impl;
-#if _azure_TESTING_BUILD
+#if TESTING_BUILD
     friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
     friend class Azure::Core::Amqp::Tests::MessageTests::MockServiceEndpoint;
     friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
