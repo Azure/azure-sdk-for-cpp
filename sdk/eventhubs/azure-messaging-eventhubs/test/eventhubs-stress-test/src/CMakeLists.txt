@@ -29,17 +29,15 @@ set(SOURCE_FILES
   scenarios/src/shared_functions.cpp
   )
 
-if (MSVC)
-  #argagg warnings
-  target_compile_options(azure-perf PUBLIC /wd28020 /wd28204)
-endif()
-
-
-
 add_executable(
   azure-messaging-eventhubs-stress-test
   ${SOURCE_FILES} ${INCLUDE_FILES}
 )
+
+if (MSVC)
+  #argagg warnings
+  target_compile_options(azure-messaging-eventhubs-stress-test PUBLIC /wd28020 /wd28204)
+endif()
 
 # Include the headers from the project.
 target_include_directories(

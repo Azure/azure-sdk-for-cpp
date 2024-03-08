@@ -144,7 +144,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return An error if the operation was not successful.
      */
-    AZURE_NODISCARD Models::_internal::AmqpError Open(Context const& context = {});
+    _azure_NODISCARD Models::_internal::AmqpError Open(Context const& context = {});
 
     /** @brief Closes a message sender.
      *
@@ -171,13 +171,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A tuple containing the status of the send operation and the send disposition.
      */
-    AZURE_NODISCARD std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
+    _azure_NODISCARD std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context = {});
 
   private:
     // Half-open the message sender (does not block waiting on the Open to complete).
-    AZURE_NODISCARD Models::_internal::AmqpError HalfOpen(Context const& context = {});
+    _azure_NODISCARD Models::_internal::AmqpError HalfOpen(Context const& context = {});
     /** @brief Construct a MessageSender from a low level message sender implementation.
      *
      * @remarks This function should never be called by a user. It is used internally by the SDK.

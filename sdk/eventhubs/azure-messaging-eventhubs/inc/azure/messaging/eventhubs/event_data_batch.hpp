@@ -116,7 +116,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @returns true if the message was added to the batch, false otherwise.
      */
-    AZURE_NODISCARD bool TryAdd(
+    _azure_NODISCARD bool TryAdd(
         std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
     {
       return TryAddAmqpMessage(message);
@@ -128,7 +128,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @returns true if the message was added to the batch, false otherwise.
      */
-    AZURE_NODISCARD bool TryAdd(Azure::Messaging::EventHubs::Models::EventData const& message);
+    _azure_NODISCARD bool TryAdd(Azure::Messaging::EventHubs::Models::EventData const& message);
 
     /** @brief Gets the number of messages in the batch
      *
@@ -163,7 +163,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     Azure::Core::Amqp::Models::AmqpMessage CreateBatchEnvelope(
-        std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message)
+        std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message) const
     {
       // Create the batch envelope from the prototype message. This copies all the attributes
       // *except* the body attribute to the batch envelope.

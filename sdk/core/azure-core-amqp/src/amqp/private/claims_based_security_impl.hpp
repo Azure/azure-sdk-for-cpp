@@ -36,9 +36,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ClaimsBasedSecurityImpl(ClaimsBasedSecurityImpl&&) noexcept = delete;
     ClaimsBasedSecurityImpl& operator=(ClaimsBasedSecurityImpl&&) noexcept = delete;
 
-    AZURE_NODISCARD CbsOpenResult Open(Context const& context);
+    _azure_NODISCARD CbsOpenResult Open(Context const& context);
     void Close(Context const& context);
-    AZURE_NODISCARD std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
+    _azure_NODISCARD std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,
         std::string const& token,

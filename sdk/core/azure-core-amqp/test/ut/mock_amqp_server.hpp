@@ -57,8 +57,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_listenerContext{options.ListenerContext},
-            m_enableTrace{options.EnableTrace}, m_name{name}
+          : m_listenerContext{options.ListenerContext}, m_enableTrace{options.EnableTrace},
+            m_name{name}
       {
       }
 
@@ -540,7 +540,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
       }
 
-      virtual ~AmqpServerMock() { StopListening(); }
+      virtual ~AmqpServerMock()
+      {
+        // If we're destroyed while still listening, stop listening.
+        if (m_listening)
+        {
+          StopListening();
+        }
+      }
 
       void AddServiceEndpoint(std::shared_ptr<MockServiceEndpoint> const& endpoint)
       {
@@ -593,6 +600,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             std::chrono::system_clock::now() + std::chrono::seconds(5),
             [&running]() { return running == true; });
         GTEST_LOG_(INFO) << "Listener running.";
+        m_listening = true;
       }
 
       void StopListening()
@@ -625,6 +633,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           connection->Close();
         }
+        m_listening = false;
       }
 
       void ForceCbsError(bool forceError)
@@ -649,6 +658,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       //      bool m_connectionValid{false};
       bool m_enableTrace{true};
+      bool m_listening{false};
 
       std::string m_connectionId;
       std::thread m_serverThread;
