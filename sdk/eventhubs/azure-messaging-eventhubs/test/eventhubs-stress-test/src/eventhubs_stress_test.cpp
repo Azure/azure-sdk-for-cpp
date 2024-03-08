@@ -60,15 +60,14 @@ auto GetTraceResource(std::string const& stressScenarioName)
     throw std::runtime_error("Failed to get hostname." + std::string(strerror(errno)));
   }
 
-  auto resource_attributes = opentelemetry::sdk::resource::ResourceAttributes
-    {
-        {"service.name", stressScenarioName},
-        {"service.instance.id", hostname},
-    };
+  auto resource_attributes = opentelemetry::sdk::resource::ResourceAttributes{
+      {"service.name", stressScenarioName},
+      {"service.instance.id", hostname},
+  };
   return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
 }
 
-void InitTracer(const std::string &stressScenarioName)
+void InitTracer(const std::string& stressScenarioName)
 {
   opentelemetry::exporter::otlp::OtlpHttpExporterOptions opts;
 

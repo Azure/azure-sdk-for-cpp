@@ -77,8 +77,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     auto actualPayloadSize = CalculateActualSizeForPayload(serializedMessage);
     if (m_currentSize + actualPayloadSize > m_maxBytes.Value())
     {
-      Log::Stream(Logger::Level::Informational) << "Batch is full. Cannot add more messages. " << "Message size: " << actualPayloadSize << " size: " << m_currentSize << " Max size: " << m_maxBytes.Value() << std::endl;
-      // If we don't have any messages and we can't add this one, then we can't add it at all. Discard the contents of the batch.
+      Log::Stream(Logger::Level::Informational)
+          << "Batch is full. Cannot add more messages. "
+          << "Message size: " << actualPayloadSize << " size: " << m_currentSize
+          << " Max size: " << m_maxBytes.Value() << std::endl;
+      // If we don't have any messages and we can't add this one, then we can't add it at all.
+      // Discard the contents of the batch.
       if (m_marshalledMessages.size() == 0)
       {
         m_currentSize = 0;

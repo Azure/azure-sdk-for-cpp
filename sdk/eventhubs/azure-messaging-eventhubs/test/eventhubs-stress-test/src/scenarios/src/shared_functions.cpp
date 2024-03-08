@@ -98,7 +98,8 @@ EventSender::SendEventsToPartition(
           std::cerr << "Single message could not fit in batch";
           throw std::runtime_error("Single message could not fit in batch");
         }
-        std::cout << "Batch is full, sending batch and retrying to add message. Batch contains " << batch.NumberOfEvents() << " messages." << std::endl;
+        std::cout << "Batch is full, sending batch and retrying to add message. Batch contains "
+                  << batch.NumberOfEvents() << " messages." << std::endl;
         auto sendBatchSpan{CreateStressSpan("SendBatch")};
         {
           producerClient->Send(batch, context);

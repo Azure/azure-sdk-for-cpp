@@ -327,7 +327,9 @@ void BatchStressTest::ConsumeForBatchTester(
   constexpr const uint32_t cancelLimit = 5;
 
   std::cout << "Receiving events from partition " << m_partitionId << " for round " << round
-              << "starting at " << startPosition << " with a timeout of " << std::chrono::duration_cast<std::chrono::seconds>(m_batchDuration).count() << " seconds" << std::endl;
+            << "starting at " << startPosition << " with a timeout of "
+            << std::chrono::duration_cast<std::chrono::seconds>(m_batchDuration).count()
+            << " seconds" << std::endl;
 
   do
   {
