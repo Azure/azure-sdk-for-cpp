@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace _internal {
 #else
 #if defined(_MSC_VER)
 // MSVC >= 1911, use [[nodiscard]]
-#if  _MSC_VER >= 1911
+#if _MSC_VER >= 1911
 /** @brief Generate a warning if the value is ignored by the caller */
 #define _azure_NODISCARD [[nodiscard]]
 #else
