@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2023-08-03";
+    constexpr static const char* SasVersion = "2019-07-07";
   }
 
   void TablesSasBuilder::SetPermissions(TablesSasPermissions permissions)
@@ -39,7 +39,9 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   std::string TablesSasBuilder::GenerateSasToken(
       const Azure::Data::Tables::Credentials::SharedKeyCredential& credential)
   {
-    std::string canonicalName = GetCanonicalName(credential);
+    std::string canonicalName
+        = Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(
+            GetCanonicalName(credential));
 
     std::string protocol = _detail::SasProtocolToString(Protocol);
 
@@ -52,9 +54,16 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
-        + "\n" + protocol + "\n" + SasVersion + "\n" + PartitionKeyStart + "\n" + PartitionKeyEnd
-        + "\n" + RowKeyStart + "\n" + RowKeyEnd;
+        + "\n" + protocol + "\n" + SasVersion + "\n" + PartitionKeyStart + "\n" + RowKeyStart + "\n"
+        + PartitionKeyEnd + "\n" + RowKeyEnd;
 
+    /* stringToSign.erase(
+        std::unique(
+            stringToSign.begin(),
+            stringToSign.end(),
+            [](char a, char b) { return a == '\n' && b == '\n'; }),
+        stringToSign.end());
+        */
     std::string signature = Azure::Core::Convert::Base64Encode(
         Azure::Data::Tables::_detail::Cryptography::HmacSha256::Compute(
             std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -65,6 +74,10 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     builder.AppendQueryParameter(
         "sv",
         Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(SasVersion));
+
+    builder.AppendQueryParameter(
+        "tn",
+        Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(TableName));
 
     builder.AppendQueryParameter(
         "spr",

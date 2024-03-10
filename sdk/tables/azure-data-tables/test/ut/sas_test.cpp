@@ -44,6 +44,28 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(sasParts.at("spk"), "myStartPartitionKey");
     EXPECT_EQ(sasParts.at("?epk"), "myEndPartitionKey");
   }
+  TEST(SasTest, TableSasBuilderTestSomeSet)
+  {
+    TablesSasBuilder sasBuilder;
+
+    sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
+
+    sasBuilder.ExpiresOn
+        = Azure::DateTime::Parse("2022-03-11T11:13:52Z", Azure::DateTime::DateFormat::Rfc3339);
+    sasBuilder.SetPermissions(TablesSasPermissions::Add);
+    sasBuilder.TableName = "someTableName";
+
+    std::string key = "*";
+    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+        "someaccount",
+        Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
+    auto sasToken = sasBuilder.GenerateSasToken(cred);
+    auto sasParts = SasTest::ParseQueryParameters(sasToken);
+    EXPECT_EQ(sasParts.at("?se"), "2022-03-11T11:13:52Z");
+    EXPECT_EQ(sasParts.at("sp"), "a");
+    EXPECT_EQ(sasParts.at("spr"), "https,http");
+    EXPECT_EQ(sasParts.at("tn"), "someTableName");
+  }
 
   TEST(SasTest, TableSasBuilderTestMin)
   {

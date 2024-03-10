@@ -46,22 +46,18 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      * @brief Indicates that Read is permitted.
      */
     Read = 1,
-
     /**
      * @brief Indicates that Add is permitted.
      */
     Add = 2,
-
-    /**
-     * @brief Indicates that Update is permitted.
-     */
-    Update = 4,
-
     /**
      * @brief Indicates that Delete is permitted.
      */
-    Delete = 8,
-
+    Delete = 4,
+    /**
+     * @brief Indicates that Update is permitted.
+     */
+    Update = 8,
     /**
      * @brief Indicates that all permissions are set.
      */
@@ -179,7 +175,8 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     std::string GetCanonicalName(
         const Azure::Data::Tables::Credentials::SharedKeyCredential& credential) const
     {
-      return "/table/" + credential.AccountName + "/" + TableName;
+      return Azure::Core::_internal::StringExtensions::ToLower(
+          "/table/" + credential.AccountName + "/" + TableName);
     }
 
   private:

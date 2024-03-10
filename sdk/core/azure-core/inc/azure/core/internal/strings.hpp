@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cstring>
 #include <string>
+#include <vector>
 
 namespace Azure { namespace Core { namespace _internal {
 
@@ -90,6 +91,28 @@ namespace Azure { namespace Core { namespace _internal {
     {
       std::transform(src.begin(), src.end(), src.begin(), [](auto c) { return ToUpper(c); });
       return src;
+    }
+
+    static std::vector<std::string> Split(const std::string& s, char separator)
+    {
+      std::vector<std::string> result;
+
+      const auto len = s.size();
+      size_t start = 0;
+      while (start < len)
+      {
+        auto end = s.find(separator, start);
+        if (end == std::string::npos)
+        {
+          end = len;
+        }
+
+        result.push_back(s.substr(start, end - start));
+
+        start = end + 1;
+      }
+
+      return result;
     }
   };
 

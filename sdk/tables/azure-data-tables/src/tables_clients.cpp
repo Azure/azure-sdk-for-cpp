@@ -425,7 +425,7 @@ TableClient::TableClient(
     const TableClientOptions& options)
     : TableClient(
         std::string{
-            serviceUrl + sasBuilder.GetCanonicalName(*credential) + "/"
+            Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/"
             + sasBuilder.GenerateSasToken(*credential)},
         sasBuilder.TableName,
         options)
