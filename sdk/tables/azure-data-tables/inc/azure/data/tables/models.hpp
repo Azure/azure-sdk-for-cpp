@@ -67,7 +67,7 @@ namespace Azure { namespace Data { namespace Tables {
     }
     inline QueryTablesIncludeFlags& operator|=(
         QueryTablesIncludeFlags lhs,
-        QueryTablesIncludeFlags const rhs)
+        QueryTablesIncludeFlags rhs)
     {
       lhs = lhs | rhs;
       return lhs;
@@ -81,7 +81,7 @@ namespace Azure { namespace Data { namespace Tables {
     }
     inline QueryTablesIncludeFlags& operator&=(
         QueryTablesIncludeFlags lhs,
-        QueryTablesIncludeFlags const rhs)
+        QueryTablesIncludeFlags rhs)
     {
       lhs = lhs & rhs;
       return lhs;
