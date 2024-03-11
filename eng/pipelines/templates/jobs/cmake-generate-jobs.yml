@@ -27,8 +27,8 @@ jobs:
         Selection: all
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
-    OsVmImage: $(LINUXVMIMAGE)
-    Pool: $(LINUXPOOL)
+    OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+    Pool: azsdk-pool-mms-ubuntu-2004-general
     GenerateJobName: generate_matrix_cmake
     AdditionalParameters:
       Artifacts: ${{ parameters.Artifacts }}
@@ -43,8 +43,8 @@ jobs:
         Selection: all
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
-    OsVmImage: $(LINUXVMIMAGE)
-    Pool: $(LINUXPOOL)
+    OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+    Pool: azsdk-pool-mms-ubuntu-2004-general
     GenerateJobName: generate_matrix_cmake_source
     AdditionalParameters:
       Artifacts: ${{ parameters.ArtifactsSource }}
