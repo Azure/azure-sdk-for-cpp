@@ -60,7 +60,7 @@ parameters:
     default: ''
 
 jobs:
-  - job: ${{ parameters.DisplayName }}_${{ parameters.os }}
+  - job: ${{ parameters.DisplayName }}_${{ parameters.OSName }}
     displayName: ${{ parameters.DisplayName }}
     dependsOn: ${{ parameters.DependsOn }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
