@@ -56,6 +56,7 @@ int main()
   else
   {
     std::cout << "Sender failed to open" << err << std::endl;
+    return 1;
   }
 
   auto timeStart = std::chrono::high_resolution_clock::now();
