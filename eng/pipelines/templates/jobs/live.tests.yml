@@ -178,7 +178,7 @@ jobs:
       ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
     workingDirectory: build
     displayName: ctest
-    # Runs only if test-resources are happly deployed.
+    # Runs only if test-resources are happily deployed.
     # unit-tests runs for those configs where samples are not ran.
     # This enables to run tests and samples at the same time as different matrix configuration.
     # Then unit-tests runs, samples should not run.
