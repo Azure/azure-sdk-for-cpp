@@ -36,8 +36,8 @@ namespace Azure { namespace Data { namespace Test {
       switch (param)
       {
         case AuthType::ConnectionString:
-          m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-              Tables::TableServicesClient::CreateFromConnectionString(
+          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
+              Tables::TableServiceClient::CreateFromConnectionString(
                   GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(
               Tables::TableClient::CreateFromConnectionString(
@@ -45,8 +45,8 @@ namespace Azure { namespace Data { namespace Test {
           break;
         case AuthType::Key:
           m_credential = GetTestCredential();
-          m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-              Azure::Data::Tables::TableServicesClient(
+          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
+              Azure::Data::Tables::TableServiceClient(
                   "https://" + GetAccountName() + ".table.core.windows.net/",
                   m_credential,
                   clientOptions));
@@ -67,7 +67,7 @@ namespace Azure { namespace Data { namespace Test {
           sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
           std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
           m_tableServiceClient
-              = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
+              = std::make_shared<Tables::TableServiceClient>(Tables::TableServiceClient(
                   serviceUrl,
                   creds,
                   sasBuilder,

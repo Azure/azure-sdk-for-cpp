@@ -19,7 +19,7 @@ using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::Credentials::_detail;
 using namespace Azure::Data::Tables::_detail;
 
-TableServicesClient::TableServicesClient(const TableClientOptions& options)
+TableServiceClient::TableServiceClient(const TableClientOptions& options)
 {
   TableClientOptions newOptions = options;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
@@ -37,7 +37,7 @@ TableServicesClient::TableServicesClient(const TableClientOptions& options)
       std::move(perOperationPolicies));
 }
 
-TableServicesClient::TableServicesClient(
+TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     const TableClientOptions& options)
 {
@@ -57,11 +57,11 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies));
 }
 
-TableServicesClient::TableServicesClient(
+TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     std::shared_ptr<Core::Credentials::TokenCredential> credential,
     const TableClientOptions& options)
-    : TableServicesClient(options)
+    : TableServiceClient(options)
 
 {
   TableClientOptions newOptions = options;
@@ -96,7 +96,7 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies));
 }
 
-TableServicesClient::TableServicesClient(
+TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
     const TableClientOptions& options)
@@ -135,18 +135,18 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies2));
 }
 
-TableServicesClient::TableServicesClient(
+TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
     Azure::Data::Tables::Sas::AccountSasBuilder& sasBuilder,
     const TableClientOptions& options)
-    : TableServicesClient(
+    : TableServiceClient(
         std::string{serviceUrl + sasBuilder.GenerateSasToken(*credential)},
         options)
 {
 }
 
-TableServicesClient TableServicesClient::CreateFromConnectionString(
+TableServiceClient TableServiceClient::CreateFromConnectionString(
     const std::string& connectionString,
     const TableClientOptions& options)
 {
@@ -155,16 +155,16 @@ TableServicesClient TableServicesClient::CreateFromConnectionString(
 
   if (parsedConnectionString.KeyCredential)
   {
-    return TableServicesClient(
+    return TableServiceClient(
         tablesUrl.GetAbsoluteUrl(), std::move(parsedConnectionString.KeyCredential), options);
   }
   else
   {
-    return TableServicesClient(options);
+    return TableServiceClient(options);
   }
 }
 
-Azure::Response<Models::PreflightCheckResult> TableServicesClient::PreflightCheck(
+Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck(
     Models::PreflightCheckOptions const& options,
     Core::Context const& context)
 {
@@ -185,7 +185,7 @@ Azure::Response<Models::PreflightCheckResult> TableServicesClient::PreflightChec
 
   return Response<Models::PreflightCheckResult>(std::move(response), std::move(rawResponse));
 }
-Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServiceProperties(
+Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServiceProperties(
     Models::SetServicePropertiesOptions const& options,
     Core::Context const& context)
 {
@@ -215,7 +215,7 @@ Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServ
   return Response<Models::SetServicePropertiesResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceProperties(
+Azure::Response<Models::TableServiceProperties> TableServiceClient::GetServiceProperties(
     Core::Context const& context)
 {
   auto url = m_url;
@@ -238,7 +238,7 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
   return Response<Models::TableServiceProperties>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
+Azure::Response<Models::ServiceStatistics> TableServiceClient::GetStatistics(
     const Core::Context& context)
 {
   auto url = m_url;
@@ -454,8 +454,8 @@ TableClient TableClient::CreateFromConnectionString(
   }
 }
 
-Azure::Response<Models::Table> TableServicesClient::CreateTable(
-    std::string tableName,
+Azure::Response<Models::Table> TableServiceClient::CreateTable(
+    std::string const& tableName,
     Core::Context const& context)
 {
   auto url = m_url;
@@ -505,7 +505,7 @@ void Models::QueryTablesPagedResponse::OnNextPage(const Azure::Core::Context& co
   *this = m_tableServiceClient->QueryTables(m_operationOptions, context);
 }
 
-Models::QueryTablesPagedResponse TableServicesClient::QueryTables(
+Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
     Models::QueryTablesOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -548,7 +548,7 @@ Models::QueryTablesPagedResponse TableServicesClient::QueryTables(
 
     response.ServiceEndpoint = url.GetAbsoluteUrl();
     response.Prefix = options.Prefix;
-    response.m_tableServiceClient = std::make_shared<TableServicesClient>(*this);
+    response.m_tableServiceClient = std::make_shared<TableServiceClient>(*this);
     response.m_operationOptions = options;
     response.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
     response.RawResponse = std::move(response.RawResponse);
@@ -612,8 +612,8 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
   return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::DeleteResult> TableServicesClient::DeleteTable(
-    std::string tableName,
+Azure::Response<Models::DeleteResult> TableServiceClient::DeleteTable(
+    std::string const& tableName,
     Core::Context const& context)
 {
   auto url = m_url;

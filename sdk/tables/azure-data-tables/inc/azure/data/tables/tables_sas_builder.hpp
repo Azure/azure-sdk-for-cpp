@@ -65,14 +65,18 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   };
 
   /** @brief Bitwise OR of two values*/
-  inline TablesSasPermissions operator|(TablesSasPermissions lhs, TablesSasPermissions rhs)
+  inline TablesSasPermissions operator|(
+      TablesSasPermissions const lhs,
+      TablesSasPermissions const rhs)
   {
     using type = std::underlying_type_t<TablesSasPermissions>;
     return static_cast<TablesSasPermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
   /** @brief Bitwise AND of two values*/
-  inline TablesSasPermissions operator&(TablesSasPermissions lhs, TablesSasPermissions rhs)
+  inline TablesSasPermissions operator&(
+      TablesSasPermissions const lhs,
+      TablesSasPermissions const rhs)
   {
     using type = std::underlying_type_t<TablesSasPermissions>;
     return static_cast<TablesSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
@@ -82,8 +86,8 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
    * @brief TableSasBuilder is used to generate a Shared Access Signature (SAS) for an Azure
    * Storage Tables.
    */
-  struct TablesSasBuilder final
-  {
+  class TablesSasBuilder final {
+  public:
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
      * request made with the SAS.

@@ -68,13 +68,13 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     All = ~0,
   };
 
-  inline AccountSasResource operator|(AccountSasResource lhs, AccountSasResource rhs)
+  inline AccountSasResource operator|(AccountSasResource const lhs, AccountSasResource const rhs)
   {
     using type = std::underlying_type_t<AccountSasResource>;
     return static_cast<AccountSasResource>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
-  inline AccountSasResource operator&(AccountSasResource lhs, AccountSasResource rhs)
+  inline AccountSasResource operator&(AccountSasResource const lhs, AccountSasResource const rhs)
   {
     using type = std::underlying_type_t<AccountSasResource>;
     return static_cast<AccountSasResource>(static_cast<type>(lhs) & static_cast<type>(rhs));
@@ -114,13 +114,13 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     All = ~0,
   };
 
-  inline AccountSasServices operator|(AccountSasServices lhs, AccountSasServices rhs)
+  inline AccountSasServices operator|(AccountSasServices const lhs, AccountSasServices const rhs)
   {
     using type = std::underlying_type_t<AccountSasServices>;
     return static_cast<AccountSasServices>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
-  inline AccountSasServices operator&(AccountSasServices lhs, AccountSasServices rhs)
+  inline AccountSasServices operator&(AccountSasServices const lhs, AccountSasServices const rhs)
   {
     using type = std::underlying_type_t<AccountSasServices>;
     return static_cast<AccountSasServices>(static_cast<type>(lhs) & static_cast<type>(rhs));
@@ -202,13 +202,13 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     All = ~0,
   };
 
-  inline AccountSasPermissions operator|(AccountSasPermissions lhs, AccountSasPermissions rhs)
+  inline AccountSasPermissions operator|(AccountSasPermissions const lhs, AccountSasPermissions const rhs)
   {
     using type = std::underlying_type_t<AccountSasPermissions>;
     return static_cast<AccountSasPermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
-  inline AccountSasPermissions operator&(AccountSasPermissions lhs, AccountSasPermissions rhs)
+  inline AccountSasPermissions operator&(AccountSasPermissions const lhs, AccountSasPermissions const rhs)
   {
     using type = std::underlying_type_t<AccountSasPermissions>;
     return static_cast<AccountSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
@@ -218,8 +218,9 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
    * @brief AccountSasBuilder is used to generate an account level Shared Access Signature
    * (SAS) for Azure Storage services.
    */
-  struct AccountSasBuilder final
+  class AccountSasBuilder final
   {
+  public:
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
      * request made with the SAS.

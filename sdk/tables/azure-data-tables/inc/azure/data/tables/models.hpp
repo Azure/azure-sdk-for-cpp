@@ -18,7 +18,7 @@
 #include <vector>
 
 namespace Azure { namespace Data { namespace Tables {
-  class TableServicesClient;
+  class TableServiceClient;
   class TableClient;
 
   namespace Models {
@@ -59,29 +59,29 @@ namespace Azure { namespace Data { namespace Tables {
       Metadata = 1,
     };
     inline QueryTablesIncludeFlags operator|(
-        QueryTablesIncludeFlags lhs,
-        QueryTablesIncludeFlags rhs)
+        QueryTablesIncludeFlags const lhs,
+        QueryTablesIncludeFlags const rhs)
     {
       using type = std::underlying_type_t<QueryTablesIncludeFlags>;
       return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
     }
     inline QueryTablesIncludeFlags& operator|=(
-        QueryTablesIncludeFlags& lhs,
-        QueryTablesIncludeFlags rhs)
+        QueryTablesIncludeFlags lhs,
+        QueryTablesIncludeFlags const rhs)
     {
       lhs = lhs | rhs;
       return lhs;
     }
     inline QueryTablesIncludeFlags operator&(
-        QueryTablesIncludeFlags lhs,
-        QueryTablesIncludeFlags rhs)
+        QueryTablesIncludeFlags const lhs,
+        QueryTablesIncludeFlags const rhs)
     {
       using type = std::underlying_type_t<QueryTablesIncludeFlags>;
       return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
     }
     inline QueryTablesIncludeFlags& operator&=(
-        QueryTablesIncludeFlags& lhs,
-        QueryTablesIncludeFlags rhs)
+        QueryTablesIncludeFlags lhs,
+        QueryTablesIncludeFlags const rhs)
     {
       lhs = lhs & rhs;
       return lhs;
@@ -125,7 +125,7 @@ namespace Azure { namespace Data { namespace Tables {
     class QueryTablesPagedResponse final
         : public Azure::Core::PagedResponse<QueryTablesPagedResponse> {
 
-      friend class Azure::Data::Tables::TableServicesClient;
+      friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
 
     public:
@@ -148,7 +148,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * Table Service Client.
        */
-      std::shared_ptr<TableServicesClient> m_tableServiceClient;
+      std::shared_ptr<TableServiceClient> m_tableServiceClient;
       /** Operation options */
       QueryTablesOptions m_operationOptions;
 
@@ -353,18 +353,22 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Table Entity Data Type.
      */
-    class TableEntityDataType final {
+    class TableEntityDataType final
+        : public Azure::Core::_internal::ExtendableEnumeration<TableEntityDataType> {
     public:
-      /** Constructs a new TableEntityDataType instance */
-      TableEntityDataType() = default;
-      /** Constructs a new TableEntityDataType from a string. */
-      explicit TableEntityDataType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another TableEntityDataType. */
-      bool operator==(const TableEntityDataType& other) const { return m_value == other.m_value; }
-      /** Compares with another TableEntityDataType. */
-      bool operator!=(const TableEntityDataType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      /**
+       * @brief Construct a new TableEntityDataType object
+       */
+      TableEntityDataType()= default;
+      /**
+       * @brief Construct a new TableEntityDataType object
+       *
+       * @param tableEntityDataType entity data type string.
+       */
+      explicit TableEntityDataType(std::string tableEntityDataType)
+          : ExtendableEnumeration(std::move(tableEntityDataType))
+      {
+      }
       /** Constant value of type TableEntityDataType:EdmBinary */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBinary;
       /** Constant value of type TableEntityDataType:EdmBinary */
@@ -381,9 +385,6 @@ namespace Azure { namespace Data { namespace Tables {
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt64;
       /** Constant value of type TableEntityDataType:EdmBinary */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmString;
-
-    private:
-      std::string m_value;
     };
 
     /**
@@ -713,7 +714,7 @@ namespace Azure { namespace Data { namespace Tables {
     private:
       std::shared_ptr<TableClient> m_tableClient;
       QueryEntitiesOptions m_operationOptions;
-      friend class Azure::Data::Tables::TableServicesClient;
+      friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryEntitiesPagedResponse>;
 
       void OnNextPage(const Azure::Core::Context& context);

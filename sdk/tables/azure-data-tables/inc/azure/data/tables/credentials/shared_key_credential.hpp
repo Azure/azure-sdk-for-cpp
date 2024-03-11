@@ -14,8 +14,8 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
 }}}}} // namespace Azure::Data::Tables::_detail::Policies
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
-  struct AccountSasBuilder;
-  struct TablesSasBuilder;
+  class AccountSasBuilder;
+  class TablesSasBuilder;
 }}}} // namespace Azure::Data::Tables::Sas
 
 namespace Azure { namespace Data { namespace Tables { namespace Credentials {
@@ -58,8 +58,8 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
   private:
     friend class Azure::Data::Tables::_detail::Policies::SharedKeyPolicy;
     friend class Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy;
-    friend struct Azure::Data::Tables::Sas::AccountSasBuilder;
-    friend struct Azure::Data::Tables::Sas::TablesSasBuilder;
+    friend class Azure::Data::Tables::Sas::AccountSasBuilder;
+    friend class Azure::Data::Tables::Sas::TablesSasBuilder;
 
     std::string GetAccountKey() const
     {

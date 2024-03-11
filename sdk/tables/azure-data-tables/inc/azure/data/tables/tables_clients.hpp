@@ -328,17 +328,17 @@ namespace Azure { namespace Data { namespace Tables {
   };
 
   /**
-   * @brief Table Services Client
+   * @brief Table Service Client
    */
-  class TableServicesClient final {
+  class TableServiceClient final {
   public:
     /**
-     * @brief Initializes a new instance of tableServicesClient.
+     * @brief Initializes a new instance of tableServiceClient.
      *
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(const TableClientOptions& options = {});
+    explicit TableServiceClient(const TableClientOptions& options = {});
 
     /**
      * @brief Initializes a new instance of tableClient.
@@ -348,7 +348,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(
+    explicit TableServiceClient(
         const std::string& serviceUrl,
         const TableClientOptions& options = {});
 
@@ -361,7 +361,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(
+    explicit TableServiceClient(
         const std::string& serviceUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const TableClientOptions& options = {});
@@ -375,7 +375,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(
+    explicit TableServiceClient(
         const std::string& serviceUrl,
         std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         const TableClientOptions& options = {});
@@ -390,7 +390,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param sasBuilder The shared access signature builder used to sign requests.
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(
+    explicit TableServiceClient(
         const std::string& serviceUrl,
         std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         Azure::Data::Tables::Sas::AccountSasBuilder& sasBuilder,
@@ -402,9 +402,9 @@ namespace Azure { namespace Data { namespace Tables {
      * @param connectionString the connection string used to initialize.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
-     * @return TableServicesClient.
+     * @return TableServiceClient.
      */
-    static TableServicesClient CreateFromConnectionString(
+    static TableServiceClient CreateFromConnectionString(
         const std::string& connectionString,
         const TableClientOptions& options = {});
 
@@ -415,7 +415,9 @@ namespace Azure { namespace Data { namespace Tables {
      * @param tableName The name of the table to be created.
      * @return Create table result.
      */
-    Response<Models::Table> CreateTable(std::string tableName, Core::Context const& context = {});
+    Response<Models::Table> CreateTable(
+        std::string const& tableName,
+        Core::Context const& context = {});
 
     /**
      * @brief Delete the table indicated in the tableName field of the client.
@@ -425,7 +427,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @return Delete table result.
      */
     Response<Models::DeleteResult> DeleteTable(
-        std::string tableName,
+        std::string const& tableName,
         Core::Context const& context = {});
 
     /**

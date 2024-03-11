@@ -29,7 +29,7 @@ const std::string TableName = "table";
 
 int main()
 {
-  auto tableServiceClient = TableServicesClient::CreateFromConnectionString(GetConnectionString());
+  auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
   auto tableClient = TableClient::CreateFromConnectionString(GetConnectionString(), TableName);
 
   // create new table

@@ -29,7 +29,7 @@ const std::string TableName = "sample1";
 
 int main()
 {
-  auto tableServiceClient = TableServicesClient::CreateFromConnectionString(GetConnectionString());
+  auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
 
   // query tables
   auto tables = tableServiceClient.QueryTables();
