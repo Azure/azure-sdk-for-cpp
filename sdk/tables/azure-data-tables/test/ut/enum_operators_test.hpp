@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// clang-format off
 #include "azure/data/tables/account_sas_builder.hpp"
 #include "azure/data/tables/tables_sas_builder.hpp"
 #include "test/ut/test_base.hpp"
