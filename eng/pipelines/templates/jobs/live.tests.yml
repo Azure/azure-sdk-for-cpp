@@ -44,7 +44,8 @@ parameters:
   default: ''
 
 jobs:
-- job: ValidateLive
+- job: 
+  displayName: ValidateLive
   dependsOn: ${{ parameters.DependsOn }}
   condition: and(ne(variables['Skip.LiveTest'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
