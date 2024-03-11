@@ -39,6 +39,9 @@ parameters:
 - name: PostTestSteps
   type: stepList
   default: []
+- name: OSName
+  type: string
+  default: ''
 
 jobs:
 - job: ValidateLive
@@ -47,7 +50,14 @@ jobs:
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   pool:
     name: $(Pool)
-    vmImage: $(OSVmImage)
+    # 1es pipeline templates converts `image` to demands: ImageOverride under the hood
+    # which is incompatible with image selection in the default non-1es hosted pools
+    ${{ if eq(parameters.OSName, 'macOS') }}:
+      vmImage: $(OSVmImage)
+    ${{ else }}:
+      image: $(OSVmImage)
+    os: ${{ parameters.OSName }}
+    
 
   ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
     # Add a default so the job doesn't fail when the matrix is empty
@@ -58,18 +68,30 @@ jobs:
     matrix: $[ ${{ parameters.Matrix }} ]
 
   variables:
-    CMOCKA_XML_FILE: "%g-test-results.xml"
-    CMOCKA_MESSAGE_OUTPUT: "xml"
-    AZURE_ENABLE_STATIC_ANALYSIS: 1
-    BuildArgs: ""
-    VcpkgArgs: ""
-    WindowsCtestConfig: ""
-    CmakeEnvArg: ""
-    CmakeArgs: ""
-    AZURE_TEST_MODE: "LIVE"
-    AZURE_LOG_LEVEL: "verbose"
-    # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
-    AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
+    - template: /eng/pipelines/templates/variables/image.yml@self
+    - name: CMOCKA_XML_FILE
+      value: "%g-test-results.xml"
+    - name: CMOCKA_MESSAGE_OUTPUT
+      value: "xml"
+    - name: AZURE_ENABLE_STATIC_ANALYSIS
+      value: 1
+    - name: BuildArgs
+      value: ""
+    - name: VcpkgArgs
+      value: ""
+    - name: WindowsCtestConfig
+      value: ""
+    - name: CmakeEnvArg
+      value: ""
+    - name: CmakeArgs
+      value: ""
+    - name: AZURE_TEST_MODE
+      value: "LIVE"
+    - name: AZURE_LOG_LEVEL
+      value: "verbose"
+      # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
+    - name: AZURE_SERVICE_DIRECTORY
+      value: ${{ parameters.ServiceDirectory }}
 
   steps:
   - checkout: self

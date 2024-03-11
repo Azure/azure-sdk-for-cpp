@@ -52,7 +52,7 @@ parameters:
     default: true
 
 jobs:
-  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
       GenerateJobName: ${{ parameters.JobName }}_generate_matrix
       MatrixConfigs:
@@ -61,8 +61,8 @@ jobs:
           Selection: all
           GenerateVMJobs: true
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-      Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+      OsVmImage: $(LINUXVMIMAGE)
+      Pool: $(LINUXPOOL)
       AdditionalParameters:
         DisplayName: ${{ parameters.JobName }}
         Artifacts: ${{ parameters.Artifacts }}
@@ -84,8 +84,8 @@ jobs:
       - job:
         displayName: Create API Review for ${{ artifact.name }}
         pool:
-          name: azsdk-pool-mms-win-2022-1es-pt
-          vmImage: azsdk-pool-mms-win-2022-1espt
+          name: $(WINDOWSPOOL)
+          image: $(WINDOWSVMIMAGE)
           os: windows
         steps:
           - task: Powershell@2
@@ -144,8 +144,8 @@ jobs:
 
     - job: GenerateReleaseArtifacts
       pool:
-        name: azsdk-pool-mms-win-2022-1es-pt
-        vmImage: azsdk-pool-mms-win-2022-1espt
+        name: $(WINDOWSPOOL)
+        image: $(WINDOWSVMIMAGE)
         os: windows
       variables:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'

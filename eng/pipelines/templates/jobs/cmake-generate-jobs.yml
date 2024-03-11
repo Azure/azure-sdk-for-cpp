@@ -19,7 +19,7 @@ parameters:
     default: 120
 
 jobs:
-- template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+- template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
   parameters:
     MatrixConfigs:
       - Name: base
@@ -27,15 +27,15 @@ jobs:
         Selection: all
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
-    OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-    Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+    OsVmImage: $(LINUXVMIMAGE)
+    Pool: $(LINUXPOOL)
     GenerateJobName: generate_matrix_cmake
     AdditionalParameters:
       Artifacts: ${{ parameters.Artifacts }}
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
 
-- template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+- template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
   parameters:
     MatrixConfigs:
       - Name: base
@@ -43,8 +43,8 @@ jobs:
         Selection: all
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
-    OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-    Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+    OsVmImage: $(LINUXVMIMAGE)
+    Pool: $(LINUXPOOL)
     GenerateJobName: generate_matrix_cmake_source
     AdditionalParameters:
       Artifacts: ${{ parameters.ArtifactsSource }}

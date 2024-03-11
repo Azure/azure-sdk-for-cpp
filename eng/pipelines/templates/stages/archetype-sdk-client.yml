@@ -90,32 +90,31 @@ extends:
   ${{ else }}:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
-    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-      sdl:
-        sourceAnalysisPool:
-          name: azsdk-pool-mms-win-2022-1es-pt
-          image: azsdk-pool-mms-win-2022-1espt
-          os: windows
-        eslint:
-          enabled: false
-          justificationForDisabling: 'ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3499746'
-        codeql:
-          compiled:
-            enabled: false
-            justificationForDisabling: CodeQL times our pipelines out by running for 2+ hours before being force canceled.
-        psscriptanalyzer:
-          compiled: true
-          break: true
-        policy: M365
-        credscan:
-          suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
-          toolVersion: 2.3.12.23
-        binskim:
-          enabled: true
-          scanOutputDirectoryOnly: true
+    settings:
+      skipBuildTagsForGitHubPullRequests: true
+    sdl:
+      sourceAnalysisPool:
+        name: azsdk-pool-mms-win-2022-1es-pt
+        image: azsdk-pool-mms-win-2022-1espt
+        os: windows
+      eslint:
+        enabled: false
+        justificationForDisabling: 'ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3499746'
+      psscriptanalyzer:
+        compiled: true
+        break: true
+      policy: M365
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
+        toolVersion: 2.3.12.23
+      binskim:
+        enabled: true
+        scanOutputDirectoryOnly: true
 
     stages:
       - stage: CMakeGeneration
+        variables:
+          - template: /eng/pipelines/templates/variables/image.yml@self
         jobs:
           - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml@self
             parameters:
@@ -129,6 +128,8 @@ extends:
       # PrePublishBuild runs a narrower set of fast builds. If these builds pass,
       # Integration can launch immediately without awaiting more build and test jobs
       - stage: PrePublishBuild
+        variables:
+          - template: /eng/pipelines/templates/variables/image.yml@self
         dependsOn: []
         jobs:
           - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml@self
@@ -151,6 +152,8 @@ extends:
               RunMetaJobs: true
 
       - stage: Build
+        variables:
+          - template: /eng/pipelines/templates/variables/image.yml@self
         dependsOn: []
         jobs:
           - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml@self
