@@ -162,11 +162,7 @@ namespace Azure { namespace Core { namespace Test {
     // creating
     std::string GetTestNameLowerCase(bool sanitize = true)
     {
-      srand(static_cast<int>(time(0))); // NOLINT(cert-msc51-cpp)
-      std::stringstream string_object;
-      string_object << rand() % 1000; // Insert operation
-      return Azure::Core::_internal::StringExtensions::ToLower(GetTestName(sanitize))
-          + string_object.str();
+      return Azure::Core::_internal::StringExtensions::ToLower(GetTestName(sanitize));
     }
 
     /**
