@@ -48,23 +48,23 @@ function getTargetOs {
         return $OsVMImage
     }
 
-    if ($OsVMImage -eq "windows-2019") {
+    if ($OsVMImage -eq "windows-2019" -or $OsVMImage.Contains("win-2019")) {
         return "win-2019"
     }
 
-    if ($OsVMImage -eq "windows-2022") {
+    if ($OsVMImage -eq "windows-2022" -or $OsVMImage.Contains("win-2022")) {
         return "win-2022"
     }
 
-    if ($OsVMImage -in "MMSUbuntu18.04", "ubuntu-18.04") {
+    if ($OsVMImage -in "MMSUbuntu18.04", "ubuntu-18.04", "azsdk-pool-mms-ubuntu-1804-1espt") {
         return "ubuntu-18.04"
     }
 
-    if ($OsVMImage -in "MMSUbuntu20.04", "ubuntu-20.04") {
+    if ($OsVMImage -in "MMSUbuntu20.04", "ubuntu-20.04", "azsdk-pool-mms-ubuntu-2004-1espt") {
         return "ubuntu-20.04"
     }
 
-    if ($OsVMImage -in "MMSUbuntu22.04", "ubuntu-22.04") {
+    if ($OsVMImage -in "MMSUbuntu22.04", "ubuntu-22.04", "azsdk-pool-mms-ubuntu-2204-1espt") {
         return "ubuntu-22.04"
     }
 
@@ -97,11 +97,11 @@ function getToolChain {
         return "MSVC"
     }
 
-	if ($OSVmImage -match "windows-\d{4}") {
+	if ($OSVmImage -match "windows-\d{4}" -or $OSVmImage -match "win-\d{4}") {
         return "MSVC17"
     }
 
-    if ($OSVmImage.Contains("Ubuntu")) {
+    if ($OSVmImage.Contains("Ubuntu") -or $OSVmImage.Contains("ubuntu")) {
         if ($CmakeEnvArg.Contains('g++-5')) {
             return 'g++-5'
         } elseif ($env:CXX -and $env:CXX.Contains("g++8")) {
@@ -121,7 +121,7 @@ function getTargetPlatform {
         return "macos"
     }
 
-    if ($OSVmImage -match 'MMS\d{4}' -or $OsVMImage -match "windows-\d{4}") {
+    if ($OSVmImage -match 'MMS\d{4}' -or $OsVMImage -match "windows-\d{4}" -or $OsVMImage -match "win-\d{4}") {
         if (!$env:CMAKE_SYSTEM_NAME -and !$CmakeArgs.Contains('WindowsStore')) {
             return 'win32'
         } elseif ($env:CMAKE_SYSTEM_NAME -eq 'WindowsStore' -or $CmakeArgs.Contains('WindowsStore')) {
@@ -129,7 +129,7 @@ function getTargetPlatform {
         }
     }
 
-    if ($OSVmImage.Contains("Ubuntu")) {
+    if ($OSVmImage.Contains("Ubuntu") -or $OSVmImage.Contains("ubuntu")) {
         return 'linux'
     }
 

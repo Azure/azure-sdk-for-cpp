@@ -2,19 +2,19 @@
   "matrix": {
     "OSConfig": {
       "Windows": {
-        "Pool": "azsdk-pool-mms-win-2022-general",
-        "OSVmImage": "windows-2022",
+        "Pool": "env:WINDOWSPOOL",
+        "OSVmImage": "env:WINDOWSVMIMAGE",
         "CmakeEnvArg": ""
       },
       "Linux": {
-        "Pool": "azsdk-pool-mms-ubuntu-2204-general",
-        "OSVmImage": "MMSUbuntu22.04",
+        "Pool": "env:LINUXNEXTPOOL",
+        "OSVmImage": "env:LINUXNEXTVMIMAGE",
         "CmakeEnvArg": "",
         "AptDependencies": "libcurl4-openssl-dev"
       },
       "Mac": {
-        "Pool": "Azure Pipelines",
-        "OSVmImage": "macos-11",
+        "Pool": "env:MACPOOL",
+        "OSVmImage": "env:MACVMIMAGE",
         "CmakeEnvArg": "OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl@3/include ",
         "BrewDependencies": "openssl"
       }
