@@ -29,7 +29,7 @@ namespace Azure { namespace Data { namespace Test {
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-      
+
       m_tableName = GetTestNameLowerCase();
 
       std::replace(m_tableName.begin(), m_tableName.end(), '-', '0');
@@ -66,22 +66,17 @@ namespace Azure { namespace Data { namespace Test {
           sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
           sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
           std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
-          m_tableServiceClient
-              = std::make_shared<Tables::TableServiceClient>(Tables::TableServiceClient(
-                  serviceUrl,
-                  creds,
-                  sasBuilder,
-                  clientOptions));
+          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
+              Tables::TableServiceClient(serviceUrl, creds, sasBuilder, clientOptions));
 
           Azure::Data::Tables::Sas::TablesSasBuilder tableSasBuilder;
-          tableSasBuilder.Protocol= Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
+          tableSasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
           tableSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
           tableSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
           tableSasBuilder.SetPermissions(Azure::Data::Tables::Sas::TablesSasPermissions::All);
-          tableSasBuilder.TableName= m_tableName;
-          m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
-              serviceUrl,creds,tableSasBuilder,
-              tableClientOptions));
+          tableSasBuilder.TableName = m_tableName;
+          m_tableClient = std::make_shared<Tables::TableClient>(
+              Tables::TableClient(serviceUrl, creds, tableSasBuilder, tableClientOptions));
           break;
       }
     }

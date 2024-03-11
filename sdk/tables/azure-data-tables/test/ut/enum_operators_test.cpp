@@ -47,34 +47,34 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST(EnumOperator, XorTest)
   {
-	{
-	  auto val = TestEnum::One ^ TestEnum::Two;
-	  EXPECT_EQ(val, TestEnum::Three);
-	}
-	{
-	  auto val = TestEnum::One ^ TestEnum::One;
-	  EXPECT_EQ(val, TestEnum::Zero);
-	}
-	{
-	  auto val = TestEnum::Two ^ TestEnum::One;
-	  EXPECT_EQ(val, TestEnum::Three);
-	}
-	{
-	  auto val = TestEnum::Two ^ TestEnum::Two;
-	  EXPECT_EQ(val, TestEnum::Zero);
-	}
+    {
+      auto val = TestEnum::One ^ TestEnum::Two;
+      EXPECT_EQ(val, TestEnum::Three);
+    }
+    {
+      auto val = TestEnum::One ^ TestEnum::One;
+      EXPECT_EQ(val, TestEnum::Zero);
+    }
+    {
+      auto val = TestEnum::Two ^ TestEnum::One;
+      EXPECT_EQ(val, TestEnum::Three);
+    }
+    {
+      auto val = TestEnum::Two ^ TestEnum::Two;
+      EXPECT_EQ(val, TestEnum::Zero);
+    }
   }
 
   TEST(EnumOperator, NotTest)
   {
-	{
-	  auto val = !TestEnum::Zero;
-	  EXPECT_EQ(val, TestEnum::One);
-	}
-	{
-	  auto val = !TestEnum::All;
-	  EXPECT_EQ(val, TestEnum::Zero);
-	}
+    {
+      auto val = !TestEnum::Zero;
+      EXPECT_EQ(val, TestEnum::One);
+    }
+    {
+      auto val = !TestEnum::All;
+      EXPECT_EQ(val, TestEnum::Zero);
+    }
   }
 
   TEST(EnumOperator, ComplementTest)

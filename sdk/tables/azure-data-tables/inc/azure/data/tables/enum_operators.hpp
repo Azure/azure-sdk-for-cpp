@@ -24,7 +24,7 @@ namespace Azure { namespace Data { namespace Tables {
     return static_cast<E>(static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-    /**
+  /**
    * @brief Bitwise NOT operator for enum class.
    */
   template <class E, class = std::enable_if_t<std::is_enum<E>{}>> E operator!(E val)

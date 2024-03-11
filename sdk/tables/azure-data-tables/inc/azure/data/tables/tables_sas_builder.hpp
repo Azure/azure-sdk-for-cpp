@@ -6,6 +6,7 @@
 #include "azure/data/tables/account_sas_builder.hpp"
 #include "azure/data/tables/credentials/shared_key_credential.hpp"
 #include "azure/data/tables/enum_operators.hpp"
+
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
 
