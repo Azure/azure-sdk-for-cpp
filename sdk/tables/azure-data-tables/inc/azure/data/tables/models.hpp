@@ -66,11 +66,11 @@ namespace Azure { namespace Data { namespace Tables {
       return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
     }
     inline QueryTablesIncludeFlags& operator|=(
-        QueryTablesIncludeFlags lhs,
-        QueryTablesIncludeFlags rhs)
+        QueryTablesIncludeFlags const lhs,
+        QueryTablesIncludeFlags const rhs)
     {
-      lhs = lhs | rhs;
-      return lhs;
+      auto ret = lhs | rhs;
+      return ret;
     }
     inline QueryTablesIncludeFlags operator&(
         QueryTablesIncludeFlags const lhs,
@@ -80,11 +80,11 @@ namespace Azure { namespace Data { namespace Tables {
       return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
     }
     inline QueryTablesIncludeFlags& operator&=(
-        QueryTablesIncludeFlags lhs,
-        QueryTablesIncludeFlags rhs)
+        QueryTablesIncludeFlags const lhs,
+        QueryTablesIncludeFlags const rhs)
     {
-      lhs = lhs & rhs;
-      return lhs;
+      auto ret = lhs & rhs;
+      return ret;
     }
 
     /**
