@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/data/tables/dll_import_export.hpp"
+#include "azure/data/tables/enum_operators.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -58,34 +59,6 @@ namespace Azure { namespace Data { namespace Tables {
       None = 0,
       Metadata = 1,
     };
-    inline QueryTablesIncludeFlags operator|(
-        QueryTablesIncludeFlags const lhs,
-        QueryTablesIncludeFlags const rhs)
-    {
-      using type = std::underlying_type_t<QueryTablesIncludeFlags>;
-      return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
-    }
-    inline QueryTablesIncludeFlags& operator|=(
-        QueryTablesIncludeFlags const lhs,
-        QueryTablesIncludeFlags const rhs)
-    {
-      auto ret = lhs | rhs;
-      return ret;
-    }
-    inline QueryTablesIncludeFlags operator&(
-        QueryTablesIncludeFlags const lhs,
-        QueryTablesIncludeFlags const rhs)
-    {
-      using type = std::underlying_type_t<QueryTablesIncludeFlags>;
-      return static_cast<QueryTablesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
-    }
-    inline QueryTablesIncludeFlags& operator&=(
-        QueryTablesIncludeFlags const lhs,
-        QueryTablesIncludeFlags const rhs)
-    {
-      auto ret = lhs & rhs;
-      return ret;
-    }
 
     /**
      * @brief Query Tables options.
@@ -359,7 +332,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * @brief Construct a new TableEntityDataType object
        */
-      TableEntityDataType()= default;
+      TableEntityDataType() = default;
       /**
        * @brief Construct a new TableEntityDataType object
        *

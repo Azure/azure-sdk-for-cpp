@@ -5,7 +5,7 @@
 
 #include "azure/data/tables/account_sas_builder.hpp"
 #include "azure/data/tables/credentials/shared_key_credential.hpp"
-
+#include "azure/data/tables/enum_operators.hpp"
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
 
@@ -63,24 +63,6 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      */
     All = ~0
   };
-
-  /** @brief Bitwise OR of two values*/
-  inline TablesSasPermissions operator|(
-      TablesSasPermissions const lhs,
-      TablesSasPermissions const rhs)
-  {
-    using type = std::underlying_type_t<TablesSasPermissions>;
-    return static_cast<TablesSasPermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
-  }
-
-  /** @brief Bitwise AND of two values*/
-  inline TablesSasPermissions operator&(
-      TablesSasPermissions const lhs,
-      TablesSasPermissions const rhs)
-  {
-    using type = std::underlying_type_t<TablesSasPermissions>;
-    return static_cast<TablesSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
-  }
 
   /**
    * @brief TableSasBuilder is used to generate a Shared Access Signature (SAS) for an Azure

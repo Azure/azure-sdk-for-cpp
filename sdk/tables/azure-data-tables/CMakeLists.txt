@@ -43,6 +43,7 @@ set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/account_sas_builder.hpp
     inc/azure/data/tables/dll_import_export.hpp
+    inc/azure/data/tables/enum_operators.hpp
     inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
     inc/azure/data/tables/internal/cryptography/url_encode.hpp
     inc/azure/data/tables/internal/policies/service_version_policy.hpp
