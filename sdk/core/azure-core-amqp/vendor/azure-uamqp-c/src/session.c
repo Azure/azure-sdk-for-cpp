@@ -108,7 +108,6 @@ static void remove_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
 
 static void free_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
 {
-  LOG(AZ_LOG_TRACE, LOG_LINE, "free_link_endpoint, free %p", link_endpoint);
     // The link endpoint handle can be managed by both uamqp and the upper layer.
     // uamqp may destroy a link endpoint if a DETACH is received from the remote endpoint,
     // so in this case the upper layer must be notified so it does not attempt to destroy the link endpoint as well.

@@ -107,13 +107,13 @@ constexpr const bool LogDefault = false;
 bool LogToConsole{LogDefault};
 
 // Log level textual representation, including space padding, matches slf4j and log4net.
-std::string const ErrorText = "ERROR";
-std::string const WarningText = "WARN ";
-std::string const InformationalText = "INFO ";
-std::string const VerboseText = "DEBUG";
-std::string const UnknownText = "?????";
+constexpr const char *ErrorText = "ERROR";
+constexpr const char *WarningText = "WARN ";
+constexpr const char *InformationalText = "INFO ";
+constexpr const char *VerboseText = "DEBUG";
+constexpr const char *UnknownText = "?????";
 
-inline std::string const& LogLevelToConsoleString(Azure::Core::Diagnostics::Logger::Level logLevel)
+constexpr const char *LogLevelToConsoleString(Azure::Core::Diagnostics::Logger::Level logLevel)
 {
   switch (logLevel)
   {

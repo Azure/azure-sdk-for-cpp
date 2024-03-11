@@ -54,14 +54,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     return m_impl->Open(false, context);
   }
+
   Models::_internal::AmqpError MessageSender::HalfOpen(Context const& context)
   {
     return m_impl->Open(true, context);
   }
-  Models::_internal::AmqpError MessageSender::Close(Context const& context)
+
+  void MessageSender::Close(Context const& context)
   {
-    return m_impl->Close(context);
+    m_impl->Close(context);
   }
+
   std::tuple<MessageSendStatus, Models::_internal::AmqpError> MessageSender::Send(
       Models::AmqpMessage const& message,
       Context const& context)
@@ -429,9 +432,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return rv;
   }
 
-  Models::_internal::AmqpError MessageSenderImpl::Close(Context const& context)
+  void MessageSenderImpl::Close(Context const& context)
   {
-    Models::_internal::AmqpError rv;
     if (m_senderOpen)
     {
       if (m_options.EnableTrace)
@@ -476,7 +478,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         if (std::get<0>(*result))
         {
-          rv = std::move(std::get<0>(*result));
+          auto rv = std::move(std::get<0>(*result));
+          if (rv)
+          {
+            throw std::runtime_error(
+                "Message sender close operation failed: " + rv.Condition.ToString()
+                + " description: " + rv.Description);
+          }
         }
       }
 
@@ -498,8 +506,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       m_senderOpen = false;
     }
-
-    return rv;
   }
 
   void MessageSenderImpl::OnLinkDetached(Models::_internal::AmqpError const& error)

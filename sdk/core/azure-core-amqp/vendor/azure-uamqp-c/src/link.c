@@ -370,7 +370,17 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                     }
                     else
                     {
-                        set_link_state(link_instance, LINK_STATE_ATTACHED);
+                      AMQP_VALUE source = NULL;
+                      AMQP_VALUE target = NULL;
+                      if (attach_get_source(attach_handle, &source)
+                          && attach_get_target(attach_handle, &target))
+                      {
+                          LogError("Source and target not found in attach frame, attach failed.");
+                      }
+                      else
+                      {
+                          set_link_state(link_instance, LINK_STATE_ATTACHED);
+                      }
                     }
                 }
             }
