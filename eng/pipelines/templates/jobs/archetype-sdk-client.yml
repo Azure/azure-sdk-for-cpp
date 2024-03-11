@@ -61,6 +61,8 @@ jobs:
           Selection: all
           GenerateVMJobs: true
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
       AdditionalParameters:
         DisplayName: ${{ parameters.JobName }}
         Artifacts: ${{ parameters.Artifacts }}
@@ -82,8 +84,9 @@ jobs:
       - job:
         displayName: Create API Review for ${{ artifact.name }}
         pool:
-          name: azsdk-pool-mms-win-2022-general
-          vmImage: windows-2022
+          name: azsdk-pool-mms-win-2022-1es-pt
+          vmImage: azsdk-pool-mms-win-2022-1espt
+          os: windows
         steps:
           - task: Powershell@2
             inputs:
@@ -141,8 +144,9 @@ jobs:
 
     - job: GenerateReleaseArtifacts
       pool:
-        name: azsdk-pool-mms-win-2022-general
-        vmImage: windows-2022
+        name: azsdk-pool-mms-win-2022-1es-pt
+        vmImage: azsdk-pool-mms-win-2022-1espt
+        os: windows
       variables:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
@@ -328,17 +332,14 @@ jobs:
               continueOnError: true
               condition: and(succeeded(), eq(variables['VerifyChangeLogForRelease'], 'true'))
 
-        - task: PublishPipelineArtifact@1
-          inputs:
-            artifactName: packages
-            path: $(Build.ArtifactStagingDirectory)/packages
+        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+          parameters:
+            ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
+            ArtifactName: packages
 
-        # After all docs artifacts are generated publish docs artifacts
-        - task: PublishPipelineArtifact@1
-          inputs:
-            artifactName: docs
-            path: $(Build.ArtifactStagingDirectory)/docs
+        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+          parameters:
+            ArtifactPath: $(Build.ArtifactStagingDirectory)/docs
+            ArtifactName: docs
 
         - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
-
-        - template: /eng/pipelines/templates/steps/generate-and-publish-sbom.yml

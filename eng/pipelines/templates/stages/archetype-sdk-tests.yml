@@ -51,6 +51,8 @@ stages:
                   Selection: all
                   GenerateVMJobs: true
               JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+              OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+              Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
               CloudConfig:
                 SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
                 SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
