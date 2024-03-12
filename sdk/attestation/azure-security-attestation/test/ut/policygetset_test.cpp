@@ -24,7 +24,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   enum class TestCaseType
   {
-    GetAttestationPolicy,
+    GetPolicy,
     ModifyPolicyUnsecured,
     ModifyPolicySecured,
     ModifyPolicyIsolated,
@@ -184,7 +184,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_EQ(policyToSet, getResponse.Value.Body);
     }
 
-    void ResetAttestationPolicyTest(Azure::Nullable<AttestationSigningKey> const& signingKey = {})
+    void ResetPolicyTest(Azure::Nullable<AttestationSigningKey> const& signingKey = {})
     {
       auto adminClient(CreateClient());
 
@@ -252,18 +252,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     /** @brief Tests for policy modification using an unsecured JWS.
      *
-     * Forwards to the `SetPolicyTest` and `ResetAttestationPolicyTest` with a non-present AttestationSigingKey
+     * Forwards to the `SetPolicyTest` and `ResetPolicyTest` with a non-present AttestationSigingKey
      * parameter.
      */
     void ModifyPolicyUnsecuredTest()
     {
       SetPolicyTest();
-      ResetAttestationPolicyTest();
+      ResetPolicyTest();
     }
 
     /** @brief Tests for policy modification using a secured JWS with an ephemerally generated key.
      *
-     * Forwards to the `SetPolicyTest` and `ResetAttestationPolicyTest` with a newly created
+     * Forwards to the `SetPolicyTest` and `ResetPolicyTest` with a newly created
      * AttestationSigingKey parameter.
      */
     void ModifyPolicySecuredTest()
@@ -276,12 +276,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           AttestationSigningKey{rsaKey->ExportPrivateKey(), signingCert->ExportAsPEM()});
 
       SetPolicyTest(signingKey);
-      ResetAttestationPolicyTest(signingKey);
+      ResetPolicyTest(signingKey);
     }
 
     /** @brief Tests for policy modification using a secured JWS with a predefined key.
      *
-     * Forwards to the `SetPolicyTest` and `ResetAttestationPolicyTest` with an AttestationSigingKey parameter
+     * Forwards to the `SetPolicyTest` and `ResetPolicyTest` with an AttestationSigingKey parameter
      * defined in new-testresources.ps1.
      *
      * Note that this is a live-only test, because
@@ -303,7 +303,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
             = Cryptography::PemFromBase64(isolatedCertificate, "CERTIFICATE");
 
         SetPolicyTest(signingKey);
-        ResetAttestationPolicyTest(signingKey);
+        ResetPolicyTest(signingKey);
       }
     }
 
@@ -312,7 +312,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       std::vector<PolicyTestParam> returnCases;
       std::vector<TestCaseType> testTypes{
-          TestCaseType::GetAttestationPolicy,
+          TestCaseType::GetPolicy,
           TestCaseType::ModifyPolicyUnsecured,
           TestCaseType::ModifyPolicySecured,
           TestCaseType::ModifyPolicyIsolated};
@@ -322,7 +322,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
         switch (testCaseType)
         {
-          case TestCaseType::GetAttestationPolicy:
+          case TestCaseType::GetPolicy:
             typeNameList.emplace_back(ServiceInstanceType::AAD);
             typeNameList.emplace_back(ServiceInstanceType::Isolated);
             typeNameList.emplace_back(ServiceInstanceType::Shared);
@@ -358,7 +358,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     switch (GetParam().TestType)
     {
       // Tests for the GetAttestationPolicy APIs.
-      case TestCaseType::GetAttestationPolicy:
+      case TestCaseType::GetPolicy:
         GetPolicyTest();
         break;
 
@@ -409,7 +409,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       int suffixVotes = 0;
       switch (testInfo.param.TestType)
       {
-        case TestCaseType::GetAttestationPolicy:
+        case TestCaseType::GetPolicy:
           testName += "GetAttestationPolicy";
           break;
         case TestCaseType::ModifyPolicyIsolated:
