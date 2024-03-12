@@ -23,6 +23,26 @@ namespace Azure { namespace Data { namespace Test {
       auto val = TestEnum::Two & TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Two);
     }
+    {
+      auto val = TestEnum::One;
+      val &= TestEnum::Two;
+      EXPECT_EQ(val, TestEnum::Zero);
+    }
+    {
+      auto val = TestEnum::One;
+      val &= TestEnum::One;
+      EXPECT_EQ(val, TestEnum::One);
+    }
+    {
+      auto val = TestEnum::Two;
+      val &= TestEnum::One;
+      EXPECT_EQ(val, TestEnum::Zero);
+    }
+    {
+      auto val = TestEnum::Two;
+      val &= TestEnum::Two;
+      EXPECT_EQ(val, TestEnum::Two);
+    }
   }
 
   TEST(EnumOperator, OrTest)
@@ -41,6 +61,26 @@ namespace Azure { namespace Data { namespace Test {
     }
     {
       auto val = TestEnum::Two | TestEnum::Two;
+      EXPECT_EQ(val, TestEnum::Two);
+    }
+    {
+      auto val = TestEnum::One;
+      val |= TestEnum::Two;
+      EXPECT_EQ(val, TestEnum::Three);
+    }
+    {
+      auto val = TestEnum::One;
+      val |= TestEnum::One;
+      EXPECT_EQ(val, TestEnum::One);
+    }
+    {
+      auto val = TestEnum::Two;
+      val |= TestEnum::One;
+      EXPECT_EQ(val, TestEnum::Three);
+    }
+    {
+      auto val = TestEnum::Two;
+      val |= TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Two);
     }
   }
@@ -63,28 +103,24 @@ namespace Azure { namespace Data { namespace Test {
       auto val = TestEnum::Two ^ TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Zero);
     }
-  }
-
-  TEST(EnumOperator, NotTest)
-  {
     {
-      auto val = !TestEnum::Zero;
-      EXPECT_EQ(val, TestEnum::One);
+      auto val = TestEnum::One;
+      val ^= TestEnum::Two;
+      EXPECT_EQ(val, TestEnum::Three);
     }
     {
-      auto val = !TestEnum::All;
+      auto val = TestEnum::One;
+      val ^= TestEnum::One;
       EXPECT_EQ(val, TestEnum::Zero);
     }
-  }
-
-  TEST(EnumOperator, ComplementTest)
-  {
     {
-      auto val = ~TestEnum::Zero;
-      EXPECT_EQ(val, TestEnum::All);
+      auto val = TestEnum::Two;
+      val ^= TestEnum::One;
+      EXPECT_EQ(val, TestEnum::Three);
     }
     {
-      auto val = ~TestEnum::All;
+      auto val = TestEnum::Two;
+      val ^= TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Zero);
     }
   }
