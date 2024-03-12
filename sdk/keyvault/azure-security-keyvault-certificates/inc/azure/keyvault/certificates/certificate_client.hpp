@@ -33,11 +33,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    *
    * @details The client supports retrieving KeyVaultCertificate.
    */
-  class CertificateClient
-#if !defined(TESTING_BUILD)
-      final
-#endif
-  {
+  class CertificateClient final {
     friend class CreateCertificateOperation;
 
 #if defined(TESTING_BUILD)
