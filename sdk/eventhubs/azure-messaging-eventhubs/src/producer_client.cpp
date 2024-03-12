@@ -174,6 +174,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       auto openResult{sender.Open(context)};
       if (openResult)
       {
+        Azure::Core::Diagnostics::_internal::Log::Stream(Azure::Core::Diagnostics::Logger::Level::Error) << "Failed to create message sender: " << openResult;
         throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
             CreateEventHubsException(openResult);
       }
