@@ -143,7 +143,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @param context The context to use for the operation.
      *
      * @note: If the call to `Open` succeeds, the caller is responsible for calling `Close`
-     * before the MessageSender object is destroyed. Failing to 
+     * before the MessageSender object is destroyed. Failing to
      *
      * @return An error if the operation was not successful.
      */
