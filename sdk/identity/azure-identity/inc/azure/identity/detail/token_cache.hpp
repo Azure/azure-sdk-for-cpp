@@ -25,11 +25,11 @@ namespace Azure { namespace Identity { namespace _detail {
    *
    */
   class TokenCache
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
       final
 #endif
   {
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
   private:
 #else
   protected:

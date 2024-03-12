@@ -96,7 +96,7 @@ endif()
 
 if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY AND BUILD_TESTING)
   # define a symbol that enables some test hooks in code
-  add_compile_definitions(TESTING_BUILD)
+  add_compile_definitions(_azure_TESTING_BUILD)
   
   if (NOT AZ_ALL_LIBRARIES)
     include(AddGoogleTest)

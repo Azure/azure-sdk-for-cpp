@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using namespace Azure::Core::Amqp::_internal;
 
   // The non-Impl types for CBS exist only for testing purposes.
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
   ClaimsBasedSecurity::ClaimsBasedSecurity(Session const& session)
       : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(SessionFactory::GetImpl(session))}
   {
@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return m_impl->PutToken(tokenType, audience, token, context);
   }
 
-#endif // TESTING_BUILD
+#endif // _azure_TESTING_BUILD
 
   ClaimsBasedSecurityImpl::ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session)
       : m_session{session}

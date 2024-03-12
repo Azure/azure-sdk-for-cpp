@@ -39,7 +39,7 @@ std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
     }
   }
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
   OnBeforeCacheWriteLock();
 #endif
 
@@ -101,7 +101,7 @@ AccessToken TokenCache::GetToken(
     }
   }
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
   OnBeforeItemWriteLock();
 #endif
 

@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
 // Define the test classes dependant on this class here.
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   namespace MessageTests {
@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class LinkSocketListenerEvents;
   class TestMessages_SenderSendAsync_Test;
 }}}} // namespace Azure::Core::Amqp::Tests
-#endif // TESTING_BUILD
+#endif // _azure_TESTING_BUILD
 #if defined(SAMPLES_BUILD)
 namespace LocalServerSample {
 class SampleEvents;
@@ -245,7 +245,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     friend class _detail::SessionFactory;
 
-#if TESTING_BUILD
+#if _azure_TESTING_BUILD
     friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
     friend class Azure::Core::Amqp::Tests::MessageTests::MockServiceEndpoint;
     friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
@@ -258,7 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestLinks_LinkAttachDetach_Test;
 
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
-#endif // TESTING_BUILD
+#endif // _azure_TESTING_BUILD
 #if SAMPLES_BUILD
     friend class LocalServerSample::SampleEvents;
 #endif // SAMPLES_BUILD

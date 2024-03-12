@@ -23,7 +23,7 @@
 #include <thread>
 #include <unordered_map>
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
   class CurlConnectionPool_connectionPoolTest_Test;
@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * connection pool per application.
    */
   class CurlConnectionPool final {
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
     friend class Azure::Core::Test::CurlConnectionPool_uniquePort_Test;

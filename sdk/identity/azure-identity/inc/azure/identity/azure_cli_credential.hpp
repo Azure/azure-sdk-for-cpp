@@ -50,7 +50,7 @@ namespace Azure { namespace Identity {
    * token.
    */
   class AzureCliCredential
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
       final
 #endif
       : public Core::Credentials::TokenCredential {
@@ -106,7 +106,7 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
 
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
   private:
 #else
   protected:
