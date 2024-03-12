@@ -410,7 +410,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       switch (testInfo.param.TestType)
       {
         case TestCaseType::GetPolicy:
-          testName += "GetAttestationPolicy";
+          testName += "GetPolicy";
           break;
         case TestCaseType::ModifyPolicyIsolated:
           testName += "ModifyIsolatedKey";
