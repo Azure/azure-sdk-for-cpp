@@ -31,9 +31,13 @@ parameters:
   - name: TimeoutInMinutes
     type: number
     default: 120
+  - name: OSName
+    type: string
+    default: ''
 
 jobs:
-- job: ${{ parameters.JobName }}
+- job:
+  displayName: ${{ parameters.JobName }}
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   condition: >-
     and(
@@ -48,7 +52,13 @@ jobs:
 
   pool:
     name: $(Pool)
-    vmImage: $(OSVmImage)
+    # 1es pipeline templates converts `image` to demands: ImageOverride under the hood
+    # which is incompatible with image selection in the default non-1es hosted pools
+    ${{ if eq(parameters.OSName, 'macOS') }}:
+      vmImage: $(OSVmImage)
+    ${{ else }}:
+      image: $(OSVmImage)
+    os: ${{ parameters.OSName }}
 
   ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
     # Add a default so the job doesn't fail when the matrix is empty
