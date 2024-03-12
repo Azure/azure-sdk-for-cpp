@@ -60,10 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return m_impl->Open(true, context);
   }
 
-  void MessageSender::Close(Context const& context)
-  {
-    m_impl->Close(context);
-  }
+  void MessageSender::Close(Context const& context) { m_impl->Close(context); }
 
   std::tuple<MessageSendStatus, Models::_internal::AmqpError> MessageSender::Send(
       Models::AmqpMessage const& message,
