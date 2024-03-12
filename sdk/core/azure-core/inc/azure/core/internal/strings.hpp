@@ -93,7 +93,10 @@ namespace Azure { namespace Core { namespace _internal {
       return src;
     }
 
-    static std::vector<std::string> Split(const std::string& s, char separator, bool removeEmptyEntries=false)
+    static std::vector<std::string> Split(
+        const std::string& s,
+        char separator,
+        bool removeEmptyEntries = false)
     {
       std::vector<std::string> result;
 
@@ -107,9 +110,9 @@ namespace Azure { namespace Core { namespace _internal {
           end = len;
         }
         if (!removeEmptyEntries || start < end)
-		{
-		  result.push_back(s.substr(start, end - start));
-		}
+        {
+          result.push_back(s.substr(start, end - start));
+        }
 
         start = end + 1;
       }

@@ -140,8 +140,8 @@ TEST(String, SplitEmpty)
     EXPECT_TRUE(result.empty());
   }
   {
-	std::vector<std::string> result = StringExtensions::Split("", ',', true);
-	EXPECT_TRUE(result.empty());
+    std::vector<std::string> result = StringExtensions::Split("", ',', true);
+    EXPECT_TRUE(result.empty());
   }
 }
 
@@ -162,7 +162,6 @@ TEST(String, Split3)
     EXPECT_EQ(result[1], "2");
     EXPECT_EQ(result[2], "3");
   }
-  
 }
 
 TEST(String, SplitBegin)
@@ -177,11 +176,11 @@ TEST(String, SplitBegin)
     EXPECT_EQ(result[3], "3");
   }
   {
-	std::vector<std::string> result = StringExtensions::Split(",1,2,3", ',', true);
-	ASSERT_EQ(result.size(), size_t{3});
-	EXPECT_EQ(result[0], "1");
-	EXPECT_EQ(result[1], "2");
-	EXPECT_EQ(result[2], "3");
+    std::vector<std::string> result = StringExtensions::Split(",1,2,3", ',', true);
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
   }
 }
 
@@ -217,11 +216,11 @@ TEST(String, SplitPartEmpty)
     EXPECT_EQ(result[4], "3");
   }
   {
-	std::vector<std::string> result = StringExtensions::Split("1,,2,,3", ',', true);
-	ASSERT_EQ(result.size(), size_t{3});
-	EXPECT_EQ(result[0], "1");
-	EXPECT_EQ(result[1], "2");
-	EXPECT_EQ(result[2], "3");
+    std::vector<std::string> result = StringExtensions::Split("1,,2,,3", ',', true);
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
   }
 }
 
