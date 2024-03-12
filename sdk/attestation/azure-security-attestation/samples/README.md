@@ -170,4 +170,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][coc]. For m
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 [readme_md]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/attestation/azure-security-attestation/README.md
-[add_isolated_mode_cert]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-security-attestation/1.0.0-beta.1/class_azure_1_1_security_1_1_attestation_1_1_attestation_administration_client.html#ad5e9fed7924e3fa89a6b23ba12c5cb35
+[add_isolated_mode_cert]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-security-attestation/1.1.0/class_azure_1_1_security_1_1_attestation_1_1_attestation_administration_client.html
