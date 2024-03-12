@@ -498,7 +498,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   };
 
   /**
-   * @brief Result of a SetPolicy or ResetPolicy operation.
+   * @brief Result of a SetAttestationPolicy or ResetAttestationPolicy operation.
    */
   struct PolicyResult
   {
