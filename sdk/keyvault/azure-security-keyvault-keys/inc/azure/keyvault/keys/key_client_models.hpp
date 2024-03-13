@@ -11,6 +11,7 @@
 
 #include "azure/keyvault/keys/dll_import_export.hpp"
 
+#include <azure/core/base64.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
@@ -433,8 +434,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Key Release Policy
    *
    */
-  struct KeyReleasePolicy final
-  {
+  class KeyReleasePolicy final {
+  public:
     /**
      * @brief Content type and version of key release policy.
      *
@@ -455,6 +456,29 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark Format: base64url
      */
     std::string EncodedPolicy;
+
+    /**
+     * @brief Set the Encoded Policy.
+     *
+     * @param policy The policy JSON string to be encoded.
+     */
+    void SetEncodedPolicy(std::string const& policy)
+    {
+      EncodedPolicy = Azure::Core::_internal::Base64Url::Base64UrlEncode(
+          std::vector<uint8_t>(policy.begin(), policy.end()));
+    }
+
+    /**
+     * @brief Get the policy JSON string.
+     *
+     * @return std::string
+     */
+    std::string GetDecodedPolicy() const
+    {
+      std::vector<std::uint8_t> policy
+          = Azure::Core::_internal::Base64Url::Base64UrlDecode(EncodedPolicy);
+      return std::string(policy.begin(), policy.end());
+    }
   };
 
   /**

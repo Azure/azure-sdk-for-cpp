@@ -107,3 +107,21 @@ TEST(KeyEncryptionAlgorithmUnitTest, CheckValues)
   EXPECT_EQ(
       KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384.ToString(), _detail::RSA_AES_KEY_WRAP_384_Value);
 }
+
+TEST(KeyReleasePolicyTest, SetGetEncoded)
+{
+  KeyReleasePolicy policy;
+  std::string policyString = "encodedPolicy";
+  auto encoded = Azure::Core::_internal::Base64Url::Base64UrlEncode(
+      std::vector<std::uint8_t>(policyString.begin(), policyString.end()));
+  {
+    policy.SetEncodedPolicy(policyString);
+    EXPECT_EQ(policy.EncodedPolicy, std::string(encoded.begin(), encoded.end()));
+    EXPECT_EQ(policy.GetDecodedPolicy(), "encodedPolicy");
+  }
+  {
+    policy.SetEncodedPolicy("");
+    EXPECT_EQ(policy.EncodedPolicy, "");
+    EXPECT_EQ(policy.GetDecodedPolicy(), "");
+  }
+}
