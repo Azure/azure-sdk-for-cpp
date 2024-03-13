@@ -8,7 +8,7 @@ namespace Azure { namespace Data { namespace Test {
   TEST(EnumOperator, AndTest)
   {
     {
-      auto val = TestEnum::One & TestEnum::Two;
+      constexpr auto val = TestEnum::One & TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Zero);
     }
     {
@@ -48,7 +48,7 @@ namespace Azure { namespace Data { namespace Test {
   TEST(EnumOperator, OrTest)
   {
     {
-      auto val = TestEnum::One | TestEnum::Two;
+      constexpr auto val = TestEnum::One | TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Three);
     }
     {
@@ -88,7 +88,7 @@ namespace Azure { namespace Data { namespace Test {
   TEST(EnumOperator, XorTest)
   {
     {
-      auto val = TestEnum::One ^ TestEnum::Two;
+      constexpr auto val = TestEnum::One ^ TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Three);
     }
     {
@@ -122,6 +122,26 @@ namespace Azure { namespace Data { namespace Test {
       auto val = TestEnum::Two;
       val ^= TestEnum::Two;
       EXPECT_EQ(val, TestEnum::Zero);
+    }
+  }
+
+  TEST(EnumOperator, ComplementTest)
+  {
+    {
+      constexpr auto val = ~TestEnum::Zero;
+      EXPECT_EQ(val, TestEnum::All);
+    }
+    {
+      auto val = ~TestEnum::All;
+      EXPECT_EQ(val, TestEnum::Zero);
+    }
+    {
+      auto val = ~~TestEnum::Zero;
+      EXPECT_EQ(val, TestEnum::Zero);
+    }
+    {
+      auto val = ~~TestEnum::One;
+      EXPECT_EQ(val, TestEnum::One);
     }
   }
 }}} // namespace Azure::Data::Test
