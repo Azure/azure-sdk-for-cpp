@@ -57,7 +57,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       EventHubsException rv(error.Description);
       Azure::Core::Diagnostics::_internal::Log::Stream(
           Azure::Core::Diagnostics::Logger::Level::Error)
-          << "Creating EventHubsException with error condition: " << error;;
+          << "Creating EventHubsException with error condition: " << error;
+      ;
       rv.ErrorCondition = error.Condition.ToString();
       rv.ErrorDescription = error.Description;
       rv.IsTransient = IsErrorTransient(error.Condition);
