@@ -16,6 +16,45 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if defined(TESTING_BUILD)
+
+  class LinkImplEventsImpl : public LinkImplEvents {
+  public:
+    LinkImplEventsImpl(LinkEvents* linkEvents) : m_linkEvents(linkEvents) {}
+
+  private:
+    virtual Models::AmqpValue OnTransferReceived(
+        std::shared_ptr<LinkImpl> const& link,
+        Models::_internal::Performatives::AmqpTransfer transfer,
+        uint32_t payloadSize,
+        const unsigned char* payloadBytes) override
+    {
+      if (m_linkEvents)
+      {
+        return m_linkEvents->OnTransferReceived(Link{link}, transfer, payloadSize, payloadBytes);
+      }
+      return Models::AmqpValue{};
+    }
+    virtual void OnLinkStateChanged(
+        std::shared_ptr<LinkImpl> const& link,
+        LinkState newLinkState,
+        LinkState previousLinkState) override
+    {
+      if (m_linkEvents)
+      {
+        m_linkEvents->OnLinkStateChanged(Link{link}, newLinkState, previousLinkState);
+      }
+    }
+    virtual void OnLinkFlowOn(std::shared_ptr<LinkImpl> const& link) override
+    {
+      if (m_linkEvents)
+      {
+        m_linkEvents->OnLinkFlowOn(Link{link});
+      }
+    }
+
+    LinkEvents* m_linkEvents;
+  };
+
   Link::Link(
       _internal::Session const& session,
       std::string const& name,
@@ -23,8 +62,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::_internal::MessageSource const& source,
       Models::_internal::MessageTarget const& target,
       LinkEvents* linkEvents)
-      : m_impl{std::make_shared<
-          LinkImpl>(SessionFactory::GetImpl(session), name, role, source, target, linkEvents)}
+      : m_implEvents{std::make_shared<LinkImplEventsImpl>(linkEvents)},
+        m_impl{std::make_shared<LinkImpl>(
+            SessionFactory::GetImpl(session),
+            name,
+            role,
+            source,
+            target,
+            m_implEvents.get())}
   {
   }
 
@@ -36,14 +81,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::_internal::MessageSource const& source,
       Models::_internal::MessageTarget const& target,
       LinkEvents* linkEvents)
-      : m_impl{std::make_shared<LinkImpl>(
-          SessionFactory::GetImpl(session),
-          linkEndpoint,
-          name,
-          role,
-          source,
-          target,
-          linkEvents)}
+      : m_implEvents{std::make_shared<LinkImplEventsImpl>(linkEvents)},
+        m_impl{std::make_shared<LinkImpl>(
+            SessionFactory::GetImpl(session),
+            linkEndpoint,
+            name,
+            role,
+            source,
+            target,
+            m_implEvents.get())}
   {
   }
 
@@ -159,7 +205,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::SessionRole role,
       Models::_internal::MessageSource const& source,
       Models::_internal::MessageTarget const& target,
-      LinkEvents* events)
+      LinkImplEvents* events)
       : m_session{session}, m_source(source), m_target(target), m_eventHandler{events}
   {
     Models::AmqpValue sourceValue{source.AsAmqpValue()};
@@ -179,7 +225,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::SessionRole role,
       Models::_internal::MessageSource const& source,
       Models::_internal::MessageTarget const& target,
-      LinkEvents* events)
+      LinkImplEvents* events)
       : m_session{session}, m_source(source), m_target(target), m_eventHandler{events}
   {
     Models::AmqpValue sourceValue(source.AsAmqpValue());
@@ -334,7 +380,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint64_t peerMax;
     if (link_get_peer_max_message_size(m_link, &peerMax))
     {
-      throw std::runtime_error("Could not get link initial delivery count.");
+      throw std::runtime_error("Could not get peer max message size.");
     }
     return peerMax;
   }
@@ -454,11 +500,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (link->m_eventHandler)
     {
       link->m_eventHandler->OnLinkStateChanged(
-#if defined(BUILD_TESTING)
-          Link{link->shared_from_this()},
-#else
           link->shared_from_this(),
-#endif
           LinkStateFromLINK_STATE(newState),
           LinkStateFromLINK_STATE(oldState));
     }
@@ -475,11 +517,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
 
       return Models::_detail::AmqpValueFactory::ToUamqp(link->m_eventHandler->OnTransferReceived(
-#if defined(TESTING_BUILD)
-          Link{link->shared_from_this()},
-#else
           link->shared_from_this(),
-#endif
           Models::_detail::AmqpTransferFactory::FromUamqp(transfer),
           payload_size,
           payload_bytes));
@@ -566,8 +604,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           break;
       }
 
-      // Reference disposition so that we don't over-release when the AmqpValue passed to OnComplete
-      // is destroyed.
+      // Reference disposition so that we don't over-release when the AmqpValue passed to
+      // OnComplete is destroyed.
       onComplete(
           static_cast<uint32_t>(deliveryId),
           result,

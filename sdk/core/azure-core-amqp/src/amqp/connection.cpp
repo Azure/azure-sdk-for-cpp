@@ -506,7 +506,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
     if (!m_connection)
     {
-      throw std::logic_error("Connection already closed.");
+      throw std::logic_error("Connection not opened.");
     }
 
     // Stop polling on this connection, we're shutting it down.

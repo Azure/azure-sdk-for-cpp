@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Renamed `EventDataBatch::TryAddMessage` to `EventDataBatch::TryAdd` to better reflect the method's use.
+
 ### Bugs Fixed
 
 - Fixed [#5297](https://github.com/Azure/azure-sdk-for-cpp/issues/5297). The actual fix for this was to use a single management client per connection.

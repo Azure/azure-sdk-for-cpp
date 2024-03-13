@@ -40,6 +40,12 @@ if ((${VCPKG_TARGET_TRIPLET} MATCHES ".*-uwp"))
   message(STATUS "Building for Windows Store, CMAKE_SYSTEM_NAME=" ${CMAKE_SYSTEM_NAME})
 endif()
 
+# For MSVC, ensure that the compiler is operating in strict compliance mode.
+if (MSVC)
+# See also: https://learn.microsoft.com/cpp/build/reference/permissive-standards-conformance
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive-")
+endif()
+
 if(MSVC_USE_STATIC_CRT AND MSVC)
   # 1. More about static/shared CRT:
   # https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160

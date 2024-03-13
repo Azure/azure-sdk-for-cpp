@@ -64,3 +64,30 @@ namespace Azure { namespace Core { namespace _internal {
 #define AZURE_UNREACHABLE_CODE() ::Azure::Core::_internal::AzureNoReturnPath("unreachable code!")
 /** @brief Indicate that the function is not implemented. */
 #define AZURE_NOT_IMPLEMENTED() ::Azure::Core::_internal::AzureNoReturnPath("not implemented code!")
+
+#if __cplusplus >= 201703L
+// C++17 or later - use [[nodiscard]].
+/** @brief Generate a warning if the value is ignored by the caller */
+#define _azure_NODISCARD [[nodiscard]]
+#else
+#if defined(_MSC_VER)
+// MSVC >= 1911, use [[nodiscard]]
+#if _MSC_VER >= 1911
+/** @brief Generate a warning if the value is ignored by the caller */
+#define _azure_NODISCARD [[nodiscard]]
+#else
+// MSVC < 1911, use _Check_return_
+#define _azure_NODISCARD _Check_return_
+#endif
+#elif defined(__GNUC__) && __GNUC__ >= 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+// GCC 3.4 or higher, use __attribute__((warn_unused_result)).
+/** @brief Generate a warning if the value is ignored by the caller */
+#define _azure_NODISCARD __attribute__((__warn_unused_result__))
+#elif defined(__clang__)
+/** @brief Generate a warning if the value is ignored by the caller */
+#define _azure_NODISCARD __attribute__(__warn_unused_result__)
+#else
+/** @brief Generate a warning if the value is ignored by the caller */
+#define _azure_NODISCARD
+#endif
+#endif // __cplusplus >= 201703L

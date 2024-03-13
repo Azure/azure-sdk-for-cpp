@@ -963,16 +963,12 @@ inline bool flag_is_short(const char* s)
 
 inline bool parser_map::known_short_flag(const char flag) const
 {
-  const size_t index = static_cast<size_t>(static_cast<unsigned char>(flag));
-  const definition* const def = this->short_map[index];
-  return def != nullptr;
+  return this->short_map[flag] != nullptr;
 }
 
 inline const definition* parser_map::get_definition_for_short_flag(const char flag) const
 {
-  const size_t index = static_cast<size_t>(static_cast<unsigned char>(flag));
-  const definition* const def = this->short_map[index];
-  return def;
+  return this->short_map[flag];
 }
 
 inline bool parser_map::known_long_flag(const std::string& flag) const
@@ -1018,7 +1014,7 @@ inline parser_map validate_definitions(const std::vector<definition>& definition
 
       if (flag_is_short(flag.data()))
       {
-        const size_t short_flag_letter = static_cast<size_t>(flag[1]);
+        const int short_flag_letter = flag[1];
         const auto existing_short_flag = map.short_map[short_flag_letter];
         bool short_flag_already_exists = (existing_short_flag != nullptr);
         if (short_flag_already_exists)
@@ -1163,7 +1159,7 @@ inline parser_results parser::parse(int argc, const char** argv, bool posOnly) c
         size_t flag_len = arg_i_len;
         if (long_flag_arg != nullptr)
         {
-          flag_len = static_cast<size_t>(long_flag_arg - arg_i_cstr);
+          flag_len = long_flag_arg - arg_i_cstr;
         }
         std::string long_flag_str(arg_i_cstr, flag_len);
 
@@ -1426,7 +1422,7 @@ namespace convert {
     }
     else
     {
-      std::string arg_str(begin, static_cast<size_t>(s - begin));
+      std::string arg_str(begin, s - begin);
       out_arg = argagg::convert::arg<T>(arg_str.c_str());
       s += 1;
       return true;

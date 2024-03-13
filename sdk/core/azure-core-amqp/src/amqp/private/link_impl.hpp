@@ -19,6 +19,23 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  class LinkImplEvents {
+  public:
+    virtual Models::AmqpValue OnTransferReceived(
+        std::shared_ptr<LinkImpl> const& link,
+        Models::_internal::Performatives::AmqpTransfer transfer,
+        uint32_t payloadSize,
+        const unsigned char* payloadBytes)
+        = 0;
+    virtual void OnLinkStateChanged(
+        std::shared_ptr<LinkImpl> const& link,
+        LinkState newLinkState,
+        LinkState previousLinkState)
+        = 0;
+    virtual void OnLinkFlowOn(std::shared_ptr<LinkImpl> const& link) = 0;
+    virtual ~LinkImplEvents() = default;
+  };
+
   class LinkImpl final : public std::enable_shared_from_this<LinkImpl>,
                          public Common::_detail::Pollable {
 
@@ -31,7 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
         Models::_internal::MessageTarget const& target,
-        _detail::LinkEvents* events);
+        _detail::LinkImplEvents* events);
     LinkImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& linkEndpoint,
@@ -39,7 +56,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
         Models::_internal::MessageTarget const& target,
-        _detail::LinkEvents* events);
+        _detail::LinkImplEvents* events);
     ~LinkImpl() noexcept;
 
     LinkImpl(LinkImpl const&) = delete;
@@ -106,7 +123,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_internal::AsyncOperationQueue<uint32_t, LinkDeliverySettleReason, Models::AmqpValue>
         m_transferCompleteQueue;
     OnLinkDetachEvent m_onLinkDetachEvent;
-    LinkEvents* m_eventHandler;
+    LinkImplEvents* m_eventHandler;
     ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE m_linkSubscriptionHandle{};
 
     static void OnLinkDetachEventFn(void* context, ERROR_HANDLE error);
