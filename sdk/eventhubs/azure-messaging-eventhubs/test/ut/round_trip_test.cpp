@@ -30,7 +30,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
       Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
-      eventBatch.TryAddMessage(Azure::Messaging::EventHubs::Models::EventData("Hello world!"));
+      EXPECT_TRUE(
+          eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData("Hello world!")));
       EXPECT_NO_THROW(producer.Send(eventBatch));
     }
 
@@ -66,7 +67,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
       Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
-      eventBatch.TryAddMessage(Azure::Messaging::EventHubs::Models::EventData({1, 2, 3, 4, 5}));
+      EXPECT_TRUE(
+          eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData({1, 2, 3, 4, 5})));
       EXPECT_NO_THROW(producer.Send(eventBatch));
     }
 
@@ -119,7 +121,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       eventData.Body = {1, 2, 3, 4, 5, 6, 7};
       eventData.ContentType = "application/binary";
       eventData.MessageId = "Test Message Id";
-      EXPECT_TRUE(eventBatch.TryAddMessage(eventData));
+      EXPECT_TRUE(eventBatch.TryAdd(eventData));
       EXPECT_NO_THROW(producer.Send(eventBatch));
     }
 

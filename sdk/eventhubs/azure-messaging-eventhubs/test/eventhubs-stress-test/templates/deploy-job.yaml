@@ -10,7 +10,6 @@ spec:
   containers:
     - name: otel-collector
       image: azsdkengsys.azurecr.io/stress/otelcollector:0.94.0
-      image: 
       imagePullPolicy: Always
       resources:
         limits:
@@ -25,8 +24,9 @@ spec:
         - |
           set -a;
           source $ENV_FILE;
-          ./azure-messaging-eventhubs-stress-test produce BatchStressTest;
-          kill `pidof otelcol-contrib`;
+          ./azure-messaging-eventhubs-stress-test batchstresstest --send 10000 -v --useSasCredential;
+#          sleep 30;
+#          kill `pidof otelcol-contrib`;
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
       resources:
         limits:

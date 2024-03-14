@@ -115,10 +115,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       SetState(ManagementState::Opening);
       try
       {
-        m_messageSender->Open(context);
+        auto senderResult{m_messageSender->Open(false, context)};
+        if (senderResult)
+        {
+          Log::Stream(Logger::Level::Error)
+              << "ManagementClientImpl::Open: Message sender open failed: " << senderResult;
+          return _internal::ManagementOpenStatus::Error;
+        }
         m_messageSenderOpen = true;
         m_messageReceiver->Open(context);
         m_messageReceiverOpen = true;
+      }
+      catch (Azure::Core::OperationCancelledException const& e)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Operation cancelled opening message sender and receiver." << e.what();
+        return _internal::ManagementOpenStatus::Cancelled;
       }
       catch (std::runtime_error const& e)
       {

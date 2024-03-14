@@ -55,10 +55,12 @@ parameters:
   - name: DisplayName
     type: string
     default: Validate
-
+  - name: OSName
+    type: string
+    default: ''
 
 jobs:
-  - job:
+  - job: ${{ parameters.DisplayName }}_${{ parameters.OSName }}
     displayName: ${{ parameters.DisplayName }}
     dependsOn: ${{ parameters.DependsOn }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
@@ -66,8 +68,14 @@ jobs:
       matrix: $[ ${{ parameters.Matrix }} ]
       maxParallel: 12
     pool:
-      vmImage: $(OSVmImage)
       name: $(Pool)
+      # 1es pipeline templates converts `image` to demands: ImageOverride under the hood
+      # which is incompatible with image selection in the default non-1es hosted pools
+      ${{ if eq(parameters.OSName, 'macOS') }}:
+        vmImage: $(OSVmImage)
+      ${{ else }}:
+        image: $(OSVmImage)
+      os: ${{ parameters.OSName }}
     variables:
     - name: CMOCKA_XML_FILE
       value: "%g-test-results.xml"
@@ -99,7 +107,7 @@ jobs:
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
-          AgentImage: $(OsVmImage)
+          AgentImage: ${{ parameters.OSName }}
 
       - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
@@ -320,23 +328,10 @@ jobs:
         condition: eq(variables['PublishMapFiles'], 'true')
         displayName: Stage map files
 
-      - task: PublishPipelineArtifact@1
-        inputs:
-          artifactName: map-files-$(MapFileArtifactName)
-          path: $(Build.ArtifactStagingDirectory)
-        condition: eq(variables['PublishMapFiles'], 'true')
-        displayName : Publish map file artifacts
-        
-      - pwsh: |
-          $artifactName = "$(Agent.JobName)"
-          $parts = $artifactName -split ' '
-          if ($parts[1]) {
-            $artifactName = $parts[1]
-          }
-          Write-Host "##vso[task.setvariable variable=BomArtifactName;]$artifactName"
-        displayName: Set bom file artifact name
-        condition: succeededOrFailed()
-
-      - template: /eng/pipelines/templates/steps/generate-and-publish-sbom.yml
+      - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
         parameters:
-          BomArtifactName: $(BomArtifactName)
+          ArtifactPath: $(Build.ArtifactStagingDirectory)
+          ArtifactName: map-files-$(MapFileArtifactName)
+          CustomCondition: eq(variables['PublishMapFiles'], 'true')
+          SbomEnabled: false
+

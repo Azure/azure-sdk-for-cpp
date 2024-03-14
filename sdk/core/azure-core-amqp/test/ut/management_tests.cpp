@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "azure/core/amqp/internal/common/global_state.hpp"
+#include "azure/core/amqp/internal/connection.hpp"
+#include "azure/core/amqp/internal/management.hpp"
+#include "azure/core/amqp/internal/models/messaging_values.hpp"
+#include "azure/core/amqp/internal/session.hpp"
+#include "azure/core/platform.hpp"
 #include "mock_amqp_server.hpp"
-
-#include <azure/core/amqp/internal/connection.hpp>
-#include <azure/core/amqp/internal/management.hpp>
-#include <azure/core/amqp/internal/models/messaging_values.hpp>
-#include <azure/core/amqp/internal/session.hpp>
-#include <azure/core/platform.hpp>
 
 #include <gtest/gtest.h>
 
@@ -18,7 +18,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestManagement : public testing::Test {
   protected:
     void SetUp() override {}
-    void TearDown() override {}
+    void TearDown() override
+    { // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
+      Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+    }
   };
 
   using namespace Azure::Core::Amqp::Models;
@@ -117,7 +120,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // Management specification section 3.2: The correlation-id of the response message
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
-          auto requestCorrelationId = incomingMessage->Properties.CorrelationId;
+          auto& requestCorrelationId = incomingMessage->Properties.CorrelationId;
           if (!incomingMessage->Properties.CorrelationId.HasValue())
           {
             requestCorrelationId = incomingMessage->Properties.MessageId.Value();
@@ -126,7 +129,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
           // Block until the send is completed. Note: Do *not* use the listener context to ensure
           // that the send is completed.
-          GetMessageSender().Send(responseMessage);
+          auto sendResult(GetMessageSender().Send(responseMessage));
+          if (std::get<0>(sendResult) != MessageSendStatus::Ok)
+          {
+            GTEST_LOG_(INFO) << "Failed to send response message. This may be expected: "
+                             << std::get<1>(sendResult);
+          }
         }
       }
 
@@ -225,7 +233,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     try
     {
-      EXPECT_THROW(management.Open(), Azure::Core::Credentials::AuthenticationException);
+      ManagementOpenStatus openResult{ManagementOpenStatus::Error};
+      EXPECT_THROW(
+          openResult = management.Open(), Azure::Core::Credentials::AuthenticationException);
+      EXPECT_EQ(openResult, ManagementOpenStatus::Error);
 
       management.Close();
     }
@@ -317,12 +328,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // There's nobody to respond, so we expect this to time out.
     Azure::Core::Context context;
-    EXPECT_ANY_THROW(management.ExecuteOperation(
-        "Test",
-        "Test",
-        "Test",
-        messageToSend,
-        context.WithDeadline(std::chrono::system_clock::now() + std::chrono::seconds(2))));
+    ManagementOperationResult result;
+    EXPECT_ANY_THROW(
+        result = management.ExecuteOperation(
+            "Test",
+            "Test",
+            "Test",
+            messageToSend,
+            context.WithDeadline(std::chrono::system_clock::now() + std::chrono::seconds(2))));
 
     management.Close();
 

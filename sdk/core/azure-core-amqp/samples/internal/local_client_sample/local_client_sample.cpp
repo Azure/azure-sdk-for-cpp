@@ -30,7 +30,11 @@ int main()
       session.CreateMessageSender("localhost/ingress", senderOptions, nullptr)};
 
   // Open the connection to the remote.
-  sender.Open();
+  if (auto err = sender.Open())
+  {
+    std::cout << "Error opening the sender: " << err << std::endl;
+    return 1;
+  }
 
   // Send 1000 messages to the remote.
   constexpr int maxMessageSendCount = 1000;
