@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// cspell: words gearamaeh1
+// cspell: words
 
 #include "eventhubs_test_base.hpp"
 
@@ -40,10 +40,10 @@ TEST_F(ProducerClientTest, TokenCredential_LIVEONLY_)
 {
   auto credential{GetTestCredential()};
   std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+  std::string eventHubHost{GetEnv("EVENTHUBS_HOST")};
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.ApplicationID = "appId";
-  Azure::Messaging::EventHubs::ProducerClient client{
-      "gearamaeh1.servicebus.windows.net", eventHubName, credential};
+  Azure::Messaging::EventHubs::ProducerClient client{eventHubHost, eventHubName, credential};
   EXPECT_EQ(eventHubName, client.GetEventHubName());
 }
 
@@ -78,11 +78,11 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   edboptions2.PartitionId = "2";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch2{client.CreateBatch(edboptions2)};
 
-  eventBatch.TryAddMessage(message1);
-  eventBatch.TryAddMessage(message2);
+  EXPECT_TRUE(eventBatch.TryAdd(message1));
+  EXPECT_TRUE(eventBatch.TryAdd(message2));
 
-  eventBatch2.TryAddMessage(message3);
-  eventBatch2.TryAddMessage(message2);
+  EXPECT_TRUE(eventBatch2.TryAdd(message3));
+  EXPECT_TRUE(eventBatch2.TryAdd(message2));
 
   for (int i = 0; i < 5; i++)
   {

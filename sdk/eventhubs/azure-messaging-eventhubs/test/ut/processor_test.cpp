@@ -298,7 +298,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 std::stringstream ss;
                 ss << "[" << partitionClient->PartitionId() << ":[" << i << ":" << j
                    << "]] Message";
-                batch.TryAddMessage(Models::EventData{ss.str()});
+                EXPECT_TRUE(batch.TryAdd(Models::EventData{ss.str()}));
               }
               GTEST_LOG_(INFO) << "Send batch " << i << ", targeting partition "
                                << partitionClient->PartitionId();
@@ -375,7 +375,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             {
               std::stringstream ss;
               ss << "[" << partitionClient->PartitionId() << ":[" << i << ":" << j << "]] Message";
-              batch.TryAddMessage(Models::EventData{ss.str()});
+              EXPECT_TRUE(batch.TryAdd(Models::EventData{ss.str()}));
             }
             GTEST_LOG_(INFO) << "Send batch " << i << ", targeting partition "
                              << partitionClient->PartitionId();

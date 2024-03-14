@@ -54,23 +54,39 @@ int main()
     Azure::Messaging::EventHubs::Models::EventData event;
     event.Body = {1, 3, 5, 7};
     event.MessageId = "test-message-id";
-    batch.TryAddMessage(event);
+    if (!batch.TryAdd(event))
+    {
+      std::cerr << "Failed to add the event to the batch" << std::endl;
+      return 1;
+    }
   }
   {
     Azure::Messaging::EventHubs::Models::EventData event;
     event.Body = {2, 4, 6, 8, 10};
     event.MessageId = "test-message-id-2";
-    batch.TryAddMessage(event);
+    if (!batch.TryAdd(event))
+    {
+      std::cerr << "Failed to add the event to the batch" << std::endl;
+      return 1;
+    }
   }
   {
     Azure::Messaging::EventHubs::Models::EventData event{1, 1, 2, 3, 5, 8};
     event.MessageId = "test-message-id5";
-    batch.TryAddMessage(event);
+    if (!batch.TryAdd(event))
+    {
+      std::cerr << "Failed to add the event to the batch" << std::endl;
+      return 1;
+    }
   }
   {
     Azure::Messaging::EventHubs::Models::EventData event{"Hello Eventhubs via AAD!"};
     event.MessageId = "test-message-id4";
-    batch.TryAddMessage(event);
+    if (!batch.TryAdd(event))
+    {
+      std::cerr << "Failed to add the event to the batch" << std::endl;
+      return 1;
+    }
   }
 
   producerClient.Send(batch);

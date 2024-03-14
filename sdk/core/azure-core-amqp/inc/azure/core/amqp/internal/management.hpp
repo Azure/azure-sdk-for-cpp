@@ -173,7 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @returns The result of the open operation.
      */
-    ManagementOpenStatus Open(Context const& context = {});
+    _azure_NODISCARD ManagementOpenStatus Open(Context const& context = {});
 
     /**
      * @brief Close the management instance.
@@ -199,7 +199,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remark The messageToSend is intentionally passed by value because the ExecuteOperation needs
      * to modify the message to add the required properties for the management operation.
      */
-    ManagementOperationResult ExecuteOperation(
+    _azure_NODISCARD ManagementOperationResult ExecuteOperation(
         std::string const& operationToPerform,
         std::string const& typeOfOperation,
         std::string const& locales,

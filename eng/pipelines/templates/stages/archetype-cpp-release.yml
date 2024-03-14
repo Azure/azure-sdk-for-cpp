@@ -24,7 +24,8 @@ stages:
 
             pool:
               name: azsdk-pool-mms-win-2022-general
-              vmImage: windows-2022
+              image: azsdk-pool-mms-win-2022-1espt
+              os: windows
 
             strategy:
               runOnce:
@@ -65,7 +66,8 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                vmImage: windows-2022
+                image: azsdk-pool-mms-win-2022-1espt
+                os: windows
 
               strategy:
                 runOnce:
@@ -95,7 +97,8 @@ stages:
               dependsOn: TagRepository
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                vmImage: windows-2022
+                image: azsdk-pool-mms-win-2022-1espt
+                os: windows
 
               variables:
                 VcpkgPrRepoOwner: Microsoft
@@ -226,7 +229,8 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                vmImage: windows-2022
+                image: azsdk-pool-mms-win-2022-1espt
+                os: windows
 
               strategy:
                 runOnce:
@@ -255,13 +259,17 @@ stages:
             eq(variables['Build.Reason'],'Schedule')
           )
         )
+      variables:
+        - template: /eng/pipelines/templates/variables/image.yml
+
       jobs:
         - job: PublishDailyVcpkg
           displayName: Publish to vcpkg daily branch
 
           pool:
-            name: azsdk-pool-mms-win-2022-general
-            vmImage: windows-2022
+            name: $(WINDOWSPOOL)
+            image: $(WINDOWSVMIMAGE)
+            os: windows
 
           steps:
             - checkout: self

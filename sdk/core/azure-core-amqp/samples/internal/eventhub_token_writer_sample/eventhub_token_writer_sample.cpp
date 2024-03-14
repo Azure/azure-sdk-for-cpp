@@ -61,7 +61,11 @@ int main()
       session.CreateMessageSender(eventhubsEntity, senderOptions, nullptr));
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.
-  sender.Open();
+  if (auto err = sender.Open())
+  {
+    std::cout << "Failed to open the message sender: " << err << std::endl;
+    return 1;
+  }
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 

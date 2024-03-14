@@ -6,13 +6,13 @@
     {
       "OSConfiguration": {
         "macOS-11": {
-          "OSVmImage": "macos-11",
+          "OSVmImage": "env:MACVMIMAGE",
           "XCODE_VERSION": "12.5.1"
         }
       },
       "StaticConfigs": {
         "_": {
-          "Pool": "Azure Pipelines",
+          "Pool": "env:MACPOOL",
           "BuildArgs": "-j 10",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
           "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
@@ -31,8 +31,8 @@
     {
       "StaticConfigs": {
         "Win2019_x64_Release": {
-          "OSVmImage": "windows-2019",
-          "Pool": "azsdk-pool-mms-win-2019-general",
+          "OSVmImage": "env:WINDOWSPREVIOUSVMIMAGE",
+          "Pool": "azsdk-pool-mms-win-2019-1es-pt",
           "CMAKE_GENERATOR": "Visual Studio 16 2019",
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
@@ -49,8 +49,8 @@
     {
       "StaticConfigs": {
         "Win2022": {
-          "OSVmImage": "windows-2022",
-          "Pool": "azsdk-pool-mms-win-2022-general",
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
           "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
       },
@@ -78,8 +78,8 @@
     {
       "StaticConfigs": {
         "Win2022": {
-          "OSVmImage": "windows-2022",
-          "Pool": "azsdk-pool-mms-win-2022-general",
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
           "RunProxyTests": true,
           "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
@@ -111,8 +111,8 @@
       "StaticConfigs": {
         "Win2022": {
           "VcpkgInstall": "openssl",
-          "OSVmImage": "windows-2022",
-          "Pool": "azsdk-pool-mms-win-2022-general",
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
           "CMAKE_GENERATOR": "Visual Studio 17 2022",
           "PublishMapFiles": "true"
         }
@@ -141,8 +141,8 @@
     {
       "StaticConfigs": {
         "Ubuntu22": {
-          "OSVmImage": "MMSUbuntu22.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2204-general",
+          "OSVmImage": "env:LINUXNEXTVMIMAGE",
+          "Pool": "env:LINUXNEXTPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "RunProxyTests": true
@@ -190,8 +190,8 @@
     {
       "StaticConfigs": {
         "Ubuntu20": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "RunProxyTests": true
@@ -208,8 +208,8 @@
     {
       "StaticConfigs": {
         "Ubuntu20": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "CC": "/usr/bin/clang-11",
