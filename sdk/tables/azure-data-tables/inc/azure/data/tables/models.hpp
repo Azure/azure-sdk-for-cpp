@@ -393,7 +393,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Delete result.
      *
      */
-    struct DeleteResult final
+    struct DeleteTableResult final
     {
     };
 

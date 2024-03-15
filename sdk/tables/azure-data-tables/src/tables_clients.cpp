@@ -608,7 +608,7 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
   return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::DeleteResult> TableServiceClient::DeleteTable(
+Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
     std::string const& tableName,
     Core::Context const& context)
 {
@@ -627,9 +627,9 @@ Azure::Response<Models::DeleteResult> TableServiceClient::DeleteTable(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::DeleteResult response{};
+  Models::DeleteTableResult response{};
 
-  return Response<Models::DeleteResult>(std::move(response), std::move(rawResponse));
+  return Response<Models::DeleteTableResult>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
