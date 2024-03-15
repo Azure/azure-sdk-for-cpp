@@ -243,7 +243,8 @@ namespace Azure {
   };
 
   /**
-   * @brief Result of a GetAttestationPolicy, SetAttestationPolicy, or ResetAttestationPolicy operation.
+   * @brief Result of a GetAttestationPolicy, SetAttestationPolicy, or ResetAttestationPolicy
+   * operation.
    */
   struct PolicyResult
   {
@@ -278,7 +279,8 @@ namespace Azure {
   };
 
   /**
-   * @brief Result of a GetAttestationPolicy, SetAttestationPolicy, or ResetAttestationPolicy operation.
+   * @brief Result of a GetAttestationPolicy, SetAttestationPolicy, or ResetAttestationPolicy
+   * operation.
    */
   struct GetIsolatedModeCertificatesResult
   {

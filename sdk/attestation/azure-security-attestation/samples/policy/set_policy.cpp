@@ -76,8 +76,8 @@ authorizationrules
 
     // To verify that the attestation service received the attestation policy, the service returns
     // the SHA256 hash of the policy token which was sent ot the service. To simplify the customer
-    // experience of interacting with the SetAttestationPolicy APIs, CreateAttestationPolicyToken API will
-    // generate the same token that would be send to the service.
+    // experience of interacting with the SetAttestationPolicy APIs, CreateAttestationPolicyToken
+    // API will generate the same token that would be send to the service.
     //
     // To ensure that the token which was sent from the client matches the token which was received
     // by the attestation service, the customer can call CreateAttestationPolicyToken and then
