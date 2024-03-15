@@ -10,7 +10,9 @@
 #include <string>
 
 namespace Azure { namespace Data { namespace Tables { namespace Credentials {
-
+  /**
+   * @brief Azure Shared Access Signature (SAS) credential.
+   */
   class AzureSasCredential final {
   private:
     std::string m_signature;
