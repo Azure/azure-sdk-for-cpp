@@ -27,6 +27,7 @@ TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_TRUE(keyVaultKey.Properties.HsmPlatform.HasValue());
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
   {
@@ -36,6 +37,7 @@ TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey)
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
+    EXPECT_TRUE(keyVaultKey.Properties.HsmPlatform.HasValue());
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
 }
@@ -54,6 +56,7 @@ TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_TRUE(keyVaultKey.Properties.HsmPlatform.HasValue());
   }
   {
     // Now get the key
@@ -63,6 +66,7 @@ TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey)
     EXPECT_EQ(keyVaultKey.Name(), keyName);
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
+    EXPECT_TRUE(keyVaultKey.Properties.HsmPlatform.HasValue());
   }
 }
 
