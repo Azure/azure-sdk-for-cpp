@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/data/tables/dll_import_export.hpp"
+#include "azure/data/tables/enum_operators.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -18,11 +19,10 @@
 #include <vector>
 
 namespace Azure { namespace Data { namespace Tables {
-  class TableServicesClient;
+  class TableServiceClient;
   class TableClient;
 
   namespace Models {
-
     /**
      * @brief Table definition struct.
      */
@@ -54,41 +54,17 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Include this parameter to specify that the tables' metadata be returned as part of
      * the response body.
      */
-    enum class ListTablesIncludeFlags
+    enum class QueryTablesIncludeFlags
     {
       None = 0,
       Metadata = 1,
     };
-    inline ListTablesIncludeFlags operator|(ListTablesIncludeFlags lhs, ListTablesIncludeFlags rhs)
-    {
-      using type = std::underlying_type_t<ListTablesIncludeFlags>;
-      return static_cast<ListTablesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
-    }
-    inline ListTablesIncludeFlags& operator|=(
-        ListTablesIncludeFlags& lhs,
-        ListTablesIncludeFlags rhs)
-    {
-      lhs = lhs | rhs;
-      return lhs;
-    }
-    inline ListTablesIncludeFlags operator&(ListTablesIncludeFlags lhs, ListTablesIncludeFlags rhs)
-    {
-      using type = std::underlying_type_t<ListTablesIncludeFlags>;
-      return static_cast<ListTablesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
-    }
-    inline ListTablesIncludeFlags& operator&=(
-        ListTablesIncludeFlags& lhs,
-        ListTablesIncludeFlags rhs)
-    {
-      lhs = lhs & rhs;
-      return lhs;
-    }
 
     /**
-     * @brief List Tables options.
+     * @brief Query Tables options.
      *
      */
-    struct ListTablesOptions final
+    struct QueryTablesOptions final
     {
       /**
        * @brief Specifies a string that filters the results to return only tables whose name
@@ -108,22 +84,22 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * @brief Specifies the maximum number of tables to return.
        */
-      Azure::Nullable<int32_t> PageSizeHint;
+      Azure::Nullable<std::int32_t> PageSizeHint;
 
       /**
        * @brief Specifies that the table's metadata be returned.
        */
-      Models::ListTablesIncludeFlags Include = Models::ListTablesIncludeFlags::None;
+      Models::QueryTablesIncludeFlags Include = Models::QueryTablesIncludeFlags::None;
     };
 
     /**
-     * @brief List tables paged response.
+     * @brief Query tables paged response.
      */
-    class ListTablesPagedResponse final
-        : public Azure::Core::PagedResponse<ListTablesPagedResponse> {
+    class QueryTablesPagedResponse final
+        : public Azure::Core::PagedResponse<QueryTablesPagedResponse> {
 
-      friend class Azure::Data::Tables::TableServicesClient;
-      friend class Azure::Core::PagedResponse<ListTablesPagedResponse>;
+      friend class Azure::Data::Tables::TableServiceClient;
+      friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
 
     public:
       /**
@@ -145,9 +121,9 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * Table Service Client.
        */
-      std::shared_ptr<TableServicesClient> m_tableServiceClient;
+      std::shared_ptr<TableServiceClient> m_tableServiceClient;
       /** Operation options */
-      ListTablesOptions m_operationOptions;
+      QueryTablesOptions m_operationOptions;
 
     private:
       void OnNextPage(const Azure::Core::Context& context);
@@ -166,7 +142,7 @@ namespace Azure { namespace Data { namespace Tables {
        * Indicates the number of days that metrics or logging or soft-deleted data should be
        * retained. All data older than this value will be deleted.
        */
-      Nullable<int32_t> Days;
+      Nullable<std::int32_t> Days;
     };
 
     /**
@@ -253,7 +229,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * The maximum amount time that a browser should cache the preflight OPTIONS request.
        */
-      int32_t MaxAgeInSeconds = int32_t();
+      std::int32_t MaxAgeInSeconds = int32_t();
     };
 
     /**
@@ -348,6 +324,43 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
+     * @brief Table Entity Data Type.
+     */
+    class TableEntityDataType final
+        : public Azure::Core::_internal::ExtendableEnumeration<TableEntityDataType> {
+    public:
+      /**
+       * @brief Construct a new TableEntityDataType object
+       */
+      TableEntityDataType() = default;
+      /**
+       * @brief Construct a new TableEntityDataType object
+       *
+       * @param tableEntityDataType entity data type string.
+       */
+      explicit TableEntityDataType(std::string tableEntityDataType)
+          : ExtendableEnumeration(std::move(tableEntityDataType))
+      {
+      }
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBinary;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBoolean;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDateTime;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDouble;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmGuid;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt32;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt64;
+      /** Constant value of type TableEntityDataType:EdmBinary */
+      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmString;
+    };
+
+    /**
      * @brief Geo-Replication information for the Secondary Storage Service.
      */
     struct GeoReplication final
@@ -380,7 +393,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Delete result.
      *
      */
-    struct DeleteResult final
+    struct DeleteTableResult final
     {
     };
 
@@ -450,6 +463,12 @@ namespace Azure { namespace Data { namespace Tables {
        * ETag
        */
       Azure::Nullable<std::string> ETag;
+
+      /**
+       * @brief Table Entity data type.
+       *
+       */
+      TableEntityDataType DataType;
     };
 
     /**
@@ -486,7 +505,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @param other Upsert Entity options.
        */
-      CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
+      explicit CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
     /**
@@ -668,7 +687,7 @@ namespace Azure { namespace Data { namespace Tables {
     private:
       std::shared_ptr<TableClient> m_tableClient;
       QueryEntitiesOptions m_operationOptions;
-      friend class Azure::Data::Tables::TableServicesClient;
+      friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryEntitiesPagedResponse>;
 
       void OnNextPage(const Azure::Core::Context& context);
