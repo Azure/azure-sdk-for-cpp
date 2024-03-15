@@ -137,12 +137,9 @@ TableServiceClient::TableServiceClient(
 
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
-    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
-    Azure::Data::Tables::Sas::AccountSasBuilder& sasBuilder,
+    std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
     const TableClientOptions& options)
-    : TableServiceClient(
-        std::string{serviceUrl + sasBuilder.GenerateSasToken(*credential)},
-        options)
+    : TableServiceClient(std::string{serviceUrl + credential->GetSignature()}, options)
 {
 }
 
@@ -420,14 +417,13 @@ TableClient::TableClient(
 
 TableClient::TableClient(
     const std::string& serviceUrl,
-    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
-    Azure::Data::Tables::Sas::TablesSasBuilder sasBuilder,
+    std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
+    const std::string& tableName,
     const TableClientOptions& options)
     : TableClient(
         std::string{
-            Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/"
-            + sasBuilder.GenerateSasToken(*credential)},
-        sasBuilder.TableName,
+            Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/" + credential->GetSignature()},
+        tableName,
         options)
 {
 }

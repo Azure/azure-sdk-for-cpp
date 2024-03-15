@@ -66,8 +66,10 @@ namespace Azure { namespace Data { namespace Test {
           sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
           sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
           std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
+          auto sasCreds = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
+              sasBuilder.GenerateSasToken(*creds));
           m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
-              Tables::TableServiceClient(serviceUrl, creds, sasBuilder, clientOptions));
+              Tables::TableServiceClient(serviceUrl, sasCreds, clientOptions));
 
           Azure::Data::Tables::Sas::TablesSasBuilder tableSasBuilder;
           tableSasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
@@ -75,8 +77,11 @@ namespace Azure { namespace Data { namespace Test {
           tableSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
           tableSasBuilder.SetPermissions(Azure::Data::Tables::Sas::TablesSasPermissions::All);
           tableSasBuilder.TableName = m_tableName;
+          auto tableSasCreds
+              = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
+                  tableSasBuilder.GenerateSasToken(*creds));
           m_tableClient = std::make_shared<Tables::TableClient>(
-              Tables::TableClient(serviceUrl, creds, tableSasBuilder, tableClientOptions));
+              Tables::TableClient(serviceUrl, tableSasCreds, m_tableName, tableClientOptions));
           break;
       }
     }

@@ -42,6 +42,8 @@ endif()
 set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/account_sas_builder.hpp
+    inc/azure/data/tables/credentials/shared_key_credential.hpp
+    inc/azure/data/tables/credentials/azure_sas_credential.hpp
     inc/azure/data/tables/dll_import_export.hpp
     inc/azure/data/tables/enum_operators.hpp
     inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
@@ -60,7 +62,6 @@ set(
     inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/tables_sas_builder.hpp
     inc/azure/data/tables/transactions.hpp
-    inc/azure/data/tables/credentials/shared_key_credential.hpp
 )
 
 set(
