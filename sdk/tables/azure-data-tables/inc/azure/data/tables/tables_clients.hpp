@@ -301,7 +301,7 @@ namespace Azure { namespace Data { namespace Tables {
         Models::QueryEntitiesOptions const& options = {},
         Core::Context const& context = {});
 
-     /**
+    /**
      * @brief Get one table entity.
      *
      * @param partitionKey The partition key of the entity.
@@ -310,8 +310,8 @@ namespace Azure { namespace Data { namespace Tables {
      * @return Entity list paged response.
      */
     Response<Models::TableEntity> GetEntity(
-        const std::string & partitionKey,
-        const std::string & rowKey,
+        const std::string& partitionKey,
+        const std::string& rowKey,
         Core::Context const& context = {});
 
     /**
