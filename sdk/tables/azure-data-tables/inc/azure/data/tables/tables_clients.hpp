@@ -300,6 +300,20 @@ namespace Azure { namespace Data { namespace Tables {
     Models::QueryEntitiesPagedResponse QueryEntities(
         Models::QueryEntitiesOptions const& options = {},
         Core::Context const& context = {});
+
+     /**
+     * @brief GetTableEntity.
+     *
+     * @param partitionKey The partition key of the entity.
+     * @param rowKey The row key of the entity.
+     * @param context for canceling long running operations.
+     * @return Entity list paged response.
+     */
+    Response<Models::TableEntity> GetEntity(
+        const std::string & partitionKey,
+        const std::string & rowKey,
+        Core::Context const& context = {});
+
     /**
      * @brief Creates a new transaction.
      *
