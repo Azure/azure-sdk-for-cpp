@@ -302,7 +302,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
      /**
-     * @brief GetTableEntity.
+     * @brief Get one table entity.
      *
      * @param partitionKey The partition key of the entity.
      * @param rowKey The row key of the entity.

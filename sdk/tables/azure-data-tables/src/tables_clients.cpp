@@ -11,7 +11,6 @@
 #include "azure/data/tables/internal/policies/timeout_policy.hpp"
 #include "azure/data/tables/internal/serializers.hpp"
 
-
 #include <sstream>
 #include <string>
 using namespace Azure::Data::Tables;
@@ -821,7 +820,7 @@ void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& 
   *this = m_tableClient->QueryEntities(m_operationOptions, context);
 }
 
- Azure::Response<Models::TableEntity> TableClient::GetEntity(
+Azure::Response<Models::TableEntity> TableClient::GetEntity(
     const std::string& partitionKey,
     const std::string& rowKey,
     Core::Context const& context)
@@ -843,7 +842,7 @@ void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& 
   {
     const auto& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
-    
+
     auto const jsonRoot
         = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
