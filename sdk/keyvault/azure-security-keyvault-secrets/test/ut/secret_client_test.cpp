@@ -30,10 +30,10 @@ TEST(SecretClient, ServiceVersion)
 {
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
-  // 7.3
+  // 7.5
   EXPECT_NO_THROW(auto options = SecretClientOptions();
                   SecretClient SecretClient("http://account.vault.azure.net", credential, options);
-                  EXPECT_EQ(options.ApiVersion, "7.3"););
+                  EXPECT_EQ(options.ApiVersion, "7.5"););
 }
 
 TEST(SecretClient, GetUrl)

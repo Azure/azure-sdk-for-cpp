@@ -41,6 +41,6 @@ namespace Azure {
      * @brief Construct a new Key Client Options object.
      *
      */
-    CryptographyClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.3"; }
+    CryptographyClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.5"; }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

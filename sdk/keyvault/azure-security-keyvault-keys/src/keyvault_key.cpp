@@ -80,6 +80,9 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
         attributes,
         _detail::UpdatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
+
+    JsonOptional::SetIfExists<std::string>(
+        key.Properties.HsmPlatform, attributes, _detail::HsmPlatformPropertyName);
   }
 
   JsonOptional::SetIfExists<json, KeyReleasePolicy>(

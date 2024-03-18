@@ -5,6 +5,8 @@
 #include "azure/data/tables/internal/xml_wrapper.hpp"
 #include "azure/data/tables/models.hpp"
 
+#include <azure/core/internal/json/json.hpp>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -68,5 +70,10 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
      */
     static Models::TableServiceProperties ServicePropertiesFromXml(
         std::vector<uint8_t> responseData);
+
+    /**
+     * @brief Deserialize a TableEntity from JSON.
+     */
+    static Models::TableEntity DeserializeEntity(Azure::Core::Json::_internal::json json);
   };
 }}}} // namespace Azure::Data::Tables::_detail

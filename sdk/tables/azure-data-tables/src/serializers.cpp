@@ -20,7 +20,6 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
       {
         jsonRoot[entry.first] = entry.second;
       }
-
       jsonBody = jsonRoot.dump();
     }
     return jsonBody;
@@ -28,38 +27,12 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
 
   std::string const Serializers::MergeEntity(Models::TableEntity const& tableEntity)
   {
-    std::string jsonBody;
-    {
-      auto jsonRoot = Core::Json::_internal::json::object();
-
-      jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
-      jsonRoot["RowKey"] = tableEntity.RowKey;
-      for (auto entry : tableEntity.Properties)
-      {
-        jsonRoot[entry.first] = entry.second;
-      }
-
-      jsonBody = jsonRoot.dump();
-    }
-    return jsonBody;
+    return CreateEntity(tableEntity);
   }
 
   std::string const Serializers::UpdateEntity(Models::TableEntity const& tableEntity)
   {
-    std::string jsonBody;
-    {
-      auto jsonRoot = Core::Json::_internal::json::object();
-
-      jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
-      jsonRoot["RowKey"] = tableEntity.RowKey;
-      for (auto entry : tableEntity.Properties)
-      {
-        jsonRoot[entry.first] = entry.second;
-      }
-
-      jsonBody = jsonRoot.dump();
-    }
-    return jsonBody;
+    return CreateEntity(tableEntity);
   }
 
   std::string const Serializers::SetAccessPolicy(Models::TableAccessPolicy const& tableAccessPolicy)
@@ -538,5 +511,35 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
       }
     }
     return response;
+  }
+
+  Models::TableEntity Serializers::DeserializeEntity(Azure::Core::Json::_internal::json json)
+  {
+    Models::TableEntity tableEntity{};
+    if (json.contains("PartitionKey"))
+    {
+      tableEntity.PartitionKey = json["PartitionKey"].get<std::string>();
+    }
+    if (json.contains("RowKey"))
+    {
+      tableEntity.RowKey = json["RowKey"].get<std::string>();
+    }
+    if (json.contains("odata.etag"))
+    {
+      tableEntity.ETag = json["odata.etag"].get<std::string>();
+    }
+    for (auto properties : json.get<std::map<std::string, std::string>>())
+    {
+      if (properties.first.find("odata.type") != std::string::npos)
+      {
+        tableEntity.DataType = Models::TableEntityDataType(properties.second);
+      }
+      if (properties.first != "odata.metadata" && properties.first != "PartitionKey"
+          && properties.first != "RowKey" && properties.first != "odata.etag")
+      {
+        tableEntity.Properties[properties.first] = properties.second;
+      }
+    }
+    return tableEntity;
   }
 }}}} // namespace Azure::Data::Tables::_detail

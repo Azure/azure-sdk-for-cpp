@@ -4,12 +4,14 @@
 #include "table_client_test.hpp"
 
 #include "azure/data/tables/account_sas_builder.hpp"
+#include "azure/data/tables/tables_sas_builder.hpp"
 
 #include <azure/core/internal/strings.hpp>
 
 #include <chrono>
 #include <string>
 #include <thread>
+
 using namespace Azure::Data;
 namespace Azure { namespace Data { namespace Test {
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
@@ -34,8 +36,8 @@ namespace Azure { namespace Data { namespace Test {
       switch (param)
       {
         case AuthType::ConnectionString:
-          m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-              Tables::TableServicesClient::CreateFromConnectionString(
+          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
+              Tables::TableServiceClient::CreateFromConnectionString(
                   GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(
               Tables::TableClient::CreateFromConnectionString(
@@ -43,8 +45,8 @@ namespace Azure { namespace Data { namespace Test {
           break;
         case AuthType::Key:
           m_credential = GetTestCredential();
-          m_tableServiceClient = std::make_shared<Tables::TableServicesClient>(
-              Azure::Data::Tables::TableServicesClient(
+          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
+              Azure::Data::Tables::TableServiceClient(
                   "https://" + GetAccountName() + ".table.core.windows.net/",
                   m_credential,
                   clientOptions));
@@ -63,15 +65,23 @@ namespace Azure { namespace Data { namespace Test {
           sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServices::All;
           sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
           sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
-          auto sasToken = sasBuilder.GenerateSasToken(*creds);
-          m_tableServiceClient
-              = std::make_shared<Tables::TableServicesClient>(Tables::TableServicesClient(
-                  "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,
-                  clientOptions));
-          m_tableClient = std::make_shared<Tables::TableClient>(Tables::TableClient(
-              "https://" + GetAccountName() + ".table.core.windows.net/" + sasToken,
-              m_tableName,
-              tableClientOptions));
+          std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
+          auto sasCreds = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
+              sasBuilder.GenerateSasToken(*creds));
+          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
+              Tables::TableServiceClient(serviceUrl, sasCreds, clientOptions));
+
+          Azure::Data::Tables::Sas::TablesSasBuilder tableSasBuilder;
+          tableSasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
+          tableSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+          tableSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+          tableSasBuilder.SetPermissions(Azure::Data::Tables::Sas::TablesSasPermissions::All);
+          tableSasBuilder.TableName = m_tableName;
+          auto tableSasCreds
+              = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
+                  tableSasBuilder.GenerateSasToken(*creds));
+          m_tableClient = std::make_shared<Tables::TableClient>(
+              Tables::TableClient(serviceUrl, tableSasCreds, m_tableName, tableClientOptions));
           break;
       }
     }
@@ -83,8 +93,7 @@ namespace Azure { namespace Data { namespace Test {
     {
       try
       {
-
-        auto deleteResponse = m_tableClient->Delete();
+        auto deleteResponse = m_tableServiceClient->DeleteTable(m_tableName);
       }
       catch (...)
       {
@@ -115,7 +124,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, CreateTable)
   {
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     EXPECT_EQ(createResponse.Value.TableName, m_tableName);
     EXPECT_EQ(createResponse.Value.EditLink, "Tables('" + m_tableName + "')");
     EXPECT_TRUE(createResponse.Value.Type.find(".Tables") != std::string::npos);
@@ -129,7 +138,7 @@ namespace Azure { namespace Data { namespace Test {
       SkipTest();
       return;
     }
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     auto getResponse = m_tableClient->GetAccessPolicy();
     EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 0);
@@ -142,7 +151,7 @@ namespace Azure { namespace Data { namespace Test {
       SkipTest();
       return;
     }
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     Azure::Data::Tables::Models::TableAccessPolicy newPolicy{};
     Azure::Data::Tables::Models::SignedIdentifier newIdentifier{};
     newIdentifier.Id = "testid";
@@ -179,12 +188,11 @@ namespace Azure { namespace Data { namespace Test {
     }
     else
     {
+      auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
-      auto createResponse = m_tableClient->Create();
+      Azure::Data::Tables::Models::QueryTablesOptions listOptions;
 
-      Azure::Data::Tables::Models::ListTablesOptions listOptions;
-
-      auto listResponse = m_tableServiceClient->ListTables(listOptions);
+      auto listResponse = m_tableServiceClient->QueryTables(listOptions);
 
       for (auto table : listResponse.Tables)
       {
@@ -201,9 +209,9 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, DeleteTable)
   {
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
-    auto response = m_tableClient->Delete();
+    auto response = m_tableServiceClient->DeleteTable(m_tableName);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
@@ -266,7 +274,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->CreateEntity(entity);
 
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -287,7 +295,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->CreateEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
@@ -322,7 +330,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->CreateEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
@@ -357,7 +365,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->CreateEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
@@ -393,7 +401,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->UpsertEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
@@ -433,7 +441,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->CreateEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
@@ -510,7 +518,7 @@ namespace Azure { namespace Data { namespace Test {
     entity2.RowKey = "R1";
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto transaction = m_tableClient->CreateTransaction("P1");
 
     transaction.CreateEntity(entity);
@@ -538,7 +546,7 @@ namespace Azure { namespace Data { namespace Test {
     entity2.RowKey = "R2";
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto transaction = m_tableClient->CreateTransaction("P1");
 
     transaction.CreateEntity(entity);
@@ -566,7 +574,7 @@ namespace Azure { namespace Data { namespace Test {
     entity2.RowKey = "R2";
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto transaction = m_tableClient->CreateTransaction("P1");
 
     transaction.CreateEntity(entity);
@@ -600,7 +608,7 @@ namespace Azure { namespace Data { namespace Test {
     entity2.RowKey = "R1";
     entity2.Properties["Name"] = "Azure2";
     entity2.Properties["Product"] = "Tables3";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto transaction = m_tableClient->CreateTransaction("P1");
 
     transaction.CreateEntity(entity);
@@ -633,7 +641,7 @@ namespace Azure { namespace Data { namespace Test {
     entity2.RowKey = "R1";
     entity2.Properties["Name"] = "Azure2";
     entity2.Properties["Product"] = "Tables3";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto transaction = m_tableClient->CreateTransaction("P1");
 
     transaction.CreateEntity(entity);

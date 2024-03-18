@@ -49,28 +49,6 @@ namespace Azure { namespace Core { namespace Test {
   class PipelineTest : public Azure::Perf::PerfTest {
     std::unique_ptr<HttpPipeline> m_pipeline;
 
-    static std::vector<std::string> SplitString(const std::string& s, char separator)
-    {
-      std::vector<std::string> result;
-
-      const auto len = s.size();
-      size_t start = 0;
-      while (start < len)
-      {
-        auto end = s.find(separator, start);
-        if (end == std::string::npos)
-        {
-          end = len;
-        }
-
-        result.push_back(s.substr(start, end - start));
-
-        start = end + 1;
-      }
-
-      return result;
-    }
-
   public:
     /**
      * @brief Construct a new PipelineTest test.
@@ -96,8 +74,8 @@ namespace Azure { namespace Core { namespace Test {
       std::vector<std::unique_ptr<HttpPolicy>> policies2;
 
       auto const total = m_options.GetMandatoryOption<int>("Count");
-      auto const policyNames
-          = SplitString(m_options.GetOptionOrDefault<std::string>("Policies", "TestPolicy"), ',');
+      auto const policyNames = Azure::Core::_internal::StringExtensions::Split(
+          m_options.GetOptionOrDefault<std::string>("Policies", "TestPolicy"), ',');
       // we want a total number of policies added to the pipeline
       // thus for loop total / number , depends on rounding but close enough
       // since in each loop we add the whole set of desired policies
