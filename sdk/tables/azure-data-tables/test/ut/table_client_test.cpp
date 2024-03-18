@@ -469,10 +469,9 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
 
-    TEST_P(TablesClientTest, EntityGet)
+  TEST_P(TablesClientTest, EntityGet)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -496,10 +495,9 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R3";
     m_tableClient->CreateEntity(entity);
 
-    
     std::string partitionKey = "P1";
     std::string rowKey = "R1";
-    auto responseQuery = m_tableClient->GetEntity(partitionKey,rowKey);
+    auto responseQuery = m_tableClient->GetEntity(partitionKey, rowKey);
     EXPECT_EQ(responseQuery.Value.PartitionKey, "P1");
     EXPECT_EQ(responseQuery.Value.RowKey, "R1");
     EXPECT_EQ(responseQuery.Value.Properties["Name"], "Azure");
