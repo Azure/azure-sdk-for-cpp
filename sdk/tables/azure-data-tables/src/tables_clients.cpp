@@ -843,12 +843,11 @@ void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& 
   {
     const auto& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
-
     
     auto const jsonRoot
         = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-    response = DeserializeEntity(jsonRoot);
+    response = Serializers::DeserializeEntity(jsonRoot);
   }
   return Response<Models::TableEntity>(std::move(response), std::move(rawResponse));
 }

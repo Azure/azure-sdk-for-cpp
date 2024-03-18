@@ -483,7 +483,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.RowKey = "R1";
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    auto createResponse = m_tableClient->Create();
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->CreateEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
