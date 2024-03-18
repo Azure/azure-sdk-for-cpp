@@ -108,13 +108,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       EXPECT_EQ(result.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
 
-      // SetPolicy responses should have updated or reset the policy value.
+      // SetAttestationPolicy responses should have updated or reset the policy value.
       if (policyToValidate)
       {
         EXPECT_EQ(PolicyModification::Updated, result.Value.Body.PolicyResolution);
 
         // The attestation service only returns the PolicySigner and PolicySigningHash on
-        // SetPolicy calls, not ResetPolicy calls.
+        // SetAttestationPolicy calls, not ResetAttestationPolicy calls.
 
         // Now check the policy signer if appropriate.
         if (signingKey)
@@ -363,20 +363,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         break;
 
       // Modify attestation policies using an unsecured attestation JWS. This exercises the
-      // SetPolicy and ResetPolicy APIs.
+      // SetAttestationPolicy and ResetAttestationPolicy APIs.
       case TestCaseType::ModifyPolicyUnsecured:
         ModifyPolicyUnsecuredTest();
         break;
 
       // Modify attestation policies using an ephemeral secured attestation JWS. This exercises the
-      // SetPolicy and ResetPolicy APIs.
+      // SetAttestationPolicy and ResetAttestationPolicy APIs.
       case TestCaseType::ModifyPolicySecured:
         ModifyPolicySecuredTest();
         break;
 
       // Modify attestation policies using a predefined signing key and certificate.
       // The key and certificate were created at test resource creation time.
-      // Exercises the SetPolicy and ResetPolicy APIs.
+      // Exercises the SetAttestationPolicy and ResetAttestationPolicy APIs.
       case TestCaseType::ModifyPolicyIsolated:
         ModifyPolicyIsolatedTest(); // LIVE-ONLY test!
         break;

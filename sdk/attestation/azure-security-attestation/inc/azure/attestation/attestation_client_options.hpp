@@ -301,7 +301,7 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct SetPolicyOptions final
   {
-    /** @brief Optional Signing Key which is used to sign the SetPolicy request.
+    /** @brief Optional Signing Key which is used to sign the SetAttestationPolicy request.
      */
     Azure::Nullable<AttestationSigningKey> SigningKey;
 

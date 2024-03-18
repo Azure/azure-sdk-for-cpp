@@ -29,14 +29,14 @@ const std::string TableName = "sample1";
 
 int main()
 {
-  auto tableServiceClient = TableServicesClient::CreateFromConnectionString(GetConnectionString());
+  auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
   auto tableClient = TableClient::CreateFromConnectionString(GetConnectionString(), TableName);
 
   // create new table
-  tableClient.Create();
+  tableServiceClient.CreateTable(TableName);
 
-  // list tables
-  auto tables = tableServiceClient.ListTables();
+  // query tables
+  auto tables = tableServiceClient.QueryTables();
 
   // print table names
   for (auto table : tables.Tables)
@@ -44,6 +44,6 @@ int main()
     std::cout << table.TableName << std::endl;
   }
   // delete existing table
-  tableClient.Delete();
+  tableServiceClient.DeleteTable(TableName);
   return 0;
 }

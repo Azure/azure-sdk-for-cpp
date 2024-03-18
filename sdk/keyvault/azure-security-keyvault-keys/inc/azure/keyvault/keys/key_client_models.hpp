@@ -560,6 +560,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Nullable<bool> Exportable;
 
     /**
+     * @brief Indicates if the private key can be exported.
+     *
+     */
+    Azure::Nullable<std::string> HsmPlatform;
+
+    /**
      * @brief Construct a new Key Properties object.
      *
      */
