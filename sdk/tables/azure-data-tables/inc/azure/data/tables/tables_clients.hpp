@@ -302,6 +302,19 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
+     * @brief Get one table entity.
+     *
+     * @param partitionKey The partition key of the entity.
+     * @param rowKey The row key of the entity.
+     * @param context for canceling long running operations.
+     * @return Entity list paged response.
+     */
+    Response<Models::TableEntity> GetEntity(
+        const std::string& partitionKey,
+        const std::string& rowKey,
+        Core::Context const& context = {});
+
+    /**
      * @brief Creates a new transaction.
      *
      * @param partitionKey The partition key of the transaction.

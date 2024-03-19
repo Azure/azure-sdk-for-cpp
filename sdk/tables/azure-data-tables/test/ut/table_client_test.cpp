@@ -469,6 +469,41 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
 
+  TEST_P(TablesClientTest, EntityGet)
+  {
+    if (GetParam() == AuthType::Key)
+    {
+      EXPECT_TRUE(true);
+      return;
+    }
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    entity.PartitionKey = "P1";
+    entity.RowKey = "R1";
+    entity.Properties["Name"] = "Azure";
+    entity.Properties["Product"] = "Tables";
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    auto response = m_tableClient->CreateEntity(entity);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+
+    entity.Properties["Product"] = "Tables2";
+    entity.RowKey = "R2";
+    m_tableClient->CreateEntity(entity);
+
+    entity.Properties["Product"] = "Tables3";
+    entity.RowKey = "R3";
+    m_tableClient->CreateEntity(entity);
+
+    std::string partitionKey = "P1";
+    std::string rowKey = "R1";
+    auto responseQuery = m_tableClient->GetEntity(partitionKey, rowKey);
+    EXPECT_EQ(responseQuery.Value.PartitionKey, "P1");
+    EXPECT_EQ(responseQuery.Value.RowKey, "R1");
+    EXPECT_EQ(responseQuery.Value.Properties["Name"], "Azure");
+    EXPECT_EQ(responseQuery.Value.Properties["Product"], "Tables");
+  }
+
   TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
   {
     Azure::Data::Tables::Models::TableEntity entity;
