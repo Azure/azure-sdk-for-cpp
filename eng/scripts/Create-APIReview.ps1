@@ -16,7 +16,7 @@ Param(
     [Parameter(Mandatory=$True)]
     [string] $RepoName,
     [Parameter(Mandatory=$True)]
-    [string] $BuildId,
+    [string] $BuildId
 )
 
 Write-Host "$PSScriptRoot"
