@@ -81,7 +81,7 @@ jobs:
   # Disable build for cpp - client
   - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:
     - job:
-      displayName: Create API Review for ${{ artifact.name }}
+      displayName: Create API Review
       pool:
         name: $(WINDOWSPOOL)
         image: $(WINDOWSVMIMAGE)
@@ -120,7 +120,7 @@ jobs:
           inputs:
             filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Create-APIReview.ps1
             arguments: >
-              -ArtifactList ${{parameters.Artifacts}}
+              -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
               -OutPath $(Build.ArtifactStagingDirectory)
               -ApiKey "$(azuresdk-apiview-apikey)"
               -SourceBranch $(Build.SourceBranchName)
@@ -131,7 +131,7 @@ jobs:
               -RepoName "$(Build.Repository.Name)"
             pwsh: true
             workingDirectory: $(Pipeline.Workspace)
-          displayName: Create API Review for ${{ artifact.name }}
+          displayName: Create API Review
           condition: >-
             and(
               succeeded(),
