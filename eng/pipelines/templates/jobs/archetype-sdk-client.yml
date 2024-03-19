@@ -80,67 +80,65 @@ jobs:
 
   # Disable build for cpp - client
   - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:
-    - ${{ each artifact in parameters.Artifacts }}:
-      - job:
-        displayName: Create API Review for ${{ artifact.name }}
-        pool:
-          name: $(WINDOWSPOOL)
-          image: $(WINDOWSVMIMAGE)
-          os: windows
-        steps:
-          - task: Powershell@2
-            inputs:
-              filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-              arguments: >
-                -ServiceDirectory ${{ parameters.ServiceDirectory }}
-                -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-              pwsh: true
-              workingDirectory: $(Pipeline.Workspace)
-            displayName: Dump Package properties
-            condition: succeeded()
+    - job:
+      displayName: Create API Review for ${{ artifact.name }}
+      pool:
+        name: $(WINDOWSPOOL)
+        image: $(WINDOWSVMIMAGE)
+        os: windows
+      steps:
+        - task: Powershell@2
+          inputs:
+            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+            arguments: >
+              -ServiceDirectory ${{ parameters.ServiceDirectory }}
+              -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+          displayName: Dump Package properties
+          condition: succeeded()
 
-          - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+        - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
-          - task:  UniversalPackages@0
-            displayName: Download ApiView Parser.
-            inputs:
-              command: download
-              vstsFeed: 'internal/AzureSDKForCpp'
-              vstsFeedPackage: 'parseazuresdkcpp'
-              downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
-              vstsPackageVersion: 0.11.0
-            condition: >-
-                and(
-                  succeeded(),
-                  ne(variables['Skip.CreateApiReview'], 'true'),
-                  ne(variables['Build.Reason'],'PullRequest'),
-                  eq(variables['System.TeamProject'], 'internal')
-                )
-
-          - task: Powershell@2
-            inputs:
-              filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Create-APIReview.ps1
-              arguments: >
-                -ArtifactName ${{ artifact.name }}
-                -OutPath $(Build.ArtifactStagingDirectory)
-                -ApiviewUri "$(azuresdk-apiview-uri)"
-                -ApiKey "$(azuresdk-apiview-apikey)"
-                -ApiLabel "Auto Review - $(Build.SourceVersion)"
-                -SourceBranch $(Build.SourceBranchName)
-                -DefaultBranch $(DefaultBranch)
-                -ConfigFileDir $(Build.ArtifactStagingDirectory)/PackageInfo
-                -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
-                -SourcePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.name }}/inc
-              pwsh: true
-              workingDirectory: $(Pipeline.Workspace)
-            displayName: Create API Review for ${{ artifact.name }}
-            condition: >-
+        - task:  UniversalPackages@0
+          displayName: Download ApiView Parser.
+          inputs:
+            command: download
+            vstsFeed: 'internal/AzureSDKForCpp'
+            vstsFeedPackage: 'parseazuresdkcpp'
+            downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
+            vstsPackageVersion: 0.11.0
+          condition: >-
               and(
                 succeeded(),
                 ne(variables['Skip.CreateApiReview'], 'true'),
                 ne(variables['Build.Reason'],'PullRequest'),
                 eq(variables['System.TeamProject'], 'internal')
               )
+
+        - task: Powershell@2
+          inputs:
+            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Create-APIReview.ps1
+            arguments: >
+              -ArtifactList ${{parameters.Artifacts}}
+              -OutPath $(Build.ArtifactStagingDirectory)
+              -ApiKey "$(azuresdk-apiview-apikey)"
+              -SourceBranch $(Build.SourceBranchName)
+              -DefaultBranch $(DefaultBranch)
+              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
+              -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
+              -BuildId $(Build.BuildId)
+              -RepoName "$(Build.Repository.Name)"
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+          displayName: Create API Review for ${{ artifact.name }}
+          condition: >-
+            and(
+              succeeded(),
+              ne(variables['Skip.CreateApiReview'], 'true'),
+              ne(variables['Build.Reason'],'PullRequest'),
+              eq(variables['System.TeamProject'], 'internal')
+            )
 
     - job: GenerateReleaseArtifacts
       pool:
