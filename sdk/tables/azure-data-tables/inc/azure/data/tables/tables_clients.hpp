@@ -307,7 +307,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param partitionKey The partition key of the entity.
      * @param rowKey The row key of the entity.
      * @param context for canceling long running operations.
-     * @return Entity list paged response.
+     * @return Table entity.
      */
     Response<Models::TableEntity> GetEntity(
         const std::string& partitionKey,
