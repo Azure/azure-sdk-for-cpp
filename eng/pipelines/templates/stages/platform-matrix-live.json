@@ -106,7 +106,7 @@
           "BuildArgs": "-v --parallel 8 --config Release",
           "WindowsCtestConfig": "-C Release",
           "KVLocation": "eastus2",
-          "EnableHSM": 1
+          "EnableHSM": 0
         },
         "x64_with_unit_samples_libcurl": {
           "VcpkgInstall": "curl[winssl] openssl",
@@ -178,7 +178,7 @@
           "BuildArgs": "-v --parallel 8 --config Release",
           "WindowsCtestConfig": "-C Release",
           "KVLocation": "eastus2",
-          "EnableHSM": 1
+          "EnableHSM": 0
         },
         "x64_with_unit_samples_libcurl": {
           "VcpkgInstall": "curl[winssl] openssl",
