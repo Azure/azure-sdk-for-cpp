@@ -672,8 +672,8 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
-      + "')");
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
+      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
 
   std::string jsonBody = Serializers::UpdateEntity(tableEntity);
 
@@ -716,8 +716,8 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
-      + "')");
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
+      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
 
   std::string jsonBody = Serializers::MergeEntity(tableEntity);
 
@@ -758,8 +758,8 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 {
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
-      + "')");
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
+      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
@@ -820,6 +820,39 @@ void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& 
   *this = m_tableClient->QueryEntities(m_operationOptions, context);
 }
 
+Azure::Response<Models::TableEntity> TableClient::GetEntity(
+    const std::string& partitionKey,
+    const std::string& rowKey,
+    Core::Context const& context)
+{
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(partitionKey) + "',RowKey='"
+      + Azure::Core::Url::Encode(rowKey) + "')");
+
+  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::TableEntity response{};
+  {
+    const auto& responseBody = rawResponse->GetBody();
+    std::string responseString = std::string(responseBody.begin(), responseBody.end());
+
+    auto const jsonRoot
+        = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+
+    response = Serializers::DeserializeEntity(jsonRoot);
+  }
+  return Response<Models::TableEntity>(std::move(response), std::move(rawResponse));
+}
+
 Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     Models::QueryEntitiesOptions const& options,
     Core::Context const& context)
@@ -828,11 +861,11 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
   std::string appendPath = m_tableName + "(";
   if (!options.PartitionKey.empty())
   {
-    appendPath += "PartitionKey='" + options.PartitionKey + "'";
+    appendPath += "PartitionKey='" + Azure::Core::Url::Encode(options.PartitionKey) + "'";
   }
   if (!options.RowKey.empty())
   {
-    appendPath += ",RowKey='" + options.RowKey + "'";
+    appendPath += ",RowKey='" + Azure::Core::Url::Encode(options.RowKey) + "'";
   }
   appendPath += ")";
 
@@ -840,11 +873,11 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
   if (options.Filter.HasValue())
   {
-    url.AppendQueryParameter("$filter", options.Filter.Value());
+    url.AppendQueryParameter("$filter", Azure::Core::Url::Encode(options.Filter.Value()));
   }
   if (!options.SelectColumns.empty())
   {
-    url.AppendQueryParameter("$select", options.SelectColumns);
+    url.AppendQueryParameter("$select", Azure::Core::Url::Encode(options.SelectColumns));
   }
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
