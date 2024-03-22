@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Test {
      * @remark This configuration allow tests to ignore live mode
      *
      */
-    bool PlaybackOnly = false;
+    bool RecordedOnly = false;
 
     /**
      * @brief Construct a new Test Context Manager object
@@ -144,7 +144,7 @@ namespace Azure { namespace Core { namespace Test {
     bool IsLiveMode() const { return TestMode == Azure::Core::Test::TestMode::LIVE; }
 
     constexpr static const char* LiveOnlyToken = "_LIVEONLY_";
-    constexpr static const char* PlaybackOnlyToken = "_RECORDEDONLY_";
+    constexpr static const char* RecordedOnlyToken = "_RECORDEDONLY_";
 
     std::string RecordingId;
 
@@ -156,9 +156,9 @@ namespace Azure { namespace Core { namespace Test {
       // Naming a test with a prefix `LIVE` will set it up to be only live mode supported.
       // It won't be recorded and it won't be ran when playback mode is on.
       std::string liveOnlyToken{Azure::Core::Test::TestContextManager::LiveOnlyToken};
-      std::string playbackOnlyToken{Azure::Core::Test::TestContextManager::PlaybackOnlyToken};
+      std::string playbackOnlyToken{Azure::Core::Test::TestContextManager::RecordedOnlyToken};
       LiveOnly = false;
-      PlaybackOnly = false;
+      RecordedOnly = false;
       if (testName.size() > liveOnlyToken.size())
       {
         if (testName.find(liveOnlyToken) != std::string::npos)
@@ -172,7 +172,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         if (testName.find(playbackOnlyToken) != std::string::npos)
         {
-          PlaybackOnly = true;
+          RecordedOnly = true;
         }
       }
     }
