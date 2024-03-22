@@ -109,12 +109,13 @@ namespace Azure { namespace Core { namespace Test {
       // Remove special marker for LIVEONLY
       auto noPrefix
           = std::regex_replace(updated, std::regex(TestContextManager::LiveOnlyToken), "");
-      //Remove special marker for PLAYBACKONLY
+      // Remove special marker for PLAYBACKONLY
       noPrefix = std::regex_replace(updated, std::regex(TestContextManager::PlaybackOnlyToken), "");
       if (noPrefix != updated)
       {
         if ((m_testContext.TestMode == TestMode::RECORD
-            || m_testContext.TestMode == TestMode::PLAYBACK) && m_testContext.LiveOnly)
+             || m_testContext.TestMode == TestMode::PLAYBACK)
+            && m_testContext.LiveOnly)
         {
           TestLog("Test is expected to run on LIVE mode only. Recording won't be created.");
           SkipTest();
@@ -128,6 +129,7 @@ namespace Azure { namespace Core { namespace Test {
       }
       return updated;
     }
+
   protected:
     Azure::Core::Test::TestContextManager m_testContext;
     std::unique_ptr<Azure::Core::Test::TestProxyManager> m_testProxy;

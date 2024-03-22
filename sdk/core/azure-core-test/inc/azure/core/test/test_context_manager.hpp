@@ -71,10 +71,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @param testName The new name for the test.
      */
-    void RenameTest(std::string const& testName)
-    {
-      m_testName = testName;
-    }
+    void RenameTest(std::string const& testName) { m_testName = testName; }
 
     /**
      * @brief Change the name of the test suite and test name.
