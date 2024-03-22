@@ -20,7 +20,7 @@ using namespace Azure::Security::KeyVault::Administration::Test;
 
 using namespace std::chrono_literals;
 
-TEST_F(SettingsClientTest, GetSettings)
+TEST_F(SettingsClientTest, GetSettings_RECORDEDONLY_)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   EXPECT_EQ(testName, testName);
@@ -37,7 +37,7 @@ TEST_F(SettingsClientTest, GetSettings)
   }
 }
 
-TEST_F(SettingsClientTest, GetSetting)
+TEST_F(SettingsClientTest, GetSetting_RECORDEDONLY_)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   CreateHSMClientForTest();
@@ -51,7 +51,7 @@ TEST_F(SettingsClientTest, GetSetting)
   }
 }
 
-TEST_F(SettingsClientTest, UpdateSetting)
+TEST_F(SettingsClientTest, UpdateSetting_RECORDEDONLY_)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   CreateHSMClientForTest();

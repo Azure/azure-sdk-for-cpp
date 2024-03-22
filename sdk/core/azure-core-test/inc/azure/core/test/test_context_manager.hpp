@@ -49,10 +49,22 @@ namespace Azure { namespace Core { namespace Test {
     bool LiveOnly = false;
 
     /**
+     * @brief Whenever the test must not be ran on live mode.
+     *
+     * @remark This configuration allow tests to ignore live mode
+     *
+     */
+    bool PlaybackOnly = false;
+
+    /**
      * @brief Construct a new Test Context Manager object
      *
      */
-    TestContextManager() { SetLiveOnly(); }
+    TestContextManager()
+    {
+      auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
+      SetRunFlags(testNameInfo->name());
+    }
 
     /**
      * @brief Change the name of the running test.
@@ -62,7 +74,6 @@ namespace Azure { namespace Core { namespace Test {
     void RenameTest(std::string const& testName)
     {
       m_testName = testName;
-      SetLiveOnly();
     }
 
     /**
@@ -136,22 +147,35 @@ namespace Azure { namespace Core { namespace Test {
     bool IsLiveMode() const { return TestMode == Azure::Core::Test::TestMode::LIVE; }
 
     constexpr static const char* LiveOnlyToken = "_LIVEONLY_";
+    constexpr static const char* PlaybackOnlyToken = "_RECORDEDONLY_";
 
     std::string RecordingId;
 
   private:
     std::string m_testName;
     std::string m_testSuite;
-    void SetLiveOnly()
+    void SetRunFlags(std::string const& testName)
     {
       // Naming a test with a prefix `LIVE` will set it up to be only live mode supported.
       // It won't be recorded and it won't be ran when playback mode is on.
-      std::string liveOnlyToken(Azure::Core::Test::TestContextManager::LiveOnlyToken);
-      if (m_testName.size() > liveOnlyToken.size())
+      std::string liveOnlyToken{Azure::Core::Test::TestContextManager::LiveOnlyToken};
+      std::string playbackOnlyToken{Azure::Core::Test::TestContextManager::PlaybackOnlyToken};
+      LiveOnly = false;
+      PlaybackOnly = false;
+      if (testName.size() > liveOnlyToken.size())
       {
-        if (m_testName.find(liveOnlyToken) == 0)
+        if (testName.find(liveOnlyToken) != std::string::npos)
         {
           LiveOnly = true;
+        }
+      }
+      // Naming a test with a suffix `PLAYBACKONLY` will set it up to be only PAYBACK/RECORD mode
+      // supported. it won't be running in live mode.
+      if (testName.size() > playbackOnlyToken.size())
+      {
+        if (testName.find(playbackOnlyToken) != std::string::npos)
+        {
+          PlaybackOnly = true;
         }
       }
     }
