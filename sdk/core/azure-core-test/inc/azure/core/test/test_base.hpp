@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Test {
       noPrefix = std::regex_replace(updated, std::regex(TestContextManager::RecordedOnlyToken), "");
 
       if (noPrefix != updated)
-      { // we removed either liveonly or recordedkonly check if the test should run, since this is
+      { // we removed either live only or recorded only check if the test should run, since this is
         // called from the sanitize test name method
         if ((m_testContext.TestMode == TestMode::RECORD
              || m_testContext.TestMode == TestMode::PLAYBACK)
