@@ -156,7 +156,7 @@ namespace Azure { namespace Core { namespace Test {
       // Naming a test with a prefix `LIVE` will set it up to be only live mode supported.
       // It won't be recorded and it won't be ran when playback mode is on.
       std::string liveOnlyToken{Azure::Core::Test::TestContextManager::LiveOnlyToken};
-      std::string playbackOnlyToken{Azure::Core::Test::TestContextManager::RecordedOnlyToken};
+      std::string recordedOnlyToken{Azure::Core::Test::TestContextManager::RecordedOnlyToken};
       LiveOnly = false;
       RecordedOnly = false;
       if (testName.size() > liveOnlyToken.size())
@@ -166,11 +166,11 @@ namespace Azure { namespace Core { namespace Test {
           LiveOnly = true;
         }
       }
-      // Naming a test with a suffix `PLAYBACKONLY` will set it up to be only PAYBACK/RECORD mode
+      // Naming a test with a suffix `RECORDEDONLY` will set it up to be only PAYBACK/RECORD mode
       // supported. it won't be running in live mode.
-      if (testName.size() > playbackOnlyToken.size())
+      if (testName.size() > recordedOnlyToken.size())
       {
-        if (testName.find(playbackOnlyToken) != std::string::npos)
+        if (testName.find(recordedOnlyToken) != std::string::npos)
         {
           RecordedOnly = true;
         }
