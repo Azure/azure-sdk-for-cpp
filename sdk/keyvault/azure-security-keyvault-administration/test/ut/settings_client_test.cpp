@@ -20,13 +20,13 @@ using namespace Azure::Security::KeyVault::Administration::Test;
 
 using namespace std::chrono_literals;
 
-TEST_F(SettingsClientTest, GetSettings_RECORDEDONLY_)
+TEST_F(SettingsClientTest, GetSettings)
 {
+  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  EXPECT_EQ(testName, testName);
+  CreateHSMClientForTest();
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-    auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-    EXPECT_EQ(testName, testName);
-    CreateHSMClientForTest();
     // create certificate method contains all the checks
     auto const& client = GetClientForTest(testName);
     auto result = client.GetSettings();
@@ -35,36 +35,28 @@ TEST_F(SettingsClientTest, GetSettings_RECORDEDONLY_)
     EXPECT_EQ(setting.Name, "AllowKeyManagementOperationsThroughARM");
     EXPECT_EQ(setting.Value, "false");
   }
-  else
-  {
-    EXPECT_TRUE(true);
-  }
 }
 
-TEST_F(SettingsClientTest, GetSetting_RECORDEDONLY_)
+TEST_F(SettingsClientTest, GetSetting)
 {
+  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  CreateHSMClientForTest();
+  // create certificate method contains all the checks
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-    auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-    CreateHSMClientForTest();
-    // create certificate method contains all the checks
     auto const& client = GetClientForTest(testName);
     auto result = client.GetSetting("AllowKeyManagementOperationsThroughARM");
     EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
     EXPECT_EQ(result.Value.Value, "false");
   }
-  else
-  {
-    EXPECT_TRUE(true);
-  }
 }
 
-TEST_F(SettingsClientTest, UpdateSetting_RECORDEDONLY_)
+TEST_F(SettingsClientTest, UpdateSetting)
 {
+  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  CreateHSMClientForTest();
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-    auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-    CreateHSMClientForTest();
     // create certificate method contains all the checks
     auto const& client = GetClientForTest(testName);
     {
@@ -89,9 +81,5 @@ TEST_F(SettingsClientTest, UpdateSetting_RECORDEDONLY_)
       EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
       EXPECT_EQ(result.Value.Value, "false");
     }
-  }
-  else
-  {
-    EXPECT_TRUE(true);
   }
 }

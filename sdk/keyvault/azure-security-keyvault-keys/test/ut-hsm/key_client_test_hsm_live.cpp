@@ -14,11 +14,12 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 // FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
 TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey_RECORDEDONLY_)
 {
+
+  auto const baseKeyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-    auto const baseKeyName = GetTestName();
-    // This client requires an HSM client
-    CreateHsmClient();
     auto const& client = GetClientForTest(baseKeyName);
     for (const auto& op :
          {KeyOperation::Decrypt,
@@ -61,11 +62,12 @@ TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey_RECORDEDONLY_)
 // FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
 TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey_RECORDEDONLY_)
 {
+
+  auto const baseKeyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-    auto const baseKeyName = GetTestName();
-    // This client requires an HSM client
-    CreateHsmClient();
     auto const& client = GetClientForTest(baseKeyName);
     for (const auto& op :
          {KeyOperation::Decrypt,
@@ -107,10 +109,10 @@ TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey_RECORDEDONLY_)
 // FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
 TEST_F(KeyVaultKeyHSMClient, GetRandomBytes_RECORDEDONLY_)
 {
+  auto const keyName = GetTestName();
+  CreateHsmClient();
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-    auto const keyName = GetTestName();
-    CreateHsmClient();
     auto const& client = GetClientForTest(keyName);
     GetRandomBytesOptions options;
     options.Count = 4;
