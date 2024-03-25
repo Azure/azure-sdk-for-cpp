@@ -14,7 +14,6 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 // FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
 TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey_RECORDEDONLY_)
 {
-
   auto const baseKeyName = GetTestName();
   // This client requires an HSM client
   CreateHsmClient();
