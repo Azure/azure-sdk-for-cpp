@@ -105,28 +105,22 @@ namespace Azure { namespace Core { namespace Test {
 
     std::string RemovePrefix(std::string const& src)
     {
-      std::string updated{src};
+      std::string updated(src);
       // Remove special marker for LIVEONLY
-      auto noPrefix
+      auto const noPrefix
           = std::regex_replace(updated, std::regex(TestContextManager::LiveOnlyToken), "");
-      // Remove special marker for RECORDEDONLY
-      noPrefix = std::regex_replace(updated, std::regex(TestContextManager::RecordedOnlyToken), "");
-
       if (noPrefix != updated)
-      { // we removed either live only or recorded only check if the test should run, since this is
-        // called from the sanitize test name method
-        if ((m_testContext.TestMode == TestMode::RECORD
-             || m_testContext.TestMode == TestMode::PLAYBACK)
-            && m_testContext.LiveOnly)
+      {
+        if (m_testContext.TestMode == TestMode::RECORD)
         {
           TestLog("Test is expected to run on LIVE mode only. Recording won't be created.");
-          SkipTest();
         }
-        else if (m_testContext.TestMode == TestMode::LIVE && m_testContext.RecordedOnly)
+        else if (m_testContext.TestMode == TestMode::PLAYBACK)
         {
-          TestLog("Test is expected to run not run on LIVE mode, only PLAYBACK/RECORD allowed.");
+          TestLog("Test is expected to run on LIVE mode only. Skipping test on playback mode.");
           SkipTest();
         }
+        m_testContext.LiveOnly = true;
         return noPrefix;
       }
       return updated;
