@@ -28,7 +28,6 @@ TEST_F(SettingsClientTest, GetSettings_RECORDEDONLY_)
     EXPECT_EQ(testName, testName);
     CreateHSMClientForTest();
 
-    // create certificate method contains all the checks
     auto const& client = GetClientForTest(testName);
     auto result = client.GetSettings();
     EXPECT_EQ(result.Value.Value.size(), 1);
@@ -44,7 +43,6 @@ TEST_F(SettingsClientTest, GetSettings_RECORDEDONLY_)
 
 TEST_F(SettingsClientTest, GetSetting_RECORDEDONLY_)
 {
-  // create certificate method contains all the checks
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
     auto testName = "GetSetting";
@@ -66,7 +64,7 @@ TEST_F(SettingsClientTest, UpdateSetting_RECORDEDONLY_)
   {
     auto testName = "UpdateSetting";
     CreateHSMClientForTest();
-    // create certificate method contains all the checks
+
     auto const& client = GetClientForTest(testName);
     {
       std::string value = "false";

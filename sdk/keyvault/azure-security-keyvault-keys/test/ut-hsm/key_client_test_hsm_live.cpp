@@ -16,9 +16,9 @@ TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey_RECORDEDONLY_)
 {
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-  auto const baseKeyName = "CreateEcHsmKey";
-  // This client requires an HSM client
-  CreateHsmClient();
+    auto const baseKeyName = "CreateEcHsmKey";
+    // This client requires an HSM client
+    CreateHsmClient();
     auto const& client = GetClientForTest(baseKeyName);
     for (const auto& op :
          {KeyOperation::Decrypt,
@@ -63,9 +63,9 @@ TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey_RECORDEDONLY_)
 {
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
-  auto const baseKeyName = "CreateRsaHsmKey";
-  // This client requires an HSM client
-  CreateHsmClient();
+    auto const baseKeyName = "CreateRsaHsmKey";
+    // This client requires an HSM client
+    CreateHsmClient();
     auto const& client = GetClientForTest(baseKeyName);
     for (const auto& op :
          {KeyOperation::Decrypt,
