@@ -41,7 +41,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
    * @brief Specifies the resource types accessible from an account level shared access
    * signature.
    */
-  enum class AccountSasResource
+  enum class AccountSasResourceType
   {
     /**
      * @brief Indicates whether service-level APIs are accessible from this shared access
@@ -220,7 +220,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      * The resource types associated with the shared access signature. The user is
      * restricted to operations on the specified resources.
      */
-    AccountSasResource ResourceTypes;
+    AccountSasResourceType ResourceTypes;
 
     /**
      * @brief Optional encryption scope to use when sending requests authorized with this SAS url.

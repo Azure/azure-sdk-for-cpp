@@ -98,15 +98,15 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     }
 
     std::string resourceTypes;
-    if ((ResourceTypes & AccountSasResource::Service) == AccountSasResource::Service)
+    if ((ResourceTypes & AccountSasResourceType::Service) == AccountSasResourceType::Service)
     {
       resourceTypes += "s";
     }
-    if ((ResourceTypes & AccountSasResource::Container) == AccountSasResource::Container)
+    if ((ResourceTypes & AccountSasResourceType::Container) == AccountSasResourceType::Container)
     {
       resourceTypes += "c";
     }
-    if ((ResourceTypes & AccountSasResource::Object) == AccountSasResource::Object)
+    if ((ResourceTypes & AccountSasResourceType::Object) == AccountSasResourceType::Object)
     {
       resourceTypes += "o";
     }

@@ -74,7 +74,7 @@ namespace Azure { namespace Data { namespace Test {
               GetAccountName(), GetAccountKey());
           Azure::Data::Tables::Sas::AccountSasBuilder sasBuilder;
           sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          sasBuilder.ResourceTypes = Azure::Data::Tables::Sas::AccountSasResource::All;
+          sasBuilder.ResourceTypes = Azure::Data::Tables::Sas::AccountSasResourceType::All;
           sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServices::All;
           sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
           sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);

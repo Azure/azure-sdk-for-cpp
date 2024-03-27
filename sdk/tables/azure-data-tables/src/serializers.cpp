@@ -115,13 +115,13 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
           "Enabled",
           options.ServiceProperties.Logging.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                 : "false"});
-      if (options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.HasValue())
+      if (options.ServiceProperties.Logging.RetentionPolicyDefinition.DataRetentionInDays.HasValue())
       {
         writer.Write(XmlNode{
             XmlNodeType::StartTag,
             "Days",
             std::to_string(
-                options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.Value())});
+                options.ServiceProperties.Logging.RetentionPolicyDefinition.DataRetentionInDays.Value())});
       }
       writer.Write(XmlNode{XmlNodeType::EndTag});
       writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -145,13 +145,13 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
           "Enabled",
           options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                     : "false"});
-      if (options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.HasValue())
+      if (options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.DataRetentionInDays.HasValue())
       {
         writer.Write(XmlNode{
             XmlNodeType::StartTag,
             "Days",
             std::to_string(
-                options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.Value())});
+                options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.DataRetentionInDays.Value())});
       }
       writer.Write(XmlNode{XmlNodeType::EndTag});
       writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -175,13 +175,13 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
           "Enabled",
           options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                       : "false"});
-      if (options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.HasValue())
+      if (options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.DataRetentionInDays.HasValue())
       {
         writer.Write(XmlNode{
             XmlNodeType::StartTag,
             "Days",
             std::to_string(
-                options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.Value())});
+                options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.DataRetentionInDays.Value())});
       }
       writer.Write(XmlNode{XmlNodeType::EndTag});
       writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -392,7 +392,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
             && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.Logging.RetentionPolicyDefinition.Days = std::stoi(node.Value);
+          response.Logging.RetentionPolicyDefinition.DataRetentionInDays = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -425,7 +425,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
             && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.HourMetrics.RetentionPolicyDefinition.Days = std::stoi(node.Value);
+          response.HourMetrics.RetentionPolicyDefinition.DataRetentionInDays = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -458,7 +458,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
             && xmlPath[1] == XmlTagEnum::kMinuteMetrics
             && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.MinuteMetrics.RetentionPolicyDefinition.Days = std::stoi(node.Value);
+          response.MinuteMetrics.RetentionPolicyDefinition.DataRetentionInDays = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties

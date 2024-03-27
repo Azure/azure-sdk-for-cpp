@@ -92,7 +92,7 @@ namespace Azure { namespace Data { namespace Test {
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
     sasBuilder.IPRange = "iprange";
     sasBuilder.EncryptionScope = "myScope";
-    sasBuilder.ResourceTypes = AccountSasResource::All;
+    sasBuilder.ResourceTypes = AccountSasResourceType::All;
     sasBuilder.Services = AccountSasServices::All;
 
     std::string key = "accountKey";

@@ -142,7 +142,7 @@ namespace Azure { namespace Data { namespace Tables {
        * Indicates the number of days that metrics or logging or soft-deleted data should be
        * retained. All data older than this value will be deleted.
        */
-      Nullable<std::int32_t> Days;
+      Nullable<std::int32_t> DataRetentionInDays;
     };
 
     /**
