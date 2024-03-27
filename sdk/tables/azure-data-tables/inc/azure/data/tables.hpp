@@ -17,4 +17,3 @@
 #include "azure/data/tables/rtti.hpp"
 #include "azure/data/tables/tables_clients.hpp"
 #include "azure/data/tables/tables_sas_builder.hpp"
-#include "azure/data/tables/transactions.hpp"

@@ -14,30 +14,8 @@
 #include <type_traits>
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
-  /**
-   * @brief Defines the protocols permitted for Storage requests made with a shared
-   * access signature.
-   */
-  enum class TablesSasProtocol
-  {
-    /**
-     * @brief No protocol has been specified. If no value is specified,
-     * the service will default to HttpsAndHttp.
-     */
-    None = 0,
-
-    /**
-     * @brief Only requests issued over HTTPS or HTTP will be permitted.
-     */
-    HttpsAndHttp = 1,
-
-    /**
-     * @brief Only requests issued over HTTPS will be permitted.
-     */
-    Https = 2
-  };
-
-  /**
+ 
+   /**
    * @brief Contains the list of
    * permissions that can be set for a table's access policy.
    */

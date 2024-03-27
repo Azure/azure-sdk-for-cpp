@@ -9,8 +9,16 @@
 #include <azure/core/internal/strings.hpp>
 
 #include <chrono>
+#include <cstdlib>
+#include <ctime>
+// useful for debugging to avoid table conflicts when creating tables
+#define RANDOM_TABLE_NAME
+
+#ifdef RANDOM_TABLE_NAME
+#include <iostream>
 #include <string>
 #include <thread>
+#endif
 
 using namespace Azure::Data;
 namespace Azure { namespace Data { namespace Test {
@@ -29,8 +37,13 @@ namespace Azure { namespace Data { namespace Test {
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-
       m_tableName = GetTestNameLowerCase();
+
+#ifdef RANDOM_TABLE_NAME
+      srand(static_cast<unsigned>(time(nullptr)));
+      int random_number = rand() % 1000 + 1;
+      m_tableName = m_tableName + std::to_string(random_number);
+#endif
 
       std::replace(m_tableName.begin(), m_tableName.end(), '-', '0');
       switch (param)
@@ -38,10 +51,10 @@ namespace Azure { namespace Data { namespace Test {
         case AuthType::ConnectionString:
           m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
               Tables::TableServiceClient::CreateFromConnectionString(
-                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), clientOptions));
+                  GetConnectionString(), clientOptions));
           m_tableClient = std::make_shared<Tables::TableClient>(
               Tables::TableClient::CreateFromConnectionString(
-                  GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, tableClientOptions));
+                  GetConnectionString(), m_tableName, tableClientOptions));
           break;
         case AuthType::Key:
           m_credential = GetTestCredential();
@@ -275,7 +288,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->CreateEntity(entity);
+    auto response = m_tableClient->AddEntity(entity);
 
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
@@ -296,7 +309,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->CreateEntity(entity);
+    auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
@@ -331,7 +344,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->CreateEntity(entity);
+    auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
@@ -366,7 +379,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->CreateEntity(entity);
+    auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
@@ -376,7 +389,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
 
-    response = m_tableClient->CreateEntity(entity);
+    response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
     entity.Properties["Product3"] = "Tables3";
@@ -442,17 +455,17 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->CreateEntity(entity);
+    auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
     entity.Properties["Product"] = "Tables2";
     entity.RowKey = "R2";
-    m_tableClient->CreateEntity(entity);
+    m_tableClient->AddEntity(entity);
 
     entity.Properties["Product"] = "Tables3";
     entity.RowKey = "R3";
-    m_tableClient->CreateEntity(entity);
+    m_tableClient->AddEntity(entity);
 
     Azure::Data::Tables::Models::QueryEntitiesOptions options;
 
@@ -483,17 +496,17 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->CreateEntity(entity);
+    auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
     entity.Properties["Product"] = "Tables2";
     entity.RowKey = "R2";
-    m_tableClient->CreateEntity(entity);
+    m_tableClient->AddEntity(entity);
 
     entity.Properties["Product"] = "Tables3";
     entity.RowKey = "R3";
-    m_tableClient->CreateEntity(entity);
+    m_tableClient->AddEntity(entity);
 
     std::string partitionKey = "P1";
     std::string rowKey = "R1";
@@ -504,8 +517,13 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(responseQuery.Value.Properties["Product"], "Tables");
   }
 
-  TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionCreateFail)
   {
+    if (GetParam() == AuthType::SAS)
+    {
+      SkipTest();
+      return;
+    }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.PartitionKey = "P1";
@@ -517,21 +535,23 @@ namespace Azure { namespace Data { namespace Test {
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto transaction = m_tableClient->CreateTransaction("P1");
 
-    transaction.CreateEntity(entity);
-    transaction.CreateEntity(entity2);
+    std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
+    // conflicting entites in the same transaction
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity});
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
-    auto response = m_tableClient->SubmitTransaction(transaction);
+    auto response = m_tableClient->SubmitTransaction(steps);
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionCreateOK)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::SAS)
     {
-      EXPECT_TRUE(true);
+      SkipTest();
       return;
     }
     Azure::Data::Tables::Models::TableEntity entity;
@@ -545,21 +565,23 @@ namespace Azure { namespace Data { namespace Test {
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto transaction = m_tableClient->CreateTransaction("P1");
 
-    transaction.CreateEntity(entity);
-    transaction.CreateEntity(entity2);
+    std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
+    // create two entities in the same transaction
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity});
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
-    auto response = m_tableClient->SubmitTransaction(transaction);
+    auto response = m_tableClient->SubmitTransaction(steps);
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionDelete)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::SAS)
     {
-      EXPECT_TRUE(true);
+      SkipTest();
       return;
     }
     Azure::Data::Tables::Models::TableEntity entity;
@@ -573,27 +595,30 @@ namespace Azure { namespace Data { namespace Test {
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto transaction = m_tableClient->CreateTransaction("P1");
 
-    transaction.CreateEntity(entity);
-    transaction.CreateEntity(entity2);
+    std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
 
-    auto response = m_tableClient->SubmitTransaction(transaction);
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity});
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
-    auto transaction2 = m_tableClient->CreateTransaction("P1");
+    auto response = m_tableClient->SubmitTransaction(steps);
 
-    transaction2.DeleteEntity(entity);
+    steps.clear();
+    // delete entity
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Delete, entity2});
 
-    response = m_tableClient->SubmitTransaction(transaction2);
+    response = m_tableClient->SubmitTransaction(steps);
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionMerge)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::SAS)
     {
-      EXPECT_TRUE(true);
+      SkipTest();
       return;
     }
     Azure::Data::Tables::Models::TableEntity entity;
@@ -607,26 +632,28 @@ namespace Azure { namespace Data { namespace Test {
     entity2.Properties["Name"] = "Azure2";
     entity2.Properties["Product"] = "Tables3";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto transaction = m_tableClient->CreateTransaction("P1");
 
-    transaction.CreateEntity(entity);
+    std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
 
-    auto response = m_tableClient->SubmitTransaction(transaction);
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity});
+    auto response = m_tableClient->SubmitTransaction(steps);
 
-    auto transaction2 = m_tableClient->CreateTransaction("P1");
+    steps.clear();
+    // merge entity
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::UpdateMerge, entity2});
 
-    transaction2.MergeEntity(entity2);
+    response = m_tableClient->SubmitTransaction(steps);
 
-    response = m_tableClient->SubmitTransaction(transaction2);
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionUpdate)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::SAS)
     {
-      EXPECT_TRUE(true);
+      SkipTest();
       return;
     }
     Azure::Data::Tables::Models::TableEntity entity;
@@ -640,17 +667,18 @@ namespace Azure { namespace Data { namespace Test {
     entity2.Properties["Name"] = "Azure2";
     entity2.Properties["Product"] = "Tables3";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto transaction = m_tableClient->CreateTransaction("P1");
+    std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
 
-    transaction.CreateEntity(entity);
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::Add, entity});
+    auto response = m_tableClient->SubmitTransaction(steps);
 
-    auto response = m_tableClient->SubmitTransaction(transaction);
+    steps.clear();
+    // replace entity
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::UpdateReplace, entity2});
+    response = m_tableClient->SubmitTransaction(steps);
 
-    auto transaction2 = m_tableClient->CreateTransaction("P1");
-
-    transaction2.UpdateEntity(entity2);
-
-    response = m_tableClient->SubmitTransaction(transaction2);
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 

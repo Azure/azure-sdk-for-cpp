@@ -48,7 +48,7 @@ int main()
   entity.Properties["Name"] = "Azure";
   entity.Properties["Product"] = "Tables";
   // create new entity
-  auto response = tableClient.CreateEntity(entity);
+  auto response = tableClient.AddEntity(entity);
 
   // update entity
   std::cout << response.Value.ETag << std::endl;

@@ -494,25 +494,25 @@ namespace Azure { namespace Data { namespace Tables {
       UpsertKind UpsertType = UpsertKind::Update;
     };
     /**
-     * @brief Create Entity options.
+     * @brief Add Entity options.
      *
      */
-    struct CreateEntityOptions : public UpsertEntityOptions
+    struct AddEntityOptions : public UpsertEntityOptions
     {
-      CreateEntityOptions() = default;
+      AddEntityOptions() = default;
       /**
        * @brief Create Entity options constructor.
        *
        * @param other Upsert Entity options.
        */
-      explicit CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
+      explicit AddEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
     /**
-     * @brief Create Entity result.
+     * @brief Add Entity result.
      *
      */
-    struct CreateEntityResult
+    struct AddEntityResult
     {
       /**
        * ETag
@@ -596,7 +596,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct UpsertEntityResult final : public MergeEntityResult,
                                       UpdateEntityResult,
-                                      CreateEntityResult
+                                      AddEntityResult
     {
       /**
        * ETag
@@ -628,10 +628,10 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * @brief Upsert Entity result constructor.
        *
-       * @param other Create Entity result.
+       * @param other Add Entity result.
        */
-      UpsertEntityResult(CreateEntityResult const& other)
-          : CreateEntityResult(other), ETag(std::move(other.ETag))
+      UpsertEntityResult(AddEntityResult const& other)
+          : AddEntityResult(other), ETag(std::move(other.ETag))
       {
       }
     };
@@ -697,26 +697,25 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Transaction Action
      *
      */
-    enum class TransactionAction
+    enum class TransactionActionType
     {
-      InsertEntity = 32,
-      DeleteEntity,
-      MergeEntity,
-      UpdateEntity,
-      InsertMergeEntity,
-      InsertReplaceEntity
+      Add,
+      UpdateMerge,
+      UpdateReplace,
+      Delete,
+      InsertMerge,
+      InsertReplace
     };
 
     /**
      * @brief Transaction Step
      *
      */
-    struct TransactionStep final
-    {
+    struct TransactionStep final {
       /**
        * Action.
        */
-      TransactionAction Action;
+      TransactionActionType Action;
       /**
        * Entity.
        */

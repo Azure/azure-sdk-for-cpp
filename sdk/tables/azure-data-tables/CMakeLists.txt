@@ -61,7 +61,6 @@ set(
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/tables_sas_builder.hpp
-    inc/azure/data/tables/transactions.hpp
 )
 
 set(
@@ -79,7 +78,6 @@ set(
     src/serializers.cpp
     src/tables_clients.cpp
     src/tables_sas_builder.cpp
-    src/transactions.cpp
     src/xml_wrapper.cpp
 )
 
