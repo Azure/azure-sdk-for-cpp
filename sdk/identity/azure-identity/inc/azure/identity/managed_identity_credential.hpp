@@ -24,7 +24,7 @@ namespace Azure { namespace Identity {
    * deployment environment. This authentication type works in Azure VMs, App Service and Azure
    * Functions applications, as well as the Azure Cloud Shell. More information about configuring
    * managed identities can be found here:
-   * https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
+   * https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
    */
   class ManagedIdentityCredential final : public Core::Credentials::TokenCredential {
   private:

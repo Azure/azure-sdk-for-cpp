@@ -47,7 +47,7 @@ namespace Azure { namespace Identity {
      *
      * @note Example of an authority host string: "https://login.microsoftonline.us/". See national
      * clouds' Microsoft Entra authentication endpoints:
-     * https://learn.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
+     * https://learn.microsoft.com/entra/identity-platform/authentication-national-cloud.
      */
     std::string AuthorityHost = _detail::DefaultOptionValues::GetAuthorityHost();
 
