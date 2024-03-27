@@ -19,7 +19,11 @@ foreach ($logFile in $filteredLogs)
     Write-Host "=============================================================================================================================="
     Write-Host "Log file: $logFile"
     Write-Host "=============================================================================================================================="
-    Get-Content $logFile | Write-Host
+    try { 
+        Get-Content $logFile | Write-Host
+    } catch { 
+        Write-Host "Could not locate file found using Get-ChildItem $logFile"
+    }
 }
 
 exit 0
