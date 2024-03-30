@@ -140,7 +140,7 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Get HTTP protocol major version.
-     * 
+     *
      */
     int32_t GetMajorVersion() const { return m_majorVersion; }
 
