@@ -73,6 +73,7 @@ namespace Azure { namespace Core { namespace Test {
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
+        session->m_httpKeepAlive = true;
       }
       // Check that after the connection is gone, it is moved back to the pool
       {
@@ -110,6 +111,7 @@ namespace Azure { namespace Core { namespace Test {
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
+        session->m_httpKeepAlive = true;
       }
       {
         std::lock_guard<std::mutex> lock(
@@ -155,6 +157,7 @@ namespace Azure { namespace Core { namespace Test {
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
+        session->m_httpKeepAlive = true;
       }
 
       // Now there should be 2 index wit one connection each
@@ -219,6 +222,7 @@ namespace Azure { namespace Core { namespace Test {
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
+        session->m_httpKeepAlive = true;
       }
       // Now there should be 2 index wit one connection each
       EXPECT_EQ(
