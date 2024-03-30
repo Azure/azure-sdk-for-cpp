@@ -888,10 +888,26 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     }
   }
 
-  this->m_httpKeepAlive = (this->m_response->GetMajorVersion() == 1
-                           && this->m_response->GetMinorVersion() == 1) // is HTTP 1.1?
-      ? (!hasConnectionClose || hasConnectionKeepAlive)
-      : hasConnectionKeepAlive;
+  // HTTP <=1.0 is "close" by default. HTTP 1.1 is "keep-alive" by default.
+  // The value can also be "keep-alive, close" (i.e. "both are fine"), in which case we are
+  // preferring to treat it as keep-alive.
+  // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection)
+  // Should it come to HTTP/2 and HTTP/3, they are "keep-alive", but any response from HTTP/2 or /3
+  // containing a "Connection" header should be considered malformed.
+  // (HTTP/2: https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
+  //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
+  if (this->m_response->GetMajorVersion() == 1 && this->m_response->GetMinorVersion() >= 1)
+  {
+    this->m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
+  }
+  else if (this->m_response->GetMajorVersion() <= 1)
+  {
+    this->m_httpKeepAlive = hasConnectionKeepAlive;
+  }
+  else
+  {
+    this->m_httpKeepAlive = true;
+  }
 
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
