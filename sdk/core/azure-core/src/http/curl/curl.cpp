@@ -896,17 +896,17 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // containing a "Connection" header should be considered malformed.
   // (HTTP/2: https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
   //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
-  if (this->m_response->GetMajorVersion() == 1 && this->m_response->GetMinorVersion() >= 1)
+  if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() >= 1)
   {
-    this->m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
+    m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
   }
   else if (this->m_response->GetMajorVersion() <= 1)
   {
-    this->m_httpKeepAlive = hasConnectionKeepAlive;
+    m_httpKeepAlive = hasConnectionKeepAlive;
   }
   else
   {
-    this->m_httpKeepAlive = true;
+    m_httpKeepAlive = true;
   }
 
   // For Head request, set the length of body response to 0.
