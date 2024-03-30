@@ -900,7 +900,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   {
     m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
   }
-  else if (this->m_response->GetMajorVersion() <= 1)
+  else if (m_response->GetMajorVersion() <= 1)
   {
     m_httpKeepAlive = hasConnectionKeepAlive;
   }
