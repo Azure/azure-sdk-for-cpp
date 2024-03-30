@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 
+- [[#5450]](https://github.com/Azure/azure-sdk-for-cpp/issues/5450) Reverted libcurl connection pool to use more conservative caching strategy.
 - [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/5371) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[morten-ofstad](https://github.com/morten-ofstad)_)
 
 ### Acknowledgments
