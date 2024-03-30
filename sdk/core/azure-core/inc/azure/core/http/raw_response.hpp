@@ -139,6 +139,18 @@ namespace Azure { namespace Core { namespace Http {
     // fields in a class
 
     /**
+     * @brief Get HTTP protocol major version.
+     * 
+     */
+    int32_t GetMajorVersion() const { return m_majorVersion; }
+
+    /**
+     * @brief Get HTTP protocol minor version.
+     *
+     */
+    int32_t GetMinorVersion() const { return m_minorVersion; }
+
+    /**
      * @brief Get HTTP status code of the HTTP response.
      *
      */

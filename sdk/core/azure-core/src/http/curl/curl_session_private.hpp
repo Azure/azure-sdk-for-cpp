@@ -340,6 +340,13 @@ namespace Azure { namespace Core { namespace Http {
     Http::HttpStatusCode m_lastStatusCode = Http::HttpStatusCode::BadRequest;
 
     /**
+     * @brief Holds information on whether the connection can be kept alive, based on HTTP protocol
+     * version and the "Connection" HTTP header.
+     *
+     */
+    bool m_httpKeepAlive = false;
+
+    /**
      * @brief check whether an end of file has been reached.
      * @return `true` if end of file has been reached; otherwise, `false`.
      */
@@ -417,7 +424,7 @@ namespace Azure { namespace Core { namespace Http {
       if (IsEOF() && m_keepAlive && !m_connectionUpgraded)
       {
         _detail::CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
-            std::move(m_connection), m_lastStatusCode);
+            std::move(m_connection), m_httpKeepAlive);
       }
     }
 

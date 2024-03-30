@@ -282,7 +282,7 @@ namespace Azure { namespace Core { namespace Test {
         for (int count = 0; count < 5; count++)
         {
           CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
-              std::move(connections[count]), Http::HttpStatusCode::Ok);
+              std::move(connections[count]), true);
         }
       }
 
@@ -351,7 +351,7 @@ namespace Azure { namespace Core { namespace Test {
 
       //       CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
       //           std::unique_ptr<MockCurlNetworkConnection>(curlMock),
-      //           Azure::Core::Http::HttpStatusCode::Ok);
+      //           true);
       //     }
       //     // No need to take look here because connections are mocked to never be expired.
       //     EXPECT_EQ(
@@ -389,7 +389,7 @@ namespace Azure { namespace Core { namespace Test {
 
       //       CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
       //           std::unique_ptr<MockCurlNetworkConnection>(curlMock),
-      //           Azure::Core::Http::HttpStatusCode::Ok);
+      //           true);
 
       //       EXPECT_EQ(
       //           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -455,7 +455,7 @@ namespace Azure { namespace Core { namespace Test {
         }
         // move connection back to the pool
         Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+            .MoveConnectionBackToPool(std::move(connection), true);
       }
 
       {
@@ -494,7 +494,7 @@ namespace Azure { namespace Core { namespace Test {
         }
         // move connection back to the pool
         Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+            .MoveConnectionBackToPool(std::move(connection), true);
       }
       {
         std::lock_guard<std::mutex> lock(
@@ -532,7 +532,7 @@ namespace Azure { namespace Core { namespace Test {
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
         // move connection back to the pool
         Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+            .MoveConnectionBackToPool(std::move(connection), true);
       }
 
       {
@@ -570,7 +570,7 @@ namespace Azure { namespace Core { namespace Test {
         }
         // move connection back to the pool
         Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-            .MoveConnectionBackToPool(std::move(connection), Azure::Core::Http::HttpStatusCode::Ok);
+            .MoveConnectionBackToPool(std::move(connection), true);
       }
       {
         std::lock_guard<std::mutex> lock(

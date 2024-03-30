@@ -874,6 +874,25 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   this->m_innerBufferSize = bufferSize;
   this->m_lastStatusCode = this->m_response->GetStatusCode();
 
+  bool hasConnectionKeepAlive = false;
+  bool hasConnectionClose = false;
+  {
+    const Core::CaseInsensitiveMap& responseHeaders = m_response->GetHeaders();
+    const auto connectionHeader = responseHeaders.find("Connection");
+    if (connectionHeader != responseHeaders.cend())
+    {
+      const std::string headerValueLowercase
+          = Core::_internal::StringExtensions::ToLower(connectionHeader->second);
+      hasConnectionKeepAlive = headerValueLowercase.find("keep-alive") != std::string::npos;
+      hasConnectionClose = headerValueLowercase.find("close") != std::string::npos;
+    }
+  }
+
+  this->m_httpKeepAlive = (this->m_response->GetMajorVersion() == 1
+                           && this->m_response->GetMinorVersion() == 1) // is HTTP 1.1?
+      ? (!hasConnectionClose || hasConnectionKeepAlive)
+      : hasConnectionKeepAlive;
+
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
   // length of the body. However, Server won't send body
@@ -2129,13 +2148,11 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 // first connection to be picked next time some one ask for a connection to the pool (LIFO)
 void CurlConnectionPool::MoveConnectionBackToPool(
     std::unique_ptr<CurlNetworkConnection> connection,
-    HttpStatusCode lastStatusCode)
+    bool httpKeepAlive)
 {
-  auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
-  if ((code < 200 || code >= 300) && lastStatusCode != HttpStatusCode::NotFound)
+  if (!httpKeepAlive)
   {
-    // A handler with previous response with Error can't be re-use.
-    return;
+    return; // The server has asked us to not re-use this connection.
   }
 
   if (connection->IsShutdown())
