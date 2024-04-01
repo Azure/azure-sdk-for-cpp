@@ -306,7 +306,7 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
-    entity.SetRowKey ( "R1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -322,7 +322,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(updateResponse.Value.ETag.empty());
 
     entity.Properties["Product"] = "Tables3";
-    entity.ETag = updateResponse.Value.ETag;
+    entity.SetETag(updateResponse.Value.ETag);
     auto updateResponse2 = m_tableClient->UpdateEntity(entity);
 
     EXPECT_EQ(
@@ -340,8 +340,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.SetPartitionKey( "P1");
-    entity.SetRowKey ( "R1");
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -357,7 +357,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(updateResponse.Value.ETag.empty());
 
     entity.Properties["Product3"] = "Tables3";
-    entity.ETag = updateResponse.Value.ETag;
+    entity.SetETag(updateResponse.Value.ETag);
     auto updateResponse2 = m_tableClient->MergeEntity(entity);
 
     EXPECT_EQ(
@@ -375,7 +375,7 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-   entity.SetPartitionKey("P1");
+    entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
@@ -394,7 +394,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
     entity.Properties["Product3"] = "Tables3";
-    entity.ETag = response.Value.ETag;
+    entity.SetETag(response.Value.ETag);
     auto updateResponse2 = m_tableClient->DeleteEntity(entity);
 
     EXPECT_EQ(
@@ -433,7 +433,7 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::UpsertEntityOptions options2;
     options2.UpsertType = Azure::Data::Tables::Models::UpsertKind::Merge;
     entity.Properties["Product3"] = "Tables3";
-    entity.ETag = updateResponse.Value.ETag;
+    entity.SetETag(updateResponse.Value.ETag);
     auto updateResponse2 = m_tableClient->MergeEntity(entity, options2);
 
     EXPECT_EQ(
@@ -492,7 +492,7 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-   entity.SetPartitionKey("P1");
+    entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";

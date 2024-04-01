@@ -451,30 +451,17 @@ namespace Azure { namespace Data { namespace Tables {
        * Properties
        */
       std::map<std::string, std::string> Properties;
-      /**
-       * ETag
-       */
-      Azure::Nullable<std::string> ETag;
 
-      /**
-       * @brief Table Entity data type.
-       *
-       */
-      TableEntityDataType DataType;
-      
       /**
        * @brief Get partition key.
        *
        * @return Partition key
        */
-      Azure::Nullable<std::string> GetPartitionKey() const { return Properties.at("PartitionKey"); }
-
-      /**
-       * @brief Get row key.
-       *
-       * @return Row key
-       */
-      Azure::Nullable<std::string> GetRowKey() const { return Properties.at("RowKey"); }
+      Azure::Nullable<std::string> GetPartitionKey() const
+      {
+        return Properties.find("PartitionKey") == Properties.end() ? Azure::Nullable<std::string>()
+                                                                 : Properties.at("PartitionKey");
+      }
 
       /**
        * @brief Set Partition key.
@@ -487,14 +474,55 @@ namespace Azure { namespace Data { namespace Tables {
       }
 
       /**
+       * @brief Get row key.
+       *
+       * @return Row key
+       */
+      Azure::Nullable<std::string> GetRowKey() const
+      {
+        return Properties.find("RowKey") == Properties.end() ? Azure::Nullable<std::string>()
+                                                                 : Properties.at("RowKey");
+      }
+      /**
        * @brief Set Row key.
        *
        * @param rowKey Row key.
        */
-      void SetRowKey(const std::string& rowKey)
+      void SetRowKey(const std::string& rowKey) { Properties["RowKey"] = rowKey; }
+
+      /**
+       * @brief Get ETag.
+       *
+       * @return ETag
+       */
+      Azure::Nullable<std::string> GetETag() const
       {
-        Properties["RowKey"] = rowKey;
+        return Properties.find("odata.etag") == Properties.end() ? Azure::Nullable<std::string>()
+                                                                 : Properties.at("odata.etag");
       }
+      /**
+       * @brief Set ETag.
+       *
+       * @param eTag ETag.
+       */
+      void SetETag(const std::string& eTag) { Properties["odata.etag"] = eTag; }
+
+      /**
+       * @brief Get time stamp.
+       *
+       * @return timestamp
+       */
+      Azure::Nullable<std::string> GetTimestamp() const
+      {
+        return Properties.find("Timestamp") == Properties.end() ? Azure::Nullable<std::string>()
+                                                                : Properties.at("Timestamp");
+      }
+      /**
+       * @brief Set time stamp.
+       *
+       * @param timeStamp time stamp.
+       */
+      void SetTimestamp(const std::string& timestamp) { Properties["Timestamp"] = timestamp; }
     };
 
     /**

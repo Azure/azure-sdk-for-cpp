@@ -665,9 +665,9 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
   request.SetHeader("Accept", "application/json;odata=nometadata");
   request.SetHeader("Prefer", "return-no-content");
-  if (tableEntity.ETag.HasValue())
+  if (tableEntity.GetETag().HasValue())
   {
-    request.SetHeader("If-Match", tableEntity.ETag.Value());
+    request.SetHeader("If-Match", tableEntity.GetETag().Value());
   }
   else
   {
@@ -710,9 +710,9 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
   request.SetHeader("Accept", "application/json;odata=nometadata");
   request.SetHeader("Prefer", "return-no-content");
-  if (tableEntity.ETag.HasValue())
+  if (tableEntity.GetETag().HasValue())
   {
-    request.SetHeader("If-Match", tableEntity.ETag.Value());
+    request.SetHeader("If-Match", tableEntity.GetETag().Value());
   }
   else
   {
@@ -744,9 +744,9 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
-  if (tableEntity.ETag.HasValue())
+  if (tableEntity.GetETag().HasValue())
   {
-    request.SetHeader("If-Match", tableEntity.ETag.Value());
+    request.SetHeader("If-Match", tableEntity.GetETag().Value());
   }
   else
   {
@@ -1034,9 +1034,9 @@ std::string TableClient::PrepDeleteEntity(
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   // returnValue += "Prefer: return-no-content\n";
   returnValue += "DataServiceVersion: 3.0;\n";
-  if (entity.ETag.HasValue())
+  if (entity.GetETag().HasValue())
   {
-    returnValue += "If-Match: " + entity.ETag.Value();
+    returnValue += "If-Match: " + entity.GetETag().Value();
   }
   else
   {
@@ -1078,9 +1078,9 @@ std::string TableClient::PrepUpdateEntity(
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   returnValue += "Prefer: return-no-content\n";
   returnValue += "DataServiceVersion: 3.0;\n";
-  if (entity.ETag.HasValue())
+  if (entity.GetETag().HasValue())
   {
-    returnValue += "If-Match: " + entity.ETag.Value();
+    returnValue += "If-Match: " + entity.GetETag().Value();
   }
   else
   {

@@ -58,12 +58,12 @@ int main()
 
   // merge entity
   entity.Properties["Product"] = "Tables3";
-  entity.ETag = updateResponse.Value.ETag;
+  entity.SetETag( updateResponse.Value.ETag);
   auto updateResponse2 = tableClient.MergeEntity(entity);
 
   // delete entity
   std::cout << updateResponse2.Value.ETag << std::endl;
-  entity.ETag = updateResponse2.Value.ETag;
+  entity.SetETag(updateResponse2.Value.ETag);
   auto deleteResponse = tableClient.DeleteEntity(entity);
 
   // delete existing table

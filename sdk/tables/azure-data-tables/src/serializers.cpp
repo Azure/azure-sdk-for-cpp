@@ -531,13 +531,13 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
     }
     if (json.contains("odata.etag"))
     {
-      tableEntity.ETag = json["odata.etag"].get<std::string>();
+      tableEntity.SetETag( json["odata.etag"].get<std::string>());
     }
     for (auto properties : json.get<std::map<std::string, std::string>>())
     {
       if (properties.first.find("odata.type") != std::string::npos)
       {
-        tableEntity.DataType = Models::TableEntityDataType(properties.second);
+        //tableEntity.DataType = Models::TableEntityDataType(properties.second);
       }
       if (properties.first != "odata.metadata" && properties.first != "PartitionKey"
           && properties.first != "RowKey" && properties.first != "odata.etag")
