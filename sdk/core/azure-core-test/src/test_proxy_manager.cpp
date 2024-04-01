@@ -243,7 +243,7 @@ void TestProxyManager::SetProxySanitizer()
   addSanitizer(SanitizerType::General, g_accountRegex, "account");
   addSanitizer(
       SanitizerType::Body,
-      "client_secret=(?<clientsecret>[a-zA-Z0-9\\%_~\\-\\.]+)",
+      "client_secret=(?<clientsecret>[^&]+)",
       "clientsecret");
   const std::string storageSasSignatureRegex = "\\?.*sig=(?<sassig>[a-zA-Z0-9\\%\\/+=]+)";
   addSanitizer(SanitizerType::Uri, storageSasSignatureRegex, "sassig");
