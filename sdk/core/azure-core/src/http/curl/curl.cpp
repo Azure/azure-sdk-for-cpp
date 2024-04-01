@@ -874,39 +874,98 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   this->m_innerBufferSize = bufferSize;
   this->m_lastStatusCode = this->m_response->GetStatusCode();
 
-  bool hasConnectionKeepAlive = false;
-  bool hasConnectionClose = false;
+  // The logic below comes from the expectation that Azure services, particularly Storage, may not
+  // conform to HTTP standards when it comes to handling 100-continue requests, and not send
+  // "Connection: close" when they should. We do not know for sure if this is true, but this logic
+  // did exist for libcurl transport in earlier C++ SDK versions.
+  //
+  // The idea is the following: if status code is not 2xx, and request header contains "Expect:
+  // 100-continue" and request body length is not zero, we don't reuse the connection.
+  //
+  // More detailed description of what might happen if we don't have this logic:
+  // 1. Storage SDK sends a PUT request with a non-empty request body (which means Content-Length
+  // request header is not 0, let's say it's 6) and Expect: 100-continue request header, but it
+  // doesn't send the header unless server returns 100 Continue status code.
+  // 2. Storage service returns 4xx status code and response headers, but it doesn't want to close
+  // this connection, so there's no Connection: close in response headers.
+  // 3. Now both client and server agree to continue using this connection. But they do not agree in
+  // the current status of this connection.
+  //    3.1. Client side thinks the previous request is finished because it has received a status
+  //    code and response headers. It should send a new HTTP request if there's any. 3.2. Server
+  //    side thinks the previous request is not finished because it hasn't received the request
+  //    body. I tend to think this is a bug of server-side.
+  // 4. Client side sends a new request, for example,
+  //    HEAD /whatever/path HTTP/1.1
+  //    host: foo.bar.com
+  //    ...
+  // 5. Server side takes the first 6 bytes (HEAD /) of the send request and thinks this is the
+  // request body of the first request and discard it.
+  // 6. Server side keeps reading the remaining data on the wire and thinks the first part
+  // (whatever/path) is an HTTP verb. It fails the request with 400 invalid verb.
+  bool non2xxAfter100ContinueWithNonzeroContentLength = false;
   {
-    const Core::CaseInsensitiveMap& responseHeaders = m_response->GetHeaders();
-    const auto connectionHeader = responseHeaders.find("Connection");
-    if (connectionHeader != responseHeaders.cend())
+    auto responseHttpCodeInt
+        = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(m_lastStatusCode);
+    if (responseHttpCodeInt < 200 || responseHttpCodeInt >= 300)
     {
-      const std::string headerValueLowercase
-          = Core::_internal::StringExtensions::ToLower(connectionHeader->second);
-      hasConnectionKeepAlive = headerValueLowercase.find("keep-alive") != std::string::npos;
-      hasConnectionClose = headerValueLowercase.find("close") != std::string::npos;
+      const auto requestExpectHeader = m_request.GetHeader("Expect");
+      if (requestExpectHeader.HasValue())
+      {
+        const auto requestExpectHeaderValueLowercase
+            = Core::_internal::StringExtensions::ToLower(requestExpectHeader.Value());
+        if (requestExpectHeaderValueLowercase == "100-continue")
+        {
+          const auto requestContentLengthHeaderValue = m_request.GetHeader("Content-Length");
+          if (requestContentLengthHeaderValue.HasValue()
+              && requestContentLengthHeaderValue.Value() != "0")
+          {
+            non2xxAfter100ContinueWithNonzeroContentLength = true;
+          }
+        }
+      }
     }
   }
 
-  // HTTP <=1.0 is "close" by default. HTTP 1.1 is "keep-alive" by default.
-  // The value can also be "keep-alive, close" (i.e. "both are fine"), in which case we are
-  // preferring to treat it as keep-alive.
-  // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection)
-  // Should it come to HTTP/2 and HTTP/3, they are "keep-alive", but any response from HTTP/2 or /3
-  // containing a "Connection" header should be considered malformed.
-  // (HTTP/2: https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
-  //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
-  if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() >= 1)
+  if (non2xxAfter100ContinueWithNonzeroContentLength)
   {
-    m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
-  }
-  else if (m_response->GetMajorVersion() <= 1)
-  {
-    m_httpKeepAlive = hasConnectionKeepAlive;
+    m_httpKeepAlive = false;
   }
   else
   {
-    m_httpKeepAlive = true;
+    bool hasConnectionKeepAlive = false;
+    bool hasConnectionClose = false;
+    {
+      const Core::CaseInsensitiveMap& responseHeaders = m_response->GetHeaders();
+      const auto connectionHeader = responseHeaders.find("Connection");
+      if (connectionHeader != responseHeaders.cend())
+      {
+        const std::string headerValueLowercase
+            = Core::_internal::StringExtensions::ToLower(connectionHeader->second);
+        hasConnectionKeepAlive = headerValueLowercase.find("keep-alive") != std::string::npos;
+        hasConnectionClose = headerValueLowercase.find("close") != std::string::npos;
+      }
+    }
+
+    // HTTP <=1.0 is "close" by default. HTTP 1.1 is "keep-alive" by default.
+    // The value can also be "keep-alive, close" (i.e. "both are fine"), in which case we are
+    // preferring to treat it as keep-alive.
+    // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection)
+    // Should it come to HTTP/2 and HTTP/3, they are "keep-alive", but any response from HTTP/2 or
+    // /3 containing a "Connection" header should be considered malformed. (HTTP/2:
+    // https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
+    //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
+    if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() >= 1)
+    {
+      m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
+    }
+    else if (m_response->GetMajorVersion() <= 1)
+    {
+      m_httpKeepAlive = hasConnectionKeepAlive;
+    }
+    else
+    {
+      m_httpKeepAlive = true;
+    }
   }
 
   // For Head request, set the length of body response to 0.
