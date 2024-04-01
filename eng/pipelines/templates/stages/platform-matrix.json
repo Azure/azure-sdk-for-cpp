@@ -15,6 +15,7 @@
           "Pool": "env:MACPOOL",
           "BuildArgs": "-j 10",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
+          "VCPKG_FEATURE_FLAGS": "-binarycaching",
           "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
           "PublishMapFiles": "true"
         }
