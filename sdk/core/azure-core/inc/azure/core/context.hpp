@@ -73,7 +73,7 @@ namespace Azure { namespace Core {
        * @param other Other `%Key` to compare with.
        * @return `false` if instances are equal; otherwise, `true`.
        */
-      bool operator!=(Key const& other) const { return !(*this == other); }
+      bool operator!=(Key const& other) const { return !!!(*this == other); }
     };
 
   private:
