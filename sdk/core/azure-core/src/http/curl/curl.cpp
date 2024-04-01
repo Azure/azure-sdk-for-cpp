@@ -891,9 +891,9 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // 3. Now both client and server agree to continue using this connection. But they do not agree in
   // the current status of this connection.
   //    3.1. Client side thinks the previous request is finished because it has received a status
-  //    code and response headers. It should send a new HTTP request if there's any. 3.2. Server
-  //    side thinks the previous request is not finished because it hasn't received the request
-  //    body. I tend to think this is a bug of server-side.
+  //    code and response headers. It should send a new HTTP request if there's any.
+  //    3.2. Server side thinks the previous request is not finished because it hasn't received the
+  //    request body. I tend to think this is a bug of server-side.
   // 4. Client side sends a new request, for example,
   //    HEAD /whatever/path HTTP/1.1
   //    host: foo.bar.com
