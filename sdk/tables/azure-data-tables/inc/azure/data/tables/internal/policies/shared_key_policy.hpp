@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/named_key_credential.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 
@@ -14,7 +14,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
 
   class SharedKeyPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
-    explicit SharedKeyPolicy(std::shared_ptr<Credentials::SharedKeyCredential> credential)
+    explicit SharedKeyPolicy(std::shared_ptr<Credentials::NamedKeyCredential> credential)
         : m_credential{std::move(credential)}
     {
     }
@@ -39,7 +39,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
   private:
     std::string GetSignature(const Core::Http::Request& request) const;
 
-    std::shared_ptr<Credentials::SharedKeyCredential> m_credential;
+    std::shared_ptr<Credentials::NamedKeyCredential> m_credential;
   };
 
 }}}}} // namespace Azure::Data::Tables::_detail::Policies

@@ -12,7 +12,8 @@
 #include <cstdlib>
 #include <ctime>
 // useful for debugging to avoid table conflicts when creating tables
-#define RANDOM_TABLE_NAME
+// as it takes a while from then a table is deleted to when it can be recreated
+//#define RANDOM_TABLE_NAME
 
 #ifdef RANDOM_TABLE_NAME
 #include <iostream>
@@ -70,7 +71,7 @@ namespace Azure { namespace Data { namespace Test {
               tableClientOptions));
           break;
         case AuthType::SAS:
-          auto creds = std::make_shared<Azure::Data::Tables::Credentials::SharedKeyCredential>(
+          auto creds = std::make_shared<Azure::Data::Tables::Credentials::NamedKeyCredential>(
               GetAccountName(), GetAccountKey());
           Azure::Data::Tables::Sas::AccountSasBuilder sasBuilder;
           sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

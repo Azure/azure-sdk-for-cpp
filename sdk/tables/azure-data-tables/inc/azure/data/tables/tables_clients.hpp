@@ -4,7 +4,7 @@
 #pragma once
 
 #include "azure/data/tables/credentials/azure_sas_credential.hpp"
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -171,14 +171,14 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Initializes a new instance of tableClient.
      *
      * @param tableName The name of the table.
-     * @param credential The shared key credential used to sign requests.
+     * @param credential The named key credential used to sign requests.
      * @param url A url referencing the table that includes the name of the account and the name of
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit TableClient(
         const std::string& tableName,
-        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
         std::string url,
         const TableClientOptions& options = {});
 
@@ -395,13 +395,13 @@ namespace Azure { namespace Data { namespace Tables {
      *
      * @param serviceUrl A url referencing the table that includes the name of the account and the
      * name of the table.
-     * @param credential The shared key credential used to sign requests.
+     * @param credential The named key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit TableServiceClient(
         const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
         const TableClientOptions& options = {});
 
     /**

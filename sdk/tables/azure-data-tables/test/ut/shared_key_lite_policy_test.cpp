@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
 #include "azure/data/tables/internal/policies/shared_key_lite_policy.hpp"
 
@@ -27,7 +27,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
                                          std::vector<uint8_t>(accountKey.begin(), accountKey.end()))
           + ";EndpointSuffix = core.windows.net ";
 
-      std::shared_ptr<SharedKeyCredential> credential;
+      std::shared_ptr<NamedKeyCredential> credential;
       auto parsedConnectionString = ParseConnectionString(connectionString);
       SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
@@ -54,7 +54,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
                                          std::vector<uint8_t>(accountKey.begin(), accountKey.end()))
           + ";EndpointSuffix = core.windows.net ";
 
-      std::shared_ptr<SharedKeyCredential> credential;
+      std::shared_ptr<NamedKeyCredential> credential;
       auto parsedConnectionString = ParseConnectionString(connectionString);
       SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 
@@ -73,7 +73,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _internal { name
                                          std::vector<uint8_t>(accountKey.begin(), accountKey.end()))
           + ";EndpointSuffix = core.windows.net ";
 
-      std::shared_ptr<SharedKeyCredential> credential;
+      std::shared_ptr<NamedKeyCredential> credential;
       auto parsedConnectionString = ParseConnectionString(connectionString);
       SharedKeyLitePolicy policy(parsedConnectionString.KeyCredential);
 

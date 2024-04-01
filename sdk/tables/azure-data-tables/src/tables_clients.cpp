@@ -90,7 +90,7 @@ TableServiceClient::TableServiceClient(
 
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
-    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
     const TableClientOptions& options)
     : m_url(Azure::Core::Url(serviceUrl))
 {
@@ -358,7 +358,7 @@ TableClient::TableClient(
 
 TableClient::TableClient(
     const std::string& tableName,
-    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
     std::string url,
     const TableClientOptions& options)
     : m_url(std::move(url)), m_tableName(tableName)

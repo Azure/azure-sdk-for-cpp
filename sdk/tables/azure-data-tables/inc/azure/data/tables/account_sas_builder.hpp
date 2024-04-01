@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/enum_operators.hpp"
 
 #include <azure/core/datetime.hpp>
@@ -74,23 +74,6 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   enum class AccountSasServices
   {
     /**
-     * @brief Indicates whether Azure Blob Storage resources are accessible from the shared
-     * access signature.
-     */
-    Blobs = 1,
-
-    /**
-     * @brief Indicates whether Azure Queue Storage resources are accessible from the shared
-     * access signature.
-     */
-    Queue = 2,
-
-    /**
-     * @brief Indicates whether Azure File Storage resources are accessible from the shared
-     * access signature.
-     */
-    Files = 4,
-    /**
      * @brief Indicates whether Azure Table Storage resources are accessible from the shared
      * access signature.
      */
@@ -123,54 +106,19 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     Delete = 4,
 
     /**
-     * @brief Indicates that deleting previous blob version is permitted.
-     */
-    DeleteVersion = 8,
-
-    /**
      * @brief Indicates that List is permitted.
      */
-    List = 16,
+    List = 8,
 
     /**
      * @brief Indicates that Add is permitted.
      */
-    Add = 32,
-
-    /**
-     * @brief Indicates that Create is permitted.
-     */
-    Create = 64,
+    Add = 16,
 
     /**
      * @brief Indicates that Update is permitted.
      */
-    Update = 128,
-
-    /**
-     * @brief Indicates that Process is permitted.
-     */
-    Process = 256,
-
-    /**
-     * @brief Indicates that reading and writing tags is permitted.
-     */
-    Tags = 512,
-
-    /**
-     * @brief Indicates that filtering by tags is permitted.
-     */
-    Filter = 1024,
-
-    /**
-     * @brief Indicates that setting immutability policy is permitted.
-     */
-    SetImmutabilityPolicy = 2048,
-
-    /**
-     * @brief Indicates that permanent delete is permitted.
-     */
-    PermanentDelete = 4096,
+    Update = 32,
 
     /**
      * @brief Indicates that all permissions are set.
@@ -243,16 +191,14 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
 
     /**
-     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
+     * @brief Uses the NamedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
-     * @param credential
-     * The storage account's shared key credential.
-     * @return The SAS query parameters used for
-     * authenticating requests.
+     * @param credential The named key credential.
+     * @return The SAS query parameters used for authenticating requests.
      */
     std::string GenerateSasToken(
-        const Azure::Data::Tables::Credentials::SharedKeyCredential& credential);
+        const Azure::Data::Tables::Credentials::NamedKeyCredential& credential);
 
   private:
     std::string Permissions;
