@@ -13,7 +13,7 @@
 #include <ctime>
 // useful for debugging to avoid table conflicts when creating tables
 // as it takes a while from then a table is deleted to when it can be recreated
-//#define RANDOM_TABLE_NAME
+// #define RANDOM_TABLE_NAME
 
 #ifdef RANDOM_TABLE_NAME
 #include <iostream>
@@ -284,8 +284,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -305,8 +305,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey ( "R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -340,8 +340,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey( "P1");
+    entity.SetRowKey ( "R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -375,8 +375,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+   entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -411,8 +411,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -451,8 +451,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -461,11 +461,11 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.ETag.empty());
 
     entity.Properties["Product"] = "Tables2";
-    entity.RowKey = "R2";
+    entity.SetRowKey("R2");
     m_tableClient->AddEntity(entity);
 
     entity.Properties["Product"] = "Tables3";
-    entity.RowKey = "R3";
+    entity.SetRowKey("R3");
     m_tableClient->AddEntity(entity);
 
     Azure::Data::Tables::Models::QueryEntitiesOptions options;
@@ -492,8 +492,8 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
 
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+   entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -502,18 +502,18 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.ETag.empty());
 
     entity.Properties["Product"] = "Tables2";
-    entity.RowKey = "R2";
+    entity.SetRowKey("R2");
     m_tableClient->AddEntity(entity);
 
     entity.Properties["Product"] = "Tables3";
-    entity.RowKey = "R3";
+    entity.SetRowKey("R3");
     m_tableClient->AddEntity(entity);
 
     std::string partitionKey = "P1";
     std::string rowKey = "R1";
     auto responseQuery = m_tableClient->GetEntity(partitionKey, rowKey);
-    EXPECT_EQ(responseQuery.Value.PartitionKey, "P1");
-    EXPECT_EQ(responseQuery.Value.RowKey, "R1");
+    EXPECT_EQ(responseQuery.Value.GetPartitionKey().Value(), "P1");
+    EXPECT_EQ(responseQuery.Value.GetRowKey().Value(), "R1");
     EXPECT_EQ(responseQuery.Value.Properties["Name"], "Azure");
     EXPECT_EQ(responseQuery.Value.Properties["Product"], "Tables");
   }
@@ -527,12 +527,12 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    entity2.PartitionKey = "P1";
-    entity2.RowKey = "R1";
+    entity2.SetPartitionKey("P1");
+    entity2.SetRowKey("R1");
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -557,12 +557,12 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    entity2.PartitionKey = "P1";
-    entity2.RowKey = "R2";
+    entity2.SetPartitionKey("P1");
+    entity2.SetRowKey("R2");
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -587,12 +587,12 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    entity2.PartitionKey = "P1";
-    entity2.RowKey = "R2";
+    entity2.SetPartitionKey("P1");
+    entity2.SetRowKey("R2");
     entity2.Properties["Name"] = "Azure";
     entity2.Properties["Product"] = "Tables";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -624,12 +624,12 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    entity2.PartitionKey = "P1";
-    entity2.RowKey = "R1";
+    entity2.SetPartitionKey("P1");
+    entity2.SetRowKey("R1");
     entity2.Properties["Name"] = "Azure2";
     entity2.Properties["Product"] = "Tables3";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
@@ -659,12 +659,12 @@ namespace Azure { namespace Data { namespace Test {
     }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
-    entity.PartitionKey = "P1";
-    entity.RowKey = "R1";
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
     entity.Properties["Name"] = "Azure";
     entity.Properties["Product"] = "Tables";
-    entity2.PartitionKey = "P1";
-    entity2.RowKey = "R1";
+    entity2.SetPartitionKey("P1");
+    entity2.SetRowKey("R1");
     entity2.Properties["Name"] = "Azure2";
     entity2.Properties["Product"] = "Tables3";
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);

@@ -332,7 +332,7 @@ TableClient::TableClient(
   m_url = Azure::Core::Url(serviceUrl);
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
+  perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
 
@@ -650,8 +650,9 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
-      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
+      m_tableName + "(PartitionKey='"
+      + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value()) + "',RowKey='"
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value()) + "')");
 
   std::string jsonBody = Serializers::UpdateEntity(tableEntity);
 
@@ -694,8 +695,9 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
-      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
+      m_tableName + "(PartitionKey='"
+      + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value()) + "',RowKey='"
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value()) + "')");
 
   std::string jsonBody = Serializers::MergeEntity(tableEntity);
 
@@ -736,8 +738,9 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 {
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
-      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
+      m_tableName + "(PartitionKey='"
+      + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value()) + "',RowKey='"
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value()) + "')");
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
@@ -910,8 +913,8 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
   url.AppendPath("$batch");
   std::string batchId = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
   std::string changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
-  
-  std::string body = PreparePayload(batchId,changesetId,steps);
+
+  std::string body = PreparePayload(batchId, changesetId, steps);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(body.data()), body.length());
 
@@ -1026,8 +1029,8 @@ std::string TableClient::PrepDeleteEntity(
   returnValue += "Content-Transfer-Encoding: binary\n\n";
 
   returnValue += "DELETE " + m_url.GetAbsoluteUrl() + "/" + m_tableName + "(PartitionKey='"
-      + entity.PartitionKey
-      + "',RowKey='" + entity.RowKey + "')" + " HTTP/1.1\n";
+      + entity.GetPartitionKey().Value() + "',RowKey='" + entity.GetRowKey().Value() + "')"
+      + " HTTP/1.1\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   // returnValue += "Prefer: return-no-content\n";
   returnValue += "DataServiceVersion: 3.0;\n";
@@ -1050,8 +1053,8 @@ std::string TableClient::PrepMergeEntity(std::string const& changesetId, Models:
   returnValue += "Content-Transfer-Encoding: binary\n\n";
 
   returnValue += "MERGE " + m_url.GetAbsoluteUrl() + "/" + m_tableName + "(PartitionKey='"
-      + entity.PartitionKey
-      + "',RowKey='" + entity.RowKey + "')" + " HTTP/1.1\n";
+      + entity.GetPartitionKey().Value() + "',RowKey='" + entity.GetRowKey().Value() + "')"
+      + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   returnValue += "DataServiceVersion: 3.0;\n\n";
@@ -1069,8 +1072,8 @@ std::string TableClient::PrepUpdateEntity(
   returnValue += "Content-Transfer-Encoding: binary\n\n";
 
   returnValue += "PUT " + m_url.GetAbsoluteUrl() + "/" + m_tableName + "(PartitionKey='"
-      + entity.PartitionKey
-      + "',RowKey='" + entity.RowKey + "')" + " HTTP/1.1\n";
+      + entity.GetPartitionKey().Value() + "',RowKey='" + entity.GetRowKey().Value() + "')"
+      + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   returnValue += "Prefer: return-no-content\n";

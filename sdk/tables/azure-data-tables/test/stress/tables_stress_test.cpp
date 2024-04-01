@@ -30,8 +30,8 @@ namespace Azure { namespace Data { namespace Tables { namespace StressTest {
       for (int i = 0; i < num; i++)
       {
         Models::TableEntity entity;
-        entity.PartitionKey = "pk1";
-        entity.RowKey = "rk1";
+        entity.SetPartitionKey("pk1");
+        entity.SetRowKey("rk1");
         entity.Properties.emplace("prop1", "value1");
         entity.Properties.emplace("prop2", "value2");
         steps.emplace_back(
@@ -43,7 +43,7 @@ namespace Azure { namespace Data { namespace Tables { namespace StressTest {
         steps.emplace_back(
             Models::TransactionStep{Models::TransactionActionType::UpdateMerge, entity});
       }
-      auto result = client.PreparePayload("batch", "changeset",steps);
+      auto result = client.PreparePayload("batch", "changeset", steps);
       return result;
     }
   };
@@ -51,7 +51,7 @@ namespace Azure { namespace Data { namespace Tables { namespace StressTest {
 
 int main()
 {
-    Azure::Data::Tables::StressTest::TransactionStressTest test;
+  Azure::Data::Tables::StressTest::TransactionStressTest test;
   std::cout << "--------------\tSTARTING TEST\t--------------" << std::endl;
   std::cout << "--------------\tPRE WARMUP\t--------------" << std::endl;
   test.Transactions(WARMUP);

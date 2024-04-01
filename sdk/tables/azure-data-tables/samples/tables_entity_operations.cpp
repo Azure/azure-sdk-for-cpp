@@ -43,8 +43,8 @@ int main()
   }
   // init new entity
   Azure::Data::Tables::Models::TableEntity entity;
-  entity.PartitionKey = "P1";
-  entity.RowKey = "R1";
+  entity.SetPartitionKey ("P1");
+  entity.SetRowKey ( "R1");
   entity.Properties["Name"] = "Azure";
   entity.Properties["Product"] = "Tables";
   // create new entity

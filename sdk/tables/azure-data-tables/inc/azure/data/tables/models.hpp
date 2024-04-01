@@ -445,16 +445,8 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Table Entity
      *
      */
-    struct TableEntity final
-    {
-      /**
-       * Partition Key
-       */
-      std::string PartitionKey;
-      /**
-       * Row Key
-       */
-      std::string RowKey;
+    class TableEntity final {
+    public:
       /**
        * Properties
        */
@@ -469,6 +461,40 @@ namespace Azure { namespace Data { namespace Tables {
        *
        */
       TableEntityDataType DataType;
+      
+      /**
+       * @brief Get partition key.
+       *
+       * @return Partition key
+       */
+      Azure::Nullable<std::string> GetPartitionKey() const { return Properties.at("PartitionKey"); }
+
+      /**
+       * @brief Get row key.
+       *
+       * @return Row key
+       */
+      Azure::Nullable<std::string> GetRowKey() const { return Properties.at("RowKey"); }
+
+      /**
+       * @brief Set Partition key.
+       *
+       * @param partitionKey Partition key.
+       */
+      void SetPartitionKey(const std::string& partitionKey)
+      {
+        Properties["PartitionKey"] = partitionKey;
+      }
+
+      /**
+       * @brief Set Row key.
+       *
+       * @param rowKey Row key.
+       */
+      void SetRowKey(const std::string& rowKey)
+      {
+        Properties["RowKey"] = rowKey;
+      }
     };
 
     /**
@@ -594,9 +620,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Upsert Entity result.
      *
      */
-    struct UpsertEntityResult final : public MergeEntityResult,
-                                      UpdateEntityResult,
-                                      AddEntityResult
+    struct UpsertEntityResult final : public MergeEntityResult, UpdateEntityResult, AddEntityResult
     {
       /**
        * ETag
@@ -711,7 +735,8 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Transaction Step
      *
      */
-    struct TransactionStep final {
+    struct TransactionStep final
+    {
       /**
        * Action.
        */
