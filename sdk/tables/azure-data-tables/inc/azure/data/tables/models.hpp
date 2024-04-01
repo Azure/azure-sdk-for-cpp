@@ -459,8 +459,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       Azure::Nullable<std::string> GetPartitionKey() const
       {
-        return Properties.find("PartitionKey") == Properties.end() ? Azure::Nullable<std::string>()
-                                                                 : Properties.at("PartitionKey");
+        return GetProperty("PartitionKey");
       }
 
       /**
@@ -480,8 +479,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       Azure::Nullable<std::string> GetRowKey() const
       {
-        return Properties.find("RowKey") == Properties.end() ? Azure::Nullable<std::string>()
-                                                                 : Properties.at("RowKey");
+        return GetProperty("RowKey");
       }
       /**
        * @brief Set Row key.
@@ -497,8 +495,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       Azure::Nullable<std::string> GetETag() const
       {
-        return Properties.find("odata.etag") == Properties.end() ? Azure::Nullable<std::string>()
-                                                                 : Properties.at("odata.etag");
+        return GetProperty("odata.etag");
       }
       /**
        * @brief Set ETag.
@@ -514,8 +511,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       Azure::Nullable<std::string> GetTimestamp() const
       {
-        return Properties.find("Timestamp") == Properties.end() ? Azure::Nullable<std::string>()
-                                                                : Properties.at("Timestamp");
+        return GetProperty("Timestamp");
       }
       /**
        * @brief Set time stamp.
@@ -523,6 +519,13 @@ namespace Azure { namespace Data { namespace Tables {
        * @param timeStamp time stamp.
        */
       void SetTimestamp(const std::string& timestamp) { Properties["Timestamp"] = timestamp; }
+
+    private:
+      Azure::Nullable<std::string> GetProperty(std::string const& name) const
+      {
+        return Properties.find(name) == Properties.end() ? Azure::Nullable<std::string>()
+                                                         : Properties.at(name);
+      }
     };
 
     /**

@@ -518,7 +518,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(responseQuery.Value.Properties["Product"], "Tables");
   }
 
-  TEST_P(TablesClientTest, TransactionCreateFail)
+  TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
   {
     if (GetParam() == AuthType::SAS)
     {
@@ -548,7 +548,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionCreateOK)
+  TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
   {
     if (GetParam() == AuthType::SAS)
     {
@@ -578,7 +578,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionDelete)
+  TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
   {
     if (GetParam() == AuthType::SAS)
     {
@@ -615,7 +615,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionMerge)
+  TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
   {
     if (GetParam() == AuthType::SAS)
     {
@@ -650,7 +650,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionUpdate)
+  TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
   {
     if (GetParam() == AuthType::SAS)
     {
