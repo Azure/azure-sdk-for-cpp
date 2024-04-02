@@ -328,7 +328,7 @@ namespace Azure { namespace Data { namespace Tables {
         std::vector<Models::TransactionStep> const& steps,
         Core::Context const& context = {});
 
-  protected:
+  private:
     friend class Azure::Data::Tables::StressTest::TransactionStressTest;
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionCreate_Test;
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyInsertMergeOp_Test;
