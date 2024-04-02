@@ -504,6 +504,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Get table client.
      *
      * @param tableName The name of the table.
+     * @param options Optional parameters for the table client.
      * @return TableClient.
      * @remark The TableClient can be used to perform operations on the table. This method will
      * attempt to create a table client with the same credentials as the service client except the

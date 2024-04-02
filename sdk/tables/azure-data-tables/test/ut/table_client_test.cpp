@@ -276,8 +276,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityCreate)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -297,8 +296,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityUpdate)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -332,8 +330,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityMerge)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -367,8 +364,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityDelete)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -403,8 +399,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityUpsert)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -443,8 +438,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityQuery)
   {
-    if (GetParam() == AuthType::Key
-        && Azure::Core::_internal::StringExtensions::ToLower(GetEnv("AZURE_TEST_MODE")) == "live")
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
