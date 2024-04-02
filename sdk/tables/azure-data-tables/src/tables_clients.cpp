@@ -60,6 +60,7 @@ TableServiceClient::TableServiceClient(
     : TableServiceClient(options)
 
 {
+  m_tokenCredential = credential;
   TableClientOptions newOptions = options;
   m_url = Azure::Core::Url(serviceUrl);
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
@@ -94,6 +95,7 @@ TableServiceClient::TableServiceClient(
     const TableClientOptions& options)
     : m_url(Azure::Core::Url(serviceUrl))
 {
+  m_namedKeyCredential = credential;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
@@ -129,6 +131,25 @@ TableServiceClient::TableServiceClient(
     const TableClientOptions& options)
     : TableServiceClient(std::string{serviceUrl + credential->GetSignature()}, options)
 {
+}
+
+TableClient TableServiceClient::GetTableClient(
+    const std::string& tableName,
+    TableClientOptions const& options) const
+{
+  if (m_namedKeyCredential != nullptr)
+  {
+    return TableClient(tableName, m_namedKeyCredential, m_url.GetAbsoluteUrl(), options);
+  }
+  if (m_tokenCredential != nullptr)
+  {
+    return TableClient(m_url.GetAbsoluteUrl(), tableName, m_tokenCredential, options);
+  }
+  if (!m_url.GetAbsoluteUrl().empty())
+  {
+    return TableClient(m_url.GetAbsoluteUrl(), tableName, options);
+  }
+  throw std::runtime_error("TableServiceClient is not properly initialized.");
 }
 
 TableServiceClient TableServiceClient::CreateFromConnectionString(
@@ -170,6 +191,7 @@ Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck
 
   return Response<Models::PreflightCheckResult>(std::move(response), std::move(rawResponse));
 }
+
 Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServiceProperties(
     Models::SetServicePropertiesOptions const& options,
     Core::Context const& context)
@@ -628,7 +650,7 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
 
   request.SetHeader("Content-Type", "application/json");
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
   request.SetHeader("Prefer", "return-no-content");
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -663,7 +685,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
 
   request.SetHeader("Content-Type", "application/json");
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
   request.SetHeader("Prefer", "return-no-content");
   if (tableEntity.GetETag().HasValue())
   {
@@ -708,7 +730,7 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
 
   request.SetHeader("Content-Type", "application/json");
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
   request.SetHeader("Prefer", "return-no-content");
   if (tableEntity.GetETag().HasValue())
   {
@@ -752,7 +774,7 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
   {
     request.SetHeader("If-Match", "*");
   }
-  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)

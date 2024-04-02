@@ -500,9 +500,22 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::PreflightCheckResult> PreflightCheck(
         Models::PreflightCheckOptions const& options,
         Core::Context const& context = {});
+    /**
+     * @brief Get table client.
+     *
+     * @param tableName The name of the table.
+     * @return TableClient.
+     * @remark The TableClient can be used to perform operations on the table. This method will
+     * attempt to create a table client with the same credentials as the service client except the
+     * SAS token credential as the SAS token permissions varies from the service level permissions.
+     */
+    TableClient GetTableClient(const std::string& tableName, TableClientOptions const& options = {})
+        const;
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<Core::Credentials::TokenCredential> m_tokenCredential;
+    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> m_namedKeyCredential;
     Core::Url m_url;
   };
 }}} // namespace Azure::Data::Tables
