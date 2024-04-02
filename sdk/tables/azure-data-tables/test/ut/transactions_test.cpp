@@ -33,8 +33,8 @@ namespace Azure { namespace Data { namespace Test {
     TableClient client(url, tableName);
 
     Azure::Data::Tables::Models::TableEntity entity;
-    entity.SetRowKey( rowKey);
-    entity.SetPartitionKey( partitionKey);
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
     steps.emplace_back(Models::TransactionStep{Models::TransactionActionType::Add, entity});
     auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
 
@@ -47,8 +47,8 @@ namespace Azure { namespace Data { namespace Test {
     TableClient client(url, tableName);
 
     Azure::Data::Tables::Models::TableEntity entity;
-    entity.SetRowKey( rowKey);
-    entity.SetPartitionKey( partitionKey);
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
     steps.emplace_back(Models::TransactionStep{Models::TransactionActionType::InsertMerge, entity});
     auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
 

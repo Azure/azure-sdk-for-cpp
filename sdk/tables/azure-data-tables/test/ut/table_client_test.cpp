@@ -538,7 +538,7 @@ namespace Azure { namespace Data { namespace Test {
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
-    // conflicting entites in the same transaction
+    // conflicting entities in the same transaction
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity});
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{

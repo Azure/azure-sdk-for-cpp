@@ -457,10 +457,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return Partition key
        */
-      Azure::Nullable<std::string> GetPartitionKey() const
-      {
-        return GetProperty("PartitionKey");
-      }
+      Azure::Nullable<std::string> GetPartitionKey() const { return GetProperty("PartitionKey"); }
 
       /**
        * @brief Set Partition key.
@@ -477,10 +474,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return Row key
        */
-      Azure::Nullable<std::string> GetRowKey() const
-      {
-        return GetProperty("RowKey");
-      }
+      Azure::Nullable<std::string> GetRowKey() const { return GetProperty("RowKey"); }
       /**
        * @brief Set Row key.
        *
@@ -493,10 +487,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return ETag
        */
-      Azure::Nullable<std::string> GetETag() const
-      {
-        return GetProperty("odata.etag");
-      }
+      Azure::Nullable<std::string> GetETag() const { return GetProperty("odata.etag"); }
       /**
        * @brief Set ETag.
        *
@@ -509,10 +500,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return timestamp
        */
-      Azure::Nullable<std::string> GetTimestamp() const
-      {
-        return GetProperty("Timestamp");
-      }
+      Azure::Nullable<std::string> GetTimestamp() const { return GetProperty("Timestamp"); }
       /**
        * @brief Set time stamp.
        *

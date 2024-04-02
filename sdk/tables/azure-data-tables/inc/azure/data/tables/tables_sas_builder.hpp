@@ -14,8 +14,8 @@
 #include <type_traits>
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
- 
-   /**
+
+  /**
    * @brief Contains the list of
    * permissions that can be set for a table's access policy.
    */

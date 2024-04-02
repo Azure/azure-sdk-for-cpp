@@ -43,8 +43,8 @@ int main()
   }
   // init new entity
   Azure::Data::Tables::Models::TableEntity entity;
-  entity.SetPartitionKey ("P1");
-  entity.SetRowKey ( "R1");
+  entity.SetPartitionKey("P1");
+  entity.SetRowKey("R1");
   entity.Properties["Name"] = "Azure";
   entity.Properties["Product"] = "Tables";
   // create new entity
@@ -58,7 +58,7 @@ int main()
 
   // merge entity
   entity.Properties["Product"] = "Tables3";
-  entity.SetETag( updateResponse.Value.ETag);
+  entity.SetETag(updateResponse.Value.ETag);
   auto updateResponse2 = tableClient.MergeEntity(entity);
 
   // delete entity
