@@ -516,7 +516,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * @brief Set time stamp.
        *
-       * @param timeStamp time stamp.
+       * @param timestamp time stamp.
        */
       void SetTimestamp(const std::string& timestamp) { Properties["Timestamp"] = timestamp; }
 
