@@ -51,7 +51,7 @@
         "Win2022": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
-          "CMAKE_GENERATOR": "Visual Studio 17 2022"
+          "CMAKE_GENERATOR": "Ninja"
         }
       },
       "TargetPlatform": {
@@ -81,7 +81,7 @@
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
           "RunProxyTests": true,
-          "CMAKE_GENERATOR": "Visual Studio 17 2022"
+          "CMAKE_GENERATOR": "Ninja"
         }
       },
       "TargetPlatform": {
