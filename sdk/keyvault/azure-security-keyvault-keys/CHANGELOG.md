@@ -4,11 +4,7 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Updated to API version 7.5.
 
 ## 4.4.1 (2024-01-16)
 
