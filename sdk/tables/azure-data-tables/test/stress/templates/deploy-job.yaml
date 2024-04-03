@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-{{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.deploy-example") -}}
+{{- include "stress-test-addons.env-job-template.from-pod" (list . "stress.deploy-example") -}}
 {{- define "stress.deploy-example" -}}
 metadata:
   labels:
