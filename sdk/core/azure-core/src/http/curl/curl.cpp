@@ -2132,7 +2132,8 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     HttpStatusCode lastStatusCode)
 {
   auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
-  if ((code < 200 || code >= 300) && lastStatusCode != HttpStatusCode::NotFound)
+  // laststatusCode = 0
+  if (code < 200 || code >= 300)
   {
     // A handler with previous response with Error can't be re-use.
     return;
