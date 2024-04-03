@@ -441,6 +441,10 @@ namespace Azure { namespace Data { namespace Tables {
     {
     };
 
+    /**
+     * @brief Table entity property.
+     *
+     */
     struct TableEntityProperty final
     {
       /**
@@ -478,7 +482,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetPartitionKey(const std::string& partitionKey)
       {
-        Properties["PartitionKey"] = TableEntityProperty{partitionKey};
+        Properties["PartitionKey"] = TableEntityProperty{partitionKey,};
       }
 
       /**
@@ -494,7 +498,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetRowKey(const std::string& rowKey)
       {
-        Properties["RowKey"] = TableEntityProperty{rowKey};
+        Properties["RowKey"] = TableEntityProperty{rowKey,};
       }
 
       /**
@@ -510,7 +514,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetETag(const std::string& eTag)
       {
-        Properties["odata.etag"] = TableEntityProperty{eTag};
+        Properties["odata.etag"] = TableEntityProperty{eTag,};
       }
 
       /**
@@ -526,13 +530,13 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetTimestamp(const std::string& timestamp)
       {
-        Properties["Timestamp"] = TableEntityProperty{timestamp};
+        Properties["Timestamp"] = TableEntityProperty{timestamp,};
       }
 
     private:
       TableEntityProperty GetProperty(std::string const& name) const
       {
-        return Properties.find(name) == Properties.end() ? TableEntityProperty{}
+        return Properties.find(name) == Properties.end() ? TableEntityProperty()
                                                          : Properties.at(name);
       }
     };

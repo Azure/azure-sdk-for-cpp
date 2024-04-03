@@ -526,18 +526,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
   Models::TableEntity Serializers::DeserializeEntity(Azure::Core::Json::_internal::json json)
   {
     Models::TableEntity tableEntity{};
-    // if (json.contains("PartitionKey"))
-    //{
-    //   tableEntity.SetPartitionKey(json["PartitionKey"].get<std::string>());
-    // }
-    // if (json.contains("RowKey"))
-    //{
-    //   tableEntity.SetRowKey(json["RowKey"].get<std::string>());
-    // }
-    // if (json.contains("odata.etag"))
-    //{
-    //   tableEntity.SetETag(json["odata.etag"].get<std::string>());
-    // }
+   
     auto properties = json.get<std::map<std::string, std::string>>();
     std::vector<std::string> erasable;
     for (auto property : properties)
@@ -551,40 +540,10 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
         tableEntity.Properties[name] = TableEntityProperty{
             value, static_cast<Azure::Data::Tables::Models::TableEntityDataType>(type)};
         erasable.push_back(typeFieldName);
-        /* if (type == "Edm.Int32")
-          {
-              tableEntity.Properties[name] = TableEntityProperty{std::stoi(value)};
-          }
-          else if (type == "Edm.Double")
-          {
-              tableEntity.Properties[name] = TableEntityProperty{std::stod(value)};
-          }
-          else if (type == "Edm.Boolean")
-          {
-              tableEntity.Properties[name] = TableEntityProperty{value == "true"};
-          }
-          else if (type == "Edm.DateTime")
-          {
-              tableEntity.Properties[name] = TableEntityProperty{DateTime::Parse(value,
-          DateTime::DateFormat::Rfc3339)};
-          }
-          else if (type == "Edm.Guid")
-          {
-              tableEntity.Properties[name] = TableEntityProperty{Guid::Parse(value)};
-          }
-          else if (type == "Edm.Binary")
-          {
-              tableEntity.Properties[name] =
-          TableEntityProperty{Core::Convert::Base64Decode(value)};
-          }
-          else
-          {
-              tableEntity.Properties[name] = TableEntityProperty{value};
-          }*/
       }
       else
       {
-        tableEntity.Properties[name] = TableEntityProperty{value};
+        tableEntity.Properties[name] = TableEntityProperty{value,};
       }
     }
     for (auto erase : erasable)
