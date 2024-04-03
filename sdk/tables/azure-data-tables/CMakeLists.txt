@@ -50,8 +50,6 @@ set(
     inc/azure/data/tables/internal/cryptography/url_encode.hpp
     inc/azure/data/tables/internal/policies/service_version_policy.hpp
     inc/azure/data/tables/internal/policies/shared_key_lite_policy.hpp
-    inc/azure/data/tables/internal/policies/shared_key_policy.hpp
-    inc/azure/data/tables/internal/policies/switch_to_secondary_policy.hpp
     inc/azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp
     inc/azure/data/tables/internal/policies/timeout_policy.hpp
     inc/azure/data/tables/internal/serializers.hpp
@@ -70,8 +68,6 @@ set(
     src/cryptography/hmacsha256.cpp
     src/models.cpp
     src/policies/shared_key_lite_policy.cpp
-    src/policies/shared_key_policy.cpp
-    src/policies/switch_to_secondary_policy.cpp
     src/policies/tenant_bearer_token_policy.cpp
     src/policies/timeout_policy.cpp
     src/private/package_version.hpp

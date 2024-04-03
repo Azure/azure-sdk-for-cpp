@@ -9,7 +9,6 @@
 #include <mutex>
 #include <string>
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
-  class SharedKeyPolicy;
   class SharedKeyLitePolicy;
 }}}}} // namespace Azure::Data::Tables::_detail::Policies
 
@@ -56,7 +55,6 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
     const std::string AccountName;
 
   private:
-    friend class Azure::Data::Tables::_detail::Policies::SharedKeyPolicy;
     friend class Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy;
     friend class Azure::Data::Tables::Sas::AccountSasBuilder;
     friend class Azure::Data::Tables::Sas::TablesSasBuilder;
