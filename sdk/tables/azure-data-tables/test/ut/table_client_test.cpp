@@ -22,6 +22,8 @@
 #endif
 
 using namespace Azure::Data;
+using namespace Azure::Data::Tables::Models;
+
 namespace Azure { namespace Data { namespace Test {
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
   void TablesClientTest::SetUp()
@@ -285,8 +287,8 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
 
@@ -305,21 +307,21 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
-    entity.Properties["Product"] = "Tables2";
+    entity.Properties["Product"] = TableEntityProperty{"Tables2"};
     auto updateResponse = m_tableClient->UpdateEntity(entity);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(updateResponse.Value.ETag.empty());
 
-    entity.Properties["Product"] = "Tables3";
+    entity.Properties["Product"] = TableEntityProperty{"Tables3"};
     entity.SetETag(updateResponse.Value.ETag);
     auto updateResponse2 = m_tableClient->UpdateEntity(entity);
 
@@ -339,21 +341,21 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
-    entity.Properties["Product2"] = "Tables2";
+    entity.Properties["Product2"] = TableEntityProperty{"Tables2"};
     auto updateResponse = m_tableClient->MergeEntity(entity);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(updateResponse.Value.ETag.empty());
 
-    entity.Properties["Product3"] = "Tables3";
+    entity.Properties["Product3"] = TableEntityProperty{"Tables3"};
     entity.SetETag(updateResponse.Value.ETag);
     auto updateResponse2 = m_tableClient->MergeEntity(entity);
 
@@ -373,14 +375,14 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
-    entity.Properties["Product2"] = "Tables2";
+    entity.Properties["Product2"] = TableEntityProperty{"Tables2"};
     auto updateResponse = m_tableClient->DeleteEntity(entity);
 
     EXPECT_EQ(
@@ -389,7 +391,7 @@ namespace Azure { namespace Data { namespace Test {
     response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
-    entity.Properties["Product3"] = "Tables3";
+    entity.Properties["Product3"] = TableEntityProperty{"Tables3"};
     entity.SetETag(response.Value.ETag);
     auto updateResponse2 = m_tableClient->DeleteEntity(entity);
 
@@ -408,8 +410,8 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->UpsertEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -418,7 +420,7 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::UpsertEntityOptions options;
     options.UpsertType = Azure::Data::Tables::Models::UpsertKind::Update;
 
-    entity.Properties["Product"] = "Tables2";
+    entity.Properties["Product"] = TableEntityProperty{"Tables2"};
     auto updateResponse = m_tableClient->MergeEntity(entity, options);
 
     EXPECT_EQ(
@@ -427,7 +429,7 @@ namespace Azure { namespace Data { namespace Test {
 
     Azure::Data::Tables::Models::UpsertEntityOptions options2;
     options2.UpsertType = Azure::Data::Tables::Models::UpsertKind::Merge;
-    entity.Properties["Product3"] = "Tables3";
+    entity.Properties["Product3"] = TableEntityProperty{"Tables3"};
     entity.SetETag(updateResponse.Value.ETag);
     auto updateResponse2 = m_tableClient->MergeEntity(entity, options2);
 
@@ -447,18 +449,18 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
-    entity.Properties["Product"] = "Tables2";
+    entity.Properties["Product"] = TableEntityProperty{"Tables2"};
     entity.SetRowKey("R2");
     m_tableClient->AddEntity(entity);
 
-    entity.Properties["Product"] = "Tables3";
+    entity.Properties["Product"] = TableEntityProperty{"Tables3"};
     entity.SetRowKey("R3");
     m_tableClient->AddEntity(entity);
 
@@ -488,28 +490,30 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
-    entity.Properties["Product"] = "Tables2";
+    entity.Properties["Product"] = TableEntityProperty{"Tables2"};
     entity.SetRowKey("R2");
     m_tableClient->AddEntity(entity);
 
-    entity.Properties["Product"] = "Tables3";
+    entity.Properties["Product"] = TableEntityProperty{"Tables3"};
     entity.SetRowKey("R3");
     m_tableClient->AddEntity(entity);
 
     std::string partitionKey = "P1";
     std::string rowKey = "R1";
     auto responseQuery = m_tableClient->GetEntity(partitionKey, rowKey);
-    EXPECT_EQ(responseQuery.Value.GetPartitionKey().Value(), "P1");
-    EXPECT_EQ(responseQuery.Value.GetRowKey().Value(), "R1");
-    EXPECT_EQ(responseQuery.Value.Properties["Name"], "Azure");
-    EXPECT_EQ(responseQuery.Value.Properties["Product"], "Tables");
+    EXPECT_EQ(responseQuery.Value.GetPartitionKey().Value, "P1");
+    EXPECT_EQ(responseQuery.Value.GetRowKey().Value, "R1");
+    EXPECT_EQ(responseQuery.Value.Properties["Name"].Value, "Azure");
+    EXPECT_EQ(responseQuery.Value.Properties["Product"].Value, "Tables");
+    EXPECT_EQ(
+        responseQuery.Value.Properties["Timestamp"].Type.Value(), TableEntityDataType::EdmDateTime);
   }
 
   TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
@@ -523,12 +527,12 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     entity2.SetPartitionKey("P1");
     entity2.SetRowKey("R1");
-    entity2.Properties["Name"] = "Azure";
-    entity2.Properties["Product"] = "Tables";
+    entity2.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity2.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
@@ -553,12 +557,12 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     entity2.SetPartitionKey("P1");
     entity2.SetRowKey("R2");
-    entity2.Properties["Name"] = "Azure";
-    entity2.Properties["Product"] = "Tables";
+    entity2.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity2.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
@@ -583,12 +587,12 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     entity2.SetPartitionKey("P1");
     entity2.SetRowKey("R2");
-    entity2.Properties["Name"] = "Azure";
-    entity2.Properties["Product"] = "Tables";
+    entity2.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity2.Properties["Product"] = TableEntityProperty{"Tables"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
@@ -620,12 +624,12 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     entity2.SetPartitionKey("P1");
     entity2.SetRowKey("R1");
-    entity2.Properties["Name"] = "Azure2";
-    entity2.Properties["Product"] = "Tables3";
+    entity2.Properties["Name"] = TableEntityProperty{"Azure2"};
+    entity2.Properties["Product"] = TableEntityProperty{"Tables3"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
@@ -655,12 +659,12 @@ namespace Azure { namespace Data { namespace Test {
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
     entity.SetRowKey("R1");
-    entity.Properties["Name"] = "Azure";
-    entity.Properties["Product"] = "Tables";
+    entity.Properties["Name"] = TableEntityProperty{"Azure"};
+    entity.Properties["Product"] = TableEntityProperty{"Tables"};
     entity2.SetPartitionKey("P1");
     entity2.SetRowKey("R1");
-    entity2.Properties["Name"] = "Azure2";
-    entity2.Properties["Product"] = "Tables3";
+    entity2.Properties["Name"] = TableEntityProperty{"Azure2"};
+    entity2.Properties["Product"] = TableEntityProperty{"Tables3"};
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
 

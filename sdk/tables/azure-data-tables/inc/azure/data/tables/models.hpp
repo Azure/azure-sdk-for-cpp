@@ -344,19 +344,19 @@ namespace Azure { namespace Data { namespace Tables {
       }
       /** Constant value of type TableEntityDataType:EdmBinary */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBinary;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmBoolean */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBoolean;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmDateTime */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDateTime;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmDouble */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDouble;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmGuid */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmGuid;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmInt32 */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt32;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmInt64 */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt64;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmString */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmString;
     };
 
@@ -441,6 +441,18 @@ namespace Azure { namespace Data { namespace Tables {
     {
     };
 
+    struct TableEntityProperty final
+    {
+      /**
+       * Property value.
+       */
+      std::string Value;
+      /**
+       * Property type.
+       */
+      Azure::Nullable<TableEntityDataType> Type;
+    };
+
     /**
      * @brief Table Entity
      *
@@ -450,14 +462,14 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * Properties
        */
-      std::map<std::string, std::string> Properties;
+      std::map<std::string, TableEntityProperty> Properties;
 
       /**
        * @brief Get partition key.
        *
        * @return Partition key
        */
-      Azure::Nullable<std::string> GetPartitionKey() const { return GetProperty("PartitionKey"); }
+      TableEntityProperty GetPartitionKey() const { return GetProperty("PartitionKey"); }
 
       /**
        * @brief Set Partition key.
@@ -466,7 +478,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetPartitionKey(const std::string& partitionKey)
       {
-        Properties["PartitionKey"] = partitionKey;
+        Properties["PartitionKey"] = TableEntityProperty{partitionKey};
       }
 
       /**
@@ -474,44 +486,53 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return Row key
        */
-      Azure::Nullable<std::string> GetRowKey() const { return GetProperty("RowKey"); }
+      TableEntityProperty GetRowKey() const { return GetProperty("RowKey"); }
       /**
        * @brief Set Row key.
        *
        * @param rowKey Row key.
        */
-      void SetRowKey(const std::string& rowKey) { Properties["RowKey"] = rowKey; }
+      void SetRowKey(const std::string& rowKey)
+      {
+        Properties["RowKey"] = TableEntityProperty{rowKey};
+      }
 
       /**
        * @brief Get ETag.
        *
        * @return ETag
        */
-      Azure::Nullable<std::string> GetETag() const { return GetProperty("odata.etag"); }
+      TableEntityProperty GetETag() const { return GetProperty("odata.etag"); }
       /**
        * @brief Set ETag.
        *
        * @param eTag ETag.
        */
-      void SetETag(const std::string& eTag) { Properties["odata.etag"] = eTag; }
+      void SetETag(const std::string& eTag)
+      {
+        Properties["odata.etag"] = TableEntityProperty{eTag};
+      }
 
       /**
        * @brief Get time stamp.
        *
        * @return timestamp
        */
-      Azure::Nullable<std::string> GetTimestamp() const { return GetProperty("Timestamp"); }
+      TableEntityProperty GetTimestamp() const { return GetProperty("Timestamp"); }
       /**
        * @brief Set time stamp.
        *
        * @param timestamp time stamp.
        */
-      void SetTimestamp(const std::string& timestamp) { Properties["Timestamp"] = timestamp; }
+      void SetTimestamp(const std::string& timestamp)
+      {
+        Properties["Timestamp"] = TableEntityProperty{timestamp};
+      }
 
     private:
-      Azure::Nullable<std::string> GetProperty(std::string const& name) const
+      TableEntityProperty GetProperty(std::string const& name) const
       {
-        return Properties.find(name) == Properties.end() ? Azure::Nullable<std::string>()
+        return Properties.find(name) == Properties.end() ? TableEntityProperty{}
                                                          : Properties.at(name);
       }
     };

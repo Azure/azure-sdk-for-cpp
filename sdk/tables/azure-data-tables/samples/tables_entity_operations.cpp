@@ -8,6 +8,10 @@
 #include <stdexcept>
 #include <thread>
 
+using namespace Azure::Data::Tables;
+using namespace Azure::Data::Tables::Models;
+const std::string TableName = "table";
+
 std::string GetConnectionString()
 {
   const static std::string ConnectionString = "";
@@ -23,9 +27,6 @@ std::string GetConnectionString()
   }
   throw std::runtime_error("Cannot find connection string.");
 }
-
-using namespace Azure::Data::Tables;
-const std::string TableName = "table";
 
 int main()
 {
@@ -45,19 +46,19 @@ int main()
   Azure::Data::Tables::Models::TableEntity entity;
   entity.SetPartitionKey("P1");
   entity.SetRowKey("R1");
-  entity.Properties["Name"] = "Azure";
-  entity.Properties["Product"] = "Tables";
+  entity.Properties["Name"] = TableEntityProperty{"Azure"};
+  entity.Properties["Product"] = TableEntityProperty{"Tables"};
   // create new entity
   auto response = tableClient.AddEntity(entity);
 
   // update entity
   std::cout << response.Value.ETag << std::endl;
-  entity.Properties["Product"] = "Tables2";
+  entity.Properties["Product"] = TableEntityProperty{"Tables2"};
   auto updateResponse = tableClient.UpdateEntity(entity);
   std::cout << updateResponse.Value.ETag << std::endl;
 
   // merge entity
-  entity.Properties["Product"] = "Tables3";
+  entity.Properties["Product"] = TableEntityProperty{"Tables3"};
   entity.SetETag(updateResponse.Value.ETag);
   auto updateResponse2 = tableClient.MergeEntity(entity);
 

@@ -7,6 +7,7 @@
 
 using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables;
+using namespace Azure::Data::Tables::Models;
 namespace Azure { namespace Data { namespace Tables { namespace _detail {
   std::string const Serializers::CreateEntity(Models::TableEntity const& tableEntity)
   {
@@ -14,11 +15,15 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
     {
       auto jsonRoot = Core::Json::_internal::json::object();
 
-      jsonRoot["PartitionKey"] = tableEntity.GetPartitionKey().Value();
-      jsonRoot["RowKey"] = tableEntity.GetRowKey().Value();
+      jsonRoot["PartitionKey"] = tableEntity.GetPartitionKey().Value;
+      jsonRoot["RowKey"] = tableEntity.GetRowKey().Value;
       for (auto entry : tableEntity.Properties)
       {
-        jsonRoot[entry.first] = entry.second;
+        jsonRoot[entry.first] = entry.second.Value;
+        if (entry.second.Type.HasValue())
+        {
+          jsonRoot[entry.first + "@odata.type"] = entry.second.Type.Value().ToString();
+        }
       }
       jsonBody = jsonRoot.dump();
     }
@@ -521,25 +526,70 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
   Models::TableEntity Serializers::DeserializeEntity(Azure::Core::Json::_internal::json json)
   {
     Models::TableEntity tableEntity{};
-    if (json.contains("PartitionKey"))
+    // if (json.contains("PartitionKey"))
+    //{
+    //   tableEntity.SetPartitionKey(json["PartitionKey"].get<std::string>());
+    // }
+    // if (json.contains("RowKey"))
+    //{
+    //   tableEntity.SetRowKey(json["RowKey"].get<std::string>());
+    // }
+    // if (json.contains("odata.etag"))
+    //{
+    //   tableEntity.SetETag(json["odata.etag"].get<std::string>());
+    // }
+    auto properties = json.get<std::map<std::string, std::string>>();
+    std::vector<std::string> erasable;
+    for (auto property : properties)
     {
-      tableEntity.SetPartitionKey(json["PartitionKey"].get<std::string>());
-    }
-    if (json.contains("RowKey"))
-    {
-      tableEntity.SetRowKey(json["RowKey"].get<std::string>());
-    }
-    if (json.contains("odata.etag"))
-    {
-      tableEntity.SetETag(json["odata.etag"].get<std::string>());
-    }
-    for (auto properties : json.get<std::map<std::string, std::string>>())
-    {
-      if (properties.first != "odata.metadata" && properties.first != "PartitionKey"
-          && properties.first != "RowKey" && properties.first != "odata.etag")
+      auto value = property.second;
+      auto name = property.first;
+      std::string typeFieldName = name + "@odata.type";
+      if (properties.find(typeFieldName) != properties.end())
       {
-        tableEntity.Properties[properties.first] = properties.second;
+        auto type = properties[typeFieldName];
+        tableEntity.Properties[name] = TableEntityProperty{
+            value, static_cast<Azure::Data::Tables::Models::TableEntityDataType>(type)};
+        erasable.push_back(typeFieldName);
+        /* if (type == "Edm.Int32")
+          {
+              tableEntity.Properties[name] = TableEntityProperty{std::stoi(value)};
+          }
+          else if (type == "Edm.Double")
+          {
+              tableEntity.Properties[name] = TableEntityProperty{std::stod(value)};
+          }
+          else if (type == "Edm.Boolean")
+          {
+              tableEntity.Properties[name] = TableEntityProperty{value == "true"};
+          }
+          else if (type == "Edm.DateTime")
+          {
+              tableEntity.Properties[name] = TableEntityProperty{DateTime::Parse(value,
+          DateTime::DateFormat::Rfc3339)};
+          }
+          else if (type == "Edm.Guid")
+          {
+              tableEntity.Properties[name] = TableEntityProperty{Guid::Parse(value)};
+          }
+          else if (type == "Edm.Binary")
+          {
+              tableEntity.Properties[name] =
+          TableEntityProperty{Core::Convert::Base64Decode(value)};
+          }
+          else
+          {
+              tableEntity.Properties[name] = TableEntityProperty{value};
+          }*/
       }
+      else
+      {
+        tableEntity.Properties[name] = TableEntityProperty{value};
+      }
+    }
+    for (auto erase : erasable)
+    {
+      tableEntity.Properties.erase(erase);
     }
     return tableEntity;
   }
