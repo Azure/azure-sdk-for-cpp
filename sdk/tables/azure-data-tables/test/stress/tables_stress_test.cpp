@@ -33,9 +33,9 @@ namespace Azure { namespace Data { namespace Tables { namespace StressTest {
         entity.SetPartitionKey("pk1");
         entity.SetRowKey("rk1");
         entity.Properties.emplace(
-            "prop1", Azure::Data::Tables::Models::TableEntityProperty{"value1",});
+            "prop1", Azure::Data::Tables::Models::TableEntityProperty("value1"));
         entity.Properties.emplace(
-            "prop2", Azure::Data::Tables::Models::TableEntityProperty{"value2",});
+            "prop2", Azure::Data::Tables::Models::TableEntityProperty("value2"));
         steps.emplace_back(
             Models::TransactionStep{Models::TransactionActionType::InsertMerge, entity});
 

@@ -526,7 +526,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
   Models::TableEntity Serializers::DeserializeEntity(Azure::Core::Json::_internal::json json)
   {
     Models::TableEntity tableEntity{};
-   
+
     auto properties = json.get<std::map<std::string, std::string>>();
     std::vector<std::string> erasable;
     for (auto property : properties)
@@ -537,13 +537,13 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
       if (properties.find(typeFieldName) != properties.end())
       {
         auto type = properties[typeFieldName];
-        tableEntity.Properties[name] = TableEntityProperty{
-            value, static_cast<Azure::Data::Tables::Models::TableEntityDataType>(type)};
+        tableEntity.Properties[name] = TableEntityProperty(
+            value, static_cast<Azure::Data::Tables::Models::TableEntityDataType>(type));
         erasable.push_back(typeFieldName);
       }
       else
       {
-        tableEntity.Properties[name] = TableEntityProperty{value,};
+        tableEntity.Properties[name] = TableEntityProperty(value);
       }
     }
     for (auto erase : erasable)

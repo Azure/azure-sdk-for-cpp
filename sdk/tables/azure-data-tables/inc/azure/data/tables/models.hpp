@@ -445,8 +445,26 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Table entity property.
      *
      */
-    struct TableEntityProperty final
-    {
+    class TableEntityProperty final {
+    public:
+      /** Default constructor. */
+      TableEntityProperty() = default;
+
+      /**
+       * @brief Construct a new TableEntityProperty object.
+       *
+       * @param value Property value.
+       */
+      TableEntityProperty(std::string const& value) : Value(std::move(value)) {}
+      /**
+       * @brief Construct a new TableEntityProperty object.
+       * @param value Property value.
+       * @param type Property type.
+       */
+      TableEntityProperty(std::string const& value, TableEntityDataType type)
+          : Value(std::move(value)), Type(type)
+      {
+      }
       /**
        * Property value.
        */
@@ -482,7 +500,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetPartitionKey(const std::string& partitionKey)
       {
-        Properties["PartitionKey"] = TableEntityProperty{partitionKey,};
+        Properties["PartitionKey"] = TableEntityProperty(partitionKey);
       }
 
       /**
@@ -498,7 +516,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetRowKey(const std::string& rowKey)
       {
-        Properties["RowKey"] = TableEntityProperty{rowKey,};
+        Properties["RowKey"] = TableEntityProperty(rowKey);
       }
 
       /**
@@ -514,7 +532,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetETag(const std::string& eTag)
       {
-        Properties["odata.etag"] = TableEntityProperty{eTag,};
+        Properties["odata.etag"] = TableEntityProperty(eTag);
       }
 
       /**
@@ -530,7 +548,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetTimestamp(const std::string& timestamp)
       {
-        Properties["Timestamp"] = TableEntityProperty{timestamp,};
+        Properties["Timestamp"] = TableEntityProperty(timestamp);
       }
 
     private:
