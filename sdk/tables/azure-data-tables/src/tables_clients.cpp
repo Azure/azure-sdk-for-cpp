@@ -18,32 +18,6 @@ using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::Credentials::_detail;
 using namespace Azure::Data::Tables::_detail;
 
-constexpr static const char* OriginHeader = "Origin";
-constexpr static const char* AccessControlRequestMethodHeader = "Access-Control-Request-Method";
-constexpr static const char* ResrouceTypeService = "service";
-constexpr static const char* ComponentProperties = "properties";
-constexpr static const char* ContentTypeXml = "application/xml";
-constexpr static const char* ContentTypeJson = "application/json";
-constexpr static const char* ResourceTypeHeader = "restype"; 
-constexpr static const char* CompHeader = "comp";
-constexpr static const char* ContentTypeHeader = "Content-Type";
-constexpr static const char* ContentLengthHeader = "Content-Length";
-constexpr static const char* AcceptHeader = "Accept";
-constexpr static const char* PreferHeader = "Prefer";
-constexpr static const char* PreferNoContent = "return-no-content";
-constexpr static const char* AcceptFullMeta = "application/json;odata=fullmetadata";
-constexpr static const char* IfMatch = "If-Match";
-constexpr static const char* PartitionKeyFragment = "(PartitionKey='";
-constexpr static const char* RowKeyFragment = "',RowKey='";
-constexpr static const char* ClosingFragment = "')";
-constexpr static const char* Value = "value";
-constexpr static const char* TableName = "TableName";
-constexpr static const char* ODataEditLink = "odata.editLink";
-constexpr static const char* ODataId = "odata.id";
-constexpr static const char* ODataType = "odata.type";
-constexpr static const char* ODataMeta = "odata.metadata";
-constexpr static const char* ODataError = "odata.error";
-
 TableServiceClient::TableServiceClient(const TableClientOptions& options)
 {
   TableClientOptions newOptions = options;
@@ -224,9 +198,8 @@ Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServi
   std::string xmlBody = Serializers::SetServiceProperties(options);
   auto url = m_url;
 
-url.AppendQueryParameter(
-    ResourceTypeHeader, ResrouceTypeService);
-url.AppendQueryParameter(CompHeader, ComponentProperties);
+  url.AppendQueryParameter(ResourceTypeHeader, ResrouceTypeService);
+  url.AppendQueryParameter(CompHeader, ComponentProperties);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(xmlBody.data()), xmlBody.length());
 
@@ -999,17 +972,17 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
         response.StatusCode = status;
       }
 
-      if (line.find("odata.error") != std::string::npos)
+      if (line.find(ODataError) != std::string::npos)
       {
         auto const jsonRoot = Core::Json::_internal::json::parse(line.begin(), line.end());
-        if (jsonRoot["odata.error"].contains("code"))
+        if (jsonRoot[ODataError].contains("code"))
         {
-          error.Code = jsonRoot["odata.error"]["code"].get<std::string>();
+          error.Code = jsonRoot[ODataError]["code"].get<std::string>();
         }
-        if (jsonRoot["odata.error"].contains("message")
-            && jsonRoot["odata.error"]["message"].contains(Value))
+        if (jsonRoot[ODataError].contains("message")
+            && jsonRoot[ODataError]["message"].contains(Value))
         {
-          error.Message = jsonRoot["odata.error"]["message"][Value].get<std::string>();
+          error.Message = jsonRoot[ODataError]["message"][Value].get<std::string>();
         }
       }
     }
