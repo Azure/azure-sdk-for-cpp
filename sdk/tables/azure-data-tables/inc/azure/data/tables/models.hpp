@@ -480,10 +480,10 @@ namespace Azure { namespace Data { namespace Tables {
      *
      */
     class TableEntity final {
-        constexpr static const char* PartitionKeyPropertyName = "PartitionKey";
-        constexpr static const char* RowKeyPropertyName = "RowKey";
-        constexpr static const char* ETagPropertyName = "odata.etag";
-        constexpr static const char* TimestampPropertyName = "Timestamp";
+      constexpr static const char* PartitionKeyPropertyName = "PartitionKey";
+      constexpr static const char* RowKeyPropertyName = "RowKey";
+      constexpr static const char* ETagPropertyName = "odata.etag";
+      constexpr static const char* TimestampPropertyName = "Timestamp";
 
     public:
       /**

@@ -20,8 +20,8 @@
 #include <utility>
 #include <vector>
 
-#ifdef _azure_TABLES_TESTING_BUILD 
-namespace Azure{namespace Data{namespace Tables{namespace StressTest {
+#ifdef _azure_TABLES_TESTING_BUILD
+namespace Azure { namespace Data { namespace Tables { namespace StressTest {
   class TransactionStressTest;
 }}}} // namespace Azure::Data::Tables::StressTest
 namespace Azure { namespace Data { namespace Test {
@@ -357,7 +357,6 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
   private:
-
 #ifdef _azure_TABLES_TESTING_BUILD
     friend class Azure::Data::Tables::StressTest::TransactionStressTest;
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionCreate_Test;
