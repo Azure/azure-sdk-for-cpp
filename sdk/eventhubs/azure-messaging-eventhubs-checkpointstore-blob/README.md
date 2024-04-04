@@ -73,8 +73,8 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs
 [azure_identity_pkg]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-identity/latest/index.html
 [default_azure_credential]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-identity/latest/index.html#defaultazurecredential
-<!-- TODO: Fix go links to refer to C++ documentation when it is published.-->
-[cppdoc]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs
-[cppdoc_examples]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#pkg-examples
+
+[cppdoc]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-messaging-eventhubs-checkpointstore-blob/latest/index.html
+[cppdoc_examples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs/azure-messaging-eventhubs/samples
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Feventhubs%2FREADME.png)

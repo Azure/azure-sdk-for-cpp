@@ -3,9 +3,10 @@
 
 #include "batch_stress_tests.hpp"
 
-#include "opentelemetry_helpers.hpp"
 #include "scope_guard.hpp"
+#include "shared_functions.hpp"
 
+#include <azure/identity/default_azure_credential.hpp>
 #include <azure/identity/environment_credential.hpp>
 
 using namespace Azure::Messaging::EventHubs;
@@ -110,7 +111,7 @@ std::vector<EventHubsScenarioOptions> BatchScenarioOptions{
 
 // Note that the DefaultNumberToSend value is artificially reduced to 100 until the
 // MessageSender::Open code fully supports Open.
-constexpr const std::uint32_t DefaultNumberToSend = /*1000000*/ 100;
+constexpr const std::uint32_t DefaultNumberToSend = 1000000;
 constexpr const std::uint32_t DefaultBatchSize = 1000;
 constexpr const std::uint32_t DefaultPrefetch = 0;
 constexpr const auto DefaultDuration = std::chrono::seconds(60);
@@ -136,7 +137,7 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   m_partitionId = parserResults["PartitionId"].as<std::string>(DefaultPartitionId);
   m_maxTimeouts = parserResults["MaxTimeouts"].as<uint32_t>(DefaultMaxTimeouts);
   m_verbose = parserResults["verbose"].as<bool>(false);
-  m_useSasCredential = parserResults["UseSasCredential"].as<bool>(true);
+  m_useSasCredential = static_cast<bool>(parserResults["UseSasCredential"]);
   if (m_rounds == 0xffffffff)
   {
     m_rounds = (std::numeric_limits<uint32_t>::max)();
@@ -154,8 +155,12 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   span.first->SetAttribute("Verbose", m_verbose);
   span.first->SetAttribute("UseSasCredential", m_useSasCredential);
 
-  //    m_sleepAfter =
-  //    parserResults["SleepAfter"].as<std::chrono::system_clock::duration>(std::chrono::seconds(0));
+  if (parserResults.has_option("SleepAfter"))
+  {
+    m_sleepAfterFunction
+        = GetSleepAfterFunction(parserResults["SleepAfter"].as<std::chrono::system_clock::duration>(
+            std::chrono::seconds(0)));
+  }
 
   m_eventHubName = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
 
@@ -191,6 +196,12 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
 
 void BatchStressTest::Run()
 {
+  auto scopeGuard{sg::make_scope_guard([&]() {
+    if (m_sleepAfterFunction)
+    {
+      m_sleepAfterFunction({});
+    }
+  })};
   std::cout << "Run " << std::endl;
   auto sendOutput = SendMessages();
   std::cout << "Starting receive tests for partition " << m_partitionId << std::endl;
@@ -217,7 +228,8 @@ BatchStressTest::SendMessages()
     producerClient = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
         m_eventHubNamespace,
         m_eventHubName,
-        std::make_shared<Azure::Identity::EnvironmentCredential>());
+        //        std::make_shared<Azure::Identity::EnvironmentCredential>());
+        std::make_shared<Azure::Identity::DefaultAzureCredential>());
   }
   Azure::Core::Context context;
   auto scopeGuard{
@@ -314,9 +326,15 @@ void BatchStressTest::ConsumeForBatchTester(
   uint32_t numCancels = 0;
   constexpr const uint32_t cancelLimit = 5;
 
+  std::cout << "Receiving events from partition " << m_partitionId << " for round " << round
+            << "starting at " << startPosition << " with a timeout of "
+            << std::chrono::duration_cast<std::chrono::seconds>(m_batchDuration).count()
+            << " seconds" << std::endl;
+
   do
   {
     auto duration = std::chrono::system_clock::now() + m_batchDuration;
+
     auto receiveContext = context.WithDeadline(duration);
 
     try
@@ -324,7 +342,6 @@ void BatchStressTest::ConsumeForBatchTester(
       auto span{CreateStressSpan("ConsumeForBatchTester::ReceiveEvents")};
       auto events = partitionClient->ReceiveEvents(m_batchSize, receiveContext);
       total += events.size();
-      std::cout << "Total: " << total << std::endl;
       if (total >= m_numberToSend)
       {
         break;

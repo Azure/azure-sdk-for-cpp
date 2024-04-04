@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
+#include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/message_receiver.hpp"
 #include "azure/core/amqp/internal/message_sender.hpp"
@@ -28,7 +29,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestMessageSendReceive : public testing::Test {
   protected:
     void SetUp() override {}
-    void TearDown() override {}
+    void TearDown() override
+    { // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
+      Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+    }
   };
 
   using namespace Azure::Core::Amqp::_internal;
@@ -176,27 +180,52 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, SenderOpenClose)
   {
-    uint16_t testPort = FindAvailableSocket();
-    GTEST_LOG_(INFO) << "Test port: " << testPort;
+    class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      SenderLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+      virtual ~SenderLinkEndpoint() = default;
+
+    private:
+      void MessageReceived(
+          std::string const& linkName,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
+      }
+    };
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = true;
+    auto senderEndpoint
+        = std::make_shared<SenderLinkEndpoint>("MyTarget", mockServiceEndpointOptions);
+    MessageTests::AmqpServerMock mockServer{};
+    mockServer.AddServiceEndpoint(senderEndpoint);
+
+    mockServer.StartListening();
+
     ConnectionOptions connectionOptions;
     connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.Port = testPort;
+    connectionOptions.Port = mockServer.GetPort();
+    connectionOptions.EnableTrace = true;
     connectionOptions.ContainerId = ::testing::UnitTest::GetInstance()->current_test_info()->name();
 
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession()};
 
-    Azure::Core::Amqp::Network::_detail::SocketListener listener(testPort, nullptr);
-    EXPECT_NO_THROW(listener.Start());
     {
       MessageSenderOptions options;
       options.MessageSource = "MySource";
 
       MessageSender sender(session.CreateMessageSender("MyTarget", options, nullptr));
-      sender.Open();
+      EXPECT_FALSE(sender.Open());
       sender.Close();
     }
-    listener.Stop();
+    mockServer.StopListening();
   }
 
   TEST_F(TestMessageSendReceive, TestLocalhostVsTls)
@@ -220,8 +249,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             MessageSenderState oldState) override
         {
           GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. OldState: "
-                           << std::to_string(static_cast<uint32_t>(oldState))
-                           << " NewState: " << std::to_string(static_cast<uint32_t>(newState));
+                           << oldState << " NewState: " << newState;
           (void)sender;
         }
         virtual void OnMessageSenderDisconnected(
@@ -240,33 +268,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.MaxMessageSize = 65536;
       MessageSender sender(
           session.CreateMessageSender("localhost/ingress", options, &senderEvents));
-      EXPECT_NO_THROW(sender.Open());
 
-      EXPECT_EQ(65536, sender.GetMaxMessageSize());
-
-      Azure::Core::Amqp::Models::AmqpMessage message;
-      message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
-
-      Azure::Core::Context context;
-      try
-      {
-        auto result = sender.Send(message, context);
-
-        // Because we're trying to use TLS to connect to a non-TLS port, we should get an error
-        // sending the message.
-        EXPECT_EQ(std::get<0>(result), MessageSendStatus::Error);
-      }
-      catch (Azure::Core::OperationCancelledException const&)
-      {
-        GTEST_LOG_(INFO) << "Operation cancelled.";
-      }
-      catch (std::runtime_error const& ex)
-      {
-        // The WaitForPolledResult call can throw an exception if the connection enters the
-        // "End" state.
-        GTEST_LOG_(INFO) << "Exception: " << ex.what();
-      }
-      sender.Close();
+      // Opening the message sender should fail because we couldn't connect.
+      EXPECT_TRUE(sender.Open());
     }
     mockServer.StopListening();
   }
@@ -342,7 +346,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.MaxMessageSize = 65536;
       MessageSender sender(
           session.CreateMessageSender("localhost/ingress", options, &senderEvents));
-      EXPECT_NO_THROW(sender.Open());
+      EXPECT_FALSE(sender.Open());
 
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
@@ -408,7 +412,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.MessageSource = "ingress";
       options.Name = "sender-link";
       MessageSender sender(session.CreateMessageSender("localhost/ingress", options, nullptr));
-      EXPECT_NO_THROW(sender.Open());
+      EXPECT_FALSE(sender.Open());
 
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
@@ -479,11 +483,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     MessageSender sender(
         session.CreateMessageSender(sasCredential->GetEntityPath(), senderOptions, nullptr));
 
-    sender.Open();
+    EXPECT_FALSE(sender.Open());
 
     Azure::Core::Amqp::Models::AmqpMessage message;
     message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
-    sender.Send(message);
+    EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(sender.Send(message)));
 
     sender.Close();
     server.StopListening();
@@ -556,11 +560,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     senderOptions.MaxMessageSize = 65536;
     senderOptions.Name = "sender-link";
     MessageSender sender(session.CreateMessageSender(endpoint, senderOptions, nullptr));
-    sender.Open();
+    EXPECT_FALSE(sender.Open());
 
     Azure::Core::Amqp::Models::AmqpMessage message;
     message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
-    sender.Send(message);
+    EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(sender.Send(message)));
 
     sender.Close();
     server.StopListening();
@@ -599,7 +603,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           {
             GTEST_LOG_(INFO) << "Sent, resetting should send.";
             m_shouldSendMessage = false;
-            GetMessageSender().Send(sendMessage);
+            EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(GetMessageSender().Send(sendMessage)));
           }
           else
           {
@@ -720,7 +724,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           {
             GTEST_LOG_(INFO) << "Sent, resetting should send.";
             m_shouldSendMessage = false;
-            GetMessageSender().Send(sendMessage);
+            EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(GetMessageSender().Send(sendMessage)));
           }
           else
           {
@@ -848,7 +852,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           {
             GTEST_LOG_(INFO) << "Sent, resetting should send.";
             m_shouldSendMessage = false;
-            GetMessageSender().Send(sendMessage);
+            EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(GetMessageSender().Send(sendMessage)));
           }
           else
           {

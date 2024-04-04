@@ -131,3 +131,112 @@ TEST(String, toUpper)
   EXPECT_NE(StringExtensions::ToUpper("a"), "aA");
   EXPECT_NE(StringExtensions::ToUpper("abc"), "abcd");
 }
+
+TEST(String, SplitEmpty)
+{
+  using Azure::Core::_internal::StringExtensions;
+  {
+    std::vector<std::string> result = StringExtensions::Split("", ',');
+    EXPECT_TRUE(result.empty());
+  }
+  {
+    std::vector<std::string> result = StringExtensions::Split("", ',', true);
+    EXPECT_TRUE(result.empty());
+  }
+}
+
+TEST(String, Split3)
+{
+  using Azure::Core::_internal::StringExtensions;
+  {
+    std::vector<std::string> result = StringExtensions::Split("1,2,3", ',');
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
+  }
+  {
+    std::vector<std::string> result = StringExtensions::Split("1,2,3", ',', true);
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
+  }
+}
+
+TEST(String, SplitBegin)
+{
+  using Azure::Core::_internal::StringExtensions;
+  {
+    std::vector<std::string> result = StringExtensions::Split(",1,2,3", ',');
+    ASSERT_EQ(result.size(), size_t{4});
+    EXPECT_EQ(result[0], "");
+    EXPECT_EQ(result[1], "1");
+    EXPECT_EQ(result[2], "2");
+    EXPECT_EQ(result[3], "3");
+  }
+  {
+    std::vector<std::string> result = StringExtensions::Split(",1,2,3", ',', true);
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
+  }
+}
+
+TEST(String, SplitEnd)
+{
+  using Azure::Core::_internal::StringExtensions;
+  {
+    std::vector<std::string> result = StringExtensions::Split("1,2,3,", ',');
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
+  }
+  {
+    std::vector<std::string> result = StringExtensions::Split("1,2,3,", ',', true);
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
+  }
+}
+
+TEST(String, SplitPartEmpty)
+{
+  using Azure::Core::_internal::StringExtensions;
+  {
+    std::vector<std::string> result = StringExtensions::Split("1,,2,,3", ',');
+    ASSERT_EQ(result.size(), size_t{5});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "");
+    EXPECT_EQ(result[2], "2");
+    EXPECT_EQ(result[3], "");
+    EXPECT_EQ(result[4], "3");
+  }
+  {
+    std::vector<std::string> result = StringExtensions::Split("1,,2,,3", ',', true);
+    ASSERT_EQ(result.size(), size_t{3});
+    EXPECT_EQ(result[0], "1");
+    EXPECT_EQ(result[1], "2");
+    EXPECT_EQ(result[2], "3");
+  }
+}
+
+TEST(String, SplitSeparator)
+{
+  using Azure::Core::_internal::StringExtensions;
+  {
+    std::vector<std::string> result = StringExtensions::Split(",,,,", ',');
+    ASSERT_EQ(result.size(), size_t{4});
+    EXPECT_EQ(result[0], "");
+    EXPECT_EQ(result[1], "");
+    EXPECT_EQ(result[2], "");
+    EXPECT_EQ(result[3], "");
+  }
+  {
+    std::vector<std::string> result = StringExtensions::Split(",,,,", ',', true);
+    ASSERT_EQ(result.size(), size_t{0});
+  }
+}

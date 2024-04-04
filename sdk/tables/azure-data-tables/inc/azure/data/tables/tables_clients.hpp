@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/data/tables/credentials/azure_sas_credential.hpp"
 #include "azure/data/tables/credentials/shared_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
 #include "azure/data/tables/transactions.hpp"
@@ -181,6 +182,21 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Initializes a new instance of tableClient.
      *
+     * @param serviceUrl The service Url
+     * @param credential The SAS credential used to sign requests.
+     * @param tableName The name of the table.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
+    explicit TableClient(
+        const std::string& serviceUrl,
+        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
+        const std::string& tableName,
+        const TableClientOptions& options = {});
+
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
      * @param connectionString the connection string used to initialize.
      * @param tableName The name of the table.
      * @param options Optional client options that define the transport pipeline policies for
@@ -191,22 +207,6 @@ namespace Azure { namespace Data { namespace Tables {
         const std::string& connectionString,
         const std::string& tableName,
         const TableClientOptions& options = {});
-
-    /**
-     * @brief Create the table indicated in the tableName field of the client.
-     *
-     * @param context for canceling long running operations.
-     * @return Create table result.
-     */
-    Response<Models::Table> Create(Core::Context const& context = {});
-
-    /**
-     * @brief Delete the table indicated in the tableName field of the client.
-     *
-     * @param context for canceling long running operations.
-     * @return Delete table result.
-     */
-    Response<Models::DeleteResult> Delete(Core::Context const& context = {});
 
     /**
      * @brief Get table access policy.
@@ -300,6 +300,20 @@ namespace Azure { namespace Data { namespace Tables {
     Models::QueryEntitiesPagedResponse QueryEntities(
         Models::QueryEntitiesOptions const& options = {},
         Core::Context const& context = {});
+
+    /**
+     * @brief Get one table entity.
+     *
+     * @param partitionKey The partition key of the entity.
+     * @param rowKey The row key of the entity.
+     * @param context for canceling long running operations.
+     * @return Table entity.
+     */
+    Response<Models::TableEntity> GetEntity(
+        const std::string& partitionKey,
+        const std::string& rowKey,
+        Core::Context const& context = {});
+
     /**
      * @brief Creates a new transaction.
      *
@@ -323,21 +337,20 @@ namespace Azure { namespace Data { namespace Tables {
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_tableName;
-    Models::TableEntity DeserializeEntity(Azure::Core::Json::_internal::json json);
   };
 
   /**
-   * @brief Table Services Client
+   * @brief Table Service Client
    */
-  class TableServicesClient final {
+  class TableServiceClient final {
   public:
     /**
-     * @brief Initializes a new instance of tableServicesClient.
+     * @brief Initializes a new instance of tableServiceClient.
      *
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(const TableClientOptions& options = {});
+    explicit TableServiceClient(const TableClientOptions& options = {});
 
     /**
      * @brief Initializes a new instance of tableClient.
@@ -347,7 +360,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(
+    explicit TableServiceClient(
         const std::string& serviceUrl,
         const TableClientOptions& options = {});
 
@@ -360,7 +373,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(
+    explicit TableServiceClient(
         const std::string& serviceUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const TableClientOptions& options = {});
@@ -374,31 +387,68 @@ namespace Azure { namespace Data { namespace Tables {
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
-    explicit TableServicesClient(
+    explicit TableServiceClient(
         const std::string& serviceUrl,
         std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
         const TableClientOptions& options = {});
+
+    /**
+     * @brief Initializes a new instance of tableClient.
+     *
+     * @param serviceUrl A url referencing the table that includes the name of the account and the
+     * name of the table.
+     * @param credential The SAS credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
+    explicit TableServiceClient(
+        const std::string& serviceUrl,
+        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
+        const TableClientOptions& options = {});
+
     /**
      * @brief Initializes a new instance of tableClient.
      *
      * @param connectionString the connection string used to initialize.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
-     * @return TableServicesClient.
+     * @return TableServiceClient.
      */
-    static TableServicesClient CreateFromConnectionString(
+    static TableServiceClient CreateFromConnectionString(
         const std::string& connectionString,
         const TableClientOptions& options = {});
 
     /**
-     * @brief List tables.
+     * @brief Create the table indicated in the tableName field of the client.
+     *
+     * @param context for canceling long running operations.
+     * @param tableName The name of the table to be created.
+     * @return Create table result.
+     */
+    Response<Models::Table> CreateTable(
+        std::string const& tableName,
+        Core::Context const& context = {});
+
+    /**
+     * @brief Delete the table indicated in the tableName field of the client.
+     *
+     * @param context for canceling long running operations.
+     * @param tableName The name of the table to be deleted.
+     * @return Delete table result.
+     */
+    Response<Models::DeleteTableResult> DeleteTable(
+        std::string const& tableName,
+        Core::Context const& context = {});
+
+    /**
+     * @brief Query tables.
      *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return List tables paged response.
      */
-    Models::ListTablesPagedResponse ListTables(
-        const Models::ListTablesOptions& options = {},
+    Models::QueryTablesPagedResponse QueryTables(
+        const Models::QueryTablesOptions& options = {},
         const Azure::Core::Context& context = {}) const;
 
     /**

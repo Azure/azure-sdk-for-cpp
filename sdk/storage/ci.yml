@@ -22,8 +22,8 @@ pr:
       - sdk/storage
       - eng/common/testproxy
 
-stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: storage
       # Not running tests on CI but only on LiveTest mode

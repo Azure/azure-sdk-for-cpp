@@ -32,6 +32,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char UpdatedPropertyName[] = "updated";
   constexpr static const char RecoverableDaysPropertyName[] = "recoverableDays";
   constexpr static const char RecoveryLevelPropertyName[] = "recoveryLevel";
+  constexpr static const char HsmPlatformPropertyName[] = "hsmPlatform";
 
   /***************** Key Request Parameters *****************/
   constexpr static const char KeyTypePropertyName[] = "kty";

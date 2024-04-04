@@ -55,6 +55,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Azure::Core::Amqp::Models::_internal::AmqpError const& error)
     {
       EventHubsException rv(error.Description);
+      Azure::Core::Diagnostics::_internal::Log::Stream(
+          Azure::Core::Diagnostics::Logger::Level::Error)
+          << "Creating EventHubsException with error condition: " << error;
+      ;
       rv.ErrorCondition = error.Condition.ToString();
       rv.ErrorDescription = error.Description;
       rv.IsTransient = IsErrorTransient(error.Condition);
@@ -232,7 +236,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         m_managementClient = std::make_unique<Azure::Core::Amqp::_internal::ManagementClient>(
             m_session.CreateManagementClient(m_eventHub, managementClientOptions));
 
-        m_managementClient->Open(context);
+        auto openResult{m_managementClient->Open(context)};
+        if (openResult != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
+        {
+          throw std::runtime_error("Could not open Management client");
+        }
         m_managementClientIsOpen = true;
       }
     }

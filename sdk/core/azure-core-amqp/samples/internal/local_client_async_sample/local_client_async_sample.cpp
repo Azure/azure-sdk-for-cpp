@@ -31,28 +31,30 @@ int main()
       session.CreateMessageSender("localhost/ingress", senderOptions, nullptr)};
 
   // Open the connection to the remote.
-  sender.Open();
-
-  auto timeStart = std::chrono::high_resolution_clock::now();
-
-  constexpr int maxMessageSendCount = 1000;
-
-  Azure::Core::Amqp::Models::AmqpMessage message;
-  message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
-
-  int messageSendCount = 0;
-  while (messageSendCount < maxMessageSendCount)
+  if (sender.Open())
   {
-    auto result = sender.Send(message);
-    messageSendCount += 1;
+
+    auto timeStart = std::chrono::high_resolution_clock::now();
+
+    constexpr int maxMessageSendCount = 1000;
+
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
+
+    int messageSendCount = 0;
+    while (messageSendCount < maxMessageSendCount)
+    {
+      auto result = sender.Send(message);
+      messageSendCount += 1;
+    }
+
+    auto timeEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::nanoseconds timeDiff = timeEnd - timeStart;
+
+    std::cout << "Sent " << messageSendCount << " in "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()
+              << " milliseconds" << std::endl;
+
+    sender.Close();
   }
-
-  auto timeEnd = std::chrono::high_resolution_clock::now();
-  std::chrono::nanoseconds timeDiff = timeEnd - timeStart;
-
-  std::cout << "Sent " << messageSendCount << " in "
-            << std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()
-            << " milliseconds" << std::endl;
-
-  sender.Close();
 }

@@ -39,15 +39,26 @@ parameters:
 - name: PostTestSteps
   type: stepList
   default: []
+- name: OSName
+  type: string
+  default: ''
 
 jobs:
-- job: ValidateLive
+- job:
+  displayName: ValidateLive
   dependsOn: ${{ parameters.DependsOn }}
   condition: and(ne(variables['Skip.LiveTest'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   pool:
     name: $(Pool)
-    vmImage: $(OSVmImage)
+    # 1es pipeline templates converts `image` to demands: ImageOverride under the hood
+    # which is incompatible with image selection in the default non-1es hosted pools
+    ${{ if eq(parameters.OSName, 'macOS') }}:
+      vmImage: $(OSVmImage)
+    ${{ else }}:
+      image: $(OSVmImage)
+    os: ${{ parameters.OSName }}
+    
 
   ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
     # Add a default so the job doesn't fail when the matrix is empty
@@ -58,18 +69,30 @@ jobs:
     matrix: $[ ${{ parameters.Matrix }} ]
 
   variables:
-    CMOCKA_XML_FILE: "%g-test-results.xml"
-    CMOCKA_MESSAGE_OUTPUT: "xml"
-    AZURE_ENABLE_STATIC_ANALYSIS: 1
-    BuildArgs: ""
-    VcpkgArgs: ""
-    WindowsCtestConfig: ""
-    CmakeEnvArg: ""
-    CmakeArgs: ""
-    AZURE_TEST_MODE: "LIVE"
-    AZURE_LOG_LEVEL: "verbose"
-    # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
-    AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
+    - template: /eng/pipelines/templates/variables/image.yml@self
+    - name: CMOCKA_XML_FILE
+      value: "%g-test-results.xml"
+    - name: CMOCKA_MESSAGE_OUTPUT
+      value: "xml"
+    - name: AZURE_ENABLE_STATIC_ANALYSIS
+      value: 1
+    - name: BuildArgs
+      value: ""
+    - name: VcpkgArgs
+      value: ""
+    - name: WindowsCtestConfig
+      value: ""
+    - name: CmakeEnvArg
+      value: ""
+    - name: CmakeArgs
+      value: ""
+    - name: AZURE_TEST_MODE
+      value: "LIVE"
+    - name: AZURE_LOG_LEVEL
+      value: "verbose"
+      # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
+    - name: AZURE_SERVICE_DIRECTORY
+      value: ${{ parameters.ServiceDirectory }}
 
   steps:
   - checkout: self
@@ -148,10 +171,15 @@ jobs:
     # We don't need to set it to invoke ctest
     # Visual Studio generator used in CI is a multi-config generator.
     # As such, it requires the configuration argument for building and invoking ctest
-  - script: ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
+  - bash: |
+      export AZURE_CLIENT_ID=$(${{parameters.ServiceDirectory}}_CLIENT_ID)
+      export AZURE_TENANT_ID=$(${{parameters.ServiceDirectory}}_TENANT_ID)
+      export AZURE_CLIENT_SECRET=$(${{parameters.ServiceDirectory}}_CLIENT_SECRET)
+
+      ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
     workingDirectory: build
     displayName: ctest
-    # Runs only if test-resources are happly deployed.
+    # Runs only if test-resources are happily deployed.
     # unit-tests runs for those configs where samples are not ran.
     # This enables to run tests and samples at the same time as different matrix configuration.
     # Then unit-tests runs, samples should not run.

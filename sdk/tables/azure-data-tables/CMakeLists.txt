@@ -42,7 +42,10 @@ endif()
 set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/account_sas_builder.hpp
+    inc/azure/data/tables/credentials/azure_sas_credential.hpp
+    inc/azure/data/tables/credentials/shared_key_credential.hpp
     inc/azure/data/tables/dll_import_export.hpp
+    inc/azure/data/tables/enum_operators.hpp
     inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
     inc/azure/data/tables/internal/cryptography/url_encode.hpp
     inc/azure/data/tables/internal/policies/service_version_policy.hpp
@@ -57,8 +60,8 @@ set(
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_clients.hpp
+    inc/azure/data/tables/tables_sas_builder.hpp
     inc/azure/data/tables/transactions.hpp
-    inc/azure/data/tables/credentials/shared_key_credential.hpp
 )
 
 set(
@@ -66,6 +69,7 @@ set(
     src/account_sas_builder.cpp
     src/credentials/shared_key_credential.cpp
     src/cryptography/hmacsha256.cpp
+    src/models.cpp
     src/policies/shared_key_lite_policy.cpp
     src/policies/shared_key_policy.cpp
     src/policies/switch_to_secondary_policy.cpp
@@ -74,6 +78,7 @@ set(
     src/private/package_version.hpp
     src/serializers.cpp
     src/tables_clients.cpp
+    src/tables_sas_builder.cpp
     src/transactions.cpp
     src/xml_wrapper.cpp
 )

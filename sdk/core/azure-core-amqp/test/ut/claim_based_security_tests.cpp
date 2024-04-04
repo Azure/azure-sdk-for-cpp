@@ -4,6 +4,7 @@
 #include "mock_amqp_server.hpp"
 
 #include <azure/core/amqp/internal/claims_based_security.hpp>
+#include <azure/core/amqp/internal/common/global_state.hpp>
 #include <azure/core/amqp/internal/connection.hpp>
 #include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
@@ -16,7 +17,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestCbs : public testing::Test {
   protected:
     void SetUp() override {}
-    void TearDown() override {}
+    void TearDown() override
+    { // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
+      Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+    }
   };
 
   using namespace Azure::Core::Amqp;

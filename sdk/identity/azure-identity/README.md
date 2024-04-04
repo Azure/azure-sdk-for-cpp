@@ -1,5 +1,5 @@
 # Azure Identity client library for C++
-The Azure Identity library provides Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/azure/active-directory/fundamentals/new-name)) token authentication support across the Azure SDK. It provides a set of `TokenCredential` implementations which can be used to construct Azure SDK clients which support Microsoft Entra token authentication.
+The Azure Identity library provides Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/entra/fundamentals/new-name)) token authentication support across the Azure SDK. It provides a set of `TokenCredential` implementations which can be used to construct Azure SDK clients which support Microsoft Entra token authentication.
 This library follows the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
   [Source code][source] | [API reference documentation][doxygen] | [Microsoft Entra ID documentation][meid_doc]
@@ -74,6 +74,7 @@ See the [code samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/
 `ChainedTokenCredential` allows users to set up custom authentication flow consisting of multiple credentials.
 
 An example below demonstrates using `ChainedTokenCredential` which will attempt to authenticate using `EnvironmentCredential`, and fall back to authenticate using `ManagedIdentityCredential`.
+
 ```cpp
 // A configuration demonstrated below would authenticate using EnvironmentCredential if it is
 // available, and if it is not available, would fall back to use AzureCliCredential, and then to
@@ -89,11 +90,11 @@ Azure::Service::Client azureServiceClient("serviceUrl", chainedTokenCredential);
 
 ## Managed Identity Support
 
-The [Managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via the `ManagedIdentityCredential` for the following Azure Services:
-* [Azure App Service and Azure Functions](https://docs.microsoft.com/azure/app-service/overview-managed-identity)
-* [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
-* [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
-* [Azure Virtual Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
+The [Managed identity authentication](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) is supported via the `ManagedIdentityCredential` for the following Azure Services:
+* [Azure App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
+* [Azure Cloud Shell](https://learn.microsoft.com/azure/cloud-shell/msi-authorization)
+* [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
+* [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
 
 ## Environment Variables
 
@@ -106,7 +107,7 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 |`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
 |`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
 |`AZURE_CLIENT_SECRET`|one of the application's client secrets
-|`AZURE_AUTHORITY_HOST`|(optional) [authentication authority URL](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud)
+|`AZURE_AUTHORITY_HOST`|(optional) [authentication authority URL](https://learn.microsoft.com/entra/identity-platform/authentication-national-cloud)
 
 ### Service principal with certificate
 
@@ -115,7 +116,7 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 |`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
 |`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
 |`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PFX or PEM-encoded certificate file including private key
-|`AZURE_AUTHORITY_HOST`|(optional) [authentication authority URL](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud)
+|`AZURE_AUTHORITY_HOST`|(optional) [authentication authority URL](https://learn.microsoft.com/entra/identity-platform/authentication-national-cloud)
 
 Configuration is attempted in the above order. For example, if values for a client secret and certificate are both present, the client secret will be used.
 
@@ -133,8 +134,8 @@ Configuration is attempted in the above order. For example, if values for a clie
 ### Authenticate service principals
 |Credential | Usage
 |-|-
-|`ClientSecretCredential`|Authenticates a service principal [using a secret](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals).
-|`ClientCertificateCredential`|Authenticates a service principal [using a certificate](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals).
+|`ClientSecretCredential`|Authenticates a service principal [using a secret](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals).
+|`ClientCertificateCredential`|Authenticates a service principal [using a certificate](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals).
 
 ### Authenticate via development tools
 |Credential | Usage
@@ -187,6 +188,6 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
 [default_azure_credential_auth_flow]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/img/mermaidjs/DefaultAzureCredentialAuthFlow.svg
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
-[meid_doc]: https://learn.microsoft.com/azure/active-directory/
+[meid_doc]: https://learn.microsoft.com/entra/identity/
 [azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core
 [doxygen]: https://azure.github.io/azure-sdk-for-cpp/

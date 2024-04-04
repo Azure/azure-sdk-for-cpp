@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "event_sender.hpp"
 #include "eventhubs_stress_scenarios.hpp"
 
 #include <azure/core/internal/environment.hpp>
@@ -48,6 +47,7 @@ private:
   std::uint32_t m_maxTimeouts{10};
   bool m_verbose{false};
   bool m_useSasCredential{false};
+  std::function<void(Azure::Core::Context)> m_sleepAfterFunction;
 
   std::string m_scenarioName{"BatchStressTest"};
 

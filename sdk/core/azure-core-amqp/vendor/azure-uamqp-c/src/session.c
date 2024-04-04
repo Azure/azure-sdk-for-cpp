@@ -5,6 +5,7 @@
 #include <string.h>
 #include "azure_macro_utils/macro_utils.h"
 #include "azure_c_shared_utility/gballoc.h"
+#include "azure_c_shared_utility/xlogging.h"
 #include "azure_uamqp_c/session.h"
 #include "azure_uamqp_c/connection.h"
 #include "azure_uamqp_c/amqp_definitions.h"
@@ -545,6 +546,11 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                             if (!session_instance->on_link_attached(session_instance->on_link_attached_callback_context, new_link_endpoint, name, role, source, target, properties))
                             {
                                 remove_link_endpoint(new_link_endpoint);
+                              LOG(AZ_LOG_INFO,
+                                  LOG_LINE,
+                                  "free_link_endpoint because link attached callback returned false. %p",
+                                  new_link_endpoint);
+
                                 free_link_endpoint(new_link_endpoint);
                                 new_link_endpoint = NULL;
                             }
@@ -615,7 +621,7 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                 {
                     if (link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING)
                     {
-                        link_endpoint->link_endpoint_state = LINK_ENDPOINT_STATE_DETACHING;
+                      link_endpoint->link_endpoint_state = LINK_ENDPOINT_STATE_DETACHING;
                         if (link_endpoint->frame_received_callback)
                         {
                             link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
@@ -625,6 +631,10 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                     {
                         /* remove the link endpoint */
                         remove_link_endpoint(link_endpoint);
+                        LOG(AZ_LOG_INFO,
+                            LOG_LINE,
+                            "free_link_endpoint because endpoint is detaching.: %p",
+                            link_endpoint);
                         free_link_endpoint(link_endpoint);
                     }
                 }
@@ -1007,7 +1017,8 @@ int session_end(SESSION_HANDLE session, const char* condition_value, const char*
         // all link endpoints are destroyed when the session end happens
         for (i = 0; i < session_instance->link_endpoint_count; i++)
         {
-            free_link_endpoint(session_instance->link_endpoints[i]);
+          LOG(AZ_LOG_INFO, LOG_LINE, "free link endpoint because session ending");
+          free_link_endpoint(session_instance->link_endpoints[i]);
         }
 
         session_instance->link_endpoint_count = 0;

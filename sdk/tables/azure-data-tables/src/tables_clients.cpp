@@ -19,7 +19,7 @@ using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::Credentials::_detail;
 using namespace Azure::Data::Tables::_detail;
 
-TableServicesClient::TableServicesClient(const TableClientOptions& options)
+TableServiceClient::TableServiceClient(const TableClientOptions& options)
 {
   TableClientOptions newOptions = options;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
@@ -37,7 +37,7 @@ TableServicesClient::TableServicesClient(const TableClientOptions& options)
       std::move(perOperationPolicies));
 }
 
-TableServicesClient::TableServicesClient(
+TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     const TableClientOptions& options)
 {
@@ -57,11 +57,11 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies));
 }
 
-TableServicesClient::TableServicesClient(
+TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     std::shared_ptr<Core::Credentials::TokenCredential> credential,
     const TableClientOptions& options)
-    : TableServicesClient(options)
+    : TableServiceClient(options)
 
 {
   TableClientOptions newOptions = options;
@@ -96,7 +96,7 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies));
 }
 
-TableServicesClient::TableServicesClient(
+TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
     const TableClientOptions& options)
@@ -135,7 +135,15 @@ TableServicesClient::TableServicesClient(
       std::move(perOperationPolicies2));
 }
 
-TableServicesClient TableServicesClient::CreateFromConnectionString(
+TableServiceClient::TableServiceClient(
+    const std::string& serviceUrl,
+    std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
+    const TableClientOptions& options)
+    : TableServiceClient(std::string{serviceUrl + credential->GetSignature()}, options)
+{
+}
+
+TableServiceClient TableServiceClient::CreateFromConnectionString(
     const std::string& connectionString,
     const TableClientOptions& options)
 {
@@ -144,16 +152,16 @@ TableServicesClient TableServicesClient::CreateFromConnectionString(
 
   if (parsedConnectionString.KeyCredential)
   {
-    return TableServicesClient(
+    return TableServiceClient(
         tablesUrl.GetAbsoluteUrl(), std::move(parsedConnectionString.KeyCredential), options);
   }
   else
   {
-    return TableServicesClient(options);
+    return TableServiceClient(options);
   }
 }
 
-Azure::Response<Models::PreflightCheckResult> TableServicesClient::PreflightCheck(
+Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck(
     Models::PreflightCheckOptions const& options,
     Core::Context const& context)
 {
@@ -174,7 +182,7 @@ Azure::Response<Models::PreflightCheckResult> TableServicesClient::PreflightChec
 
   return Response<Models::PreflightCheckResult>(std::move(response), std::move(rawResponse));
 }
-Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServiceProperties(
+Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServiceProperties(
     Models::SetServicePropertiesOptions const& options,
     Core::Context const& context)
 {
@@ -204,7 +212,7 @@ Azure::Response<Models::SetServicePropertiesResult> TableServicesClient::SetServ
   return Response<Models::SetServicePropertiesResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceProperties(
+Azure::Response<Models::TableServiceProperties> TableServiceClient::GetServiceProperties(
     Core::Context const& context)
 {
   auto url = m_url;
@@ -227,7 +235,7 @@ Azure::Response<Models::TableServiceProperties> TableServicesClient::GetServiceP
   return Response<Models::TableServiceProperties>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::ServiceStatistics> TableServicesClient::GetStatistics(
+Azure::Response<Models::ServiceStatistics> TableServiceClient::GetStatistics(
     const Core::Context& context)
 {
   auto url = m_url;
@@ -407,6 +415,19 @@ TableClient::TableClient(
       std::move(perOperationPolicies2));
 }
 
+TableClient::TableClient(
+    const std::string& serviceUrl,
+    std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
+    const std::string& tableName,
+    const TableClientOptions& options)
+    : TableClient(
+        std::string{
+            Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/" + credential->GetSignature()},
+        tableName,
+        options)
+{
+}
+
 TableClient TableClient::CreateFromConnectionString(
     const std::string& connectionString,
     const std::string& tableName,
@@ -429,12 +450,14 @@ TableClient TableClient::CreateFromConnectionString(
   }
 }
 
-Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
+Azure::Response<Models::Table> TableServiceClient::CreateTable(
+    std::string const& tableName,
+    Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("Tables");
 
-  std::string jsonBody = Serializers::Create(m_tableName);
+  std::string jsonBody = Serializers::Create(tableName);
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
@@ -472,14 +495,14 @@ Azure::Response<Models::Table> TableClient::Create(Core::Context const& context)
   return Response<Models::Table>(std::move(response), std::move(rawResponse));
 }
 
-void Models::ListTablesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+void Models::QueryTablesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   m_operationOptions.ContinuationToken = NextPageToken;
-  *this = m_tableServiceClient->ListTables(m_operationOptions, context);
+  *this = m_tableServiceClient->QueryTables(m_operationOptions, context);
 }
 
-Models::ListTablesPagedResponse TableServicesClient::ListTables(
-    Models::ListTablesOptions const& options,
+Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
+    Models::QueryTablesOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto url = m_url;
@@ -498,7 +521,7 @@ Models::ListTablesPagedResponse TableServicesClient::ListTables(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::ListTablesPagedResponse response;
+  Models::QueryTablesPagedResponse response;
   {
     auto const& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
@@ -521,7 +544,7 @@ Models::ListTablesPagedResponse TableServicesClient::ListTables(
 
     response.ServiceEndpoint = url.GetAbsoluteUrl();
     response.Prefix = options.Prefix;
-    response.m_tableServiceClient = std::make_shared<TableServicesClient>(*this);
+    response.m_tableServiceClient = std::make_shared<TableServiceClient>(*this);
     response.m_operationOptions = options;
     response.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
     response.RawResponse = std::move(response.RawResponse);
@@ -585,10 +608,12 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
   return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Models::DeleteResult> TableClient::Delete(Core::Context const& context)
+Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
+    std::string const& tableName,
+    Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("Tables('" + m_tableName + "')");
+  url.AppendPath("Tables('" + tableName + "')");
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
@@ -602,9 +627,9 @@ Azure::Response<Models::DeleteResult> TableClient::Delete(Core::Context const& c
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::DeleteResult response{};
+  Models::DeleteTableResult response{};
 
-  return Response<Models::DeleteResult>(std::move(response), std::move(rawResponse));
+  return Response<Models::DeleteTableResult>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
@@ -616,19 +641,7 @@ Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
   auto url = m_url;
   url.AppendPath(m_tableName);
 
-  std::string jsonBody;
-  {
-    auto jsonRoot = Core::Json::_internal::json::object();
-
-    jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
-    jsonRoot["RowKey"] = tableEntity.RowKey;
-    for (auto entry : tableEntity.Properties)
-    {
-      jsonRoot[entry.first] = entry.second;
-    }
-
-    jsonBody = jsonRoot.dump();
-  }
+  std::string jsonBody = Serializers::CreateEntity(tableEntity);
 
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
@@ -659,8 +672,8 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
-      + "')");
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
+      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
 
   std::string jsonBody = Serializers::UpdateEntity(tableEntity);
 
@@ -703,8 +716,8 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
-      + "')");
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
+      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
 
   std::string jsonBody = Serializers::MergeEntity(tableEntity);
 
@@ -745,8 +758,8 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 {
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + tableEntity.PartitionKey + "',RowKey='" + tableEntity.RowKey
-      + "')");
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
+      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
@@ -807,6 +820,39 @@ void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& 
   *this = m_tableClient->QueryEntities(m_operationOptions, context);
 }
 
+Azure::Response<Models::TableEntity> TableClient::GetEntity(
+    const std::string& partitionKey,
+    const std::string& rowKey,
+    Core::Context const& context)
+{
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(partitionKey) + "',RowKey='"
+      + Azure::Core::Url::Encode(rowKey) + "')");
+
+  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::TableEntity response{};
+  {
+    const auto& responseBody = rawResponse->GetBody();
+    std::string responseString = std::string(responseBody.begin(), responseBody.end());
+
+    auto const jsonRoot
+        = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+
+    response = Serializers::DeserializeEntity(jsonRoot);
+  }
+  return Response<Models::TableEntity>(std::move(response), std::move(rawResponse));
+}
+
 Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     Models::QueryEntitiesOptions const& options,
     Core::Context const& context)
@@ -815,11 +861,11 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
   std::string appendPath = m_tableName + "(";
   if (!options.PartitionKey.empty())
   {
-    appendPath += "PartitionKey='" + options.PartitionKey + "'";
+    appendPath += "PartitionKey='" + Azure::Core::Url::Encode(options.PartitionKey) + "'";
   }
   if (!options.RowKey.empty())
   {
-    appendPath += ",RowKey='" + options.RowKey + "'";
+    appendPath += ",RowKey='" + Azure::Core::Url::Encode(options.RowKey) + "'";
   }
   appendPath += ")";
 
@@ -827,11 +873,11 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
   if (options.Filter.HasValue())
   {
-    url.AppendQueryParameter("$filter", options.Filter.Value());
+    url.AppendQueryParameter("$filter", Azure::Core::Url::Encode(options.Filter.Value()));
   }
   if (!options.SelectColumns.empty())
   {
-    url.AppendQueryParameter("$select", options.SelectColumns);
+    url.AppendQueryParameter("$select", Azure::Core::Url::Encode(options.SelectColumns));
   }
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -865,43 +911,17 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
     if (!jsonRoot.contains("value"))
     {
-      response.TableEntities.emplace_back(DeserializeEntity(jsonRoot));
+      response.TableEntities.emplace_back(Serializers::DeserializeEntity(jsonRoot));
     }
     else
     {
       for (auto value : jsonRoot["value"])
       {
-        response.TableEntities.emplace_back(DeserializeEntity(value));
+        response.TableEntities.emplace_back(Serializers::DeserializeEntity(value));
       }
     }
   }
   return response;
-}
-
-Models::TableEntity TableClient::DeserializeEntity(Azure::Core::Json::_internal::json json)
-{
-  Models::TableEntity tableEntity{};
-  if (json.contains("PartitionKey"))
-  {
-    tableEntity.PartitionKey = json["PartitionKey"].get<std::string>();
-  }
-  if (json.contains("PartitionKey"))
-  {
-    tableEntity.RowKey = json["RowKey"].get<std::string>();
-  }
-  if (json.contains("PartitionKey"))
-  {
-    tableEntity.ETag = json["odata.etag"].get<std::string>();
-  }
-  for (auto properties : json.get<std::map<std::string, std::string>>())
-  {
-    if (properties.first != "odata.metadata" && properties.first != "PartitionKey"
-        && properties.first != "RowKey" && properties.first != "odata.etag")
-    {
-      tableEntity.Properties[properties.first] = properties.second;
-    }
-  }
-  return tableEntity;
 }
 
 Transaction TableClient::CreateTransaction(std::string const& partitionKey)
