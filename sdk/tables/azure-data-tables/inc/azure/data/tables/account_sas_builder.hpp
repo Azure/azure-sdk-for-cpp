@@ -12,7 +12,8 @@
 #include <string>
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
-
+  constexpr const char* HttpsAndHttp = "https,http";
+  constexpr const char* HttpsOnly = "https";
   /**
    * @brief Defines the protocols permitted for Storage requests made with a shared access
    * signature.
@@ -33,7 +34,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   namespace _detail {
     inline std::string SasProtocolToString(SasProtocol protocol)
     {
-      return protocol == SasProtocol::HttpsAndHttp ? "https,http" : "https";
+      return protocol == SasProtocol::HttpsAndHttp ? HttpsAndHttp : HttpsOnly;
     }
   } // namespace _detail
 
@@ -77,7 +78,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      * @brief Indicates whether Azure Table Storage resources are accessible from the shared
      * access signature.
      */
-    Table = 8,
+    Table = 1,
     /**
      * @brief Indicates all services are accessible from the shared
      * access signature.

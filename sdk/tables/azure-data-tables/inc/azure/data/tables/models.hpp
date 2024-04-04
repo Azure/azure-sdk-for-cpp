@@ -480,6 +480,11 @@ namespace Azure { namespace Data { namespace Tables {
      *
      */
     class TableEntity final {
+        constexpr static const char* PartitionKeyPropertyName = "PartitionKey";
+        constexpr static const char* RowKeyPropertyName = "RowKey";
+        constexpr static const char* ETagPropertyName = "odata.etag";
+        constexpr static const char* TimestampPropertyName = "Timestamp";
+
     public:
       /**
        * Properties
@@ -491,7 +496,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return Partition key
        */
-      TableEntityProperty GetPartitionKey() const { return GetProperty("PartitionKey"); }
+      TableEntityProperty GetPartitionKey() const { return GetProperty(PartitionKeyPropertyName); }
 
       /**
        * @brief Set Partition key.
@@ -500,7 +505,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetPartitionKey(const std::string& partitionKey)
       {
-        Properties["PartitionKey"] = TableEntityProperty(partitionKey);
+        Properties[PartitionKeyPropertyName] = TableEntityProperty(partitionKey);
       }
 
       /**
@@ -508,7 +513,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return Row key
        */
-      TableEntityProperty GetRowKey() const { return GetProperty("RowKey"); }
+      TableEntityProperty GetRowKey() const { return GetProperty(RowKeyPropertyName); }
       /**
        * @brief Set Row key.
        *
@@ -516,7 +521,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetRowKey(const std::string& rowKey)
       {
-        Properties["RowKey"] = TableEntityProperty(rowKey);
+        Properties[RowKeyPropertyName] = TableEntityProperty(rowKey);
       }
 
       /**
@@ -524,7 +529,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return ETag
        */
-      TableEntityProperty GetETag() const { return GetProperty("odata.etag"); }
+      TableEntityProperty GetETag() const { return GetProperty(ETagPropertyName); }
       /**
        * @brief Set ETag.
        *
@@ -532,7 +537,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetETag(const std::string& eTag)
       {
-        Properties["odata.etag"] = TableEntityProperty(eTag);
+        Properties[ETagPropertyName] = TableEntityProperty(eTag);
       }
 
       /**
@@ -540,7 +545,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @return timestamp
        */
-      TableEntityProperty GetTimestamp() const { return GetProperty("Timestamp"); }
+      TableEntityProperty GetTimestamp() const { return GetProperty(TimestampPropertyName); }
       /**
        * @brief Set time stamp.
        *
@@ -548,7 +553,7 @@ namespace Azure { namespace Data { namespace Tables {
        */
       void SetTimestamp(const std::string& timestamp)
       {
-        Properties["Timestamp"] = TableEntityProperty(timestamp);
+        Properties[TimestampPropertyName] = TableEntityProperty(timestamp);
       }
 
     private:

@@ -121,6 +121,7 @@ az_rtti_setup(
 create_code_coverage(tables azure-data-tables azure-data-tables-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
+  add_compile_definitions(_azure_TABLES_TESTING_BUILD)
   add_subdirectory(test/ut)
   add_subdirectory(test/stress)
 endif()
