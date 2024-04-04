@@ -548,7 +548,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
@@ -578,7 +578,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
@@ -615,7 +615,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
@@ -650,7 +650,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
