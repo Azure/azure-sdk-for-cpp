@@ -147,6 +147,18 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
   }
 
+  TEST_P(TablesClientTest, CreateTableFail)
+  {
+    try
+    {
+      auto createResponse = m_tableServiceClient->CreateTable("+++");
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::BadRequest);
+    }
+  }
+
   TEST_P(TablesClientTest, GetAccessPolicy_LIVEONLY_)
   {
     if (GetParam() != AuthType::ConnectionString)
@@ -231,6 +243,18 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
+  TEST_P(TablesClientTest, DeleteTableFail)
+  {
+    try
+    {
+      auto response = m_tableServiceClient->DeleteTable(m_tableName);
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    }
+  }
+
   TEST_P(TablesClientTest, ServiceClientConstructors)
   {
     EXPECT_FALSE(m_tableServiceClient == nullptr);
@@ -294,6 +318,39 @@ namespace Azure { namespace Data { namespace Test {
 
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
+  }
+
+  TEST_P(TablesClientTest, EntityCreateFail)
+  {
+    if (GetParam() == AuthType::Key)
+    {
+      EXPECT_TRUE(true);
+      return;
+    }
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
+    entity.Properties["Name"] = TableEntityProperty("Azure");
+    entity.Properties["Product"] = TableEntityProperty("Tables");
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    {
+      auto response = m_tableClient->AddEntity(entity);
+
+      EXPECT_EQ(
+          response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+      EXPECT_FALSE(response.Value.ETag.empty());
+    }
+    {
+      try
+      {
+        auto response = m_tableClient->AddEntity(entity);
+      }
+      catch (Azure::Core::RequestFailedException& e)
+      {
+        EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::Conflict);
+      }
+    }
   }
 
   TEST_P(TablesClientTest, EntityUpdate)
@@ -397,6 +454,26 @@ namespace Azure { namespace Data { namespace Test {
 
     EXPECT_EQ(
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+  }
+
+  TEST_P(TablesClientTest, EntityDeleteFail)
+  {
+
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
+    entity.Properties["Name"] = TableEntityProperty("Azure");
+    entity.Properties["Product"] = TableEntityProperty("Tables");
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    try
+    {
+      auto updateResponse2 = m_tableClient->DeleteEntity(entity);
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    }
   }
 
   TEST_P(TablesClientTest, EntityUpsert)
@@ -514,6 +591,22 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(responseQuery.Value.Properties["Product"].Value, "Tables");
     EXPECT_EQ(
         responseQuery.Value.Properties["Timestamp"].Type.Value(), TableEntityDataType::EdmDateTime);
+  }
+
+  TEST_P(TablesClientTest, EntityGetFail)
+  {
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    std::string partitionKey = "P1";
+    std::string rowKey = "R1";
+    try
+    {
+      auto responseQuery = m_tableClient->GetEntity(partitionKey, rowKey);
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    }
   }
 
   TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
