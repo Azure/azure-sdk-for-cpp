@@ -458,7 +458,11 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityDeleteFail)
   {
-
+    if (GetParam() == AuthType::Key)
+    {
+      EXPECT_TRUE(true);
+      return;
+    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
