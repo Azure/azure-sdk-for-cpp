@@ -8,7 +8,7 @@
 #include <thread>
 
 using namespace Azure::Data::Tables::Sas;
-// cspell: words rwdxylacupitf raud bqft
+// cspell: words rwdlau raud bqft
 namespace Azure { namespace Data { namespace Test {
   TEST(SasTest, TableSasBuilderTestAllSet)
   {
@@ -27,7 +27,7 @@ namespace Azure { namespace Data { namespace Test {
     sasBuilder.PartitionKeyStart = "myStartPartitionKey";
     sasBuilder.PartitionKeyEnd = "myEndPartitionKey";
     std::string key = "accountKey";
-    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+    Azure::Data::Tables::Credentials::NamedKeyCredential cred(
         "accountName",
         Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
     auto sasToken = sasBuilder.GenerateSasToken(cred);
@@ -56,7 +56,7 @@ namespace Azure { namespace Data { namespace Test {
     sasBuilder.TableName = "someTableName";
 
     std::string key = "*";
-    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+    Azure::Data::Tables::Credentials::NamedKeyCredential cred(
         "someaccount",
         Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
     auto sasToken = sasBuilder.GenerateSasToken(cred);
@@ -73,7 +73,7 @@ namespace Azure { namespace Data { namespace Test {
     sasBuilder.ExpiresOn
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
     std::string key = "accountKey";
-    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+    Azure::Data::Tables::Credentials::NamedKeyCredential cred(
         "accountName",
         Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
     auto sasToken = sasBuilder.GenerateSasToken(cred);
@@ -92,11 +92,11 @@ namespace Azure { namespace Data { namespace Test {
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
     sasBuilder.IPRange = "iprange";
     sasBuilder.EncryptionScope = "myScope";
-    sasBuilder.ResourceTypes = AccountSasResource::All;
+    sasBuilder.ResourceTypes = AccountSasResourceType::All;
     sasBuilder.Services = AccountSasServices::All;
 
     std::string key = "accountKey";
-    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+    Azure::Data::Tables::Credentials::NamedKeyCredential cred(
         "accountName",
         Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
     auto sasToken = sasBuilder.GenerateSasToken(cred);
@@ -106,10 +106,10 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(sasParts.at("ses"), "myScope");
     EXPECT_FALSE(sasParts.at("sig").empty());
     EXPECT_EQ(sasParts.at("sip"), "iprange");
-    EXPECT_EQ(sasParts.at("sp"), "rwdxylacupitf");
+    EXPECT_EQ(sasParts.at("sp"), "rwdlau");
     EXPECT_EQ(sasParts.at("spr"), "https,http");
     EXPECT_EQ(sasParts.at("srt"), "sco");
-    EXPECT_EQ(sasParts.at("ss"), "bqft");
+    EXPECT_EQ(sasParts.at("ss"), "t");
     EXPECT_EQ(sasParts.at("st"), "2020-08-18T00:00:00Z");
     EXPECT_EQ(sasParts.at("sv"), "2023-08-03");
   }
@@ -122,7 +122,7 @@ namespace Azure { namespace Data { namespace Test {
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
 
     std::string key = "accountKey";
-    Azure::Data::Tables::Credentials::SharedKeyCredential cred(
+    Azure::Data::Tables::Credentials::NamedKeyCredential cred(
         "accountName",
         Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(key.begin(), key.end())));
     auto sasToken = sasBuilder.GenerateSasToken(cred);

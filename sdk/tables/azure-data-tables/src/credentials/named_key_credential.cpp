@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/named_key_credential.hpp"
 
 #include <algorithm>
 
@@ -71,7 +71,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials { na
         throw std::runtime_error("Cannot find account name in connection string.");
       }
       connectionStringParts.KeyCredential
-          = std::make_shared<SharedKeyCredential>(accountName, accountKey);
+          = std::make_shared<NamedKeyCredential>(accountName, accountKey);
     }
 
     std::string sas = getWithDefault(connectionStringMap, "SharedAccessSignature");

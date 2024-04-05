@@ -4,7 +4,7 @@
 #pragma once
 
 #include "azure/data/tables/account_sas_builder.hpp"
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/enum_operators.hpp"
 
 #include <azure/core/datetime.hpp>
@@ -14,28 +14,6 @@
 #include <type_traits>
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
-  /**
-   * @brief Defines the protocols permitted for Storage requests made with a shared
-   * access signature.
-   */
-  enum class TablesSasProtocol
-  {
-    /**
-     * @brief No protocol has been specified. If no value is specified,
-     * the service will default to HttpsAndHttp.
-     */
-    None = 0,
-
-    /**
-     * @brief Only requests issued over HTTPS or HTTP will be permitted.
-     */
-    HttpsAndHttp = 1,
-
-    /**
-     * @brief Only requests issued over HTTPS will be permitted.
-     */
-    Https = 2
-  };
 
   /**
    * @brief Contains the list of
@@ -144,23 +122,23 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
 
     /**
-     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
+     * @brief Uses the NamedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
-     * @param credential The storage account's shared key credential.
+     * @param credential The named key credential.
      * @return The SAS query parameters used for authenticating requests.
      */
     std::string GenerateSasToken(
-        const Azure::Data::Tables::Credentials::SharedKeyCredential& credential);
+        const Azure::Data::Tables::Credentials::NamedKeyCredential& credential);
 
     /**
      * @brief Gets the canonical path for the shared access signature.
      *
-     * @param credential The storage account's shared key credential.
+     * @param credential The named key credential.
      * @return Canonical path.
      */
     std::string GetCanonicalName(
-        const Azure::Data::Tables::Credentials::SharedKeyCredential& credential) const
+        const Azure::Data::Tables::Credentials::NamedKeyCredential& credential) const
     {
       return Azure::Core::_internal::StringExtensions::ToLower(
           "/table/" + credential.AccountName + "/" + TableName);

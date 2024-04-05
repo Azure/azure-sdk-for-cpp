@@ -37,7 +37,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   }
 
   std::string TablesSasBuilder::GenerateSasToken(
-      const Azure::Data::Tables::Credentials::SharedKeyCredential& credential)
+      const Azure::Data::Tables::Credentials::NamedKeyCredential& credential)
   {
     std::string canonicalName
         = Azure::Data::Tables::_detail::Cryptography::UrlUtils::UrlEncodeQueryParameter(

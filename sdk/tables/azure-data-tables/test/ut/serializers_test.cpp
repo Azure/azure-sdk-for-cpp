@@ -38,20 +38,20 @@ namespace Azure { namespace Data { namespace Test {
     policy.ServiceProperties.HourMetrics.Version = "1.0";
     policy.ServiceProperties.HourMetrics.IsEnabled = true;
     policy.ServiceProperties.HourMetrics.IncludeApis = true;
-    policy.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days = 1;
+    policy.ServiceProperties.HourMetrics.RetentionPolicyDefinition.DataRetentionInDays = 1;
     policy.ServiceProperties.HourMetrics.RetentionPolicyDefinition.IsEnabled = true;
 
     policy.ServiceProperties.MinuteMetrics.Version = "1.0";
     policy.ServiceProperties.MinuteMetrics.IsEnabled = true;
     policy.ServiceProperties.MinuteMetrics.IncludeApis = true;
-    policy.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days = 1;
+    policy.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.DataRetentionInDays = 1;
     policy.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.IsEnabled = true;
 
     policy.ServiceProperties.Logging.Version = "1.0";
     policy.ServiceProperties.Logging.Delete = true;
     policy.ServiceProperties.Logging.Read = true;
     policy.ServiceProperties.Logging.Write = true;
-    policy.ServiceProperties.Logging.RetentionPolicyDefinition.Days = 1;
+    policy.ServiceProperties.Logging.RetentionPolicyDefinition.DataRetentionInDays = 1;
     policy.ServiceProperties.Logging.RetentionPolicyDefinition.IsEnabled = true;
 
     policy.ServiceProperties.Cors.emplace_back(CorsRule());
@@ -66,20 +66,20 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(data.HourMetrics.Version, "1.0");
     EXPECT_EQ(data.HourMetrics.IsEnabled, true);
     EXPECT_EQ(data.HourMetrics.IncludeApis.Value(), true);
-    EXPECT_EQ(data.HourMetrics.RetentionPolicyDefinition.Days.Value(), 1);
+    EXPECT_EQ(data.HourMetrics.RetentionPolicyDefinition.DataRetentionInDays.Value(), 1);
     EXPECT_EQ(data.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
 
     EXPECT_EQ(data.MinuteMetrics.Version, "1.0");
     EXPECT_EQ(data.MinuteMetrics.IsEnabled, true);
     EXPECT_EQ(data.MinuteMetrics.IncludeApis.Value(), true);
-    EXPECT_EQ(data.MinuteMetrics.RetentionPolicyDefinition.Days.Value(), 1);
+    EXPECT_EQ(data.MinuteMetrics.RetentionPolicyDefinition.DataRetentionInDays.Value(), 1);
     EXPECT_EQ(data.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, true);
 
     EXPECT_EQ(data.Logging.Version, "1.0");
     EXPECT_EQ(data.Logging.Delete, true);
     EXPECT_EQ(data.Logging.Read, true);
     EXPECT_EQ(data.Logging.Write, true);
-    EXPECT_EQ(data.Logging.RetentionPolicyDefinition.Days.Value(), 1);
+    EXPECT_EQ(data.Logging.RetentionPolicyDefinition.DataRetentionInDays.Value(), 1);
     EXPECT_EQ(data.Logging.RetentionPolicyDefinition.IsEnabled, true);
 
     EXPECT_EQ(data.Cors[0].AllowedOrigins, "*");

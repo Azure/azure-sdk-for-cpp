@@ -16,135 +16,137 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_F(TransactionsBodyTest, TransactionCreate)
   {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-    EXPECT_EQ(transaction.GetPartitionKey(), partitionKey);
-    EXPECT_EQ(transaction.GetBatchId().substr(0, 6), "batch_");
-    EXPECT_EQ(transaction.GetChangesetId().substr(0, 9), "changeset");
+    std::vector<Models::TransactionStep> steps;
+    TableClient client("http://localhost:7777", "table");
+
+    auto ser = client.PreparePayload("batch", "changeset", steps);
+
+    EXPECT_EQ(
+        ser,
+        "--batch\nContent-Type: multipart/mixed; "
+        "boundary=changeset\n\n\n\n--changeset--\n--batch\n");
   }
 
-  TEST_F(TransactionsBodyTest, TransactionBodyInsertOp)
+  TEST_F(TransactionsBodyTest, TransactionBodyAddOp)
   {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Data::Tables::Models::TableEntity entity;
-    entity.RowKey = rowKey;
-    transaction.CreateEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::InsertEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::InsertEntity);
-  }
-
-  TEST_F(TransactionsBodyTest, TransactionBodyDeleteOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
+    std::vector<Models::TransactionStep> steps;
+    TableClient client(url, tableName);
 
     Azure::Data::Tables::Models::TableEntity entity;
-    entity.RowKey = rowKey;
-    transaction.DeleteEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::DeleteEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::DeleteEntity);
-  }
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
+    steps.emplace_back(Models::TransactionStep{Models::TransactionActionType::Add, entity});
+    auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
 
-  TEST_F(TransactionsBodyTest, TransactionBodyMergeOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-
-    Azure::Data::Tables::Models::TableEntity entity;
-    entity.RowKey = rowKey;
-    transaction.MergeEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::MergeEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::MergeEntity);
-  }
-
-  TEST_F(TransactionsBodyTest, TransactionBodyUpdateOp)
-  {
-    Tables::Transaction transaction(url, tableName, partitionKey);
-    Azure::Data::Tables::Models::TableEntity entity;
-    entity.RowKey = rowKey;
-    transaction.UpdateEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::UpdateEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::UpdateEntity);
+    CheckTransactionBody(serialized, Models::TransactionActionType::Add);
   }
 
   TEST_F(TransactionsBodyTest, TransactionBodyInsertMergeOp)
   {
-    Tables::Transaction transaction(url, tableName, partitionKey);
+    std::vector<Models::TransactionStep> steps;
+    TableClient client(url, tableName);
+
     Azure::Data::Tables::Models::TableEntity entity;
-    entity.RowKey = rowKey;
-    transaction.InsertMergeEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::MergeEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::InsertMergeEntity);
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
+    steps.emplace_back(Models::TransactionStep{Models::TransactionActionType::InsertMerge, entity});
+    auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
+
+    CheckTransactionBody(serialized, Models::TransactionActionType::InsertMerge);
   }
 
   TEST_F(TransactionsBodyTest, TransactionBodyInsertReplaceOp)
   {
-    Tables::Transaction transaction(url, tableName, partitionKey);
+    std::vector<Models::TransactionStep> steps;
+    TableClient client(url, tableName);
+
     Azure::Data::Tables::Models::TableEntity entity;
-    entity.RowKey = rowKey;
-    transaction.InsertReplaceEntity(entity);
-    EXPECT_EQ(transaction.GetSteps().size(), 1);
-    EXPECT_EQ(transaction.GetSteps()[0].Action, Models::TransactionAction::UpdateEntity);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.RowKey, rowKey);
-    EXPECT_EQ(transaction.GetSteps()[0].Entity.PartitionKey, partitionKey);
-    auto serialized = transaction.PreparePayload();
-    CheckTransactionBody(serialized, Models::TransactionAction::InsertReplaceEntity);
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
+    steps.emplace_back(
+        Models::TransactionStep{Models::TransactionActionType::InsertReplace, entity});
+    auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
+
+    CheckTransactionBody(serialized, Models::TransactionActionType::InsertReplace);
+  }
+
+  TEST_F(TransactionsBodyTest, TransactionBodyDeleteOp)
+  {
+    std::vector<Models::TransactionStep> steps;
+    TableClient client(url, tableName);
+
+    Azure::Data::Tables::Models::TableEntity entity;
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
+    steps.emplace_back(Models::TransactionStep{Models::TransactionActionType::Delete, entity});
+    auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
+    CheckTransactionBody(serialized, Models::TransactionActionType::Delete);
+  }
+
+  TEST_F(TransactionsBodyTest, TransactionBodyUpdateMergeOp)
+  {
+    std::vector<Models::TransactionStep> steps;
+    TableClient client(url, tableName);
+
+    Azure::Data::Tables::Models::TableEntity entity;
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
+    steps.emplace_back(Models::TransactionStep{Models::TransactionActionType::UpdateMerge, entity});
+    auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
+    CheckTransactionBody(serialized, Models::TransactionActionType::UpdateMerge);
+  }
+
+  TEST_F(TransactionsBodyTest, TransactionBodyUpdateReplaceOp)
+  {
+    std::vector<Models::TransactionStep> steps;
+    TableClient client(url, tableName);
+
+    Azure::Data::Tables::Models::TableEntity entity;
+    entity.SetRowKey(rowKey);
+    entity.SetPartitionKey(partitionKey);
+    steps.emplace_back(
+        Models::TransactionStep{Models::TransactionActionType::UpdateReplace, entity});
+    auto serialized = client.PreparePayload("batch_", "changeset_1", steps);
+    CheckTransactionBody(serialized, Models::TransactionActionType::UpdateReplace);
   }
 
   void TransactionsBodyTest::CheckContentLines(
       std::vector<std::string> const& lines,
-      Models::TransactionAction action)
+      Models::TransactionActionType action)
   {
     EXPECT_EQ(lines[0], "--" + changeset);
     EXPECT_EQ(lines[1], "Content-Type: application/http");
     EXPECT_EQ(lines[2], "Content-Transfer-Encoding: binary");
     switch (action)
     {
-      case Models::TransactionAction::InsertEntity:
+      case Models::TransactionActionType::Add:
         EXPECT_EQ(lines[4], "POST " + url + "/" + tableName + " HTTP/1.1");
         break;
-      case Models::TransactionAction::DeleteEntity:
+      case Models::TransactionActionType::Delete:
         EXPECT_EQ(
             lines[4],
             "DELETE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
-      case Models::TransactionAction::MergeEntity:
+      case Models::TransactionActionType::UpdateMerge:
         EXPECT_EQ(
             lines[4],
             "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
-      case Models::TransactionAction::UpdateEntity:
+      case Models::TransactionActionType::UpdateReplace:
         EXPECT_EQ(
             lines[4],
             "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
-      case Models::TransactionAction::InsertMergeEntity:
+      case Models::TransactionActionType::InsertMerge:
         EXPECT_EQ(
             lines[4],
             "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
-      case Models::TransactionAction::InsertReplaceEntity:
+      case Models::TransactionActionType::InsertReplace:
         EXPECT_EQ(
             lines[4],
             "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
@@ -155,7 +157,7 @@ namespace Azure { namespace Data { namespace Test {
   }
   void TransactionsBodyTest::CheckTransactionBody(
       std::string const& body,
-      Models::TransactionAction action)
+      Models::TransactionActionType action)
   {
     (void)action;
     std::stringstream ss(body);
@@ -164,12 +166,11 @@ namespace Azure { namespace Data { namespace Test {
 
     // line1
     EXPECT_EQ(line.substr(0, 8), "--batch_");
-    EXPECT_EQ(line.size(), 44);
+    EXPECT_EQ(line.size(), 8);
     batch = line.substr(2, line.length() - 1);
     // line2
     std::getline(ss, line, '\n');
-    EXPECT_EQ(line.substr(0, 50), "Content-Type: multipart/mixed; boundary=changeset_");
-    EXPECT_EQ(line.size(), 86);
+    EXPECT_EQ(line, "Content-Type: multipart/mixed; boundary=changeset_1");
     changeset = line.substr(40, line.length() - 1);
 
     // line3
