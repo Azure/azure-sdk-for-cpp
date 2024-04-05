@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ConnectionFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
 // Define the test classes dependant on this class here.
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   namespace MessageTests {
@@ -44,7 +44,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestMessages_ReceiverReceiveAsync_Test;
 
 }}}} // namespace Azure::Core::Amqp::Tests
-#endif // TESTING_BUILD
+#endif // _azure_TESTING_BUILD
 #if defined(SAMPLES_BUILD)
 namespace LocalServerSample {
 int LocalServerSampleMain();
@@ -452,7 +452,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     std::shared_ptr<_detail::ConnectionImpl> m_impl;
     friend class _detail::ConnectionFactory;
-#if TESTING_BUILD
+#if _azure_TESTING_BUILD
     friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
     friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
     friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
@@ -467,7 +467,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
 
-#endif // TESTING_BUILD
+#endif // _azure_TESTING_BUILD
 #if SAMPLES_BUILD
     friend int LocalServerSample::LocalServerSampleMain();
 #endif // SAMPLES_BUILD
