@@ -80,13 +80,16 @@ In order to Create/Delete a table we need to create a TablesClient first.
 using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
 ...
-auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
-tableClient.Create();
+auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
+
+// create new table
+tableServiceClient.CreateTable(TableName);
 ```
 
 In order to Delete a table we need to call the delete method on the previously created client.
 ```cpp
-tableClient.Delete();
+// delete existing table
+tableServiceClient.DeleteTable(TableName);
 ```
 
 ### Manipulating entities
@@ -100,22 +103,22 @@ using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
 ...
 auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
-tableClient.Create();
+tableServiceClient.CreateTable(TableName);
 ```
 
 Then we initialize and populate an entity.
 ```cpp
  // init new entity
   Models::TableEntity entity;
-  entity.PartitionKey = "P1";
-  entity.RowKey = "R1";
-  entity.Properties["Name"] = "Azure";
-  entity.Properties["Product"] = "Tables";
+  entity.SetPartitionKey("P1");
+  entity.SetRowKey("R1");
+  entity.Properties["Name"] = TableEntityProperty("Azure");
+  entity.Properties["Product"] = TableEntityProperty("Tables");
 ```
 
 To create the entity on the server we call the CreateEntity method on the table client.
 ```cpp
-  tableClient.CreateEntity(entity);
+  tableClient.AddEntity(entity);
 ```
 
 To update the entity, assume we made some changes to the entity, we call the UpdateEntity method on the table client.
