@@ -466,11 +466,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_eventHandler)
     {
-#if defined(_azure_TESTING_BUILD)
+#if defined(BUILD_TESTING)
       link->m_eventHandler->OnLinkFlowOn(Link{link->shared_from_this()});
 #else
       link->m_eventHandler->OnLinkFlowOn(link->shared_from_this());
-#endif // _azure_TESTING_BUILD
+#endif
     }
   }
   namespace {
