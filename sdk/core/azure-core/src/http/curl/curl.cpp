@@ -946,7 +946,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
         hasConnectionClose = headerValueLowercase.find("close") != std::string::npos;
       }
     }
-    // LCOV_EXCL_STOP
 
     // HTTP <=1.0 is "close" by default. HTTP 1.1 is "keep-alive" by default.
     // The value can also be "keep-alive, close" (i.e. "both are fine"), in which case we are
@@ -969,6 +968,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       m_httpKeepAlive = true;
     }
   }
+  // LCOV_EXCL_STOP
 
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
