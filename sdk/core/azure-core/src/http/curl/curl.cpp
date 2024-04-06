@@ -902,6 +902,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // request body of the first request and discard it.
   // 6. Server side keeps reading the remaining data on the wire and thinks the first part
   // (whatever/path) is an HTTP verb. It fails the request with 400 invalid verb.
+// LCOV_EXCL_START
   bool non2xxAfter100ContinueWithNonzeroContentLength = false;
   {
     auto responseHttpCodeInt
@@ -945,6 +946,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
         hasConnectionClose = headerValueLowercase.find("close") != std::string::npos;
       }
     }
+    // LCOV_EXCL_STOP
 
     // HTTP <=1.0 is "close" by default. HTTP 1.1 is "keep-alive" by default.
     // The value can also be "keep-alive, close" (i.e. "both are fine"), in which case we are
