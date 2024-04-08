@@ -902,7 +902,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // request body of the first request and discard it.
   // 6. Server side keeps reading the remaining data on the wire and thinks the first part
   // (whatever/path) is an HTTP verb. It fails the request with 400 invalid verb.
-// LCOV_EXCL_START
+  // LCOV_EXCL_START
   bool non2xxAfter100ContinueWithNonzeroContentLength = false;
   {
     auto responseHttpCodeInt
