@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0-beta.2 (Unreleased)
+## 1.0.0-beta.2 (2024-04-09)
 
 ### Features Added
 
-### Breaking Changes
+- Updates to models, transactions and other features.
 
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0-beta.1 (2024-01-16)
 

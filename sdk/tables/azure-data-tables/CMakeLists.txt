@@ -43,15 +43,13 @@ set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/account_sas_builder.hpp
     inc/azure/data/tables/credentials/azure_sas_credential.hpp
-    inc/azure/data/tables/credentials/shared_key_credential.hpp
+    inc/azure/data/tables/credentials/named_key_credential.hpp
     inc/azure/data/tables/dll_import_export.hpp
     inc/azure/data/tables/enum_operators.hpp
     inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
     inc/azure/data/tables/internal/cryptography/url_encode.hpp
     inc/azure/data/tables/internal/policies/service_version_policy.hpp
     inc/azure/data/tables/internal/policies/shared_key_lite_policy.hpp
-    inc/azure/data/tables/internal/policies/shared_key_policy.hpp
-    inc/azure/data/tables/internal/policies/switch_to_secondary_policy.hpp
     inc/azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp
     inc/azure/data/tables/internal/policies/timeout_policy.hpp
     inc/azure/data/tables/internal/serializers.hpp
@@ -61,25 +59,21 @@ set(
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/tables_sas_builder.hpp
-    inc/azure/data/tables/transactions.hpp
 )
 
 set(
   AZURE_DATA_TABLES_SOURCE
     src/account_sas_builder.cpp
-    src/credentials/shared_key_credential.cpp
+    src/credentials/named_key_credential.cpp
     src/cryptography/hmacsha256.cpp
     src/models.cpp
     src/policies/shared_key_lite_policy.cpp
-    src/policies/shared_key_policy.cpp
-    src/policies/switch_to_secondary_policy.cpp
     src/policies/tenant_bearer_token_policy.cpp
     src/policies/timeout_policy.cpp
     src/private/package_version.hpp
     src/serializers.cpp
     src/tables_clients.cpp
     src/tables_sas_builder.cpp
-    src/transactions.cpp
     src/xml_wrapper.cpp
 )
 
@@ -127,6 +121,7 @@ az_rtti_setup(
 create_code_coverage(tables azure-data-tables azure-data-tables-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
+  add_compile_definitions(_azure_TABLES_TESTING_BUILD)
   add_subdirectory(test/ut)
   add_subdirectory(test/stress)
 endif()

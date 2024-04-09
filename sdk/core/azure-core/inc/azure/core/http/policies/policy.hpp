@@ -364,7 +364,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief HTTP retry policy.
      */
     class RetryPolicy
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
         final
 #endif
         : public HttpPolicy {

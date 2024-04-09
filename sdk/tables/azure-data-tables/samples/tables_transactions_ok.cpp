@@ -10,7 +10,8 @@
 
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::Models;
-const std::string TableName = "table";
+
+const std::string TableName = "transactions";
 
 std::string GetConnectionString()
 {
@@ -30,43 +31,43 @@ std::string GetConnectionString()
 
 int main()
 {
+  // Get the service client
   auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
-  auto tableClient = TableClient::CreateFromConnectionString(GetConnectionString(), TableName);
-
-  // create new table
+  // create table
   tableServiceClient.CreateTable(TableName);
+  // get table client from table service client
+  auto tableClient = tableServiceClient.GetTableClient(TableName);
 
-  // list tables
-  auto tables = tableServiceClient.QueryTables();
-  for (auto table : tables.Tables)
-  {
-    std::cout << table.TableName << std::endl;
-  }
-  // init new entity
-  Azure::Data::Tables::Models::TableEntity entity;
+  // Create two table entities
+  TableEntity entity;
+  TableEntity entity2;
   entity.SetPartitionKey("P1");
   entity.SetRowKey("R1");
   entity.Properties["Name"] = TableEntityProperty("Azure");
   entity.Properties["Product"] = TableEntityProperty("Tables");
-  // create new entity
-  auto response = tableClient.AddEntity(entity);
+  entity2.SetPartitionKey("P1");
+  entity2.SetRowKey("R2");
+  entity2.Properties["Name"] = TableEntityProperty("Azure2");
+  entity2.Properties["Product"] = TableEntityProperty("Tables2");
 
-  // update entity
-  std::cout << response.Value.ETag << std::endl;
-  entity.Properties["Product"] = TableEntityProperty("Tables2");
-  auto updateResponse = tableClient.UpdateEntity(entity);
-  std::cout << updateResponse.Value.ETag << std::endl;
+  // Create a transaction with two steps
+  std::vector<TransactionStep> steps;
+  steps.emplace_back(TransactionStep{TransactionActionType::Add, entity});
+  steps.emplace_back(TransactionStep{TransactionActionType::Add, entity2});
 
-  // merge entity
-  entity.Properties["Product"] = TableEntityProperty("Tables3");
-  entity.SetETag(updateResponse.Value.ETag);
-  auto updateResponse2 = tableClient.MergeEntity(entity);
+  // Submit the transaction
+  auto response = tableClient.SubmitTransaction(steps);
 
-  // delete entity
-  std::cout << updateResponse2.Value.ETag << std::endl;
-  entity.SetETag(updateResponse2.Value.ETag);
-  auto deleteResponse = tableClient.DeleteEntity(entity);
-
+  // Check the response
+  if (!response.Value.Error.HasValue())
+  {
+    std::cout << "Transaction completed successfully." << std::endl;
+  }
+  else
+  {
+    std::cout << "Transaction failed with error: " << response.Value.Error.Value().Message
+              << std::endl;
+  }
   // delete existing table
   tableServiceClient.DeleteTable(TableName);
   return 0;

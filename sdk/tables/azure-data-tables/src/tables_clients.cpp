@@ -5,14 +5,13 @@
 
 #include "azure/data/tables/internal/policies/service_version_policy.hpp"
 #include "azure/data/tables/internal/policies/shared_key_lite_policy.hpp"
-#include "azure/data/tables/internal/policies/shared_key_policy.hpp"
-#include "azure/data/tables/internal/policies/switch_to_secondary_policy.hpp"
 #include "azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp"
 #include "azure/data/tables/internal/policies/timeout_policy.hpp"
 #include "azure/data/tables/internal/serializers.hpp"
 
 #include <sstream>
 #include <string>
+
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::_detail::Policies;
 using namespace Azure::Data::Tables::_detail::Xml;
@@ -24,8 +23,6 @@ TableServiceClient::TableServiceClient(const TableClientOptions& options)
   TableClientOptions newOptions = options;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
@@ -44,8 +41,6 @@ TableServiceClient::TableServiceClient(
   m_url = Azure::Core::Url(serviceUrl);
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
@@ -64,18 +59,15 @@ TableServiceClient::TableServiceClient(
     : TableServiceClient(options)
 
 {
+  m_tokenCredential = credential;
   TableClientOptions newOptions = options;
   m_url = Azure::Core::Url(serviceUrl);
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
 
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
@@ -98,14 +90,13 @@ TableServiceClient::TableServiceClient(
 
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
-    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
     const TableClientOptions& options)
     : m_url(Azure::Core::Url(serviceUrl))
 {
+  m_namedKeyCredential = credential;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
@@ -122,8 +113,6 @@ TableServiceClient::TableServiceClient(
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
-  perRetryPolicies2.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies2.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies2.emplace_back(
       std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
@@ -141,6 +130,25 @@ TableServiceClient::TableServiceClient(
     const TableClientOptions& options)
     : TableServiceClient(std::string{serviceUrl + credential->GetSignature()}, options)
 {
+}
+
+TableClient TableServiceClient::GetTableClient(
+    const std::string& tableName,
+    TableClientOptions const& options) const
+{
+  if (m_namedKeyCredential != nullptr)
+  {
+    return TableClient(tableName, m_namedKeyCredential, m_url.GetAbsoluteUrl(), options);
+  }
+  if (m_tokenCredential != nullptr)
+  {
+    return TableClient(m_url.GetAbsoluteUrl(), tableName, m_tokenCredential, options);
+  }
+  if (!m_url.GetAbsoluteUrl().empty())
+  {
+    return TableClient(m_url.GetAbsoluteUrl(), tableName, options);
+  }
+  throw std::runtime_error("TableServiceClient is not properly initialized.");
 }
 
 TableServiceClient TableServiceClient::CreateFromConnectionString(
@@ -168,8 +176,8 @@ Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck
   auto url = m_url;
   url.AppendPath(options.TableName);
   Core::Http::Request request(Core::Http::HttpMethod::Options, url);
-  request.SetHeader("Origin", options.Origin);
-  request.SetHeader("Access-Control-Request-Method", Core::Http::HttpMethod::Options.ToString());
+  request.SetHeader(OriginHeader, options.Origin);
+  request.SetHeader(AccessControlRequestMethodHeader, Core::Http::HttpMethod::Options.ToString());
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
@@ -182,6 +190,7 @@ Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck
 
   return Response<Models::PreflightCheckResult>(std::move(response), std::move(rawResponse));
 }
+
 Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServiceProperties(
     Models::SetServicePropertiesOptions const& options,
     Core::Context const& context)
@@ -189,15 +198,15 @@ Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServi
   std::string xmlBody = Serializers::SetServiceProperties(options);
   auto url = m_url;
 
-  url.AppendQueryParameter("restype", "service");
-  url.AppendQueryParameter("comp", "properties");
+  url.AppendQueryParameter(ResourceTypeHeader, ResrouceTypeService);
+  url.AppendQueryParameter(CompHeader, ComponentProperties);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(xmlBody.data()), xmlBody.length());
 
   Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/xml");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+  request.SetHeader(ContentTypeHeader, ContentTypeXml);
+  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -216,8 +225,8 @@ Azure::Response<Models::TableServiceProperties> TableServiceClient::GetServicePr
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendQueryParameter("restype", "service");
-  url.AppendQueryParameter("comp", "properties");
+  url.AppendQueryParameter(ResourceTypeHeader, ResrouceTypeService);
+  url.AppendQueryParameter(CompHeader, ComponentProperties);
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
@@ -243,8 +252,8 @@ Azure::Response<Models::ServiceStatistics> TableServiceClient::GetStatistics(
   std::string accountName = host.substr(0, host.find('.'));
   accountName += "-secondary";
   url.SetHost(accountName + "." + host.substr(host.find('.') + 1));
-  url.AppendQueryParameter("restype", "service");
-  url.AppendQueryParameter("comp", "stats");
+  url.AppendQueryParameter(ResourceTypeHeader, ResrouceTypeService);
+  url.AppendQueryParameter(CompHeader, "stats");
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
   auto pRawResponse = m_pipeline->Send(request, context);
@@ -321,8 +330,6 @@ TableClient::TableClient(
 {
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
@@ -346,14 +353,10 @@ TableClient::TableClient(
   m_url = Azure::Core::Url(serviceUrl);
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
 
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
@@ -376,7 +379,7 @@ TableClient::TableClient(
 
 TableClient::TableClient(
     const std::string& tableName,
-    std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
     std::string url,
     const TableClientOptions& options)
     : m_url(std::move(url)), m_tableName(tableName)
@@ -384,8 +387,6 @@ TableClient::TableClient(
 {
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), options.SecondaryHostForRetryReads));
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies.emplace_back(
       std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
@@ -402,8 +403,6 @@ TableClient::TableClient(
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
-  perRetryPolicies2.emplace_back(std::make_unique<SwitchToSecondaryPolicy>(
-      m_url.GetHost(), newOptions.SecondaryHostForRetryReads));
   perRetryPolicies2.emplace_back(std::make_unique<TimeoutPolicy>());
   perOperationPolicies2.emplace_back(
       std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
@@ -464,9 +463,9 @@ Azure::Response<Models::Table> TableServiceClient::CreateTable(
 
   Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+  request.SetHeader(ContentTypeHeader, ContentTypeJson);
+  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
@@ -484,11 +483,11 @@ Azure::Response<Models::Table> TableServiceClient::CreateTable(
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-      response.TableName = jsonRoot["TableName"].get<std::string>();
-      response.EditLink = jsonRoot["odata.editLink"].get<std::string>();
-      response.Id = jsonRoot["odata.id"].get<std::string>();
-      response.Metadata = jsonRoot["odata.metadata"].get<std::string>();
-      response.Type = jsonRoot["odata.type"].get<std::string>();
+      response.TableName = jsonRoot[TableName].get<std::string>();
+      response.EditLink = jsonRoot[ODataEditLink].get<std::string>();
+      response.Id = jsonRoot[ODataId].get<std::string>();
+      response.Metadata = jsonRoot[ODataMeta].get<std::string>();
+      response.Type = jsonRoot[ODataType].get<std::string>();
     }
   }
 
@@ -508,10 +507,10 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
   auto url = m_url;
   url.AppendPath("Tables");
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
-  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
   if (options.Prefix.HasValue())
   {
-    request.GetUrl().AppendQueryParameter("If-Match", options.Prefix.Value());
+    request.GetUrl().AppendQueryParameter(IfMatch, options.Prefix.Value());
   }
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -529,14 +528,14 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
     {
       auto const jsonRoot
           = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-      std::string metadataLink = jsonRoot["odata.metadata"].get<std::string>();
-      for (auto value : jsonRoot["value"])
+      std::string metadataLink = jsonRoot[ODataMeta].get<std::string>();
+      for (auto value : jsonRoot[Value])
       {
         Models::Table table;
-        table.TableName = value["TableName"].get<std::string>();
-        table.EditLink = value["odata.editLink"].get<std::string>();
-        table.Id = value["odata.id"].get<std::string>();
-        table.Type = value["odata.type"].get<std::string>();
+        table.TableName = value[TableName].get<std::string>();
+        table.EditLink = value[ODataEditLink].get<std::string>();
+        table.Id = value[ODataId].get<std::string>();
+        table.Type = value[ODataType].get<std::string>();
         table.Metadata = metadataLink;
         response.Tables.emplace_back(std::move(table));
       }
@@ -566,15 +565,15 @@ Azure::Response<Models::SetTableAccessPolicyResult> TableClient::SetAccessPolicy
 {
   auto url = m_url;
   url.AppendPath(m_tableName);
-  url.AppendQueryParameter("comp", "acl");
+  url.AppendQueryParameter(CompHeader, "acl");
   std::string xmlBody = Serializers::SetAccessPolicy(tableAccessPolicy);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<const uint8_t*>(xmlBody.data()), xmlBody.length());
 
   auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url, &requestBody);
-  request.SetHeader("Content-Type", "application/xml; charset=UTF-8");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.GetUrl().AppendQueryParameter("comp", "acl");
+  request.SetHeader(ContentTypeHeader, "application/xml; charset=UTF-8");
+  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
+  request.GetUrl().AppendQueryParameter(CompHeader, "acl");
   request.SetHeader("x-ms-version", "2019-12-12");
   auto pRawResponse = m_pipeline->Send(request, context);
   auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -592,7 +591,7 @@ Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
   auto url = m_url;
   url.SetPath("");
   url.AppendPath(m_tableName);
-  url.AppendQueryParameter("comp", "acl");
+  url.AppendQueryParameter(CompHeader, "acl");
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
   auto pRawResponse = m_pipeline->Send(request, context);
@@ -613,12 +612,12 @@ Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("Tables('" + tableName + "')");
+  url.AppendPath("Tables('" + tableName + ClosingFragment);
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+  request.SetHeader(ContentTypeHeader, ContentTypeJson);
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
@@ -632,9 +631,9 @@ Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
   return Response<Models::DeleteTableResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
+Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
     Models::TableEntity const& tableEntity,
-    Models::CreateEntityOptions const& options,
+    Models::AddEntityOptions const& options,
     Core::Context const& context)
 {
   (void)options;
@@ -648,10 +647,10 @@ Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
 
   Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.SetHeader("Accept", "application/json;odata=nometadata");
-  request.SetHeader("Prefer", "return-no-content");
+  request.SetHeader(ContentTypeHeader, ContentTypeJson);
+  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
+  request.SetHeader(PreferHeader, PreferNoContent);
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -659,9 +658,9 @@ Azure::Response<Models::CreateEntityResult> TableClient::CreateEntity(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::CreateEntityResult response{};
+  Models::AddEntityResult response{};
   response.ETag = rawResponse->GetHeaders().at("ETag");
-  return Response<Models::CreateEntityResult>(std::move(response), std::move(rawResponse));
+  return Response<Models::AddEntityResult>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
@@ -672,8 +671,9 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
-      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
+      m_tableName + PartitionKeyFragment
+      + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value) + RowKeyFragment
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment);
 
   std::string jsonBody = Serializers::UpdateEntity(tableEntity);
 
@@ -682,17 +682,17 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
 
   Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.SetHeader("Accept", "application/json;odata=nometadata");
-  request.SetHeader("Prefer", "return-no-content");
-  if (tableEntity.ETag.HasValue())
+  request.SetHeader(ContentTypeHeader, ContentTypeJson);
+  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
+  request.SetHeader(PreferHeader, PreferNoContent);
+  if (!tableEntity.GetETag().Value.empty())
   {
-    request.SetHeader("If-Match", tableEntity.ETag.Value());
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   else
   {
-    request.SetHeader("If-Match", "*");
+    request.SetHeader(IfMatch, "*");
   }
 
   auto rawResponse = m_pipeline->Send(request, context);
@@ -716,8 +716,9 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   (void)options;
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
-      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
+      m_tableName + PartitionKeyFragment
+      + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value) + RowKeyFragment
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment);
 
   std::string jsonBody = Serializers::MergeEntity(tableEntity);
 
@@ -726,17 +727,17 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
 
   Core::Http::Request request(Core::Http::HttpMethod::Patch, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.SetHeader("Accept", "application/json;odata=nometadata");
-  request.SetHeader("Prefer", "return-no-content");
-  if (tableEntity.ETag.HasValue())
+  request.SetHeader(ContentTypeHeader, ContentTypeJson);
+  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
+  request.SetHeader(PreferHeader, PreferNoContent);
+  if (!tableEntity.GetETag().Value.empty())
   {
-    request.SetHeader("If-Match", tableEntity.ETag.Value());
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   else
   {
-    request.SetHeader("If-Match", "*");
+    request.SetHeader(IfMatch, "*");
   }
 
   auto rawResponse = m_pipeline->Send(request, context);
@@ -758,20 +759,21 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 {
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(tableEntity.PartitionKey)
-      + "',RowKey='" + Azure::Core::Url::Encode(tableEntity.RowKey) + "')");
+      m_tableName + PartitionKeyFragment
+      + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value) + RowKeyFragment
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment);
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
-  if (tableEntity.ETag.HasValue())
+  if (!tableEntity.GetETag().Value.empty())
   {
-    request.SetHeader("If-Match", tableEntity.ETag.Value());
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   else
   {
-    request.SetHeader("If-Match", "*");
+    request.SetHeader(IfMatch, "*");
   }
-  request.SetHeader("Accept", "application/json;odata=nometadata");
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -807,7 +809,7 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
   }
   catch (const Azure::Core::RequestFailedException&)
   {
-    auto response = CreateEntity(tableEntity, Models::CreateEntityOptions(options), context);
+    auto response = AddEntity(tableEntity, Models::AddEntityOptions(options), context);
     return Azure::Response<Models::UpsertEntityResult>(
         Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
   }
@@ -827,11 +829,11 @@ Azure::Response<Models::TableEntity> TableClient::GetEntity(
 {
   auto url = m_url;
   url.AppendPath(
-      m_tableName + "(PartitionKey='" + Azure::Core::Url::Encode(partitionKey) + "',RowKey='"
-      + Azure::Core::Url::Encode(rowKey) + "')");
+      m_tableName + PartitionKeyFragment + Azure::Core::Url::Encode(partitionKey) + RowKeyFragment
+      + Azure::Core::Url::Encode(rowKey) + ClosingFragment);
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
-  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
 
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -881,7 +883,7 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
   }
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
-  request.SetHeader("Accept", "application/json;odata=fullmetadata");
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
 
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -909,13 +911,13 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     auto const jsonRoot
         = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
-    if (!jsonRoot.contains("value"))
+    if (!jsonRoot.contains(Value))
     {
       response.TableEntities.emplace_back(Serializers::DeserializeEntity(jsonRoot));
     }
     else
     {
-      for (auto value : jsonRoot["value"])
+      for (auto value : jsonRoot[Value])
       {
         response.TableEntities.emplace_back(Serializers::DeserializeEntity(value));
       }
@@ -924,27 +926,24 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
   return response;
 }
 
-Transaction TableClient::CreateTransaction(std::string const& partitionKey)
-{
-  return Transaction(m_url.GetAbsoluteUrl(), m_tableName, partitionKey);
-}
-
 Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
-    Transaction& transaction,
+    std::vector<Models::TransactionStep> const& steps,
     Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("$batch");
+  std::string batchId = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
+  std::string changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
 
-  std::string body = transaction.PreparePayload();
+  std::string body = PreparePayload(batchId, changesetId, steps);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(body.data()), body.length());
 
   Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
-  request.SetHeader("Content-Type", "multipart/mixed; boundary=" + transaction.GetBatchId());
-  request.SetHeader("Accept", "application/json;odata=fullmetadata");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+  request.SetHeader(ContentTypeHeader, "multipart/mixed; boundary=" + batchId);
+  request.SetHeader(AcceptHeader, AcceptFullMeta);
+  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader("Connection", "Keep-Alive");
   request.SetHeader("DataServiceVersion", "3.0");
   request.SetHeader("Accept-Charset", "UTF-8");
@@ -973,17 +972,17 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
         response.StatusCode = status;
       }
 
-      if (line.find("odata.error") != std::string::npos)
+      if (line.find(ODataError) != std::string::npos)
       {
         auto const jsonRoot = Core::Json::_internal::json::parse(line.begin(), line.end());
-        if (jsonRoot["odata.error"].contains("code"))
+        if (jsonRoot[ODataError].contains("code"))
         {
-          error.Code = jsonRoot["odata.error"]["code"].get<std::string>();
+          error.Code = jsonRoot[ODataError]["code"].get<std::string>();
         }
-        if (jsonRoot["odata.error"].contains("message")
-            && jsonRoot["odata.error"]["message"].contains("value"))
+        if (jsonRoot[ODataError].contains("message")
+            && jsonRoot[ODataError]["message"].contains(Value))
         {
-          error.Message = jsonRoot["odata.error"]["message"]["value"].get<std::string>();
+          error.Message = jsonRoot[ODataError]["message"][Value].get<std::string>();
         }
       }
     }
@@ -993,4 +992,122 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
     }
   }
   return Response<Models::SubmitTransactionResult>(std::move(response), std::move(rawResponse));
+}
+
+std::string TableClient::PreparePayload(
+    std::string const& batchId,
+    std::string const& changesetId,
+    std::vector<Models::TransactionStep> const& steps)
+{
+  std::string accumulator
+      = "--" + batchId + "\nContent-Type: multipart/mixed; boundary=" + changesetId + "\n\n";
+
+  for (auto step : steps)
+  {
+    switch (step.Action)
+    {
+      case Models::TransactionActionType::Add:
+        accumulator += PrepAddEntity(changesetId, step.Entity);
+        break;
+      case Models::TransactionActionType::Delete:
+        accumulator += PrepDeleteEntity(changesetId, step.Entity);
+        break;
+      case Models::TransactionActionType::InsertMerge:
+      case Models::TransactionActionType::UpdateMerge:
+        accumulator += PrepMergeEntity(changesetId, step.Entity);
+        break;
+      case Models::TransactionActionType::InsertReplace:
+      case Models::TransactionActionType::UpdateReplace:
+        accumulator += PrepUpdateEntity(changesetId, step.Entity);
+        break;
+    }
+  }
+
+  accumulator += "\n\n--" + changesetId + "--\n";
+  accumulator += "--" + batchId + "\n";
+  return accumulator;
+}
+std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::TableEntity entity)
+{
+  std::string returnValue = "--" + changesetId + "\n";
+  returnValue += "Content-Type: application/http\n";
+  returnValue += "Content-Transfer-Encoding: binary\n\n";
+
+  returnValue += "POST " + m_url.GetAbsoluteUrl() + "/" + m_tableName + " HTTP/1.1\n";
+  returnValue += "Content-Type: application/json\n";
+  returnValue += "Accept: application/json;odata=minimalmetadata\n";
+  returnValue += "Prefer: return-no-content\n";
+  returnValue += "DataServiceVersion: 3.0;\n\n";
+  returnValue += Serializers::CreateEntity(entity);
+  return returnValue;
+}
+std::string TableClient::PrepDeleteEntity(
+    std::string const& changesetId,
+    Models::TableEntity entity)
+{
+  std::string returnValue = "--" + changesetId + "\n";
+  returnValue += "Content-Type: application/http\n";
+  returnValue += "Content-Transfer-Encoding: binary\n\n";
+
+  returnValue += "DELETE " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
+      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
+      + " HTTP/1.1\n";
+  returnValue += "Accept: application/json;odata=minimalmetadata\n";
+  // returnValue += "Prefer: return-no-content\n";
+  returnValue += "DataServiceVersion: 3.0;\n";
+  if (!entity.GetETag().Value.empty())
+  {
+    returnValue += "If-Match: " + entity.GetETag().Value;
+  }
+  else
+  {
+    returnValue += "If-Match: *";
+  }
+  returnValue += "\n";
+  return returnValue;
+}
+
+std::string TableClient::PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity)
+{
+  std::string returnValue = "--" + changesetId + "\n";
+  returnValue += "Content-Type: application/http\n";
+  returnValue += "Content-Transfer-Encoding: binary\n\n";
+
+  returnValue += "MERGE " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
+      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
+      + " HTTP/1.1\n";
+  returnValue += "Content-Type: application/json\n";
+  returnValue += "Accept: application/json;odata=minimalmetadata\n";
+  returnValue += "DataServiceVersion: 3.0;\n\n";
+  returnValue += Serializers::MergeEntity(entity);
+
+  return returnValue;
+}
+
+std::string TableClient::PrepUpdateEntity(
+    std::string const& changesetId,
+    Models::TableEntity entity)
+{
+  std::string returnValue = "--" + changesetId + "\n";
+  returnValue += "Content-Type: application/http\n";
+  returnValue += "Content-Transfer-Encoding: binary\n\n";
+
+  returnValue += "PUT " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
+      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
+      + " HTTP/1.1\n";
+  returnValue += "Content-Type: application/json\n";
+  returnValue += "Accept: application/json;odata=minimalmetadata\n";
+  returnValue += "Prefer: return-no-content\n";
+  returnValue += "DataServiceVersion: 3.0;\n";
+  if (!entity.GetETag().Value.empty())
+  {
+    returnValue += "If-Match: " + entity.GetETag().Value;
+  }
+  else
+  {
+    returnValue += "If-Match: *";
+  }
+  returnValue += "\n\n";
+  returnValue += Serializers::UpdateEntity(entity);
+  return returnValue;
 }

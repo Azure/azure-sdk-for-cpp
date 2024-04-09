@@ -7,6 +7,7 @@
 
 using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables;
+using namespace Azure::Data::Tables::Models;
 namespace Azure { namespace Data { namespace Tables { namespace _detail {
   std::string const Serializers::CreateEntity(Models::TableEntity const& tableEntity)
   {
@@ -14,11 +15,15 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
     {
       auto jsonRoot = Core::Json::_internal::json::object();
 
-      jsonRoot["PartitionKey"] = tableEntity.PartitionKey;
-      jsonRoot["RowKey"] = tableEntity.RowKey;
+      jsonRoot["PartitionKey"] = tableEntity.GetPartitionKey().Value;
+      jsonRoot["RowKey"] = tableEntity.GetRowKey().Value;
       for (auto entry : tableEntity.Properties)
       {
-        jsonRoot[entry.first] = entry.second;
+        jsonRoot[entry.first] = entry.second.Value;
+        if (entry.second.Type.HasValue())
+        {
+          jsonRoot[entry.first + "@odata.type"] = entry.second.Type.Value().ToString();
+        }
       }
       jsonBody = jsonRoot.dump();
     }
@@ -115,13 +120,14 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
           "Enabled",
           options.ServiceProperties.Logging.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                 : "false"});
-      if (options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.HasValue())
+      if (options.ServiceProperties.Logging.RetentionPolicyDefinition.DataRetentionInDays
+              .HasValue())
       {
         writer.Write(XmlNode{
             XmlNodeType::StartTag,
             "Days",
-            std::to_string(
-                options.ServiceProperties.Logging.RetentionPolicyDefinition.Days.Value())});
+            std::to_string(options.ServiceProperties.Logging.RetentionPolicyDefinition
+                               .DataRetentionInDays.Value())});
       }
       writer.Write(XmlNode{XmlNodeType::EndTag});
       writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -145,13 +151,14 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
           "Enabled",
           options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                     : "false"});
-      if (options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.HasValue())
+      if (options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.DataRetentionInDays
+              .HasValue())
       {
         writer.Write(XmlNode{
             XmlNodeType::StartTag,
             "Days",
-            std::to_string(
-                options.ServiceProperties.HourMetrics.RetentionPolicyDefinition.Days.Value())});
+            std::to_string(options.ServiceProperties.HourMetrics.RetentionPolicyDefinition
+                               .DataRetentionInDays.Value())});
       }
       writer.Write(XmlNode{XmlNodeType::EndTag});
       writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -175,13 +182,14 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
           "Enabled",
           options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.IsEnabled ? "true"
                                                                                       : "false"});
-      if (options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.HasValue())
+      if (options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.DataRetentionInDays
+              .HasValue())
       {
         writer.Write(XmlNode{
             XmlNodeType::StartTag,
             "Days",
-            std::to_string(
-                options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition.Days.Value())});
+            std::to_string(options.ServiceProperties.MinuteMetrics.RetentionPolicyDefinition
+                               .DataRetentionInDays.Value())});
       }
       writer.Write(XmlNode{XmlNodeType::EndTag});
       writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -392,7 +400,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
             && xmlPath[1] == XmlTagEnum::kLogging && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.Logging.RetentionPolicyDefinition.Days = std::stoi(node.Value);
+          response.Logging.RetentionPolicyDefinition.DataRetentionInDays = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -425,7 +433,8 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
             && xmlPath[1] == XmlTagEnum::kHourMetrics && xmlPath[2] == XmlTagEnum::kRetentionPolicy
             && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.HourMetrics.RetentionPolicyDefinition.Days = std::stoi(node.Value);
+          response.HourMetrics.RetentionPolicyDefinition.DataRetentionInDays
+              = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -458,7 +467,8 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
             && xmlPath[1] == XmlTagEnum::kMinuteMetrics
             && xmlPath[2] == XmlTagEnum::kRetentionPolicy && xmlPath[3] == XmlTagEnum::kDays)
         {
-          response.MinuteMetrics.RetentionPolicyDefinition.Days = std::stoi(node.Value);
+          response.MinuteMetrics.RetentionPolicyDefinition.DataRetentionInDays
+              = std::stoi(node.Value);
         }
         else if (
             xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
@@ -516,29 +526,29 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
   Models::TableEntity Serializers::DeserializeEntity(Azure::Core::Json::_internal::json json)
   {
     Models::TableEntity tableEntity{};
-    if (json.contains("PartitionKey"))
+
+    auto properties = json.get<std::map<std::string, std::string>>();
+    std::vector<std::string> erasable;
+    for (auto property : properties)
     {
-      tableEntity.PartitionKey = json["PartitionKey"].get<std::string>();
-    }
-    if (json.contains("RowKey"))
-    {
-      tableEntity.RowKey = json["RowKey"].get<std::string>();
-    }
-    if (json.contains("odata.etag"))
-    {
-      tableEntity.ETag = json["odata.etag"].get<std::string>();
-    }
-    for (auto properties : json.get<std::map<std::string, std::string>>())
-    {
-      if (properties.first.find("odata.type") != std::string::npos)
+      auto value = property.second;
+      auto name = property.first;
+      std::string typeFieldName = name + "@odata.type";
+      if (properties.find(typeFieldName) != properties.end())
       {
-        tableEntity.DataType = Models::TableEntityDataType(properties.second);
+        auto type = properties[typeFieldName];
+        tableEntity.Properties[name] = TableEntityProperty(
+            value, static_cast<Azure::Data::Tables::Models::TableEntityDataType>(type));
+        erasable.push_back(typeFieldName);
       }
-      if (properties.first != "odata.metadata" && properties.first != "PartitionKey"
-          && properties.first != "RowKey" && properties.first != "odata.etag")
+      else
       {
-        tableEntity.Properties[properties.first] = properties.second;
+        tableEntity.Properties[name] = TableEntityProperty(value);
       }
+    }
+    for (auto erase : erasable)
+    {
+      tableEntity.Properties.erase(erase);
     }
     return tableEntity;
   }

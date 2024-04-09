@@ -142,7 +142,7 @@ namespace Azure { namespace Data { namespace Tables {
        * Indicates the number of days that metrics or logging or soft-deleted data should be
        * retained. All data older than this value will be deleted.
        */
-      Nullable<std::int32_t> Days;
+      Nullable<std::int32_t> DataRetentionInDays;
     };
 
     /**
@@ -344,19 +344,19 @@ namespace Azure { namespace Data { namespace Tables {
       }
       /** Constant value of type TableEntityDataType:EdmBinary */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBinary;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmBoolean */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBoolean;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmDateTime */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDateTime;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmDouble */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDouble;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmGuid */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmGuid;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmInt32 */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt32;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmInt64 */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt64;
-      /** Constant value of type TableEntityDataType:EdmBinary */
+      /** Constant value of type TableEntityDataType:EdmString */
       AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmString;
     };
 
@@ -442,33 +442,126 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
+     * @brief Table entity property.
+     *
+     */
+    class TableEntityProperty final {
+    public:
+      /** Default constructor. */
+      TableEntityProperty() = default;
+
+      /**
+       * @brief Construct a new TableEntityProperty object.
+       *
+       * @param value Property value.
+       */
+      TableEntityProperty(std::string const& value) : Value(std::move(value)) {}
+      /**
+       * @brief Construct a new TableEntityProperty object.
+       * @param value Property value.
+       * @param type Property type.
+       */
+      TableEntityProperty(std::string const& value, TableEntityDataType type)
+          : Value(std::move(value)), Type(type)
+      {
+      }
+      /**
+       * Property value.
+       */
+      std::string Value;
+      /**
+       * Property type.
+       */
+      Azure::Nullable<TableEntityDataType> Type;
+    };
+
+    /**
      * @brief Table Entity
      *
      */
-    struct TableEntity final
-    {
-      /**
-       * Partition Key
-       */
-      std::string PartitionKey;
-      /**
-       * Row Key
-       */
-      std::string RowKey;
+    class TableEntity final {
+      constexpr static const char* PartitionKeyPropertyName = "PartitionKey";
+      constexpr static const char* RowKeyPropertyName = "RowKey";
+      constexpr static const char* ETagPropertyName = "odata.etag";
+      constexpr static const char* TimestampPropertyName = "Timestamp";
+
+    public:
       /**
        * Properties
        */
-      std::map<std::string, std::string> Properties;
-      /**
-       * ETag
-       */
-      Azure::Nullable<std::string> ETag;
+      std::map<std::string, TableEntityProperty> Properties;
 
       /**
-       * @brief Table Entity data type.
+       * @brief Get partition key.
        *
+       * @return Partition key
        */
-      TableEntityDataType DataType;
+      TableEntityProperty GetPartitionKey() const { return GetProperty(PartitionKeyPropertyName); }
+
+      /**
+       * @brief Set Partition key.
+       *
+       * @param partitionKey Partition key.
+       */
+      void SetPartitionKey(const std::string& partitionKey)
+      {
+        Properties[PartitionKeyPropertyName] = TableEntityProperty(partitionKey);
+      }
+
+      /**
+       * @brief Get row key.
+       *
+       * @return Row key
+       */
+      TableEntityProperty GetRowKey() const { return GetProperty(RowKeyPropertyName); }
+      /**
+       * @brief Set Row key.
+       *
+       * @param rowKey Row key.
+       */
+      void SetRowKey(const std::string& rowKey)
+      {
+        Properties[RowKeyPropertyName] = TableEntityProperty(rowKey);
+      }
+
+      /**
+       * @brief Get ETag.
+       *
+       * @return ETag
+       */
+      TableEntityProperty GetETag() const { return GetProperty(ETagPropertyName); }
+      /**
+       * @brief Set ETag.
+       *
+       * @param eTag ETag.
+       */
+      void SetETag(const std::string& eTag)
+      {
+        Properties[ETagPropertyName] = TableEntityProperty(eTag);
+      }
+
+      /**
+       * @brief Get time stamp.
+       *
+       * @return timestamp
+       */
+      TableEntityProperty GetTimestamp() const { return GetProperty(TimestampPropertyName); }
+      /**
+       * @brief Set time stamp.
+       *
+       * @param timestamp time stamp.
+       */
+      void SetTimestamp(const std::string& timestamp)
+      {
+        Properties[TimestampPropertyName] = TableEntityProperty(timestamp);
+      }
+
+    private:
+      TableEntityProperty GetProperty(std::string const& name) const
+      {
+        return Properties.find(name) == Properties.end() ? TableEntityProperty()
+                                                         : Properties.at(name);
+      }
     };
 
     /**
@@ -494,25 +587,25 @@ namespace Azure { namespace Data { namespace Tables {
       UpsertKind UpsertType = UpsertKind::Update;
     };
     /**
-     * @brief Create Entity options.
+     * @brief Add Entity options.
      *
      */
-    struct CreateEntityOptions : public UpsertEntityOptions
+    struct AddEntityOptions : public UpsertEntityOptions
     {
-      CreateEntityOptions() = default;
+      AddEntityOptions() = default;
       /**
        * @brief Create Entity options constructor.
        *
        * @param other Upsert Entity options.
        */
-      explicit CreateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
+      explicit AddEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
     /**
-     * @brief Create Entity result.
+     * @brief Add Entity result.
      *
      */
-    struct CreateEntityResult
+    struct AddEntityResult
     {
       /**
        * ETag
@@ -594,9 +687,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Upsert Entity result.
      *
      */
-    struct UpsertEntityResult final : public MergeEntityResult,
-                                      UpdateEntityResult,
-                                      CreateEntityResult
+    struct UpsertEntityResult final : public MergeEntityResult, UpdateEntityResult, AddEntityResult
     {
       /**
        * ETag
@@ -628,10 +719,10 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * @brief Upsert Entity result constructor.
        *
-       * @param other Create Entity result.
+       * @param other Add Entity result.
        */
-      UpsertEntityResult(CreateEntityResult const& other)
-          : CreateEntityResult(other), ETag(std::move(other.ETag))
+      UpsertEntityResult(AddEntityResult const& other)
+          : AddEntityResult(other), ETag(std::move(other.ETag))
       {
       }
     };
@@ -697,14 +788,14 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Transaction Action
      *
      */
-    enum class TransactionAction
+    enum class TransactionActionType
     {
-      InsertEntity = 32,
-      DeleteEntity,
-      MergeEntity,
-      UpdateEntity,
-      InsertMergeEntity,
-      InsertReplaceEntity
+      Add,
+      UpdateMerge,
+      UpdateReplace,
+      Delete,
+      InsertMerge,
+      InsertReplace
     };
 
     /**
@@ -716,7 +807,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * Action.
        */
-      TransactionAction Action;
+      TransactionActionType Action;
       /**
        * Entity.
        */
