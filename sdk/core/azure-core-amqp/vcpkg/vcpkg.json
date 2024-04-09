@@ -20,7 +20,7 @@
     {
       "name": "azure-core-cpp",
       "default-features": false,
-      "version>=": "1.10.0"
+      "version>=": "1.11.3"
     },
     "azure-macro-utils-c",
     "umock-c",
