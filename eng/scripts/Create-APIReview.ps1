@@ -39,7 +39,13 @@ foreach ($artifact in $ArtifactList)
     $parentPath = Split-Path $ParserPath  -Parent
     Write-Host "Contents in $($parentPath)"
     Get-ChildItem -Path $parentPath -Recurse
-    & $ParserPath -o $OutPath/$ArtifactName/$ArtifactName.json $SourcePath
+    $tokenFilePath = "$OutPath/$ArtifactName/$ArtifactName.json"
+    & $ParserPath -o $tokenFilePath $SourcePath    
+    if (!(Test-Path $tokenFilePath))
+    {
+        Write-Host "Failed to generate token file for package [$(ArtifactName)]. Token file is not found in $(tokenFilePath). API review cannot be generated for C++ package without a token file."
+        exit 1
+    }
 }
 
 $createReviewScript = (Join-Path $PSScriptRoot .. common scripts Create-APIReview.ps1)
