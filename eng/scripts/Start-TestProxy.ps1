@@ -23,7 +23,9 @@ $CurrentVersion = (Get-Command -Name "test-proxy" -ErrorAction SilentlyContinue)
 if($error){
     echo "Will install testproxy"
 
-    dotnet tool update azure.sdk.tools.testproxy --global --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json --version "1.0.0-dev*"
+    $proxyVersion = (Get-Content -Path (Join-Path $PSScriptRoot ".." "common" "testproxy" "target_version.txt")).Trim()
+
+    dotnet tool update azure.sdk.tools.testproxy --global --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json --version $proxyVersion
     # clear the errors again
     $error.clear()
 
