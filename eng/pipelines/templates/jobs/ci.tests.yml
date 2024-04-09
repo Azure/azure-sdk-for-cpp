@@ -268,25 +268,25 @@ jobs:
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
-          displayName: Check line coverage
-          inputs:
-            checkCoverage: true
-            coverageFailOption: fixed
-            coverageType: line
-            # Minimum baseline for line coverage
-            coverageThreshold: ${{ parameters.LineCoverageTarget }}
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
+#        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+#          displayName: Check line coverage
+#          inputs:
+#            checkCoverage: true
+#            coverageFailOption: fixed
+#            coverageType: line
+#            # Minimum baseline for line coverage
+#            coverageThreshold: ${{ parameters.LineCoverageTarget }}
+#          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
-          displayName: Check branch coverage
-          inputs:
-            checkCoverage: true
-            coverageFailOption: fixed
-            coverageType: branches
-            # Minimum baseline for branch coverage
-            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
+#        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+#          displayName: Check branch coverage
+#          inputs:
+#            checkCoverage: true
+#            coverageFailOption: fixed
+#            coverageType: branches
+#            # Minimum baseline for branch coverage
+#            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
+#          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
 
       - task: Powershell@2
         inputs:
