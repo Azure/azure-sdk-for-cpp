@@ -5,6 +5,7 @@
 
 include(CMakeFindDependencyMacro)
 find_dependency(azure-core-amqp-cpp)
+find_dependency(azure-core)
 
 include("${CMAKE_CURRENT_LIST_DIR}/azure-messaging-eventhubs-cppTargets.cmake")
 
