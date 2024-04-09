@@ -28,7 +28,7 @@
 #include <unordered_set>
 #include <vector>
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
 // Define the class used from tests to validate retry enabled
 namespace Azure { namespace Core { namespace Test {
   class TestHttp_getters_Test;
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class Request final {
     friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
     friend class Azure::Core::Test::TestHttp_query_parameter_Test;

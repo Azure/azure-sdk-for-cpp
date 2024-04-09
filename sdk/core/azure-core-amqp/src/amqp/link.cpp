@@ -15,7 +15,7 @@
 #include <azure_uamqp_c/link.h>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
 
   class LinkImplEventsImpl : public LinkImplEvents {
   public:
@@ -164,7 +164,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     return m_impl->Detach(close, errorCondition, errorDescription, info);
   }
-#endif
+#endif // _azure_TESTING_BUILD
 
   std::ostream& operator<<(std::ostream& os, LinkState linkState)
   {

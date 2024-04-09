@@ -53,13 +53,13 @@ Two different clients are provided to interact with the various components of th
 1. **`TableClient`** -
     * Interacts with a specific table (which need not exist yet).
     * Create, delete, query, and upsert entities within the specified table.
-    * Create or delete the specified table itself.
+    * Submit transactional batch operations.
 2. **`TableServiceClient`** -
     * Get and set account settings
     * Query tables within the account.
-    
+    * Create or delete the specified table.
 ### Entities
-Entities are similar to rows. An entity has a **`PartitionKey`**, a **`RowKey`**, and a set of properties. A property is a name value pair, similar to a column. Every entity in a table does not need to have the same properties. 
+Entities are similar to rows. An entity has a set of properties, including a **`PartitionKey`** and **`RowKey`** which form the primary key of the entity. A property is a name value pair, similar to a column. Every entity in a table does not need to have the same properties. 
 
 ## Examples
 
@@ -68,7 +68,8 @@ The following sections provide several code snippets covering some of the most c
 * [Creating and deleting a table](#creating-and-deleting-a-table "Creating and deleting a table")
 * [Manipulating entities](#manipulating-entities "Manipulating entities")
 * [Table Service Operations](#table-service-operations "Table Service Operations")
-
+* [Table Transactions Success](#table-transactions-success "Table Transactions Success")
+* [Table Transactions Error](#table-transactions-error "Table Transactions Error")
 ### Creating and deleting a table
 
 In order to Create/Delete a table we need to create a TablesClient first.
@@ -79,13 +80,16 @@ In order to Create/Delete a table we need to create a TablesClient first.
 using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
 ...
-auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
-tableClient.Create();
+auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
+
+// create new table
+tableServiceClient.CreateTable(TableName);
 ```
 
 In order to Delete a table we need to call the delete method on the previously created client.
 ```cpp
-tableClient.Delete();
+// delete existing table
+tableServiceClient.DeleteTable(TableName);
 ```
 
 ### Manipulating entities
@@ -99,22 +103,22 @@ using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
 ...
 auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
-tableClient.Create();
+tableServiceClient.CreateTable(TableName);
 ```
 
 Then we initialize and populate an entity.
 ```cpp
  // init new entity
   Models::TableEntity entity;
-  entity.PartitionKey = "P1";
-  entity.RowKey = "R1";
-  entity.Properties["Name"] = "Azure";
-  entity.Properties["Product"] = "Tables";
+  entity.SetPartitionKey("P1");
+  entity.SetRowKey("R1");
+  entity.Properties["Name"] = TableEntityProperty("Azure");
+  entity.Properties["Product"] = TableEntityProperty("Tables");
 ```
 
 To create the entity on the server we call the CreateEntity method on the table client.
 ```cpp
-  tableClient.CreateEntity(entity);
+  tableClient.AddEntity(entity);
 ```
 
 To update the entity, assume we made some changes to the entity, we call the UpdateEntity method on the table client.
@@ -157,6 +161,92 @@ To list the tables in the account we call the ListTables method on the table ser
 To get the statistics of the account we call the GetStatistics method on the table service client.
 ```cpp
   auto statistics = tableServiceClient.GetStatistics();
+```
+
+### Table Transactions Success
+
+In order to get the service properties we need to create a TableServiceClient first.
+
+```cpp
+#include <azure/data/tables.hpp>
+...
+using namespace Azure::Data::Tables;
+...
+auto tableServiceClient = TableServiceClient::CreateFromConnectionString(...);
+```
+
+We create a table on which we run the transaction and get a table client. 
+```cpp
+// create table
+tableServiceClient.CreateTable(TableName);
+// get table client from table service client
+auto tableClient = tableServiceClient.GetTableClient(TableName);
+```
+N.B. Here we are obtaining the table client from the table service client using the credentials that were passed to the table service client.
+
+We initialize and populate the entities.
+```cpp
+Models::TableEntity entity1;
+entity1.PartitionKey = "P1";
+entity1.RowKey = "R1";
+entity1.Properties["Name"] = "Azure";
+entity1.Properties["Product"] = "Tables";
+
+Models::TableEntity entity2;
+entity2.PartitionKey = "P2";
+entity2.RowKey = "R2";
+entity2.Properties["Name"] = "Azure";
+entity2.Properties["Product"] = "Tables";
+```
+
+We create a transaction batch and add the operations to the transaction.
+```cpp
+// Create a transaction with two steps
+std::vector<TransactionStep> steps;
+steps.emplace_back(TransactionStep{TransactionActionType::Add, entity});
+steps.emplace_back(TransactionStep{TransactionActionType::Add, entity2});
+```
+
+We then submit the transaction and check the response.
+```cpp
+// Check the response
+if (!response.Value.Error.HasValue())
+{
+  std::cout << "Transaction completed successfully." << std::endl;
+}
+else
+{
+  std::cout << "Transaction failed with error: " << response.Value.Error.Value().Message
+            << std::endl;
+}
+```
+
+The output of this sample is:
+```text
+Transaction completed successfully.
+```
+
+### Table Transactions Error
+
+The difference from the previous example is that we are trying to add two entities  with the same PartitionKey and RowKey.
+```cpp
+// Create two table entities
+TableEntity entity;
+TableEntity entity2;
+entity.SetPartitionKey("P1");
+entity.SetRowKey("R1");
+...
+entity2.SetPartitionKey("P1");
+entity2.SetRowKey("R1");
+...
+```
+
+The rest of the steps are the same as in the previous example.
+
+The output of the sample contains the error message: 
+
+```text
+Transaction failed with error: 1:The batch request contains multiple changes with same row key. An entity can appear only once in a batch request.
 ```
 
 ## Contributing
