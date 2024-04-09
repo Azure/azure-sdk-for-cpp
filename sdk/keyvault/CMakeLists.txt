@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
-  add_compile_definitions(TESTING_BUILD)
+  add_compile_definitions(_azure_TESTING_BUILD)
 endif()
 
 add_subdirectory(azure-security-keyvault-keys)

@@ -17,13 +17,13 @@
 
 #include <tuple>
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
 // Define the test classes dependant on this class here.
 namespace Azure { namespace Core { namespace Amqp { namespace Tests { namespace MessageTests {
   class AmqpServerMock;
   class MockServiceEndpoint;
 }}}}} // namespace Azure::Core::Amqp::Tests::MessageTests
-#endif // TESTING_BUILD
+#endif // _azure_TESTING_BUILDs
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class MessageSenderImpl;
@@ -188,10 +188,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     friend class _detail::MessageSenderFactory;
     std::shared_ptr<_detail::MessageSenderImpl> m_impl;
-#if TESTING_BUILD
+#if _azure_TESTING_BUILD
     friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
     friend class Azure::Core::Amqp::Tests::MessageTests::MockServiceEndpoint;
     friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
-#endif // TESTING_BUILD
+#endif // _azure_TESTING_BUILD
   };
 }}}} // namespace Azure::Core::Amqp::_internal

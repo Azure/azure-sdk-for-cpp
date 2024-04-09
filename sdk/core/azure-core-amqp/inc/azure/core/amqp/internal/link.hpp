@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Invalid
   };
 
-#if defined(TESTING_BUILD)
+#if defined(_azure_TESTING_BUILD)
   class Link;
   class LinkImplEvents;
   class LinkImplEventsImpl;
@@ -159,5 +159,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<LinkImplEvents> m_implEvents;
     std::shared_ptr<LinkImpl> m_impl;
   };
-#endif // defined(TESTING_BUILD)
+#endif // _azure_TESTING_BUILD
 }}}} // namespace Azure::Core::Amqp::_detail

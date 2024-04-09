@@ -4,9 +4,8 @@
 #pragma once
 
 #include "azure/data/tables/credentials/azure_sas_credential.hpp"
-#include "azure/data/tables/credentials/shared_key_credential.hpp"
+#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
-#include "azure/data/tables/transactions.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
@@ -21,6 +20,21 @@
 #include <utility>
 #include <vector>
 
+#ifdef _azure_TABLES_TESTING_BUILD
+namespace Azure { namespace Data { namespace Tables { namespace StressTest {
+  class TransactionStressTest;
+}}}} // namespace Azure::Data::Tables::StressTest
+namespace Azure { namespace Data { namespace Test {
+  class TransactionsBodyTest_TransactionCreate_Test;
+  class TransactionsBodyTest_TransactionBodyInsertMergeOp_Test;
+  class TransactionsBodyTest_TransactionBodyInsertReplaceOp_Test;
+  class TransactionsBodyTest_TransactionBodyDeleteOp_Test;
+  class TransactionsBodyTest_TransactionBodyUpdateMergeOp_Test;
+  class TransactionsBodyTest_TransactionBodyUpdateReplaceOp_Test;
+  class TransactionsBodyTest_TransactionBodyAddOp_Test;
+}}} // namespace Azure::Data::Test
+#endif
+
 namespace Azure { namespace Data { namespace Tables {
 
   namespace _detail {
@@ -32,6 +46,32 @@ namespace Azure { namespace Data { namespace Tables {
      * The package name of the SDK.
      */
     constexpr static const char* TablesServicePackageName = "data-tables";
+    // various strings used in the library
+    constexpr static const char* OriginHeader = "Origin";
+    constexpr static const char* AccessControlRequestMethodHeader = "Access-Control-Request-Method";
+    constexpr static const char* ResrouceTypeService = "service";
+    constexpr static const char* ComponentProperties = "properties";
+    constexpr static const char* ContentTypeXml = "application/xml";
+    constexpr static const char* ContentTypeJson = "application/json";
+    constexpr static const char* ResourceTypeHeader = "restype";
+    constexpr static const char* CompHeader = "comp";
+    constexpr static const char* ContentTypeHeader = "Content-Type";
+    constexpr static const char* ContentLengthHeader = "Content-Length";
+    constexpr static const char* AcceptHeader = "Accept";
+    constexpr static const char* PreferHeader = "Prefer";
+    constexpr static const char* PreferNoContent = "return-no-content";
+    constexpr static const char* AcceptFullMeta = "application/json;odata=fullmetadata";
+    constexpr static const char* IfMatch = "If-Match";
+    constexpr static const char* PartitionKeyFragment = "(PartitionKey='";
+    constexpr static const char* RowKeyFragment = "',RowKey='";
+    constexpr static const char* ClosingFragment = "')";
+    constexpr static const char* Value = "value";
+    constexpr static const char* TableName = "TableName";
+    constexpr static const char* ODataEditLink = "odata.editLink";
+    constexpr static const char* ODataId = "odata.id";
+    constexpr static const char* ODataType = "odata.type";
+    constexpr static const char* ODataMeta = "odata.metadata";
+    constexpr static const char* ODataError = "odata.error";
   } // namespace _detail
 
   /**
@@ -103,15 +143,6 @@ namespace Azure { namespace Data { namespace Tables {
   struct TableClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
-     * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
-     * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
-     * operations are not retried against another host. NOTE: Before setting this field, make sure
-     * you understand the issues around reading stale & potentially-inconsistent data at this
-     * webpage: https://docs.microsoft.com/azure/storage/common/geo-redundant-design.
-     */
-    std::string SecondaryHostForRetryReads;
-
-    /**
      * API version used by this client.
      */
     ServiceVersion ApiVersion{_detail::ApiVersion};
@@ -168,14 +199,14 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Initializes a new instance of tableClient.
      *
      * @param tableName The name of the table.
-     * @param credential The shared key credential used to sign requests.
+     * @param credential The named key credential used to sign requests.
      * @param url A url referencing the table that includes the name of the account and the name of
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit TableClient(
         const std::string& tableName,
-        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
         std::string url,
         const TableClientOptions& options = {});
 
@@ -228,16 +259,16 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Create table entity.
+     * @brief Add table entity.
      *
      * @param tableEntity The TableEntity to set.
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
-     * @return Create entity result.
+     * @return Add entity result.
      */
-    Response<Models::CreateEntityResult> CreateEntity(
+    Response<Models::AddEntityResult> AddEntity(
         Models::TableEntity const& tableEntity,
-        Models::CreateEntityOptions const& options = {},
+        Models::AddEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**
@@ -315,25 +346,36 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Creates a new transaction.
-     *
-     * @param partitionKey The partition key of the transaction.
-     * @return New transaction.
-     */
-    Transaction CreateTransaction(std::string const& partitionKey);
-
-    /**
      * @brief Submits a transaction.
      *
-     * @param transaction The transaction to submit.
+     * @param steps the transaction steps to execute.
      * @param context for canceling long running operations.
      * @return Submit transaction result.
      */
     Response<Models::SubmitTransactionResult> SubmitTransaction(
-        Transaction& transaction,
+        std::vector<Models::TransactionStep> const& steps,
         Core::Context const& context = {});
 
   private:
+#ifdef _azure_TABLES_TESTING_BUILD
+    friend class Azure::Data::Tables::StressTest::TransactionStressTest;
+    friend class Azure::Data::Test::TransactionsBodyTest_TransactionCreate_Test;
+    friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyInsertMergeOp_Test;
+    friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyInsertReplaceOp_Test;
+    friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyDeleteOp_Test;
+    friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyUpdateMergeOp_Test;
+    friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyUpdateReplaceOp_Test;
+    friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyAddOp_Test;
+#endif
+
+    std::string PreparePayload(
+        std::string const& batchId,
+        std::string const& changesetId,
+        std::vector<Models::TransactionStep> const& steps);
+    std::string PrepAddEntity(std::string const& changesetId, Models::TableEntity entity);
+    std::string PrepDeleteEntity(std::string const& changesetId, Models::TableEntity entity);
+    std::string PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity);
+    std::string PrepUpdateEntity(std::string const& changesetId, Models::TableEntity entity);
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_tableName;
@@ -383,13 +425,13 @@ namespace Azure { namespace Data { namespace Tables {
      *
      * @param serviceUrl A url referencing the table that includes the name of the account and the
      * name of the table.
-     * @param credential The shared key credential used to sign requests.
+     * @param credential The named key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit TableServiceClient(
         const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::SharedKeyCredential> credential,
+        std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
         const TableClientOptions& options = {});
 
     /**
@@ -488,9 +530,23 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::PreflightCheckResult> PreflightCheck(
         Models::PreflightCheckOptions const& options,
         Core::Context const& context = {});
+    /**
+     * @brief Get table client.
+     *
+     * @param tableName The name of the table.
+     * @param options Optional parameters for the table client.
+     * @return TableClient.
+     * @remark The TableClient can be used to perform operations on the table. This method will
+     * attempt to create a table client with the same credentials as the service client except the
+     * SAS token credential as the SAS token permissions varies from the service level permissions.
+     */
+    TableClient GetTableClient(const std::string& tableName, TableClientOptions const& options = {})
+        const;
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<Core::Credentials::TokenCredential> m_tokenCredential;
+    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> m_namedKeyCredential;
     Core::Url m_url;
   };
 }}} // namespace Azure::Data::Tables

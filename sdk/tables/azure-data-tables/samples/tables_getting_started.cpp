@@ -30,7 +30,6 @@ const std::string TableName = "sample1";
 int main()
 {
   auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
-  auto tableClient = TableClient::CreateFromConnectionString(GetConnectionString(), TableName);
 
   // create new table
   tableServiceClient.CreateTable(TableName);

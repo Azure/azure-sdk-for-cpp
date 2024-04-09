@@ -29,16 +29,6 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     {
       Permissions += "d";
     }
-    if ((permissions & AccountSasPermissions::DeleteVersion)
-        == AccountSasPermissions::DeleteVersion)
-    {
-      Permissions += "x";
-    }
-    if ((permissions & AccountSasPermissions::PermanentDelete)
-        == AccountSasPermissions::PermanentDelete)
-    {
-      Permissions += "y";
-    }
     if ((permissions & AccountSasPermissions::List) == AccountSasPermissions::List)
     {
       Permissions += "l";
@@ -47,66 +37,33 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     {
       Permissions += "a";
     }
-    if ((permissions & AccountSasPermissions::Create) == AccountSasPermissions::Create)
-    {
-      Permissions += "c";
-    }
     if ((permissions & AccountSasPermissions::Update) == AccountSasPermissions::Update)
     {
       Permissions += "u";
     }
-    if ((permissions & AccountSasPermissions::Process) == AccountSasPermissions::Process)
-    {
-      Permissions += "p";
-    }
-    if ((permissions & AccountSasPermissions::SetImmutabilityPolicy)
-        == AccountSasPermissions::SetImmutabilityPolicy)
-    {
-      Permissions += "i";
-    }
-    if ((permissions & AccountSasPermissions::Tags) == AccountSasPermissions::Tags)
-    {
-      Permissions += "t";
-    }
-    if ((permissions & AccountSasPermissions::Filter) == AccountSasPermissions::Filter)
-    {
-      Permissions += "f";
-    }
   }
 
   std::string AccountSasBuilder::GenerateSasToken(
-      const Azure::Data::Tables::Credentials::SharedKeyCredential& credential)
+      const Azure::Data::Tables::Credentials::NamedKeyCredential& credential)
   {
     std::string protocol = _detail::SasProtocolToString(Protocol);
 
     std::string services;
-    if ((Services & AccountSasServices::Blobs) == AccountSasServices::Blobs)
-    {
-      services += "b";
-    }
-    if ((Services & AccountSasServices::Queue) == AccountSasServices::Queue)
-    {
-      services += "q";
-    }
-    if ((Services & AccountSasServices::Files) == AccountSasServices::Files)
-    {
-      services += "f";
-    }
     if ((Services & AccountSasServices::Table) == AccountSasServices::Table)
     {
       services += "t";
     }
 
     std::string resourceTypes;
-    if ((ResourceTypes & AccountSasResource::Service) == AccountSasResource::Service)
+    if ((ResourceTypes & AccountSasResourceType::Service) == AccountSasResourceType::Service)
     {
       resourceTypes += "s";
     }
-    if ((ResourceTypes & AccountSasResource::Container) == AccountSasResource::Container)
+    if ((ResourceTypes & AccountSasResourceType::Container) == AccountSasResourceType::Container)
     {
       resourceTypes += "c";
     }
-    if ((ResourceTypes & AccountSasResource::Object) == AccountSasResource::Object)
+    if ((ResourceTypes & AccountSasResourceType::Object) == AccountSasResourceType::Object)
     {
       resourceTypes += "o";
     }

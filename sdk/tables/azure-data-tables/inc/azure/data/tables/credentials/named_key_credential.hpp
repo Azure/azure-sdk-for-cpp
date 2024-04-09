@@ -9,7 +9,6 @@
 #include <mutex>
 #include <string>
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
-  class SharedKeyPolicy;
   class SharedKeyLitePolicy;
 }}}}} // namespace Azure::Data::Tables::_detail::Policies
 
@@ -21,19 +20,19 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
 namespace Azure { namespace Data { namespace Tables { namespace Credentials {
 
   /**
-   * @brief A SharedKeyCredential is a credential backed by an account's name and
+   * @brief A NamedKeyCredential is a credential backed by an account's name and
    * one of its access keys.
    */
-  class SharedKeyCredential final {
+  class NamedKeyCredential final {
   public:
     /**
-     * @brief Initializes a new instance of the SharedKeyCredential.
+     * @brief Initializes a new instance of the NamedKeyCredential.
      *
      * @param accountName Name of the  account.
      * @param accountKey Access key of the
      * account.
      */
-    explicit SharedKeyCredential(std::string accountName, std::string accountKey)
+    explicit NamedKeyCredential(std::string accountName, std::string accountKey)
         : AccountName{std::move(accountName)}, m_accountKey{std::move(accountKey)}
     {
     }
@@ -56,7 +55,6 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
     const std::string AccountName;
 
   private:
-    friend class Azure::Data::Tables::_detail::Policies::SharedKeyPolicy;
     friend class Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy;
     friend class Azure::Data::Tables::Sas::AccountSasBuilder;
     friend class Azure::Data::Tables::Sas::TablesSasBuilder;
@@ -77,7 +75,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
       std::string AccountName;
       std::string AccountKey;
       Azure::Core::Url TableServiceUrl;
-      std::shared_ptr<SharedKeyCredential> KeyCredential;
+      std::shared_ptr<NamedKeyCredential> KeyCredential;
     };
 
     ConnectionStringParts ParseConnectionString(const std::string& connectionString);
