@@ -654,7 +654,8 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto blockBlobClientWithoutEncryptionKey
           = m_blobContainerClient->GetBlockBlobClient(blockBlobName);
-      EXPECT_NO_THROW(blockBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::Models::AccessTier::Cool));
+      EXPECT_NO_THROW(
+          blockBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::Models::AccessTier::Cool));
       EXPECT_NO_THROW(blockBlobClientWithoutEncryptionKey.GetBlockList());
     }
 
