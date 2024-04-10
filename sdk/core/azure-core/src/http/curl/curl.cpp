@@ -902,7 +902,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // request body of the first request and discard it.
   // 6. Server side keeps reading the remaining data on the wire and thinks the first part
   // (whatever/path) is an HTTP verb. It fails the request with 400 invalid verb.
-  // LCOV_EXCL_START
   bool non2xxAfter100ContinueWithNonzeroContentLength = false;
   {
     auto responseHttpCodeInt
@@ -968,7 +967,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       m_httpKeepAlive = true;
     }
   }
-  // LCOV_EXCL_STOP
 
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
