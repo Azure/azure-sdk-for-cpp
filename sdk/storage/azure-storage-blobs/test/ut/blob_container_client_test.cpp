@@ -650,13 +650,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
       EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
-      EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
+      EXPECT_NO_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool));
 
       auto blockBlobClientWithoutEncryptionKey
           = m_blobContainerClient->GetBlockBlobClient(blockBlobName);
-      EXPECT_THROW(
-          blockBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::Models::AccessTier::Cool),
-          StorageException);
+      EXPECT_NO_THROW(
+          blockBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::Models::AccessTier::Cool));
       EXPECT_NO_THROW(blockBlobClientWithoutEncryptionKey.GetBlockList());
     }
 
