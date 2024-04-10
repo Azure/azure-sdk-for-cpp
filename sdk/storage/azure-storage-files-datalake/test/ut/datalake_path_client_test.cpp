@@ -473,7 +473,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakePathClientTest, GetPropertiesAccessControlList_PLAYBACKONLY_)
+  TEST_F(DataLakePathClientTest, GetPropertiesAccessControlList)
   {
     auto properties = m_pathClient->GetProperties().Value;
     EXPECT_TRUE(properties.Acls.HasValue() && !properties.Acls.Value().empty());
@@ -482,7 +482,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.Permissions.HasValue());
   }
 
-  TEST_F(DataLakePathClientTest, GetPropertiesWithUserPrincipalName_PLAYBACKONLY_)
+  TEST_F(DataLakePathClientTest, GetPropertiesWithUserPrincipalName)
   {
     std::string userPrincipalName = "kat@microsoft.com";
     std::string userObjectId = "72a3f86f-271f-439e-b031-25678907d381";

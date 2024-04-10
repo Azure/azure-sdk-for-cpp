@@ -713,7 +713,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(ReadFile(testName), std::runtime_error);
   }
 
-  TEST_F(DataLakeFileClientTest, FileDownloadAccessControlList_PLAYBACKONLY_)
+  TEST_F(DataLakeFileClientTest, FileDownloadAccessControlList)
   {
     auto downloadResult = m_fileClient->Download().Value;
     EXPECT_TRUE(
@@ -723,7 +723,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
   }
 
-  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName_PLAYBACKONLY_)
+  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName)
   {
     std::string userPrincipalName = "kat@microsoft.com";
     std::string userObjectId = "72a3f86f-271f-439e-b031-25678907d381";
