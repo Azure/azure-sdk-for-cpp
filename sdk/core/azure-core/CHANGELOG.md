@@ -1,14 +1,10 @@
 # Release History
 
-## 1.12.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.12.0-beta.1 (2024-04-10)
 
 ### Bugs Fixed
 
-### Other Changes
+- [[#5450]](https://github.com/Azure/azure-sdk-for-cpp/issues/5450) Fixed libcurl connection pool to use `Connection` response header values.
 
 ## 1.11.3 (2024-04-09)
 
