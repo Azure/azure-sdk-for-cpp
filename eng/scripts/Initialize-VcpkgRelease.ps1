@@ -14,7 +14,7 @@ Name of the GitHub repo (of the form Azure/azure-sdk-for-cpp)
 
 .PARAMETER DailyReleaseRef
 If supplied update the portfile.cmake file's REF and SHA512 with values
-associated with the given ref.
+associated with the given ref. 
 
 #>
 [CmdletBinding()]
