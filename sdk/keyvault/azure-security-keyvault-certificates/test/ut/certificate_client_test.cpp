@@ -748,7 +748,7 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
+TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs_LIVEONLY_)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   std::string const pkcs(testName);
@@ -781,7 +781,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
+TEST_F(KeyVaultCertificateClientTest, DownloadImportPem_LIVEONLY_)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   std::string const pem(testName);
