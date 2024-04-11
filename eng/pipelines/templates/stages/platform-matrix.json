@@ -145,8 +145,7 @@
           "Pool": "env:LINUXNEXTPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
-          "RunProxyTests": true,
-          "AptDependencies": "cmake=3.22.1"
+          "RunProxyTests": true
         }
       },
       "BuildSettings": {

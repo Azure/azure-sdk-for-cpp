@@ -111,7 +111,7 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
-      - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
+      - pwsh: sudo apt update && sudo apt install -y cmake=3.29.0 $(AptDependencies)
         retryCountOnTaskFailure: 10
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
         displayName: Install dependencies from apt
