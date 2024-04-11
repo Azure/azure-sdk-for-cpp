@@ -125,7 +125,7 @@ jobs:
       )
 
   # Install apt dependencies (if appropriate)
-  - bash: sudo apt install -y cmake=3.29.0 $(AptDependencies)
+  - bash: sudo apt install -y cmake=3.22.1 $(AptDependencies)
     retryCountOnTaskFailure: 10
     condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
