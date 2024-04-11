@@ -69,7 +69,7 @@ $newContent = $portFileContent -replace '(SHA512\s+)0', "`${1}$sha512"
 
 if ($DailyReleaseRef) {
     Write-Verbose "Overriding REF with test release ref: $DailyReleaseRef"
-    $newContent = $newContent -replace '(?m)^(\s+)REF azure.*$', "`${1}REF $DailyReleaseRef"
+    $newContent = $newContent -replace '(?m)^(\s+)REF \"azure.*\"$', "`${1}REF $DailyReleaseRef"
 }
 
 $newContent | Set-Content $portfileLocation -NoNewLine
