@@ -242,6 +242,7 @@ void TestProxyManager::SetProxySanitizer()
 
   addSanitizer(SanitizerType::General, g_accountRegex, "account");
   addSanitizer(SanitizerType::Body, "client_secret=(?<clientsecret>[^&]+)", "clientsecret");
+  addSanitizer(SanitizerType::Body, "client_id=(?<clientid>[^&]+)", "clientid");
   const std::string storageSasSignatureRegex = "\\?.*sig=(?<sassig>[a-zA-Z0-9\\%\\/+=]+)";
   addSanitizer(SanitizerType::Uri, storageSasSignatureRegex, "sassig");
   addSanitizer(SanitizerType::Header, storageSasSignatureRegex, "sassig", "x-ms-copy-source");
@@ -252,7 +253,8 @@ void TestProxyManager::SetProxySanitizer()
   addSanitizer(SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-file-rename-source");
   addSanitizer(SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-copy-source");
   addSanitizer(SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-copy-source-authorization");
-  addSanitizer(SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-file-rename-source-authorization");
+  addSanitizer(
+      SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-file-rename-source-authorization");
   addSanitizer(SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-encryption-key-sha256");
   addSanitizer(SanitizerType::Header, "(?<cookie>.+)", "cookie", "Cookie");
   addSanitizer(SanitizerType::Header, "(?<cookie>.+)", "cookie", "Set-Cookie");
