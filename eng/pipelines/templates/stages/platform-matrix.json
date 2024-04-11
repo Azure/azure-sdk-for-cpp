@@ -146,7 +146,7 @@
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "RunProxyTests": true,
-          "AptDependencies": "cmake=3.29.0"
+          "AptDependencies": "cmake=3.22.1"
         }
       },
       "BuildSettings": {
