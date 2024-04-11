@@ -9,6 +9,7 @@ vcpkg_from_github(
     REPO Azure/azure-sdk-for-cpp
     REF azure-security-keyvault-administration_@AZ_LIBRARY_VERSION@
     SHA512 0
+    HEAD_REF main
 )
 
 if(EXISTS "${SOURCE_PATH}/sdk/keyvault/azure-security-keyvault-administration")
