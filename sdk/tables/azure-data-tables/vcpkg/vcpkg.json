@@ -18,11 +18,15 @@
     {
       "name": "azure-core-cpp",
       "default-features": false,
-      "version>=": "1.11.0"
+      "version>=": "1.11.3"
     },
     {
       "name": "libxml2",
       "default-features": false,
+      "platform": "!windows"
+    },
+    {
+      "name": "openssl",
       "platform": "!windows"
     },
     {

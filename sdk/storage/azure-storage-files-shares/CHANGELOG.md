@@ -4,11 +4,8 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new field `ClientName` in `HandleItem`.
+- Added new field `IncludeRenames` in `GetFileRangeListOptions`.
 
 ## 12.8.0 (2023-11-07)
 

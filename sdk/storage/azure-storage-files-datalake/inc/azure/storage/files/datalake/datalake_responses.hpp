@@ -442,6 +442,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<bool> IsCurrentVersion;
 
       /**
+       * The acls of the path.
+       */
+      Azure::Nullable<std::vector<Acl>> Acls;
+
+      /**
        * The owner of the path.
        */
       Azure::Nullable<std::string> Owner;
@@ -706,6 +711,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * Not applicable for directories.
        */
       Nullable<std::string> EncryptionContext;
+
+      /**
+       * The acls of the file.
+       */
+      Azure::Nullable<std::vector<Acl>> Acls;
 
       /**
        * The owner of the file.

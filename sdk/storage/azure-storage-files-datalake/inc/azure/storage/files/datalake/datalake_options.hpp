@@ -322,9 +322,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * Valid only when Hierarchical Namespace is enabled for the account. If "true", the user
      * identity values returned in the owner and group fields of each list entry will be transformed
-     * from Azure Active Directory Object IDs to User Principal Names. If "false", the values will
-     * be returned as Azure Active Directory Object IDs. The default value is false. Note that group
-     * and application Object IDs are not translated because they do not have unique friendly names.
+     * from Azure Active Directory Object IDs to User Principal Names. If "false" or not provided,
+     * the values will be returned as Azure Active Directory Object IDs. Note that group and
+     * application Object IDs are not translated because they do not have unique friendly names.
+     * More Details about UserPrincipalName, See
+     * https://learn.microsoft.com/entra/identity/hybrid/connect/plan-connect-userprincipalname#what-is-userprincipalname
      */
     Azure::Nullable<bool> UserPrincipalName;
 
@@ -766,6 +768,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+
+    /**
+     * Valid only when Hierarchical Namespace is enabled for the account. If "true", the user
+     * identity values returned in the owner and group fields of each list entry will be transformed
+     * from Azure Active Directory Object IDs to User Principal Names. If "false" or not provided,
+     * the values will be returned as Azure Active Directory Object IDs. Note that group and
+     * application Object IDs are not translated because they do not have unique friendly names.
+     * More Details about UserPrincipalName, See
+     * https://learn.microsoft.com/entra/identity/hybrid/connect/plan-connect-userprincipalname#what-is-userprincipalname
+     */
+    Nullable<bool> IncludeUserPrincipalName;
   };
 
   /**
@@ -778,6 +791,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+
+    /**
+     * Valid only when Hierarchical Namespace is enabled for the account. If "true", the user
+     * identity values returned in the owner and group fields of each list entry will be transformed
+     * from Azure Active Directory Object IDs to User Principal Names. If "false" or not provided,
+     * the values will be returned as Azure Active Directory Object IDs. Note that group and
+     * application Object IDs are not translated because they do not have unique friendly names.
+     * More Details about UserPrincipalName, See
+     * https://learn.microsoft.com/entra/identity/hybrid/connect/plan-connect-userprincipalname#what-is-userprincipalname
+     */
+    Nullable<bool> IncludeUserPrincipalName;
   };
 
   /**
@@ -802,6 +826,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+
+    /**
+     * Valid only when Hierarchical Namespace is enabled for the account. If "true", the user
+     * identity values returned in the owner and group fields of each list entry will be transformed
+     * from Azure Active Directory Object IDs to User Principal Names. If "false" or not provided,
+     * the values will be returned as Azure Active Directory Object IDs. Note that group and
+     * application Object IDs are not translated because they do not have unique friendly names.
+     * More Details about UserPrincipalName, See
+     * https://learn.microsoft.com/entra/identity/hybrid/connect/plan-connect-userprincipalname#what-is-userprincipalname
+     */
+    Nullable<bool> IncludeUserPrincipalName;
   };
 
   /**
