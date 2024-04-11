@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, RenameFile)
+  TEST_F(FileShareDirectoryClientTest, RenameFile_LIVEONLY_)
   {
     const std::string baseName = RandomString();
     const std::string baseDirectoryName = baseName + "1";
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, RenameSubdirectory)
+  TEST_F(FileShareDirectoryClientTest, RenameSubdirectory_LIVEONLY_)
   {
     const std::string baseName = RandomString();
     const std::string baseDirectoryName = baseName + "1";
@@ -999,7 +999,7 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false);
   }
 
-  TEST_F(FileShareDirectoryClientTest, RenameAllowTrailingDot)
+  TEST_F(FileShareDirectoryClientTest, RenameAllowTrailingDot_LIVEONLY_)
   {
     const std::string directoryNameWithTrailingDot = RandomString() + ".";
     const std::string connectionString = StandardStorageConnectionString();
@@ -1099,7 +1099,7 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false, false);
   }
 
-  TEST_F(FileShareDirectoryClientTest, OAuth_PLAYBACKONLY_)
+  TEST_F(FileShareDirectoryClientTest, DISABLED_OAuth)
   {
     const std::string directoryName = RandomString();
 

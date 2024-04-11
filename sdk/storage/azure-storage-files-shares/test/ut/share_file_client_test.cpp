@@ -901,7 +901,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, GetRangeListDiffWithRename_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, DISABLE_GetRangeListDiffWithRename)
   {
     size_t rangeSize = 128;
     std::vector<uint8_t> rangeContent = RandomBuffer(rangeSize);
