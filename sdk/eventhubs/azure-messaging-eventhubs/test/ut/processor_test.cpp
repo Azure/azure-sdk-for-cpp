@@ -144,6 +144,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         // Block until all the events have been processed.
         waitGroup.Wait();
 
+        producerClient.Close(context);
+
         // And wait until all the threads have completed.
         for (auto& thread : processEventsThreads)
         {
@@ -212,6 +214,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         ProcessEventsForLoadBalancerTestSingleThreaded(producerClient, partitionClient, context);
       }
+
+      producerClient.Close(context);
+
       // Stop the processor, we're done with the test.
       processor.Stop();
     }
