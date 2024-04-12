@@ -312,7 +312,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           }
           catch (std::runtime_error& ex)
           {
-            GTEST_LOG_(FATAL) << "Exception thrown sending messages" << ex.what();
+            GTEST_LOG_(ERROR) << "Exception thrown sending messages" << ex.what();
           }
         });
         std::vector<std::shared_ptr<const Models::ReceivedEventData>> allEvents;
@@ -345,7 +345,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       catch (std::runtime_error const& ex)
       {
-        GTEST_LOG_(FATAL) << "Exception thrown receiving messages." << ex.what();
+        GTEST_LOG_(ERROR) << "Exception thrown receiving messages." << ex.what();
         producerContext.Cancel();
       }
     }
@@ -389,7 +389,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         }
         catch (std::runtime_error& ex)
         {
-          GTEST_LOG_(FATAL) << "Exception thrown sending messages" << ex.what();
+          GTEST_LOG_(ERROR) << "Exception thrown sending messages" << ex.what();
         }
 
         std::vector<std::shared_ptr<const Models::ReceivedEventData>> allEvents;
@@ -418,7 +418,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       catch (std::runtime_error const& ex)
       {
-        GTEST_LOG_(FATAL) << "Exception thrown receiving messages." << ex.what();
+        GTEST_LOG_(ERROR) << "Exception thrown receiving messages." << ex.what();
         producerContext.Cancel();
       }
     }
