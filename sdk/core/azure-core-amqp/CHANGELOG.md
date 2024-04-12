@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-	- Fixed a potential deadlock where a message receiver Open call could block indefinitely when adding the Link to the Pollables.
+- Fixed a potential deadlock where a message receiver Open call could block indefinitely when adding the Link to the Pollables.
 
 ### Other Changes
 
