@@ -755,7 +755,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs_LIVEONLY_)
   std::string const importName(pkcs + "2");
 
   auto const& client = GetClientForTest(testName);
-
   auto originalCertificate
       = CreateCertificate(pkcs, client, m_defaultWait, "CN=xyz", CertificateContentType::Pkcs12);
 
