@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2022-11-02";
+    constexpr static const char* ApiVersion = "2023-11-03";
   } // namespace _detail
   namespace Models {
     /**
@@ -3683,6 +3683,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<bool> UserPrincipalName;
       };
       static Response<Models::DownloadBlobResult> Download(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3702,6 +3703,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<bool> UserPrincipalName;
       };
       static Response<Models::BlobProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
