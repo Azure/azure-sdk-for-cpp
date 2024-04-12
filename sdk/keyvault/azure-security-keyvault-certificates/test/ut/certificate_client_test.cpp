@@ -787,7 +787,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem_LIVEONLY_)
   std::string const importName(pem + "2");
 
   auto const& client = GetClientForTest(testName);
-
   auto originalCertificate
       = CreateCertificate(pem, client, m_defaultWait, "CN=xyz", CertificateContentType::Pem);
 
