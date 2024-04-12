@@ -750,7 +750,7 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
 
 TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs_LIVEONLY_)
 {
-  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  auto testName = GetTestName();
   std::string const pkcs(testName);
   std::string const importName(pkcs + "2");
 
@@ -782,7 +782,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs_LIVEONLY_)
 
 TEST_F(KeyVaultCertificateClientTest, DownloadImportPem_LIVEONLY_)
 {
-  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  auto testName = GetTestName();
   std::string const pem(testName);
   std::string const importName(pem + "2");
 
