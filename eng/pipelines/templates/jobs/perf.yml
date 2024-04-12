@@ -49,6 +49,7 @@ extends:
           runProxy: true
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+      - template: /eng/pipelines/templates/steps/install-cmake.yml
         
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
     PackageVersions: ${{ parameters.PackageVersions }}

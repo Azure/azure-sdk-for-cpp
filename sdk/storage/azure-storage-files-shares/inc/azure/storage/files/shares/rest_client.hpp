@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2023-01-03";
+    constexpr static const char* ApiVersion = "2024-05-04";
   } // namespace _detail
   namespace Models {
     /**
@@ -1301,6 +1301,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          */
         std::string ClientIp;
         /**
+         * Name of the client machine where the share is being mounted.
+         */
+        std::string ClientName;
+        /**
          * Time when the session that previously opened the handle has last been reconnected. (UTC).
          */
         DateTime OpenedOn;
@@ -2566,6 +2570,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<bool> SupportRename;
       };
       static Response<Models::GetFileRangeListResult> GetRangeList(
           Core::Http::_internal::HttpPipeline& pipeline,

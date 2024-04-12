@@ -1,8 +1,16 @@
 # Release History
 
-## 1.0.0-beta.7 (Unreleased)
+## 1.0.0-beta.8 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0-beta.7 (2024-04-09)
 
 ### Breaking Changes
 
@@ -11,8 +19,6 @@
 ### Bugs Fixed
 
 - Fixed [#5297](https://github.com/Azure/azure-sdk-for-cpp/issues/5297). The actual fix for this was to use a single management client per connection.
-
-### Other Changes
 
 ## 1.0.0-beta.6 (2024-02-06)
 

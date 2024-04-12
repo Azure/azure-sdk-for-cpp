@@ -347,7 +347,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto response = m_blobClient.GetProperties(blobOptions, context);
+    auto response = m_blobClient.GetProperties(
+        blobOptions,
+        options.IncludeUserPrincipalName.HasValue() ? context.WithValue(
+            Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
+            options.IncludeUserPrincipalName.Value())
+                                                    : context);
     Models::PathProperties ret;
     ret.ETag = std::move(response.Value.ETag);
     ret.LastModified = std::move(response.Value.LastModified);
@@ -383,6 +388,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.EncryptionContext = encryptionContext->second;
     }
+    auto acl = headers.find(_detail::AclHeaderName);
+    if (acl != headers.end())
+    {
+      ret.Acls = Models::Acl::DeserializeAcls(acl->second);
+    }
     auto owner = headers.find(_detail::OwnerHeaderName);
     if (owner != headers.end())
     {
@@ -411,6 +421,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.Upn = options.IncludeUserPrincipalName;
     auto response = _detail::PathClient::GetAccessControlList(
         *m_pipeline, m_pathUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
     Azure::Nullable<std::vector<Models::Acl>> acl;

@@ -669,6 +669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.SupportRename = options.IncludeRenames;
     return _detail::FileClient::GetRangeList(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
@@ -699,6 +700,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         fileHandle.Path = std::move(handle.Path.Content);
       }
       fileHandle.ClientIp = std::move(handle.ClientIp);
+      fileHandle.ClientName = std::move(handle.ClientName);
       fileHandle.FileId = std::move(handle.FileId);
       fileHandle.HandleId = std::move(handle.HandleId);
       fileHandle.LastReconnectedOn = std::move(handle.LastReconnectedOn);
