@@ -475,46 +475,55 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           m_session, static_cast<std::string>(m_source.GetAddress()), context);
     }
 
-    auto lock{m_session->GetConnection()->Lock()};
-
-    // Once we've authenticated the connection, establish the link and receiver.
-    // We cannot do this before authenticating the client.
-    if (!m_link)
     {
-      CreateLink();
-    }
-    if (m_messageReceiver == nullptr)
-    {
-      m_messageReceiver.reset(messagereceiver_create(
-          *m_link, MessageReceiverImpl::OnMessageReceiverStateChangedFn, this));
-    }
+      auto lock{m_session->GetConnection()->Lock()};
 
-    messagereceiver_set_trace(m_messageReceiver.get(), m_options.EnableTrace);
+      // Once we've authenticated the connection, establish the link and receiver.
+      // We cannot do this before authenticating the client.
+      if (!m_link)
+      {
+        CreateLink();
+      }
+      if (m_messageReceiver == nullptr)
+      {
+        m_messageReceiver.reset(messagereceiver_create(
+            *m_link, MessageReceiverImpl::OnMessageReceiverStateChangedFn, this));
+      }
 
-    if (messagereceiver_open(
-            m_messageReceiver.get(), MessageReceiverImpl::OnMessageReceivedFn, this))
-    {
+      messagereceiver_set_trace(m_messageReceiver.get(), m_options.EnableTrace);
 
-      auto err = errno;
+      if (messagereceiver_open(
+              m_messageReceiver.get(), MessageReceiverImpl::OnMessageReceivedFn, this))
+      {
+
+        auto err = errno;
 #if defined(AZ_PLATFORM_WINDOWS)
-      char buf[256];
-      strerror_s(buf, sizeof(buf), err);
+        char buf[256];
+        strerror_s(buf, sizeof(buf), err);
 #else
-      std::string buf{strerror(err)};
+        std::string buf{strerror(err)};
 #endif
-      throw std::runtime_error(
-          "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
-    }
-    m_receiverOpen = true;
+        throw std::runtime_error(
+            "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
+      }
+      m_receiverOpen = true;
 
-    if (m_options.EnableTrace)
-    {
-      Log::Stream(Logger::Level::Verbose) << "Opening message receiver. Start async";
+      if (m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose) << "Opening message receiver. Start async";
+      }
+      // Mark the connection as async so that we can use the async APIs.
+      m_session->GetConnection()->EnableAsyncOperation(true);
     }
-    // Mark the connection as async so that we can use the async APIs.
-    m_session->GetConnection()->EnableAsyncOperation(true);
 
     // And add the link to the list of pollable items.
+    //
+    // Note that you *cannot* hold any connection or link locks when calling AddPollable. This is
+    // because the the AddPollable function attempts to lock the pollable and the RemovePollable
+    // function blocks until any pollables have completed while holding the pollable lock.
+    //
+    // This can result in a deadlock because the polling thread is also going to acquire the
+    // connection lock resulting in a deadlock.
     Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
   }
 

@@ -144,6 +144,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         // Block until all the events have been processed.
         waitGroup.Wait();
 
+        producerClient.Close(context);
+
         // And wait until all the threads have completed.
         for (auto& thread : processEventsThreads)
         {
@@ -212,6 +214,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         ProcessEventsForLoadBalancerTestSingleThreaded(producerClient, partitionClient, context);
       }
+
+      producerClient.Close(context);
+
       // Stop the processor, we're done with the test.
       processor.Stop();
     }
@@ -307,7 +312,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           }
           catch (std::runtime_error& ex)
           {
-            GTEST_LOG_(FATAL) << "Exception thrown sending messages" << ex.what();
+            GTEST_LOG_(ERROR) << "Exception thrown sending messages" << ex.what();
           }
         });
         std::vector<std::shared_ptr<const Models::ReceivedEventData>> allEvents;
@@ -340,7 +345,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       catch (std::runtime_error const& ex)
       {
-        GTEST_LOG_(FATAL) << "Exception thrown receiving messages." << ex.what();
+        GTEST_LOG_(ERROR) << "Exception thrown receiving messages." << ex.what();
         producerContext.Cancel();
       }
     }
@@ -384,7 +389,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         }
         catch (std::runtime_error& ex)
         {
-          GTEST_LOG_(FATAL) << "Exception thrown sending messages" << ex.what();
+          GTEST_LOG_(ERROR) << "Exception thrown sending messages" << ex.what();
         }
 
         std::vector<std::shared_ptr<const Models::ReceivedEventData>> allEvents;
@@ -413,7 +418,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       catch (std::runtime_error const& ex)
       {
-        GTEST_LOG_(FATAL) << "Exception thrown receiving messages." << ex.what();
+        GTEST_LOG_(ERROR) << "Exception thrown receiving messages." << ex.what();
         producerContext.Cancel();
       }
     }

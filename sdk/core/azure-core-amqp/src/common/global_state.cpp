@@ -141,6 +141,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 #endif
   }
 
+  /**
+   * @brief Adds a pollable object to the list of objects to be polled.
+   *
+   * @param pollable The pollable object to add.
+   *
+   * @note Note that you *cannot* hold any connection or link locks when calling AddPollable. This
+   * is because the the AddPollable function attempts to lock the pollable and the RemovePollable
+   * function blocks until any pollables have completed while holding the pollable lock.
+   *
+   * This can result in a deadlock because the polling thread is also going to acquire the
+   * connection lock resulting in a deadlock.
+   *
+   */
   void GlobalStateHolder::AddPollable(std::shared_ptr<Pollable> pollable)
   {
     std::lock_guard<std::mutex> lock(m_pollablesMutex);
