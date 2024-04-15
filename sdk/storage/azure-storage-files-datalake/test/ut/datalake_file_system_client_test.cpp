@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, CustomerProvidedKey_LIVEONLY_)
+  TEST_F(DataLakeFileSystemClientTest, CustomerProvidedKey)
   {
     auto getRandomCustomerProvidedKey = [&]() {
       Files::DataLake::EncryptionKey key;
