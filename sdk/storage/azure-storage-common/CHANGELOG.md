@@ -1,18 +1,14 @@
 # Release History
 
-## 12.6.0-beta.1 (Unreleased)
+## 12.6.0-beta.1 (2024-04-17)
 
 ### Features Added
 
 - Removed unnecessary dependencies on non-Windows platforms. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed a bug where exception error code was not parsed for `HEAD` requests.
-
-### Other Changes
 
 ### Acknowledgments
 
