@@ -241,7 +241,6 @@ void TestProxyManager::SetProxySanitizer()
   };
 
   addSanitizer(SanitizerType::General, g_accountRegex, "account");
-  
   addSanitizer(SanitizerType::Body, "client_secret=(?<clientsecret>[^&]+)", "clientsecret");
   addSanitizer(SanitizerType::Body, "client_id=(?<clientid>[^&]+)", "clientid");
   addSanitizer(SanitizerType::Body, "(?:<Value>)(.*)(?:</Value>)", "value");
