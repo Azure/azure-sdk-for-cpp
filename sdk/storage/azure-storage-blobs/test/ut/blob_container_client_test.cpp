@@ -616,7 +616,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobContainerClientTest, CustomerProvidedKey_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, CustomerProvidedKey)
   {
     auto sourceContainerClient = *m_blobContainerClient;
 
@@ -629,6 +629,7 @@ namespace Azure { namespace Storage { namespace Test {
       key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
     };
+    auto redactedKeyHash = Core::Convert::Base64Decode("REDACTED");
 
     Blobs::BlobClientOptions options;
     options.CustomerProvidedKey = getRandomCustomerProvidedKey();
@@ -665,14 +666,16 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobContentInfo = appendBlob.Create().Value;
       EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(
-          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
+      EXPECT_TRUE(
+          blobContentInfo.EncryptionKeySha256.Value() == options.CustomerProvidedKey.Value().KeyHash
+          || blobContentInfo.EncryptionKeySha256.Value() == redactedKeyHash);
       auto blobItem = GetBlobItem(appendBlobName);
       EXPECT_TRUE(blobItem.Details.IsServerEncrypted);
       EXPECT_TRUE(blobItem.Details.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(
-          blobItem.Details.EncryptionKeySha256.Value(),
-          options.CustomerProvidedKey.Value().KeyHash);
+      EXPECT_TRUE(
+          blobItem.Details.EncryptionKeySha256.Value()
+              == options.CustomerProvidedKey.Value().KeyHash
+          || blobItem.Details.EncryptionKeySha256.Value() == redactedKeyHash);
 
       bodyStream.Rewind();
       EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
@@ -682,9 +685,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto setMetadataRes = appendBlob.SetMetadata({});
       EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
       ASSERT_TRUE(setMetadataRes.Value.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(
-          setMetadataRes.Value.EncryptionKeySha256.Value(),
-          options.CustomerProvidedKey.Value().KeyHash);
+      EXPECT_TRUE(
+          setMetadataRes.Value.EncryptionKeySha256.Value()
+              == options.CustomerProvidedKey.Value().KeyHash
+          || setMetadataRes.Value.EncryptionKeySha256.Value() == redactedKeyHash);
       EXPECT_NO_THROW(appendBlob.CreateSnapshot());
 
       auto appendBlobClientWithoutEncryptionKey
@@ -712,8 +716,9 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobContentInfo = pageBlob.Create(0).Value;
       EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(
-          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
+      EXPECT_TRUE(
+          blobContentInfo.EncryptionKeySha256.Value() == options.CustomerProvidedKey.Value().KeyHash
+          || blobContentInfo.EncryptionKeySha256.Value() == redactedKeyHash);
       bodyStream.Rewind();
       EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
       EXPECT_NO_THROW(pageBlob.UploadPages(0, bodyStream));
