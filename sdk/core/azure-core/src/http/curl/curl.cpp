@@ -2519,20 +2519,9 @@ CurlConnection::CurlConnection(
   }
 
   auto performResult = curl_easy_perform(m_handle.get());
-
-  Log::Write(
-      Logger::Level::Error,
-      LogMsgPrefix + "TESTLOG: " + std::string(curl_easy_strerror(performResult)));
-  Log::Write(
-      Logger::Level::Error, LogMsgPrefix + "TESTLOG: " + std::string(curl_easy_strerror(CURLE_OK)));
-    
   if (performResult != CURLE_OK)
   {
 #if defined(AZ_PLATFORM_LINUX)
-
-    Log::Write(
-        Logger::Level::Error,
-        LogMsgPrefix + "TESTLOG: " + std::string(curl_easy_strerror(CURLE_SSL_PEER_CERTIFICATE)));
     if (performResult == CURLE_SSL_PEER_CERTIFICATE)
     {
       curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &result);
