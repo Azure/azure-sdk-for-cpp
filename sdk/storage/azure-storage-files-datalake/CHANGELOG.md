@@ -1,18 +1,12 @@
 # Release History
 
-## 12.10.0-beta.1 (Unreleased)
+## 12.10.0-beta.1 (2024-04-17)
 
 ### Features Added
 
 - Bumped up API version to `2023-11-03`.
 - Added new field `IncludeUserPrincipalName` in `GetPathAccessControlListOptions`, `GetPathPropertiesOptions` and `DownloadFileOptions`.
 - Added new field `Acls` in `PathProperties` and `DownloadFileDetails`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.9.0 (2023-11-07)
 
