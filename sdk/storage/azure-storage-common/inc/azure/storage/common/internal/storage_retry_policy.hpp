@@ -5,8 +5,6 @@
 
 #include <azure/core/http/policies/policy.hpp>
 
-#include <memory>
-
 namespace Azure { namespace Storage { namespace _internal {
 
   class StorageRetryPolicy final : public Core::Http::Policies::_internal::RetryPolicy {
