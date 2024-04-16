@@ -1,13 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-
 #include "azure/storage/common/internal/storage_retry_policy.hpp"
-
 
 namespace Azure { namespace Storage { namespace _internal {
 
-	bool StorageRetryPolicy::ShouldRetryOnResponse(
+  bool StorageRetryPolicy::ShouldRetryOnResponse(
       Core::Http::RawResponse const& response,
       Core::Http::Policies::RetryOptions const& retryOptions,
       int32_t attempt,
@@ -26,7 +24,8 @@ namespace Azure { namespace Storage { namespace _internal {
       return false;
     }
 
-    if (static_cast<std::underlying_type_t<Core::Http::HttpStatusCode>>(response.GetStatusCode()) >= 400)
+    if (static_cast<std::underlying_type_t<Core::Http::HttpStatusCode>>(response.GetStatusCode())
+        >= 400)
     {
       const auto& headers = response.GetHeaders();
       auto ite = headers.find("x-ms-copy-source-status-code");
