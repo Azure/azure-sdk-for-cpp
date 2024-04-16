@@ -433,8 +433,10 @@ namespace Azure { namespace Core { namespace Test {
     //    Azure::Core::Url testUrl("https://www.microsoft.com/");
     // HTTP Connections.
     auto failedCounter = 0;
-    for (auto i = 0; i < 10; i++)
+    auto const attempts = 3;
+    for (auto i = 0; i < attempts; i++)
     {
+      GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i << ".";
       try
       {
         Azure::Core::Http::Policies::TransportOptions transportOptions;
@@ -454,13 +456,15 @@ namespace Azure { namespace Core { namespace Test {
         GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i
                          << " failed with a TransportException.";
         failedCounter++;
-        // We allow 1 intermittent failure.
+        // We allow 1 intermittent failure, due to networking issues.
         if (failedCounter > 1)
         {
           throw;
         }
       }
     }
+    // We expect at least one of the three attempts to succeed.
+    EXPECT_LT(failedCounter, attempts);
 #if defined(ENABLE_PROXY_TESTS)
     if (IsSquidProxyRunning)
     {
