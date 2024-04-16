@@ -15,6 +15,7 @@ namespace Azure { namespace Storage { namespace _internal {
         : RetryPolicy(options), m_options(std::move(options))
     {
     }
+    ~StorageRetryPolicy() override {}
 
   protected:
     bool ShouldRetryOnResponse(
