@@ -430,7 +430,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapterOptions, DisableCrlValidation)
   {
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
-    //    Azure::Core::Url testUrl("https://www.microsoft.com/");
+
     // HTTP Connections.
     auto failedCounter = 0;
     auto const attempts = 3;
