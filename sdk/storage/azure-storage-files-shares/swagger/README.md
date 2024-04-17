@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2024-05-04/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2024-05-04/file.json
 ```
 
 ## ModelFour Options
