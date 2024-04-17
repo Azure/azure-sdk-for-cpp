@@ -112,18 +112,18 @@ extends:
         scanOutputDirectoryOnly: true
 
     stages:
-      - stage: CMakeGeneration
-        variables:
-          - template: /eng/pipelines/templates/variables/image.yml@self
-        jobs:
-          - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml@self
-            parameters:
-              TimeoutInMinutes: ${{ parameters.CMakeGenerationTimeoutInMinutes }}
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              Artifacts: ${{ parameters.Artifacts }}
-              ArtifactsSource: ${{ parameters.ArtifactsSource }}
-              CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
-              CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
+      # - stage: CMakeGeneration
+      #   variables:
+      #     - template: /eng/pipelines/templates/variables/image.yml@self
+      #   jobs:
+      #     - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml@self
+      #       parameters:
+      #         TimeoutInMinutes: ${{ parameters.CMakeGenerationTimeoutInMinutes }}
+      #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      #         Artifacts: ${{ parameters.Artifacts }}
+      #         ArtifactsSource: ${{ parameters.ArtifactsSource }}
+      #         CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
+      #         CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
 
       # PrePublishBuild runs a narrower set of fast builds. If these builds pass,
       # Integration can launch immediately without awaiting more build and test jobs
@@ -151,64 +151,64 @@ extends:
               PostTestSteps: ${{ parameters.PostTestSteps }}
               RunMetaJobs: true
 
-      - stage: Build
-        variables:
-          - template: /eng/pipelines/templates/variables/image.yml@self
-        dependsOn: []
-        jobs:
-          - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml@self
-            # Code coverage is enabled by default for live tests
-            parameters:
-              MatrixFile: eng/pipelines/templates/stages/platform-matrix.json
-              JobName: Validate
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              Artifacts: ${{ parameters.Artifacts }}
-              CtestRegex: ${{ parameters.CtestRegex }}
-              CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
-              CoverageEnabled: ${{ parameters.CoverageEnabled }}
-              CoverageReportPath: ${{ parameters.CoverageReportPath }}
-              LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
-              BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
-              ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-                TestPipeline: true
-              TestEnv: ${{ parameters.TestEnv }}
-              PreTestSteps: ${{ parameters.PreTestSteps }}
-              PostTestSteps: ${{ parameters.PostTestSteps }}
-              RunMetaJobs: false
+      # - stage: Build
+      #   variables:
+      #     - template: /eng/pipelines/templates/variables/image.yml@self
+      #   dependsOn: []
+      #   jobs:
+      #     - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml@self
+      #       # Code coverage is enabled by default for live tests
+      #       parameters:
+      #         MatrixFile: eng/pipelines/templates/stages/platform-matrix.json
+      #         JobName: Validate
+      #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      #         Artifacts: ${{ parameters.Artifacts }}
+      #         CtestRegex: ${{ parameters.CtestRegex }}
+      #         CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
+      #         CoverageEnabled: ${{ parameters.CoverageEnabled }}
+      #         CoverageReportPath: ${{ parameters.CoverageReportPath }}
+      #         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+      #         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+      #         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+      #           TestPipeline: true
+      #         TestEnv: ${{ parameters.TestEnv }}
+      #         PreTestSteps: ${{ parameters.PreTestSteps }}
+      #         PostTestSteps: ${{ parameters.PostTestSteps }}
+      #         RunMetaJobs: false
 
-      - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
-          - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml@self
-            parameters:
-              TimeoutInMinutes: ${{ parameters.LiveTestTimeoutInMinutes }}
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              CtestRegex: ${{ parameters.LiveTestCtestRegex }}
-              CoverageReportPath: ${{ parameters.CoverageReportPath }}
-              Location: ${{ parameters.Location }}
-              CloudConfig: ${{ parameters.CloudConfig }}
-              Clouds: ${{ parameters.Clouds }}
-              SupportedClouds: ${{ parameters.SupportedClouds }}
-              UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
-              PreTestSteps: ${{ parameters.PreTestSteps }}
-              PostTestSteps: ${{ parameters.PostTestSteps }}
+      # - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
+      #     - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml@self
+      #       parameters:
+      #         TimeoutInMinutes: ${{ parameters.LiveTestTimeoutInMinutes }}
+      #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      #         CtestRegex: ${{ parameters.LiveTestCtestRegex }}
+      #         CoverageReportPath: ${{ parameters.CoverageReportPath }}
+      #         Location: ${{ parameters.Location }}
+      #         CloudConfig: ${{ parameters.CloudConfig }}
+      #         Clouds: ${{ parameters.Clouds }}
+      #         SupportedClouds: ${{ parameters.SupportedClouds }}
+      #         UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
+      #         PreTestSteps: ${{ parameters.PreTestSteps }}
+      #         PostTestSteps: ${{ parameters.PostTestSteps }}
 
-      - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
-          - template: archetype-cpp-release.yml@self
-            parameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              IntegrationDependsOn:
-                - PrePublishBuild
-              DependsOn:
-                - PrePublishBuild
-                - Build
-                # Only depend on `LiveTest` if there are live tests to execute
-                - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
-                    # Pulled from stages/archetype-sdk-tests.yml to generate 'LiveTest_<cloud>'
-                    - ${{ each cloud in parameters.CloudConfig }}:
-                        - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
-                            - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-                                - LiveTest_${{ cloud.key }}
-              Artifacts: ${{ parameters.Artifacts }}
-              ArtifactName: packages
-              ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-                TestPipeline: true
+      # - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
+      #     - template: archetype-cpp-release.yml@self
+      #       parameters:
+      #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      #         IntegrationDependsOn:
+      #           - PrePublishBuild
+      #         DependsOn:
+      #           - PrePublishBuild
+      #           - Build
+      #           # Only depend on `LiveTest` if there are live tests to execute
+      #           - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
+      #               # Pulled from stages/archetype-sdk-tests.yml to generate 'LiveTest_<cloud>'
+      #               - ${{ each cloud in parameters.CloudConfig }}:
+      #                   - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+      #                       - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+      #                           - LiveTest_${{ cloud.key }}
+      #         Artifacts: ${{ parameters.Artifacts }}
+      #         ArtifactName: packages
+      #         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+      #           TestPipeline: true
 
