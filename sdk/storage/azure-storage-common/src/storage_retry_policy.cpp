@@ -6,8 +6,8 @@
 namespace Azure { namespace Storage { namespace _internal {
 
   bool StorageRetryPolicy::ShouldRetryOnResponse(
-      Core::Http::RawResponse const& response,
-      Core::Http::Policies::RetryOptions const& retryOptions,
+      const Core::Http::RawResponse& response,
+      const Core::Http::Policies::RetryOptions& retryOptions,
       int32_t attempt,
       std::chrono::milliseconds& retryAfter,
       double jitterFactor) const
@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace _internal {
       return true;
     }
 
-    if (attempt > m_options.MaxRetries)
+    if (attempt > retryOptions.MaxRetries)
     {
       return false;
     }
@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace _internal {
       if (ite != headers.end())
       {
         auto innerStatusCode = static_cast<Core::Http::HttpStatusCode>(std::stoi(ite->second));
-        if (m_options.StatusCodes.find(innerStatusCode) != m_options.StatusCodes.end())
+        if (retryOptions.StatusCodes.find(innerStatusCode) != retryOptions.StatusCodes.end())
         {
           return true;
         }

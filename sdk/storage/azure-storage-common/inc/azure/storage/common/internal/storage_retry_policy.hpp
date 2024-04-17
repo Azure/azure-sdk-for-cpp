@@ -10,7 +10,7 @@ namespace Azure { namespace Storage { namespace _internal {
   class StorageRetryPolicy final : public Core::Http::Policies::_internal::RetryPolicy {
   public:
     explicit StorageRetryPolicy(Core::Http::Policies::RetryOptions options)
-        : RetryPolicy(options), m_options(std::move(options))
+        : RetryPolicy(std::move(options))
     {
     }
     ~StorageRetryPolicy() override {}
@@ -22,9 +22,6 @@ namespace Azure { namespace Storage { namespace _internal {
         int32_t attempt,
         std::chrono::milliseconds& retryAfter,
         double jitterFactor = -1) const override;
-
-  private:
-    Core::Http::Policies::RetryOptions m_options;
   };
 
 }}} // namespace Azure::Storage::_internal
