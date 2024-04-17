@@ -16,8 +16,11 @@ steps:
       Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
       $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
       $componentsToRemove= @(
-        "Microsoft.VisualStudio.Component.VC.14.38.17.8.x86.x64"
-        "Microsoft.VisualStudio.Component.VC.14.38.17.8.x86.x64.Spectre"
+        # "Microsoft.VisualStudio.Component.VC.14.38.17.8.x86.x64"
+        # "Microsoft.VisualStudio.Component.VC.14.38.17.8.x86.x64.Spectre"
+        "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+        # "Microsoft.VisualStudio.Component.VC.v141.x86.x64"
+        # "Microsoft.VisualStudio.Component.VC.v141.x86.x64.Spectre"
       )
       [string]$workloadArgs = $componentsToRemove | ForEach-Object {" --remove " +  $_}
       $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
@@ -28,8 +31,7 @@ steps:
       Write-Host "Installing VC components..."
 
       $componentsToInstall= @(
-        "Microsoft.VisualStudio.Component.VC.14.39.17.9.x86.x64"
-        "Microsoft.VisualStudio.Component.VC.14.39.17.9.x86.x64.Spectre"
+        "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
       )
       [string]$workloadArgs = $componentsToInstall | ForEach-Object {" --add " +  $_}
       $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
