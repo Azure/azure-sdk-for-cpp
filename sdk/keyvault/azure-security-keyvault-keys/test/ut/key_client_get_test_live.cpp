@@ -28,7 +28,9 @@ TEST_F(KeyVaultKeyClient, GetSingleKey)
   EXPECT_EQ(key.GetKeyType(), KeyVaultKeyType::Ec);
 }
 
-TEST_F(KeyVaultKeyClient, GetPropertiesOfKeysAllPages_LIVEONLY_) // truncated json in the recording body
+TEST_F(
+    KeyVaultKeyClient,
+    GetPropertiesOfKeysAllPages_LIVEONLY_) // truncated json in the recording body
 {
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
