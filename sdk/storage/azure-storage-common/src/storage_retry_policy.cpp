@@ -3,6 +3,8 @@
 
 #include "azure/storage/common/internal/storage_retry_policy.hpp"
 
+#include "azure/core/internal/diagnostics/log.hpp"
+
 namespace Azure { namespace Storage { namespace _internal {
 
   bool StorageRetryPolicy::ShouldRetryOnResponse(
@@ -31,8 +33,21 @@ namespace Azure { namespace Storage { namespace _internal {
       auto ite = headers.find("x-ms-copy-source-status-code");
       if (ite != headers.end())
       {
-        auto innerStatusCode = static_cast<Core::Http::HttpStatusCode>(std::stoi(ite->second));
-        if (retryOptions.StatusCodes.find(innerStatusCode) != retryOptions.StatusCodes.end())
+        const auto innerStatusCodeInt = std::stoi(ite->second);
+        const auto innerStatusCode = static_cast<Core::Http::HttpStatusCode>(innerStatusCodeInt);
+
+        const bool shouldRetry
+            = retryOptions.StatusCodes.find(innerStatusCode) != retryOptions.StatusCodes.end();
+
+        if (Azure::Core::Diagnostics::_internal::Log::ShouldWrite(
+                Azure::Core::Diagnostics::Logger::Level::Informational))
+        {
+          Azure::Core::Diagnostics::_internal::Log::Write(
+              Azure::Core::Diagnostics::Logger::Level::Informational,
+              std::string("x-ms-copy-source-status-code ") + std::to_string(innerStatusCodeInt)
+                  + (shouldRetry ? " will be retried" : " won't be retried"));
+        }
+        if (shouldRetry)
         {
           return true;
         }
