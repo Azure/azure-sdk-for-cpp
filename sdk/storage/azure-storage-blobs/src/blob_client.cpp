@@ -18,6 +18,7 @@
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
+#include <azure/storage/common/internal/storage_pipeline.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
@@ -58,23 +59,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
       : BlobClient(blobUrl, options)
   {
-    BlobClientOptions newOptions = options;
-    newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<_internal::SharedKeyPolicy>(credential));
-
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_blobUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
-    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        newOptions,
+        m_blobUrl.GetHost(), options.SecondaryHostForRetryReads));
+
+    m_pipeline = _internal::ConstructStorageHttpPipeline(
+        options.ApiVersion,
         _internal::BlobServicePackageName,
         _detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+        credential,
+        {},
+        perRetryPolicies,
+        options);
   }
 
   BlobClient::BlobClient(
