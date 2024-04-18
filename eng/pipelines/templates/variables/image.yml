@@ -6,7 +6,7 @@ variables:
   - name: LINUXNEXTPOOL
     value: azsdk-pool-mms-ubuntu-2204-general
   - name: WINDOWSPOOL
-    value: azsdk-pool-mms-win-2022-general
+    value: azsdk-pool-mms-win-2019-general
   - name: WINDOWSPREVIOUSPOOL
     value: azsdk-pool-mms-win-2019-general
   - name: MACPOOL
@@ -17,7 +17,7 @@ variables:
   - name: LINUXNEXTVMIMAGE
     value: azsdk-pool-mms-ubuntu-2204-1espt
   - name: WINDOWSVMIMAGE
-    value: 1espt-win-2022-cpp-rollback
+    value: azsdk-pool-mms-win-2019-1espt
   - name: WINDOWSPREVIOUSVMIMAGE
     value: azsdk-pool-mms-win-2019-1espt
   - name: MACVMIMAGE
