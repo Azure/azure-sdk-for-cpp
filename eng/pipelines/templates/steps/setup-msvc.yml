@@ -12,7 +12,7 @@ steps:
       }
 
       Remove-item 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\Microsoft.VCToolsVersion.v143.default.*' -Force
-      Get-ChildItem ''C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\' -Name | Write-Host
+      Get-ChildItem 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\' -Name | Write-Host
       # Write-Host "Removing VC components..."
 
       # Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
