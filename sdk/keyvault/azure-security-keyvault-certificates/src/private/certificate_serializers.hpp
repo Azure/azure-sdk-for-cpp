@@ -56,21 +56,24 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         auto const& path = kid.GetPath();
         //  path is in the form of `verb/keyName{/keyVersion}`
         auto const separatorChar = '/';
-        auto pathEnd = path.end();
-        auto start = path.begin();
-        start = std::find(start, pathEnd, separatorChar);
-        start += 1;
-        auto separator = std::find(start, pathEnd, separatorChar);
-        if (separator != pathEnd)
+        if (path.length() > 0)
         {
-          certificateProperties.Name = std::string(start, separator);
-          start = separator + 1;
-          certificateProperties.Version = std::string(start, pathEnd);
-        }
-        else
-        {
-          // Nothing but the name+
-          certificateProperties.Name = std::string(start, pathEnd);
+          auto pathEnd = path.end();
+          auto start = path.begin();
+          start = std::find(start, pathEnd, separatorChar);
+          start += 1;
+          auto separator = std::find(start, pathEnd, separatorChar);
+          if (separator != pathEnd)
+          {
+            certificateProperties.Name = std::string(start, separator);
+            start = separator + 1;
+            certificateProperties.Version = std::string(start, pathEnd);
+          }
+          else
+          {
+            // Nothing but the name+
+            certificateProperties.Name = std::string(start, pathEnd);
+          }
         }
       }
     };
@@ -170,21 +173,24 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         certificateProperties.IdUrl = url;
         certificateProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
         auto const& path = kid.GetPath();
-        // path in format certificates/{name}/pending
-        auto const separatorChar = '/';
-        auto pathEnd = path.end();
-        auto start = path.begin();
-        start = std::find(start, pathEnd, separatorChar);
-        start += 1;
-        auto separator = std::find(start, pathEnd, separatorChar);
-        if (separator != pathEnd)
+        if (path.length() > 0)
         {
-          certificateProperties.Name = std::string(start, separator);
-        }
-        else
-        {
-          // Nothing but the name+
-          certificateProperties.Name = std::string(start, pathEnd);
+          // path in format certificates/{name}/pending
+          auto const separatorChar = '/';
+          auto pathEnd = path.end();
+          auto start = path.begin();
+          start = std::find(start, pathEnd, separatorChar);
+          start += 1;
+          auto separator = std::find(start, pathEnd, separatorChar);
+          if (separator != pathEnd)
+          {
+            certificateProperties.Name = std::string(start, separator);
+          }
+          else
+          {
+            // Nothing but the name+
+            certificateProperties.Name = std::string(start, pathEnd);
+          }
         }
       }
     };

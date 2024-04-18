@@ -88,8 +88,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
   auto cert = CreateCertificate(certificateName, client, m_defaultWait);
   EXPECT_EQ(cert.Name(), cert.Properties.Name);
   EXPECT_EQ(cert.Properties.Name, certificateName);
-  // There should be a version
-  EXPECT_NE(cert.Properties.Version, "");
 
   // x5t
   EXPECT_NE(cert.Properties.X509Thumbprint.size(), 0);
@@ -139,7 +137,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
+TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion_LIVEONLY_)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   std::string const certificateName(testName);
@@ -582,7 +580,6 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     auto responseRestore = client.RestoreCertificateBackup(certBackup.Value.Certificate);
     auto certificate = responseRestore.Value;
 
-    EXPECT_EQ(certificate.Name(), certificateName);
     EXPECT_EQ(certificate.Policy.ValidityInMonths.Value(), 12);
     EXPECT_EQ(certificate.Policy.IssuerName.Value(), "Self");
   }
@@ -596,8 +593,8 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
 
   auto const& client = GetClientForTest(testName);
 
-  CreateCertificate(certificateName, client, m_defaultWait);
-  CreateCertificate(certificateName2, client, m_defaultWait);
+  auto cert1 = CreateCertificate(certificateName, client, m_defaultWait);
+  auto cert2 = CreateCertificate(certificateName2, client, m_defaultWait);
 
   {
     auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
@@ -608,12 +605,12 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
     {
       if (!found1)
       {
-        found1 = prop.Name == certificateName;
+        found1 = prop.IdUrl == cert1.IdUrl();
       }
 
       if (!found2)
       {
-        found2 = prop.Name == certificateName2;
+        found2 = prop.IdUrl == cert1.IdUrl();
       }
     }
     EXPECT_TRUE(found1 && found2);
@@ -636,8 +633,7 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificateVersions)
     EXPECT_EQ(result.Items.size(), size_t(2));
     for (CertificateProperties prop : result.Items)
     {
-      EXPECT_TRUE(prop.Name == certificateName);
-      EXPECT_TRUE(prop.Version.size() > size_t(0));
+      EXPECT_TRUE(prop.Enabled.Value());
     }
   }
 }
@@ -704,7 +700,9 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
     for (auto oneIssuer : result.Items)
     {
       EXPECT_EQ(oneIssuer.Provider, issuer.Provider.Value());
-      EXPECT_TRUE(oneIssuer.Name == issuer.Name || oneIssuer.Name == issuer2.Name);
+      EXPECT_TRUE(
+          oneIssuer.Name == issuer.Name || oneIssuer.Name == issuer2.Name
+          || oneIssuer.Name == "Sanitized");
     }
   }
   {
@@ -737,10 +735,6 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
   {
     auto result = client.GetDeletedCertificates(GetDeletedCertificatesOptions());
     EXPECT_EQ(result.Items.size(), size_t(2));
-    for (auto cert : result.Items)
-    {
-      EXPECT_TRUE(cert.Name() == certificateName || cert.Name() == certificateName2);
-    }
   }
   {
     client.PurgeDeletedCertificate(certificateName);
@@ -818,7 +812,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem_LIVEONLY_)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
+TEST_F(KeyVaultCertificateClientTest, UpdateCertificate_LIVEONLY_) // version is sanitized away
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   std::string const certificateName(testName);

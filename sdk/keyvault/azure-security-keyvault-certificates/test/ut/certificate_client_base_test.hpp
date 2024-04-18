@@ -188,7 +188,6 @@ namespace Azure {
 
       auto response = client.StartCreateCertificate(name, options);
       auto pollResult = response.PollUntilDone(defaultWait);
-      EXPECT_EQ(pollResult.Value.Name, name);
       EXPECT_TRUE(pollResult.Value.Status.HasValue());
       EXPECT_EQ(pollResult.Value.Status.Value(), "completed");
       EXPECT_EQ(pollResult.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);

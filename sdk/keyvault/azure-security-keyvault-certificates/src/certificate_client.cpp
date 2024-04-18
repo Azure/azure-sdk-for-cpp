@@ -134,7 +134,10 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
 
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
-
+  if (value.Name.empty())
+  {
+    value.Name = certificateName;
+  }
   return CreateCertificateOperation(value.Name, std::make_shared<CertificateClient>(*this));
 }
 

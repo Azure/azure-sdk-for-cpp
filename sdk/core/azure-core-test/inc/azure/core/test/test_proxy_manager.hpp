@@ -83,7 +83,6 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::_internal::HttpPipeline pipeline(
           clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
       m_privatePipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(pipeline);
-      SetProxySanitizer();
     }
 
     /**
@@ -154,7 +153,6 @@ namespace Azure { namespace Core { namespace Test {
 
   private:
     std::string PrepareRequestBody();
-    void SetProxySanitizer();
     bool CheckSanitizers();
   };
 
