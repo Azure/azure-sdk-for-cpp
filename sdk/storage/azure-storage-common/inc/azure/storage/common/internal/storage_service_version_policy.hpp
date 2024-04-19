@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "constants.hpp"
+
 #include <azure/core/http/policies/policy.hpp>
 
 #include <memory>
