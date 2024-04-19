@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       policies.push_back(std::move(policy));
     }
-    perRetryPolicies.push_back(std::make_unique<StoragePerRetryPolicy>());
+    policies.push_back(std::make_unique<StoragePerRetryPolicy>());
 
     // client options per retry policies.
     for (auto& policy : clientOptions.PerRetryPolicies)
