@@ -2091,6 +2091,7 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
           Azure::Core::Context const& context) const override
       {
+        // cSpell:disable
         request.SetHeader("x-ms-test", "val");
         request.SetHeader("x-ms-test-", "val");
         request.SetHeader("x-ms-test-a", "val");
@@ -2131,6 +2132,7 @@ namespace Azure { namespace Storage { namespace Test {
         request.SetHeader("x-ms-test-`", "val");
         request.SetHeader("x-ms-test-|", "val");
         request.SetHeader("x-ms-test-~", "val");
+        // cSpell:enable
         return nextPolicy.Send(request, context);
       }
     };
