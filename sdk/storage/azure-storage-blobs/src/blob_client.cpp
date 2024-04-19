@@ -67,9 +67,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.ApiVersion,
         _internal::BlobServicePackageName,
         _detail::PackageVersion::ToString(),
-        credential,
+        std::move(credential),
         {},
-        perRetryPolicies,
+        std::move(perRetryPolicies),
         options);
   }
 
