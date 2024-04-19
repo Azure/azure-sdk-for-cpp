@@ -184,13 +184,13 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
     CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-    //TestSleep(4min);
+    // TestSleep(4min);
   }
   {
     auto restore = client.RestoreSecretBackup(backupData);
     CheckValidResponse(restore);
     auto restored = restore.Value;
-    EXPECT_TRUE(restored.Id.length()>0);
+    EXPECT_TRUE(restored.Id.length() > 0);
   }
 }
 
