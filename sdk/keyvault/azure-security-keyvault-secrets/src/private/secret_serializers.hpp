@@ -62,22 +62,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       secretProperties.VaultUrl = GetUrlAuthorityWithScheme(sid);
       auto const& path = sid.GetPath();
       //  path is in the form of `verb/keyName{/keyVersion}`
-      auto const separatorChar = '/';
-      auto pathEnd = path.end();
-      auto start = path.begin();
-      start = std::find(start, pathEnd, separatorChar);
-      start += 1;
-      auto separator = std::find(start, pathEnd, separatorChar);
-      if (separator != pathEnd)
+      if (path.length() > 0)
       {
-        secretProperties.Name = std::string(start, separator);
-        start = separator + 1;
-        secretProperties.Version = std::string(start, pathEnd);
-      }
-      else
-      {
-        // Nothing but the name+
-        secretProperties.Name = std::string(start, pathEnd);
+        auto const separatorChar = '/';
+        auto pathEnd = path.end();
+        auto start = path.begin();
+        start = std::find(start, pathEnd, separatorChar);
+        start += 1;
+        auto separator = std::find(start, pathEnd, separatorChar);
+        if (separator != pathEnd)
+        {
+          secretProperties.Name = std::string(start, separator);
+          start = separator + 1;
+          secretProperties.Version = std::string(start, pathEnd);
+        }
+        else
+        {
+          // Nothing but the name+
+          secretProperties.Name = std::string(start, pathEnd);
+        }
       }
     }
   };
