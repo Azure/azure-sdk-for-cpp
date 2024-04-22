@@ -13,10 +13,3 @@ steps:
       && sudo rm cmakeinstall.sh
     displayName: Install Cmake ${{ parameters.Version }} (Linux)
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
-
-  - pwsh: |
-      Write-Host "Installing CMake ${{ parameters.Version }}"
-      Invoke-WebRequest -Uri https://github.com/Kitware/CMake/releases/download/v${{ parameters.Version }}/cmake-${{ parameters.Version }}-windows-x86_64.msi -OutFile cmake.msi
-      msiexec.exe /i cmake.msi | Wait-Process
-    displayName: Install Cmake ${{ parameters.Version }} (Windows)
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
