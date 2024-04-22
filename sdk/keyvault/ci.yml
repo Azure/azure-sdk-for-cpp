@@ -72,9 +72,9 @@ extends:
           Value: "non-real-secret"
         - Name: LOGGING__LOGLEVEL__DEFAULT
           Value: "debug"
-        - Name:  LOGGING__LOGLEVEL
+        - Name: LOGGING__LOGLEVEL
           Value: "debug"
-        - Name:  LOGGING__LOGLEVEL__MICROSOFT
+        - Name: LOGGING__LOGLEVEL__MICROSOFT
           Value: "debug"
       CMakeTestOptions:
         - Name: Default
