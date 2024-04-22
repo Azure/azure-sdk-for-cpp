@@ -189,7 +189,7 @@ bool TestProxyManager::CheckSanitizers()
   return true;
 }
 
-void TestProxyManager::SetProxySanitizer()
+/* void TestProxyManager::SetProxySanitizer()
 {
   if (CheckSanitizers())
   {
@@ -197,7 +197,8 @@ void TestProxyManager::SetProxySanitizer()
   }
   // we have 3 types of sanitizer,
   // see
-  // https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#a-note-about-where-sanitizers-apply
+  //
+https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#a-note-about-where-sanitizers-apply
   enum class SanitizerType
   {
     Uri,
@@ -330,4 +331,4 @@ void TestProxyManager::SetProxySanitizer()
     Azure::Core::Context ctx;
     auto response = m_privatePipeline->Send(request, ctx);
   }
-}
+}*/
