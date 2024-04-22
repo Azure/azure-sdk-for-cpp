@@ -369,8 +369,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(queueServiceClient.GetProperties());
 
     // With custom audience
-    auto blobUrl = Azure::Core::Url(m_queueServiceClient->GetUrl());
-    clientOptions.Audience = Queues::QueueAudience(blobUrl.GetScheme() + "://" + blobUrl.GetHost());
+    auto queueUrl = Azure::Core::Url(m_queueServiceClient->GetUrl());
+    clientOptions.Audience = Queues::QueueAudience(queueUrl.GetScheme() + "://" + queueUrl.GetHost());
     queueServiceClient = Queues::QueueServiceClient(
         m_queueServiceClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(
