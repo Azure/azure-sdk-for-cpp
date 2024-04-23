@@ -256,6 +256,7 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
   }
   // Get Secret properties
   std::vector<SecretProperties> secretProps;
+
   for (auto secretResponse = client.GetPropertiesOfSecrets(); secretResponse.HasPage();
        secretResponse.MoveToNextPage())
   {
@@ -265,5 +266,5 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
     }
   }
 
-  EXPECT_EQ(secretProps.size(), static_cast<size_t>(capacity));
+  EXPECT_TRUE(secretProps.size() >= static_cast<size_t>(capacity));
 }

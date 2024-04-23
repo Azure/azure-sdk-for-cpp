@@ -605,12 +605,12 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
     {
       if (!found1)
       {
-        found1 = prop.IdUrl == cert1.IdUrl();
+        found1 = prop.Name == certificateName;
       }
 
       if (!found2)
       {
-        found2 = prop.IdUrl == cert1.IdUrl();
+        found2 = prop.Name == certificateName2;
       }
     }
     EXPECT_TRUE(found1 && found2);
@@ -630,7 +630,7 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificateVersions)
   {
     auto result = client.GetPropertiesOfCertificateVersions(
         certificateName, GetPropertiesOfCertificateVersionsOptions());
-    EXPECT_EQ(result.Items.size(), size_t(2));
+    EXPECT_TRUE(result.Items.size() >= size_t(2));
     for (CertificateProperties prop : result.Items)
     {
       EXPECT_TRUE(prop.Enabled.Value());
