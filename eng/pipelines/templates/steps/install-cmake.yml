@@ -1,3 +1,6 @@
+# This temporary fix resolves an issue with CMake and vcpkg. When Linux and
+# Windows agents have a later version of CMake installed this can be removed.
+
 parameters:
   Version: '3.29.2'
 
@@ -9,21 +12,4 @@ steps:
       && sudo ./cmakeinstall.sh --prefix=/usr/local --exclude-subdir \
       && sudo rm cmakeinstall.sh
     displayName: Install Cmake ${{ parameters.Version }} (Linux)
-    condition: eq(variables['Agent.OS'], 'Linux')
-
-  - pwsh: |
-      $tempFile = New-TemporaryFile;
-      systeminfo.exe /fo csv > $tempFile
-      $osName = (Import-Csv $tempFile).'OS Name'
-
-      Write-Host "OS Name: $osName"
-      if (!($osName -like '*2019*')) {
-        Write-Host "OS is not Windows Server 2019, skipping CMake installation"
-        exit 0
-      }
-
-      Write-Host "Installing CMake ${{ parameters.Version }}"
-      Invoke-WebRequest -Uri https://github.com/Kitware/CMake/releases/download/v${{ parameters.Version }}/cmake-${{ parameters.Version }}-windows-x86_64.msi -OutFile cmake.msi
-      msiexec.exe /i cmake.msi | Wait-Process
-    displayName: Install Cmake ${{ parameters.Version }} (Windows)
-    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
