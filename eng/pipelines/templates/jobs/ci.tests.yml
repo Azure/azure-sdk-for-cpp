@@ -229,6 +229,7 @@ jobs:
             
      
       - pwsh: |
+          $ErrorActionPreference = 'SilentlyContinue'
           get-content test-proxy.log
         displayName: TestProxy Log
         condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))

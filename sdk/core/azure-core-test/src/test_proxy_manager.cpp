@@ -165,7 +165,7 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
 {
   return std::make_unique<Azure::Core::Test::TestProxyPolicy>(this);
 }
-
+/*
 namespace {
 const char* g_accountRegex = "https://(?<account>[a-zA-Z0-9\\-]+)\\.";
 }
@@ -189,7 +189,7 @@ bool TestProxyManager::CheckSanitizers()
   return true;
 }
 
-/* void TestProxyManager::SetProxySanitizer()
+ void TestProxyManager::SetProxySanitizer()
 {
   if (CheckSanitizers())
   {
