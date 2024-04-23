@@ -165,3 +165,79 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
 {
   return std::make_unique<Azure::Core::Test::TestProxyPolicy>(this);
 }
+
+namespace {
+const char* g_accountRegex = "https://(?<account>[a-zA-Z0-9\\-]+)\\.";
+}
+
+bool TestProxyManager::CheckSanitizers()
+{
+  Azure::Core::Url checkRequest(m_proxy);
+  checkRequest.AppendPath("Info");
+  checkRequest.AppendPath("Active");
+
+  Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, checkRequest);
+  Azure::Core::Context ctx;
+  auto response = m_privatePipeline->Send(request, ctx);
+
+  auto rawResponse = response->GetBody();
+  std::string stringBody(rawResponse.begin(), rawResponse.end());
+  if (stringBody.find(g_accountRegex) == std::string::npos)
+  {
+    return false;
+  }
+  return true;
+}
+
+void TestProxyManager::SetProxySanitizer()
+{
+  if (CheckSanitizers())
+  {
+    return;
+  }
+  Azure::Core::Url matcherRequest(m_proxy);
+  matcherRequest.AppendPath("Admin");
+  matcherRequest.AppendPath("SetMatcher");
+  std::string matcherBody;
+  {
+    auto jsonRoot = Json::_internal::json::object();
+    jsonRoot["compareBodies"] = false;
+    jsonRoot["ignoreQueryOrdering"] = true;
+    const std::vector<std::string> excludedHeaders = {
+        "Expect",
+        "Connection",
+        "Cookie",
+    };
+    jsonRoot["excludedHeaders"] = std::accumulate(
+        excludedHeaders.begin(),
+        excludedHeaders.end(),
+        std::string(),
+        [](const std::string& lhs, const std::string& rhs) {
+          return lhs + (lhs.empty() ? "" : ",") + rhs;
+        });
+    const std::vector<std::string> ignoreQueryParameters = {
+        "st",
+        "se",
+        "sig",
+        "sv",
+    };
+
+    jsonRoot["ignoredQueryParameters"] = std::accumulate(
+        ignoreQueryParameters.begin(),
+        ignoreQueryParameters.end(),
+        std::string(),
+        [](const std::string& lhs, const std::string& rhs) {
+          return lhs + (lhs.empty() ? "" : ",") + rhs;
+        });
+    matcherBody = jsonRoot.dump();
+  }
+  {
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(matcherBody.data()), matcherBody.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, matcherRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", "CustomDefaultMatcher");
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+  }
+}

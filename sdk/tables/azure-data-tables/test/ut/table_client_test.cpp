@@ -140,18 +140,11 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, CreateTable)
   {
-    if (GetParam() == AuthType::SAS)
-    {
-      EXPECT_TRUE(true);
-    }
-    else
-    {
-      auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-      EXPECT_EQ(createResponse.Value.TableName, m_tableName);
-      EXPECT_EQ(createResponse.Value.EditLink, "Tables('" + m_tableName + "')");
-      EXPECT_TRUE(createResponse.Value.Type.find(".Tables") != std::string::npos);
-      EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
-    }
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    EXPECT_EQ(createResponse.Value.TableName, m_tableName);
+    EXPECT_EQ(createResponse.Value.EditLink, "Tables('" + m_tableName + "')");
+    EXPECT_TRUE(createResponse.Value.Type.find(".Tables") != std::string::npos);
+    EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
   }
 
   TEST_P(TablesClientTest, GetAccessPolicy_LIVEONLY_)
@@ -205,7 +198,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, ListTables)
   {
-    if (GetParam() == AuthType::ConnectionString||GetParam()==AuthType::SAS)
+    if (GetParam() == AuthType::ConnectionString)
     {
       EXPECT_TRUE(true);
     }
@@ -232,18 +225,10 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, DeleteTable)
   {
-    if (GetParam() == AuthType::SAS)
-    {
-      EXPECT_TRUE(true);
-    }
-    else
-    {
-      auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
-      auto response = m_tableServiceClient->DeleteTable(m_tableName);
-      EXPECT_EQ(
-          response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
-    }
+    auto response = m_tableServiceClient->DeleteTable(m_tableName);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
   TEST_P(TablesClientTest, ServiceClientConstructors)
@@ -253,7 +238,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientGetProperties)
   {
-    if (GetParam() == AuthType::ConnectionString||GetParam()==AuthType::SAS)
+    if (GetParam() == AuthType::ConnectionString)
     {
       EXPECT_TRUE(true);
     }
@@ -293,7 +278,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityCreate)
   {
-    if (GetParam() == AuthType::Key || GetParam()==AuthType::SAS)
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -313,7 +298,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityUpdate)
   {
-    if (GetParam() == AuthType::Key || GetParam() == AuthType::SAS)
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -347,7 +332,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityMerge)
   {
-    if (GetParam() == AuthType::Key || GetParam() == AuthType::SAS)
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -381,7 +366,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityDelete)
   {
-    if (GetParam() == AuthType::Key || GetParam() == AuthType::SAS)
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -416,7 +401,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityUpsert)
   {
-    if (GetParam() == AuthType::Key || GetParam() == AuthType::SAS)
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -455,7 +440,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityQuery)
   {
-    if (GetParam() == AuthType::Key || GetParam() == AuthType::SAS)
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
@@ -496,7 +481,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityGet)
   {
-    if (GetParam() == AuthType::Key || GetParam() == AuthType::SAS)
+    if (GetParam() == AuthType::Key)
     {
       EXPECT_TRUE(true);
       return;
