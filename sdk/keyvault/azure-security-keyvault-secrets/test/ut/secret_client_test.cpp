@@ -110,7 +110,7 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
   }
 }
 
-TEST_F(KeyVaultSecretClientTest, UpdateTest)
+TEST_F(KeyVaultSecretClientTest, UpdateTest_LIVEONLY_)
 {
   auto secretName = "UpdateTest";
   SecretProperties properties;
