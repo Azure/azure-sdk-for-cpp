@@ -412,7 +412,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClient.Download(options), StorageException);
   }
 
-  TEST_F(BlockBlobClientTest, SyncCopyFromUri)
+  TEST_F(BlockBlobClientTest, SyncCopyFromUri_LIVEONLY_)
   {
     auto sourceBlobClient = m_blobContainerClient->GetBlockBlobClient("source" + RandomString());
     sourceBlobClient.UploadFrom(m_blobContent.data(), m_blobContent.size());

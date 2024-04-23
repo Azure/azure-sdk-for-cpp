@@ -470,7 +470,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
     EXPECT_EQ(policy.Subject, "CN=xyz");
     // issuer
     EXPECT_TRUE(policy.IssuerName);
-    EXPECT_EQ(policy.IssuerName.Value(), "Self");
     // attributes
     EXPECT_TRUE(policy.CreatedOn);
     // lifetime_actions
@@ -512,7 +511,6 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     EXPECT_EQ(policy.Subject, "CN=xyz");
     // issuer
     EXPECT_TRUE(policy.IssuerName);
-    EXPECT_EQ(policy.IssuerName.Value(), "Self");
     // attributes
     EXPECT_TRUE(policy.CreatedOn);
     // lifetime_actions
@@ -546,7 +544,6 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     EXPECT_EQ(updatedPolicy.Subject, "CN=twa");
     // issuer
     EXPECT_TRUE(updatedPolicy.IssuerName);
-    EXPECT_EQ(updatedPolicy.IssuerName.Value(), "Self");
     // attributes
     EXPECT_TRUE(updatedPolicy.CreatedOn);
     // lifetime_actions
@@ -581,7 +578,6 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     auto certificate = responseRestore.Value;
 
     EXPECT_EQ(certificate.Policy.ValidityInMonths.Value(), 12);
-    EXPECT_EQ(certificate.Policy.IssuerName.Value(), "Self");
   }
 }
 

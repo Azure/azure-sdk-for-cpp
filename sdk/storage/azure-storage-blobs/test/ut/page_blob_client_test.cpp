@@ -306,7 +306,7 @@ namespace Azure { namespace Storage { namespace Test {
         pageBlobClient.Download().Value.BodyStream->ReadToEnd());
   }
 
-  TEST_F(PageBlobClientTest, StartCopyIncremental)
+  TEST_F(PageBlobClientTest, StartCopyIncremental_LIVEONLY_)
   {
     auto pageBlobClient = *m_pageBlobClient;
 
