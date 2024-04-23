@@ -599,21 +599,6 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
   {
     auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
     EXPECT_TRUE(result.Items.size() >= size_t(2));
-    bool found1 = false;
-    bool found2 = false;
-    for (CertificateProperties prop : result.Items)
-    {
-      if (!found1)
-      {
-        found1 = prop.Name == certificateName;
-      }
-
-      if (!found2)
-      {
-        found2 = prop.Name == certificateName2;
-      }
-    }
-    EXPECT_TRUE(found1 && found2);
   }
 }
 

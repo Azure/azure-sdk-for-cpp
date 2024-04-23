@@ -140,7 +140,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, CreateTable)
   {
-    if (GetParam() != AuthType::SAS)
+    if (GetParam() == AuthType::SAS)
     {
       SkipTest();
       return;
