@@ -141,9 +141,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EventHub(
           EventHubCreationOptions const& options,
           std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
-          : m_name(options.Name),
+          : m_namespace{options.Namespace}, m_name(options.Name),
             m_resourceGroup(options.ResourceGroup), m_subscriptionId{options.SubscriptionId},
-            m_namespace{options.Namespace}, m_pipeline{pipeline}
+            m_pipeline{pipeline}
       {
       }
 
