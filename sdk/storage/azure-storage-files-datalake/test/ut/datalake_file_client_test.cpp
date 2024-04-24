@@ -570,7 +570,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileClientTest, CreateWithEncryptionContext)
+  TEST_F(DataLakeFileClientTest, CreateWithEncryptionContext_LIVEONLY_)
   {
     std::string encryptionContext = "encryptionContext";
     const std::string fileName = RandomString();

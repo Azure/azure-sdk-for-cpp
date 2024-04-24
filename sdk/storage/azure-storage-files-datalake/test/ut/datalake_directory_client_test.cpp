@@ -767,7 +767,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeDirectoryClientTest, ListPaths)
+  TEST_F(DataLakeDirectoryClientTest, ListPaths_LIVEONLY_)
   {
     std::set<std::string> paths;
     const std::string dir1 = RandomString();

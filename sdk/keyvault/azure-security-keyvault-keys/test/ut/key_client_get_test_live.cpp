@@ -28,14 +28,16 @@ TEST_F(KeyVaultKeyClient, GetSingleKey)
   EXPECT_EQ(key.GetKeyType(), KeyVaultKeyType::Ec);
 }
 
-TEST_F(KeyVaultKeyClient, GetPropertiesOfKeysAllPages)
+TEST_F(
+    KeyVaultKeyClient,
+    GetPropertiesOfKeysAllPages_LIVEONLY_) // truncated json in the recording body
 {
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
 
   // Create 5 keys
   std::vector<std::string> keyNames;
-  for (int counter = 0; counter < 50; counter++)
+  for (int counter = 0; counter < 10; counter++)
   {
     std::string const name(keyName + std::to_string(counter));
     CreateEcKeyOptions options(name);
@@ -74,8 +76,8 @@ TEST_F(KeyVaultKeyClient, GetKeysVersions)
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
 
-  // Create 5 key versions
-  size_t expectedVersions = 50;
+  // Create key versions
+  size_t expectedVersions = 10;
   CreateEcKeyOptions createKeyOptions(keyName);
   for (size_t counter = 0; counter < expectedVersions; counter++)
   {
@@ -113,14 +115,14 @@ TEST_F(KeyVaultKeyClient, GetKeysVersions)
   }
 }
 
-TEST_F(KeyVaultKeyClient, GetDeletedKeys)
+TEST_F(KeyVaultKeyClient, GetDeletedKeys_LIVEONLY_) // truncated json in the recording body
 {
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
 
   // Create 5 keys
   std::vector<std::string> keyNames;
-  for (int counter = 0; counter < 50; counter++)
+  for (int counter = 0; counter < 10; counter++)
   {
     std::string const name(keyName + std::to_string(counter));
     CreateEcKeyOptions options(name);

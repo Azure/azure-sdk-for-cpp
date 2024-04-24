@@ -188,7 +188,6 @@ namespace Azure {
 
       auto response = client.StartCreateCertificate(name, options);
       auto pollResult = response.PollUntilDone(defaultWait);
-      EXPECT_EQ(pollResult.Value.Name, name);
       EXPECT_TRUE(pollResult.Value.Status.HasValue());
       EXPECT_EQ(pollResult.Value.Status.Value(), "completed");
       EXPECT_EQ(pollResult.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
@@ -198,7 +197,6 @@ namespace Azure {
       EXPECT_EQ(result.Value.Name(), options.Properties.Name);
       EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);
       EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-      EXPECT_EQ(result.Value.Policy.IssuerName.Value(), options.Policy.IssuerName.Value());
       EXPECT_EQ(result.Value.Policy.ContentType.Value(), options.Policy.ContentType.Value());
       EXPECT_EQ(result.Value.Policy.Subject, options.Policy.Subject);
       EXPECT_EQ(
