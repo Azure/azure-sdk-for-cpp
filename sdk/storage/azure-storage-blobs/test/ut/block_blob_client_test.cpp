@@ -2075,7 +2075,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blockBlobClient.GetProperties(), StorageException);
   }
 
-  TEST_F(BlockBlobClientTest, AccountInfo_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, AccountInfo)
   {
     auto blobClient = *m_blockBlobClient;
 
