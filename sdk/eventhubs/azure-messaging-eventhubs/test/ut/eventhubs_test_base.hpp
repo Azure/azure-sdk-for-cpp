@@ -45,12 +45,12 @@ protected:
     {
       case AuthType::ConnectionString: {
         return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
-            GetEnv("EVENTHUB_CONNECTION_STRING"), eventHubName, eventConsumerGroup);
+            GetEnv("EVENTHUB_CONNECTION_STRING"), eventHubName, eventConsumerGroup, options);
       }
       case AuthType::Key: {
         std::string eventHubNamespace = GetEnv("EVENTHUBS_HOST");
         return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
-            eventHubNamespace, eventHubName, GetTestCredential(), eventConsumerGroup);
+            eventHubNamespace, eventHubName, GetTestCredential(), eventConsumerGroup, options);
       }
       case AuthType::Emulator: {
         return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
@@ -58,7 +58,8 @@ protected:
             ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
             "UseDevelopmentEmulator=true",
             "eh1",
-            "$default");
+            "$default",
+            options);
       }
     }
     return nullptr;
