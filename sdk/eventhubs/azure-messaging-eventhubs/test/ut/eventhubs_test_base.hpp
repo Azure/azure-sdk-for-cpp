@@ -55,7 +55,7 @@ protected:
       case AuthType::Emulator: {
         return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
             "Endpoint=sb://localhost:5672/"
-            ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abceefaaafaf;"
+            ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
             "UseDevelopmentEmulator=true",
             "eh1",
             "$default");
