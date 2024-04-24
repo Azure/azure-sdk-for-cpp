@@ -11,6 +11,10 @@ namespace Azure { namespace Storage { namespace Test {
   protected:
     void SetUp() override;
 
+    Files::Shares::ShareClient GetPremiumShareClientForTest(
+        const std::string& shareName,
+        Files::Shares::ShareClientOptions clientOptions = Files::Shares::ShareClientOptions());
+
   protected:
     std::shared_ptr<Files::Shares::ShareServiceClient> m_shareServiceClient;
   };
