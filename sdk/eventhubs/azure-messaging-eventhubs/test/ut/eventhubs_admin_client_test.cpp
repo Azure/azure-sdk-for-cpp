@@ -80,4 +80,24 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     eventhubsNamespace.DeleteEventHub(eventHubName);
   }
 
+  TEST_F(AdminTest, CreateConsumerGroup_LIVEONLY_)
+  {
+    EventHubsManagement administrationClient;
+    std::string eventHubName = GetRandomName("eventhub");
+    auto eventhubsNamespace = administrationClient.GetNamespace(
+        Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));
+
+    auto eventhubs = eventhubsNamespace.CreateEventHub(eventHubName);
+    EXPECT_TRUE(eventhubs.Name() == eventHubName);
+
+    std::string cgName = GetRandomName("ConsumerGroup");
+
+    EXPECT_TRUE(eventhubs.CreateConsumerGroup(cgName));
+
+    EXPECT_TRUE(eventhubs.DeleteConsumerGroup(cgName));
+
+    // Now delete the eventhub we just created.
+    eventhubsNamespace.DeleteEventHub(eventHubName);
+  }
+
 }}}} // namespace Azure::Messaging::EventHubs::Test

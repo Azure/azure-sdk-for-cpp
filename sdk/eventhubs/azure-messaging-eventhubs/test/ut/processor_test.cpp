@@ -72,14 +72,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     };
   } // namespace
 
-  class ProcessorTest : public EventHubsTestBase {
+  class ProcessorTest : public EventHubsTestBaseParameterized {
   protected:
     static void SetUpTestSuite() { EventHubsTestBase::SetUpTestSuite(); }
     static void TearDownTestSuite() { EventHubsTestBase::TearDownTestSuite(); }
 
     void TearDown() override
     {
-      EventHubsTestBase::TearDown();
+      EventHubsTestBaseParameterized::TearDown();
       // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
@@ -90,9 +90,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           Azure::DateTime::clock::now() + std::chrono::minutes(5));
 
       std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-      std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
 
-      std::string const connectionString = GetEnv("EVENTHUB_CONNECTION_STRING");
       Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
       consumerClientOptions.ApplicationID
           = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -104,8 +102,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::shared_ptr<CheckpointStore> checkpointStore{std::make_shared<TestCheckpointStore>()};
       GTEST_LOG_(INFO) << "Checkpoint store created";
 
-      std::shared_ptr<ConsumerClient> consumerClient{std::make_shared<ConsumerClient>(
-          connectionString, eventHubName, consumerGroup, consumerClientOptions)};
+      std::shared_ptr<ConsumerClient> consumerClient{
+          CreateConsumerClient(eventHubName, consumerClientOptions)};
       GTEST_LOG_(INFO) << "Consumer Client created";
 
       ProcessorOptions processorOptions;
@@ -119,7 +117,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       ProducerClientOptions producerOptions;
       producerOptions.Name = "Producer for LoadBalancerTest";
-      ProducerClient producerClient{connectionString, eventHubName, producerOptions};
+      auto producerClient{CreateProducerClient("", producerOptions)};
 
       std::thread processEventsThread([&]() {
         std::set<std::string> partitionsAcquired;
@@ -144,7 +142,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         // Block until all the events have been processed.
         waitGroup.Wait();
 
-        producerClient.Close(context);
+        producerClient->Close(context);
 
         // And wait until all the threads have completed.
         for (auto& thread : processEventsThreads)
@@ -168,10 +166,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
           Azure::DateTime::clock::now() + std::chrono::minutes(5));
 
-      std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-      std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-      std::string const connectionString = GetEnv("EVENTHUB_CONNECTION_STRING");
       Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
       consumerClientOptions.ApplicationID
           = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -183,8 +177,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::shared_ptr<CheckpointStore> checkpointStore{std::make_shared<TestCheckpointStore>()};
       GTEST_LOG_(INFO) << "Checkpoint store created";
 
-      std::shared_ptr<ConsumerClient> consumerClient{std::make_shared<ConsumerClient>(
-          connectionString, eventHubName, consumerGroup, consumerClientOptions)};
+      std::shared_ptr<ConsumerClient> consumerClient{
+          CreateConsumerClient("", consumerClientOptions)};
       GTEST_LOG_(INFO) << "Consumer Client created";
 
       ProcessorOptions processorOptions;
@@ -198,7 +192,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       ProducerClientOptions producerOptions;
       producerOptions.Name = "Producer for LoadBalancerTest";
-      ProducerClient producerClient{connectionString, eventHubName, producerOptions};
+      std::unique_ptr<ProducerClient> producerClient{CreateProducerClient("", producerOptions)};
 
       // Run the processor on a background thread and the test on the foreground.
       processor.Start(context);
@@ -215,7 +209,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         ProcessEventsForLoadBalancerTestSingleThreaded(producerClient, partitionClient, context);
       }
 
-      producerClient.Close(context);
+      producerClient->Close(context);
 
       // Stop the processor, we're done with the test.
       processor.Stop();
@@ -226,10 +220,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
           Azure::DateTime::clock::now() + std::chrono::minutes(5));
 
-      std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-      std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-      std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
       Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
       consumerClientOptions.ApplicationID
           = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -241,8 +231,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::shared_ptr<CheckpointStore> checkpointStore{std::make_shared<TestCheckpointStore>()};
       GTEST_LOG_(INFO) << "Checkpoint store created";
 
-      std::shared_ptr<ConsumerClient> consumerClient{std::make_shared<ConsumerClient>(
-          connString, eventHubName, consumerGroup, consumerClientOptions)};
+      std::shared_ptr<ConsumerClient> consumerClient{
+          CreateConsumerClient("", consumerClientOptions)};
       GTEST_LOG_(INFO) << "Consumer Client created";
 
       ProcessorOptions processorOptions;
@@ -269,7 +259,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     void ProcessEventsForLoadBalancerTest(
-        ProducerClient& producerClient,
+        std::unique_ptr<ProducerClient>& producerClient,
         std::shared_ptr<ProcessorPartitionClient> partitionClient,
         Azure::Core::Context const& context)
     {
@@ -297,7 +287,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
               producerContext.ThrowIfCancelled();
               EventDataBatchOptions batchOptions;
               batchOptions.PartitionId = partitionClient->PartitionId();
-              auto batch = producerClient.CreateBatch(batchOptions, producerContext);
+              auto batch = producerClient->CreateBatch(batchOptions, producerContext);
               for (int j = 0; j < batchSize; j++)
               {
                 std::stringstream ss;
@@ -307,7 +297,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
               }
               GTEST_LOG_(INFO) << "Send batch " << i << ", targeting partition "
                                << partitionClient->PartitionId();
-              producerClient.Send(batch, producerContext);
+              producerClient->Send(batch, producerContext);
             }
           }
           catch (std::runtime_error& ex)
@@ -351,7 +341,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     void ProcessEventsForLoadBalancerTestSingleThreaded(
-        ProducerClient& producerClient,
+        std::unique_ptr<ProducerClient>& producerClient,
         std::shared_ptr<ProcessorPartitionClient> partitionClient,
         Azure::Core::Context const& context)
     {
@@ -375,7 +365,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             producerContext.ThrowIfCancelled();
             EventDataBatchOptions batchOptions;
             batchOptions.PartitionId = partitionClient->PartitionId();
-            auto batch = producerClient.CreateBatch(batchOptions, producerContext);
+            auto batch = producerClient->CreateBatch(batchOptions, producerContext);
             for (int j = 0; j < batchSize; j++)
             {
               std::stringstream ss;
@@ -384,7 +374,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             }
             GTEST_LOG_(INFO) << "Send batch " << i << ", targeting partition "
                              << partitionClient->PartitionId();
-            producerClient.Send(batch, producerContext);
+            producerClient->Send(batch, producerContext);
           }
         }
         catch (std::runtime_error& ex)
@@ -424,15 +414,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   };
 
-  TEST_F(ProcessorTest, BasicTest)
+  TEST_P(ProcessorTest, BasicTest)
   {
     std::shared_ptr<Azure::Messaging::EventHubs::CheckpointStore> checkpointStore{
         std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
     Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
     consumerClientOptions.ApplicationID
         = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -443,21 +429,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(
-        std::make_shared<ConsumerClient>(
-            connStringNoEntityPath, eventHubName, consumerGroup, consumerClientOptions),
-        checkpointStore,
-        processorOptions);
+        CreateConsumerClient("", consumerClientOptions), checkpointStore, processorOptions);
   }
 
-  TEST_F(ProcessorTest, StartStop_LIVEONLY_)
+  TEST_P(ProcessorTest, StartStop_LIVEONLY_)
   {
     std::shared_ptr<Azure::Messaging::EventHubs::CheckpointStore> checkpointStore{
         std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
     Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
     consumerClientOptions.ApplicationID
         = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -468,10 +447,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(
-        std::make_shared<ConsumerClient>(
-            connStringNoEntityPath, eventHubName, consumerGroup, consumerClientOptions),
-        checkpointStore,
-        processorOptions);
+        CreateConsumerClient("", consumerClientOptions), checkpointStore, processorOptions);
 
     processor.Start();
 
@@ -479,15 +455,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processor.Close();
   }
 
-  TEST_F(ProcessorTest, JustStop_LIVEONLY_)
+  TEST_P(ProcessorTest, JustStop_LIVEONLY_)
   {
     std::shared_ptr<Azure::Messaging::EventHubs::CheckpointStore> checkpointStore{
         std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
     Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
     consumerClientOptions.ApplicationID
         = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -498,25 +470,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(
-        std::make_shared<ConsumerClient>(
-            connStringNoEntityPath, eventHubName, consumerGroup, consumerClientOptions),
-        checkpointStore,
-        processorOptions);
+        CreateConsumerClient("", consumerClientOptions), checkpointStore, processorOptions);
 
     processor.Stop();
     processor.Close();
   }
 
-  TEST_F(ProcessorTest, LoadBalancing_LIVEONLY_)
+  TEST_P(ProcessorTest, LoadBalancing_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
     std::shared_ptr<Azure::Messaging::EventHubs::CheckpointStore> checkpointStore{
         std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
     Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
     consumerClientOptions.ApplicationID
         = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -527,10 +492,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(
-        std::make_shared<ConsumerClient>(
-            connStringNoEntityPath, eventHubName, consumerGroup, consumerClientOptions),
-        checkpointStore,
-        processorOptions);
+        CreateConsumerClient("", consumerClientOptions), checkpointStore, processorOptions);
 
     Azure::Core::Context context;
     std::thread workerThread([&processor, &context]() { processor.Run(context); });
@@ -545,16 +507,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processor.Close();
   }
 
-  TEST_F(ProcessorTest, LoadBalancing_Cancel_LIVEONLY_)
+  TEST_P(ProcessorTest, LoadBalancing_Cancel_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
     std::shared_ptr<Azure::Messaging::EventHubs::CheckpointStore> checkpointStore{
         std::make_shared<Azure::Messaging::EventHubs::Test::TestCheckpointStore>()};
 
-    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
     Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
     consumerClientOptions.ApplicationID
         = testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -565,10 +523,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(
-        std::make_shared<ConsumerClient>(
-            connStringNoEntityPath, eventHubName, consumerGroup, consumerClientOptions),
-        checkpointStore,
-        processorOptions);
+        CreateConsumerClient("", consumerClientOptions), checkpointStore, processorOptions);
 
     Azure::Core::Context runContext;
     std::thread workerThread([runContext, &processor]() { processor.Run(runContext); });
@@ -583,21 +538,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processor.Close();
   }
 
-  TEST_F(ProcessorTest, Processor_ClientUniquePartitionClients_LIVEONLY_)
+  TEST_P(ProcessorTest, Processor_ClientUniquePartitionClients_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
 
-    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
-    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
     Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
     consumerClientOptions.ApplicationID
         = testing::UnitTest::GetInstance()->current_test_info()->name();
     consumerClientOptions.Name = testing::UnitTest::GetInstance()->current_test_info()->name();
 
-    auto consumerClient = std::make_shared<ConsumerClient>(
-        connStringNoEntityPath, eventHubName, consumerGroup, consumerClientOptions);
+    std::shared_ptr<ConsumerClient> consumerClient
+        = CreateConsumerClient("", consumerClientOptions);
 
     auto eventhubInfo = consumerClient->GetEventHubProperties();
 
@@ -651,20 +602,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     processor.Stop();
   }
 
-  TEST_F(ProcessorTest, Processor_SingleThreaded_Balanced_LIVEONLY_)
+  TEST_P(ProcessorTest, Processor_SingleThreaded_Balanced_LIVEONLY_)
   {
     TestWithLoadBalancerSingleThreaded(Models::ProcessorStrategy::ProcessorStrategyBalanced);
   }
-  TEST_F(ProcessorTest, Processor_SingleThreaded_Greedy_LIVEONLY_)
+  TEST_P(ProcessorTest, Processor_SingleThreaded_Greedy_LIVEONLY_)
   {
     TestWithLoadBalancerSingleThreaded(Models::ProcessorStrategy::ProcessorStrategyGreedy);
   }
 
-  TEST_F(ProcessorTest, Processor_Balanced_LIVEONLY_)
+  TEST_P(ProcessorTest, Processor_Balanced_LIVEONLY_)
   {
     TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyBalanced);
   }
-  TEST_F(ProcessorTest, Processor_Greedy_LIVEONLY_)
+  TEST_P(ProcessorTest, Processor_Greedy_LIVEONLY_)
   {
     TestWithLoadBalancer(Models::ProcessorStrategy::ProcessorStrategyGreedy);
   }
@@ -681,5 +632,30 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     TestPartitionAcquisition(Models::ProcessorStrategy::ProcessorStrategyGreedy);
   }
 #endif
+
+  namespace {
+    static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
+    {
+      std::string stringValue = "";
+      switch (info.param)
+      {
+        case AuthType::ConnectionString:
+          stringValue = "ConnectionString_LIVEONLY_";
+          break;
+        case AuthType::Key:
+          stringValue = "Key_LIVEONLY_";
+          break;
+        case AuthType::Emulator:
+          stringValue = "Emulator";
+          break;
+      }
+      return stringValue;
+    }
+  } // namespace
+  INSTANTIATE_TEST_SUITE_P(
+      EventHubs,
+      ProcessorTest,
+      ::testing::Values(AuthType::Key, AuthType::ConnectionString, AuthType::Emulator),
+      GetSuffix);
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

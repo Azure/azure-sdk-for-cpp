@@ -10,38 +10,33 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class RoundTripTests : public EventHubsTestBase {
+  class RoundTripTests : public EventHubsTestBaseParameterized {
   };
 
   // Round trip a message with a string body using a sequence number filter.
-  TEST_F(RoundTripTests, SendAndReceiveStringSequenceNumber_LIVEONLY_)
+  TEST_P(RoundTripTests, SendAndReceiveStringSequenceNumber_LIVEONLY_)
   {
-    std::string const connectionString = GetEnv("EVENTHUB_CONNECTION_STRING");
-    std::string const eventHubName = GetEnv("EVENTHUB_NAME");
-    std::string const consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
     int64_t startSequenceNumber = 0;
 
     {
-      Azure::Messaging::EventHubs::ProducerClient producer{connectionString, eventHubName};
-      auto partitionProperties = producer.GetPartitionProperties("1");
+      auto producer{CreateProducerClient()};
+      auto partitionProperties = producer->GetPartitionProperties("1");
       startSequenceNumber = partitionProperties.LastEnqueuedSequenceNumber;
 
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
-      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
+      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer->CreateBatch(batchOptions)};
       EXPECT_TRUE(
           eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData("Hello world!")));
-      EXPECT_NO_THROW(producer.Send(eventBatch));
+      EXPECT_NO_THROW(producer->Send(eventBatch));
     }
 
     {
       Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
       partitionOptions.StartPosition.SequenceNumber = startSequenceNumber;
 
-      Azure::Messaging::EventHubs::ConsumerClient consumer(
-          connectionString, eventHubName, consumerGroup);
-      auto receiver = consumer.CreatePartitionClient("1", partitionOptions);
+      auto consumer(CreateConsumerClient());
+      auto receiver = consumer->CreatePartitionClient("1", partitionOptions);
 
       auto receivedEvents = receiver.ReceiveEvents(1);
       ASSERT_EQ(1ul, receivedEvents.size());
@@ -52,34 +47,29 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 
   // Round trip a message with a binary body using an offset filter.
-  TEST_F(RoundTripTests, SendAndReceiveBinaryDataOffset_LIVEONLY_)
+  TEST_P(RoundTripTests, SendAndReceiveBinaryDataOffset_LIVEONLY_)
   {
-    std::string const connectionString = GetEnv("EVENTHUB_CONNECTION_STRING");
-    std::string const eventHubName = GetEnv("EVENTHUB_NAME");
-    std::string const consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
     int64_t startOffset = 0;
     {
-      Azure::Messaging::EventHubs::ProducerClient producer(connectionString, eventHubName);
-      auto partitionProperties = producer.GetPartitionProperties("1");
+      auto producer{CreateProducerClient()};
+      auto partitionProperties = producer->GetPartitionProperties("1");
       startOffset = partitionProperties.LastEnqueuedOffset;
 
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
-      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
+      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer->CreateBatch(batchOptions)};
       EXPECT_TRUE(
           eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData({1, 2, 3, 4, 5})));
-      EXPECT_NO_THROW(producer.Send(eventBatch));
+      EXPECT_NO_THROW(producer->Send(eventBatch));
     }
 
     {
-      Azure::Messaging::EventHubs::ConsumerClient consumer(
-          connectionString, eventHubName, consumerGroup);
+      auto consumer{CreateConsumerClient()};
 
       Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
       partitionOptions.StartPosition.Offset = startOffset;
 
-      auto receiver = consumer.CreatePartitionClient("1", partitionOptions);
+      auto receiver = consumer->CreatePartitionClient("1", partitionOptions);
 
       auto receivedEvents = receiver.ReceiveEvents(1);
       ASSERT_EQ(1ul, receivedEvents.size());
@@ -98,16 +88,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 
   // Round trip a message with a binary body using a queued time filter.
-  TEST_F(RoundTripTests, SendAndReceiveTimestamp_LIVEONLY_)
+  TEST_P(RoundTripTests, SendAndReceiveTimestamp_LIVEONLY_)
   {
-    std::string const connectionString = GetEnv("EVENTHUB_CONNECTION_STRING");
-    std::string const eventHubName = GetEnv("EVENTHUB_NAME");
-    std::string const consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
     Azure::DateTime startTime;
     {
-      Azure::Messaging::EventHubs::ProducerClient producer(connectionString, eventHubName);
-      auto partitionProperties = producer.GetPartitionProperties("1");
+      auto producer{CreateProducerClient()};
+      auto partitionProperties = producer->GetPartitionProperties("1");
       GTEST_LOG_(INFO) << "Partition Properties: " << partitionProperties;
       startTime = partitionProperties.LastEnqueuedTimeUtc + std::chrono::seconds(1);
 
@@ -116,24 +102,23 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
-      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
+      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer->CreateBatch(batchOptions)};
       Azure::Messaging::EventHubs::Models::EventData eventData;
       eventData.Body = {1, 2, 3, 4, 5, 6, 7};
       eventData.ContentType = "application/binary";
       eventData.MessageId = "Test Message Id";
       EXPECT_TRUE(eventBatch.TryAdd(eventData));
-      EXPECT_NO_THROW(producer.Send(eventBatch));
+      EXPECT_NO_THROW(producer->Send(eventBatch));
     }
 
     {
-      Azure::Messaging::EventHubs::ConsumerClient consumer(
-          connectionString, eventHubName, consumerGroup);
+      auto consumer{CreateConsumerClient()};
 
       Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
       partitionOptions.StartPosition.EnqueuedTime = startTime;
       partitionOptions.StartPosition.Inclusive = false;
 
-      auto receiver = consumer.CreatePartitionClient("1", partitionOptions);
+      auto receiver = consumer->CreatePartitionClient("1", partitionOptions);
 
       auto receivedEvents = receiver.ReceiveEvents(1);
       ASSERT_EQ(1ul, receivedEvents.size());
@@ -153,5 +138,31 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EXPECT_EQ("Test Message Id", static_cast<std::string>(receivedEvents[0]->MessageId.Value()));
     }
   }
+
+  namespace {
+    static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
+    {
+      std::string stringValue = "";
+      switch (info.param)
+      {
+        case AuthType::ConnectionString:
+          stringValue = "connectionstring_LIVEONLY_";
+          break;
+        case AuthType::Key:
+          stringValue = "key";
+          break;
+        case AuthType::Emulator:
+          stringValue = "emulator";
+          break;
+      }
+      return stringValue;
+    }
+  } // namespace
+
+  INSTANTIATE_TEST_SUITE_P(
+      EventHubs,
+      RoundTripTests,
+      ::testing::Values(AuthType::Key, AuthType::ConnectionString, AuthType::Emulator),
+      GetSuffix);
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

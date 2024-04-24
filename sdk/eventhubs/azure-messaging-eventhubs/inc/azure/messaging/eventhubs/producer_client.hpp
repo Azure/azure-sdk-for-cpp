@@ -187,6 +187,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The URL to the Event Hubs namespace
     std::string m_targetUrl{};
 
+    uint16_t m_targetPort = Azure::Core::Amqp::_internal::AmqpTlsPort;
+
     /// Credentials to be used to authenticate the client.
     std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
 

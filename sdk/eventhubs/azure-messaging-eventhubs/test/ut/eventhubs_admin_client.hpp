@@ -128,12 +128,22 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     };
 
     class Namespace;
+
+    struct EventHubCreationOptions
+    {
+      std::string Namespace;
+      std::string Name;
+      std::string ResourceGroup;
+      std::string SubscriptionId;
+    };
+
     class EventHub {
       EventHub(
-          std::string const& name,
-          std::string const& resourceGroup,
-          std::string const& subscriptionId)
-          : m_name(name), m_resourceGroup(resourceGroup), m_subscriptionId{subscriptionId}
+          EventHubCreationOptions const& options,
+          std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
+          : m_name(options.Name),
+            m_resourceGroup(options.ResourceGroup), m_subscriptionId{options.SubscriptionId},
+            m_namespace{options.Namespace}, m_pipeline{pipeline}
       {
       }
 
@@ -152,9 +162,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           Azure::Core::Context const& context = {});
 
     private:
+      std::string m_namespace;
       std::string m_name;
       std::string m_resourceGroup;
       std::string m_subscriptionId;
+      std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
       friend class EventHubsManagement;
       friend class EventHubsManagement::Namespace;
     };
@@ -182,6 +194,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::int32_t TombstoneRetentionTimeInHours;
     };
 
+    struct ConsumerGroup
+    {
+      Azure::DateTime CreatedAt;
+      Azure::DateTime UpdatedAt;
+      std::string UserMetadata;
+    };
+
     class Namespace {
       Namespace(
           std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
@@ -204,6 +223,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           Azure::Core::Context const& context = {});
       bool DoesEventHubExist(
           std::string const& eventHubName,
+          Azure::Core::Context const& context = {});
+
+      ConsumerGroup CreateConsumerGroup(
+          std::string const& eventHubName,
+          std::string const& consumerGroupName,
           Azure::Core::Context const& context = {});
 
     private:
