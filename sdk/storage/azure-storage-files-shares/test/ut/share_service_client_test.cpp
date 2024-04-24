@@ -26,6 +26,18 @@ namespace Azure { namespace Storage { namespace Test {
             StandardStorageConnectionString(), options));
   }
 
+  Files::Shares::ShareClient FileShareServiceClientTest::GetPremiumShareClientForTest(
+      const std::string& shareName,
+      Files::Shares::ShareClientOptions clientOptions)
+  {
+    InitStorageClientOptions(clientOptions);
+    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+        PremiumFileConnectionString(), shareName, clientOptions);
+    m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
+
+    return shareClient;
+  }
+
   TEST_F(FileShareServiceClientTest, Constructors)
   {
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
@@ -130,6 +142,53 @@ namespace Azure { namespace Storage { namespace Test {
     {
       m_shareServiceClient->GetShareClient(shareName).DeleteIfExists();
     }
+  }
+
+  TEST_F(FileShareServiceClientTest, ListSharesEnableSnapshotVirtualDirectoryAccess_PLAYBACKONLY_)
+  {
+    auto premiumFileShareServiceClient
+        = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+            PremiumFileConnectionString(),
+            InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    std::string shareName1 = LowercaseRandomString();
+    std::string shareName2 = LowercaseRandomString();
+    auto shareClient1 = GetPremiumShareClientForTest(shareName1);
+    auto shareClient2 = GetPremiumShareClientForTest(shareName2);
+    Files::Shares::CreateShareOptions createOptions;
+    createOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+    shareClient1.Create(createOptions);
+    shareClient2.Create(createOptions);
+
+    Files::Shares::SetSharePropertiesOptions setPropertiesOptions;
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = true;
+    shareClient1.SetProperties(setPropertiesOptions);
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = false;
+    shareClient2.SetProperties(setPropertiesOptions);
+
+    Azure::Nullable<Files::Shares::Models::ShareItem> share1;
+    Azure::Nullable<Files::Shares::Models::ShareItem> share2;
+    for (auto page = premiumFileShareServiceClient.ListShares(); page.HasPage();
+         page.MoveToNextPage())
+    {
+      for (const auto& share : page.Shares)
+      {
+        if (share.Name == shareName1)
+        {
+          share1 = share;
+        }
+        else if (share.Name == shareName2)
+        {
+          share2 = share;
+        }
+      }
+    }
+    ASSERT_TRUE(share1.HasValue() && share2.HasValue());
+    EXPECT_TRUE(
+        share1.Value().Details.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && share1.Value().Details.EnableSnapshotVirtualDirectoryAccess.Value());
+    EXPECT_TRUE(
+        share2.Value().Details.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && !share2.Value().Details.EnableSnapshotVirtualDirectoryAccess.Value());
   }
 
   TEST_F(FileShareServiceClientTest, GetProperties)
