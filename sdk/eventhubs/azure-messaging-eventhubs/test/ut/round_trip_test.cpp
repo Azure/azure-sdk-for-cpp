@@ -146,13 +146,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       switch (info.param)
       {
         case AuthType::ConnectionString:
-          stringValue = "connectionstring_LIVEONLY_";
+          stringValue = "ConnectionString_LIVEONLY_";
           break;
         case AuthType::Key:
-          stringValue = "key";
+          stringValue = "Key_LIVEONLY_";
           break;
         case AuthType::Emulator:
-          stringValue = "emulator";
+          stringValue = "Emulator";
           break;
       }
       return stringValue;
