@@ -2074,4 +2074,14 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(blockBlobClient.GetProperties(), StorageException);
   }
+
+  TEST_F(BlockBlobClientTest, AccountInfo)
+  {
+    auto blobClient = *m_blockBlobClient;
+
+    auto accountInfo = blobClient.GetAccountInfo().Value;
+    EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
+    EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
+    EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
+  }
 }}} // namespace Azure::Storage::Test

@@ -70,8 +70,6 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]
     transform: >
-      delete $["/{containerName}?restype=account&comp=properties"];
-      delete $["/{containerName}/{blob}?restype=account&comp=properties"];
       delete $["/{filesystem}/{path}?action=setAccessControl&blob"];
       delete $["/{filesystem}/{path}?action=getAccessControl&blob"];
       delete $["/{filesystem}/{path}?FileRename"];
@@ -673,22 +671,30 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $["x-ms-paths"]["/?restype=account&comp=properties"].get.responses["200"]
+    where: $
     transform: >
-        $.schema = {"$ref": "#/definitions/AccountInfo"};
-  - from: swagger-document
-    where: $["x-ms-paths"]["/?restype=account&comp=properties"].get.responses["200"].headers["x-ms-sku-name"]
-    transform: >
-      $["x-ms-enum"]["values"] = [
-        {"value": "Standard_LRS", "name":"Standard_Lrs"},
-        {"value": "Standard_GRS", "name":"StandardGrs"},
-        {"value": "Standard_RAGRS", "name":"StandardRagrs"},
-        {"value": "Standard_ZRS", "name":"StandardZrs"},
-        {"value": "Premium_LRS", "name":"PremiumLrs"},
-        {"value": "Premium_ZRS", "name":"PremiumZrs"},
-        {"value": "Standard_GZRS", "name":"StandardGzrs"},
-        {"value": "Standard_RAGZRS", "name":"StandardRagzrs"}
+      const operations = [
+        "Service_GetAccountInfo",
+        "BlobContainer_GetAccountInfo",
+        "Blob_GetAccountInfo",
       ];
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          if (!operations.includes($["x-ms-paths"][url][verb].operationId)) continue;
+          const operation = $["x-ms-paths"][url][verb];
+          operation.responses["200"].schema = {"$ref": "#/definitions/AccountInfo"};
+          operation.responses["200"].headers["x-ms-sku-name"]["x-ms-enum"]["values"] = [
+            {"value": "Standard_LRS", "name":"Standard_Lrs"},
+            {"value": "Standard_GRS", "name":"StandardGrs"},
+            {"value": "Standard_RAGRS", "name":"StandardRagrs"},
+            {"value": "Standard_ZRS", "name":"StandardZrs"},
+            {"value": "Premium_LRS", "name":"PremiumLrs"},
+            {"value": "Premium_ZRS", "name":"PremiumZrs"},
+            {"value": "Standard_GZRS", "name":"StandardGzrs"},
+            {"value": "Standard_RAGZRS", "name":"StandardRagzrs"}
+          ];
+        }
+      }
 ```
 
 ### FindBlobsByTags

@@ -3597,6 +3597,31 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Response<Models::_detail::ListBlobsByHierarchyResult>(
           std::move(response), std::move(pRawResponse));
     }
+    Response<Models::AccountInfo> BlobContainerClient::GetAccountInfo(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const GetBlobContainerAccountInfoOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
+      request.GetUrl().AppendQueryParameter("restype", "account");
+      request.GetUrl().AppendQueryParameter("comp", "properties");
+      request.SetHeader("x-ms-version", "2023-11-03");
+      (void)options;
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::AccountInfo response;
+      response.SkuName = Models::SkuName(pRawResponse->GetHeaders().at("x-ms-sku-name"));
+      response.AccountKind
+          = Models::AccountKind(pRawResponse->GetHeaders().at("x-ms-account-kind"));
+      response.IsHierarchicalNamespaceEnabled
+          = pRawResponse->GetHeaders().at("x-ms-is-hns-enabled") == std::string("true");
+      return Response<Models::AccountInfo>(std::move(response), std::move(pRawResponse));
+    }
     Response<Models::DownloadBlobResult> BlobClient::Download(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
@@ -5294,6 +5319,31 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::SetBlobAccessTierResult response;
       return Response<Models::SetBlobAccessTierResult>(
           std::move(response), std::move(pRawResponse));
+    }
+    Response<Models::AccountInfo> BlobClient::GetAccountInfo(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const GetBlobAccountInfoOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
+      request.GetUrl().AppendQueryParameter("restype", "account");
+      request.GetUrl().AppendQueryParameter("comp", "properties");
+      request.SetHeader("x-ms-version", "2023-11-03");
+      (void)options;
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::AccountInfo response;
+      response.SkuName = Models::SkuName(pRawResponse->GetHeaders().at("x-ms-sku-name"));
+      response.AccountKind
+          = Models::AccountKind(pRawResponse->GetHeaders().at("x-ms-account-kind"));
+      response.IsHierarchicalNamespaceEnabled
+          = pRawResponse->GetHeaders().at("x-ms-is-hns-enabled") == std::string("true");
+      return Response<Models::AccountInfo>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::QueryBlobResult> BlobClient::Query(
         Core::Http::_internal::HttpPipeline& pipeline,
