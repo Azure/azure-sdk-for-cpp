@@ -139,7 +139,8 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 
 TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion_LIVEONLY_)
 {
-  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  auto testName = GetTestName();
+  
   std::string const certificateName(testName);
 
   auto const& client = GetClientForTest(testName);
@@ -795,7 +796,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem_LIVEONLY_)
 
 TEST_F(KeyVaultCertificateClientTest, UpdateCertificate_LIVEONLY_) // version is sanitized away
 {
-  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  auto testName = GetTestName();
   std::string const certificateName(testName);
 
   auto const& client = GetClientForTest(testName);
