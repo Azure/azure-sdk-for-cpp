@@ -33,7 +33,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_eventHub
         = (sasCredential->GetEntityPath().empty() ? eventHub : sasCredential->GetEntityPath());
     m_fullyQualifiedNamespace = sasCredential->GetHostName();
-    m_targetUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub;
+    std::string serviceScheme = _detail::EventHubsServiceScheme;
+    if (sasCredential->UseDevelopmentEmulator())
+    {
+      serviceScheme = _detail::EventHubsServiceScheme_Emulator;
+      m_targetPort = Azure::Core::Amqp::_internal::AmqpPort; // When using the emulator, use the
+                                                             // non-TLS endpoint by default.
+    }
+    m_targetUrl = serviceScheme + m_fullyQualifiedNamespace + ":"
+        + std::to_string(sasCredential->GetPort()) + "/" + m_eventHub;
   }
 
   ProducerClient::ProducerClient(
@@ -113,6 +121,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
     connectOptions.EnableTrace = _detail::EnableAmqpTrace;
     connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
+    connectOptions.Port = m_targetPort;
 
     // Set the UserAgent related properties on this message sender.
     _detail::EventHubsUtilities::SetUserAgent(

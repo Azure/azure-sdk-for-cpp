@@ -93,6 +93,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       }
     }
     {
+      auto useDevelopmentEmulator = elements.find("UseDevelopmentEmulator");
+      if (useDevelopmentEmulator != elements.end())
+      {
+        m_useDevelopmentEmulator = useDevelopmentEmulator->second == "true";
+      }
+    }
+    {
       auto sak = elements.find("SharedAccessKeyName");
       if (sak != elements.end())
       {
