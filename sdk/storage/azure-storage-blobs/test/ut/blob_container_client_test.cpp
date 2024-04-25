@@ -1493,4 +1493,14 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(e.ErrorCode, "BlobNotFound");
     }
   }
+
+  TEST_F(BlobContainerClientTest, AccountInfo)
+  {
+    auto containerClient = *m_blobContainerClient;
+
+    auto accountInfo = containerClient.GetAccountInfo().Value;
+    EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
+    EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
+    EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
+  }
 }}} // namespace Azure::Storage::Test
