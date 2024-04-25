@@ -343,7 +343,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(queueServiceClient.GetProperties(), StorageException);
   }
 
-  TEST_F(QueueServiceClientTest, BearerChallengeWorks_LIVEONLY_)
+  TEST_F(QueueServiceClientTest, BearerChallengeWorks)
   {
     auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
     auto options = InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
