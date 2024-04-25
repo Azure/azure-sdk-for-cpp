@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.PreventEncryptionScopeOverride);
   }
 
-  TEST_F(DataLakeFileSystemClientTest, ListPaths)
+  TEST_F(DataLakeFileSystemClientTest, ListPaths_LIVEONLY_)
   {
     std::set<std::string> paths;
     const std::string dir1 = RandomString();
@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, CustomerProvidedKey)
+  TEST_F(DataLakeFileSystemClientTest, CustomerProvidedKey_LIVEONLY_)
   {
     auto getRandomCustomerProvidedKey = [&]() {
       Files::DataLake::EncryptionKey key;
@@ -343,6 +343,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto fileSystemClientWithCPK
         = GetFileSystemClientForTest(m_fileSystemName, clientOptionsWithCPK);
     auto fileSystemClientWithoutCPK = GetFileSystemClientForTest(m_fileSystemName);
+    auto redactedKeyHash = Core::Convert::Base64Decode("REDACTED");
 
     // fileSystem works
     {
@@ -358,7 +359,9 @@ namespace Azure { namespace Storage { namespace Test {
       auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
           fileSystemClientWithCPK.RenameFile(filename1, filename2).Value);
       auto properties = newFileClient->GetProperties().Value;
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          properties.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || properties.EncryptionKeySha256.Value() == redactedKeyHash);
       auto newFileClientWithoutEncryptionKey
           = std::make_shared<Files::DataLake::DataLakeFileClient>(
               fileSystemClientWithoutCPK.GetFileClient(filename2));
@@ -381,7 +384,9 @@ namespace Azure { namespace Storage { namespace Test {
           fileSystemClientWithCPK.RenameDirectory(oldDirectoryName, newDirectoryName).Value);
       properties = newDirectoryClient->GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          properties.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || properties.EncryptionKeySha256.Value() == redactedKeyHash);
       auto newDirectoryClientWithoutEncryptionKey
           = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
               fileSystemClientWithoutCPK.GetDirectoryClient(newDirectoryName));
@@ -391,7 +396,9 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto createResult = fileSystemClientWithCPK.GetFileClient(filename4).Create().Value;
       EXPECT_TRUE(createResult.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, createResult.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          createResult.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || createResult.EncryptionKeySha256.Value() == redactedKeyHash);
     }
 
     // path works
@@ -410,8 +417,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(pathClientWithCPK->SetMetadata(RandomMetadata()));
       auto properties = pathClientWithCPK->GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
-
+      EXPECT_TRUE(
+          properties.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || properties.EncryptionKeySha256.Value() == redactedKeyHash);
       EXPECT_THROW(pathClientWithoutCPK->SetMetadata(RandomMetadata()), StorageException);
       EXPECT_THROW(pathClientWithoutCPK->GetProperties(), StorageException);
       EXPECT_NO_THROW(pathClientWithoutCPK->GetAccessControlList());
@@ -422,7 +430,9 @@ namespace Azure { namespace Storage { namespace Test {
       auto createResult
           = pathClient2WithCPK->Create(Files::DataLake::Models::PathResourceType::File).Value;
       EXPECT_TRUE(createResult.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, createResult.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          createResult.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || createResult.EncryptionKeySha256.Value() == redactedKeyHash);
     }
 
     // file works
@@ -456,13 +466,17 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClientWithCPK->SetMetadata(RandomMetadata()));
       auto properties = fileClientWithCPK->GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          properties.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || properties.EncryptionKeySha256.Value() == redactedKeyHash);
       EXPECT_THROW(fileClientWithoutCPK->Flush(buffer.size()), StorageException);
       EXPECT_THROW(fileClientWithoutCPK->Download(), StorageException);
 
       auto createResult = fileClient2WithCPK->Create().Value;
       EXPECT_TRUE(createResult.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, createResult.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          createResult.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || createResult.EncryptionKeySha256.Value() == redactedKeyHash);
     }
     // directory works
     {
@@ -489,15 +503,20 @@ namespace Azure { namespace Storage { namespace Test {
           directoryClientWithCPK->GetFileClient(fileName1));
       EXPECT_NO_THROW(fileClientWithCPK->Create());
       auto subdirectoryProperties = subdirectoryClientWithCPK->GetProperties().Value;
-      EXPECT_EQ(customerProvidedKey.KeyHash, subdirectoryProperties.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          subdirectoryProperties.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || subdirectoryProperties.EncryptionKeySha256.Value() == redactedKeyHash);
       auto fileProperties = fileClientWithCPK->GetProperties();
-      EXPECT_EQ(customerProvidedKey.KeyHash, fileProperties.Value.EncryptionKeySha256.Value());
-
+      EXPECT_TRUE(
+          fileProperties.Value.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || fileProperties.Value.EncryptionKeySha256.Value() == redactedKeyHash);
       // rename file
       auto newFileClient
           = directoryClientWithCPK->RenameFile(fileName1, directoryName + "/" + fileName2).Value;
       auto newFileProperties = newFileClient.GetProperties().Value;
-      EXPECT_EQ(customerProvidedKey.KeyHash, newFileProperties.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          newFileProperties.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || newFileProperties.EncryptionKeySha256.Value() == redactedKeyHash);
       auto newFileClientWithoutCPK = std::make_shared<Files::DataLake::DataLakeFileClient>(
           fileSystemClientWithoutCPK.GetFileClient(directoryName + "/" + fileName2));
       EXPECT_THROW(newFileClientWithoutCPK->GetProperties(), StorageException);
@@ -509,7 +528,9 @@ namespace Azure { namespace Storage { namespace Test {
                 ->RenameSubdirectory(subdirectoryName1, directoryName + "/" + subdirectoryName2)
                 .Value;
       auto newSubdirectoryProperties = newSubdirectoryClientWithCPK.GetProperties().Value;
-      EXPECT_EQ(customerProvidedKey.KeyHash, newSubdirectoryProperties.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          newSubdirectoryProperties.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || newSubdirectoryProperties.EncryptionKeySha256.Value() == redactedKeyHash);
       auto newsubdirectoryClientWithoutCPK
           = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
               fileSystemClientWithoutCPK.GetDirectoryClient(
@@ -522,7 +543,9 @@ namespace Azure { namespace Storage { namespace Test {
           fileSystemClientWithCPK.GetDirectoryClient(directoryName2));
       auto createResult = directoryClient2WithCPK->Create().Value;
       EXPECT_TRUE(createResult.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, createResult.EncryptionKeySha256.Value());
+      EXPECT_TRUE(
+          createResult.EncryptionKeySha256.Value() == customerProvidedKey.KeyHash
+          || createResult.EncryptionKeySha256.Value() == redactedKeyHash);
     }
   }
 

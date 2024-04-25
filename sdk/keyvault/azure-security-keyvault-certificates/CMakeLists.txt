@@ -102,7 +102,7 @@ generate_documentation(azure-security-keyvault-certificates ${AZ_LIBRARY_VERSION
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
-  add_compile_definitions(TESTING_BUILD)
+  add_compile_definitions(_azure_TESTING_BUILD)
 
   if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)

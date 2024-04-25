@@ -18,7 +18,7 @@
 #include <memory>
 #include <string>
 
-#ifdef TESTING_BUILD
+#ifdef _azure_TESTING_BUILD
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
   class CurlConnectionPool_connectionPoolTest_Test;
@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace Http {
    * transporter to be reusable in multiple pipelines while every call to network is unique.
    */
   class CurlSession final : public Azure::Core::IO::BodyStream {
-#ifdef TESTING_BUILD
+#ifdef _azure_TESTING_BUILD
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
     friend class Azure::Core::Test::SdkWithLibcurl_DISABLED_globalCleanUp_Test;
@@ -340,6 +340,13 @@ namespace Azure { namespace Core { namespace Http {
     Http::HttpStatusCode m_lastStatusCode = Http::HttpStatusCode::BadRequest;
 
     /**
+     * @brief Holds information on whether the connection can be kept alive, based on HTTP protocol
+     * version and the "Connection" HTTP header.
+     *
+     */
+    bool m_httpKeepAlive = false;
+
+    /**
      * @brief check whether an end of file has been reached.
      * @return `true` if end of file has been reached; otherwise, `false`.
      */
@@ -417,7 +424,7 @@ namespace Azure { namespace Core { namespace Http {
       if (IsEOF() && m_keepAlive && !m_connectionUpgraded)
       {
         _detail::CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
-            std::move(m_connection), m_lastStatusCode);
+            std::move(m_connection), m_httpKeepAlive);
       }
     }
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0-beta.1 (Unreleased)
+## 4.3.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.3.0-beta.1 (2024-04-09)
+
+### Features Added
+
+- Updated to API version 7.5.
 
 ## 4.2.1 (2024-01-16)
 

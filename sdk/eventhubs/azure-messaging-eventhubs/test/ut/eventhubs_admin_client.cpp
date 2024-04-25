@@ -522,7 +522,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Core::Json::_internal::json jsonOutput
         = Azure::Core::Json::_internal::json::parse(bodyAsString);
 
-    return EventHub(eventHubName, m_resourceGroup, m_subscriptionId);
+    return EventHub(
+        EventHubCreationOptions{m_name, eventHubName, m_resourceGroup, m_subscriptionId},
+        m_pipeline);
   }
 
   bool EventHubsManagement::Namespace::DeleteEventHub(
@@ -547,6 +549,69 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     // There is no expected body on a delete eventhub response.
+
+    return true;
+  }
+
+  bool EventHubsManagement::EventHub::CreateConsumerGroup(
+      std::string const& consumerGroupName,
+      Azure::Core::Context const& context)
+  {
+    Azure::Core::Url requestUrl(
+        "https://management.azure.com/subscriptions/" + Azure::Core::Url::Encode(m_subscriptionId)
+        + "/resourceGroups/" + Azure::Core::Url::Encode(m_resourceGroup)
+        + "/providers/Microsoft.EventHub/namespaces/" + m_namespace + "/eventhubs/" + m_name
+        + "/consumergroups/" + consumerGroupName);
+    requestUrl.AppendQueryParameter("api-version", "2022-10-01-preview");
+
+    Azure::Core::Json::_internal::json jsonBody;
+    jsonBody["properties"] = Azure::Core::Json::_internal::json::object();
+
+    std::string bodyText = jsonBody.dump();
+
+    Azure::Core::IO::MemoryBodyStream requestBody{
+        reinterpret_cast<const uint8_t*>(bodyText.data()), bodyText.size()};
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Put, requestUrl, &requestBody);
+
+    request.SetHeader("Accept", "application/json");
+    auto result = m_pipeline->Send(request, context);
+
+    auto& val = result->GetBody();
+    std::string bodyAsString{reinterpret_cast<const char*>(val.data()), val.size()};
+    if (result->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Ok)
+    {
+      throw Azure::Core::RequestFailedException(result);
+    }
+
+    Azure::Core::Json::_internal::json jsonOutput
+        = Azure::Core::Json::_internal::json::parse(bodyAsString);
+
+    return true;
+  }
+
+  bool EventHubsManagement::EventHub::DeleteConsumerGroup(
+      std::string const& consumerGroupName,
+      Azure::Core::Context const& context)
+  {
+    Azure::Core::Url requestUrl(
+        "https://management.azure.com/subscriptions/" + Azure::Core::Url::Encode(m_subscriptionId)
+        + "/resourceGroups/" + Azure::Core::Url::Encode(m_resourceGroup)
+        + "/providers/Microsoft.EventHub/namespaces/" + m_namespace + "/eventhubs/" + m_name
+        + "/consumergroups/" + consumerGroupName);
+    requestUrl.AppendQueryParameter("api-version", "2022-10-01-preview");
+
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, requestUrl);
+
+    request.SetHeader("Accept", "application/json");
+    auto result = m_pipeline->Send(request, context);
+
+    auto& val = result->GetBody();
+    std::string bodyAsString{reinterpret_cast<const char*>(val.data()), val.size()};
+    if (result->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Ok)
+    {
+      throw Azure::Core::RequestFailedException(result);
+    }
 
     return true;
   }
@@ -605,5 +670,4 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     rv.Type = json["type"];
     return rv;
   }
-
 }}}} // namespace Azure::Messaging::EventHubs::Test

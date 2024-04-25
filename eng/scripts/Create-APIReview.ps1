@@ -40,6 +40,11 @@ foreach ($artifact in $ArtifactList)
     Write-Host "Contents in $($parentPath)"
     Get-ChildItem -Path $parentPath -Recurse
     & $ParserPath -o $OutPath/$ArtifactName/$ArtifactName.json $SourcePath
+    if ($LASTEXITCODE -ne 0)
+	{
+		Write-Host "Failed to generate API review file for $($ArtifactName)"
+		exit 1
+	}
 }
 
 $createReviewScript = (Join-Path $PSScriptRoot .. common scripts Create-APIReview.ps1)

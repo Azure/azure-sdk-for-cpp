@@ -111,6 +111,10 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
+      - template: /eng/pipelines/templates/steps/setup-msvc.yml
+
+      - template: /eng/pipelines/templates/steps/install-cmake.yml
+
       - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
         retryCountOnTaskFailure: 10
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
@@ -197,6 +201,7 @@ jobs:
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true
+          targetVersion: 1.0.0-dev.20240423.2
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))

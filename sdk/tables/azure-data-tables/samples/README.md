@@ -14,3 +14,5 @@ description: Samples for the azure-data-tables client library.
 - Create,list and delete tables.
 - Create, merge, update, delete entities.
 - List Tables, Get Statistics, Get Access Policy for service.
+- Submit Transactions success
+- Submit Transactions failure

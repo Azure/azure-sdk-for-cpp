@@ -193,6 +193,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The URL to the Event Hubs namespace
     std::string m_hostUrl;
 
+    /// <summary>
+    /// The expected port to be used. TLS by default.
+    /// </summary>
+    std::uint16_t m_targetPort = Azure::Core::Amqp::_internal::AmqpTlsPort;
+
     /// @brief The message receivers used to receive messages for a given partition.
     std::mutex m_receiversLock;
     std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers;

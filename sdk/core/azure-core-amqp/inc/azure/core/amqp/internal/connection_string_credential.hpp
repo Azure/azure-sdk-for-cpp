@@ -36,6 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::string const& GetEntityPath() const { return m_entityPath; }
     std::string const& GetHostName() const { return m_hostName; }
     uint16_t GetPort() const { return m_port; }
+    bool UseDevelopmentEmulator() const { return m_useDevelopmentEmulator; }
 
   private:
     void ParseConnectionString(const std::string& connectionString);
@@ -44,6 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::string m_sharedAccessKey;
     std::string m_uri;
     std::string m_hostName;
+    bool m_useDevelopmentEmulator{false};
     uint16_t m_port{};
     std::string m_entityPath;
   };
@@ -147,6 +149,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::string const& GetEntityPath() const { return m_connectionParser.GetEntityPath(); }
     std::string const& GetHostName() const { return m_connectionParser.GetHostName(); }
     uint16_t GetPort() const { return m_connectionParser.GetPort(); }
+
+    bool UseDevelopmentEmulator() { return m_connectionParser.UseDevelopmentEmulator(); }
 
     /**
      * @brief Gets an authentication token.

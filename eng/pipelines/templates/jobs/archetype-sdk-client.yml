@@ -107,7 +107,7 @@ jobs:
             vstsFeed: 'internal/AzureSDKForCpp'
             vstsFeedPackage: 'parseazuresdkcpp'
             downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
-            vstsPackageVersion: 0.12.0 
+            vstsPackageVersion: 0.13.0 
           condition: >-
               and(
                 succeeded(),
@@ -199,6 +199,10 @@ jobs:
             .'C:\Program Files\doxygen\bin\doxygen.exe' --version
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
+
+        - template: /eng/pipelines/templates/steps/install-cmake.yml
+
+        - template: /eng/pipelines/templates/steps/setup-msvc.yml
 
         - template: /eng/pipelines/templates/steps/vcpkg.yml
 

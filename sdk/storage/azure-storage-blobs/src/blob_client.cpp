@@ -27,6 +27,10 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  namespace _detail {
+    Azure::Core::Context::Key const DataLakeInteroperabilityExtraOptionsKey;
+  }
+
   BlobClient BlobClient::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& blobContainerName,
@@ -191,6 +195,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    {
+      bool includeUserPrincipalName = false;
+      if (context.TryGetValue(
+              _detail::DataLakeInteroperabilityExtraOptionsKey, includeUserPrincipalName))
+      {
+        protocolLayerOptions.UserPrincipalName = includeUserPrincipalName;
+      }
+    }
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
@@ -535,6 +547,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    {
+      bool includeUserPrincipalName = false;
+      if (context.TryGetValue(
+              _detail::DataLakeInteroperabilityExtraOptionsKey, includeUserPrincipalName))
+      {
+        protocolLayerOptions.UserPrincipalName = includeUserPrincipalName;
+      }
+    }
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;

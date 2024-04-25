@@ -52,8 +52,14 @@ void SecretSerializer::Deserialize(
   secret.Properties.Id = secret.Id;
 
   ParseIDUrl(secret.Properties, secret.Id);
-  secret.Name = secret.Properties.Name;
-
+  if (!secret.Properties.Name.empty())
+  {
+    secret.Name = secret.Properties.Name;
+  }
+  else
+  {
+    secret.Properties.Name = secret.Name;
+  }
   // Parse URL for the various attributes
   if (jsonParser.contains(_detail::AttributesPropertyName))
   {

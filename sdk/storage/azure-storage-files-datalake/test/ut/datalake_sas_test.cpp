@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeSasTest, ServiceFileSystemSasPermissions)
+  TEST_F(DataLakeSasTest, ServiceFileSystemSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeSasTest, ServiceFileSasPermissions)
+  TEST_F(DataLakeSasTest, ServiceFileSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -367,7 +367,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeSasTest, ServiceDirectorySasPermissions)
+  TEST_F(DataLakeSasTest, ServiceDirectorySasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -607,7 +607,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasNonRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, FileSasWithPreauthorizedAgentObjectId)
+  TEST_F(DataLakeSasTest, FileSasWithPreauthorizedAgentObjectId_LIVEONLY_)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 

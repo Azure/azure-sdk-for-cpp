@@ -570,7 +570,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileClientTest, CreateWithEncryptionContext)
+  TEST_F(DataLakeFileClientTest, CreateWithEncryptionContext_LIVEONLY_)
   {
     std::string encryptionContext = "encryptionContext";
     const std::string fileName = RandomString();
@@ -713,12 +713,56 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(ReadFile(testName), std::runtime_error);
   }
 
-  TEST_F(DataLakeFileClientTest, FileDownloadOwnerGroupPermissions)
+  TEST_F(DataLakeFileClientTest, FileDownloadAccessControlList)
   {
     auto downloadResult = m_fileClient->Download().Value;
-    ASSERT_TRUE(downloadResult.Details.Owner.HasValue());
-    ASSERT_TRUE(downloadResult.Details.Group.HasValue());
-    ASSERT_TRUE(downloadResult.Details.Permissions.HasValue());
+    EXPECT_TRUE(
+        downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
+    EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Group.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
+  }
+
+  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName)
+  {
+    std::string userPrincipalName = "kat@microsoft.com";
+    std::string userObjectId = "72a3f86f-271f-439e-b031-25678907d381";
+    std::vector<Files::DataLake::Models::Acl> acls;
+    Files::DataLake::Models::Acl acl;
+    acl.Type = "user";
+    acl.Id = userObjectId;
+    acl.Permissions = "rwx";
+    acls.emplace_back(acl);
+    m_fileClient->SetAccessControlList(acls);
+    Files::DataLake::DownloadFileOptions options;
+
+    // UserPrincipalName = true
+    options.IncludeUserPrincipalName = true;
+    auto downloadResult = m_fileClient->Download(options).Value;
+    ASSERT_TRUE(
+        downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
+    EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Group.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
+    // Validate that the user principal name is returned
+    acls = downloadResult.Details.Acls.Value();
+    auto it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userPrincipalName; });
+    EXPECT_NE(it, acls.end());
+
+    // UserPrincipalName = false
+    options.IncludeUserPrincipalName = false;
+    downloadResult = m_fileClient->Download(options).Value;
+    ASSERT_TRUE(
+        downloadResult.Details.Acls.HasValue() && !downloadResult.Details.Acls.Value().empty());
+    EXPECT_TRUE(downloadResult.Details.Owner.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Group.HasValue());
+    EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
+    // Validate that the user principal name is not returned
+    acls = downloadResult.Details.Acls.Value();
+    it = std::find_if(
+        acls.begin(), acls.end(), [&](const auto& acl) { return acl.Id == userObjectId; });
+    EXPECT_NE(it, acls.end());
   }
 
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)

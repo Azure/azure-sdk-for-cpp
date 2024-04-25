@@ -35,7 +35,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * restoring, and listing the KeyVaultKey.
    */
   class KeyClient
-#if !defined(TESTING_BUILD)
+#if !defined(_azure_TESTING_BUILD)
       final
 #endif
   {

@@ -1,6 +1,6 @@
 # Release History
 
-## 12.9.0-beta.1 (Unreleased)
+## 12.9.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.9.0-beta.1 (2024-04-17)
+
+### Features Added
+
+- Added new field `ClientName` in `HandleItem`.
+- Added new field `IncludeRenames` in `GetFileRangeListOptions`.
 
 ## 12.8.0 (2023-11-07)
 

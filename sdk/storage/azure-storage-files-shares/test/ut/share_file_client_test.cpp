@@ -901,6 +901,43 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, GetRangeListDiffWithRename)
+  {
+    size_t rangeSize = 128;
+    std::vector<uint8_t> rangeContent = RandomBuffer(rangeSize);
+    auto memBodyStream = Core::IO::MemoryBodyStream(rangeContent);
+    std::string sourceFileName = RandomString();
+    std::string destFileName = RandomString();
+
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(sourceFileName);
+    fileClient.Create(rangeSize);
+
+    EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
+
+    auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
+    EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
+
+    fileClient
+        = m_shareClient->GetRootDirectoryClient().RenameFile(sourceFileName, destFileName).Value;
+
+    Files::Shares::GetFileRangeListOptions options;
+    options.Range = Core::Http::HttpRange();
+    options.Range.Value().Offset = 64;
+    options.Range.Value().Length = 64;
+    Files::Shares::Models::GetFileRangeListResult result;
+
+    // SupportRename == true
+    options.IncludeRenames = true;
+    EXPECT_NO_THROW(result = fileClient.GetRangeListDiff(snapshot, options).Value);
+    EXPECT_EQ(1U, result.Ranges.size());
+    EXPECT_EQ(64, result.Ranges[0].Offset);
+    EXPECT_TRUE(result.Ranges[0].Length.HasValue());
+
+    // SupportRename == false
+    options.IncludeRenames = false;
+    EXPECT_THROW(fileClient.GetRangeListDiff(snapshot, options), StorageException);
+  }
+
   TEST_F(FileShareFileClientTest, PreviousRangeWithSnapshot)
   {
     size_t fileSize = 1024 * 10;
@@ -1739,6 +1776,20 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(fileHandles.size(), 1L);
     EXPECT_TRUE(fileHandles[0].AccessRights.HasValue());
     EXPECT_EQ(allAccessRights, fileHandles[0].AccessRights.Value());
+  }
+
+  TEST_F(FileShareFileClientTest, ListHandlesWithClientName_PLAYBACKONLY_)
+  {
+    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        "testing",
+        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto fileClient
+        = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("dir1").GetFileClient(
+            "test.txt");
+    auto fileHandles = fileClient.ListHandles().FileHandles;
+    EXPECT_EQ(fileHandles.size(), 1L);
+    EXPECT_FALSE(fileHandles[0].ClientName.empty());
   }
 
   TEST_F(FileShareFileClientTest, WithShareSnapshot)

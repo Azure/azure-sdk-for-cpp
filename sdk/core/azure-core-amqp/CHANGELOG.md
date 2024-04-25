@@ -1,8 +1,18 @@
 # Release History
 
-## 1.0.0-beta.8 (Unreleased)
+## 1.0.0-beta.9 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed a potential deadlock where a message receiver Open call could block indefinitely when adding the Link to the Pollables.
+
+### Other Changes
+
+## 1.0.0-beta.8 (2024-04-09)
 
 ### Breaking Changes
 
