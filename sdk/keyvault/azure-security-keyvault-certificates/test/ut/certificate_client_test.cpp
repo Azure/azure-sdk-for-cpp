@@ -140,7 +140,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion_LIVEONLY_)
 {
   auto testName = GetTestName();
-  
+
   std::string const certificateName(testName);
 
   auto const& client = GetClientForTest(testName);
