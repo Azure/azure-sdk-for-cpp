@@ -37,9 +37,11 @@ Call GetSecret to retrieve a secret from Key Vault.
 
 ```cpp Snippet:SecretSample3GetSecret
 // get secret
-Secret secret = secretClient.GetSecret(secretName).Value;
-std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
-          << std::endl;
+KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+
+std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
+std::cout << "Secret is returned with name " << secret.Name << " and value "
+          << valueString << std::endl;
 ```
 
 ## Deleting a secret

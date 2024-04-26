@@ -158,7 +158,8 @@ KeyVaultCertificateWithPolicy CreateCertificate(
     auto pollResponse = response.PollUntilDone(defaultWait).Value;
 
     // check the status of the poll response
-    if (!pollResponse.Error && pollResponse.Status.Value() == "completed")
+    if (!pollResponse.Error && pollResponse.Status.HasValue()
+        && pollResponse.Status.Value() == "completed")
     {
       // get the certificate
       auto certificate = certificateClient.GetCertificate(certificateName).Value;

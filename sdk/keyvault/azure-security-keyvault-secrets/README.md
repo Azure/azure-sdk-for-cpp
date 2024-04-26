@@ -80,8 +80,9 @@ We retrieve a secret by name.
     // get secret
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
+    std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
     std::cout << "Secret is returned with name " << secret.Name << " and value "
-              << secret.Value.Value() << std::endl;
+              << valueString << std::endl;
 ```
 
 ### Update a secret
@@ -94,7 +95,9 @@ Updating an existing secret
     secret.Properties.ContentType = "my content";
     // update the secret
     KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
-    std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
+    std::string updatedValueString = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value()
+                                                                    : "NONE RETURNED";
+    std::cout << "Secret's content type is now " << updatedValueString
               << std::endl;
 ```
 
