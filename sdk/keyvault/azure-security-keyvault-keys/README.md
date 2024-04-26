@@ -313,8 +313,6 @@ client.PurgeDeletedKey(key.Name());
 This example lists all the keys in the specified Azure Key Vault.
 
 ```cpp
-Pageable<KeyProperties> allKeys = client.GetPropertiesOfKeys();
-
 for (auto keys = client.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPage())
     {
       for (auto const& key : keys.Items)
