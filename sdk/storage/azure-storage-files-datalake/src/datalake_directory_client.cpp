@@ -281,6 +281,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
             std::stoll(path.ExpiresOn.Value()));
       }
+      item.EncryptionContext = std::move(path.EncryptionContext);
       pagedResponse.Paths.push_back(std::move(item));
     }
     pagedResponse.m_directoryClient = std::make_shared<DataLakeDirectoryClient>(*this);
