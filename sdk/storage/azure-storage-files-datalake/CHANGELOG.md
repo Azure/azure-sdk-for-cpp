@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `PathItem::EncryptionContext` returned by `DataLakeDirectoryClient::ListPaths` was always null.
+
 ### Other Changes
 
 ## 12.10.0-beta.1 (2024-04-17)
