@@ -431,7 +431,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        *
        * @param response An HTTP response returned corresponding to the request sent by the policy.
        * @param retryOptions The set of options provided to the RetryPolicy.
-       * @return Whether or not the HTTP request should be sent againg through the pipeline.
+       * @return Whether or not the HTTP request should be sent again through the pipeline.
        */
       virtual bool ShouldRetry(
           std::unique_ptr<RawResponse> const& response,
