@@ -39,13 +39,6 @@
  */
 extern std::shared_ptr<Azure::Core::Http::HttpTransport> AzureSdkGetCustomHttpTransport();
 
-#if defined(_azure_TESTING_BUILD)
-namespace Azure { namespace Core { namespace Http { namespace Policies { namespace Tests {
-  class RetryPolicyTest;
-  class RetryLogic;
-}}}}} // namespace Azure::Core::Http::Policies::Tests
-#endif // _azure_TESTING_BUILD
-
 namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   struct TransportOptions;
@@ -371,21 +364,21 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief HTTP retry policy.
      */
     class RetryPolicy : public HttpPolicy {
-#if defined(_azure_TESTING_BUILD)
-      friend class Azure::Core::Http::Policies::Tests::RetryPolicyTest;
-      friend class Azure::Core::Http::Policies::Tests::RetryLogic;
-#endif
-
     private:
       RetryOptions m_retryOptions;
 
-      bool ShouldRetryOnTransportFailure(
+#if defined(_azure_TESTING_BUILD)
+    protected:
+#else
+    private:
+#endif
+      virtual bool ShouldRetryOnTransportFailure(
           RetryOptions const& retryOptions,
           int32_t attempt,
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
 
-      bool ShouldRetryOnResponse(
+      virtual bool ShouldRetryOnResponse(
           RawResponse const& response,
           RetryOptions const& retryOptions,
           int32_t attempt,
