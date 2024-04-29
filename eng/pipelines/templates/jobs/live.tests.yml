@@ -106,8 +106,6 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/setup-msvc.yml
 
-  - template: /eng/pipelines/templates/steps/install-cmake.yml
-
   # Add g++5 repo to ubuntu
   - bash: sudo sh -c "echo 'deb http://ftp.debian.org/debian/ stretch main' >> /etc/apt/sources.list"
     displayName: Add g++ 5
