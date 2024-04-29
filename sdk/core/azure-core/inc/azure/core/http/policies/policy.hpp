@@ -39,6 +39,13 @@
  */
 extern std::shared_ptr<Azure::Core::Http::HttpTransport> AzureSdkGetCustomHttpTransport();
 
+#if defined(_azure_TESTING_BUILD)
+namespace Azure { namespace Core { namespace Http { namespace Policies { namespace Tests {
+  class RetryPolicyTest;
+  class RetryLogic;
+}}}}} // namespace Azure::Core::Http::Policies::Tests
+#endif // _azure_TESTING_BUILD
+
 namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   struct TransportOptions;
@@ -363,13 +370,27 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy
-#if !defined(_azure_TESTING_BUILD)
-        final
+    class RetryPolicy : public HttpPolicy {
+#if defined(_azure_TESTING_BUILD)
+      friend class Azure::Core::Http::Policies::Tests::RetryPolicyTest;
+      friend class Azure::Core::Http::Policies::Tests::RetryLogic;
 #endif
-        : public HttpPolicy {
+
     private:
       RetryOptions m_retryOptions;
+
+      bool ShouldRetryOnTransportFailure(
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
+
+      bool ShouldRetryOnResponse(
+          RawResponse const& response,
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
 
     public:
       /**
@@ -403,18 +424,25 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       static int32_t GetRetryCount(Context const& context);
 
     protected:
-      virtual bool ShouldRetryOnTransportFailure(
-          RetryOptions const& retryOptions,
-          int32_t attempt,
-          std::chrono::milliseconds& retryAfter,
-          double jitterFactor = -1) const;
-
-      virtual bool ShouldRetryOnResponse(
-          RawResponse const& response,
-          RetryOptions const& retryOptions,
-          int32_t attempt,
-          std::chrono::milliseconds& retryAfter,
-          double jitterFactor = -1) const;
+      /**
+       * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
+       * a request, based on the returned HTTP response.
+       *
+       * @remark A null response pointer means there was no response received from the corresponding
+       * request. Custom implementations of this method that override the retry behavior, should
+       * handle that error case, if that needs to be customized.
+       *
+       * @remark Unless overriden, the default implementation is to always return true. The
+       * non-retriable errors, including those specified in the RetryOptions, remain evaluated
+       * before calling ShouldRetry.
+       *
+       * @param response An HTTP response returned corresponding to the request sent by the policy.
+       * @param retryOptions The set of options provided to the RetryPolicy.
+       * @return Whether or not the HTTP request should be sent againg through the pipeline.
+       */
+      virtual bool ShouldRetry(
+          std::unique_ptr<RawResponse> const& response,
+          RetryOptions const& retryOptions) const;
     };
 
     /**
