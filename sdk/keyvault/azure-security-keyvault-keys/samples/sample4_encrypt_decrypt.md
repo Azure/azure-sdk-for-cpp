@@ -72,6 +72,4 @@ std::cout << " - Decrypted data using the algorithm " << decryptResult.Algorithm
 
 ## Source
 
-- [sample4_encrypt_decrypt.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample4_encrypt_decrypt/sample4_encrypt_decrypt.cpp)
-
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md
