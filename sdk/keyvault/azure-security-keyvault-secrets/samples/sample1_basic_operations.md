@@ -12,7 +12,7 @@ Key Vault Secrets client for C++ currently supports any `TokenCredential` for au
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
 ```cpp Snippet:SecretSample1CreateCredential
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
@@ -38,23 +38,25 @@ Call GetSecret to retrieve a secret from Key Vault.
 
 ```cpp Snippet:SecretSample1GetSecret
 // get secret
-Secret secret = secretClient.GetSecret(secretName).Value;
-std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
-          << std::endl;
+KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+
+std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
+std::cout << "Secret is returned with name " << secret.Name << " and value "
+          << valueString << std::endl;
 ```
 
 ## Updating secret properties
 
 Call UpdateSecretProperties to change on of the secret properties.
 
-
 ```cpp Snippet:SecretSample1UpdateSecretProperties
 // change one of the properties
 secret.Properties.ContentType = "my content";
 // update the secret
-Secret updatedSecret = secretClient.UpdateSecretProperties(secret.Name, secret.Properties.Version, secret.Properties)
-          .Value;
-std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
+KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
+std::string updatedValueString = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value()
+                                                                : "NONE RETURNED";
+std::cout << "Secret's content type is now " << updatedValueString
           << std::endl;
 ```
 

@@ -11,7 +11,7 @@ Key Vault Secrets client for C++ currently supports any `TokenCredential` for au
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
 ```cpp Snippet:SecretSample3CreateCredential
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
@@ -37,9 +37,11 @@ Call GetSecret to retrieve a secret from Key Vault.
 
 ```cpp Snippet:SecretSample3GetSecret
 // get secret
-Secret secret = secretClient.GetSecret(secretName).Value;
-std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
-          << std::endl;
+KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+
+std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
+std::cout << "Secret is returned with name " << secret.Name << " and value "
+          << valueString << std::endl;
 ```
 
 ## Deleting a secret

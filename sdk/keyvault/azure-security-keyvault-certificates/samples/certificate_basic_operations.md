@@ -71,7 +71,10 @@ auto updatedCertificate
             .Value;
 
 std::cout << "After update certificate is enabled : "
-          << (updatedCertificate.Properties.Enabled.Value() ? "true" : "false");
+          << (updatedCertificate.Properties.Enabled.HasValue()
+                      && updatedCertificate.Properties.Enabled.Value()
+                  ? "true"
+                  : "false");
 ```
 
 ## Deleting a Certificate
