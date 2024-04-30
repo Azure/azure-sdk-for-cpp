@@ -120,4 +120,4 @@ secretClient.PurgeDeletedSecret(secret2.Name);
 ## Source
 
 To see the full example source, see:
-[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample4-get-secrets-deleted)
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample4-get-secrets-deleted)

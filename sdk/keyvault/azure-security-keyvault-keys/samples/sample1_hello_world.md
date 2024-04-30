@@ -91,6 +91,6 @@ keyClient.PurgeDeletedKey(rsaKeyName);
 
 ## Source
 
-- [sample1_hello_world.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample1-hello-world/sample1_hello_world.cpp)
+- [sample1_hello_world.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample1-hello-world/sample1_hello_world.cpp)
 
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

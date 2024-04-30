@@ -138,6 +138,4 @@ std::cout << " - Verified the signature using the algorithm "
 
 ## Source
 
-To see the full example source, see:
-
-- sample5_sign_verify.cpp
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

@@ -100,6 +100,6 @@ keyClient.PurgeDeletedKey(rsaKeyName);
 
 ## Source
 
-- [sample7_key_rotation.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample7-key-rotation/sample7_key_rotation.cpp)
+- [sample7_key_rotation.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample7-key-rotation/sample7_key_rotation.cpp)
 
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

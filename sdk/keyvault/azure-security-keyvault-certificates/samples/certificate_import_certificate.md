@@ -90,4 +90,6 @@ certificateClient.PurgeDeletedCertificate(pemName);
 ## Source
 
 To see the full example source, see:
-[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-import-certificate)
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate-import-certificate)
+
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md
