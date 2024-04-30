@@ -50,8 +50,7 @@ extends:
           targetVersion: 1.0.0-dev.20240423.2
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
-      - template: /eng/pipelines/templates/steps/install-cmake.yml
-        
+
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
