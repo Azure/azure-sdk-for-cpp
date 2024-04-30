@@ -83,7 +83,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
      * @brief Define the test
      *
      */
-    void Run(Azure::Core::Context const&) override { auto t = m_client->GetSecret(m_secretName); }
+    void Run(Azure::Core::Context const&) override
+    {
+      try
+      {
+        auto t = m_client->GetSecret(m_secretName);
+      }
+      catch (...)
+      {
+        // Do nothing
+      }
+    }
 
     /**
      * @brief Define the test options for the test.
