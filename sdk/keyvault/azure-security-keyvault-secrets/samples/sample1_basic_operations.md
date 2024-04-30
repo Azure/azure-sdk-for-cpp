@@ -18,7 +18,10 @@ auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
 ```cpp Snippet:SecretSample1SecretClient
-SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+// create client
+SecretClient secretClient(keyVaultUrl, credential);
 ```
 
 ## Creating a Secret
