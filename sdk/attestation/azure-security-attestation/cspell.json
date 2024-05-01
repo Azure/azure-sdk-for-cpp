@@ -6,6 +6,9 @@
     "powershell",
     "cpp"
   ],
+  "ignorePaths": [
+    "**/test/ut/recordings/*.json"
+  ],
   "words": [
     "ECDS",
     "jwks",
@@ -17,6 +20,6 @@
     "attestsgxenclavewithruntimejson",
     "attestsgxenclavewithruntimebinary",
     "getopenidmetadata"
-      
+
   ]
 }
