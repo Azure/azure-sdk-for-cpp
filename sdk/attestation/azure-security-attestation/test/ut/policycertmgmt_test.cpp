@@ -35,10 +35,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
 
     // Create
-    virtual void SetUp() override
-    {
-      Azure::Core::Test::TestBase::SetUpTestBase();
-    }
+    virtual void SetUp() override { Azure::Core::Test::TestBase::SetUpTestBase(); }
 
     std::string GetServiceEndpoint(ServiceInstanceType const type)
     {

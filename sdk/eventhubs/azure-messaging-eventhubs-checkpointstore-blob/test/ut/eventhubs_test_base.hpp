@@ -9,10 +9,7 @@ class EventHubsTestBase : public Azure::Core::Test::TestBase {
 public:
   EventHubsTestBase() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
   // Create
-  virtual void SetUp() override
-  {
-    Azure::Core::Test::TestBase::SetUpTestBase();
-  }
+  virtual void SetUp() override { Azure::Core::Test::TestBase::SetUpTestBase(); }
   virtual void TearDown() override
   {
     // Make sure you call the base classes TearDown method to ensure recordings are made.

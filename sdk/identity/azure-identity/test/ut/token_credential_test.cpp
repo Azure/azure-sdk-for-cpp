@@ -43,10 +43,7 @@ namespace Azure { namespace Identity { namespace Test {
     }
 
     // Runs before every test.
-    virtual void SetUp() override
-    {
-      Azure::Core::Test::TestBase::SetUpTestBase();
-    }
+    virtual void SetUp() override { Azure::Core::Test::TestBase::SetUpTestBase(); }
   };
 }}} // namespace Azure::Identity::Test
 

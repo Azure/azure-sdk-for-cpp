@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     std::string AssetsPath;
-    
+
     /**
      * @brief The mode how the test is running.
      *
@@ -93,7 +93,7 @@ namespace Azure { namespace Core { namespace Test {
 
       return fullName;
     }
-    
+
     std::string GetTestName() const { return m_testName; }
     std::string GetTestSuiteName() const { return m_testSuite; }
 
