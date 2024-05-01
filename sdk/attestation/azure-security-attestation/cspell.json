@@ -20,6 +20,6 @@
     "attestsgxenclavewithruntimejson",
     "attestsgxenclavewithruntimebinary",
     "getopenidmetadata"
-
+    
   ]
 }
