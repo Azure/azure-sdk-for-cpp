@@ -6,9 +6,6 @@
     "powershell",
     "cpp"
   ],
-  "ignorePaths": [
-    "**/test/ut/recordings/*.json"
-  ],
   "words": [
     "blang",
     "dowork",
