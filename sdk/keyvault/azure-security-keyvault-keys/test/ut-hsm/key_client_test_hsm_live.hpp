@@ -47,7 +47,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+      Azure::Core::Test::TestBase::SetUpTestBase();
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
 

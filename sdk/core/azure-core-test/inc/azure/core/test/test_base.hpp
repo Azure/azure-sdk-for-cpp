@@ -66,7 +66,6 @@ namespace Azure { namespace Core { namespace Test {
         // Record mode uses:
         //  - curl or winhttp transport adapter
         //  - Recording policy. Intercept server responses to create json files
-        // AZURE_TEST_RECORDING_DIR is exported by CMAKE
         m_testProxy->StartPlaybackRecord(TestMode::RECORD);
         m_testProxy->ConfigureInsecureConnection(options);
         options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
@@ -362,29 +361,21 @@ namespace Azure { namespace Core { namespace Test {
     /**
      * @brief Run before each test.
      *
-     * @param baseRecordingPath - the base recording path to be used for this test. Normally this
-     * is `AZURE_TEST_RECORDING_DIR`.
-     *
      * For example:
      *
      * \code{.cpp}
-     *  Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+     *  Azure::Core::Test::TestBase::SetUpTestBase();
      * \endcode
      *
      */
-    void SetUpTestBase(std::string const& baseRecordingPath)
+    void SetUpTestBase()
     {
-      // Init interceptor from PlayBackRecorder
-      std::string recordingPath(baseRecordingPath);
-      recordingPath.append("/recordings");
-
       m_testContext.TestMode = Azure::Core::Test::TestProxyManager::GetTestMode();
       // Use the test info to init the test context and interceptor.
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
       // set the interceptor for the current test
       m_testContext.RenameTest(
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
-      m_testContext.RecordingPath = recordingPath;
       m_testContext.AssetsPath = GetAssetsPath();
 
       if (!m_wasSkipped && !m_testContext.IsLiveMode())

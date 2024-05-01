@@ -124,7 +124,7 @@ protected:
   // Create
   virtual void SetUp() override
   {
-    Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+    Azure::Core::Test::TestBase::SetUpTestBase();
 
     opentelemetry::sdk::common::internal_log::GlobalLogHandler::SetLogHandler(
         opentelemetry::nostd::shared_ptr<opentelemetry::sdk::common::internal_log::LogHandler>(

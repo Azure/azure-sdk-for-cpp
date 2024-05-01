@@ -27,12 +27,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     std::string AssetsPath;
-    /**
-     * @brief The path where the tests recordings are written.
-     *
-     */
-    std::string RecordingPath;
-
+    
     /**
      * @brief The mode how the test is running.
      *
@@ -93,14 +88,12 @@ namespace Azure { namespace Core { namespace Test {
 
     std::string GetTestRecordingPathName() const
     {
-      std::string fullName(RecordingPath);
-      fullName.append("/");
-      fullName.append(GetTestPlaybackRecordingName());
+      std::string fullName{GetTestPlaybackRecordingName()};
       fullName.append(".json");
 
       return fullName;
     }
-
+    
     std::string GetTestName() const { return m_testName; }
     std::string GetTestSuiteName() const { return m_testSuite; }
 

@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   void StorageTest::SetUp()
   {
-    Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+    Azure::Core::Test::TestBase::SetUpTestBase();
 
     if (m_testContext.IsLiveMode())
     {

@@ -30,7 +30,7 @@ namespace Azure { namespace Data { namespace Test {
   {
     auto param = GetParam();
 
-    Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+    Azure::Core::Test::TestBase::SetUpTestBase();
     StorageTest::SetUp();
     if (shouldSkipTest())
     {

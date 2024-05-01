@@ -39,7 +39,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Create
     virtual void SetUp() override
     {
-      Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+      Azure::Core::Test::TestBase::SetUpTestBase();
       {
         // TPM attestation requires a policy document be set. For simplicity, we only run the
         // test against an AAD attestation service instance.

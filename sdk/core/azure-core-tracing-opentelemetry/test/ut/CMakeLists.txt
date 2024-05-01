@@ -7,8 +7,6 @@ set(azure-core-tracing-opentelemetry-test)
 
 add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 
-add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
-
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
   add_compile_options(-Wno-error=deprecated-declarations)
 endif()

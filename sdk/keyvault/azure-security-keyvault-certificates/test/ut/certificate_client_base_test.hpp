@@ -69,7 +69,7 @@ namespace Azure {
     // Runs before every test.
     virtual void SetUp() override
     {
-      Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+      Azure::Core::Test::TestBase::SetUpTestBase();
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
 
       // Options and credential for the client

@@ -23,7 +23,7 @@ public:
   // Create
   virtual void SetUp() override
   {
-    Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+    Azure::Core::Test::TestBase::SetUpTestBase();
   }
   virtual void TearDown() override
   {
@@ -109,7 +109,7 @@ public:
   // Create
   virtual void SetUp() override
   {
-    Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+    Azure::Core::Test::TestBase::SetUpTestBase();
   }
   virtual void TearDown() override
   {
