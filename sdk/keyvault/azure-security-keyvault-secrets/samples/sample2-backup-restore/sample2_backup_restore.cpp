@@ -24,10 +24,11 @@ void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& ac
 
 int main()
 {
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  SecretClient secretClient(keyVaultUrl, credential);
 
   std::string secretName("MySampleSecret2");
   std::string secretValue("my secret value");

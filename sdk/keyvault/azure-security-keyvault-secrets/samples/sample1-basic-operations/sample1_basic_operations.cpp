@@ -21,11 +21,12 @@ using namespace std::chrono_literals;
 
 int main()
 {
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   // @begin_snippet: SecretSample1CreateCredential
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  SecretClient secretClient(keyVaultUrl, credential);
   // @end_snippet
 
   try

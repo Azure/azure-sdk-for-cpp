@@ -10,9 +10,6 @@
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
 
@@ -32,14 +29,11 @@ KeyVaultCertificateWithPolicy CreateCertificate(
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
   std::chrono::milliseconds defaultWait(10s);
   // create client
-  CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  CertificateClient certificateClient(keyVaultUrl, credential);
 
   try
   {
