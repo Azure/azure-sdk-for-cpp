@@ -8,6 +8,8 @@
 $logFiles = Get-ChildItem -Recurse -Filter *.log
 $filteredLogs = $logFiles.Where({ $_.Name -in ('vcpkg-bootstrap.log', 'vcpkg-manifest-install.log') })
 
+$filteredLogs.FullName | Write-Host
+
 if (!$filteredLogs) {
     Write-Host "No logs found"
     exit 0
@@ -19,7 +21,7 @@ foreach ($logFile in $filteredLogs)
     Write-Host "=============================================================================================================================="
     Write-Host "Log file: $logFile"
     Write-Host "=============================================================================================================================="
-    try { 
+    try {
         Get-Content $logFile | Write-Host
     } catch { 
         Write-Host "Could not locate file found using Get-ChildItem $logFile"
