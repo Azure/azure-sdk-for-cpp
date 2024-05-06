@@ -954,18 +954,12 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // /3 containing a "Connection" header should be considered malformed. (HTTP/2:
     // https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
     //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
-    if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() >= 1)
-    {
-      m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
-    }
-    else if (m_response->GetMajorVersion() <= 1)
-    {
-      m_httpKeepAlive = hasConnectionKeepAlive;
-    }
-    else
-    {
-      m_httpKeepAlive = true;
-    }
+    // We assume that the server is not sending malformed responses,
+    // so we are not considering HTTP/2 or HTTP/3 here.
+    // We currently only support HTTP/1.1 requests and responses. Even if the response is HTTP/1.0,
+    // if it has a "Connection" header, with just "close", we dont keep the connection alive.
+
+    m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
   }
 
   // For Head request, set the length of body response to 0.

@@ -340,8 +340,8 @@ namespace Azure { namespace Core { namespace Http {
     Http::HttpStatusCode m_lastStatusCode = Http::HttpStatusCode::BadRequest;
 
     /**
-     * @brief Holds information on whether the connection can be kept alive, based on HTTP protocol
-     * version and the "Connection" HTTP header.
+     * @brief Holds information on whether the connection can be kept alive, based on the
+     * "Connection" HTTP header.
      *
      */
     bool m_httpKeepAlive = false;

@@ -91,8 +91,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @brief Moves a connection back to the pool to be re-used.
      *
      * @param connection CURL HTTP connection to add to the pool.
-     * @param httpKeepAlive The status of keep-alive behavior, based on HTTP protocol version and
-     * the most recent response header received through the \p connection.
+     * @param httpKeepAlive The status of keep-alive behavior, based on the most recent response
+     * header received through the \p connection.
      */
     void MoveConnectionBackToPool(
         std::unique_ptr<CurlNetworkConnection> connection,
