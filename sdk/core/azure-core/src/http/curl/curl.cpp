@@ -559,6 +559,17 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(
   end = std::find(start, last, '\r');
   auto reasonPhrase = std::string(start, end); // remove \r
 
+  // We currently only support HTTP/1.1, both in the request and the response.
+  if (majorVersion != 1 || minorVersion != 1)
+  {
+    Log::Write(
+        Logger::Level::Verbose,
+        LogMsgPrefix + "Unsupported HTTP version in the response. Only HTTP/1.1 is supported.");
+    throw TransportException(
+        "Unsupported HTTP version: " + std::to_string(majorVersion) + "."
+        + std::to_string(minorVersion));
+  }
+
   // allocate the instance of response to heap with shared ptr
   // So this memory gets delegated outside CurlTransport as a shared_ptr so memory will be
   // eventually released
