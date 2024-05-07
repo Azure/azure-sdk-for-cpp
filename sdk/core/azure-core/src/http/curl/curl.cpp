@@ -957,7 +957,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // We assume that the server is not sending malformed responses,
     // so we are not considering HTTP/2 or HTTP/3 here.
     // We currently only support HTTP/1.1 requests and responses. Even if the response is HTTP/1.0,
-    // if it has a "Connection" header, with just "close", we dont keep the connection alive.
+    // if it has a "Connection" header, with just "close", we do not keep the connection alive.
 
     m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
   }
