@@ -1,6 +1,7 @@
 # Release History
 
 ## 1.0.0-beta.8 (2024-05-07)
+
 ### Features Added
 
 - Added new features for upcoming Event Hubs service release.
