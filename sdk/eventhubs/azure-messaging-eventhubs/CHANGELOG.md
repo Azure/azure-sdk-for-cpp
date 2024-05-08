@@ -6,7 +6,6 @@
 
 - Added new features for upcoming Event Hubs service release.
 
-
 ## 1.0.0-beta.7 (2024-04-09)
 
 ### Breaking Changes
