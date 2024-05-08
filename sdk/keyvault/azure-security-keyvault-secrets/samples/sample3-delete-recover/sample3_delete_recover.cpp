@@ -3,7 +3,7 @@
 
 /**
  * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for
- * C++ to create, get, update, delete and purge a secret.
+ * C++ to delete and restore a secret.
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
@@ -13,62 +13,63 @@
 #include <azure/identity.hpp>
 #include <azure/keyvault/secrets.hpp>
 
+#include <assert.h>
 #include <chrono>
 #include <iostream>
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
 
 int main()
 {
-  // @begin_snippet: SecretSample1CreateCredential
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
-
   // create client
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-  // @end_snippet
+  SecretClient secretClient(keyVaultUrl, credential);
+
+  std::string secretName("MySampleSecret");
+  std::string secretValue("my secret value");
 
   try
   {
+
     // create secret
-    // @begin_snippet: SecretSample1CreateSecret
-    std::string secretName("MySampleSecret");
-    std::string secretValue("my secret value");
-
     secretClient.SetSecret(secretName, secretValue);
-    // @end_snippet
 
-    // @begin_snippet: SecretSample1GetSecret
     // get secret
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
     std::cout << "Secret is returned with name " << secret.Name << " and value " << valueString
               << std::endl;
-    // @end_snippet
-
-    // @begin_snippet: SecretSample1UpdateSecretProperties
-    // change one of the properties
-    secret.Properties.ContentType = "my content";
-    // update the secret
-    KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
-    std::string updatedValueString
-        = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value() : "NONE RETURNED";
-    std::cout << "Secret's content type is now " << updatedValueString << std::endl;
-    // @end_snippet
-
-    // @begin_snippet: SecretSample1DeleteSecret
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
-    operation.PollUntilDone(20s);
+    operation.PollUntilDone(2s);
 
-    // purge the deleted secret
-    secretClient.PurgeDeletedSecret(secret.Name);
-    // @end_snippet
+    // call recover secret
+    RecoverDeletedSecretOperation recoverOperation
+        = secretClient.StartRecoverDeletedSecret(secret.Name);
+
+    // poll until done
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
+    SecretProperties restoredSecretProperties = recoverOperation.PollUntilDone(2s).Value;
+    KeyVaultSecret restoredSecret = secretClient.GetSecret(restoredSecretProperties.Name).Value;
+
+    AssertSecretsEqual(secret, restoredSecret);
+
+    // cleanup
+    // start deleting the secret
+    DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
+    cleanupOperation.PollUntilDone(2s);
+    secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
@@ -83,4 +84,16 @@ int main()
   }
 
   return 0;
+}
+
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual)
+{
+#if defined(NDEBUG)
+  // Use (void) to silence unused warnings.
+  (void)expected;
+  (void)actual;
+#endif
+  assert(expected.Name == actual.Name);
+  assert(expected.Properties.Version == actual.Properties.Version);
+  assert(expected.Id == actual.Id);
 }

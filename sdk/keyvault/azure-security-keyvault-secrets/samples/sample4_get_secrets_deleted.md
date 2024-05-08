@@ -17,7 +17,10 @@ auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
 ```cpp
-SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+// create client
+SecretClient secretClient(keyVaultUrl, credential);
 ```
 
 ## Creating a couple of Secrets
@@ -120,4 +123,4 @@ secretClient.PurgeDeletedSecret(secret2.Name);
 ## Source
 
 To see the full example source, see:
-[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample4-get-secrets-deleted)
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample4-get-secrets-deleted)

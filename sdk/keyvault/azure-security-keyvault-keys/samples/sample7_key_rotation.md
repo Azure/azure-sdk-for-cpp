@@ -18,7 +18,9 @@ auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
 ```cpp Snippet:KeysSample7KeyClient
-KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+KeyClient keyClient(keyVaultUrl, credential);
 ```
 
 ## Creating a key
@@ -100,6 +102,6 @@ keyClient.PurgeDeletedKey(rsaKeyName);
 
 ## Source
 
-- [sample7_key_rotation.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample7-key-rotation/sample7_key_rotation.cpp)
+- [sample7_key_rotation.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample7-key-rotation/sample7_key_rotation.cpp)
 
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

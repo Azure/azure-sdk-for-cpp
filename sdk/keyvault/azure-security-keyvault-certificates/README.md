@@ -62,7 +62,9 @@ Key Vault Certificate client for C++ currently supports any `TokenCredential` fo
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
 ```cpp Snippet:CertificateSample1Client
-CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+ CertificateClient certificateClient(keyVaultUrl, credential);
 ```
 
 ### Start creating a Certificate

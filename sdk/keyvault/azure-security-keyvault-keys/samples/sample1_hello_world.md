@@ -10,13 +10,15 @@ To create a new `KeyClient` to create, get, update, or delete keys, you need the
 Key Vault Keys client for C++ currently supports any `TokenCredential` for authenticating.
 
 ```cpp Snippet:KeysSample1CreateCredential
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
 ```cpp Snippet:KeysSample1KeyClient
-KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+KeyClient keyClient(keyVaultUrl, credential);
 ```
 
 ## Creating a key
@@ -91,6 +93,6 @@ keyClient.PurgeDeletedKey(rsaKeyName);
 
 ## Source
 
-- [sample1_hello_world.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample1-hello-world/sample1_hello_world.cpp)
+- [sample1_hello_world.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample1-hello-world/sample1_hello_world.cpp)
 
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

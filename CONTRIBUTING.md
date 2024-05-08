@@ -199,7 +199,7 @@ When setting `AZURE_TEST_MODE=PLAYBACK`, test cases will consume pre-recorded da
 
 - RECORD
 
-When setting `AZURE_TEST_MODE=RECORD`, test cases will run the as when running `LIVE`. All the AZURE service network responses are recorded in a json file within the /recordings folder from the /test/ut directory. Use this test mode to generate pre-recorded data to be used on `PLAYBACK` mode.
+When setting `AZURE_TEST_MODE=RECORD`, test cases will run the as when running `LIVE`. All the AZURE service network responses are handled by the test proxy. Use this test mode to generate pre-recorded data to be used on `PLAYBACK` mode.
 
 ##### Test Environment Configuration
 

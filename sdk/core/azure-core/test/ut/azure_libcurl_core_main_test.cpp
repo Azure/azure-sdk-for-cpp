@@ -32,7 +32,7 @@
 
 namespace Azure { namespace Core { namespace Test {
   // This test fails intermittently: https://github.com/Azure/azure-sdk-for-cpp/issues/4332
-  TEST(SdkWithLibcurl, DISABLED_globalCleanUp)
+  TEST(SdkWithLibcurl, globalCleanUp)
   {
     Azure::Core::Http::Request req(
         Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://httpbin.org/get"));
@@ -84,11 +84,19 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
               .size(),
           1);
-      // let the thread cleanup thread hit
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(
-              Azure::Core::Http::_detail::DefaultCleanerIntervalMilliseconds + 1000)
-          - ms_double);
+
+      std::uint16_t waitRepeats{0};
+      // wait for the cleanup thread to wake up and run. since this is a timing matter based on when
+      // the thread is scheduled we should let it run to completion max 2 minutes (12*10s)
+      while (Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                     .ConnectionPoolIndex.size()
+                 == 1
+             && waitRepeats < 12)
+      {
+        // sleep for 10 seconds
+        std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+      }
+
       // Check that after the connection is gone and cleaned up, the pool is empty
       EXPECT_EQ(
           Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex

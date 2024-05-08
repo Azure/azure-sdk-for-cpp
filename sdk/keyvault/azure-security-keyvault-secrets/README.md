@@ -52,10 +52,10 @@ For detailed samples please review the samples provided.
 First step is to create  a SecretClient.
 
 ```cpp
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
 auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
-
 // create client
-SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+SecretClient secretClient(keyVaultUrl, credential);
 ```
 
 ### Create a secret
