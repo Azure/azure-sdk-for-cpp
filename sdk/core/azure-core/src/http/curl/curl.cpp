@@ -954,8 +954,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // /3 containing a "Connection" header should be considered malformed. (HTTP/2:
     // https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
     //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
-    // We assume that the server is not sending malformed responses,
-    // so we are not considering HTTP/2 or HTTP/3 here.
     if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() == 1)
     {
       // HTTP/1.1
