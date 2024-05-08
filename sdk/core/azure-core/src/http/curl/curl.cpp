@@ -954,17 +954,28 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // /3 containing a "Connection" header should be considered malformed. (HTTP/2:
     // https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
     //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
-    if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() >= 1)
+    // We assume that the server is not sending malformed responses,
+    // so we are not considering HTTP/2 or HTTP/3 here.
+    if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() == 1)
     {
+      // HTTP/1.1
       m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
     }
-    else if (m_response->GetMajorVersion() <= 1)
+    else if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() == 0)
     {
+      // HTTP/1.0
       m_httpKeepAlive = hasConnectionKeepAlive;
     }
     else
     {
-      m_httpKeepAlive = true;
+      Log::Write(
+          Logger::Level::Verbose,
+          LogMsgPrefix
+              + "Unsupported HTTP version in the response. Only HTTP/1.0 and HTTP/1.1 is "
+                "supported.");
+      throw TransportException(
+          "Unsupported HTTP version: " + std::to_string(m_response->GetMajorVersion()) + "."
+          + std::to_string(m_response->GetMinorVersion()));
     }
   }
 
