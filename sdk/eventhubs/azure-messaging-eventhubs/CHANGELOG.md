@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added new features for upcoming Event Hubs service release.
+
 ### Breaking Changes
 
 ### Bugs Fixed
