@@ -933,6 +933,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   else
   {
     bool hasConnectionKeepAlive = false;
+    bool hasConnectionClose = false;
     {
       const Core::CaseInsensitiveMap& responseHeaders = m_response->GetHeaders();
       const auto connectionHeader = responseHeaders.find("Connection");
@@ -941,6 +942,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
         const std::string headerValueLowercase
             = Core::_internal::StringExtensions::ToLower(connectionHeader->second);
         hasConnectionKeepAlive = headerValueLowercase.find("keep-alive") != std::string::npos;
+        hasConnectionClose = headerValueLowercase.find("close") != std::string::npos;
       }
     }
 
@@ -957,7 +959,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // We currently only support HTTP/1.1 requests and responses. Even if the response is HTTP/1.0,
     // if it has a "Connection" header, with just "close", we do not keep the connection alive.
 
-    m_httpKeepAlive = hasConnectionKeepAlive;
+    m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
   }
 
   // For Head request, set the length of body response to 0.
