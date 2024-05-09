@@ -950,19 +950,18 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // The value can also be "keep-alive, close" (i.e. "both are fine"), in which case we are
     // preferring to treat it as keep-alive.
     // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection)
-    // Should it come to HTTP/2 and HTTP/3, they are "keep-alive", but any response from HTTP/2 or
-    // /3 containing a "Connection" header should be considered malformed. (HTTP/2:
-    // https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
-    //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
-    if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() >= 1)
+    if (m_response->GetMajorVersion() == 1)
     {
-      // HTTP/1.1
-      m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
-    }
-    else if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() == 0)
-    {
-      // HTTP/1.0
-      m_httpKeepAlive = hasConnectionKeepAlive;
+      if (m_response->GetMinorVersion() >= 1)
+      {
+        // HTTP/1.1+
+        m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
+      }
+      else
+      {
+        // HTTP/1.0
+        m_httpKeepAlive = hasConnectionKeepAlive;
+      }
     }
     else
     {
@@ -970,10 +969,12 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
           Logger::Level::Verbose,
           LogMsgPrefix
               + "Unsupported HTTP version in the response. Only HTTP/1.0 and HTTP/1.1 is "
-                "supported.");
-      throw TransportException(
-          "Unsupported HTTP version: " + std::to_string(m_response->GetMajorVersion()) + "."
-          + std::to_string(m_response->GetMinorVersion()));
+                "supported as a response, for an HTTP/1.1 request.");
+
+      // We don't expect HTTP/2.0 or 3.0 as a response, when sending an HTTP/1.1 request.
+      // Barring rejecting as malformed, the safest thing to do here is to assume the connection is
+      // not reusable.
+      m_httpKeepAlive = false;
     }
   }
 
