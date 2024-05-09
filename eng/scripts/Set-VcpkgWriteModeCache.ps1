@@ -1,6 +1,6 @@
 param(
     [string] $StorageAccountName = 'cppvcpkgcache',
-    [string] $StorageAccountKey
+    [string] $ResourceGroupName = 'cpp'
 )
 
 
@@ -27,9 +27,14 @@ $env:PSModulePath = $modulePaths -join $moduleSeperator
 
 Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
+$storageAccountKeys = Get-AzStorageAccountKey `
+    -ResourceGroupName $ResourceGroupName `
+    -Name $StorageAccountName
+
 $ctx = New-AzStorageContext `
-    -StorageAccountName $StorageAccountName `
-    -StorageAccountKey $StorageAccountKey
+    -StorageAccountKey $storageAccountKeys[0].Value`
+    -StorageAccountName $StorageAccountName
+
 $token = New-AzStorageAccountSASToken `
     -Service Blob `
     -ResourceType Object `

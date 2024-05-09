@@ -1,6 +1,6 @@
 # Release History
 
-## 12.10.0-beta.2 (Unreleased)
+## 12.11.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,17 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where `PathItem::EncryptionContext` returned by `DataLakeDirectoryClient::ListPaths` was always null.
-
 ### Other Changes
+
+## 12.10.0 (2024-05-07)
+
+### Features Added
+
+- Features in `12.10.0-beta.1` are now generally available.
+
+### Bugs Fixed
+
+- Fixed a bug where `PathItem::EncryptionContext` returned by `DataLakeDirectoryClient::ListPaths` was always null.
 
 ## 12.10.0-beta.1 (2024-04-17)
 
