@@ -121,6 +121,24 @@ namespace Azure { namespace Core { namespace Test {
         (std::pair<std::string, std::string>("valid3", "header3")));
   }
 
+  TEST(TestHttp, RawResponseHttpVersions)
+  {
+    Http::RawResponse responseHttp10(1, 0, Http::HttpStatusCode::Accepted, "Test");
+
+    EXPECT_EQ(responseHttp10.GetMajorVersion(), 1);
+    EXPECT_EQ(responseHttp10.GetMinorVersion(), 0);
+
+    Http::RawResponse responseHttp11(1, 1, Http::HttpStatusCode::Accepted, "Test");
+
+    EXPECT_EQ(responseHttp11.GetMajorVersion(), 1);
+    EXPECT_EQ(responseHttp11.GetMinorVersion(), 1);
+
+    Http::RawResponse responseHttp20(2, 0, Http::HttpStatusCode::Accepted, "Test");
+
+    EXPECT_EQ(responseHttp20.GetMajorVersion(), 2);
+    EXPECT_EQ(responseHttp20.GetMinorVersion(), 0);
+  }
+
   // HTTP Range
   TEST(TestHttp, HttpRange)
   {
