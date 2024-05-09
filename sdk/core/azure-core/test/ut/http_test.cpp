@@ -121,22 +121,30 @@ namespace Azure { namespace Core { namespace Test {
         (std::pair<std::string, std::string>("valid3", "header3")));
   }
 
-  TEST(TestHttp, RawResponseHttpVersions)
+  class ParameterizedTestForHttpVersions
+      : public ::testing::TestWithParam<std::pair<std::int32_t, std::int32_t>> {
+  protected:
+    std::pair<std::int32_t, std::int32_t> httpVersion;
+  };
+
+  INSTANTIATE_TEST_SUITE_P(
+      TestHttp,
+      ParameterizedTestForHttpVersions,
+      ::testing::Values(
+          std::make_pair(0, 9),
+          std::make_pair(1, 0),
+          std::make_pair(1, 1),
+          std::make_pair(2, 0)));
+
+  TEST_P(ParameterizedTestForHttpVersions, ValidHttpVersionsInResponse)
   {
-    Http::RawResponse responseHttp10(1, 0, Http::HttpStatusCode::Accepted, "Test");
+    std::int32_t majorVersion = GetParam().first;
+    std::int32_t minorVersion = GetParam().second;
 
-    EXPECT_EQ(responseHttp10.GetMajorVersion(), 1);
-    EXPECT_EQ(responseHttp10.GetMinorVersion(), 0);
+    Http::RawResponse response(majorVersion, minorVersion, Http::HttpStatusCode::Ok, "Test");
 
-    Http::RawResponse responseHttp11(1, 1, Http::HttpStatusCode::Accepted, "Test");
-
-    EXPECT_EQ(responseHttp11.GetMajorVersion(), 1);
-    EXPECT_EQ(responseHttp11.GetMinorVersion(), 1);
-
-    Http::RawResponse responseHttp20(2, 0, Http::HttpStatusCode::Accepted, "Test");
-
-    EXPECT_EQ(responseHttp20.GetMajorVersion(), 2);
-    EXPECT_EQ(responseHttp20.GetMinorVersion(), 0);
+    EXPECT_EQ(response.GetMajorVersion(), majorVersion);
+    EXPECT_EQ(response.GetMinorVersion(), minorVersion);
   }
 
   // HTTP Range
