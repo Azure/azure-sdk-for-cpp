@@ -367,24 +367,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     private:
       RetryOptions m_retryOptions;
 
-#if defined(_azure_TESTING_BUILD)
-    protected:
-#else
-    private:
-#endif
-      virtual bool ShouldRetryOnTransportFailure(
-          RetryOptions const& retryOptions,
-          int32_t attempt,
-          std::chrono::milliseconds& retryAfter,
-          double jitterFactor = -1) const;
-
-      virtual bool ShouldRetryOnResponse(
-          RawResponse const& response,
-          RetryOptions const& retryOptions,
-          int32_t attempt,
-          std::chrono::milliseconds& retryAfter,
-          double jitterFactor = -1) const;
-
     public:
       /**
        * Constructs HTTP retry policy with the provided #Azure::Core::Http::Policies::RetryOptions.
@@ -417,6 +399,18 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       static int32_t GetRetryCount(Context const& context);
 
     protected:
+      virtual bool ShouldRetryOnTransportFailure(
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
+
+      virtual bool ShouldRetryOnResponse(
+          RawResponse const& response,
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          std::chrono::milliseconds& retryAfter,
+          double jitterFactor = -1) const;
       /**
        * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
        * a request, based on the returned HTTP response.
