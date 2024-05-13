@@ -118,12 +118,8 @@ int32_t RetryPolicy::GetRetryCount(Context const& context)
   return *ptr;
 }
 
-bool RetryPolicy::ShouldRetry(
-    std::unique_ptr<RawResponse> const& response,
-    RetryOptions const& retryOptions) const
+bool RetryPolicy::ShouldRetry(std::unique_ptr<RawResponse> const&, RetryOptions const&) const
 {
-  (void)response;
-  (void)retryOptions;
   return true;
 }
 
