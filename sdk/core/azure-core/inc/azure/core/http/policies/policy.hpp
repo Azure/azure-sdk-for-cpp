@@ -411,6 +411,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           int32_t attempt,
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
+
       /**
        * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
        * a request, based on the returned HTTP response.
