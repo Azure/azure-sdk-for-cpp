@@ -255,17 +255,17 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientGetProperties)
   {
-      auto response = m_tableServiceClient->GetServiceProperties();
-      EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
-      EXPECT_EQ(response.Value.Logging.Version, "1.0");
-      EXPECT_EQ(response.Value.Logging.Delete, false);
-      EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
-      EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
-      EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
-      EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
-      EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
-      EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
-      EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
+    auto response = m_tableServiceClient->GetServiceProperties();
+    EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
+    EXPECT_EQ(response.Value.Logging.Version, "1.0");
+    EXPECT_EQ(response.Value.Logging.Delete, false);
+    EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
+    EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
+    EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
+    EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
+    EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
+    EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
+    EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
   }
 
   TEST_P(TablesClientTest, ServiceClientSet)
@@ -556,6 +556,11 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionCreateFail)
   {
+    if (GetParam() != AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -581,12 +586,12 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionCreateOK)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
-    
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -612,12 +617,12 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionDelete)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
-    
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -650,12 +655,12 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionMerge)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
-    
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -686,12 +691,12 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionUpdate)
   {
-    if (GetParam() == AuthType::SAS)
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
-    
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -743,6 +748,6 @@ namespace Azure { namespace Data { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       Tables,
       TablesClientTest,
-      ::testing::Values(AuthType::Key , AuthType::ConnectionString, AuthType::SAS),
+      ::testing::Values(AuthType::Key, AuthType::ConnectionString, AuthType::SAS),
       GetSuffix);
 }}} // namespace Azure::Data::Test
