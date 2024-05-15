@@ -512,6 +512,10 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
   {
     request.GetUrl().AppendQueryParameter(IfMatch, options.Prefix.Value());
   }
+  if (options.ContinuationToken.HasValue())
+  {
+    request.GetUrl().AppendQueryParameter("NextTableName", options.ContinuationToken.Value());
+  }
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
@@ -520,7 +524,7 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::QueryTablesPagedResponse response;
+  Models::QueryTablesPagedResponse response(std::make_shared<TableServiceClient>(*this));
   {
     auto const& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());

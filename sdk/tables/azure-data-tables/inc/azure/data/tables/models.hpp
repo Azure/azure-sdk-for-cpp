@@ -117,6 +117,16 @@ namespace Azure { namespace Data { namespace Tables {
        */
       std::vector<Models::Table> Tables;
 
+      /**
+       * @brief Construct a new Query Tables Paged Response object.
+       *
+       * @param tableServiceClient Table service client.
+       */
+      QueryTablesPagedResponse(std::shared_ptr<TableServiceClient> tableServiceClient)
+          : m_tableServiceClient(tableServiceClient)
+      {
+      }
+
     public:
       /**
        * Table Service Client.
