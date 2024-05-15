@@ -8,7 +8,15 @@
 
 ### Bugs Fixed
 
+- [[#5589]](https://github.com/Azure/azure-sdk-for-cpp/pull/5589) Fix possible endless loop while polling curl socket.  (A community contribution, courtesy of _[CurtizJ](https://github.com/CurtizJ)_)
+
 ### Other Changes
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Anton Popov _([GitHub](https://github.com/CurtizJ))_
 
 ## 1.12.0 (2024-05-09)
 
