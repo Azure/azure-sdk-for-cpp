@@ -860,7 +860,7 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     Core::Context const& context)
 {
   auto url = m_url;
-  if (!options.NextPartitionKey.empty()&& !options.NextRowKey.empty())
+  if (!options.NextPartitionKey.empty() && !options.NextRowKey.empty())
   {
     url.AppendPath(m_tableName);
     url.AppendQueryParameter("NextPartitionKey", options.NextPartitionKey);
@@ -916,7 +916,7 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     {
       response.NextRowKey = headers.at("x-ms-continuation-NextRowKey");
     }
-    
+
     if (!response.NextPartitionKey.empty() || !response.NextRowKey.empty())
     {
       response.NextPageToken = "true";
