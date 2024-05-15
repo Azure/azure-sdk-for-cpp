@@ -817,8 +817,8 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
 
 void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
-  m_operationOptions.PartitionKey = NextPartitionKey;
-  m_operationOptions.RowKey = NextRowKey;
+  m_operationOptions.NextPartitionKey = NextPartitionKey;
+  m_operationOptions.NextRowKey = NextRowKey;
   *this = m_tableClient->QueryEntities(m_operationOptions, context);
 }
 
@@ -860,18 +860,27 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     Core::Context const& context)
 {
   auto url = m_url;
-  std::string appendPath = m_tableName + "(";
-  if (!options.PartitionKey.empty())
+  if (!options.NextPartitionKey.empty()&& !options.NextRowKey.empty())
   {
-    appendPath += "PartitionKey='" + Azure::Core::Url::Encode(options.PartitionKey) + "'";
+    url.AppendPath(m_tableName);
+    url.AppendQueryParameter("NextPartitionKey", options.NextPartitionKey);
+    url.AppendQueryParameter("NextRowKey", options.NextRowKey);
   }
-  if (!options.RowKey.empty())
+  else
   {
-    appendPath += ",RowKey='" + Azure::Core::Url::Encode(options.RowKey) + "'";
-  }
-  appendPath += ")";
+    std::string appendPath = m_tableName + "(";
+    if (!options.PartitionKey.empty())
+    {
+      appendPath += "PartitionKey='" + Azure::Core::Url::Encode(options.PartitionKey) + "'";
+    }
+    if (!options.RowKey.empty())
+    {
+      appendPath += ",RowKey='" + Azure::Core::Url::Encode(options.RowKey) + "'";
+    }
+    appendPath += ")";
 
-  url.AppendPath(appendPath);
+    url.AppendPath(appendPath);
+  }
 
   if (options.Filter.HasValue())
   {
@@ -892,7 +901,7 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::QueryEntitiesPagedResponse response{};
+  Models::QueryEntitiesPagedResponse response(std::make_shared<TableClient>(*this));
   {
     const auto& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
@@ -907,7 +916,13 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     {
       response.NextRowKey = headers.at("x-ms-continuation-NextRowKey");
     }
+    
+    if (!response.NextPartitionKey.empty() || !response.NextRowKey.empty())
+    {
+      response.NextPageToken = "true";
+    }
 
+    response.TableEntities.clear();
     auto const jsonRoot
         = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 

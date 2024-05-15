@@ -744,6 +744,16 @@ namespace Azure { namespace Data { namespace Tables {
        */
       std::string RowKey;
       /**
+       * @brief The next Partition key.
+       *
+       */
+      std::string NextPartitionKey;
+      /**
+       * @brief The next row key.
+       *
+       */
+      std::string NextRowKey;
+      /**
        * @brief The select query.
        *
        */
@@ -774,6 +784,14 @@ namespace Azure { namespace Data { namespace Tables {
        * Table entities.
        */
       std::vector<Models::TableEntity> TableEntities;
+
+      /**
+       * @brief Construct a new Query Entities Paged Response object.
+       *
+       * @param tableClient Table client.
+       */
+      QueryEntitiesPagedResponse(std::shared_ptr<TableClient> tableClient)
+          : m_tableClient(tableClient){};
 
     private:
       std::shared_ptr<TableClient> m_tableClient;

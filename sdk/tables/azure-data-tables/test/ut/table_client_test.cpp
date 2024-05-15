@@ -560,6 +560,26 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
 
+  TEST_P(TablesClientTest, QueryEntityPagedResponse_LIVEONLY_)
+  {
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    for (int i = 0; i < 1010; i++)
+    {
+      auto entity = Azure::Data::Tables::Models::TableEntity();
+      entity.SetPartitionKey("partition");
+      entity.SetRowKey("rowKey" + std::to_string(i));
+      m_tableClient->AddEntity(entity);
+    }
+
+    Azure::Data::Tables::Models::QueryEntitiesOptions options;
+    auto response = m_tableClient->QueryEntities(options);
+    EXPECT_EQ(response.TableEntities.size(), 1000);
+    EXPECT_EQ(response.TableEntities[0].GetRowKey().Value, "rowKey0");
+
+    response.MoveToNextPage();
+    EXPECT_EQ(response.TableEntities.size(), 10);
+  }
+
   TEST_P(TablesClientTest, EntityGet)
   {
     if (GetParam() == AuthType::Key)
