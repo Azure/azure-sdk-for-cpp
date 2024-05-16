@@ -449,7 +449,7 @@ namespace Azure { namespace Core { namespace Test {
         auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
-      catch (Azure::Core::Http::TransportException const& ex)
+      catch (Azure::Core::Http::TransportException const&)
       {
         // CURL returns a connection error which triggers a transport exception.
         GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i
