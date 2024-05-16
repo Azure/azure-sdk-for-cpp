@@ -286,7 +286,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     listener.Stop();
   }
 
-  TEST_F(TestLinks, LinkAttachDetachMultipleOneSession)
+  // This test fails intermittently, with segfault:
+  // https://github.com/Azure/azure-sdk-for-cpp/issues/5536
+  TEST_F(TestLinks, DISABLED_LinkAttachDetachMultipleOneSession)
   {
     class MySessionListener final : public MessageTests::MockServiceEndpoint {
     public:
