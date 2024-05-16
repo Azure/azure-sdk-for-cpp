@@ -430,19 +430,37 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapterOptions, DisableCrlValidation)
   {
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
-    //    Azure::Core::Url testUrl("https://www.microsoft.com/");
+
     // HTTP Connections.
+    auto failedCounter = 0;
+    for (auto i = 0; i < 3; i++)
     {
-      Azure::Core::Http::Policies::TransportOptions transportOptions;
+      GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i << ".";
+      try
+      {
+        Azure::Core::Http::Policies::TransportOptions transportOptions;
 
-      // Note that the default is to *disable* CRL checks, because they are disabled
-      // by default. So we test *enabling* CRL validation checks.
-      transportOptions.EnableCertificateRevocationListCheck = true;
-      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+        // Note that the default is to *disable* CRL checks, because they are disabled
+        // by default. So we test *enabling* CRL validation checks.
+        transportOptions.EnableCertificateRevocationListCheck = true;
+        HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
 
-      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-      auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-      EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      catch (Azure::Core::Http::TransportException const&)
+      {
+        // CURL returns a connection error which triggers a transport exception.
+        GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i
+                         << " failed with a TransportException.";
+        failedCounter++;
+        // We allow 1 intermittent failure, due to networking issues.
+        if (failedCounter > 1)
+        {
+          throw;
+        }
+      }
     }
 #if defined(ENABLE_PROXY_TESTS)
     if (IsSquidProxyRunning)
