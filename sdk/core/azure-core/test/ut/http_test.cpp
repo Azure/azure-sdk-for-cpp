@@ -134,7 +134,10 @@ namespace Azure { namespace Core { namespace Test {
           std::make_pair(0, 9),
           std::make_pair(1, 0),
           std::make_pair(1, 1),
-          std::make_pair(2, 0)));
+          std::make_pair(1, 5),
+          std::make_pair(2, 0),
+          std::make_pair(INT32_MAX, 0),
+          std::make_pair(INT32_MAX, INT32_MAX)));
 
   TEST_P(ParameterizedTestForHttpVersions, ValidHttpVersionsInResponse)
   {
