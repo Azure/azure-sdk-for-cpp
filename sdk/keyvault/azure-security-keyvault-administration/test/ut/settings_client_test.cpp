@@ -32,7 +32,10 @@ TEST_F(SettingsClientTest, GetSettings_RECORDEDONLY_)
     auto result = client.GetSettings();
     EXPECT_EQ(result.Value.Value.size(), 1);
     auto setting = result.Value.Value[0];
-    EXPECT_EQ(setting.Name, "AllowKeyManagementOperationsThroughARM");
+    if (setting.Name != "Sanitized")
+    {
+      EXPECT_EQ(setting.Name, "AllowKeyManagementOperationsThroughARM");
+    }
     EXPECT_EQ(setting.Value, "false");
   }
   else
@@ -49,7 +52,11 @@ TEST_F(SettingsClientTest, GetSetting_RECORDEDONLY_)
     CreateHSMClientForTest();
     auto const& client = GetClientForTest(testName);
     auto result = client.GetSetting("AllowKeyManagementOperationsThroughARM");
-    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+    if (result.Value.Name != "Sanitized")
+    {
+      EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+    }
+
     EXPECT_EQ(result.Value.Value, "false");
   }
   else
@@ -69,23 +76,29 @@ TEST_F(SettingsClientTest, UpdateSetting_RECORDEDONLY_)
     {
       std::string value = "false";
       auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", value);
-
-      EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      if (result.Value.Name != "Sanitized")
+      {
+        EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      }
       EXPECT_EQ(result.Value.Value, "false");
     }
     {
 
       std::string value = "true";
       auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", value);
-
-      EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      if (result.Value.Name != "Sanitized")
+      {
+        EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      }
       EXPECT_EQ(result.Value.Value, "true");
     }
     {
       std::string value = "false";
       auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", value);
-
-      EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      if (result.Value.Name != "Sanitized")
+      {
+        EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      }
       EXPECT_EQ(result.Value.Value, "false");
     }
   }

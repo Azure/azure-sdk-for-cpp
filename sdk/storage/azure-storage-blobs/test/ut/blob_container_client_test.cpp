@@ -616,7 +616,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobContainerClientTest, CustomerProvidedKey)
+  TEST_F(BlobContainerClientTest, CustomerProvidedKey_LIVEONLY_)
   {
     auto sourceContainerClient = *m_blobContainerClient;
 

@@ -17,13 +17,15 @@ To create a new `CertificateClient` to create, get, update, or delete certificat
 Key Vault Certificate client for C++ currently supports any `TokenCredential` for authenticating.
 
 ```cpp Snippet:CertificateSample1CreateCredential
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
 ```cpp Snippet:CertificateSample1Client
-CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+CertificateClient certificateClient(keyVaultUrl, credential);
 ```
 
 ## Creating a Certificate
@@ -71,7 +73,10 @@ auto updatedCertificate
             .Value;
 
 std::cout << "After update certificate is enabled : "
-          << (updatedCertificate.Properties.Enabled.Value() ? "true" : "false");
+          << (updatedCertificate.Properties.Enabled.HasValue()
+                      && updatedCertificate.Properties.Enabled.Value()
+                  ? "true"
+                  : "false");
 ```
 
 ## Deleting a Certificate
@@ -94,4 +99,6 @@ certificateClient.PurgeDeletedCertificate(certificateName);
 ## Source
 
 To see the full example source, see:
-[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-basic-operations)
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate-basic-operations)
+
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

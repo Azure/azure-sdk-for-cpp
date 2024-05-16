@@ -10,13 +10,15 @@ To create a new `CertificateClient` to create, get, update, or delete certificat
 Key Vault Certificate client for C++ currently supports any `TokenCredential` for authenticating.
 
 ```cpp Snippet:CertificateSample3CreateCredential
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
 ```cpp Snippet:CertificateSample3Client
-CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+CertificateClient certificateClient(keyVaultUrl, credential);
 ```
 
 ## Importing a PEM certificate
@@ -90,4 +92,6 @@ certificateClient.PurgeDeletedCertificate(pemName);
 ## Source
 
 To see the full example source, see:
-[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-import-certificate)
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate-import-certificate)
+
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

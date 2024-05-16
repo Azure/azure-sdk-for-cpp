@@ -39,7 +39,6 @@
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
     "eng/CredScanSuppression.json",
-    "**/test/ut/recordings/*.json",
     "sdk/core/azure-core-amqp/vendor/**/*",
     "sdk/storage/*/NOTICE.txt",
     "sdk/tables/*/NOTICE.txt"
@@ -65,6 +64,7 @@
     "AMQPS",
     "amqpvalue",
     "AMQPVALUE",
+    "ATLMFC",
     "australiacentral",
     "australiaeast",
     "authcid",
@@ -206,6 +206,7 @@
     "Ragrs",
     "Ragzrs",
     "Reconnector",
+    "Redist",
     "rehydrated",
     "Reitz",
     "retriable",

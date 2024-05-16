@@ -1,5 +1,22 @@
 # Release History
 
+## 12.7.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.6.0 (2024-05-07)
+
+### Features Added
+
+- Features in `12.6.0-beta.1` are now generally available.
+- Bumped up Account SAS version to `2024-05-04`.
+
 ## 12.6.0-beta.1 (2024-04-17)
 
 ### Features Added

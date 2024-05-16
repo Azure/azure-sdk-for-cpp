@@ -10,21 +10,24 @@ Key Vault Secrets client for C++ currently supports any `TokenCredential` for au
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
-```cpp Snippet:SecretSample4CreateCredential
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+```cpp
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
-```cpp Snippet:SecretSample4SecretClient
-SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+```cpp
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+...
+// create client
+SecretClient secretClient(keyVaultUrl, credential);
 ```
 
 ## Creating a couple of Secrets
 
 Call SetSecret to create a couple of new secret with names and secret values.
 
-```cpp Snippet:SecretSample4SetSecret
+```cpp
 std::string secretName("MySampleSecret");
 std::string secretName2("MySampleSecret2");
 std::string secretValue("my secret value");
@@ -37,7 +40,7 @@ Secret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 
 Call GetPropertiesOfSecrets to get the properties of all the secrets in the key vault. The results of this call are paged to a maximum of 25 SecretProperties per page.
 
-```cpp Snippet:SecretSample4ListAllSecrets
+```cpp
  // get properties of secrets
 for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage(); secrets.MoveToNextPage())
 { // go through every secret of each page returned
@@ -120,4 +123,4 @@ secretClient.PurgeDeletedSecret(secret2.Name);
 ## Source
 
 To see the full example source, see:
-[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample4-get-secrets-deleted)
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample4-get-secrets-deleted)

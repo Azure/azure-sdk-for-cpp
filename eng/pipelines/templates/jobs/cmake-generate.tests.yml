@@ -77,7 +77,7 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
-  - template: /eng/pipelines/templates/steps/install-cmake.yml
+  - template: /eng/pipelines/templates/steps/setup-msvc.yml
 
   - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
     retryCountOnTaskFailure: 10

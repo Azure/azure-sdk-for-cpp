@@ -147,7 +147,19 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_TRUE(createResponse.Value.Id.find(m_tableName) != std::string::npos);
   }
 
-  TEST_P(TablesClientTest, GetAccessPolicy_LIVEONLY_)
+  TEST_P(TablesClientTest, CreateTableFail)
+  {
+    try
+    {
+      auto createResponse = m_tableServiceClient->CreateTable("+++");
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::BadRequest);
+    }
+  }
+
+  TEST_P(TablesClientTest, GetAccessPolicy)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
@@ -160,7 +172,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 0);
   }
 
-  TEST_P(TablesClientTest, SetAccessPolicy_LIVEONLY_)
+  TEST_P(TablesClientTest, SetAccessPolicy)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
@@ -198,27 +210,20 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, ListTables)
   {
-    if (GetParam() == AuthType::ConnectionString)
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+
+    Azure::Data::Tables::Models::QueryTablesOptions listOptions;
+
+    auto listResponse = m_tableServiceClient->QueryTables(listOptions);
+
+    for (auto table : listResponse.Tables)
     {
-      EXPECT_TRUE(true);
-    }
-    else
-    {
-      auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-
-      Azure::Data::Tables::Models::QueryTablesOptions listOptions;
-
-      auto listResponse = m_tableServiceClient->QueryTables(listOptions);
-
-      for (auto table : listResponse.Tables)
+      if (table.TableName == m_tableName)
       {
-        if (table.TableName == m_tableName)
-        {
-          EXPECT_EQ(table.TableName, m_tableName);
-          EXPECT_EQ(table.EditLink, "Tables('" + m_tableName + "')");
-          EXPECT_TRUE(table.Type.find(".Tables") != std::string::npos);
-          EXPECT_TRUE(table.Id.find(m_tableName) != std::string::npos);
-        }
+        EXPECT_EQ(table.TableName, m_tableName);
+        EXPECT_EQ(table.EditLink, "Tables('" + m_tableName + "')");
+        EXPECT_TRUE(table.Type.find(".Tables") != std::string::npos);
+        EXPECT_TRUE(table.Id.find(m_tableName) != std::string::npos);
       }
     }
   }
@@ -231,6 +236,18 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
+  TEST_P(TablesClientTest, DeleteTableFail)
+  {
+    try
+    {
+      auto response = m_tableServiceClient->DeleteTable(m_tableName);
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    }
+  }
+
   TEST_P(TablesClientTest, ServiceClientConstructors)
   {
     EXPECT_FALSE(m_tableServiceClient == nullptr);
@@ -238,27 +255,20 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, ServiceClientGetProperties)
   {
-    if (GetParam() == AuthType::ConnectionString)
-    {
-      EXPECT_TRUE(true);
-    }
-    else
-    {
-      auto response = m_tableServiceClient->GetServiceProperties();
-      EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
-      EXPECT_EQ(response.Value.Logging.Version, "1.0");
-      EXPECT_EQ(response.Value.Logging.Delete, false);
-      EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
-      EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
-      EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
-      EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
-      EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
-      EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
-      EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
-    }
+    auto response = m_tableServiceClient->GetServiceProperties();
+    EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
+    EXPECT_EQ(response.Value.Logging.Version, "1.0");
+    EXPECT_EQ(response.Value.Logging.Delete, false);
+    EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
+    EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
+    EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
+    EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
+    EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
+    EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
+    EXPECT_EQ(response.Value.MinuteMetrics.IsEnabled, false);
   }
 
-  TEST_P(TablesClientTest, ServiceClientSet_LIVEONLY_)
+  TEST_P(TablesClientTest, ServiceClientSet)
   {
     auto response = m_tableServiceClient->GetServiceProperties();
 
@@ -268,7 +278,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(response2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
   }
 
-  TEST_P(TablesClientTest, ServiceClientStatistics_LIVEONLY_)
+  TEST_P(TablesClientTest, ServiceClientStatistics)
   {
     auto response = m_tableServiceClient->GetStatistics();
 
@@ -278,11 +288,6 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityCreate)
   {
-    if (GetParam() == AuthType::Key)
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
@@ -296,13 +301,36 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.ETag.empty());
   }
 
+  TEST_P(TablesClientTest, EntityCreateFail)
+  {
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
+    entity.Properties["Name"] = TableEntityProperty("Azure");
+    entity.Properties["Product"] = TableEntityProperty("Tables");
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    {
+      auto response = m_tableClient->AddEntity(entity);
+
+      EXPECT_EQ(
+          response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+      EXPECT_FALSE(response.Value.ETag.empty());
+    }
+    {
+      try
+      {
+        auto response = m_tableClient->AddEntity(entity);
+      }
+      catch (Azure::Core::RequestFailedException& e)
+      {
+        EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::Conflict);
+      }
+    }
+  }
+
   TEST_P(TablesClientTest, EntityUpdate)
   {
-    if (GetParam() == AuthType::Key)
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
@@ -332,11 +360,6 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityMerge)
   {
-    if (GetParam() == AuthType::Key)
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
@@ -366,11 +389,6 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityDelete)
   {
-    if (GetParam() == AuthType::Key)
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
@@ -399,13 +417,27 @@ namespace Azure { namespace Data { namespace Test {
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
   }
 
+  TEST_P(TablesClientTest, EntityDeleteFail)
+  {
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
+    entity.Properties["Name"] = TableEntityProperty("Azure");
+    entity.Properties["Product"] = TableEntityProperty("Tables");
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    try
+    {
+      auto updateResponse2 = m_tableClient->DeleteEntity(entity);
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    }
+  }
+
   TEST_P(TablesClientTest, EntityUpsert)
   {
-    if (GetParam() == AuthType::Key)
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
@@ -440,11 +472,6 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityQuery)
   {
-    if (GetParam() == AuthType::Key)
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
@@ -481,11 +508,6 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, EntityGet)
   {
-    if (GetParam() == AuthType::Key)
-    {
-      EXPECT_TRUE(true);
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
 
     entity.SetPartitionKey("P1");
@@ -516,9 +538,25 @@ namespace Azure { namespace Data { namespace Test {
         responseQuery.Value.Properties["Timestamp"].Type.Value(), TableEntityDataType::EdmDateTime);
   }
 
-  TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
+  TEST_P(TablesClientTest, EntityGetFail)
   {
-    if (GetParam() == AuthType::SAS)
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    std::string partitionKey = "P1";
+    std::string rowKey = "R1";
+    try
+    {
+      auto responseQuery = m_tableClient->GetEntity(partitionKey, rowKey);
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    }
+  }
+
+  TEST_P(TablesClientTest, TransactionCreateFail)
+  {
+    if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
@@ -546,13 +584,14 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionCreateOK)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -576,13 +615,14 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionDelete)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -613,13 +653,14 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionMerge)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -648,13 +689,14 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
+  TEST_P(TablesClientTest, TransactionUpdate)
   {
     if (GetParam() != AuthType::ConnectionString)
     {
       SkipTest();
       return;
     }
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -688,13 +730,13 @@ namespace Azure { namespace Data { namespace Test {
       switch (info.param)
       {
         case AuthType::ConnectionString:
-          stringValue = "connectionstring";
+          stringValue = "connectionstring_LIVEONLY_";
           break;
         case AuthType::Key:
           stringValue = "key";
           break;
         case AuthType::SAS:
-          stringValue = "sas";
+          stringValue = "sas_LIVEONLY_";
           break;
         default:
           stringValue = "key";
