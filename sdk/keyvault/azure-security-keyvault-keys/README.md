@@ -154,9 +154,11 @@ az keyvault security-domain download --hsm-name <your-key-vault-name> --sd-wrapp
 Once you've replaced **your-vault-url** with the above returned URI, you can create the [KeyClient][key_client_class]:
 
 ```cpp
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
 // Create a new key client using the default credential from Azure Identity.
 auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
-KeyClient client("AZURE_KEYVAULT_URL", credential);
+
+KeyClient keyClient(keyVaultUrl, credential);;
 
 // Create a new key using the key client.
 client.CreateKey("key-name", KeyVaultKeyType::Rsa);
@@ -188,6 +190,12 @@ A `KeyClient` providing synchronous operations exists in the SDK. Once you've in
 ### CryptographyClient
 
 A `CryptographyClient` providing synchronous operations exists in the SDK. Once you've initialized a `CryptographyClient`, you can use it to perform cryptographic operations with keys stored in Azure Key Vault.
+
+#### Note 
+Microsoft recommends you not use CBC without first ensuring the integrity of the cipher text using an HMAC, for example. See https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
+
+Optional initialization vector (IV). If you pass your own IV, make sure you use a cryptographically random, non-repeating IV. If null, a cryptographically random IV will be choosing using {RandomNumberGenerator | whatever cryptorng your language provides}.
+
 
 ### Thread safety
 
@@ -313,8 +321,6 @@ client.PurgeDeletedKey(key.Name());
 This example lists all the keys in the specified Azure Key Vault.
 
 ```cpp
-Pageable<KeyProperties> allKeys = client.GetPropertiesOfKeys();
-
 for (auto keys = client.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPage())
     {
       for (auto const& key : keys.Items)

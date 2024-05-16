@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.PreventEncryptionScopeOverride);
   }
 
-  TEST_F(DataLakeFileSystemClientTest, ListPaths)
+  TEST_F(DataLakeFileSystemClientTest, ListPaths_LIVEONLY_)
   {
     std::set<std::string> paths;
     const std::string dir1 = RandomString();
@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, CustomerProvidedKey)
+  TEST_F(DataLakeFileSystemClientTest, CustomerProvidedKey_LIVEONLY_)
   {
     auto getRandomCustomerProvidedKey = [&]() {
       Files::DataLake::EncryptionKey key;

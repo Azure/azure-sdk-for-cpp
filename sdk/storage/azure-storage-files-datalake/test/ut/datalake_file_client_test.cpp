@@ -574,7 +574,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string encryptionContext = "encryptionContext";
     const std::string fileName = RandomString();
-    auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+    const std::string directoryName = LowercaseRandomString();
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
+    auto fileClient = directoryClient.GetFileClient(fileName);
+    directoryClient.Create();
     Files::DataLake::CreateFileOptions options;
     options.EncryptionContext = encryptionContext;
     // Assert Create
@@ -587,14 +590,19 @@ namespace Azure { namespace Storage { namespace Test {
     auto downloadResult = fileClient.Download();
     EXPECT_TRUE(downloadResult.Value.Details.EncryptionContext.HasValue());
     EXPECT_EQ(encryptionContext, downloadResult.Value.Details.EncryptionContext.Value());
-    // Assert ListPaths
-    auto paths = m_fileSystemClient->ListPaths(false).Paths;
+    // Assert DataLakeDirectoryClient::ListPaths
+    auto paths = directoryClient.ListPaths(false).Paths;
+    EXPECT_EQ(paths.size(), 1);
+    EXPECT_TRUE(paths[0].EncryptionContext.HasValue());
+    EXPECT_EQ(encryptionContext, paths[0].EncryptionContext.Value());
+
+    // Assert DataLakeFileSystemClient::ListPaths
+    paths = m_fileSystemClient->ListPaths(true).Paths;
     auto iter = std::find_if(
-        paths.begin(), paths.end(), [&fileName](const Files::DataLake::Models::PathItem& path) {
-          return path.Name == fileName;
+        paths.begin(), paths.end(), [](const Files::DataLake::Models::PathItem& path) {
+          return path.EncryptionContext.HasValue();
         });
     EXPECT_NE(paths.end(), iter);
-    EXPECT_TRUE(iter->EncryptionContext.HasValue());
     EXPECT_EQ(encryptionContext, iter->EncryptionContext.Value());
   }
 

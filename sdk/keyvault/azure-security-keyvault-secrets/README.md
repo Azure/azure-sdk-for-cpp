@@ -51,108 +51,104 @@ For detailed samples please review the samples provided.
 
 First step is to create  a SecretClient.
 
-<!-- @insert_snippet: SecretSample1CreateCredential -->
 ```cpp
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
-
-  // create client
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+// create client
+SecretClient secretClient(keyVaultUrl, credential);
 ```
 
 ### Create a secret
 
 We call the secret client to create a secret.
 
-<!-- @insert_snippet: SecretSample1CreateSecret -->
 ```cpp
-    std::string secretName("MySampleSecret");
-    std::string secretValue("my secret value");
+std::string secretName("MySampleSecret");
+std::string secretValue("my secret value");
 
-    secretClient.SetSecret(secretName, secretValue);
+secretClient.SetSecret(secretName, secretValue);
 ```
 
 ### Get a secret
 
 We retrieve a secret by name.
 
-<!-- @insert_snippet: SecretSample1GetSecret -->
 ```cpp
-    // get secret
-    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+// get secret
+KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value "
-              << secret.Value.Value() << std::endl;
+std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
+std::cout << "Secret is returned with name " << secret.Name << " and value "
+          << valueString << std::endl;
 ```
 
 ### Update a secret
 
 Updating an existing secret
 
-<!-- @insert_snippet: SecretSample1UpdateSecretProperties -->
 ```cpp
-    // change one of the properties
-    secret.Properties.ContentType = "my content";
-    // update the secret
-    KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
-    std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
-              << std::endl;
+// change one of the properties
+secret.Properties.ContentType = "my content";
+// update the secret
+KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
+std::string updatedValueString = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value()
+                                                                : "NONE RETURNED";
+std::cout << "Secret's content type is now " << updatedValueString
+          << std::endl;
 ```
 
 ### Delete a secret
 
 Delete an existing secret.
 
-<!-- @insert_snippet: SecretSample1DeleteSecret -->
 ```cpp
-    // start deleting the secret
-    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+// start deleting the secret
+DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
-    // You only need to wait for completion if you want to purge or recover the secret.
-    // The duration of the delete operation might vary
-    // in case returns too fast increase the timeout value
-    operation.PollUntilDone(20s);
+// You only need to wait for completion if you want to purge or recover the secret.
+// The duration of the delete operation might vary
+// in case returns too fast increase the timeout value
+operation.PollUntilDone(20s);
 
-    // purge the deleted secret
-    secretClient.PurgeDeletedSecret(secret.Name);
+// purge the deleted secret
+secretClient.PurgeDeletedSecret(secret.Name);
 ```
 
 ### Delete and purge a secret
 
 Delete and Purge a secret.
 
-<!-- @insert_snippet: SecretSample1DeleteSecret -->
 ```cpp
-    // start deleting the secret
-    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+// start deleting the secret
+DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
-    // You only need to wait for completion if you want to purge or recover the secret.
-    // The duration of the delete operation might vary
-    // in case returns too fast increase the timeout value
-    operation.PollUntilDone(20s);
+// You only need to wait for completion if you want to purge or recover the secret.
+// The duration of the delete operation might vary
+// in case returns too fast increase the timeout value
+operation.PollUntilDone(20s);
 
-    // purge the deleted secret
-    secretClient.PurgeDeletedSecret(secret.Name);
+// purge the deleted secret
+secretClient.PurgeDeletedSecret(secret.Name);
 ```
 
 ### List Secrets
 
 List all the secrets in keyvault. 
 
-<!-- @insert_snippet: SecretSample4ListAllSecrets -->
 ```cpp
-    // get all the versions of a secret
-    for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secret1.Name);
-         secretsVersion.HasPage();
-         secretsVersion.MoveToNextPage())
-    { // go through each version of the secret
-      // the number of results returned for in a page is not guaranteed
-      // it can be anywhere from 0 to 25
-      for (auto const& secret : secretsVersion.Items)
-      {
-        std::cout << "Found Secret with name: " << secret.Name
-                  << " and with version: " << secret.Version << std::endl;
-      }
-    }
+// get all the versions of a secret
+for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secret1.Name);
+     secretsVersion.HasPage();
+     secretsVersion.MoveToNextPage())
+{ // go through each version of the secret
+  // the number of results returned for in a page is not guaranteed
+  // it can be anywhere from 0 to 25
+  for (auto const& secret : secretsVersion.Items)
+  {
+    std::cout << "Found Secret with name: " << secret.Name
+              << " and with version: " << secret.Version << std::endl;
+  }
+}
 ```
 
 ## Troubleshooting

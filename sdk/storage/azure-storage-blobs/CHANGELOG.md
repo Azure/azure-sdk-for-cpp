@@ -1,16 +1,26 @@
 # Release History
 
-## 12.11.0-beta.1 (Unreleased)
+## 12.12.0-beta.1 (Unreleased)
 
 ### Features Added
-
-- Bumped up API version to `2023-11-03`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.11.0 (2024-05-07)
+
+### Features Added
+
+- Features in `12.11.0-beta.1` are now generally available.
+
+## 12.11.0-beta.1 (2024-04-17)
+
+### Features Added
+
+- Bumped up API version to `2023-11-03`.
 
 ## 12.10.0 (2023-11-07)
 

@@ -1,18 +1,31 @@
 # Release History
 
-## 12.6.0-beta.1 (Unreleased)
+## 12.7.0-beta.1 (Unreleased)
 
 ### Features Added
-
-- Removed unnecessary dependencies on non-Windows platforms. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- Fixed a bug where exception error code was not parsed for `HEAD` requests.
-
 ### Other Changes
+
+## 12.6.0 (2024-05-07)
+
+### Features Added
+
+- Features in `12.6.0-beta.1` are now generally available.
+- Bumped up Account SAS version to `2024-05-04`.
+
+## 12.6.0-beta.1 (2024-04-17)
+
+### Features Added
+
+- Removed unnecessary dependencies on non-Windows platforms. (A community contribution, courtesy of _[teo-tsirpanis](https://github.com/teo-tsirpanis)_)
+
+### Bugs Fixed
+
+- Fixed a bug where exception error code was not parsed for `HEAD` requests.
 
 ### Acknowledgments
 

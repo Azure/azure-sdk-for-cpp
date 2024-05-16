@@ -21,11 +21,12 @@ using namespace std::chrono_literals;
 
 int main()
 {
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   // @begin_snippet: SecretSample1CreateCredential
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  SecretClient secretClient(keyVaultUrl, credential);
   // @end_snippet
 
   try
@@ -42,8 +43,9 @@ int main()
     // get secret
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value "
-              << secret.Value.Value() << std::endl;
+    std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
+    std::cout << "Secret is returned with name " << secret.Name << " and value " << valueString
+              << std::endl;
     // @end_snippet
 
     // @begin_snippet: SecretSample1UpdateSecretProperties
@@ -51,8 +53,9 @@ int main()
     secret.Properties.ContentType = "my content";
     // update the secret
     KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
-    std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
-              << std::endl;
+    std::string updatedValueString
+        = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value() : "NONE RETURNED";
+    std::cout << "Secret's content type is now " << updatedValueString << std::endl;
     // @end_snippet
 
     // @begin_snippet: SecretSample1DeleteSecret

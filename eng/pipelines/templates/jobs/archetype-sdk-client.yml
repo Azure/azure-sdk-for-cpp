@@ -200,6 +200,8 @@ jobs:
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
 
+        - template: /eng/pipelines/templates/steps/setup-msvc.yml
+
         - template: /eng/pipelines/templates/steps/vcpkg.yml
 
         - template: /eng/pipelines/templates/steps/cmake-build.yml
