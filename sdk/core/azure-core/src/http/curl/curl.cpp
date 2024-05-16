@@ -2522,7 +2522,7 @@ CurlConnection::CurlConnection(
   if (performResult != CURLE_OK)
   {
 #if defined(AZ_PLATFORM_LINUX)
-    if (performResult == CURLE_SSL_PEER_CERTIFICATE)
+    if (performResult == CURLE_PEER_FAILED_VERIFICATION)
     {
       curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &result);
       throw Http::TransportException(
