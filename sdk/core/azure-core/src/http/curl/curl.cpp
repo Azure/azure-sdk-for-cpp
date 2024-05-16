@@ -161,6 +161,7 @@ int pollSocketUntilEventOrTimeout(
     result = poll(&poller, 1, pollTimeoutMs);
     if (result < 0 && EINTR == errno)
     {
+      now = std::chrono::steady_clock::now();
       continue;
     }
 #elif defined(AZ_PLATFORM_WINDOWS)
