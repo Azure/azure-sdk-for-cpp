@@ -47,7 +47,7 @@ extends:
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true
-          targetVersion: 1.0.0-dev.20240516.1
+          targetVersion: 1.0.0-dev.20240423.2
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
 
