@@ -7,6 +7,7 @@
 #include <azure/core/context.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
+#include <azure/storage/blobs/blob_container_client.hpp>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
@@ -32,23 +33,45 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return name;
     }
 
+    Azure::Storage::Blobs::BlobContainerClient CreateBlobContainerClient(std::string const& testName)
+    {
+      if (GetParam() == AuthType::ConnectionString)
+      {
+        return Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+            GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions);
+      }
+      else if (GetParam() == AuthType::ManagedIdentity)
+      {
+        return Azure::Storage::Blobs::BlobContainerClient(
+            GetEnv("CHECKPOINTSTORE_STORAGE_URL") + "/" + testName,
+            GetTestCredential(),
+            m_blobClientOptions);
+      }
+      else
+      {
+        throw std::runtime_error("AuthType not supported");
+	  }
+    }
+
     Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
   };
 
-  TEST_F(BlobCheckpointStoreTest, TestCheckpoints_LIVEONLY_)
+  TEST_P(BlobCheckpointStoreTest, TestCheckpoints)
   {
     std::string const testName = GetRandomName();
     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
-    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
 
-    auto checkpoints = checkpointStore.ListCheckpoints(
+    auto containerClient{CreateBlobContainerClient(testName)};
+
+    std::shared_ptr<CheckpointStore> checkpointStore{
+        std::make_shared<Azure::Messaging::EventHubs::BlobCheckpointStore>(containerClient)};
+
+    auto checkpoints = checkpointStore->ListCheckpoints(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
 
     EXPECT_EQ(0ul, checkpoints.size());
 
-    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
+    checkpointStore->UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         consumerGroup,
         "event-hub-name",
         "ns.servicebus.windows.net",
@@ -57,7 +80,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         202,
     });
 
-    checkpoints = checkpointStore.ListCheckpoints(
+    {
+      // There still should be no checkpoints in the partition we first queried.
+      checkpoints = checkpointStore->ListCheckpoints(
+          "fully-qualified-namespace", "event-hub-name", "consumer-group");
+      EXPECT_EQ(0ul, checkpoints.size());
+    }
+
+    checkpoints = checkpointStore->ListCheckpoints(
         "ns.servicebus.windows.net", "event-hub-name", consumerGroup);
     EXPECT_EQ(checkpoints.size(), 1ul);
     EXPECT_EQ(consumerGroup, checkpoints[0].ConsumerGroup);
@@ -67,7 +97,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(202, checkpoints[0].SequenceNumber.Value());
     EXPECT_EQ(101, checkpoints[0].Offset.Value());
 
-    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
+    checkpointStore->UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         consumerGroup,
         "event-hub-name",
         "ns.servicebus.windows.net",
@@ -76,7 +106,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         203,
     });
 
-    checkpoints = checkpointStore.ListCheckpoints(
+    checkpoints = checkpointStore->ListCheckpoints(
         "ns.servicebus.windows.net", "event-hub-name", consumerGroup);
     EXPECT_EQ(checkpoints.size(), 1ul);
     EXPECT_EQ(consumerGroup, checkpoints[0].ConsumerGroup);
@@ -87,23 +117,24 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
 
-  TEST_F(BlobCheckpointStoreTest, TestOwnerships_LIVEONLY_)
+  TEST_P(BlobCheckpointStoreTest, TestOwnerships)
   {
     std::string const testName = GetRandomName();
-    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions)};
 
-    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
+    auto containerClient{CreateBlobContainerClient(testName)};
 
-    auto ownerships = checkpointStore.ListOwnership(
+    std::shared_ptr<CheckpointStore> checkpointStore{
+        std::make_shared<Azure::Messaging::EventHubs::BlobCheckpointStore>(containerClient)};
+
+    auto ownerships = checkpointStore->ListOwnership(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
     EXPECT_EQ(0ul, ownerships.size());
 
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{});
     EXPECT_EQ(0ul, ownerships.size());
 
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
                 "$Default",
@@ -126,7 +157,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     //
     // This ownership should NOT take precedence over the previous ownership, so the set of
     // ownerships returned should be empty.
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
                 "$Default",
@@ -137,7 +168,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 Azure::ETag("randomETAG")}});
     EXPECT_EQ(0ul, ownerships.size());
 
-    ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore->ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
                 "$Default",
@@ -155,4 +186,27 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("partition-id", ownerships[0].PartitionId);
     EXPECT_EQ("owner-id", ownerships[0].OwnerId);
   }
+
+    namespace {
+    static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
+    {
+      std::string stringValue = "";
+      switch (info.param)
+      {
+        case AuthType::ConnectionString:
+          stringValue = "ConnectionString_LIVEONLY_";
+          break;
+        case AuthType::ManagedIdentity:
+          stringValue = "ManagedIdentity";
+          break;
+      }
+      return stringValue;
+    }
+  } // namespace
+  INSTANTIATE_TEST_SUITE_P(
+      EventHubs,
+      BlobCheckpointStoreTest,
+      ::testing::Values(AuthType::ManagedIdentity, AuthType::ConnectionString),
+      GetSuffix);
+
 }}}} // namespace Azure::Messaging::EventHubs::Test

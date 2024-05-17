@@ -5,7 +5,14 @@
 
 #include <gtest/gtest.h>
 
-class EventHubsTestBase : public Azure::Core::Test::TestBase {
+enum class AuthType
+{
+  ManagedIdentity,
+  ConnectionString,
+};
+
+class EventHubsTestBase : public Azure::Core::Test::TestBase,
+                                       public ::testing::WithParamInterface<AuthType> {
 public:
   EventHubsTestBase() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
   // Create
@@ -18,4 +25,6 @@ public:
     // Make sure you call the base classes TearDown method to ensure recordings are made.
     TestBase::TearDown();
   }
+
+protected:
 };
