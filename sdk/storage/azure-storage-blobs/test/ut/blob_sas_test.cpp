@@ -741,7 +741,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient1.Delete());
   }
 
-  TEST_F(BlobSasTest, AccountSasAuthorizationErrorDetail)
+  TEST_F(BlobSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
