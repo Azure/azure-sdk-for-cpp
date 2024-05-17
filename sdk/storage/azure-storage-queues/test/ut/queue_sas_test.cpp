@@ -340,7 +340,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       unauthorizedQueueServiceClient.ListQueues();
     }
-    catch (StorageException e)
+    catch (StorageException& e)
     {
       EXPECT_EQ("AuthorizationResourceTypeMismatch", e.ErrorCode);
       EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
