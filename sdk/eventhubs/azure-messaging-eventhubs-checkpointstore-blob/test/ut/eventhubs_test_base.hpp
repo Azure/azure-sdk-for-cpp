@@ -12,7 +12,7 @@ enum class AuthType
 };
 
 class EventHubsTestBase : public Azure::Core::Test::TestBase,
-                                       public ::testing::WithParamInterface<AuthType> {
+                          public ::testing::WithParamInterface<AuthType> {
 public:
   EventHubsTestBase() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
   // Create

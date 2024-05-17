@@ -4,11 +4,6 @@
 #include "azure/messaging/eventhubs/checkpointstore_blob/blob_checkpoint_store.hpp"
 #include "eventhubs_test_base.hpp"
 
-#include <azure/core/context.hpp>
-#include <azure/identity.hpp>
-#include <azure/messaging/eventhubs.hpp>
-#include <azure/storage/blobs/blob_container_client.hpp>
-
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   class BlobCheckpointStoreTest : public EventHubsTestBase {
@@ -33,7 +28,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return name;
     }
 
-    Azure::Storage::Blobs::BlobContainerClient CreateBlobContainerClient(std::string const& testName)
+    Azure::Storage::Blobs::BlobContainerClient CreateBlobContainerClient(
+        std::string const& testName)
     {
       if (GetParam() == AuthType::ConnectionString)
       {
@@ -50,7 +46,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       else
       {
         throw std::runtime_error("AuthType not supported");
-	  }
+      }
     }
 
     Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
@@ -187,7 +183,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("owner-id", ownerships[0].OwnerId);
   }
 
-    namespace {
+  namespace {
     static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
     {
       std::string stringValue = "";
