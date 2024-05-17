@@ -786,4 +786,41 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_TRUE(properties.EncryptionScope.HasValue());
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
   }
+
+  TEST_F(DataLakeSasTest, AccountSasAuthorizationErrorDetail)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::Service;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string directoryName = RandomString();
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeDirectoryClient = dataLakeFileSystemClient.GetDirectoryClient(directoryName);
+    dataLakeDirectoryClient.Create();
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    auto unauthorizedFileClient = GetSasAuthenticatedClient(dataLakeFileClient, sasToken);
+    try
+    {
+      unauthorizedFileClient.Download();
+    }
+    catch (StorageException e)
+    {
+      EXPECT_EQ("AuthorizationResourceTypeMismatch", e.ErrorCode);
+      EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
+    }
+  }
 }}} // namespace Azure::Storage::Test

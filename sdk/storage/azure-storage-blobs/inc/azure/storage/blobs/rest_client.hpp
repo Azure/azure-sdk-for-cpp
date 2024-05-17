@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2023-11-03";
+    constexpr static const char* ApiVersion = "2024-08-04";
   } // namespace _detail
   namespace Models {
     /**
