@@ -55,7 +55,7 @@ stages:
                         PackageRepository: CPP
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-cpp
-                    
+
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishDocs
               displayName: Publish Docs to GitHub pages
@@ -81,7 +81,6 @@ stages:
                       - template: ../../../common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
-                          BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'cpp'
                           ArtifactLocation: '$(Pipeline.Workspace)/packages/${{artifact.Name}}'
@@ -115,7 +114,7 @@ stages:
                           if ('$(VcpkgForkBranchName)') {
                             Write-Host "Using queue time branch name"
                             $branchName = '$(VcpkgForkBranchName)'
-                          } 
+                          }
                           Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
                         displayName: Set fork branch name
 
