@@ -247,6 +247,10 @@
       "type": "string",
       "value": "[variables('consumerGroup')]"
     },
+    "CHECKPOINTSTORE_STORAGE_URL": {
+      "type": "string",
+      "value": "[concat('https://', variables('storageAccount'), '.blob.', parameters('storageEndpointSuffix'))]"
+    },
     "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccount'), ';AccountKey=', listKeys(variables('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=', parameters('storageEndpointSuffix'))]"

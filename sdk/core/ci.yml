@@ -132,6 +132,8 @@ extends:
 # EventHubs
         - Name: CHECKPOINTSTORE_STORAGE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        - Name: CHECKPOINTSTORE_STORAGE_URL
+          Value: "https://non-real-account.blob.core.windows.net/"
 
       CMakeTestOptions:
         - Name: Default

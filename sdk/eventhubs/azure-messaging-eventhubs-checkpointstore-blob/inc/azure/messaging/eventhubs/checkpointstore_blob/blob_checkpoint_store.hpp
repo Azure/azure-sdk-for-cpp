@@ -7,7 +7,8 @@
 #include <azure/core/nullable.hpp>
 #include <azure/messaging/eventhubs/checkpoint_store.hpp>
 #include <azure/messaging/eventhubs/models/checkpoint_store_models.hpp>
-#include <azure/storage/blobs.hpp>
+#include <azure/storage/blobs/blob_container_client.hpp>
+#include <azure/storage/blobs/block_blob_client.hpp>
 
 #include <sstream>
 #include <stdexcept>
