@@ -60,7 +60,7 @@ extends:
         - Name: EVENTHUB_NAME
           Value: "non-real-eventhub-name"
         - Name: CHECKPOINTSTORE_STORAGE_URL
-          Value: "https://non-real-account.blob.core.windows.net/"
+          Value: "https://non-real-account.blob.core.windows.net"
         - Name: EVENTHUB_CONNECTION_STRING
           Value: "Endpoint=sb://notReal.servicebus.windows.net/;SharedAccessKeyName=notReal"
         - Name: CHECKPOINTSTORE_STORAGE_CONNECTION_STRING
