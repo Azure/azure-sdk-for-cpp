@@ -199,7 +199,7 @@ jobs:
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true
-          targetVersion: 1.0.0-dev.20240423.2
+          targetVersion: 1.0.0-dev.20240516.1
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
