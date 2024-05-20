@@ -41,4 +41,5 @@ gtest_discover_tests(azure-security-keyvault-administration-test
   TEST_PREFIX azure-security-keyvault-administration.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
-  DISCOVERY_TIMEOUT 600)
+  DISCOVERY_TIMEOUT 600
+  DISCOVERY_MODE PRE_TEST)

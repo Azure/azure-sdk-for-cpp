@@ -52,4 +52,5 @@ gtest_discover_tests(azure-messaging-eventhubs-blobstore-test
   TEST_PREFIX azure-messaging-eventhubs.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
-  DISCOVERY_TIMEOUT 600)
+  DISCOVERY_TIMEOUT 600
+  DISCOVERY_MODE PRE_TEST)
