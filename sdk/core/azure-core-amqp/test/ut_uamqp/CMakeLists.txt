@@ -62,7 +62,6 @@ target_include_directories(azure-core-amqp-uamqp-tests PRIVATE Azure::azure-core
 
 # Link test executable against gtest & gtest_main
 target_link_libraries(azure-core-amqp-uamqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp uamqp umock_c azure_macro_utils_c)
-gtest_discover_tests(azure-core-amqp-uamqp-tests)
 
 create_per_service_target_build(core azure-core-amqp-uamqp-tests)
 create_map_file(azure-core-amqp-uamqp-tests azure-core-amqp-uamqp-tests.map)
