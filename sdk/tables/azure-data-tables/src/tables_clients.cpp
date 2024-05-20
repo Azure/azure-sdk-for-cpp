@@ -1017,7 +1017,7 @@ std::string TableClient::PreparePayload(
         accumulator += PrepMergeEntity(changesetId, step.Entity);
         break;
       case Models::TransactionActionType::InsertReplace:
-        accumulator += PrepInsertReplaceEntity(changesetId, step.Entity);
+        accumulator += PrepInsertEntity(changesetId, step.Entity);
         break;
       case Models::TransactionActionType::UpdateReplace:
         accumulator += PrepUpdateEntity(changesetId, step.Entity);
@@ -1114,7 +1114,7 @@ std::string TableClient::PrepUpdateEntity(
   return returnValue;
 }
 
-std::string TableClient::PrepInsertReplaceEntity(
+std::string TableClient::PrepInsertEntity(
     std::string const& changesetId,
     Models::TableEntity entity)
 {
