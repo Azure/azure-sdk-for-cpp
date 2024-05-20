@@ -56,7 +56,7 @@ inline std::string GetResponseLogMessage(
 {
   std::ostringstream log;
 
-  log << "HTTP Response ("
+  log << "HTTP/" << response.GetMajorVersion() << '.' << response.GetMinorVersion() << " Response ("
       << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()
       << "ms) : " << static_cast<int>(response.GetStatusCode()) << " "
       << response.GetReasonPhrase();
