@@ -524,7 +524,7 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::QueryTablesPagedResponse response(std::make_shared<TableServiceClient>(*this));
+  Models::QueryTablesPagedResponse response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
@@ -905,7 +905,8 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::QueryEntitiesPagedResponse response(std::make_shared<TableClient>(*this));
+  Models::QueryEntitiesPagedResponse response{};
+  response.m_tableClient = std::make_shared<TableClient>(*this);
   {
     const auto& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
