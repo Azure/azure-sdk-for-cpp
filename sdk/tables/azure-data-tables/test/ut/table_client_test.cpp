@@ -730,6 +730,7 @@ namespace Azure { namespace Data { namespace Test {
       SkipTest();
       return;
     }
+
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
