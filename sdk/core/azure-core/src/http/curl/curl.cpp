@@ -933,20 +933,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   }
   else
   {
-    bool hasConnectionKeepAlive = false;
-    bool hasConnectionClose = false;
-    {
-      const Core::CaseInsensitiveMap& responseHeaders = m_response->GetHeaders();
-      const auto connectionHeader = responseHeaders.find("Connection");
-      if (connectionHeader != responseHeaders.cend())
-      {
-        const std::string headerValueLowercase
-            = Core::_internal::StringExtensions::ToLower(connectionHeader->second);
-        hasConnectionKeepAlive = headerValueLowercase.find("keep-alive") != std::string::npos;
-        hasConnectionClose = headerValueLowercase.find("close") != std::string::npos;
-      }
-    }
-
     // HTTP <=1.0 is "close" by default. HTTP 1.1 is "keep-alive" by default.
     // The value can also be "keep-alive, close" (i.e. "both are fine"), in which case we are
     // preferring to treat it as keep-alive.
@@ -962,9 +948,25 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // would only mean there's a perf hit, but the communication flow is expected to be correct.
     if (m_response->GetMajorVersion() == 1)
     {
+      std::string connectionHeaderValue;
+      {
+        const Core::CaseInsensitiveMap& responseHeaders = m_response->GetHeaders();
+        const auto connectionHeader = responseHeaders.find("Connection");
+        if (connectionHeader != responseHeaders.cend())
+        {
+          connectionHeaderValue
+              = Core::_internal::StringExtensions::ToLower(connectionHeader->second);
+        }
+      }
+
+      const bool hasConnectionKeepAlive
+          = connectionHeaderValue.find("keep-alive") != std::string::npos;
+
       if (m_response->GetMinorVersion() >= 1)
       {
         // HTTP/1.1+
+        const bool hasConnectionClose = connectionHeaderValue.find("close") != std::string::npos;
+
         m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
       }
       else
@@ -975,13 +977,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     }
     else
     {
-      Log::Write(
-          Logger::Level::Verbose,
-          LogMsgPrefix
-              + "Unsupported HTTP version in the response. Only HTTP/1.x is supported as a "
-                "response, for an HTTP/1.1 request.");
-
-      // We don't expect HTTP/2.0 or 3.0 as a response, when sending an HTTP/1.1 request.
+      // We don't expect HTTP/0.9, 2.0 or 3.0 in responses.
       // Barring rejecting as malformed, the safest thing to do here is to assume the connection is
       // not reusable.
       m_httpKeepAlive = false;
