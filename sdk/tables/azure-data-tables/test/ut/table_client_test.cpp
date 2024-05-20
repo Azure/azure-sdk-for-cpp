@@ -109,7 +109,7 @@ namespace Azure { namespace Data { namespace Test {
     {
       try
       {
-        auto deleteResponse = m_tableServiceClient->DeleteTable(m_tableName);
+        //auto deleteResponse = m_tableServiceClient->DeleteTable(m_tableName);
       }
       catch (...)
       {
@@ -718,6 +718,39 @@ namespace Azure { namespace Data { namespace Test {
     // replace entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::UpdateReplace, entity2});
+    response = m_tableClient->SubmitTransaction(steps);
+
+    EXPECT_FALSE(response.Value.Error.HasValue());
+  }
+
+  TEST_P(TablesClientTest, TransactionInsertReplace)
+  {
+    if (GetParam() != AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
+    Azure::Data::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity2;
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
+    entity.Properties["Name"] = TableEntityProperty("Azure");
+    entity.Properties["Product"] = TableEntityProperty("Tables");
+    entity2.SetPartitionKey("P1");
+    entity2.SetRowKey("R2");
+    entity2.Properties["Name"] = TableEntityProperty("Azure2");
+    entity2.Properties["Product"] = TableEntityProperty("Tables3");
+    //auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
+
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity});
+    auto response = m_tableClient->SubmitTransaction(steps);
+
+    steps.clear();
+    // replace entity
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity2});
     response = m_tableClient->SubmitTransaction(steps);
 
     EXPECT_FALSE(response.Value.Error.HasValue());

@@ -376,6 +376,7 @@ namespace Azure { namespace Data { namespace Tables {
     std::string PrepDeleteEntity(std::string const& changesetId, Models::TableEntity entity);
     std::string PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity);
     std::string PrepUpdateEntity(std::string const& changesetId, Models::TableEntity entity);
+    std::string PrepInsertReplaceEntity(std::string const& changesetId, Models::TableEntity entity);
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_tableName;
