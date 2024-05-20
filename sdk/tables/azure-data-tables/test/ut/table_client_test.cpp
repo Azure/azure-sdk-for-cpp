@@ -109,7 +109,7 @@ namespace Azure { namespace Data { namespace Test {
     {
       try
       {
-        //auto deleteResponse = m_tableServiceClient->DeleteTable(m_tableName);
+        auto deleteResponse = m_tableServiceClient->DeleteTable(m_tableName);
       }
       catch (...)
       {
@@ -740,7 +740,7 @@ namespace Azure { namespace Data { namespace Test {
     entity2.SetRowKey("R2");
     entity2.Properties["Name"] = TableEntityProperty("Azure2");
     entity2.Properties["Product"] = TableEntityProperty("Tables3");
-    //auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
 
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
