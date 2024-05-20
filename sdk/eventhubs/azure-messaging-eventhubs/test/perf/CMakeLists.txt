@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 # Configure CMake project.
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.18)
 project(azure-messaging-eventhubs-perf LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

@@ -76,7 +76,7 @@ Follow the next template to create the main CMake project
 # Licensed under the MIT License.
 
 # Configure CMake project.
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.18)
 project(provide-a-project-name-here LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.18)
 
 project(azure-data-tables-stress-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)

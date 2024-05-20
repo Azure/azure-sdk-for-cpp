@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 #cspell: words tpmattestation
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.18)
 
 project (azure-security-attestation-test LANGUAGES CXX)
 

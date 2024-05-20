@@ -41,7 +41,7 @@ vcpkg.exe install openssl:x64-windows-static
 
 You can use the package manager on different POSIX platforms to install the dependencies. The dependencies to be installed are:
 
-- CMake 3.13.0 or higher.
+- CMake 3.18.0 or higher.
 - OpenSSL.
 - libcurl.
 

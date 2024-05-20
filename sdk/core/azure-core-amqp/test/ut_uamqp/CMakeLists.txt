@@ -3,7 +3,7 @@
 
 # AMQP Tests which require using the uAMQP library to force certain scenarios.
 
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.18)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

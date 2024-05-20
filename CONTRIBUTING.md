@@ -62,7 +62,7 @@ Codespaces is new technology that allows you to use a container as your developm
 
 #### CMake
 
-CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
+CMake version 3.18 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
 ### Dotnet

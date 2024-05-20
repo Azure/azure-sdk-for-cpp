@@ -3,7 +3,7 @@
 
 # cspell: words fsanitize
 
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.18)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
@@ -70,7 +70,7 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   # | endif()                                                                           |
   # +-----------------------------------------------------------------------------------+
   # However, it only works when cmake installed is 3.15+;
-  # we have to require a minimum of 3.13.
+  # we have to require a minimum of 3.18.
   #
   # 5. We "replace with empty string" (i.e. remove) first, then add, so that '/MT'
   # will be present (and present once) even if '/MD' was not.

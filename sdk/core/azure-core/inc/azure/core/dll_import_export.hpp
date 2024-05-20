@@ -9,7 +9,7 @@
 // Everything below applies to Windows builds when building the SDK library as DLL.
 // We use CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS which does most of the job for us, but static data
 // members do still need to be declared as __declspec(dllimport) for the client code. (See
-// https://cmake.org/cmake/help/v3.13/prop_tgt/WINDOWS_DLLEXPORT_ALL_SYMBOLS.html)
+// https://cmake.org/cmake/help/v3.18/prop_tgt/WINDOWS_EXPORT_ALL_SYMBOLS.html)
 // The way it works is this: each library has its own AZ_xxx_DLLEXPORT macro, which is used as
 // prefix for public(*) static variables(**), this way: class Class { public:
 //   AZ_xxx_DLLEXPORT static bool IsSomething;

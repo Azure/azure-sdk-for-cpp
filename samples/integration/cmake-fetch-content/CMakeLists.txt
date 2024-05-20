@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 # Project set up
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.18)
 project(Application-using-storage-blobs LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
