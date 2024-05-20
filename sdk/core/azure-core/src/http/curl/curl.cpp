@@ -952,20 +952,39 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     // preferring to treat it as keep-alive.
     // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection)
     // Should it come to HTTP/2 and HTTP/3, they are "keep-alive", but any response from HTTP/2 or
-    // /3 containing a "Connection" header should be considered malformed. (HTTP/2:
-    // https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
+    // /3 containing a "Connection" header should be considered malformed.
+    // (HTTP/2: https://httpwg.org/specs/rfc9113.html#ConnectionSpecific
     //  HTTP/3: https://httpwg.org/specs/rfc9114.html#rfc.section.4.2)
-    if (m_response->GetMajorVersion() == 1 && m_response->GetMinorVersion() >= 1)
+    //
+    // HTTP/2+ are supposed to create persistent ("keep-alive") connections per host,
+    // and close them by inactivity timeout. Given that we don't have such mechanism implemented
+    // at this moment, we are closing all non-1.x connections immediately, which, in the worst case,
+    // would only mean there's a perf hit, but the communication flow is expected to be correct.
+    if (m_response->GetMajorVersion() == 1)
     {
-      m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
-    }
-    else if (m_response->GetMajorVersion() <= 1)
-    {
-      m_httpKeepAlive = hasConnectionKeepAlive;
+      if (m_response->GetMinorVersion() >= 1)
+      {
+        // HTTP/1.1+
+        m_httpKeepAlive = (!hasConnectionClose || hasConnectionKeepAlive);
+      }
+      else
+      {
+        // HTTP/1.0
+        m_httpKeepAlive = hasConnectionKeepAlive;
+      }
     }
     else
     {
-      m_httpKeepAlive = true;
+      Log::Write(
+          Logger::Level::Verbose,
+          LogMsgPrefix
+              + "Unsupported HTTP version in the response. Only HTTP/1.x is supported as a "
+                "response, for an HTTP/1.1 request.");
+
+      // We don't expect HTTP/2.0 or 3.0 as a response, when sending an HTTP/1.1 request.
+      // Barring rejecting as malformed, the safest thing to do here is to assume the connection is
+      // not reusable.
+      m_httpKeepAlive = false;
     }
   }
 
