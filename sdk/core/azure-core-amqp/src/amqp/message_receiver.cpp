@@ -129,6 +129,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return stream;
   }
 
+#if defined(_azure_TESTING_BUILD)
+  void MessageReceiver::EnableLinkPolling()
+  {
+    if (m_impl)
+    {
+      m_impl->EnableLinkPolling();
+    }
+    else
+    {
+      AZURE_ASSERT_FALSE("MessageReceiver::DeferLinkPolling called on moved message receiver.");
+    }
+  }
+#endif
+
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -160,6 +174,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         *m_link, MessageReceiverImpl::OnMessageReceiverStateChangedFn, this));
 
     messagereceiver_set_trace(m_messageReceiver.get(), options.EnableTrace);
+
+    // When creating a message receiver from a link endpoint, we don't want to enable polling on the
+    // link at open time (because the Open call is made with the ConnectionLock held, resulting in a deadlock.
+    //
+    // Instead, we'll defer the link polling until after MessageReceiver is opened and it's safe to do so.
+    m_deferLinkPolling = true;
   }
 
   void MessageReceiverImpl::CreateLink(LinkEndpoint& endpoint)
@@ -332,6 +352,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // There is no data available, let the caller know that there's nothing happening here.
       return {};
+    }
+  }
+
+  void MessageReceiverImpl::EnableLinkPolling()
+  {
+    std::unique_lock<std::mutex> lock{m_MutableState};
+    if (!m_linkPollingEnabled)
+    {
+      Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
+      m_linkPollingEnabled = true;
     }
   }
 
@@ -512,6 +542,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Opening message receiver. Start async";
       }
+
       // Mark the connection as async so that we can use the async APIs.
       m_session->GetConnection()->EnableAsyncOperation(true);
     }
@@ -524,7 +555,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     //
     // This can result in a deadlock because the polling thread is also going to acquire the
     // connection lock resulting in a deadlock.
-    Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
+    // If we're not deferring link polling, enable the async operation on the connection.
+    if (!m_deferLinkPolling)
+    {
+      EnableLinkPolling();
+    }
   }
 
   void MessageReceiverImpl::Close(Context const& context)
@@ -541,9 +576,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       bool shouldWaitForClose = m_currentState == _internal::MessageReceiverState::Closing
           || m_currentState == _internal::MessageReceiverState::Open;
 
-      Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
-          m_link); // This will ensure that the link is cleaned up on the next poll()
-
+      {
+        std::unique_lock<std::mutex> lock{m_MutableState};
+        if (m_linkPollingEnabled)
+        {
+          Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+              m_link); // This will ensure that the link is cleaned up on the next poll()
+          m_linkPollingEnabled = false;
+        }
+      }
       {
         auto lock{m_session->GetConnection()->Lock()};
 

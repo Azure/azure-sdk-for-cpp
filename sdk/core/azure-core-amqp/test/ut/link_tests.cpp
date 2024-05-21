@@ -3,21 +3,13 @@
 
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
-#include "azure/core/amqp/internal/message_receiver.hpp"
-#include "azure/core/amqp/internal/message_sender.hpp"
-#include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/internal/models/performatives/amqp_transfer.hpp"
 #include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
-#include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
 #include "mock_amqp_server.hpp"
 
-#include <azure/core/platform.hpp>
-
-#include <functional>
 #include <memory>
-#include <random>
 
 #include <gtest/gtest.h>
 
@@ -306,12 +298,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto sessionListener{
         std::make_shared<MySessionListener>(MessageTests::MockServiceEndpointOptions{})};
     server.AddServiceEndpoint(sessionListener);
-    server.EnableTrace(false);
+    server.EnableTrace(true);
 
     // Create a connection
     ConnectionOptions connectionOptions;
     connectionOptions.Port = server.GetPort();
-    connectionOptions.EnableTrace = true;
+    connectionOptions.EnableTrace = false;
     Connection connection("localhost", nullptr, connectionOptions);
     server.StartListening();
 
@@ -327,6 +319,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           throw Azure::Core::OperationCancelledException("Canceled link wait.");
         }
         return std::get<0>(*result);
+      }
+
+      void WaitForLinkState(LinkState state, Azure::Core::Context const& context)
+      {
+        LinkState result;
+        do
+        {
+          result = WaitForLink(context);
+          GTEST_LOG_(INFO) << "Link state changed to: " << result;
+        } while (result != state);
+
       }
 
     private:
@@ -357,7 +360,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<LinkState> m_linkStateQueue;
     };
-
+    Azure::Core::Context timeoutContext
+        = Azure::Core::Context::ApplicationContext.WithDeadline(Azure::DateTime::clock::now()+std::chrono::seconds(60));
     Link keepAliveLink{
         session, "KeepConnectionAlive", SessionRole::Receiver, "MyTarget", "TestReceiver"};
     keepAliveLink.Attach();
@@ -367,49 +371,39 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget", &linkEvents);
       link.Attach();
 
-      LinkState linkState;
-
       // Iterate until the state changes to Attached.
-      do
-      {
-        linkState = linkEvents.WaitForLink({});
-      } while (linkState != LinkState::Attached);
+      linkEvents.WaitForLinkState(LinkState::Attached, timeoutContext);
 
       Models::AmqpMessage message;
       message.SetBody("Hello");
 
-      link.Transfer(Models::AmqpMessage::Serialize(message), {});
+      link.Transfer(Models::AmqpMessage::Serialize(message), timeoutContext);
+
+      Azure::Core::Amqp::Models::AmqpValue data;
+
+
+      link.Detach(true, {}, {}, data);
+      // Iterate until the state changes to Detached.
+      linkEvents.WaitForLinkState(LinkState::Detached, timeoutContext);
+    }
+
+    {
+      ClientLinkEvents linkEvents;
+      Link link(session, "MySession2", SessionRole::Sender, "MySource", "MyTarget", &linkEvents);
+
+      link.Attach();
+
+      // Iterate until the state changes to Attached.
+      linkEvents.WaitForLinkState(LinkState::Attached, timeoutContext);
+
 
       Azure::Core::Amqp::Models::AmqpValue data;
       link.Detach(true, {}, {}, data);
 
       // Iterate until the state changes to Detached.
-      do
-      {
-        linkState = linkEvents.WaitForLink({});
-      } while (linkState != LinkState::Detached);
+      linkEvents.WaitForLinkState(LinkState::Detached, timeoutContext);
     }
-    {
-      ClientLinkEvents linkEvents;
-      Link link(session, "MySession2", SessionRole::Sender, "MySource", "MyTarget", &linkEvents);
-      link.Attach();
 
-      LinkState linkState;
-
-      // Iterate until the state changes to Attached.
-      do
-      {
-        linkState = linkEvents.WaitForLink({});
-      } while (linkState != LinkState::Attached);
-
-      Azure::Core::Amqp::Models::AmqpValue data;
-      link.Detach(true, {}, {}, data);
-      // Iterate until the state changes to Attached.
-      do
-      {
-        linkState = linkEvents.WaitForLink({});
-      } while (linkState != LinkState::Detached);
-    }
     {
       constexpr const size_t linkCount = 20;
 
@@ -417,7 +411,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::vector<std::unique_ptr<ClientLinkEvents>> linkEvents;
       for (size_t i = 0; i < linkCount; i += 1)
       {
-        // Create 100 links on the session.
+        // Create linkCount links on the session.
         linkEvents.push_back(std::make_unique<ClientLinkEvents>());
         links.push_back(Link{
             session,
@@ -429,24 +423,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       for (size_t i = 0; i < linkCount; i += 1)
       {
-        links[i].Attach(); // Iterate until the state changes to Attached.
-        LinkState linkState;
-
-        // Wait for the links to attach.
-        do
-        {
-          linkState = linkEvents[i]->WaitForLink({});
-        } while (linkState != LinkState::Attached);
+        links[i].Attach(); 
+        // Iterate until the state changes to Attached.
+        linkEvents[i]->WaitForLinkState(LinkState::Attached, timeoutContext);
       }
+
       for (size_t i = 0; i < linkCount; i += 1)
       {
         links[i].Detach(true, "", "", Models::AmqpValue{});
         // Iterate until the state changes to Detached.
-        LinkState linkState;
-        do
-        {
-          linkState = linkEvents[i]->WaitForLink({});
-        } while (linkState != LinkState::Detached);
+        linkEvents[i]->WaitForLinkState(LinkState::Detached, timeoutContext);
       }
     }
 

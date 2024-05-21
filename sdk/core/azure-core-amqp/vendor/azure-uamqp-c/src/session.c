@@ -1027,6 +1027,25 @@ int session_end(SESSION_HANDLE session, const char* condition_value, const char*
     return result;
 }
 
+CONNECTION_HANDLE session_get_connection(SESSION_HANDLE session)
+{
+  CONNECTION_HANDLE result;
+
+  if (session == NULL)
+  {
+    result = NULL;
+  }
+  else
+  {
+    SESSION_INSTANCE* session_instance = (SESSION_INSTANCE*)session;
+
+    result = session_instance->connection;
+  }
+
+  return result;
+
+}
+
 int session_set_incoming_window(SESSION_HANDLE session, uint32_t incoming_window)
 {
     int result;

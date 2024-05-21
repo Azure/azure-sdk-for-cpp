@@ -7,6 +7,7 @@
 #include "../models/private/performatives/transfer_impl.hpp"
 #include "../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/common/completion_operation.hpp"
+#include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
 #include "private/link_impl.hpp"
@@ -147,7 +148,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   uint32_t Link::GetReceivedMessageId() const { return m_impl->GetReceivedMessageId(); }
 
-  void Link::Attach() { return m_impl->Attach(); }
+  void Link::Attach()
+  {
+    Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_impl);
+    return m_impl->Attach();
+  }
 
   std::tuple<uint32_t, LinkDeliverySettleReason, Models::AmqpValue> Link::Transfer(
       std::vector<uint8_t> const& payload,
@@ -162,7 +167,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& errorDescription,
       Models::AmqpValue const& info)
   {
-    return m_impl->Detach(close, errorCondition, errorDescription, info);
+    m_impl->Detach(close, errorCondition, errorDescription, info);
+    Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(m_impl);
   }
 #endif // _azure_TESTING_BUILD
 
@@ -196,6 +202,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return os;
   }
 
+  std::ostream& operator<<(std::ostream& os, LINK_TRANSFER_RESULT transfer)
+  {
+    switch (transfer)
+    {
+      case LINK_TRANSFER_BUSY:
+        os << "LINK_TRANSFER_BUSY";
+        break;
+      case LINK_TRANSFER_ERROR:
+        os << "LINK_TRANSFER_ERROR";
+        break;
+      default:
+        os << "Unknown (" << transfer << ")";
+        break;
+    }
+    return os;
+  }
+
   /****/
   /* LINK Implementation */
 
@@ -210,6 +233,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Models::AmqpValue sourceValue{source.AsAmqpValue()};
     Models::AmqpValue targetValue(target.AsAmqpValue());
+    auto connectionLock{m_session->GetConnection()->Lock()};
     m_link = link_create(
         *session,
         name.c_str(),
@@ -230,6 +254,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Models::AmqpValue sourceValue(source.AsAmqpValue());
     Models::AmqpValue targetValue(target.AsAmqpValue());
+    auto connectionLock{m_session->GetConnection()->Lock()};
     m_link = link_create_from_endpoint(
         *session,
         LinkEndpointFactory::Release(linkEndpoint),
@@ -645,7 +670,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           0 /*timeout*/);
       if (asyncResult == nullptr)
       {
-        throw std::runtime_error("Could not send message");
+        std::stringstream ss;
+        ss << "Could not send message: " << transferResult;
+        throw std::runtime_error(ss.str());
       }
     }
 

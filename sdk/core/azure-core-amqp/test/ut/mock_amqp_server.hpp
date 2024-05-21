@@ -5,12 +5,10 @@
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 
-#include <azure/core/amqp/internal/claims_based_security.hpp>
 #include <azure/core/amqp/internal/connection.hpp>
 #include <azure/core/amqp/internal/link.hpp>
 #include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
-#include <azure/core/amqp/internal/models/amqp_protocol.hpp>
 #include <azure/core/amqp/internal/models/message_source.hpp>
 #include <azure/core/amqp/internal/models/message_target.hpp>
 #include <azure/core/amqp/internal/models/messaging_values.hpp>
@@ -57,8 +55,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_listenerContext{options.ListenerContext},
-            m_enableTrace{options.EnableTrace}, m_name{name}
+          : m_listenerContext{options.ListenerContext}, m_enableTrace{options.EnableTrace},
+            m_name{name}
       {
       }
 
@@ -91,7 +89,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             senderOptions.InitialDeliveryCount = 0;
             m_sender[linkName] = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
                 session.CreateMessageSender(linkEndpoint, target, senderOptions, this));
-            (void)!m_sender[linkName]->HalfOpen();
+            // NOTE: The linkEndpoint needs to be attached before this function returns in order to
+            // correctly process incoming attach requests. Otherwise, the attach request will be
+            // discarded, and the link will be in a half attached state.
+            static_cast<void>(m_sender[linkName]->HalfOpen(m_listenerContext));
           }
           else
           {
@@ -117,8 +118,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             receiverOptions.InitialDeliveryCount = 0;
             m_receiver[linkName] = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
                 session.CreateMessageReceiver(linkEndpoint, source, receiverOptions, this));
-            GTEST_LOG_(INFO) << "Open new message receiver.";
-            m_receiver[linkName]->Open();
+
+            // NOTE: The linkEndpoint needs to be attached before this function returns in order to
+            // correctly process incoming attach requests. Otherwise, the attach request will be
+            // discarded, and the link will be in a half attached state.
+
+            // Note that there is a potential deadlock when opening the message receiver - the
+            // connection lock cannot be held when link polling is enabled on the incoming link.
+            // This is because the link polling will try to acquire the connection lock, which is
+            // already held by the current thread. To avoid this deadlock, we defer enabling link
+            // polling until later when it is safe to do so.
+            m_receiver[linkName]->Open(m_listenerContext);
+
+            // Now that the receiver is open, we can enable link polling from the message loop.
+            m_receiverPollingEnableQueue.CompleteOperation(linkName);
           }
           else
           {
@@ -247,6 +260,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Context& GetListenerContext() { return m_listenerContext; }
 
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "MockServiceEndpoint(" << m_name << ") Received a message " << *message;
+        m_messageQueue.CompleteOperation(receiver.GetLinkName(), message);
+        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
+      }
+
     private:
       Azure::Core::Context m_listenerContext; // Used to cancel the listener if necessary.
       bool m_enableTrace{true};
@@ -256,6 +278,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::map<std::string, std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver>>
           m_receiver;
 
+      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::string>
+          m_receiverPollingEnableQueue;
       Azure::Core::Amqp::Common::_internal::
           AsyncOperationQueue<std::string, std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage>>
               m_messageQueue;
@@ -283,6 +307,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
             MessageReceived(std::get<0>(*message), std::get<1>(*message));
           }
+
           auto senderDisconnected = m_messageSenderDisconnectedQueue.TryWaitForResult();
           if (senderDisconnected)
           {
@@ -303,6 +328,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                 m_receiver[receiverName].release()};
             m_receiver.erase(receiverName);
             receiver->Close(m_listenerContext);
+          }
+
+          auto receiverPollingEnable = m_receiverPollingEnableQueue.TryWaitForResult();
+          if (receiverPollingEnable)
+          {
+            std::string receiverName = std::get<0>(*receiverPollingEnable);
+            GTEST_LOG_(INFO) << "Enable link polling for receiver: " << receiverName;
+            m_receiver[receiverName]->EnableLinkPolling();
           }
 
           if (m_receiver.empty() && m_sender.empty())
@@ -326,17 +359,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                          << " New state: " << newState;
       }
 
-    protected:
-      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-          Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
-          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
-      {
-        GTEST_LOG_(INFO) << "MockServiceEndpoint(" << m_name << ") Received a message " << *message;
-        m_messageQueue.CompleteOperation(receiver.GetLinkName(), message);
-        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
-      }
-
-    private:
       virtual void OnMessageReceiverDisconnected(
           Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
           Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
@@ -554,10 +576,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         m_serviceEndpoints.push_back(endpoint);
       }
 
-    private:
-      std::vector<std::shared_ptr<MockServiceEndpoint>> m_serviceEndpoints;
-
-    public:
       uint16_t GetPort() const { return m_testPort; }
       Azure::Core::Context& GetListenerContext() { return m_listenerContext; }
 
@@ -649,29 +667,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       void EnableTrace(bool enableTrace) { m_enableTrace = enableTrace; }
 
-    private:
-      // The set of incoming connections, used when tearing down the mock server.
-      std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Connection>> m_connections;
-
-      // The set of sessions.
-      std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Session>> m_sessions;
-
-      //      bool m_connectionValid{false};
-      bool m_enableTrace{true};
-      bool m_listening{false};
-
-      std::string m_connectionId;
-      std::thread m_serverThread;
-      std::uint16_t m_testPort;
-
     protected:
-      // For each incoming message source, we create a queue of messages intended for that
-      // message source.
-      //
-      // Each message queue is keyed by the message-id.
-      // std::map < std::string, MessageLinkComponents> m_linkMessageQueues;
-      Azure::Core::Context m_listenerContext; // Used to cancel the listener if necessary.
-
       // Inherited from SocketListenerEvents
       virtual void OnSocketAccepted(
           std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
@@ -764,6 +760,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         GTEST_LOG_(INFO) << "Unknown endpoint name: " << endpointName;
         return false;
       }
+
+    private:
+      std::vector<std::shared_ptr<MockServiceEndpoint>> m_serviceEndpoints;
+      // The set of incoming connections, used when tearing down the mock server.
+      std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Connection>> m_connections;
+
+      // The set of sessions.
+      std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Session>> m_sessions;
+
+      //      bool m_connectionValid{false};
+      bool m_enableTrace{true};
+      bool m_listening{false};
+
+      std::string m_connectionId;
+      std::thread m_serverThread;
+      std::uint16_t m_testPort;
+
+      // For each incoming message source, we create a queue of messages intended for that
+      // message source.
+      //
+      // Each message queue is keyed by the message-id.
+      // std::map < std::string, MessageLinkComponents> m_linkMessageQueues;
+      Azure::Core::Context m_listenerContext; // Used to cancel the listener if necessary.
     };
   } // namespace MessageTests
 }}}} // namespace Azure::Core::Amqp::Tests
