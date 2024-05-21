@@ -98,9 +98,6 @@ namespace Azure { namespace Data { namespace Tables {
     class QueryTablesPagedResponse final
         : public Azure::Core::PagedResponse<QueryTablesPagedResponse> {
 
-      friend class Azure::Data::Tables::TableServiceClient;
-      friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
-
     public:
       /**
        * Service endpoint.
@@ -117,15 +114,16 @@ namespace Azure { namespace Data { namespace Tables {
        */
       std::vector<Models::Table> Tables;
 
-    public:
-      /**
-       * Table Service Client.
-       */
-      std::shared_ptr<TableServiceClient> m_tableServiceClient;
       /** Operation options */
       QueryTablesOptions m_operationOptions;
 
     private:
+      QueryTablesPagedResponse(std::shared_ptr<TableServiceClient> tableServiceClient)
+          : m_tableServiceClient(tableServiceClient){};
+     
+      friend class Azure::Data::Tables::TableServiceClient;
+      friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
+      std::shared_ptr<TableServiceClient> m_tableServiceClient;
       void OnNextPage(const Azure::Core::Context& context);
     };
 
@@ -785,15 +783,13 @@ namespace Azure { namespace Data { namespace Tables {
        */
       std::vector<Models::TableEntity> TableEntities;
 
-      /**
-       * @brief Table Client.
-       *
-       */
-      std::shared_ptr<TableClient> m_tableClient;
-
     private:
+      QueryEntitiesPagedResponse(std::shared_ptr<TableClient> tableClient)
+          : m_tableClient(tableClient){};
+
+      std::shared_ptr<TableClient> m_tableClient;
       QueryEntitiesOptions m_operationOptions;
-      friend class Azure::Data::Tables::TableServiceClient;
+      friend class Azure::Data::Tables::TableClient;
       friend class Azure::Core::PagedResponse<QueryEntitiesPagedResponse>;
 
       void OnNextPage(const Azure::Core::Context& context);
