@@ -396,12 +396,15 @@ public:
 
   Nullable(Nullable&& other) noexcept : m_value(std::move(other.m_value)) {}
 
-  Nullable& operator=(Nullable const& other) if (other.m_value)
+  Nullable& operator=(Nullable const& other)
   {
-    m_value = std::make_unique<T>(*other.m_value);
+    if (other.m_value)
+    {
+      m_value = std::make_unique<T>(*other.m_value);
+    }
   }
 
-  Nullable& operator=(Nullable&& other) noexcept { m_value = std::move(other.value); }
+  Nullable& operator=(Nullable&& other) noexcept { m_value = std::move(other.m_value); }
 
   void Reset() { m_value.reset(); }
 
