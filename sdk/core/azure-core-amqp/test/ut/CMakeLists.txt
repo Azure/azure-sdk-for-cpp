@@ -55,7 +55,6 @@ target_compile_definitions(azure-core-amqp-tests PRIVATE _CRT_SECURE_NO_WARNINGS
 
 # Link test executable against gtest & gtest_main
 target_link_libraries(azure-core-amqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp)
-gtest_discover_tests( azure-core-amqp-tests )
 
 create_per_service_target_build(core azure-core-amqp-tests)
 create_map_file(azure-core-amqp-tests azure-core-amqp-tests.map)
