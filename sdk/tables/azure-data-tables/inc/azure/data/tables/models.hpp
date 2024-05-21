@@ -120,7 +120,7 @@ namespace Azure { namespace Data { namespace Tables {
     private:
       QueryTablesPagedResponse(std::shared_ptr<TableServiceClient> tableServiceClient)
           : m_tableServiceClient(tableServiceClient){};
-     
+
       friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
       std::shared_ptr<TableServiceClient> m_tableServiceClient;
@@ -782,13 +782,16 @@ namespace Azure { namespace Data { namespace Tables {
        * Table entities.
        */
       std::vector<Models::TableEntity> TableEntities;
+      /**
+       * Operation options
+       */
+      QueryEntitiesOptions m_operationOptions;
 
     private:
       QueryEntitiesPagedResponse(std::shared_ptr<TableClient> tableClient)
           : m_tableClient(tableClient){};
 
       std::shared_ptr<TableClient> m_tableClient;
-      QueryEntitiesOptions m_operationOptions;
       friend class Azure::Data::Tables::TableClient;
       friend class Azure::Core::PagedResponse<QueryEntitiesPagedResponse>;
 
