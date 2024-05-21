@@ -150,7 +150,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void Link::Attach()
   {
-    Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_impl);
+    Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(
+        m_impl);
     return m_impl->Attach();
   }
 
@@ -168,7 +169,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpValue const& info)
   {
     m_impl->Detach(close, errorCondition, errorDescription, info);
-    Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(m_impl);
+    Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+        m_impl);
   }
 #endif // _azure_TESTING_BUILD
 

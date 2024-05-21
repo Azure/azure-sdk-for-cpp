@@ -329,7 +329,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           result = WaitForLink(context);
           GTEST_LOG_(INFO) << "Link state changed to: " << result;
         } while (result != state);
-
       }
 
     private:
@@ -360,8 +359,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<LinkState> m_linkStateQueue;
     };
-    Azure::Core::Context timeoutContext
-        = Azure::Core::Context::ApplicationContext.WithDeadline(Azure::DateTime::clock::now()+std::chrono::seconds(60));
+    Azure::Core::Context timeoutContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime::clock::now() + std::chrono::seconds(60));
     Link keepAliveLink{
         session, "KeepConnectionAlive", SessionRole::Receiver, "MyTarget", "TestReceiver"};
     keepAliveLink.Attach();
@@ -381,7 +380,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::Models::AmqpValue data;
 
-
       link.Detach(true, {}, {}, data);
       // Iterate until the state changes to Detached.
       linkEvents.WaitForLinkState(LinkState::Detached, timeoutContext);
@@ -395,7 +393,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       // Iterate until the state changes to Attached.
       linkEvents.WaitForLinkState(LinkState::Attached, timeoutContext);
-
 
       Azure::Core::Amqp::Models::AmqpValue data;
       link.Detach(true, {}, {}, data);
@@ -423,7 +420,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       for (size_t i = 0; i < linkCount; i += 1)
       {
-        links[i].Attach(); 
+        links[i].Attach();
         // Iterate until the state changes to Attached.
         linkEvents[i]->WaitForLinkState(LinkState::Attached, timeoutContext);
       }

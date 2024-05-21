@@ -176,9 +176,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     messagereceiver_set_trace(m_messageReceiver.get(), options.EnableTrace);
 
     // When creating a message receiver from a link endpoint, we don't want to enable polling on the
-    // link at open time (because the Open call is made with the ConnectionLock held, resulting in a deadlock.
+    // link at open time (because the Open call is made with the ConnectionLock held, resulting in a
+    // deadlock.
     //
-    // Instead, we'll defer the link polling until after MessageReceiver is opened and it's safe to do so.
+    // Instead, we'll defer the link polling until after MessageReceiver is opened and it's safe to
+    // do so.
     m_deferLinkPolling = true;
   }
 
