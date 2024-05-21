@@ -89,7 +89,7 @@ TEST(KeyReleaseOptionsUnitTest, All)
   KeyReleaseOptions options;
   options.Target = "xyz";
   options.Nonce = "abc";
-  options.Encryption = KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP;
+  options.Encryption = KeyEncryptionAlgorithm::CkmRsaAesKeyWrap;
   auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
   auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
 
@@ -101,9 +101,9 @@ TEST(KeyReleaseOptionsUnitTest, All)
 TEST(KeyEncryptionAlgorithmUnitTest, CheckValues)
 {
   EXPECT_EQ(
-      KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP.ToString(), _detail::CKM_RSA_AES_KEY_WRAP_Value);
+      KeyEncryptionAlgorithm::CkmRsaAesKeyWrap.ToString(), _detail::CKM_RSA_AES_KEY_WRAP_Value);
   EXPECT_EQ(
-      KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256.ToString(), _detail::RSA_AES_KEY_WRAP_256_Value);
+      KeyEncryptionAlgorithm::RsaAesKeyWrap256.ToString(), _detail::RSA_AES_KEY_WRAP_256_Value);
   EXPECT_EQ(
-      KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384.ToString(), _detail::RSA_AES_KEY_WRAP_384_Value);
+      KeyEncryptionAlgorithm::RsaAesKeyWrap384.ToString(), _detail::RSA_AES_KEY_WRAP_384_Value);
 }

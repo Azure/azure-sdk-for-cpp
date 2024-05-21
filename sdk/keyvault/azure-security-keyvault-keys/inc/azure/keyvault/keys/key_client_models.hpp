@@ -316,20 +316,53 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Gets the CKM_RSA_AES_KEY_WRAP algorithm.
      *
+     * @deprecated Use KeyEncryptionAlgorithm::CkmRsaAesKeyWrap.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm CKM_RSA_AES_KEY_WRAP;
+    [[deprecated("Use "
+                 "KeyEncryptionAlgorithm::"
+                 "CkmRsaAesKeyWrap"
+                 ".")]] AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
+        CKM_RSA_AES_KEY_WRAP;
+        
+    /**
+     * @brief Gets the CKM_RSA_AES_KEY_WRAP algorithm.
+     *
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm CkmRsaAesKeyWrap;
+
+    /**
+     * @brief Gets the RSA_AES_KEY_WRAP_256 algorithm.
+     *
+     * @deprecated Use KeyEncryptionAlgorithm::RsaAesKeyWrap256.
+     */
+    [[deprecated("Use "
+                 "KeyEncryptionAlgorithm::"
+                 "RsaAesKeyWrap256"
+                 ".")]]
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_256;
 
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_256 algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_256;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RsaAesKeyWrap256;
+
+    /**
+     * @brief Gets the RSA_AES_KEY_WRAP_384 algorithm.
+     *
+     * @deprecated Use KeyEncryptionAlgorithm::RsaAesKeyWrap384.
+     */
+    [[deprecated("Use "
+                 "KeyEncryptionAlgorithm::"
+                 "RsaAesKeyWrap384"
+                 ".")]]
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_384;
 
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_384 algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_384;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RsaAesKeyWrap384;
   };
 
   /**
