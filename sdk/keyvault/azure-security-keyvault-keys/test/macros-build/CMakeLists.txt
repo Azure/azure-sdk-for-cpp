@@ -14,4 +14,4 @@ add_executable (
 
 create_per_service_target_build_for_sample(keyvault macros-build)
 
-target_link_libraries(macros-build PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)
+target_link_libraries(macros-build PRIVATE azure-security-keyvault-keys)
