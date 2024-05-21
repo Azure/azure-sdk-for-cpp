@@ -138,6 +138,8 @@ create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvau
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
+add_subdirectory(test/macros-build)
+
 if(BUILD_TESTING)
 
   if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)

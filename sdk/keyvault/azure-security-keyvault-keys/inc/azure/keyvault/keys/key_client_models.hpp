@@ -312,7 +312,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param value The string value of the instance.
      */
     explicit KeyEncryptionAlgorithm(std::string value) : ExtendableEnumeration(std::move(value)) {}
-
+#ifndef CKM_RSA_AES_KEY_WRAP
     /**
      * @brief Gets the CKM_RSA_AES_KEY_WRAP algorithm.
      *
@@ -323,13 +323,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
                  "CkmRsaAesKeyWrap"
                  ".")]] AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
         CKM_RSA_AES_KEY_WRAP;
-        
+#endif // !CKM_RSA_AES_KEY_WRAP
     /**
      * @brief Gets the CKM_RSA_AES_KEY_WRAP algorithm.
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm CkmRsaAesKeyWrap;
 
+#ifndef RSA_AES_KEY_WRAP_256
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_256 algorithm.
      *
@@ -338,15 +339,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     [[deprecated("Use "
                  "KeyEncryptionAlgorithm::"
                  "RsaAesKeyWrap256"
-                 ".")]]
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_256;
-
+                 ".")]] AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
+        RSA_AES_KEY_WRAP_256;
+#endif // !RSA_AES_KEY_WRAP_256
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_256 algorithm.
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RsaAesKeyWrap256;
 
+#ifndef RSA_AES_KEY_WRAP_384
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_384 algorithm.
      *
@@ -355,9 +357,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     [[deprecated("Use "
                  "KeyEncryptionAlgorithm::"
                  "RsaAesKeyWrap384"
-                 ".")]]
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_384;
-
+                 ".")]] AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
+        RSA_AES_KEY_WRAP_384;
+#endif // !RSA_AES_KEY_WRAP_384
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_384 algorithm.
      *
