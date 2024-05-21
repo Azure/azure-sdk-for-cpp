@@ -289,3 +289,35 @@ TEST(Nullable, ConstexprAndRvalue)
   std::string str(Nullable<std::string>(std::string("hello")).Value());
   EXPECT_EQ(str, "hello");
 }
+
+// Temporary quick test, which demonstrates the target use cases.
+// For the final PR, there need to be multiple test cases instead of this one.
+TEST(Nullable, PartialTemplateSpecialization)
+{
+  struct S
+  {
+    std::string Message;
+    Azure::Nullable<S&> Next;
+  };
+
+  S s1;
+  s1.Message = "1.0";
+
+  {
+    S s2;
+    s2.Message = "1.5";
+    s1.Next = s2;
+  }
+
+  {
+    S s2;
+    s2.Message = "2.0";
+    s1.Next = s2;
+  }
+
+  EXPECT_TRUE(s1.Next.IsTemplateSpecialization());
+  EXPECT_EQ(s1.Message, "1.0");
+  EXPECT_TRUE(s1.Next.HasValue());
+  EXPECT_EQ(s1.Next.Value().Message, "2.0");
+  EXPECT_FALSE(s1.Next.Value().Next.HasValue());
+}

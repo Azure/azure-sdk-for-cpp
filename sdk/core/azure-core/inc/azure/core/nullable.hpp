@@ -10,6 +10,7 @@
 
 #include "azure/core/azure_assert.hpp"
 
+#include <memory>
 #include <new> // for placement new
 #include <type_traits>
 #include <utility> // for swap and move
@@ -168,210 +169,83 @@ public:
     return *this;
   }
 
-  /**
-   * @brief Assignment operator from another type.
-   *
-   * @tparam U Type of \p other.
-   *
-   * @param other Other #Azure::Nullable.
-   */
-  template <
-      class U = T,
-      typename std::enable_if<
-          !std::is_same<
-              Nullable,
-              typename std::remove_cv<typename std::remove_reference<U>::type>::type>::
-                  value // Avoid repeated assignment
-              && !(
-                  std::is_scalar<U>::value
-                  && std::is_same<T, typename std::decay<U>::type>::value) // Avoid repeated
-                                                                           // assignment of
-                                                                           // equivalent scalar
-                                                                           // types
-              && std::is_constructible<T, U>::value // Ensure the type is constructible
-              && std::is_assignable<T&, U>::value, // Ensure the type is assignable
-          int>::type
-      = 0>
-  Nullable& operator=(U&& other) noexcept(
-      std::is_nothrow_constructible<T, U>::value&& std::is_nothrow_assignable<T&, U>::value)
-  {
-    if (m_hasValue)
+  template <> class Nullable<T&> final {
+    std::unique_ptr<T> m_value;
+
+  public:
+    constexpr Nullable() {}
+
+    Nullable(T initialValue) : m_value(std::make_unique<T>(std::move(initialValue))) {}
+
+    Nullable(const Nullable& other)
     {
-      m_value = std::forward<U>(other);
-    }
-    else
-    {
-      ::new (static_cast<void*>(&m_value)) T(std::forward<U>(other));
-      m_hasValue = true;
-    }
-    return *this;
-  }
-
-  /**
-   * @brief Construct the contained value in-place.
-   *
-   * @details If this instance already contains a value before the call, the contained value is
-   * destroyed by calling its destructor.
-   */
-  template <class... U>
-  T& Emplace(U&&... Args) noexcept(std::is_nothrow_constructible<T, U...>::value)
-  {
-    Reset();
-    ::new (static_cast<void*>(&m_value)) T(std::forward<U>(Args)...);
-    m_hasValue = true;
-    return m_value;
-  }
-
-  /**
-   * @brief Check whether a value is contained.
-   *
-   * @return `true` If a value is contained, `false` if value is absent.
-   */
-  bool HasValue() const noexcept { return m_hasValue; }
-
-  /**
-   * @brief Get the contained value.
-   *
-   */
-  const T& Value() const& noexcept
-  {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
-
-    return m_value;
-  }
-
-  /**
-   * @brief Get the contained value reference.
-   *
-   */
-  T& Value() & noexcept
-  {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
-
-    return m_value;
-  }
-
-  /**
-   * @brief Get the contained value (as rvalue reference).
-   *
-   */
-  T&& Value() && noexcept
-  {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
-
-    return std::move(m_value);
-  }
-
-  // observers
-
-  /**
-   * @brief `operator bool` on the condition of #Azure::Nullable::HasValue.
-   *
-   */
-  constexpr explicit operator bool() const noexcept { return HasValue(); }
-
-  /**
-   * @brief Accesses the contained value.
-   * @return Returns a pointer to the contained value.
-   * @warning The behavior is undefined if `*this` does not contain a value.
-   * @note This operator does not check whether the #Nullable contains a value!
-           You can do so manually by using #HasValue() or simply #operator bool().
-           Alternatively, if checked access is needed, #Value() or #ValueOr() may be used.
-   */
-  constexpr const T* operator->() const { return std::addressof(m_value); }
-
-  /**
-   * @brief Accesses the contained value.
-   * @return Returns a pointer to the contained value.
-   * @warning The behavior is undefined if `*this` does not contain a value.
-   * @note This operator does not check whether the #Nullable contains a value!
-           You can do so manually by using #HasValue() or simply #operator bool().
-           Alternatively, if checked access is needed, #Value() or #ValueOr() may be used.
-   */
-  constexpr T* operator->() { return std::addressof(m_value); }
-
-  /**
-   * @brief Accesses the contained value.
-   * @return Returns a reference to the contained value.
-   * @warning The behavior is undefined if `*this` does not contain a value.
-   * @note This operator does not check whether the #Nullable contains a value!
-           You can do so manually by using #HasValue() or simply #operator bool().
-           Alternatively, if checked access is needed, #Value() or #ValueOr() may be used.
-   */
-  constexpr const T& operator*() const& { return m_value; }
-
-  /**
-   * @brief Accesses the contained value.
-   * @return Returns a reference to the contained value.
-   * @warning The behavior is undefined if `*this` does not contain a value.
-   * @note This operator does not check whether the #Nullable contains a value!
-           You can do so manually by using #HasValue() or simply #operator bool().
-           Alternatively, if checked access is needed, #Value() or #ValueOr() may be used.
-   */
-  constexpr T& operator*() & { return m_value; }
-
-  /**
-   * @brief Accesses the contained value.
-   * @return Returns a reference to the contained value.
-   * @warning The behavior is undefined if `*this` does not contain a value.
-   * @note This operator does not check whether the #Nullable contains a value!
-           You can do so manually by using #HasValue() or simply #operator bool().
-           Alternatively, if checked access is needed, #Value() or #ValueOr() may be used.
-   */
-  constexpr T&& operator*() && { return std::move(m_value); }
-
-  /**
-   * @brief Accesses the contained value.
-   * @return Returns a reference to the contained value.
-   * @warning The behavior is undefined if `*this` does not contain a value.
-   * @note This operator does not check whether the #Nullable contains a value!
-           You can do so manually by using #HasValue() or simply #operator bool().
-           Alternatively, if checked access is needed, #Value() or #ValueOr() may be used.
-   */
-  constexpr const T&& operator*() const&& { return std::move(m_value); }
-
-  /**
-   * @brief Get the contained value, returns \p other if value is absent.
-   * @param other A value to return when no value is contained.
-   * @return A contained value (when present), or \p other.
-   */
-  template <
-      class U = T,
-      typename std::enable_if<
-          std::is_convertible<const T&, typename std::remove_cv<T>::type>::value
-              && std::is_convertible<U, T>::value,
-          int>::type
-      = 0>
-  constexpr typename std::remove_cv<T>::type ValueOr(U&& other) const&
-  {
-    if (m_hasValue)
-    {
-      return m_value;
+      if (other.m_value)
+      {
+        m_value = std::make_unique<T>(*other.m_value);
+      }
     }
 
-    return static_cast<typename std::remove_cv<T>::type>(std::forward<U>(other));
-  }
+    // Should we also have an overload for const Nullable<T>&, and add the same for non-specialized
+    // version, so that Nullable<T>s and Nullable<T&>s can be assigned to each other?
 
-  /**
-   * @brief Get the contained value, returns \p other if value is absent.
-   * @param other A value to return when no value is contained.
-   * @return A contained value (when present), or \p other.
-   */
-  template <
-      class U = T,
-      typename std::enable_if<
-          std::is_convertible<T, typename std::remove_cv<T>::type>::value
-              && std::is_convertible<U, T>::value,
-          int>::type
-      = 0>
-  constexpr typename std::remove_cv<T>::type ValueOr(U&& other) &&
-  {
-    if (m_hasValue)
+    Nullable(Nullable&& other) noexcept : m_value(std::move(other.m_value)) {}
+
+    Nullable& operator=(Nullable const& other) if (other.m_value)
     {
-      return std::move(m_value);
+      m_value = std::make_unique<T>(*other.m_value);
     }
 
-    return static_cast<typename std::remove_cv<T>::type>(std::forward<U>(other));
-  }
-};
+    Nullable& operator=(Nullable&& other) noexcept { m_value = std::move(other.value); }
+
+    void Reset() { m_value.reset(); }
+
+    void Swap(Nullable& other) noexcept { m_value.swap(other.m_value); }
+
+    friend void swap(Nullable& lhs, Nullable& rhs) noexcept { lhs.Swap(rhs); }
+
+    // TODO: Write assignment operator from another type (Nullable& operator=(U&& other)),
+    // same as non-specialized version has. I'm not in the mood to detail it right now.
+
+
+    // TODO: implement similar to the non-specialized version
+    // template <class... U>
+    // T& Emplace(U&&... Args)
+
+    bool HasValue() const noexcept { return m_value; }
+
+    const T& Value() const& noexcept
+    {
+      AZURE_ASSERT_MSG(m_value, "Empty Nullable, check HasValue() first.");
+      return *m_value;
+    }
+
+    T& Value() & noexcept
+    {
+      AZURE_ASSERT_MSG(m_value, "Empty Nullable, check HasValue() first.");
+
+      return *m_value;
+    }
+
+    // TODO: T&& Value() && noexcept
+
+    explicit operator bool() const noexcept { return m_value; }
+
+    // Somehow, it is only now that I found out that NUllable has these operators, pretty cool.
+    const T* operator->() const { return m_value.operator->(); }
+    T* operator->() { return m_value.operator->(); }
+
+    const T& operator*() const& { return *m_value; }
+    T& operator*() & { return *m_value; }
+
+    // TODO: constexpr T&& operator*() && { return std::move(m_value); }
+    // and constexpr const T&& operator*() const&& { return std::move(m_value); }
+
+    // TODO: ValueOr(U&& other) const&
+    // and ValueOr(U&& other) &&
+
+    // Temporary, to make sure that it is actually this specialization that gets instantiated.
+    // This absolutely should get deleted in the final version!
+    // For the tets, there are better ways to ensure.
+    constexpr bool IsTemplateSpecialization() const { return true; }
+  };
 } // namespace Azure
