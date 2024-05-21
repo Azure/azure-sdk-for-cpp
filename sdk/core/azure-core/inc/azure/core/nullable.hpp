@@ -10,6 +10,7 @@
 
 #include "azure/core/azure_assert.hpp"
 
+#include <memory>
 #include <new> // for placement new
 #include <type_traits>
 #include <utility> // for swap and move
