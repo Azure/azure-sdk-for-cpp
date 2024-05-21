@@ -169,7 +169,7 @@ public:
     return *this;
   }
 
-  template <> class Nullable<T&> final {
+  template <typename T> class Nullable<T&> final {
     std::unique_ptr<T> m_value;
 
   public:
