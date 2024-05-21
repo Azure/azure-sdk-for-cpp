@@ -453,7 +453,7 @@ public:
 
   // Temporary, to make sure that it is actually this specialization that gets instantiated.
   // This absolutely should get deleted in the final version!
-  // For the tets, there are better ways to ensure.
+  // For the tests, there are better ways to ensure.
   constexpr bool IsTemplateSpecialization() const { return true; }
 };
 
