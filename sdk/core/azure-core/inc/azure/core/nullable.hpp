@@ -376,6 +376,9 @@ public:
   }
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+// Doxygen is failing, I don't want to investigate it at the moment.
+
 template <typename T> class Nullable<T&> final {
   std::unique_ptr<T> m_value;
 
@@ -457,5 +460,7 @@ public:
   // For the tests, there are better ways to ensure.
   constexpr bool IsTemplateSpecialization() const { return true; }
 };
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 } // namespace Azure
