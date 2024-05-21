@@ -406,9 +406,15 @@ public:
     {
       m_value = std::make_unique<T>(*other.m_value);
     }
+
+    return *this;
   }
 
-  Nullable& operator=(Nullable&& other) noexcept { m_value = std::move(other.m_value); }
+  Nullable& operator=(Nullable&& other) noexcept
+  {
+    m_value = std::move(other.m_value);
+    return *this;
+  }
 
   void Reset() { m_value.reset(); }
 
@@ -423,7 +429,7 @@ public:
   // template <class... U>
   // T& Emplace(U&&... Args)
 
-  bool HasValue() const noexcept { return m_value; }
+  bool HasValue() const noexcept { return m_value.operator bool(); }
 
   const T& Value() const& noexcept
   {
@@ -440,7 +446,7 @@ public:
 
   // TODO: T&& Value() && noexcept
 
-  explicit operator bool() const noexcept { return m_value; }
+  explicit operator bool() const noexcept { return m_value.operator bool(); }
 
   // Somehow, it is only now that I found out that NUllable has these operators, pretty cool.
   const T* operator->() const { return m_value.operator->(); }
