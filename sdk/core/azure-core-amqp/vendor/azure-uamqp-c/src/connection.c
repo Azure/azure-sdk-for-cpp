@@ -2487,15 +2487,15 @@ char *connection_get_container_id(CONNECTION_HANDLE connection)
 
     if (connection == NULL)
     {
-		LogError("NULL connection");
-		result = NULL;
-	}
+        LogError("NULL connection");
+        result = NULL;
+    }
     else
     {
-		result = connection->container_id;
-	}
+        result = connection->container_id;
+    }
 
-	return result;
+    return result;
 }
 
 ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE connection_subscribe_on_connection_close_received(CONNECTION_HANDLE connection, ON_CONNECTION_CLOSE_RECEIVED on_connection_close_received, void* context)

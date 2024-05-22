@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             // NOTE: The linkEndpoint needs to be attached before this function returns in order to
             // correctly process incoming attach requests. Otherwise, the attach request will be
             // discarded, and the link will be in a half attached state.
-            static_cast<void>(m_sender[linkName]->HalfOpen(m_listenerContext));
+            (void)m_sender[linkName]->HalfOpen(m_listenerContext);
           }
           else
           {
@@ -763,13 +763,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     private:
       std::vector<std::shared_ptr<MockServiceEndpoint>> m_serviceEndpoints;
+
       // The set of incoming connections, used when tearing down the mock server.
       std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Connection>> m_connections;
 
       // The set of sessions.
       std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Session>> m_sessions;
 
-      //      bool m_connectionValid{false};
       bool m_enableTrace{true};
       bool m_listening{false};
 
@@ -777,11 +777,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::thread m_serverThread;
       std::uint16_t m_testPort;
 
-      // For each incoming message source, we create a queue of messages intended for that
-      // message source.
-      //
-      // Each message queue is keyed by the message-id.
-      // std::map < std::string, MessageLinkComponents> m_linkMessageQueues;
       Azure::Core::Context m_listenerContext; // Used to cancel the listener if necessary.
     };
   } // namespace MessageTests

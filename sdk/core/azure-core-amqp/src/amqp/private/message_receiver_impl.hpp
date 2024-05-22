@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool m_deferLinkPolling{false};
 
     bool m_linkPollingEnabled{false};
-    std::mutex m_MutableState;
+    std::mutex m_mutableState;
 
     Azure::Core::Amqp::Common::_internal::
         AsyncOperationQueue<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>

@@ -359,7 +359,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageReceiverImpl::EnableLinkPolling()
   {
-    std::unique_lock<std::mutex> lock{m_MutableState};
+    std::unique_lock<std::mutex> lock{m_mutableState};
     if (!m_linkPollingEnabled)
     {
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
@@ -579,7 +579,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           || m_currentState == _internal::MessageReceiverState::Open;
 
       {
-        std::unique_lock<std::mutex> lock{m_MutableState};
+        std::unique_lock<std::mutex> lock{m_mutableState};
         if (m_linkPollingEnabled)
         {
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
