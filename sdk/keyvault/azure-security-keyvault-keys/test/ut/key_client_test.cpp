@@ -86,20 +86,126 @@ TEST(KeyReleaseOptionsUnitTest, Most)
 
 TEST(KeyReleaseOptionsUnitTest, All)
 {
-  KeyReleaseOptions options;
-  options.Target = "xyz";
-  options.Nonce = "abc";
-  options.Encryption = KeyEncryptionAlgorithm::CkmRsaAesKeyWrap;
-  auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
-  auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
+  {
+    KeyReleaseOptions options;
+    options.Target = "xyz";
+    options.Nonce = "abc";
+    options.Encryption = KeyEncryptionAlgorithm::CkmRsaAesKeyWrap;
+    auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+    auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
 
-  EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
-  EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
-  EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
+    EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
+    EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
+    EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
+  }
+  {
+    KeyReleaseOptions options;
+    options.Target = "xyz";
+    options.Nonce = "abc";
+    options.Encryption = KeyEncryptionAlgorithm::RsaAesKeyWrap256;
+    auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+    auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
+
+    EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
+    EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
+    EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
+  }
+  {
+    KeyReleaseOptions options;
+    options.Target = "xyz";
+    options.Nonce = "abc";
+    options.Encryption = KeyEncryptionAlgorithm::RsaAesKeyWrap384;
+    auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+    auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
+
+    EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
+    EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
+    EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
+  }
+// Disable deprecation warning
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+  {
+    KeyReleaseOptions options;
+    options.Target = "xyz";
+    options.Nonce = "abc";
+    options.Encryption = KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP;
+    auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+    auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
+
+    EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
+    EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
+    EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
+  }
+  {
+    KeyReleaseOptions options;
+    options.Target = "xyz";
+    options.Nonce = "abc";
+    options.Encryption = KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
+    auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+    auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
+
+    EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
+    EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
+    EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
+  }
+  {
+    KeyReleaseOptions options;
+    options.Target = "xyz";
+    options.Nonce = "abc";
+    options.Encryption = KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384;
+    auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+    auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
+
+    EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
+    EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
+    EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
+  }
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
+  
 }
 
 TEST(KeyEncryptionAlgorithmUnitTest, CheckValues)
 {
+// Disable deprecation warning
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+  EXPECT_EQ(
+      KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP.ToString(), _detail::CKM_RSA_AES_KEY_WRAP_Value);
+  EXPECT_EQ(
+      KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256.ToString(), _detail::RSA_AES_KEY_WRAP_256_Value);
+  EXPECT_EQ(
+      KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384.ToString(), _detail::RSA_AES_KEY_WRAP_384_Value);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
+
   EXPECT_EQ(
       KeyEncryptionAlgorithm::CkmRsaAesKeyWrap.ToString(), _detail::CKM_RSA_AES_KEY_WRAP_Value);
   EXPECT_EQ(
