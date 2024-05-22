@@ -23,6 +23,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class MessageReceiverFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 
+#if defined(_azure_TESTING_BUILD)
+namespace Azure { namespace Core { namespace Amqp { namespace Tests { namespace MessageTests {
+  class MockServiceEndpoint;
+}}}}} // namespace Azure::Core::Amqp::Tests::MessageTests
+#endif
+
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   enum class MessageReceiverState
   {
@@ -175,7 +181,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::pair<std::shared_ptr<const Models::AmqpMessage>, Models::_internal::AmqpError>
     TryWaitForIncomingMessage();
+
+  private:
+    MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}
+    friend class _detail::MessageReceiverFactory;
+    std::shared_ptr<_detail::MessageReceiverImpl> m_impl;
+
 #if _azure_TESTING_BUILD
+    friend class Azure::Core::Amqp::Tests::MessageTests::MockServiceEndpoint;
+
     // There is a deadlock associated with the link polling if it is enabled from an AMQP event
     // callback. To work around this, link polling is disabled when creating a message receiver from
     // an existing link endpoint. This method should be called to enable it at a time when it is
@@ -184,10 +198,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     // This is a test hook and should not be used outside of test code.
     void EnableLinkPolling();
 #endif
-
-  private:
-    MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}
-    friend class _detail::MessageReceiverFactory;
-    std::shared_ptr<_detail::MessageReceiverImpl> m_impl;
   };
 }}}} // namespace Azure::Core::Amqp::_internal
