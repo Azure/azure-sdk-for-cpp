@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             // NOTE: The linkEndpoint needs to be attached before this function returns in order to
             // correctly process incoming attach requests. Otherwise, the attach request will be
             // discarded, and the link will be in a half attached state.
-            (void)m_sender[linkName]->HalfOpen(m_listenerContext);
+            (void)!m_sender[linkName]->HalfOpen(m_listenerContext);
           }
           else
           {
