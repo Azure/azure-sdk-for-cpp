@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-Fixed use-after free in MessageSender and MessageReceiver when opening a connection, fixes [#5536](https://github.com/Azure/azure-sdk-for-cpp/issues/5536).
+- [[#5536]](https://github.com/Azure/azure-sdk-for-cpp/issues/5536) Fixed use-after free in MessageSender and MessageReceiver when opening a connection.
 
 ### Other Changes
 
