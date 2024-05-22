@@ -1017,6 +1017,8 @@ std::string TableClient::PreparePayload(
         accumulator += PrepMergeEntity(changesetId, step.Entity);
         break;
       case Models::TransactionActionType::InsertReplace:
+        accumulator += PrepInsertEntity(changesetId, step.Entity);
+        break;
       case Models::TransactionActionType::UpdateReplace:
         accumulator += PrepUpdateEntity(changesetId, step.Entity);
         break;
@@ -1109,5 +1111,34 @@ std::string TableClient::PrepUpdateEntity(
   }
   returnValue += "\n\n";
   returnValue += Serializers::UpdateEntity(entity);
+  return returnValue;
+}
+
+std::string TableClient::PrepInsertEntity(
+    std::string const& changesetId,
+    Models::TableEntity entity)
+{
+  std::string payload = Serializers::UpdateEntity(entity);
+  std::string returnValue = "--" + changesetId + "\n";
+  returnValue += "Content-Type: application/http\n";
+  returnValue += "Content-Transfer-Encoding: binary\n\n";
+
+  returnValue += "PATCH " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
+      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
+      + " HTTP/1.1\n";
+  returnValue += "Content-Type: application/json\n";
+  returnValue += "Content-Length: " + std::to_string(payload.length());
+  returnValue += "Accept: application/json;odata=minimalmetadata\n";
+  returnValue += "Prefer: return-no-content\n";
+  returnValue += "DataServiceVersion: 3.0;\n";
+  if (!entity.GetETag().Value.empty())
+  {
+    returnValue += "If-Match: " + entity.GetETag().Value;
+  }
+  else
+  {
+    returnValue += "If-Match: *";
+  }
+  returnValue += "\n\n";
   return returnValue;
 }

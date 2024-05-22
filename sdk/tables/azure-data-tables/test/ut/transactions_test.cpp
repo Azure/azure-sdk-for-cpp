@@ -149,7 +149,7 @@ namespace Azure { namespace Data { namespace Test {
       case Models::TransactionActionType::InsertReplace:
         EXPECT_EQ(
             lines[4],
-            "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
+            "PATCH " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
     }
