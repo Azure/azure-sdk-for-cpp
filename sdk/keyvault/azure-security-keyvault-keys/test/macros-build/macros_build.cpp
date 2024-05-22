@@ -3,7 +3,7 @@
 
 /**
  * @brief Tests the ability to build when certain macros are defined outside the keyvault
- * code
+ * code.
  *
  */
 
