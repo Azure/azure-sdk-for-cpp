@@ -24,6 +24,7 @@ int main()
   std::cout << "CKM_RSA_AES_KEY_WRAP : " << CKM_RSA_AES_KEY_WRAP << std::endl;
   std::cout << "RSA_AES_KEY_WRAP_256 : " << RSA_AES_KEY_WRAP_256 << std::endl;
   std::cout << "RSA_AES_KEY_WRAP_384 : " << RSA_AES_KEY_WRAP_384 << std::endl;
+
   std::cout << "KeyEncryptionAlgorithm::CkmRsaAesKeyWrap : "
             << KeyEncryptionAlgorithm::CkmRsaAesKeyWrap.ToString() << std::endl;
   std::cout << "KeyEncryptionAlgorithm::RsaAesKeyWrap256 : "
