@@ -6,11 +6,9 @@
 
 ### Breaking Changes
 
-- Deprecated KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP in favor of KeyEncryptionAlgorithm::CkmRsaAesKeyWrap;
-
-- Deprecated KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256 in favor of KeyEncryptionAlgorithm::RsaAesKeyWrap256;
-
-- Deprecated KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384 in favor of KeyEncryptionAlgorithm::RsaAesKeyWrap384;
+- Deprecated `KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP` in favor of `KeyEncryptionAlgorithm::CkmRsaAesKeyWrap`.
+- Deprecated `KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256` in favor of `KeyEncryptionAlgorithm::RsaAesKeyWrap256`.
+- Deprecated `KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384` in favor of `KeyEncryptionAlgorithm::RsaAesKeyWrap384`.
 
 ### Bugs Fixed
 
