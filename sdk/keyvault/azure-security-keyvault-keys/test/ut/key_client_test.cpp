@@ -176,7 +176,6 @@ TEST(KeyReleaseOptionsUnitTest, All)
 #elif defined(__GNUC__)
 #pragma GCC diagnostic pop
 #endif // _MSC_VER
-  
 }
 
 TEST(KeyEncryptionAlgorithmUnitTest, CheckValues)

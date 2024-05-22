@@ -3,7 +3,7 @@
 
 /**
  * @brief Tests the ability to build when certain macros are defined outside the keyvault
- * code.
+ * code simulating the customer scenario. If there is an issue there is a build break
  *
  */
 
