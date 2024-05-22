@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
     else
     {
-      AZURE_ASSERT_FALSE("MessageReceiver::DeferLinkPolling called on moved message receiver.");
+      AZURE_ASSERT_FALSE("MessageReceiver::EnableLinkPolling called on moved message receiver.");
     }
   }
 #endif

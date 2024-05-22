@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 #if _azure_TESTING_BUILD
     // There is a deadlock associated with the link polling if it is enabled from an AMQP event
     // callback. To work around this, link polling is disabled when creating a message receiver from
-    // an existing link endpoint. This method should be calledto enable it at a time when it is
+    // an existing link endpoint. This method should be called to enable it at a time when it is
     // safer to enable link polling.
 
     // This is a test hook and should not be used outside of test code.

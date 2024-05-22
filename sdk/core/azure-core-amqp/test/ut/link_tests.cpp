@@ -298,12 +298,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto sessionListener{
         std::make_shared<MySessionListener>(MessageTests::MockServiceEndpointOptions{})};
     server.AddServiceEndpoint(sessionListener);
-    server.EnableTrace(true);
+    server.EnableTrace(false);
 
     // Create a connection
     ConnectionOptions connectionOptions;
     connectionOptions.Port = server.GetPort();
-    connectionOptions.EnableTrace = false;
+    connectionOptions.EnableTrace = true;
     Connection connection("localhost", nullptr, connectionOptions);
     server.StartListening();
 
