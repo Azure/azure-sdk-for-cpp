@@ -49,6 +49,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     AZ_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 
+  namespace _internal {
+    class TelemetryPolicy;
+  }
+
   /**
    * @brief Telemetry options, used to configure telemetry parameters.
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
@@ -69,6 +73,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * this will be the tracing provider specified in the application context.
      */
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider;
+
+  private:
+    friend class _internal::TelemetryPolicy;
+    long CppStandardVersion = __cplusplus;
   };
 
   /**
@@ -248,7 +256,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     virtual std::unique_ptr<RawResponse> Send(
         Request& request,
         NextHttpPolicy nextPolicy,
-        Context const& context) const = 0;
+        Context const& context) const
+        = 0;
 
     /**
      * @brief Destructs `%HttpPolicy`.
@@ -542,7 +551,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
               packageName,
               packageVersion,
               options.ApplicationId,
-              __cplusplus))
+              options.CppStandardVersion))
       {
       }
 
