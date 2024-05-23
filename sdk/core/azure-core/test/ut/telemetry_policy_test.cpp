@@ -93,19 +93,19 @@ TEST(TelemetryPolicy, telemetryString)
 TEST(TelemetryPolicy, UserAgentCppVer)
 {
   {
-    const std::string uaCpp14 = _detail::UserAgentGenerator::GenerateUserAgent(
+    const std::string ua = _detail::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
 
-    EXPECT_GE(uaCpp14.length(), 10);
-    EXPECT_EQ(uaCpp14.substr(uaCpp14.length() - 10, test.expectedPrefix.size()), "Cpp201402)");
+    EXPECT_GE(ua.length(), 10);
+    EXPECT_EQ(ua.substr(ua.length() - 10, ua.size()), "Cpp201402)");
   }
 
   {
-    const std::string uaCpp14 = _detail::UserAgentGenerator::GenerateUserAgent(
+    const std::string ua = _detail::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
 
-    EXPECT_GE(uaCpp14.length(), 10);
-    EXPECT_EQ(uaCpp14.substr(uaCpp14.length() - 10, test.expectedPrefix.size()), "Cpp201703)");
+    EXPECT_GE(ua.length(), 10);
+    EXPECT_EQ(ua.substr(ua.length() - 10, ua.size()), "Cpp201703)");
   }
 }
 
