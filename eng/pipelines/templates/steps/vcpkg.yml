@@ -15,4 +15,4 @@ steps:
         pwsh: true
       # This step is idempotent and can be run multiple times in cases of
       # failure and partial execution.
-      retryCountOnTaskFailure: 5
+      retryCountOnTaskFailure: 3
