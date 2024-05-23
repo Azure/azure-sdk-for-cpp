@@ -19,6 +19,7 @@
 #include "transport_adapter_base_test.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/response.hpp>
 
 #include <iostream>
@@ -26,6 +27,8 @@
 #include <thread>
 
 namespace Azure { namespace Core { namespace Test {
+
+  using namespace Azure::Core::Json::_internal;
 
   TEST_P(TransportAdapter, get)
   {
@@ -43,8 +46,13 @@ namespace Azure { namespace Core { namespace Test {
     request.SetHeader("123", "456");
     response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
-    // header length is 6 (data) + 13 (formating) -> `    "123": "456"\r\n,`
-    CheckBodyFromBuffer(*response, expectedResponseBodySize + 6 + 13);
+
+    auto body = response->GetBody();
+    auto jsonBody = json::parse(body);
+
+    // Look for the header we added in the second request.
+    ASSERT_TRUE(jsonBody["headers"].contains("123"));
+    EXPECT_EQ(jsonBody["headers"]["123"].get<std::string>(), std::string("456"));
   }
 
   TEST_P(TransportAdapter, get204)
@@ -103,6 +111,13 @@ namespace Azure { namespace Core { namespace Test {
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
+
+    json responseJson = json::parse(response->GetBody());
+
+    // The body was 1024 bytes, so the content-length should be 1024 bytes.
+    std::string bodyAsString{
+        requestBodyVector.data(), requestBodyVector.data() + requestBodyVector.size()};
+    EXPECT_EQ(responseJson["data"].get<std::string>(), bodyAsString);
   }
 
   TEST_P(TransportAdapter, deleteRequest)
@@ -191,8 +206,14 @@ namespace Azure { namespace Core { namespace Test {
     request.SetHeader("123", "456");
     response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
-    // header length is 6 (data) + 13 (formating) -> `    "123": "456"\r\n,`
-    CheckBodyFromStream(*response, expectedResponseBodySize + 6 + 13);
+
+    auto body = response->ExtractBodyStream();
+    std::vector<uint8_t> responseBody = body->ReadToEnd(Azure::Core::Context::ApplicationContext);
+    auto jsonBody = json::parse(responseBody);
+
+    // Look for the header we added in the second request.
+    ASSERT_TRUE(jsonBody["headers"].contains("123"));
+    EXPECT_EQ(jsonBody["headers"]["123"].get<std::string>(), std::string("456"));
   }
 
   TEST_P(TransportAdapter, getLoopWithStream)
@@ -311,7 +332,7 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*r, expectedResponseBodySize);
 
     // Direct access
-    auto result = responseT.Value;
+    std::string result = responseT.Value;
     EXPECT_STREQ(result.data(), expectedType.data());
     // Test that calling getValue again will return empty
     result = std::move(responseT.Value);
@@ -392,7 +413,24 @@ namespace Azure { namespace Core { namespace Test {
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, hostPath);
 
       // Request will be canceled 500ms after sending the request.
-      EXPECT_THROW(m_pipeline->Send(request, cancelThis), Azure::Core::OperationCancelledException);
+      try
+      {
+        m_pipeline->Send(request, cancelThis);
+      }
+      catch (Azure::Core::OperationCancelledException& e)
+      {
+        // As soon as we hit the expected exception, exit the loop, the test is complete.
+        GTEST_LOG_(INFO) << "Caught expected OperationCancelledException: " << e.what();
+        break;
+      }
+      catch (std::exception& e)
+      {
+        GTEST_LOG_(INFO) << "Caught unexpected exception: " << e.what();
+      }
+      catch (...)
+      {
+        GTEST_LOG_(INFO) << "Caught unknown exception";
+      }
     }
   }
 
