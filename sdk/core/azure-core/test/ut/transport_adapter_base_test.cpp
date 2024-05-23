@@ -114,7 +114,7 @@ namespace Azure { namespace Core { namespace Test {
 
     json responseJson = json::parse(response->GetBody());
 
-    // The body was 1024 bytes, so the content-length should be 1024 bytes.
+    // Make sure the server gave us back the 1K we sent.
     std::string bodyAsString{
         requestBodyVector.data(), requestBodyVector.data() + requestBodyVector.size()};
     EXPECT_EQ(responseJson["data"].get<std::string>(), bodyAsString);
@@ -417,10 +417,9 @@ namespace Azure { namespace Core { namespace Test {
       {
         m_pipeline->Send(request, cancelThis);
       }
-      catch (Azure::Core::OperationCancelledException& e)
+      catch (Azure::Core::OperationCancelledException&)
       {
         // As soon as we hit the expected exception, exit the loop, the test is complete.
-        GTEST_LOG_(INFO) << "Caught expected OperationCancelledException: " << e.what();
         break;
       }
       catch (std::exception& e)
