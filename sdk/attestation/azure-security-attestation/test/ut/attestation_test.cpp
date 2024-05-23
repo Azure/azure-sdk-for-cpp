@@ -131,7 +131,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   };
 
-  TEST_P(AttestationTests, SimpleAttest)
+  TEST_P(AttestationTests, SimpleAttest_LIVEONLY_)
   {
     auto client(CreateClient());
 
@@ -150,7 +150,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
-  TEST_P(AttestationTests, AttestWithRuntimeData)
+  TEST_P(AttestationTests, AttestWithRuntimeData_LIVEONLY_)
   {
     // Attestation clients don't need to be authenticated, but they can be.
     auto client(CreateAuthenticatedClient());
@@ -176,7 +176,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
-  TEST_P(AttestationTests, AttestWithDraftPolicy)
+  TEST_P(AttestationTests, AttestWithDraftPolicy_LIVEONLY_)
   {
     // Attestation clients don't need to be authenticated, but they can be.
     auto client(CreateAuthenticatedClient());
@@ -254,7 +254,7 @@ issuancerules {
     }
   }
 
-  TEST_P(AttestationTests, AttestWithRuntimeDataJson)
+  TEST_P(AttestationTests, AttestWithRuntimeDataJson_LIVEONLY_)
   {
     auto client(CreateClient());
     auto runtimeData = AttestationCollateral::RunTimeData();

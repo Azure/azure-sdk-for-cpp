@@ -41,24 +41,30 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       {
-        // TPM attestation requires a policy document be set. For simplicity, we only run the
-        // test against an AAD attestation service instance.
-        m_adminClient = std::make_unique<AttestationAdministrationClient>(
-            CreateAdminClient(InstanceType::AAD));
+        if (m_testContext.GetTestMode() != Azure::Core::Test::TestMode::PLAYBACK)
+        {
+          // TPM attestation requires a policy document be set. For simplicity, we only run the
+          // test against an AAD attestation service instance.
+          m_adminClient = std::make_unique<AttestationAdministrationClient>(
+              CreateAdminClient(InstanceType::AAD));
 
-        // Set a minimal policy, which will make the TPM attestation code happy.
-        m_adminClient->SetAttestationPolicy(
-            AttestationType::Tpm,
-            "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
+          // Set a minimal policy, which will make the TPM attestation code happy.
+          m_adminClient->SetAttestationPolicy(
+              AttestationType::Tpm,
+              "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
+        }
       }
     }
 
     virtual void TearDown() override
     {
-      // Reset the attestation policy for this instance back to the default.
-      if (m_adminClient)
+      if (m_testContext.GetTestMode() != Azure::Core::Test::TestMode::PLAYBACK)
       {
-        m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+        // Reset the attestation policy for this instance back to the default.
+        if (m_adminClient)
+        {
+          m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+        }
       }
 
       // Make sure you call the base classes TearDown method to ensure recordings are made.
@@ -120,7 +126,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   };
 
-  TEST_F(TpmAttestationTests, AttestTpm)
+  TEST_F(TpmAttestationTests, AttestTpm_LIVEONLY_)
   {
     auto client(CreateClient(InstanceType::AAD));
 
