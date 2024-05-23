@@ -124,7 +124,7 @@ std::string GetOSVersion()
     utsname sysInfo{};
     if (uname(&sysInfo) == 0)
     {
-      osVersionInfo << sysInfo.sysname << ' ' << sysInfo.release << ' ' << sysInfo.machine << ' '
+      osVersionInfo << sysInfo.sysname << " " << sysInfo.release << " " << sysInfo.machine << " "
                     << sysInfo.version;
     }
   }
@@ -165,8 +165,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
 
     static std::string const osVer = GetOSVersion();
-    telemetryId << "azsdk-cpp-" << componentName << '/' << componentVersion << " (" << osVer << ' '
-                << "Cpp" << cplusplusValue << ')';
+    telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer << " "
+                << "Cpp" << cplusplusValue << ")";
 
     return telemetryId.str();
   }
