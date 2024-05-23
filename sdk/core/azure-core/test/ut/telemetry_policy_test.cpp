@@ -84,6 +84,8 @@ TEST(TelemetryPolicy, telemetryString)
     EXPECT_EQ(actualValue[actualValue.size() - 1], ClosingBrace);
 
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
+
+    EXPECT_EQ(actualValue.substr(actualValue.length() - 10, test.expectedPrefix.size()), "Cpp201402)");
   }
 }
 

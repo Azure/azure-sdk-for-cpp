@@ -541,7 +541,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
               packageName,
               packageVersion,
-              options.ApplicationId))
+              options.ApplicationId,
+              __cplusplus))
       {
       }
 
