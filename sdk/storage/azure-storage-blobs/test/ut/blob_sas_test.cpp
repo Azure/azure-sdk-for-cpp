@@ -710,7 +710,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
   }
 
-  TEST_F(BlobSasTest, ServiceSasPermissionDeleteVersion)
+  TEST_F(BlobSasTest, ServiceSasPermissionDeleteVersion_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
