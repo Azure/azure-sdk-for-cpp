@@ -787,7 +787,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
   }
 
-  TEST_F(DataLakeSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
+  TEST_F(DataLakeSasTest, AccountSasAuthorizationErrorDetail)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

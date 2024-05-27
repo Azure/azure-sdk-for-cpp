@@ -494,7 +494,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.Value.HttpHeaders.ContentEncoding, fileSasBuilder.ContentEncoding);
   }
 
-  TEST_F(ShareSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
+  TEST_F(ShareSasTest, AccountSasAuthorizationErrorDetail)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

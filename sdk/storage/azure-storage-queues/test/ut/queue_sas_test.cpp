@@ -317,7 +317,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyQueueSasRead(queueClient, sasToken);
   }
 
-  TEST_F(QueueSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
+  TEST_F(QueueSasTest, AccountSasAuthorizationErrorDetail)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
