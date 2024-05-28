@@ -1,6 +1,6 @@
 param(
     [string] $EmailAddress = $env:BUILD_REQUESTEDFOREMAIL,
-    [string] $OpenApiToke,
+    [string] $OpenApiToken,
     [string] $Fallback
 )
 
