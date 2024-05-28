@@ -353,7 +353,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }; // namespace Test
 
-  TEST_P(PolicyTests, PolicyTests)
+  TEST_P(PolicyTests, PolicyTests_LIVEONLY_)
   {
     switch (GetParam().TestType)
     {
