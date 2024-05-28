@@ -414,6 +414,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         const SetBlobLegalHoldOptions& options = SetBlobLegalHoldOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Returns the sku name and account kind for the specified account.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return AccountInfo describing the account.
+     */
+    Azure::Response<Models::AccountInfo> GetAccountInfo(
+        const GetAccountInfoOptions& options = GetAccountInfoOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   protected:
     /** @brief Blob Url */
     Azure::Core::Url m_blobUrl;

@@ -342,4 +342,73 @@ namespace Azure { namespace Storage { namespace Test {
         = Queues::QueueServiceClient(m_queueServiceClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(queueServiceClient.GetProperties(), StorageException);
   }
+
+  TEST_F(QueueServiceClientTest, BearerChallengeWorks)
+  {
+    auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
+    auto options = InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
+
+    // With tenantId
+    clientOptions.EnableTenantDiscovery = true;
+    options.AdditionallyAllowedTenants = {"*"};
+    auto queueServiceClient = Queues::QueueServiceClient(
+        m_queueServiceClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_NO_THROW(queueServiceClient.GetProperties());
+
+    // Without tenantId
+    clientOptions.EnableTenantDiscovery = true;
+    options.AdditionallyAllowedTenants = {"*"};
+    queueServiceClient = Queues::QueueServiceClient(
+        m_queueServiceClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_NO_THROW(queueServiceClient.GetProperties());
+
+    // With custom audience
+    auto queueUrl = Azure::Core::Url(m_queueServiceClient->GetUrl());
+    clientOptions.Audience
+        = Queues::QueueAudience(queueUrl.GetScheme() + "://" + queueUrl.GetHost());
+    queueServiceClient = Queues::QueueServiceClient(
+        m_queueServiceClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_NO_THROW(queueServiceClient.GetProperties());
+    clientOptions.Audience.Reset();
+
+    // With error tenantId
+    clientOptions.EnableTenantDiscovery = true;
+    options.AdditionallyAllowedTenants = {"*"};
+    queueServiceClient = Queues::QueueServiceClient(
+        m_queueServiceClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "test", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_NO_THROW(queueServiceClient.GetProperties());
+
+    // Disable Tenant Discovery and without tenantId
+    clientOptions.EnableTenantDiscovery = false;
+    queueServiceClient = Queues::QueueServiceClient(
+        m_queueServiceClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_THROW(
+        queueServiceClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
+
+    // Don't allow additional tenants
+    clientOptions.EnableTenantDiscovery = true;
+    options.AdditionallyAllowedTenants = {};
+    queueServiceClient = Queues::QueueServiceClient(
+        m_queueServiceClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_THROW(
+        queueServiceClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
+  }
 }}} // namespace Azure::Storage::Test
