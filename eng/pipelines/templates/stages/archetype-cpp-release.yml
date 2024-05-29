@@ -197,6 +197,7 @@ stages:
 
                       - task: AzureCLI@2
                         displayName: Authenticate to OpenSource API
+                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                         inputs:
                           azureSubscription: opensource-api-connection
                           scriptType: pscore
@@ -211,7 +212,7 @@ stages:
                       - pwsh: |
                           $notifyUsers = ./eng/scripts/Get-TriggeringUserGitHubAlias.ps1 `
                             -EmailAddress "$($env:BUILD_REQUESTEDFOREMAIL)" `
-                            -OpenApiToken "$(opensource-api-token)"
+                            -OpenApiToken "$(opensource-api-token)" `
                             -Fallback '@rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman'
 
                           $prComment = "Adding ${{ artifact.Name }} to release"
