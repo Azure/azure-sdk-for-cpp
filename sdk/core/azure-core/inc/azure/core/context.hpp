@@ -243,9 +243,9 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Creates a new child context whic can be cancelled independant of the current context.
+     * @brief Creates a new child context which can be cancelled independent of the current context.
      *
-     * @return A child of the current context which can be independantly cancelled.
+     * @return A child of the current context which can be independently cancelled.
      */
     Context WithCancellation() const
     {

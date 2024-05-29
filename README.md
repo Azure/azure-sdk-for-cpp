@@ -201,7 +201,7 @@ snippet below will cancel a blob client upload after 500 milliseconds.
 `Context` objects form a hierarchy, where a child context can created from a parent context. 
 There are five operations that can be performed on a 'Context' object:
 
-* Create a child context from a parent context which can be independantly cancelled.
+* Create a child context from a parent context which can be independently cancelled.
 * Create a child context from a parent context with a Key/Value pair. This is useful for associating metadata with a context.
 * Create a child context from a parent context with a deadline. This is useful for setting a deadline for a context.
 * Cancel a context. This will cancel the context and all its children. Note that there is no way of un-cancelling a context.
