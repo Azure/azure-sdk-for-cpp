@@ -506,6 +506,26 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(responseQuery.TableEntities.size(), 1);
   }
 
+  TEST_P(TablesClientTest, QueryEntityPagedResponse_LIVEONLY_)
+  {
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    for (int i = 0; i < 1010; i++)
+    {
+      auto entity = Azure::Data::Tables::Models::TableEntity();
+      entity.SetPartitionKey("partition");
+      entity.SetRowKey("rowKey" + std::to_string(i));
+      m_tableClient->AddEntity(entity);
+    }
+
+    Azure::Data::Tables::Models::QueryEntitiesOptions options;
+    auto response = m_tableClient->QueryEntities(options);
+    EXPECT_EQ(response.TableEntities.size(), 1000);
+    EXPECT_EQ(response.TableEntities[0].GetRowKey().Value, "rowKey0");
+
+    response.MoveToNextPage();
+    EXPECT_EQ(response.TableEntities.size(), 10);
+  }
+
   TEST_P(TablesClientTest, EntityGet)
   {
     Azure::Data::Tables::Models::TableEntity entity;
@@ -718,6 +738,40 @@ namespace Azure { namespace Data { namespace Test {
     // replace entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::UpdateReplace, entity2});
+    response = m_tableClient->SubmitTransaction(steps);
+
+    EXPECT_FALSE(response.Value.Error.HasValue());
+  }
+
+  TEST_P(TablesClientTest, TransactionInsertReplace)
+  {
+    if (GetParam() != AuthType::ConnectionString)
+    {
+      SkipTest();
+      return;
+    }
+
+    Azure::Data::Tables::Models::TableEntity entity;
+    Azure::Data::Tables::Models::TableEntity entity2;
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
+    entity.Properties["Name"] = TableEntityProperty("Azure");
+    entity.Properties["Product"] = TableEntityProperty("Tables");
+    entity2.SetPartitionKey("P1");
+    entity2.SetRowKey("R2");
+    entity2.Properties["Name"] = TableEntityProperty("Azure2");
+    entity2.Properties["Product"] = TableEntityProperty("Tables3");
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
+
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity});
+    auto response = m_tableClient->SubmitTransaction(steps);
+
+    steps.clear();
+    // replace entity
+    steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+        Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity2});
     response = m_tableClient->SubmitTransaction(steps);
 
     EXPECT_FALSE(response.Value.Error.HasValue());

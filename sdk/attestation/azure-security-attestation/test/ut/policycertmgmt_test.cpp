@@ -157,15 +157,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   // The GetIsolatedModeManagementCertificates API can be run against all instance types, but it
   // only returns values on isolated instances (an isolated instance is defined to be an attestation
   // service instance with policy management certificates).
-  TEST_F(CertificateTests, GetPolicyManagementCertificatesAad)
+  TEST_F(CertificateTests, GetPolicyManagementCertificatesAad_LIVEONLY_)
   {
     GetIsolatedModeCertificatesTest(ServiceInstanceType::AAD);
   }
-  TEST_F(CertificateTests, GetPolicyManagementCertificatesIsolated)
+  TEST_F(CertificateTests, GetPolicyManagementCertificatesIsolated_LIVEONLY_)
   {
     GetIsolatedModeCertificatesTest(ServiceInstanceType::Isolated);
   }
-  TEST_F(CertificateTests, GetPolicyManagementCertificatesShared)
+  TEST_F(CertificateTests, GetPolicyManagementCertificatesShared_LIVEONLY_)
   {
     GetIsolatedModeCertificatesTest(ServiceInstanceType::Shared);
   }

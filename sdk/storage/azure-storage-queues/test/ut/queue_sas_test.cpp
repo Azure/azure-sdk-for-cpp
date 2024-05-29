@@ -317,4 +317,34 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyQueueSasRead(queueClient, sasToken);
   }
 
+  TEST_F(QueueSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Queue;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::Object;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+    auto queueServiceClient = *m_queueServiceClient;
+
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    auto unauthorizedQueueServiceClient = GetSasAuthenticatedClient(queueServiceClient, sasToken);
+    try
+    {
+      unauthorizedQueueServiceClient.ListQueues();
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ("AuthorizationResourceTypeMismatch", e.ErrorCode);
+      EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

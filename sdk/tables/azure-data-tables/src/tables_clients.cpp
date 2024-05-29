@@ -512,6 +512,10 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
   {
     request.GetUrl().AppendQueryParameter(IfMatch, options.Prefix.Value());
   }
+  if (options.ContinuationToken.HasValue())
+  {
+    request.GetUrl().AppendQueryParameter("NextTableName", options.ContinuationToken.Value());
+  }
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
 
@@ -520,7 +524,7 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::QueryTablesPagedResponse response;
+  Models::QueryTablesPagedResponse response{std::make_shared<TableServiceClient>(*this)};
   {
     auto const& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
@@ -543,7 +547,6 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
 
     response.ServiceEndpoint = url.GetAbsoluteUrl();
     response.Prefix = options.Prefix;
-    response.m_tableServiceClient = std::make_shared<TableServiceClient>(*this);
     response.m_operationOptions = options;
     response.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
     response.RawResponse = std::move(response.RawResponse);
@@ -817,8 +820,8 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
 
 void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
-  m_operationOptions.PartitionKey = NextPartitionKey;
-  m_operationOptions.RowKey = NextRowKey;
+  m_operationOptions.NextPartitionKey = NextPartitionKey;
+  m_operationOptions.NextRowKey = NextRowKey;
   *this = m_tableClient->QueryEntities(m_operationOptions, context);
 }
 
@@ -860,18 +863,27 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     Core::Context const& context)
 {
   auto url = m_url;
-  std::string appendPath = m_tableName + "(";
-  if (!options.PartitionKey.empty())
+  if (!options.NextPartitionKey.empty() && !options.NextRowKey.empty())
   {
-    appendPath += "PartitionKey='" + Azure::Core::Url::Encode(options.PartitionKey) + "'";
+    url.AppendPath(m_tableName);
+    url.AppendQueryParameter("NextPartitionKey", options.NextPartitionKey);
+    url.AppendQueryParameter("NextRowKey", options.NextRowKey);
   }
-  if (!options.RowKey.empty())
+  else
   {
-    appendPath += ",RowKey='" + Azure::Core::Url::Encode(options.RowKey) + "'";
-  }
-  appendPath += ")";
+    std::string appendPath = m_tableName + "(";
+    if (!options.PartitionKey.empty())
+    {
+      appendPath += "PartitionKey='" + Azure::Core::Url::Encode(options.PartitionKey) + "'";
+    }
+    if (!options.RowKey.empty())
+    {
+      appendPath += ",RowKey='" + Azure::Core::Url::Encode(options.RowKey) + "'";
+    }
+    appendPath += ")";
 
-  url.AppendPath(appendPath);
+    url.AppendPath(appendPath);
+  }
 
   if (options.Filter.HasValue())
   {
@@ -892,7 +904,7 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::QueryEntitiesPagedResponse response{};
+  Models::QueryEntitiesPagedResponse response(std::make_shared<TableClient>(*this));
   {
     const auto& responseBody = rawResponse->GetBody();
     std::string responseString = std::string(responseBody.begin(), responseBody.end());
@@ -908,6 +920,12 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
       response.NextRowKey = headers.at("x-ms-continuation-NextRowKey");
     }
 
+    if (!response.NextPartitionKey.empty() || !response.NextRowKey.empty())
+    {
+      response.NextPageToken = "true";
+    }
+
+    response.TableEntities.clear();
     auto const jsonRoot
         = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
@@ -1017,6 +1035,8 @@ std::string TableClient::PreparePayload(
         accumulator += PrepMergeEntity(changesetId, step.Entity);
         break;
       case Models::TransactionActionType::InsertReplace:
+        accumulator += PrepInsertEntity(changesetId, step.Entity);
+        break;
       case Models::TransactionActionType::UpdateReplace:
         accumulator += PrepUpdateEntity(changesetId, step.Entity);
         break;
@@ -1109,5 +1129,34 @@ std::string TableClient::PrepUpdateEntity(
   }
   returnValue += "\n\n";
   returnValue += Serializers::UpdateEntity(entity);
+  return returnValue;
+}
+
+std::string TableClient::PrepInsertEntity(
+    std::string const& changesetId,
+    Models::TableEntity entity)
+{
+  std::string payload = Serializers::UpdateEntity(entity);
+  std::string returnValue = "--" + changesetId + "\n";
+  returnValue += "Content-Type: application/http\n";
+  returnValue += "Content-Transfer-Encoding: binary\n\n";
+
+  returnValue += "PATCH " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
+      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
+      + " HTTP/1.1\n";
+  returnValue += "Content-Type: application/json\n";
+  returnValue += "Content-Length: " + std::to_string(payload.length());
+  returnValue += "Accept: application/json;odata=minimalmetadata\n";
+  returnValue += "Prefer: return-no-content\n";
+  returnValue += "DataServiceVersion: 3.0;\n";
+  if (!entity.GetETag().Value.empty())
+  {
+    returnValue += "If-Match: " + entity.GetETag().Value;
+  }
+  else
+  {
+    returnValue += "If-Match: *";
+  }
+  returnValue += "\n\n";
   return returnValue;
 }

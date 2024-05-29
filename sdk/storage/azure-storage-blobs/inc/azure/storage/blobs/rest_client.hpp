@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2023-11-03";
+    constexpr static const char* ApiVersion = "2024-08-04";
   } // namespace _detail
   namespace Models {
     /**
@@ -654,25 +654,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     private:
       std::string m_value;
-    };
-    /**
-     * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.
-     */
-    struct AccountInfo final
-    {
-      /**
-       * Identifies the sku name of the account.
-       */
-      Models::SkuName SkuName;
-      /**
-       * Identifies the account kind.
-       */
-      Models::AccountKind AccountKind;
-      /**
-       * Version 2019-07-07 and newer. Indicates if the account has a hierarchical namespace
-       * enabled.
-       */
-      bool IsHierarchicalNamespaceEnabled = bool();
     };
     /**
      * @brief Blob info from a Filter Blobs API call.
@@ -2400,6 +2381,25 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct SetBlobAccessTierResult final
     {
     };
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.
+     */
+    struct AccountInfo final
+    {
+      /**
+       * Identifies the sku name of the account.
+       */
+      Models::SkuName SkuName;
+      /**
+       * Identifies the account kind.
+       */
+      Models::AccountKind AccountKind;
+      /**
+       * Version 2019-07-07 and newer. Indicates if the account has a hierarchical namespace
+       * enabled.
+       */
+      bool IsHierarchicalNamespaceEnabled = bool();
+    };
     namespace _detail {
       /**
        * @brief Required. The type of the provided query expression.
@@ -3664,6 +3664,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Url& url,
           const ListBlobContainerBlobsByHierarchyOptions& options,
           const Core::Context& context);
+      struct GetBlobContainerAccountInfoOptions final
+      {
+      };
+      static Response<Models::AccountInfo> GetAccountInfo(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetBlobContainerAccountInfoOptions& options,
+          const Core::Context& context);
     };
     class BlobClient final {
     public:
@@ -3985,6 +3993,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const SetBlobTierOptions& options,
+          const Core::Context& context);
+      struct GetBlobAccountInfoOptions final
+      {
+      };
+      static Response<Models::AccountInfo> GetAccountInfo(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetBlobAccountInfoOptions& options,
           const Core::Context& context);
       struct QueryBlobOptions final
       {

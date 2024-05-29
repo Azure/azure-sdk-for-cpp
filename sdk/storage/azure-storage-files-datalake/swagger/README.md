@@ -9,7 +9,7 @@ package-name: azure-storage-files-datalake
 namespace: Azure::Storage::Files::DataLake
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2023-05-03/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/stable/2023-05-03/DataLakeStorage.json
 ```
 
 ## ModelFour Options
@@ -88,12 +88,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2023-11-03"]
+        "enum": ["2024-08-04"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2023-11-03";
+      $.ApiVersionParameter.enum[0] = "2024-08-04";
 ```
 
 ### Rename Operations
