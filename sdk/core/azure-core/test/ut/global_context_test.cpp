@@ -40,4 +40,9 @@ TEST(Context, ApplicationContext)
   //  The context should be cancelled
   Context appContext2 = Context::ApplicationContext;
   EXPECT_TRUE(appContext2.IsCancelled());
+
+  // Reset the cancelled state of ApplicationContext.
+  Context::ApplicationContext = Context::CreateNewRoot();
+  EXPECT_FALSE(Context::ApplicationContext.IsCancelled());
+  EXPECT_TRUE(appContext2.IsCancelled());
 }

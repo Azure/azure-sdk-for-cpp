@@ -168,7 +168,6 @@ You can intermittently poll whether the operation has finished by using the `Pol
   std::string sourceUri = "<a uri to the source blob to copy>";
 
   // Typically, long running operation APIs have names that begin with Start.
-  StartBlobCopyOperation operation = blockBlobClient.StartCopyFromUri(sourceUri);
 
   // Waits for the operation to finish, checking for status every 1 second.
   auto copyResponse = operation.PollUntilDone(std::chrono::milliseconds(1000));
@@ -181,6 +180,41 @@ You can intermittently poll whether the operation has finished by using the `Pol
               << std::endl;
   }
 ```
+
+#### `Azure::Core::Context`
+
+Most Azure SDK Service Client methods accept an optional `Azure::Core::Context` parameter, which is used to enable cancellation of the operation.
+
+This is useful when you want to cancel an operation that is taking too long to complete. For instance, the 
+snippet below will cancel a blob client upload after 500 milliseconds.
+
+```cpp
+  Azure::Core::Context cancelledIn500ms = Azure::Core::Context::ApplicationContext.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::milliseconds(500));
+
+  std::cout << "Uploading blob: " << blobName << std::endl;
+  blobClient.UploadFrom(blobContent, sizeof(blobContent), cancelledIn500ms);
+```
+
+`Context` objects can also be directly cancelled using the `Context::Cancel` method.
+
+`Context` objects form a hierarchy, where a child context can created from a parent context. 
+There are five operations that can be performed on a 'Context' object:
+
+* Create a child context from a parent context which can be independantly cancelled.
+* Create a child context from a parent context with a Key/Value pair. This is useful for associating metadata with a context.
+* Create a child context from a parent context with a deadline. This is useful for setting a deadline for a context.
+* Cancel a context. This will cancel the context and all its children. Note that there is no way of un-cancelling a context.
+* Check if a context is cancelled.
+
+By default, when a `Context` is created, it is a child of the `ApplicationContext`. This allows a client application to cancel all the operations currently active in the process.
+
+If you do NOT want a newly created `Context` to be a child of `ApplicationContext`, use the `Azure::Core::Context::CreateNewRoot()` function, 
+which will create a new root context.
+
+When a context is copied from another context, the copied context will share state with the original context. 
+This means that if the original context is cancelled, the copied context will also be cancelled.
+
 
 #### Interacting with Azure SDK for C++
 
