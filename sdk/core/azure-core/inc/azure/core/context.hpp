@@ -337,7 +337,7 @@ namespace Azure { namespace Core {
     }
 
     /** @brief Creates a new root Context. This context is not a child of any other context, and
-     * thus can be independantly cancelled.
+     * thus can be independently cancelled.
      *
      * @return New root context.
      *
