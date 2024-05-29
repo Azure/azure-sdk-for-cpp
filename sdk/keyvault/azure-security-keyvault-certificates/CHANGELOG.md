@@ -1,4 +1,4 @@
-- # Release History
+# Release History
 
 ## 4.3.0-beta.2 (2024-06-11)
 
