@@ -1,17 +1,12 @@
 param(
     [string] $EmailAddress = $env:BUILD_REQUESTEDFOREMAIL,
-    [string] $ClientId,
-    [string] $ClientSecret,
-    [string] $TenantId,
+    [string] $OpenApiToken,
     [string] $Fallback
 )
 
 . "$PSScriptRoot/../common/scripts/Helpers/Metadata-Helpers.ps1"
 
-$allUsers = GetAllGitHubUsers `
-    -TenantId $TenantId `
-    -ClientId $ClientId `
-    -ClientSecret $ClientSecret
+$allUsers = GetAllGitHubUsers -Token $OpenApiToken
 
 if (!$allUsers) {
     Write-Host "Failed to get all GitHub users"
