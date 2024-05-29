@@ -2,8 +2,14 @@
 
 ## 4.5.0-beta.2 (2024-06-11)
 
-### Other Changes
 
+### Breaking Changes
+
+- Deprecated `KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP` in favor of `KeyEncryptionAlgorithm::CkmRsaAesKeyWrap`.
+- Deprecated `KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256` in favor of `KeyEncryptionAlgorithm::RsaAesKeyWrap256`.
+- Deprecated `KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384` in favor of `KeyEncryptionAlgorithm::RsaAesKeyWrap384`.
+
+### Other Changes
 - Relocated samples to the `samples` directory.
 - Updated the `README.md` file with the latest information.
 - Updated samples. 

@@ -12,11 +12,14 @@
 
 ### Other Changes
 
+- [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
+
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - Anton Popov _([GitHub](https://github.com/CurtizJ))_
+- AlexYue _([GitHub](https://github.com/ByteYue))_
 
 ## 1.12.0 (2024-05-09)
 

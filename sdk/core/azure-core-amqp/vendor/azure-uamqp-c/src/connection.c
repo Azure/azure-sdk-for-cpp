@@ -2481,6 +2481,23 @@ int connection_set_remote_idle_timeout_empty_frame_send_ratio(CONNECTION_HANDLE 
     return result;
 }
 
+char *connection_get_container_id(CONNECTION_HANDLE connection)
+{
+    char* result;
+
+    if (connection == NULL)
+    {
+        LogError("NULL connection");
+        result = NULL;
+    }
+    else
+    {
+        result = connection->container_id;
+    }
+
+    return result;
+}
+
 ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE connection_subscribe_on_connection_close_received(CONNECTION_HANDLE connection, ON_CONNECTION_CLOSE_RECEIVED on_connection_close_received, void* context)
 {
     ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE result;

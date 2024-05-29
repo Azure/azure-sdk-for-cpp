@@ -70,6 +70,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
     TryWaitForIncomingMessage();
 
+    void EnableLinkPolling();
+
   private:
     UniqueMessageReceiver m_messageReceiver{};
     bool m_receiverOpen{false};
@@ -79,6 +81,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_detail::SessionImpl> m_session;
     Models::_internal::AmqpError m_savedMessageError{};
     _internal::MessageReceiverState m_currentState{};
+    bool m_deferLinkPolling{false};
+
+    bool m_linkPollingEnabled{false};
+    std::mutex m_mutableState;
 
     Azure::Core::Amqp::Common::_internal::
         AsyncOperationQueue<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>

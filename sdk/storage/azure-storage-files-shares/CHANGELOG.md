@@ -4,11 +4,9 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2024-08-04`.
+- Added more detailed messaging for authorization failure cases.
+- Added support for snapshot management on NFS shares.
 
 ## 12.9.0 (2024-05-07)
 

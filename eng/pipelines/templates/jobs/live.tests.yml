@@ -104,8 +104,6 @@ jobs:
           
   - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
-  - template: /eng/pipelines/templates/steps/setup-msvc.yml
-
   # Add g++5 repo to ubuntu
   - bash: sudo sh -c "echo 'deb http://ftp.debian.org/debian/ stretch main' >> /etc/apt/sources.list"
     displayName: Add g++ 5
@@ -166,7 +164,6 @@ jobs:
   - template: /eng/common/testproxy/test-proxy-tool.yml
     parameters:
       runProxy: false
-      targetVersion: 1.0.0-dev.20240423.2
 
   - ${{ parameters.PreTestSteps }}
 

@@ -185,7 +185,7 @@ TEST(LogPolicy, Default)
       "\nheader2 : REDACTED"
       "\nx-ms-request-id : 6c536700-4c36-4e22-9161-76e7b3bf8269");
 
-  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 }
 
@@ -214,7 +214,7 @@ TEST(LogPolicy, PortAndPath)
       "\nheader2 : REDACTED"
       "\nx-ms-request-id : 6c536700-4c36-4e22-9161-76e7b3bf8269");
 
-  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 }
 
@@ -248,7 +248,7 @@ TEST(LogPolicy, Headers)
       "\nheader2 : REDACTED"
       "\nx-ms-request-id : 6c536700-4c36-4e22-9161-76e7b3bf8269");
 
-  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 }
 
@@ -305,7 +305,7 @@ TEST(LogPolicy, DefaultHeaders)
       "\nx-ms-request-id : x-ms-request-id"
       "\nx-ms-return-client-request-id : x-ms-return-client-request-id");
 
-  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 
   // Ensure that the entire list of allowed headers is in the list of headers.
@@ -345,7 +345,7 @@ TEST(LogPolicy, QueryParams)
       "\nheader2 : REDACTED"
       "\nx-ms-request-id : REDACTED");
 
-  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 }
 
@@ -374,7 +374,7 @@ TEST(LogPolicy, QueryParamsUnencoded)
       "\nheader2 : REDACTED"
       "\nx-ms-request-id : REDACTED");
 
-  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 }
 
@@ -403,6 +403,6 @@ TEST(LogPolicy, QueryParamsEncoded)
       "\nheader2 : REDACTED"
       "\nx-ms-request-id : REDACTED");
 
-  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 }

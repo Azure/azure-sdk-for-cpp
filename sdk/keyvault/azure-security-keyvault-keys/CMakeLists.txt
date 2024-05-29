@@ -147,6 +147,7 @@ if(BUILD_TESTING)
   
   add_subdirectory(test/ut)
   add_subdirectory(test/ut-hsm)
+  add_subdirectory(test/macros-build)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)

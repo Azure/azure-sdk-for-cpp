@@ -4,11 +4,8 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2024-08-04`.
+- Added more detailed messaging for authorization failure cases.
 
 ## 12.2.0 (2023-11-07)
 

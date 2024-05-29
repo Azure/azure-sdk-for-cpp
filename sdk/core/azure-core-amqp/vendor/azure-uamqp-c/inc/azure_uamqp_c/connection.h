@@ -92,6 +92,7 @@ extern "C" {
     MOCKABLE_FUNCTION(, int, connection_get_properties, CONNECTION_HANDLE, connection, fields*, properties);
     MOCKABLE_FUNCTION(, int, connection_get_remote_max_frame_size, CONNECTION_HANDLE, connection, uint32_t*, remote_max_frame_size);
     MOCKABLE_FUNCTION(, int, connection_set_remote_idle_timeout_empty_frame_send_ratio, CONNECTION_HANDLE, connection, double, idle_timeout_empty_frame_send_ratio);
+    MOCKABLE_FUNCTION(, char*, connection_get_container_id, CONNECTION_HANDLE, connection);
     MOCKABLE_FUNCTION(, uint64_t, connection_handle_deadlines, CONNECTION_HANDLE, connection);
     MOCKABLE_FUNCTION(, void, connection_dowork, CONNECTION_HANDLE, connection);
     MOCKABLE_FUNCTION(, ENDPOINT_HANDLE, connection_create_endpoint, CONNECTION_HANDLE, connection);

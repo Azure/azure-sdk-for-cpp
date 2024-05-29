@@ -392,7 +392,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto result = m_openQueue.WaitForResult(context);
       if (!result || std::get<0>(*result))
       {
-
         if (m_options.EnableTrace)
         {
           Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";

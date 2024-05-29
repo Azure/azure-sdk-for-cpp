@@ -896,4 +896,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     return _detail::BlobClient::SetLegalHold(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
+  Azure::Response<Models::AccountInfo> BlobClient::GetAccountInfo(
+      const GetAccountInfoOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::BlobClient::GetBlobAccountInfoOptions protocolLayerOptions;
+    return _detail::BlobClient::GetAccountInfo(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+  }
+
 }}} // namespace Azure::Storage::Blobs

@@ -741,4 +741,36 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient1.Delete());
   }
 
+  TEST_F(BlobSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    auto blobContainerClient = *m_blobContainerClient;
+    auto blobClient = *m_blockBlobClient;
+    const std::string blobName = m_blobName;
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::Service;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    auto unauthorizedBlobClient = GetSasAuthenticatedClient(blobClient, sasToken);
+    try
+    {
+      unauthorizedBlobClient.Download();
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ("AuthorizationResourceTypeMismatch", e.ErrorCode);
+      EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
+    }
+  }
 }}} // namespace Azure::Storage::Test

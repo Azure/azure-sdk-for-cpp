@@ -79,18 +79,6 @@ namespace Azure { namespace Storage { namespace Test {
     return shareClient;
   }
 
-  Files::Shares::ShareClient FileShareClientTest::GetPremiumShareClientForTest(
-      const std::string& shareName,
-      Files::Shares::ShareClientOptions clientOptions)
-  {
-    InitStorageClientOptions(clientOptions);
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        PremiumFileConnectionString(), shareName, clientOptions);
-    m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
-
-    return shareClient;
-  }
-
   TEST_F(FileShareClientTest, CreateDeleteShares)
   {
     {
@@ -728,5 +716,31 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.Audience = Files::Shares::ShareAudience("https://disk.compute.azure.com");
     shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(shareClient.GetPermission(created.FilePermissionKey), StorageException);
+  }
+
+  TEST_F(FileShareClientTest, EnableSnapshotVirtualDirectoryAccess_PLAYBACKONLY_)
+  {
+    std::string shareName = LowercaseRandomString();
+    auto shareClient = GetPremiumShareClientForTest(shareName);
+    Files::Shares::CreateShareOptions createOptions;
+    createOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+    shareClient.Create(createOptions);
+
+    Files::Shares::SetSharePropertiesOptions setPropertiesOptions;
+    // EnableSnapshotVirtualDirectoryAccess = true
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = true;
+    shareClient.SetProperties(setPropertiesOptions);
+    auto properties = shareClient.GetProperties().Value;
+    EXPECT_TRUE(
+        properties.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && properties.EnableSnapshotVirtualDirectoryAccess.Value());
+
+    // EnableSnapshotVirtualDirectoryAccess = false
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = false;
+    shareClient.SetProperties(setPropertiesOptions);
+    properties = shareClient.GetProperties().Value;
+    EXPECT_TRUE(
+        properties.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && !properties.EnableSnapshotVirtualDirectoryAccess.Value());
   }
 }}} // namespace Azure::Storage::Test

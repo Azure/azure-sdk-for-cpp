@@ -753,6 +753,7 @@ LINK_HANDLE link_create(SESSION_HANDLE session, const char* name, role role, AMQ
         result->target = amqpvalue_clone(target);
         result->session = session;
         result->handle = 0;
+        result->name = NULL;
         result->snd_settle_mode = sender_settle_mode_unsettled;
         result->rcv_settle_mode = receiver_settle_mode_first;
         result->delivery_count = 0;
@@ -801,11 +802,12 @@ LINK_HANDLE link_create(SESSION_HANDLE session, const char* name, role role, AMQ
                 }
                 else
                 {
+                    (void)memcpy(result->name, name, name_length + 1);
+
                     result->on_link_state_changed = NULL;
                     result->callback_context = NULL;
                     set_link_state(result, LINK_STATE_DETACHED);
 
-                    (void)memcpy(result->name, name, name_length + 1);
                     result->link_endpoint = session_create_link_endpoint(session, name);
                     if (result->link_endpoint == NULL)
                     {
@@ -906,6 +908,11 @@ LINK_HANDLE link_create_from_endpoint(SESSION_HANDLE session, LINK_ENDPOINT_HAND
                     result->on_link_state_changed = NULL;
                     result->callback_context = NULL;
                     result->link_endpoint = link_endpoint;
+
+                    // This ensures link.c gets notified if the link endpoint is destroyed
+                    // by uamqp (due to a DETACH from the hub, e.g.) to prevent a double free.
+                    session_set_link_endpoint_callback(
+                        result->link_endpoint, on_link_endpoint_destroyed, result);
                 }
             }
         }

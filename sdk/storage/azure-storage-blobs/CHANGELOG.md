@@ -4,11 +4,9 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2024-08-04`.
+- Added `BlobContainerClient::GetAccountInfo()` and `BlobClient::GetAccountInfo` APIs.
+- Added more detailed messaging for authorization failure cases.
 
 ## 12.11.0 (2024-05-07)
 

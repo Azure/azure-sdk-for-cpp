@@ -360,3 +360,8 @@ build/
 .assets
 
 CMakeUserPresets.json
+
+# Disable VS solution files and csproj files because they pollute the VS experience.
+**/vendor/**/*.sln
+**/vendor/**/*.csproj
+
