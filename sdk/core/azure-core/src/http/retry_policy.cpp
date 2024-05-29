@@ -145,11 +145,22 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     {
       auto response = nextPolicy.Send(request, retryContext);
 
-      // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
-      // doesn't need to be retried), then ShouldRetryOnResponse returns false.
+      // Are we out of retry attempts?
+      // Checking this first, before checking the response so that the extension point of
+      // ShouldRetry doesn't have the responsibility of checking the number of retries (again).
+      if (WasLastAttempt(m_retryOptions, attempt))
+      {
+        return response;
+      }
 
-      // Service SDKs can inject custom logic to define whether the request should be retried,
-      // based on the response. The default of `ShouldRetry` is false.
+      // If a response is non-retriable (or simply 200 OK, i.e doesn't need to be retried), then
+      // ShouldRetryOnResponse returns false. Service SDKs can inject custom logic to define whether
+      // the request should be retried, based on the response. The default of `ShouldRetry` is
+      // false.
+      // Because of boolean short-circuit evaluation, if ShouldRetryOnResponse returns true, the
+      // overriden ShouldRetry is not called. This is expected, since overriding ShouldRetry enables
+      // loosening the retry conditions (retrying where otherwise the request wouldn't be), but not
+      // strengthening it.
       if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter)
           && !ShouldRetry(response, m_retryOptions))
       {
@@ -223,12 +234,6 @@ bool RetryPolicy::ShouldRetryOnResponse(
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
-
-  // Are we out of retry attempts?
-  if (WasLastAttempt(retryOptions, attempt))
-  {
-    return false;
-  }
 
   // Should we retry on the given response retry code?
   {
