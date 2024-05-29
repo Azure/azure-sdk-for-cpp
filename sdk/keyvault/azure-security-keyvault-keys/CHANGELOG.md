@@ -2,7 +2,6 @@
 
 ## 4.5.0-beta.2 (2024-06-11)
 
-
 ### Breaking Changes
 
 - Deprecated `KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP` in favor of `KeyEncryptionAlgorithm::CkmRsaAesKeyWrap`.
