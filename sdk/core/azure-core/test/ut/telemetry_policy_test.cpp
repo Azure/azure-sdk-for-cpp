@@ -84,6 +84,28 @@ TEST(TelemetryPolicy, telemetryString)
     EXPECT_EQ(actualValue[actualValue.size() - 1], ClosingBrace);
 
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
+
+    EXPECT_EQ(
+        actualValue.substr(actualValue.length() - 10, test.expectedPrefix.size()), "Cpp201402)");
+  }
+}
+
+TEST(TelemetryPolicy, UserAgentCppVer)
+{
+  {
+    const std::string ua = _detail::UserAgentGenerator::GenerateUserAgent(
+        "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
+
+    EXPECT_GE(ua.length(), 10);
+    EXPECT_EQ(ua.substr(ua.length() - 10, ua.size()), "Cpp201402)");
+  }
+
+  {
+    const std::string ua = _detail::UserAgentGenerator::GenerateUserAgent(
+        "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
+
+    EXPECT_GE(ua.length(), 10);
+    EXPECT_EQ(ua.substr(ua.length() - 10, ua.size()), "Cpp201703)");
   }
 }
 

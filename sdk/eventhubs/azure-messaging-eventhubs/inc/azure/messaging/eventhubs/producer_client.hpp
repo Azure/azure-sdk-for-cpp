@@ -20,6 +20,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     class EventHubsPropertiesClient;
   } // namespace _detail
 
+  class ProducerClient;
+
   /**@brief Contains options for the ProducerClient creation
    */
   struct ProducerClientOptions final
@@ -40,6 +42,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**@brief  The maximum size of the message that can be sent.
      */
     Azure::Nullable<std::uint64_t> MaxMessageSize{};
+
+  private:
+    friend class ProducerClient;
+    long CppStandardVersion = __cplusplus;
   };
 
   /**@brief  ProducerClient can be used to send events to an Event Hub.

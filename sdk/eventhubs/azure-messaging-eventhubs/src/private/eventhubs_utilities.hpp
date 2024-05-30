@@ -261,11 +261,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   class EventHubsUtilities {
 
   public:
-    template <typename T> static void SetUserAgent(T& options, std::string const& applicationId)
+    template <typename T>
+    static void SetUserAgent(T& options, std::string const& applicationId, long cplusplusValue)
     {
       constexpr const char* packageName = "cpp-azure-messaging-eventhubs-cpp";
 
-      options.Properties.emplace("Product", +packageName);
+      options.Properties.emplace("Product", packageName);
       options.Properties.emplace("Version", PackageVersion::ToString());
 #if defined(AZ_PLATFORM_WINDOWS)
       options.Properties.emplace("Platform", "Windows");
@@ -277,7 +278,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       options.Properties.emplace(
           "User-Agent",
           Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
-              packageName, PackageVersion::ToString(), applicationId));
+              packageName, PackageVersion::ToString(), applicationId, cplusplusValue));
     }
 
     static void LogRawBuffer(std::ostream& os, std::vector<uint8_t> const& buffer);

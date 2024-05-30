@@ -125,7 +125,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     // Set the UserAgent related properties on this message sender.
     _detail::EventHubsUtilities::SetUserAgent(
-        connectOptions, m_producerClientOptions.ApplicationID);
+        connectOptions,
+        m_producerClientOptions.ApplicationID,
+        m_producerClientOptions.CppStandardVersion);
 
     return Azure::Core::Amqp::_internal::Connection{
         m_fullyQualifiedNamespace, m_credential, connectOptions};
