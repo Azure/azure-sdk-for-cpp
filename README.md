@@ -168,6 +168,7 @@ You can intermittently poll whether the operation has finished by using the `Pol
   std::string sourceUri = "<a uri to the source blob to copy>";
 
   // Typically, long running operation APIs have names that begin with Start.
+  StartBlobCopyOperation operation = blockBlobClient.StartCopyFromUri(sourceUri);
 
   // Waits for the operation to finish, checking for status every 1 second.
   auto copyResponse = operation.PollUntilDone(std::chrono::milliseconds(1000));
