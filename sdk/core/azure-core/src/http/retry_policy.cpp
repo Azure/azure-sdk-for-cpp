@@ -161,12 +161,14 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
       // overriden ShouldRetry is not called. This is expected, since overriding ShouldRetry enables
       // loosening the retry conditions (retrying where otherwise the request wouldn't be), but not
       // strengthening it.
-      if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter)
-          && !ShouldRetry(response, m_retryOptions))
+      if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
       {
-        // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
-        // trying to perform same request would use last retry query/headers
-        return response;
+        if (!ShouldRetry(response, m_retryOptions))
+        {
+          // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
+          // trying to perform same request would use last retry query/headers
+          return response;
+        }
       }
     }
     catch (const TransportException& e)
