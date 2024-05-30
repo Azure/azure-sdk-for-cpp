@@ -63,6 +63,7 @@ add_executable (
     etag_test.cpp
     exception_test.cpp
     extendable_enumeration_test.cpp
+    file_helpers_test.cpp
     global_context_test.cpp
     http_method_test.cpp
     http_test.cpp
