@@ -21101,7 +21101,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 // |  |  |__   |  |  | | | |  version 3.11.3
 // |_____|_____|_____|_|___|  https://github.com/nlohmann/json
 //
-// SPDX-FileCopyrightText: 2008-2009 Björn Hoehrmann <bjoern@hoehrmann.de>
+// SPDX-FileCopyrightText: 2008-2009 Bjorn Hoehrmann <bjoern@hoehrmann.de>
 // SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
 // SPDX-License-Identifier: MIT
 
