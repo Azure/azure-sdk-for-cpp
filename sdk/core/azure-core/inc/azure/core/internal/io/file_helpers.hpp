@@ -94,7 +94,8 @@ namespace Azure { namespace Core { namespace IO { namespace _internal {
       return true;
 #else
       int result = mkdir(directoryPath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO | S_IFDIR);
-      if (!result)
+      // Success is 0
+      if (result != 0)
       {
         if (errno == EEXIST)
         {
