@@ -135,11 +135,8 @@ public:
   }
 
 protected:
-  bool ShouldRetry(std::unique_ptr<RawResponse> const& response, RetryOptions const& retryOptions)
-      const override
+  bool ShouldRetry(std::unique_ptr<RawResponse> const&, RetryOptions const&) const override
   {
-    (void)response;
-    (void)retryOptions;
     return true;
   }
 };
@@ -154,11 +151,8 @@ public:
   }
 
 protected:
-  bool ShouldRetry(std::unique_ptr<RawResponse> const& response, RetryOptions const& retryOptions)
-      const override
+  bool ShouldRetry(std::unique_ptr<RawResponse> const&, RetryOptions const&) const override
   {
-    (void)response;
-    (void)retryOptions;
     throw TransportException("Short-circuit evaluation means this should never be called.");
   }
 };
@@ -176,11 +170,8 @@ public:
   }
 
 protected:
-  bool ShouldRetry(std::unique_ptr<RawResponse> const& response, RetryOptions const& retryOptions)
-      const override
+  bool ShouldRetry(std::unique_ptr<RawResponse> const& response, RetryOptions const&) const override
   {
-    (void)retryOptions;
-
     if (response == nullptr)
     {
       return true;
