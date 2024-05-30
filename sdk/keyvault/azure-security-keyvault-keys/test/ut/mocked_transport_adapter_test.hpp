@@ -61,8 +61,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
     const char* UpdateFakeKey(const char fakeKey[], std::string header)
     {
-      char* result;
-      std::string keyType = "RSA";
+      std::string result;
+      std::string keyType;
       // cspell: disable-next-line
       if (header.find("CreateKeyRSAHSM") != std::string::npos)
       {
@@ -91,18 +91,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         keyType = "oct";
       }
 
-      result = new char[std::string(fakeKey).size() + keyType.size()];
-
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4996)
 #endif
-      std::sprintf(result, fakeKey, keyType.c_str());
+      result += fakeKey;
+      result += keyType.c_str();
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 
-      return result;
+      return result.c_str();
     }
   };
 
