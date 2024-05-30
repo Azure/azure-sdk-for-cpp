@@ -198,7 +198,7 @@ snippet below will cancel a blob client upload after 500 milliseconds.
 
 `Context` objects can also be directly cancelled using the `Context::Cancel` method.
 
-`Context` objects form a hierarchy, where a child context can created from a parent context. 
+`Context` objects form a hierarchy, where a child context can be created from a parent context. 
 There are five operations that can be performed on a 'Context' object:
 
 * Create a child context from a parent context which can be independently cancelled.
