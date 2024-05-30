@@ -28,6 +28,7 @@
 
 #include <sys/types.h>
 #endif
+#include <string.h>
 
 namespace Azure { namespace Core { namespace IO { namespace _internal {
 

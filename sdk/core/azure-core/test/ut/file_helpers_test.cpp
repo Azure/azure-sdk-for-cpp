@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include <azure/core/internal/io/file_helpers.hpp>
+#include <azure/core/uuid.hpp>
 
 #include <fstream>
 
@@ -39,14 +40,21 @@ TEST(FileHelpers, GetFileSize_NonExistent)
 
 TEST(FileHelpers, CreateFileDirectory_Basic)
 {
-  EXPECT_TRUE(FileHelpers::CreateFileDirectory("newTestDirectory"));
-  EXPECT_FALSE(FileHelpers::CreateFileDirectory("newTestDirectory"));
+  auto uuid = Azure::Core::Uuid::CreateUuid();
+  std::string directoryNameSuffix = uuid.ToString();
 
-  EXPECT_TRUE(FileHelpers::CreateFileDirectory("newTestDirectory/subdirectory"));
-  EXPECT_FALSE(FileHelpers::CreateFileDirectory("newTestDirectory/subdirectory"));
+  std::string rootDirectory = "newTestDirectory-" + directoryNameSuffix;
+  EXPECT_TRUE(FileHelpers::CreateFileDirectory(rootDirectory));
+  EXPECT_FALSE(FileHelpers::CreateFileDirectory(rootDirectory));
 
-  EXPECT_TRUE(FileHelpers::CreateFileDirectory("newTestDirectory\\anotherSubdirectory"));
-  EXPECT_FALSE(FileHelpers::CreateFileDirectory("newTestDirectory\\anotherSubdirectory"));
+  std::string subDirectory = rootDirectory + "/" + "subdirectory-" + directoryNameSuffix;
+  EXPECT_TRUE(FileHelpers::CreateFileDirectory(subDirectory));
+  EXPECT_FALSE(FileHelpers::CreateFileDirectory(subDirectory));
+
+  std::string anotherSubdirectory
+      = rootDirectory + "\\" + "anotherSubdirectory-" + directoryNameSuffix;
+  EXPECT_TRUE(FileHelpers::CreateFileDirectory(anotherSubdirectory));
+  EXPECT_FALSE(FileHelpers::CreateFileDirectory(anotherSubdirectory));
 }
 
 TEST(FileHelpers, CreateFileDirectory_NonExistent)
