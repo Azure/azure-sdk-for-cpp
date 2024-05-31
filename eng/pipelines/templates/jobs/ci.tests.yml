@@ -193,7 +193,7 @@ jobs:
           Env: "$(CmakeEnvArg)"  
 
       - bash: |
-        curl -Lo dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/35655ed6-3e37-4fa3-8990-5c1827469ce5/f9f920ff05b0aa5961a8b30e2824de7d/dotnet-sdk-6.0.100-rc.2.21505.57-osx-x64.tar.gz & mkdir dotnet & tar -C dotnet -xf dotnet.tar.gz & rm dotnet.tar.gz & export DOTNET_ROOT=~/dotnet & export PATH=$PATH:~/dotnet & dotnet --version
+        curl -Lo dotnet.tar.gz "https://download.visualstudio.microsoft.com/download/pr/35655ed6-3e37-4fa3-8990-5c1827469ce5/f9f920ff05b0aa5961a8b30e2824de7d/dotnet-sdk-6.0.100-rc.2.21505.57-osx-x64.tar.gz" & mkdir dotnet & tar -C dotnet -xf dotnet.tar.gz & rm dotnet.tar.gz & export DOTNET_ROOT=~/dotnet & export PATH=$PATH:~/dotnet & dotnet --version
         condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
         displayName : Install .NET SDK
 
