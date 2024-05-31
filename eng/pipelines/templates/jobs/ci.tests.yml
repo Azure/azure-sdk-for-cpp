@@ -184,14 +184,6 @@ jobs:
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             TestPipeline: ${{ parameters.TestPipeline }}
 
-      - template: /eng/pipelines/templates/steps/cmake-build.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          GenerateArgs: "$(CmakeArgs)"
-          BuildArgs: "$(BuildArgs)"
-          VcpkgArgs: "$(VcpkgArgs)"
-          Env: "$(CmakeEnvArg)"  
-
       - task: UseDotNet@2
         displayName: Use .NET 6 for Test Proxy
         # Mac agents do not have .NET 6 installed by default since 10.13
@@ -215,7 +207,15 @@ jobs:
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
         
       - ${{ parameters.PreTestSteps }}
-      
+
+      - template: /eng/pipelines/templates/steps/cmake-build.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          GenerateArgs: "$(CmakeArgs)"
+          BuildArgs: "$(BuildArgs)"
+          VcpkgArgs: "$(VcpkgArgs)"
+          Env: "$(CmakeEnvArg)"  
+
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
