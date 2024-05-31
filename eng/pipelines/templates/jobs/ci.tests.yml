@@ -205,6 +205,14 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/show-failure-logs.yml
 
+      - task: UseDotNet@2
+        displayName: Use .NET 6 for Test Proxy
+        # Mac agents do not have .NET 6 installed by default since 10.13
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+        inputs:
+          packageType: runtime
+          version: 6.x
+
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true
