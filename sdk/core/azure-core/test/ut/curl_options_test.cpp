@@ -1,12 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/platform.hpp>
-
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/platform.hpp>
 
 #include <gtest/gtest.h>
 

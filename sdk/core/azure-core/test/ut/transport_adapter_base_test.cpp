@@ -1,14 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/platform.hpp>
-#include <azure/core/rtti.hpp>
-
 #include "transport_adapter_base_test.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/platform.hpp>
 #include <azure/core/response.hpp>
+#include <azure/core/rtti.hpp>
 
 #include <iostream>
 #include <string>
@@ -449,9 +448,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url host("http://unresolvedHost.org/get");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-    EXPECT_THROW(
-        m_pipeline->Send(request, Context{}),
-        Azure::Core::RequestFailedException);
+    EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::RequestFailedException);
   }
 
   TEST_P(TransportAdapter, validNonAsciiHost)
@@ -460,33 +457,25 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Url host(u8"http://unresolvedHost\u6F22\u5B57.org/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      EXPECT_THROW(
-          m_pipeline->Send(request, Context{}),
-          Azure::Core::Http::TransportException);
+      EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::Http::TransportException);
     }
     {
       Azure::Core::Url host("http://unresolvedHost\xE9\x87\x91.org/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      EXPECT_THROW(
-          m_pipeline->Send(request, Context{}),
-          Azure::Core::Http::TransportException);
+      EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::Http::TransportException);
     }
     {
       Azure::Core::Url host(u8"http://unresolvedHost\uC328.org/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      EXPECT_THROW(
-          m_pipeline->Send(request, Context{}),
-          Azure::Core::Http::TransportException);
+      EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::Http::TransportException);
     }
     {
       Azure::Core::Url host("http://\0/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      EXPECT_THROW(
-          m_pipeline->Send(request, Context{}),
-          Azure::Core::Http::TransportException);
+      EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::Http::TransportException);
     }
   }
 
@@ -496,25 +485,19 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Url host("http://unresolvedHost\xC0\x41\x42\xFE\xFE\xFF\xFF.org/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      EXPECT_THROW(
-          m_pipeline->Send(request, Context{}),
-          Azure::Core::Http::TransportException);
+      EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::Http::TransportException);
     }
     {
       Azure::Core::Url host("http://\xC0\x76\x77/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      EXPECT_THROW(
-          m_pipeline->Send(request, Context{}),
-          Azure::Core::Http::TransportException);
+      EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::Http::TransportException);
     }
     {
       Azure::Core::Url host("http://\xD8\x00\x01\x00/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      EXPECT_THROW(
-          m_pipeline->Send(request, Context{}),
-          Azure::Core::Http::TransportException);
+      EXPECT_THROW(m_pipeline->Send(request, Context{}), Azure::Core::Http::TransportException);
     }
   }
 

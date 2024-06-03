@@ -50,9 +50,10 @@ namespace Azure { namespace Core {
    *
    * By default, each newly created Context object is a child of the singleton ApplicationContext
    * object.
-   * 
-   * After cancelling a Context, all operations which have the cancelled context as a parent context will be cancelled.
-   * 
+   *
+   * After cancelling a Context, all operations which have the cancelled context as a parent context
+   * will be cancelled.
+   *
    * Cancellation is indicated by throwing an Azure::Core::OperationCancelledException from the
    * operation.
    *

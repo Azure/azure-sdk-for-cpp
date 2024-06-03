@@ -40,7 +40,7 @@ TEST(Context, ApplicationContext)
   Context appContext2 = Context::ApplicationContext;
   EXPECT_TRUE(appContext2.IsCancelled());
 
-   // Reset the cancelled state of ApplicationContext.
+  // Reset the cancelled state of ApplicationContext.
   Context::ApplicationContext.Reset();
   EXPECT_FALSE(Context::ApplicationContext.IsCancelled());
   EXPECT_TRUE(appContext2.IsCancelled());
