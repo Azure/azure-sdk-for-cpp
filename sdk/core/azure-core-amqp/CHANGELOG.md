@@ -12,8 +12,6 @@
 
 ### Other Changes
 
-- Updated JSON library to 3.11.3.
-
 ## 1.0.0-beta.9 (2024-05-06)
 
 ### Bugs Fixed
