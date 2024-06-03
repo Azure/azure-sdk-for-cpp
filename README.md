@@ -185,7 +185,7 @@ You can intermittently poll whether the operation has finished by using the `Pol
 #### `Azure::Core::Context`
 
 Most Azure SDK Service Client methods accept an optional `Azure::Core::Context` parameter, which is used to enable cancellation of the operation or to
-establish an absolute deadkune for the operation.
+establish an absolute deadline for the operation.
 
 This is useful when you want to assign a time limit on an operation to ensure that it completes in a "reasonable" timeframe. For instance, the 
 snippet below will cancel a blob client upload after 500 milliseconds.
