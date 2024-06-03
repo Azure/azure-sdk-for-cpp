@@ -471,4 +471,3 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [access_control]: https://docs.microsoft.com/azure/key-vault/managed-hsm/access-control
 [rbac_guide]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
-
