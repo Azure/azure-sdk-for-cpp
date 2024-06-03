@@ -153,7 +153,7 @@ TEST(RetryPolicy, ShouldRetry)
   // The default ShouldRetry implementation is to always return true,
   // which means we will retry up to the retry count in the options.
   {
-    Azure::Core::Context context = Azure::Core::Context::ApplicationContext;
+    Azure::Core::Context context;
     auto policy = RetryPolicy(retryOptions);
 
     RawResponse const* responsePtrSent = nullptr;

@@ -1,18 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include <azure/core/platform.hpp>
+
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/http/transport.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/response.hpp>
 
 #include <gtest/gtest.h>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"
-#include "openssl/x509.h"
+#if defined(AZ_PLATFORM_POSIX)
+#include <openssl/x509.h>
+#endif
 #endif
 
 #include "transport_adapter_base_test.hpp"
@@ -22,7 +24,6 @@
 
 #include <http/curl/curl_connection_pool_private.hpp>
 #include <http/curl/curl_connection_private.hpp>
-#include <http/curl/curl_session_private.hpp>
 
 namespace Azure { namespace Core { namespace Test {
 

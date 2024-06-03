@@ -40,8 +40,11 @@ TEST(Context, ApplicationContext)
   Context appContext2 = Context::ApplicationContext;
   EXPECT_TRUE(appContext2.IsCancelled());
 
-  // Reset the cancelled state of ApplicationContext.
-  Context::ApplicationContext = Context::CreateNewRoot();
+   // Reset the cancelled state of ApplicationContext.
+  Context::ApplicationContext.Reset();
   EXPECT_FALSE(Context::ApplicationContext.IsCancelled());
   EXPECT_TRUE(appContext2.IsCancelled());
+
+  // ApplicationContext should throw if reset when not cancelled.
+  EXPECT_THROW(Context::ApplicationContext.Reset(), std::runtime_error);
 }

@@ -2,13 +2,11 @@
 // Licensed under the MIT License.
 
 #include <azure/core/context.hpp>
-#include <azure/core/tracing/tracing.hpp>
 
 #include <chrono>
 #include <memory>
 #include <string>
 #include <thread>
-#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -513,4 +511,18 @@ TEST(Context, KeyTypePairPrecondition)
 
   EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
   EXPECT_EQ(strValue, s);
+}
+
+TEST(Context, NewRootContext)
+{
+  Context newRoot = Context::CreateNewRoot();
+  // Not cancelled new roots should throw.
+  EXPECT_THROW(newRoot.Reset(), std::runtime_error);
+
+  // Cancelled new root contexts should not throw.
+  newRoot.Cancel();
+  EXPECT_NO_THROW(newRoot.Reset());
+
+  // New contexts are not root contexts, so they should throw.
+  EXPECT_THROW(Context{}.Reset(), std::runtime_error);
 }

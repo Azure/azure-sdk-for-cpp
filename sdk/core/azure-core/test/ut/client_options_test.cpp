@@ -76,7 +76,7 @@ TEST(ClientOptions, copyWithOperator)
   options.PerRetryPolicies.emplace_back(std::make_unique<PerRetryPolicy>());
 
   // Now Copy
-  auto copyOptions = options;
+  ClientOptions copyOptions = options;
 
   // Compare
   EXPECT_EQ(1, copyOptions.Retry.MaxRetries);
@@ -182,7 +182,7 @@ TEST(ClientOptions, copyDerivedClassOperator)
   options.PerRetryPolicies.emplace_back(std::make_unique<PerRetryPolicy>());
 
   // Now Copy
-  auto copyOptions = options;
+  ServiceClientOptions copyOptions = options;
 
   // Compare
   EXPECT_EQ("I am not real!", copyOptions.ApiVersion);

@@ -184,9 +184,10 @@ You can intermittently poll whether the operation has finished by using the `Pol
 
 #### `Azure::Core::Context`
 
-Most Azure SDK Service Client methods accept an optional `Azure::Core::Context` parameter, which is used to enable cancellation of the operation.
+Most Azure SDK Service Client methods accept an optional `Azure::Core::Context` parameter, which is used to enable cancellation of the operation or to
+establish an absolute deadkune for the operation.
 
-This is useful when you want to cancel an operation that is taking too long to complete. For instance, the 
+This is useful when you want to assign a time limit on an operation to ensure that it completes in a "reasonable" timeframe. For instance, the 
 snippet below will cancel a blob client upload after 500 milliseconds.
 
 ```cpp
@@ -199,8 +200,11 @@ snippet below will cancel a blob client upload after 500 milliseconds.
 
 `Context` objects can also be directly cancelled using the `Context::Cancel` method.
 
-`Context` objects form a hierarchy, where a child context can be created from a parent context. 
-There are five operations that can be performed on a 'Context' object:
+`Context` objects form a directed tree, where a child context can be created from a parent context. 
+The context tree is unidirectional and acyclic.
+
+
+There are five basic operations that can be performed on a 'Context' object:
 
 * Create a child context from a parent context which can be independently cancelled.
 * Create a child context from a parent context with a Key/Value pair. This is useful for associating metadata with a context.
@@ -216,6 +220,43 @@ which will create a new root context.
 When a context is copied from another context, the copied context will share state with the original context. 
 This means that if the original context is cancelled, the copied context will also be cancelled.
 
+Cancellation of a `Context` is a permanent operation. Once a non-root context is cancelled, it cannot be un-cancelled.
+
+Root `Contexts` are unique in that their cancellation *CAN* be reset. Cancelling a root context essentially creates a new root Context replacing the existing root.
+
+The following snippet shows creating a new context from the `ApplicationContext` and cancelling the root context..
+
+```cpp
+  // Create a child context from the root context
+  Azure::Core::Context childContext = Azure::Core::Context::ApplicationContext.WithDeadline(std::chrono::system_clock::now() + std::chrono::seconds(10));
+
+  // Check if the child context is cancelled - this will not be printed unless 10 seconds have passed from the creation of childContext.
+  if (childContext.IsCancelled())
+  {
+	std::cout << "Child context is cancelled" << std::endl;
+  }
+
+  // Cancel the root context
+  Azure::Core::Context::ApplicationContext.Cancel();
+
+  // Check if the child context is cancelled - this will be printed because the root context was cancelled.
+  if (childContext.IsCancelled())
+  {
+	std::cout << "Child context is cancelled" << std::endl;
+  }
+
+  // Reset the root context
+  Azure::Core::Context::ApplicationContext.Reset();
+
+  // Check the child context. This will be printed because even though the root context was reset, existing contexts created before
+  // the reset will still be cancelled.
+  if (childContext.IsCancelled())
+  {
+    std::cout << "Child context is still cancelled" << std::endl;
+  }
+```
+
+When a `Context` is cancelled, it is typically indicated by throwing `Azure::Core::OperationCancelledException`. This exception can be caught and handled by the application.
 
 #### Interacting with Azure SDK for C++
 
