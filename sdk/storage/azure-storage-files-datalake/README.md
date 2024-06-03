@@ -196,4 +196,4 @@ additional questions or comments.
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[coc_contact]: mailto:opencode@microsoft.com 
+[coc_contact]: mailto:opencode@microsoft.com
