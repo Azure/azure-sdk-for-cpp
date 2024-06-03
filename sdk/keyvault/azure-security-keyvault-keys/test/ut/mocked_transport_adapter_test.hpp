@@ -93,14 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       size_t bufferSize = std::string(fakeKey).size() + keyType.size();
       result = new char[bufferSize];
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#endif
       std::snprintf(result, bufferSize, fakeKey, keyType.c_str());
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 
       return result;
     }
