@@ -196,10 +196,9 @@ jobs:
           GenerateArgs: "$(CmakeArgs)"
           BuildArgs: "$(BuildArgs)"
           VcpkgArgs: "$(VcpkgArgs)"
-          Env: "$(CmakeEnvArg)"  
-      
+          Env: "$(CmakeEnvArg)"
+  
       - template: /eng/pipelines/templates/steps/show-failure-logs.yml
-          Env: "$(CmakeEnvArg)" 
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
