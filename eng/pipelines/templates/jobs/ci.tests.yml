@@ -188,8 +188,6 @@ jobs:
           Write-Host "##vso[task.setvariable variable=DOTNET_ROLL_FORWARD]Major"
         displayName: Set DOTNET_ROLL_FORWARD to Major globally
 
-      - template: /eng/pipelines/templates/steps/show-failure-logs.yml
-
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -197,6 +195,8 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
+
+      - template: /eng/pipelines/templates/steps/show-failure-logs.yml
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
