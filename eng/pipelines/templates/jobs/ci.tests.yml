@@ -190,14 +190,6 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/show-failure-logs.yml
 
-      
-      - template: /eng/common/testproxy/test-proxy-tool.yml
-        parameters:
-          runProxy: true
-          rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
-          templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
-        
       - ${{ parameters.PreTestSteps }}
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
@@ -208,6 +200,13 @@ jobs:
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"  
 
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+        parameters:
+          runProxy: true
+          rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+          templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
+        
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
