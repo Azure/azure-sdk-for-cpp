@@ -26,6 +26,10 @@ namespace Azure { namespace Core { namespace Test {
   namespace {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
     constexpr static const char AzureSdkHttpbinHost[] = "azuresdkforcpp.azurewebsites.net";
+
+    // If we see intermittent test failures due to Httpbin reliability, even with a couple retries
+    // we'd revisit the use of this for tests, rather than increasing retries.
+    constexpr static const int AzureSdkHttpbinRetryCount = 2;
   } // namespace
   class TransportAdapterOptions : public ::testing::Test {
 
@@ -433,7 +437,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // HTTP Connections.
     auto failedCounter = 0;
-    for (auto i = 0; i < 3; i++)
+    for (auto i = 0; i < AzureSdkHttpbinRetryCount; i++)
     {
       GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i << ".";
       try
@@ -448,8 +452,9 @@ namespace Azure { namespace Core { namespace Test {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
         auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+        break; // Test passed, no need to retry.
       }
-      catch (Azure::Core::Http::TransportException const&)
+      catch (Azure::Core::Http::TransportException const& ex)
       {
         // CURL returns a connection error which triggers a transport exception.
         GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i

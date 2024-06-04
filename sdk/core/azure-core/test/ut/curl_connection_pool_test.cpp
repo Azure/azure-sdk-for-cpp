@@ -599,12 +599,31 @@ namespace Azure { namespace Core { namespace Test {
       // Simulate connection lost (like server disconnection).
       connection->Shutdown();
 
+      auto failedCounter = 0;
+      for (auto i = 0; i < _detail::AzureSdkHttpbinRetryCount; i++)
       {
-        // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
-        auto session
-            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
-        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(CURLE_SEND_ERROR, r);
+        GTEST_LOG_(INFO) << "resiliencyOnConnectionClosed test iteration " << i << ".";
+        try
+        {
+          // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
+          auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+              req, std::move(connection), options);
+          auto r = session->Perform(Azure::Core::Context::ApplicationContext);
+          EXPECT_EQ(CURLE_SEND_ERROR, r);
+          break; // Test passed, no need to retry.
+        }
+        catch (Azure::Core::Http::TransportException const&)
+        {
+          // CURL returns a connection error which triggers a transport exception.
+          GTEST_LOG_(INFO) << "resiliencyOnConnectionClosed test iteration " << i
+                           << " failed with a TransportException.";
+          failedCounter++;
+          // We allow 1 intermittent failure, due to networking issues.
+          if (failedCounter > 1)
+          {
+            throw;
+          }
+        }
       }
     }
 
@@ -617,17 +636,38 @@ namespace Azure { namespace Core { namespace Test {
       auto connection
           = CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(req, options);
 
+      auto failedCounter = 0;
+      for (auto i = 0; i < _detail::AzureSdkHttpbinRetryCount; i++)
       {
-        // Check we can use the connection to retrieve headers in the response, but the connection
-        // is still flagged as shutdown.
-        auto session
-            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
+        GTEST_LOG_(INFO) << "forceConnectionClosed test iteration " << i << ".";
+        try
+        {
+          // Check we can use the connection to retrieve headers in the response, but the connection
+          // is still flagged as shutdown.
+          auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+              req, std::move(connection), options);
 
-        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(CURLE_OK, r);
-        auto response = session->ExtractResponse();
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::SwitchingProtocols);
-        EXPECT_EQ("close", response->GetHeaders().find("Connection")->second);
+          auto r = session->Perform(Azure::Core::Context::ApplicationContext);
+          EXPECT_EQ(CURLE_OK, r);
+          auto response = session->ExtractResponse();
+          EXPECT_EQ(
+              response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::SwitchingProtocols);
+          EXPECT_EQ("close", response->GetHeaders().find("Connection")->second);
+          break; // Test passed, no need to retry.
+        }
+        catch (Azure::Core::Http::TransportException const&)
+        {
+
+          // CURL returns a connection error which triggers a transport exception.
+          GTEST_LOG_(INFO) << "forceConnectionClosed test iteration " << i
+                           << " failed with a TransportException.";
+          failedCounter++;
+          // We allow 1 intermittent failure, due to networking issues.
+          if (failedCounter > 1)
+          {
+            throw;
+          }
+        }
       }
     }
 

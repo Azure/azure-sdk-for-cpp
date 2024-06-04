@@ -79,7 +79,29 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+
+    auto failedCounter = 0;
+    for (auto i = 0; i < _detail::AzureSdkHttpbinRetryCount; i++)
+    {
+      GTEST_LOG_(INFO) << "noRevoke test iteration " << i << ".";
+      try
+      {
+        EXPECT_NO_THROW(
+            response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+        break; // Test passed, no need to retry.
+      }
+      catch (Azure::Core::Http::TransportException const&)
+      {
+        // CURL returns a connection error which triggers a transport exception.
+        GTEST_LOG_(INFO) << "noRevoke test iteration " << i << " failed with a TransportException.";
+        failedCounter++;
+        // We allow 1 intermittent failure, due to networking issues.
+        if (failedCounter > 1)
+        {
+          throw;
+        }
+      }
+    }
     if (response)
     {
       auto responseCode = response->GetStatusCode();
@@ -220,7 +242,30 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+
+    auto failedCounter = 0;
+    for (auto i = 0; i < _detail::AzureSdkHttpbinRetryCount; i++)
+    {
+      GTEST_LOG_(INFO) << "sslVerifyOff test iteration " << i << ".";
+      try
+      {
+        EXPECT_NO_THROW(
+            response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+        break; // Test passed, no need to retry.
+      }
+      catch (Azure::Core::Http::TransportException const&)
+      {
+        // CURL returns a connection error which triggers a transport exception.
+        GTEST_LOG_(INFO) << "sslVerifyOff test iteration " << i
+                         << " failed with a TransportException.";
+        failedCounter++;
+        // We allow 1 intermittent failure, due to networking issues.
+        if (failedCounter > 1)
+        {
+          throw;
+        }
+      }
+    }
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -313,7 +358,30 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+
+    auto failedCounter = 0;
+    for (auto i = 0; i < _detail::AzureSdkHttpbinRetryCount; i++)
+    {
+      GTEST_LOG_(INFO) << "httpsDefault test iteration " << i << ".";
+      try
+      {
+        EXPECT_NO_THROW(
+            response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+        break; // Test passed, no need to retry.
+      }
+      catch (Azure::Core::Http::TransportException const&)
+      {
+        // CURL returns a connection error which triggers a transport exception.
+        GTEST_LOG_(INFO) << "httpsDefault test iteration " << i
+                         << " failed with a TransportException.";
+        failedCounter++;
+        // We allow 1 intermittent failure, due to networking issues.
+        if (failedCounter > 1)
+        {
+          throw;
+        }
+      }
+    }
     auto responseCode = response->GetStatusCode();
     int expectedCode = 200;
     EXPECT_PRED2(
@@ -350,7 +418,29 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
       std::unique_ptr<Azure::Core::Http::RawResponse> response;
-      EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+      auto failedCounter = 0;
+      for (auto i = 0; i < _detail::AzureSdkHttpbinRetryCount; i++)
+      {
+        GTEST_LOG_(INFO) << "disableKeepAlive test iteration " << i << ".";
+        try
+        {
+          EXPECT_NO_THROW(
+              response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
+          break; // Test passed, no need to retry.
+        }
+        catch (Azure::Core::Http::TransportException const&)
+        {
+          // CURL returns a connection error which triggers a transport exception.
+          GTEST_LOG_(INFO) << "disableKeepAlive test iteration " << i
+                           << " failed with a TransportException.";
+          failedCounter++;
+          // We allow 1 intermittent failure, due to networking issues.
+          if (failedCounter > 1)
+          {
+            throw;
+          }
+        }
+      }
       auto responseCode = response->GetStatusCode();
       int expectedCode = 200;
       EXPECT_PRED2(
