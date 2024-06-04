@@ -9,30 +9,22 @@
 #pragma once
 
 #include "azure/core/context.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/http/policies/policy.hpp"
-#include "azure/core/http/transport.hpp"
+#include "azure/core/nullable.hpp"
+#include "azure/core/url.hpp
 #include "azure/core/internal/unique_handle.hpp"
-#include "azure/core/platform.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/transport.hpp"
+#include "azure/core/http/policies/policy.hpp"
 
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#include <windows.h>
-#endif
-
+#include <string>
 #include <memory>
-#include <type_traits>
 #include <vector>
-#include <wincrypt.h>
-#include <winhttp.h>
 
 namespace Azure { namespace Core {
   namespace _detail {
+    class WinHttpRequest;
+    void FreeWinHttpHandleImpl(void* obj);
+
     /**
      * @brief Unique handle for WinHTTP HINTERNET handles.
      *
@@ -40,25 +32,15 @@ namespace Azure { namespace Core {
      * `void *` types when used with Azure::Core::_internal::UniqueHandle.
      *
      */
-    template <> struct UniqueHandleHelper<HINTERNET>
+    template <> struct UniqueHandleHelper<void*>
     {
-      static void FreeHandle(HINTERNET obj) { WinHttpCloseHandle(obj); }
+      static void FreeWinHttpHandle(void* obj) { FreeWinHttpHandleImpl(obj); }
 
-      using type = _internal::BasicUniqueHandle<void, FreeHandle>;
+      using type = _internal::BasicUniqueHandle<void, FreeWinHttpHandle>;
     };
   } // namespace _detail
 
   namespace Http {
-
-    namespace _detail {
-
-      constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
-      constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
-
-      // Forward declaration for WinHttpRequest.
-      class WinHttpRequest;
-    } // namespace _detail
-
     /**
      * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
      * transport.
@@ -135,28 +117,20 @@ namespace Azure { namespace Core {
     private:
       WinHttpTransportOptions m_options;
       // m_sessionhandle is const to ensure immutability.
-      const Azure::Core::_internal::UniqueHandle<HINTERNET> m_sessionHandle;
+      const Azure::Core::_internal::UniqueHandle<void*> m_sessionHandle;
 
-      Azure::Core::_internal::UniqueHandle<HINTERNET> CreateSessionHandle();
-      Azure::Core::_internal::UniqueHandle<HINTERNET> CreateConnectionHandle(
+      Azure::Core::_internal::UniqueHandle<void*> CreateSessionHandle();
+      Azure::Core::_internal::UniqueHandle<void*> CreateConnectionHandle(
           Azure::Core::Url const& url,
           Azure::Core::Context const& context);
       std::unique_ptr<_detail::WinHttpRequest> CreateRequestHandle(
-          Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
+          Azure::Core::_internal::UniqueHandle<void*> const& connectionHandle,
           Azure::Core::Url const& url,
           Azure::Core::Http::HttpMethod const& method);
 
       // Callback to allow a derived transport to extract the request handle. Used for WebSocket
       // transports.
       virtual void OnUpgradedConnection(std::unique_ptr<_detail::WinHttpRequest> const&){};
-
-      /**
-       * @brief Throw an exception based on the Win32 Error code
-       *
-       * @param exceptionMessage Message describing error.
-       * @param error Win32 Error code.
-       */
-      void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError());
 
     public:
       /**

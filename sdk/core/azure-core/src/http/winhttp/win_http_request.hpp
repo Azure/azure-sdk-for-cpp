@@ -169,13 +169,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     bool VerifyCertificatesInChain(
         std::vector<std::string> const& trustedCertificates,
         PCCERT_CONTEXT serverCertificate) const;
-    /**
-     * @brief Throw an exception based on the Win32 Error code
-     *
-     * @param exceptionMessage Message describing error.
-     * @param error Win32 Error code.
-     */
-    void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError()) const;
 
   public:
     WinHttpRequest(
