@@ -9,6 +9,7 @@
 - Deprecated `KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384` in favor of `KeyEncryptionAlgorithm::RsaAesKeyWrap384`.
 
 ### Other Changes
+
 - Relocated samples to the `samples` directory.
 - Updated the `README.md` file with the latest information.
 - Updated samples. 
