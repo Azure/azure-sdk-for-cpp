@@ -191,11 +191,16 @@ This is useful when you want to assign a time limit on an operation to ensure th
 snippet below will cancel a blob client upload after 5 seconds.
 
 ```cpp
-  Azure::Core::Context cancelledIn500ms = Azure::Core::Context::ApplicationContext.WithDeadline(
+  Azure::Core::Context cancelledIn5s = Azure::Core::Context::ApplicationContext.WithDeadline(
           std::chrono::system_clock::now() + std::chrono::seconds(5);
 
   std::cout << "Uploading blob: " << blobName << std::endl;
-  blobClient.UploadFrom(blobContent, sizeof(blobContent), cancelledIn500ms);
+  try {
+    blobClient.UploadFrom(blobContent, sizeof(blobContent), cancelledIn5s);
+  }
+  catch (const Azure::Core::OperationCancelledException& e) {
+	std::cout << "Upload was cancelled: " << e.what() << std::endl;
+  }
 ```
 
 `Context` objects can also be directly cancelled using the `Context::Cancel` method.
