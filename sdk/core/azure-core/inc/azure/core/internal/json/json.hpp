@@ -52,41 +52,41 @@
 
 // This file contains all macro definitions affecting or depending on the ABI
 
-// #define NLOHMANN_JSON_VERSION_MAJOR 3  // NOLINT(modernize-macro-to-enum)
-// #define NLOHMANN_JSON_VERSION_MINOR 11 // NOLINT(modernize-macro-to-enum)
-// #define NLOHMANN_JSON_VERSION_PATCH 3  // NOLINT(modernize-macro-to-enum)
+// #define _azure_NLOHMANN_JSON_VERSION_MAJOR 3  // NOLINT(modernize-macro-to-enum)
+// #define _azure_NLOHMANN_JSON_VERSION_MINOR 11 // NOLINT(modernize-macro-to-enum)
+// #define _azure_NLOHMANN_JSON_VERSION_PATCH 3  // NOLINT(modernize-macro-to-enum)
 
-#ifndef JSON_DIAGNOSTICS
-#define JSON_DIAGNOSTICS 0
+#ifndef _azure_JSON_DIAGNOSTICS
+#define _azure_JSON_DIAGNOSTICS 0
 #endif
 
-#ifndef JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
-#define JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON 0
+#ifndef _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
+#define _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON 0
 #endif
 
-#if JSON_DIAGNOSTICS
-#define NLOHMANN_JSON_ABI_TAG_DIAGNOSTICS _diag
+#if _azure_JSON_DIAGNOSTICS
+#define _azure_NLOHMANN_JSON_ABI_TAG_DIAGNOSTICS _diag
 #else
-#define NLOHMANN_JSON_ABI_TAG_DIAGNOSTICS
+#define _azure_NLOHMANN_JSON_ABI_TAG_DIAGNOSTICS
 #endif
 
-#if JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
-#define NLOHMANN_JSON_ABI_TAG_LEGACY_DISCARDED_VALUE_COMPARISON _ldvcmp
+#if _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
+#define _azure_NLOHMANN_JSON_ABI_TAG_LEGACY_DISCARDED_VALUE_COMPARISON _ldvcmp
 #else
-#define NLOHMANN_JSON_ABI_TAG_LEGACY_DISCARDED_VALUE_COMPARISON
+#define _azure_NLOHMANN_JSON_ABI_TAG_LEGACY_DISCARDED_VALUE_COMPARISON
 #endif
 
-#ifndef NLOHMANN_JSON_NAMESPACE_NO_VERSION
-#define NLOHMANN_JSON_NAMESPACE_NO_VERSION 0
+#ifndef _azure_NLOHMANN_JSON_NAMESPACE_NO_VERSION
+#define _azure_NLOHMANN_JSON_NAMESPACE_NO_VERSION 0
 #endif
 
 // Construct the namespace ABI tags component
-#define NLOHMANN_JSON_ABI_TAGS_CONCAT_EX(a, b) json_abi##a##b
-#define NLOHMANN_JSON_ABI_TAGS_CONCAT(a, b) NLOHMANN_JSON_ABI_TAGS_CONCAT_EX(a, b)
+#define _azure_NLOHMANN_JSON_ABI_TAGS_CONCAT_EX(a, b) json_abi##a##b
+#define _azure_NLOHMANN_JSON_ABI_TAGS_CONCAT(a, b) _azure_NLOHMANN_JSON_ABI_TAGS_CONCAT_EX(a, b)
 
-#define NLOHMANN_JSON_ABI_TAGS \
-  NLOHMANN_JSON_ABI_TAGS_CONCAT( \
-      NLOHMANN_JSON_ABI_TAG_DIAGNOSTICS, NLOHMANN_JSON_ABI_TAG_LEGACY_DISCARDED_VALUE_COMPARISON)
+#define _azure_NLOHMANN_JSON_ABI_TAGS \
+  _azure_NLOHMANN_JSON_ABI_TAGS_CONCAT( \
+      _azure_NLOHMANN_JSON_ABI_TAG_DIAGNOSTICS, _azure_NLOHMANN_JSON_ABI_TAG_LEGACY_DISCARDED_VALUE_COMPARISON)
 
 // #include <nlohmann/detail/conversions/from_json.hpp>
 //     __ _____ _____ _____
@@ -120,7 +120,7 @@
 
 #include <cstddef> // nullptr_t
 #include <exception> // exception
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
 #include <numeric> // accumulate
 #endif
 #include <stdexcept> // runtime_error
@@ -250,1974 +250,1974 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
  * Created by Evan Nemerson <evan@nemerson.com>
  */
 
-#if !defined(JSON_HEDLEY_VERSION) || (JSON_HEDLEY_VERSION < 15)
-#if defined(JSON_HEDLEY_VERSION)
-#undef JSON_HEDLEY_VERSION
+#if !defined(_azure_JSON_HEDLEY_VERSION) || (_azure_JSON_HEDLEY_VERSION < 15)
+#if defined(_azure_JSON_HEDLEY_VERSION)
+#undef _azure_JSON_HEDLEY_VERSION
 #endif
-#define JSON_HEDLEY_VERSION 15
+#define _azure_JSON_HEDLEY_VERSION 15
 
-#if defined(JSON_HEDLEY_STRINGIFY_EX)
-#undef JSON_HEDLEY_STRINGIFY_EX
+#if defined(_azure_JSON_HEDLEY_STRINGIFY_EX)
+#undef _azure_JSON_HEDLEY_STRINGIFY_EX
 #endif
-#define JSON_HEDLEY_STRINGIFY_EX(x) #x
+#define _azure_JSON_HEDLEY_STRINGIFY_EX(x) #x
 
-#if defined(JSON_HEDLEY_STRINGIFY)
-#undef JSON_HEDLEY_STRINGIFY
+#if defined(_azure_JSON_HEDLEY_STRINGIFY)
+#undef _azure_JSON_HEDLEY_STRINGIFY
 #endif
-#define JSON_HEDLEY_STRINGIFY(x) JSON_HEDLEY_STRINGIFY_EX(x)
+#define _azure_JSON_HEDLEY_STRINGIFY(x) _azure_JSON_HEDLEY_STRINGIFY_EX(x)
 
-#if defined(JSON_HEDLEY_CONCAT_EX)
-#undef JSON_HEDLEY_CONCAT_EX
+#if defined(_azure_JSON_HEDLEY_CONCAT_EX)
+#undef _azure_JSON_HEDLEY_CONCAT_EX
 #endif
-#define JSON_HEDLEY_CONCAT_EX(a, b) a##b
+#define _azure_JSON_HEDLEY_CONCAT_EX(a, b) a##b
 
-#if defined(JSON_HEDLEY_CONCAT)
-#undef JSON_HEDLEY_CONCAT
+#if defined(_azure_JSON_HEDLEY_CONCAT)
+#undef _azure_JSON_HEDLEY_CONCAT
 #endif
-#define JSON_HEDLEY_CONCAT(a, b) JSON_HEDLEY_CONCAT_EX(a, b)
+#define _azure_JSON_HEDLEY_CONCAT(a, b) _azure_JSON_HEDLEY_CONCAT_EX(a, b)
 
-#if defined(JSON_HEDLEY_CONCAT3_EX)
-#undef JSON_HEDLEY_CONCAT3_EX
+#if defined(_azure_JSON_HEDLEY_CONCAT3_EX)
+#undef _azure_JSON_HEDLEY_CONCAT3_EX
 #endif
-#define JSON_HEDLEY_CONCAT3_EX(a, b, c) a##b##c
+#define _azure_JSON_HEDLEY_CONCAT3_EX(a, b, c) a##b##c
 
-#if defined(JSON_HEDLEY_CONCAT3)
-#undef JSON_HEDLEY_CONCAT3
+#if defined(_azure_JSON_HEDLEY_CONCAT3)
+#undef _azure_JSON_HEDLEY_CONCAT3
 #endif
-#define JSON_HEDLEY_CONCAT3(a, b, c) JSON_HEDLEY_CONCAT3_EX(a, b, c)
+#define _azure_JSON_HEDLEY_CONCAT3(a, b, c) _azure_JSON_HEDLEY_CONCAT3_EX(a, b, c)
 
-#if defined(JSON_HEDLEY_VERSION_ENCODE)
-#undef JSON_HEDLEY_VERSION_ENCODE
+#if defined(_azure_JSON_HEDLEY_VERSION_ENCODE)
+#undef _azure_JSON_HEDLEY_VERSION_ENCODE
 #endif
-#define JSON_HEDLEY_VERSION_ENCODE(major, minor, revision) \
+#define _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, revision) \
   (((major)*1000000) + ((minor)*1000) + (revision))
 
-#if defined(JSON_HEDLEY_VERSION_DECODE_MAJOR)
-#undef JSON_HEDLEY_VERSION_DECODE_MAJOR
+#if defined(_azure_JSON_HEDLEY_VERSION_DECODE_MAJOR)
+#undef _azure_JSON_HEDLEY_VERSION_DECODE_MAJOR
 #endif
-#define JSON_HEDLEY_VERSION_DECODE_MAJOR(version) ((version) / 1000000)
+#define _azure_JSON_HEDLEY_VERSION_DECODE_MAJOR(version) ((version) / 1000000)
 
-#if defined(JSON_HEDLEY_VERSION_DECODE_MINOR)
-#undef JSON_HEDLEY_VERSION_DECODE_MINOR
+#if defined(_azure_JSON_HEDLEY_VERSION_DECODE_MINOR)
+#undef _azure_JSON_HEDLEY_VERSION_DECODE_MINOR
 #endif
-#define JSON_HEDLEY_VERSION_DECODE_MINOR(version) (((version) % 1000000) / 1000)
+#define _azure_JSON_HEDLEY_VERSION_DECODE_MINOR(version) (((version) % 1000000) / 1000)
 
-#if defined(JSON_HEDLEY_VERSION_DECODE_REVISION)
-#undef JSON_HEDLEY_VERSION_DECODE_REVISION
+#if defined(_azure_JSON_HEDLEY_VERSION_DECODE_REVISION)
+#undef _azure_JSON_HEDLEY_VERSION_DECODE_REVISION
 #endif
-#define JSON_HEDLEY_VERSION_DECODE_REVISION(version) ((version) % 1000)
+#define _azure_JSON_HEDLEY_VERSION_DECODE_REVISION(version) ((version) % 1000)
 
-#if defined(JSON_HEDLEY_GNUC_VERSION)
-#undef JSON_HEDLEY_GNUC_VERSION
+#if defined(_azure_JSON_HEDLEY_GNUC_VERSION)
+#undef _azure_JSON_HEDLEY_GNUC_VERSION
 #endif
 #if defined(__GNUC__) && defined(__GNUC_PATCHLEVEL__)
-#define JSON_HEDLEY_GNUC_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
+#define _azure_JSON_HEDLEY_GNUC_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
 #elif defined(__GNUC__)
-#define JSON_HEDLEY_GNUC_VERSION JSON_HEDLEY_VERSION_ENCODE(__GNUC__, __GNUC_MINOR__, 0)
+#define _azure_JSON_HEDLEY_GNUC_VERSION _azure_JSON_HEDLEY_VERSION_ENCODE(__GNUC__, __GNUC_MINOR__, 0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_VERSION_CHECK)
-#undef JSON_HEDLEY_GNUC_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_GNUC_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_GNUC_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_GNUC_VERSION)
-#define JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_GNUC_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_GNUC_VERSION)
+#define _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_GNUC_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_MSVC_VERSION)
-#undef JSON_HEDLEY_MSVC_VERSION
+#if defined(_azure_JSON_HEDLEY_MSVC_VERSION)
+#undef _azure_JSON_HEDLEY_MSVC_VERSION
 #endif
 #if defined(_MSC_FULL_VER) && (_MSC_FULL_VER >= 140000000) && !defined(__ICL)
-#define JSON_HEDLEY_MSVC_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_MSVC_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       _MSC_FULL_VER / 10000000, \
       (_MSC_FULL_VER % 10000000) / 100000, \
       (_MSC_FULL_VER % 100000) / 100)
 #elif defined(_MSC_FULL_VER) && !defined(__ICL)
-#define JSON_HEDLEY_MSVC_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_MSVC_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       _MSC_FULL_VER / 1000000, (_MSC_FULL_VER % 1000000) / 10000, (_MSC_FULL_VER % 10000) / 10)
 #elif defined(_MSC_VER) && !defined(__ICL)
-#define JSON_HEDLEY_MSVC_VERSION JSON_HEDLEY_VERSION_ENCODE(_MSC_VER / 100, _MSC_VER % 100, 0)
+#define _azure_JSON_HEDLEY_MSVC_VERSION _azure_JSON_HEDLEY_VERSION_ENCODE(_MSC_VER / 100, _MSC_VER % 100, 0)
 #endif
 
-#if defined(JSON_HEDLEY_MSVC_VERSION_CHECK)
-#undef JSON_HEDLEY_MSVC_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_MSVC_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_MSVC_VERSION_CHECK
 #endif
-#if !defined(JSON_HEDLEY_MSVC_VERSION)
-#define JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) (0)
+#if !defined(_azure_JSON_HEDLEY_MSVC_VERSION)
+#define _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) (0)
 #elif defined(_MSC_VER) && (_MSC_VER >= 1400)
-#define JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) \
+#define _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) \
   (_MSC_FULL_VER >= ((major * 10000000) + (minor * 100000) + (patch)))
 #elif defined(_MSC_VER) && (_MSC_VER >= 1200)
-#define JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) \
+#define _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) \
   (_MSC_FULL_VER >= ((major * 1000000) + (minor * 10000) + (patch)))
 #else
-#define JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) (_MSC_VER >= ((major * 100) + (minor)))
+#define _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(major, minor, patch) (_MSC_VER >= ((major * 100) + (minor)))
 #endif
 
-#if defined(JSON_HEDLEY_INTEL_VERSION)
-#undef JSON_HEDLEY_INTEL_VERSION
+#if defined(_azure_JSON_HEDLEY_INTEL_VERSION)
+#undef _azure_JSON_HEDLEY_INTEL_VERSION
 #endif
 #if defined(__INTEL_COMPILER) && defined(__INTEL_COMPILER_UPDATE) && !defined(__ICL)
-#define JSON_HEDLEY_INTEL_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_INTEL_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __INTEL_COMPILER / 100, __INTEL_COMPILER % 100, __INTEL_COMPILER_UPDATE)
 #elif defined(__INTEL_COMPILER) && !defined(__ICL)
-#define JSON_HEDLEY_INTEL_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__INTEL_COMPILER / 100, __INTEL_COMPILER % 100, 0)
+#define _azure_JSON_HEDLEY_INTEL_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__INTEL_COMPILER / 100, __INTEL_COMPILER % 100, 0)
 #endif
 
-#if defined(JSON_HEDLEY_INTEL_VERSION_CHECK)
-#undef JSON_HEDLEY_INTEL_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_INTEL_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_INTEL_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_INTEL_VERSION)
-#define JSON_HEDLEY_INTEL_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_INTEL_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_INTEL_VERSION)
+#define _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_INTEL_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_INTEL_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_INTEL_CL_VERSION)
-#undef JSON_HEDLEY_INTEL_CL_VERSION
+#if defined(_azure_JSON_HEDLEY_INTEL_CL_VERSION)
+#undef _azure_JSON_HEDLEY_INTEL_CL_VERSION
 #endif
 #if defined(__INTEL_COMPILER) && defined(__INTEL_COMPILER_UPDATE) && defined(__ICL)
-#define JSON_HEDLEY_INTEL_CL_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__INTEL_COMPILER, __INTEL_COMPILER_UPDATE, 0)
+#define _azure_JSON_HEDLEY_INTEL_CL_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__INTEL_COMPILER, __INTEL_COMPILER_UPDATE, 0)
 #endif
 
-#if defined(JSON_HEDLEY_INTEL_CL_VERSION_CHECK)
-#undef JSON_HEDLEY_INTEL_CL_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_INTEL_CL_VERSION)
-#define JSON_HEDLEY_INTEL_CL_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_INTEL_CL_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_INTEL_CL_VERSION)
+#define _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_INTEL_CL_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_INTEL_CL_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_PGI_VERSION)
-#undef JSON_HEDLEY_PGI_VERSION
+#if defined(_azure_JSON_HEDLEY_PGI_VERSION)
+#undef _azure_JSON_HEDLEY_PGI_VERSION
 #endif
 #if defined(__PGI) && defined(__PGIC__) && defined(__PGIC_MINOR__) && defined(__PGIC_PATCHLEVEL__)
-#define JSON_HEDLEY_PGI_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__PGIC__, __PGIC_MINOR__, __PGIC_PATCHLEVEL__)
+#define _azure_JSON_HEDLEY_PGI_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__PGIC__, __PGIC_MINOR__, __PGIC_PATCHLEVEL__)
 #endif
 
-#if defined(JSON_HEDLEY_PGI_VERSION_CHECK)
-#undef JSON_HEDLEY_PGI_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_PGI_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_PGI_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_PGI_VERSION)
-#define JSON_HEDLEY_PGI_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_PGI_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_PGI_VERSION)
+#define _azure_JSON_HEDLEY_PGI_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_PGI_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_PGI_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_PGI_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_SUNPRO_VERSION)
-#undef JSON_HEDLEY_SUNPRO_VERSION
+#if defined(_azure_JSON_HEDLEY_SUNPRO_VERSION)
+#undef _azure_JSON_HEDLEY_SUNPRO_VERSION
 #endif
 #if defined(__SUNPRO_C) && (__SUNPRO_C > 0x1000)
-#define JSON_HEDLEY_SUNPRO_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_SUNPRO_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       (((__SUNPRO_C >> 16) & 0xf) * 10) + ((__SUNPRO_C >> 12) & 0xf), \
       (((__SUNPRO_C >> 8) & 0xf) * 10) + ((__SUNPRO_C >> 4) & 0xf), \
       (__SUNPRO_C & 0xf) * 10)
 #elif defined(__SUNPRO_C)
-#define JSON_HEDLEY_SUNPRO_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE((__SUNPRO_C >> 8) & 0xf, (__SUNPRO_C >> 4) & 0xf, (__SUNPRO_C)&0xf)
+#define _azure_JSON_HEDLEY_SUNPRO_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE((__SUNPRO_C >> 8) & 0xf, (__SUNPRO_C >> 4) & 0xf, (__SUNPRO_C)&0xf)
 #elif defined(__SUNPRO_CC) && (__SUNPRO_CC > 0x1000)
-#define JSON_HEDLEY_SUNPRO_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_SUNPRO_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       (((__SUNPRO_CC >> 16) & 0xf) * 10) + ((__SUNPRO_CC >> 12) & 0xf), \
       (((__SUNPRO_CC >> 8) & 0xf) * 10) + ((__SUNPRO_CC >> 4) & 0xf), \
       (__SUNPRO_CC & 0xf) * 10)
 #elif defined(__SUNPRO_CC)
-#define JSON_HEDLEY_SUNPRO_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE((__SUNPRO_CC >> 8) & 0xf, (__SUNPRO_CC >> 4) & 0xf, (__SUNPRO_CC)&0xf)
+#define _azure_JSON_HEDLEY_SUNPRO_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE((__SUNPRO_CC >> 8) & 0xf, (__SUNPRO_CC >> 4) & 0xf, (__SUNPRO_CC)&0xf)
 #endif
 
-#if defined(JSON_HEDLEY_SUNPRO_VERSION_CHECK)
-#undef JSON_HEDLEY_SUNPRO_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_SUNPRO_VERSION)
-#define JSON_HEDLEY_SUNPRO_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_SUNPRO_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_SUNPRO_VERSION)
+#define _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_SUNPRO_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_SUNPRO_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_EMSCRIPTEN_VERSION)
-#undef JSON_HEDLEY_EMSCRIPTEN_VERSION
+#if defined(_azure_JSON_HEDLEY_EMSCRIPTEN_VERSION)
+#undef _azure_JSON_HEDLEY_EMSCRIPTEN_VERSION
 #endif
 #if defined(__EMSCRIPTEN__)
-#define JSON_HEDLEY_EMSCRIPTEN_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__EMSCRIPTEN_major__, __EMSCRIPTEN_minor__, __EMSCRIPTEN_tiny__)
+#define _azure_JSON_HEDLEY_EMSCRIPTEN_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__EMSCRIPTEN_major__, __EMSCRIPTEN_minor__, __EMSCRIPTEN_tiny__)
 #endif
 
-#if defined(JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK)
-#undef JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_EMSCRIPTEN_VERSION)
-#define JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_EMSCRIPTEN_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_EMSCRIPTEN_VERSION)
+#define _azure_JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_EMSCRIPTEN_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_ARM_VERSION)
-#undef JSON_HEDLEY_ARM_VERSION
+#if defined(_azure_JSON_HEDLEY_ARM_VERSION)
+#undef _azure_JSON_HEDLEY_ARM_VERSION
 #endif
 #if defined(__CC_ARM) && defined(__ARMCOMPILER_VERSION)
-#define JSON_HEDLEY_ARM_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_ARM_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __ARMCOMPILER_VERSION / 1000000, \
       (__ARMCOMPILER_VERSION % 1000000) / 10000, \
       (__ARMCOMPILER_VERSION % 10000) / 100)
 #elif defined(__CC_ARM) && defined(__ARMCC_VERSION)
-#define JSON_HEDLEY_ARM_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_ARM_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __ARMCC_VERSION / 1000000, \
       (__ARMCC_VERSION % 1000000) / 10000, \
       (__ARMCC_VERSION % 10000) / 100)
 #endif
 
-#if defined(JSON_HEDLEY_ARM_VERSION_CHECK)
-#undef JSON_HEDLEY_ARM_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_ARM_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_ARM_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_ARM_VERSION)
-#define JSON_HEDLEY_ARM_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_ARM_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_ARM_VERSION)
+#define _azure_JSON_HEDLEY_ARM_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_ARM_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_ARM_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_ARM_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_IBM_VERSION)
-#undef JSON_HEDLEY_IBM_VERSION
+#if defined(_azure_JSON_HEDLEY_IBM_VERSION)
+#undef _azure_JSON_HEDLEY_IBM_VERSION
 #endif
 #if defined(__ibmxl__)
-#define JSON_HEDLEY_IBM_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__ibmxl_version__, __ibmxl_release__, __ibmxl_modification__)
+#define _azure_JSON_HEDLEY_IBM_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__ibmxl_version__, __ibmxl_release__, __ibmxl_modification__)
 #elif defined(__xlC__) && defined(__xlC_ver__)
-#define JSON_HEDLEY_IBM_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__xlC__ >> 8, __xlC__ & 0xff, (__xlC_ver__ >> 8) & 0xff)
+#define _azure_JSON_HEDLEY_IBM_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__xlC__ >> 8, __xlC__ & 0xff, (__xlC_ver__ >> 8) & 0xff)
 #elif defined(__xlC__)
-#define JSON_HEDLEY_IBM_VERSION JSON_HEDLEY_VERSION_ENCODE(__xlC__ >> 8, __xlC__ & 0xff, 0)
+#define _azure_JSON_HEDLEY_IBM_VERSION _azure_JSON_HEDLEY_VERSION_ENCODE(__xlC__ >> 8, __xlC__ & 0xff, 0)
 #endif
 
-#if defined(JSON_HEDLEY_IBM_VERSION_CHECK)
-#undef JSON_HEDLEY_IBM_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_IBM_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_IBM_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_IBM_VERSION)
-#define JSON_HEDLEY_IBM_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_IBM_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_IBM_VERSION)
+#define _azure_JSON_HEDLEY_IBM_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_IBM_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_IBM_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_IBM_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TI_VERSION)
-#undef JSON_HEDLEY_TI_VERSION
+#if defined(_azure_JSON_HEDLEY_TI_VERSION)
+#undef _azure_JSON_HEDLEY_TI_VERSION
 #endif
 #if defined(__TI_COMPILER_VERSION__) \
     && (defined(__TMS470__) || defined(__TI_ARM__) || defined(__MSP430__) \
         || defined(__TMS320C2000__))
 #if (__TI_COMPILER_VERSION__ >= 16000000)
-#define JSON_HEDLEY_TI_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_TI_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __TI_COMPILER_VERSION__ / 1000000, \
       (__TI_COMPILER_VERSION__ % 1000000) / 1000, \
       (__TI_COMPILER_VERSION__ % 1000))
 #endif
 #endif
 
-#if defined(JSON_HEDLEY_TI_VERSION_CHECK)
-#undef JSON_HEDLEY_TI_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TI_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TI_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TI_VERSION)
-#define JSON_HEDLEY_TI_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TI_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TI_VERSION)
+#define _azure_JSON_HEDLEY_TI_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TI_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TI_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TI_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL2000_VERSION)
-#undef JSON_HEDLEY_TI_CL2000_VERSION
+#if defined(_azure_JSON_HEDLEY_TI_CL2000_VERSION)
+#undef _azure_JSON_HEDLEY_TI_CL2000_VERSION
 #endif
 #if defined(__TI_COMPILER_VERSION__) && defined(__TMS320C2000__)
-#define JSON_HEDLEY_TI_CL2000_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_TI_CL2000_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __TI_COMPILER_VERSION__ / 1000000, \
       (__TI_COMPILER_VERSION__ % 1000000) / 1000, \
       (__TI_COMPILER_VERSION__ % 1000))
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL2000_VERSION_CHECK)
-#undef JSON_HEDLEY_TI_CL2000_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TI_CL2000_VERSION)
-#define JSON_HEDLEY_TI_CL2000_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TI_CL2000_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TI_CL2000_VERSION)
+#define _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TI_CL2000_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TI_CL2000_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL430_VERSION)
-#undef JSON_HEDLEY_TI_CL430_VERSION
+#if defined(_azure_JSON_HEDLEY_TI_CL430_VERSION)
+#undef _azure_JSON_HEDLEY_TI_CL430_VERSION
 #endif
 #if defined(__TI_COMPILER_VERSION__) && defined(__MSP430__)
-#define JSON_HEDLEY_TI_CL430_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_TI_CL430_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __TI_COMPILER_VERSION__ / 1000000, \
       (__TI_COMPILER_VERSION__ % 1000000) / 1000, \
       (__TI_COMPILER_VERSION__ % 1000))
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL430_VERSION_CHECK)
-#undef JSON_HEDLEY_TI_CL430_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TI_CL430_VERSION)
-#define JSON_HEDLEY_TI_CL430_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TI_CL430_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TI_CL430_VERSION)
+#define _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TI_CL430_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TI_CL430_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TI_ARMCL_VERSION)
-#undef JSON_HEDLEY_TI_ARMCL_VERSION
+#if defined(_azure_JSON_HEDLEY_TI_ARMCL_VERSION)
+#undef _azure_JSON_HEDLEY_TI_ARMCL_VERSION
 #endif
 #if defined(__TI_COMPILER_VERSION__) && (defined(__TMS470__) || defined(__TI_ARM__))
-#define JSON_HEDLEY_TI_ARMCL_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_TI_ARMCL_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __TI_COMPILER_VERSION__ / 1000000, \
       (__TI_COMPILER_VERSION__ % 1000000) / 1000, \
       (__TI_COMPILER_VERSION__ % 1000))
 #endif
 
-#if defined(JSON_HEDLEY_TI_ARMCL_VERSION_CHECK)
-#undef JSON_HEDLEY_TI_ARMCL_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TI_ARMCL_VERSION)
-#define JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TI_ARMCL_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TI_ARMCL_VERSION)
+#define _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TI_ARMCL_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL6X_VERSION)
-#undef JSON_HEDLEY_TI_CL6X_VERSION
+#if defined(_azure_JSON_HEDLEY_TI_CL6X_VERSION)
+#undef _azure_JSON_HEDLEY_TI_CL6X_VERSION
 #endif
 #if defined(__TI_COMPILER_VERSION__) && defined(__TMS320C6X__)
-#define JSON_HEDLEY_TI_CL6X_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_TI_CL6X_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __TI_COMPILER_VERSION__ / 1000000, \
       (__TI_COMPILER_VERSION__ % 1000000) / 1000, \
       (__TI_COMPILER_VERSION__ % 1000))
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL6X_VERSION_CHECK)
-#undef JSON_HEDLEY_TI_CL6X_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TI_CL6X_VERSION)
-#define JSON_HEDLEY_TI_CL6X_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TI_CL6X_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TI_CL6X_VERSION)
+#define _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TI_CL6X_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TI_CL6X_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL7X_VERSION)
-#undef JSON_HEDLEY_TI_CL7X_VERSION
+#if defined(_azure_JSON_HEDLEY_TI_CL7X_VERSION)
+#undef _azure_JSON_HEDLEY_TI_CL7X_VERSION
 #endif
 #if defined(__TI_COMPILER_VERSION__) && defined(__C7000__)
-#define JSON_HEDLEY_TI_CL7X_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_TI_CL7X_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __TI_COMPILER_VERSION__ / 1000000, \
       (__TI_COMPILER_VERSION__ % 1000000) / 1000, \
       (__TI_COMPILER_VERSION__ % 1000))
 #endif
 
-#if defined(JSON_HEDLEY_TI_CL7X_VERSION_CHECK)
-#undef JSON_HEDLEY_TI_CL7X_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TI_CL7X_VERSION)
-#define JSON_HEDLEY_TI_CL7X_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TI_CL7X_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TI_CL7X_VERSION)
+#define _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TI_CL7X_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TI_CL7X_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TI_CLPRU_VERSION)
-#undef JSON_HEDLEY_TI_CLPRU_VERSION
+#if defined(_azure_JSON_HEDLEY_TI_CLPRU_VERSION)
+#undef _azure_JSON_HEDLEY_TI_CLPRU_VERSION
 #endif
 #if defined(__TI_COMPILER_VERSION__) && defined(__PRU__)
-#define JSON_HEDLEY_TI_CLPRU_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_TI_CLPRU_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __TI_COMPILER_VERSION__ / 1000000, \
       (__TI_COMPILER_VERSION__ % 1000000) / 1000, \
       (__TI_COMPILER_VERSION__ % 1000))
 #endif
 
-#if defined(JSON_HEDLEY_TI_CLPRU_VERSION_CHECK)
-#undef JSON_HEDLEY_TI_CLPRU_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TI_CLPRU_VERSION)
-#define JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TI_CLPRU_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TI_CLPRU_VERSION)
+#define _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TI_CLPRU_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_CRAY_VERSION)
-#undef JSON_HEDLEY_CRAY_VERSION
+#if defined(_azure_JSON_HEDLEY_CRAY_VERSION)
+#undef _azure_JSON_HEDLEY_CRAY_VERSION
 #endif
 #if defined(_CRAYC)
 #if defined(_RELEASE_PATCHLEVEL)
-#define JSON_HEDLEY_CRAY_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(_RELEASE_MAJOR, _RELEASE_MINOR, _RELEASE_PATCHLEVEL)
+#define _azure_JSON_HEDLEY_CRAY_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(_RELEASE_MAJOR, _RELEASE_MINOR, _RELEASE_PATCHLEVEL)
 #else
-#define JSON_HEDLEY_CRAY_VERSION JSON_HEDLEY_VERSION_ENCODE(_RELEASE_MAJOR, _RELEASE_MINOR, 0)
+#define _azure_JSON_HEDLEY_CRAY_VERSION _azure_JSON_HEDLEY_VERSION_ENCODE(_RELEASE_MAJOR, _RELEASE_MINOR, 0)
 #endif
 #endif
 
-#if defined(JSON_HEDLEY_CRAY_VERSION_CHECK)
-#undef JSON_HEDLEY_CRAY_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_CRAY_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_CRAY_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_CRAY_VERSION)
-#define JSON_HEDLEY_CRAY_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_CRAY_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_CRAY_VERSION)
+#define _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_CRAY_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_CRAY_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_IAR_VERSION)
-#undef JSON_HEDLEY_IAR_VERSION
+#if defined(_azure_JSON_HEDLEY_IAR_VERSION)
+#undef _azure_JSON_HEDLEY_IAR_VERSION
 #endif
 #if defined(__IAR_SYSTEMS_ICC__)
 #if __VER__ > 1000
-#define JSON_HEDLEY_IAR_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE((__VER__ / 1000000), ((__VER__ / 1000) % 1000), (__VER__ % 1000))
+#define _azure_JSON_HEDLEY_IAR_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE((__VER__ / 1000000), ((__VER__ / 1000) % 1000), (__VER__ % 1000))
 #else
-#define JSON_HEDLEY_IAR_VERSION JSON_HEDLEY_VERSION_ENCODE(__VER__ / 100, __VER__ % 100, 0)
+#define _azure_JSON_HEDLEY_IAR_VERSION _azure_JSON_HEDLEY_VERSION_ENCODE(__VER__ / 100, __VER__ % 100, 0)
 #endif
 #endif
 
-#if defined(JSON_HEDLEY_IAR_VERSION_CHECK)
-#undef JSON_HEDLEY_IAR_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_IAR_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_IAR_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_IAR_VERSION)
-#define JSON_HEDLEY_IAR_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_IAR_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_IAR_VERSION)
+#define _azure_JSON_HEDLEY_IAR_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_IAR_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_IAR_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_IAR_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_TINYC_VERSION)
-#undef JSON_HEDLEY_TINYC_VERSION
+#if defined(_azure_JSON_HEDLEY_TINYC_VERSION)
+#undef _azure_JSON_HEDLEY_TINYC_VERSION
 #endif
 #if defined(__TINYC__)
-#define JSON_HEDLEY_TINYC_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__TINYC__ / 1000, (__TINYC__ / 100) % 10, __TINYC__ % 100)
+#define _azure_JSON_HEDLEY_TINYC_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__TINYC__ / 1000, (__TINYC__ / 100) % 10, __TINYC__ % 100)
 #endif
 
-#if defined(JSON_HEDLEY_TINYC_VERSION_CHECK)
-#undef JSON_HEDLEY_TINYC_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_TINYC_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_TINYC_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_TINYC_VERSION)
-#define JSON_HEDLEY_TINYC_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_TINYC_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_TINYC_VERSION)
+#define _azure_JSON_HEDLEY_TINYC_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_TINYC_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_TINYC_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_TINYC_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_DMC_VERSION)
-#undef JSON_HEDLEY_DMC_VERSION
+#if defined(_azure_JSON_HEDLEY_DMC_VERSION)
+#undef _azure_JSON_HEDLEY_DMC_VERSION
 #endif
 #if defined(__DMC__)
-#define JSON_HEDLEY_DMC_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__DMC__ >> 8, (__DMC__ >> 4) & 0xf, __DMC__ & 0xf)
+#define _azure_JSON_HEDLEY_DMC_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__DMC__ >> 8, (__DMC__ >> 4) & 0xf, __DMC__ & 0xf)
 #endif
 
-#if defined(JSON_HEDLEY_DMC_VERSION_CHECK)
-#undef JSON_HEDLEY_DMC_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_DMC_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_DMC_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_DMC_VERSION)
-#define JSON_HEDLEY_DMC_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_DMC_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_DMC_VERSION)
+#define _azure_JSON_HEDLEY_DMC_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_DMC_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_DMC_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_DMC_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_COMPCERT_VERSION)
-#undef JSON_HEDLEY_COMPCERT_VERSION
+#if defined(_azure_JSON_HEDLEY_COMPCERT_VERSION)
+#undef _azure_JSON_HEDLEY_COMPCERT_VERSION
 #endif
 #if defined(__COMPCERT_VERSION__)
-#define JSON_HEDLEY_COMPCERT_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE( \
+#define _azure_JSON_HEDLEY_COMPCERT_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE( \
       __COMPCERT_VERSION__ / 10000, \
       (__COMPCERT_VERSION__ / 100) % 100, \
       __COMPCERT_VERSION__ % 100)
 #endif
 
-#if defined(JSON_HEDLEY_COMPCERT_VERSION_CHECK)
-#undef JSON_HEDLEY_COMPCERT_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_COMPCERT_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_COMPCERT_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_COMPCERT_VERSION)
-#define JSON_HEDLEY_COMPCERT_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_COMPCERT_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_COMPCERT_VERSION)
+#define _azure_JSON_HEDLEY_COMPCERT_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_COMPCERT_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_COMPCERT_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_COMPCERT_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_PELLES_VERSION)
-#undef JSON_HEDLEY_PELLES_VERSION
+#if defined(_azure_JSON_HEDLEY_PELLES_VERSION)
+#undef _azure_JSON_HEDLEY_PELLES_VERSION
 #endif
 #if defined(__POCC__)
-#define JSON_HEDLEY_PELLES_VERSION JSON_HEDLEY_VERSION_ENCODE(__POCC__ / 100, __POCC__ % 100, 0)
+#define _azure_JSON_HEDLEY_PELLES_VERSION _azure_JSON_HEDLEY_VERSION_ENCODE(__POCC__ / 100, __POCC__ % 100, 0)
 #endif
 
-#if defined(JSON_HEDLEY_PELLES_VERSION_CHECK)
-#undef JSON_HEDLEY_PELLES_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_PELLES_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_PELLES_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_PELLES_VERSION)
-#define JSON_HEDLEY_PELLES_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_PELLES_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_PELLES_VERSION)
+#define _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_PELLES_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_PELLES_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_MCST_LCC_VERSION)
-#undef JSON_HEDLEY_MCST_LCC_VERSION
+#if defined(_azure_JSON_HEDLEY_MCST_LCC_VERSION)
+#undef _azure_JSON_HEDLEY_MCST_LCC_VERSION
 #endif
 #if defined(__LCC__) && defined(__LCC_MINOR__)
-#define JSON_HEDLEY_MCST_LCC_VERSION \
-  JSON_HEDLEY_VERSION_ENCODE(__LCC__ / 100, __LCC__ % 100, __LCC_MINOR__)
+#define _azure_JSON_HEDLEY_MCST_LCC_VERSION \
+  _azure_JSON_HEDLEY_VERSION_ENCODE(__LCC__ / 100, __LCC__ % 100, __LCC_MINOR__)
 #endif
 
-#if defined(JSON_HEDLEY_MCST_LCC_VERSION_CHECK)
-#undef JSON_HEDLEY_MCST_LCC_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_MCST_LCC_VERSION)
-#define JSON_HEDLEY_MCST_LCC_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_MCST_LCC_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_MCST_LCC_VERSION)
+#define _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_MCST_LCC_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_MCST_LCC_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_VERSION)
-#undef JSON_HEDLEY_GCC_VERSION
+#if defined(_azure_JSON_HEDLEY_GCC_VERSION)
+#undef _azure_JSON_HEDLEY_GCC_VERSION
 #endif
-#if defined(JSON_HEDLEY_GNUC_VERSION) && !defined(__clang__) \
-    && !defined(JSON_HEDLEY_INTEL_VERSION) && !defined(JSON_HEDLEY_PGI_VERSION) \
-    && !defined(JSON_HEDLEY_ARM_VERSION) && !defined(JSON_HEDLEY_CRAY_VERSION) \
-    && !defined(JSON_HEDLEY_TI_VERSION) && !defined(JSON_HEDLEY_TI_ARMCL_VERSION) \
-    && !defined(JSON_HEDLEY_TI_CL430_VERSION) && !defined(JSON_HEDLEY_TI_CL2000_VERSION) \
-    && !defined(JSON_HEDLEY_TI_CL6X_VERSION) && !defined(JSON_HEDLEY_TI_CL7X_VERSION) \
-    && !defined(JSON_HEDLEY_TI_CLPRU_VERSION) && !defined(__COMPCERT__) \
-    && !defined(JSON_HEDLEY_MCST_LCC_VERSION)
-#define JSON_HEDLEY_GCC_VERSION JSON_HEDLEY_GNUC_VERSION
+#if defined(_azure_JSON_HEDLEY_GNUC_VERSION) && !defined(__clang__) \
+    && !defined(_azure_JSON_HEDLEY_INTEL_VERSION) && !defined(_azure_JSON_HEDLEY_PGI_VERSION) \
+    && !defined(_azure_JSON_HEDLEY_ARM_VERSION) && !defined(_azure_JSON_HEDLEY_CRAY_VERSION) \
+    && !defined(_azure_JSON_HEDLEY_TI_VERSION) && !defined(_azure_JSON_HEDLEY_TI_ARMCL_VERSION) \
+    && !defined(_azure_JSON_HEDLEY_TI_CL430_VERSION) && !defined(_azure_JSON_HEDLEY_TI_CL2000_VERSION) \
+    && !defined(_azure_JSON_HEDLEY_TI_CL6X_VERSION) && !defined(_azure_JSON_HEDLEY_TI_CL7X_VERSION) \
+    && !defined(_azure_JSON_HEDLEY_TI_CLPRU_VERSION) && !defined(__COMPCERT__) \
+    && !defined(_azure_JSON_HEDLEY_MCST_LCC_VERSION)
+#define _azure_JSON_HEDLEY_GCC_VERSION _azure_JSON_HEDLEY_GNUC_VERSION
 #endif
 
-#if defined(JSON_HEDLEY_GCC_VERSION_CHECK)
-#undef JSON_HEDLEY_GCC_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_GCC_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_GCC_VERSION_CHECK
 #endif
-#if defined(JSON_HEDLEY_GCC_VERSION)
-#define JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch) \
-  (JSON_HEDLEY_GCC_VERSION >= JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
+#if defined(_azure_JSON_HEDLEY_GCC_VERSION)
+#define _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch) \
+  (_azure_JSON_HEDLEY_GCC_VERSION >= _azure_JSON_HEDLEY_VERSION_ENCODE(major, minor, patch))
 #else
-#define JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch) (0)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_ATTRIBUTE)
-#undef JSON_HEDLEY_HAS_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_HAS_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_HAS_ATTRIBUTE
 #endif
 #if defined(__has_attribute) \
-    && ((!defined(JSON_HEDLEY_IAR_VERSION) || JSON_HEDLEY_IAR_VERSION_CHECK(8, 5, 9)))
-#define JSON_HEDLEY_HAS_ATTRIBUTE(attribute) __has_attribute(attribute)
+    && ((!defined(_azure_JSON_HEDLEY_IAR_VERSION) || _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 5, 9)))
+#define _azure_JSON_HEDLEY_HAS_ATTRIBUTE(attribute) __has_attribute(attribute)
 #else
-#define JSON_HEDLEY_HAS_ATTRIBUTE(attribute) (0)
+#define _azure_JSON_HEDLEY_HAS_ATTRIBUTE(attribute) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_HAS_ATTRIBUTE)
-#undef JSON_HEDLEY_GNUC_HAS_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE
 #endif
 #if defined(__has_attribute)
-#define JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_HAS_ATTRIBUTE(attribute)
+#define _azure_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_HAS_ATTRIBUTE(attribute)
 #else
-#define JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_HAS_ATTRIBUTE)
-#undef JSON_HEDLEY_GCC_HAS_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_GCC_HAS_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_GCC_HAS_ATTRIBUTE
 #endif
 #if defined(__has_attribute)
-#define JSON_HEDLEY_GCC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_HAS_ATTRIBUTE(attribute)
+#define _azure_JSON_HEDLEY_GCC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_HAS_ATTRIBUTE(attribute)
 #else
-#define JSON_HEDLEY_GCC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_HAS_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_CPP_ATTRIBUTE)
-#undef JSON_HEDLEY_HAS_CPP_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE
 #endif
 #if defined(__has_cpp_attribute) && defined(__cplusplus) \
-    && (!defined(JSON_HEDLEY_SUNPRO_VERSION) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0))
-#define JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute) __has_cpp_attribute(attribute)
+    && (!defined(_azure_JSON_HEDLEY_SUNPRO_VERSION) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0))
+#define _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute) __has_cpp_attribute(attribute)
 #else
-#define JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute) (0)
+#define _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute) (0)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS)
-#undef JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS
+#if defined(_azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS)
+#undef _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS
 #endif
 #if !defined(__cplusplus) || !defined(__has_cpp_attribute)
-#define JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) (0)
-#elif !defined(JSON_HEDLEY_PGI_VERSION) && !defined(JSON_HEDLEY_IAR_VERSION) \
-    && (!defined(JSON_HEDLEY_SUNPRO_VERSION) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0)) \
-    && (!defined(JSON_HEDLEY_MSVC_VERSION) || JSON_HEDLEY_MSVC_VERSION_CHECK(19, 20, 0))
-#define JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) JSON_HEDLEY_HAS_CPP_ATTRIBUTE(ns::attribute)
+#define _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) (0)
+#elif !defined(_azure_JSON_HEDLEY_PGI_VERSION) && !defined(_azure_JSON_HEDLEY_IAR_VERSION) \
+    && (!defined(_azure_JSON_HEDLEY_SUNPRO_VERSION) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0)) \
+    && (!defined(_azure_JSON_HEDLEY_MSVC_VERSION) || _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(19, 20, 0))
+#define _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(ns::attribute)
 #else
-#define JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) (0)
+#define _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(ns, attribute) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE)
-#undef JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE
 #endif
 #if defined(__has_cpp_attribute) && defined(__cplusplus)
-#define JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
+#define _azure_JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
   __has_cpp_attribute(attribute)
 #else
-#define JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE)
-#undef JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE
 #endif
 #if defined(__has_cpp_attribute) && defined(__cplusplus)
-#define JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
+#define _azure_JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
   __has_cpp_attribute(attribute)
 #else
-#define JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_BUILTIN)
-#undef JSON_HEDLEY_HAS_BUILTIN
+#if defined(_azure_JSON_HEDLEY_HAS_BUILTIN)
+#undef _azure_JSON_HEDLEY_HAS_BUILTIN
 #endif
 #if defined(__has_builtin)
-#define JSON_HEDLEY_HAS_BUILTIN(builtin) __has_builtin(builtin)
+#define _azure_JSON_HEDLEY_HAS_BUILTIN(builtin) __has_builtin(builtin)
 #else
-#define JSON_HEDLEY_HAS_BUILTIN(builtin) (0)
+#define _azure_JSON_HEDLEY_HAS_BUILTIN(builtin) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_HAS_BUILTIN)
-#undef JSON_HEDLEY_GNUC_HAS_BUILTIN
+#if defined(_azure_JSON_HEDLEY_GNUC_HAS_BUILTIN)
+#undef _azure_JSON_HEDLEY_GNUC_HAS_BUILTIN
 #endif
 #if defined(__has_builtin)
-#define JSON_HEDLEY_GNUC_HAS_BUILTIN(builtin, major, minor, patch) __has_builtin(builtin)
+#define _azure_JSON_HEDLEY_GNUC_HAS_BUILTIN(builtin, major, minor, patch) __has_builtin(builtin)
 #else
-#define JSON_HEDLEY_GNUC_HAS_BUILTIN(builtin, major, minor, patch) \
-  JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GNUC_HAS_BUILTIN(builtin, major, minor, patch) \
+  _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_HAS_BUILTIN)
-#undef JSON_HEDLEY_GCC_HAS_BUILTIN
+#if defined(_azure_JSON_HEDLEY_GCC_HAS_BUILTIN)
+#undef _azure_JSON_HEDLEY_GCC_HAS_BUILTIN
 #endif
 #if defined(__has_builtin)
-#define JSON_HEDLEY_GCC_HAS_BUILTIN(builtin, major, minor, patch) __has_builtin(builtin)
+#define _azure_JSON_HEDLEY_GCC_HAS_BUILTIN(builtin, major, minor, patch) __has_builtin(builtin)
 #else
-#define JSON_HEDLEY_GCC_HAS_BUILTIN(builtin, major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_HAS_BUILTIN(builtin, major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_FEATURE)
-#undef JSON_HEDLEY_HAS_FEATURE
+#if defined(_azure_JSON_HEDLEY_HAS_FEATURE)
+#undef _azure_JSON_HEDLEY_HAS_FEATURE
 #endif
 #if defined(__has_feature)
-#define JSON_HEDLEY_HAS_FEATURE(feature) __has_feature(feature)
+#define _azure_JSON_HEDLEY_HAS_FEATURE(feature) __has_feature(feature)
 #else
-#define JSON_HEDLEY_HAS_FEATURE(feature) (0)
+#define _azure_JSON_HEDLEY_HAS_FEATURE(feature) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_HAS_FEATURE)
-#undef JSON_HEDLEY_GNUC_HAS_FEATURE
+#if defined(_azure_JSON_HEDLEY_GNUC_HAS_FEATURE)
+#undef _azure_JSON_HEDLEY_GNUC_HAS_FEATURE
 #endif
 #if defined(__has_feature)
-#define JSON_HEDLEY_GNUC_HAS_FEATURE(feature, major, minor, patch) __has_feature(feature)
+#define _azure_JSON_HEDLEY_GNUC_HAS_FEATURE(feature, major, minor, patch) __has_feature(feature)
 #else
-#define JSON_HEDLEY_GNUC_HAS_FEATURE(feature, major, minor, patch) \
-  JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GNUC_HAS_FEATURE(feature, major, minor, patch) \
+  _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_HAS_FEATURE)
-#undef JSON_HEDLEY_GCC_HAS_FEATURE
+#if defined(_azure_JSON_HEDLEY_GCC_HAS_FEATURE)
+#undef _azure_JSON_HEDLEY_GCC_HAS_FEATURE
 #endif
 #if defined(__has_feature)
-#define JSON_HEDLEY_GCC_HAS_FEATURE(feature, major, minor, patch) __has_feature(feature)
+#define _azure_JSON_HEDLEY_GCC_HAS_FEATURE(feature, major, minor, patch) __has_feature(feature)
 #else
-#define JSON_HEDLEY_GCC_HAS_FEATURE(feature, major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_HAS_FEATURE(feature, major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_EXTENSION)
-#undef JSON_HEDLEY_HAS_EXTENSION
+#if defined(_azure_JSON_HEDLEY_HAS_EXTENSION)
+#undef _azure_JSON_HEDLEY_HAS_EXTENSION
 #endif
 #if defined(__has_extension)
-#define JSON_HEDLEY_HAS_EXTENSION(extension) __has_extension(extension)
+#define _azure_JSON_HEDLEY_HAS_EXTENSION(extension) __has_extension(extension)
 #else
-#define JSON_HEDLEY_HAS_EXTENSION(extension) (0)
+#define _azure_JSON_HEDLEY_HAS_EXTENSION(extension) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_HAS_EXTENSION)
-#undef JSON_HEDLEY_GNUC_HAS_EXTENSION
+#if defined(_azure_JSON_HEDLEY_GNUC_HAS_EXTENSION)
+#undef _azure_JSON_HEDLEY_GNUC_HAS_EXTENSION
 #endif
 #if defined(__has_extension)
-#define JSON_HEDLEY_GNUC_HAS_EXTENSION(extension, major, minor, patch) __has_extension(extension)
+#define _azure_JSON_HEDLEY_GNUC_HAS_EXTENSION(extension, major, minor, patch) __has_extension(extension)
 #else
-#define JSON_HEDLEY_GNUC_HAS_EXTENSION(extension, major, minor, patch) \
-  JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GNUC_HAS_EXTENSION(extension, major, minor, patch) \
+  _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_HAS_EXTENSION)
-#undef JSON_HEDLEY_GCC_HAS_EXTENSION
+#if defined(_azure_JSON_HEDLEY_GCC_HAS_EXTENSION)
+#undef _azure_JSON_HEDLEY_GCC_HAS_EXTENSION
 #endif
 #if defined(__has_extension)
-#define JSON_HEDLEY_GCC_HAS_EXTENSION(extension, major, minor, patch) __has_extension(extension)
+#define _azure_JSON_HEDLEY_GCC_HAS_EXTENSION(extension, major, minor, patch) __has_extension(extension)
 #else
-#define JSON_HEDLEY_GCC_HAS_EXTENSION(extension, major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_HAS_EXTENSION(extension, major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE)
-#undef JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE
 #endif
 #if defined(__has_declspec_attribute)
-#define JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE(attribute) __has_declspec_attribute(attribute)
+#define _azure_JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE(attribute) __has_declspec_attribute(attribute)
 #else
-#define JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE(attribute) (0)
+#define _azure_JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE(attribute) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE)
-#undef JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE
 #endif
 #if defined(__has_declspec_attribute)
-#define JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
+#define _azure_JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
   __has_declspec_attribute(attribute)
 #else
-#define JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE)
-#undef JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE
 #endif
 #if defined(__has_declspec_attribute)
-#define JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
+#define _azure_JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
   __has_declspec_attribute(attribute)
 #else
-#define JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE(attribute, major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_HAS_WARNING)
-#undef JSON_HEDLEY_HAS_WARNING
+#if defined(_azure_JSON_HEDLEY_HAS_WARNING)
+#undef _azure_JSON_HEDLEY_HAS_WARNING
 #endif
 #if defined(__has_warning)
-#define JSON_HEDLEY_HAS_WARNING(warning) __has_warning(warning)
+#define _azure_JSON_HEDLEY_HAS_WARNING(warning) __has_warning(warning)
 #else
-#define JSON_HEDLEY_HAS_WARNING(warning) (0)
+#define _azure_JSON_HEDLEY_HAS_WARNING(warning) (0)
 #endif
 
-#if defined(JSON_HEDLEY_GNUC_HAS_WARNING)
-#undef JSON_HEDLEY_GNUC_HAS_WARNING
+#if defined(_azure_JSON_HEDLEY_GNUC_HAS_WARNING)
+#undef _azure_JSON_HEDLEY_GNUC_HAS_WARNING
 #endif
 #if defined(__has_warning)
-#define JSON_HEDLEY_GNUC_HAS_WARNING(warning, major, minor, patch) __has_warning(warning)
+#define _azure_JSON_HEDLEY_GNUC_HAS_WARNING(warning, major, minor, patch) __has_warning(warning)
 #else
-#define JSON_HEDLEY_GNUC_HAS_WARNING(warning, major, minor, patch) \
-  JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GNUC_HAS_WARNING(warning, major, minor, patch) \
+  _azure_JSON_HEDLEY_GNUC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_GCC_HAS_WARNING)
-#undef JSON_HEDLEY_GCC_HAS_WARNING
+#if defined(_azure_JSON_HEDLEY_GCC_HAS_WARNING)
+#undef _azure_JSON_HEDLEY_GCC_HAS_WARNING
 #endif
 #if defined(__has_warning)
-#define JSON_HEDLEY_GCC_HAS_WARNING(warning, major, minor, patch) __has_warning(warning)
+#define _azure_JSON_HEDLEY_GCC_HAS_WARNING(warning, major, minor, patch) __has_warning(warning)
 #else
-#define JSON_HEDLEY_GCC_HAS_WARNING(warning, major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_HAS_WARNING(warning, major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
 #if (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)) || defined(__clang__) \
-    || JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0) || JSON_HEDLEY_PGI_VERSION_CHECK(18, 4, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) || JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 0, 0) \
-    || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || JSON_HEDLEY_CRAY_VERSION_CHECK(5, 0, 0) || JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 17) \
-    || JSON_HEDLEY_SUNPRO_VERSION_CHECK(8, 0, 0) \
-    || (JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) && defined(__C99_PRAGMA_OPERATOR))
-#define JSON_HEDLEY_PRAGMA(value) _Pragma(#value)
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0)
-#define JSON_HEDLEY_PRAGMA(value) __pragma(value)
+    || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0) || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(18, 4, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 0, 0) \
+    || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(5, 0, 0) || _azure_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 17) \
+    || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(8, 0, 0) \
+    || (_azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) && defined(__C99_PRAGMA_OPERATOR))
+#define _azure_JSON_HEDLEY_PRAGMA(value) _Pragma(#value)
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0)
+#define _azure_JSON_HEDLEY_PRAGMA(value) __pragma(value)
 #else
-#define JSON_HEDLEY_PRAGMA(value)
+#define _azure_JSON_HEDLEY_PRAGMA(value)
 #endif
 
-#if defined(JSON_HEDLEY_DIAGNOSTIC_PUSH)
-#undef JSON_HEDLEY_DIAGNOSTIC_PUSH
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_PUSH)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH
 #endif
-#if defined(JSON_HEDLEY_DIAGNOSTIC_POP)
-#undef JSON_HEDLEY_DIAGNOSTIC_POP
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_POP)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #if defined(__clang__)
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("clang diagnostic push")
-#define JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("clang diagnostic pop")
-#elif JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("warning(push)")
-#define JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("warning(pop)")
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(4, 6, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("GCC diagnostic push")
-#define JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("GCC diagnostic pop")
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH __pragma(warning(push))
-#define JSON_HEDLEY_DIAGNOSTIC_POP __pragma(warning(pop))
-#elif JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("push")
-#define JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("pop")
-#elif JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 4, 0) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) \
-    || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("diag_push")
-#define JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("diag_pop")
-#elif JSON_HEDLEY_PELLES_VERSION_CHECK(2, 90, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("warning(push)")
-#define JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("warning(pop)")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("clang diagnostic push")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("clang diagnostic pop")
+#elif _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("warning(push)")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("warning(pop)")
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 6, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("GCC diagnostic push")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("GCC diagnostic pop")
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH __pragma(warning(push))
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP __pragma(warning(pop))
+#elif _azure_JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("push")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("pop")
+#elif _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 4, 0) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("diag_push")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("diag_pop")
+#elif _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(2, 90, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH _Pragma("warning(push)")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP _Pragma("warning(pop)")
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_PUSH
-#define JSON_HEDLEY_DIAGNOSTIC_POP
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 
-/* JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_ is for
+/* _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_ is for
    HEDLEY INTERNAL USE ONLY.  API subject to change without notice. */
-#if defined(JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_)
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_
 #endif
 #if defined(__cplusplus)
-#if JSON_HEDLEY_HAS_WARNING("-Wc++98-compat")
-#if JSON_HEDLEY_HAS_WARNING("-Wc++17-extensions")
-#if JSON_HEDLEY_HAS_WARNING("-Wc++1z-extensions")
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wc++98-compat")
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wc++17-extensions")
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wc++1z-extensions")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
   _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") \
       _Pragma("clang diagnostic ignored \"-Wc++17-extensions\"") \
           _Pragma("clang diagnostic ignored \"-Wc++1z-extensions\"") \
-              xpr JSON_HEDLEY_DIAGNOSTIC_POP
+              xpr _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
   _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") \
-      _Pragma("clang diagnostic ignored \"-Wc++17-extensions\"") xpr JSON_HEDLEY_DIAGNOSTIC_POP
+      _Pragma("clang diagnostic ignored \"-Wc++17-extensions\"") xpr _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") xpr JSON_HEDLEY_DIAGNOSTIC_POP
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(xpr) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
+  _Pragma("clang diagnostic ignored \"-Wc++98-compat\"") xpr _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #endif
 #endif
-#if !defined(JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(x) x
+#if !defined(_azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(x) x
 #endif
 
-#if defined(JSON_HEDLEY_CONST_CAST)
-#undef JSON_HEDLEY_CONST_CAST
+#if defined(_azure_JSON_HEDLEY_CONST_CAST)
+#undef _azure_JSON_HEDLEY_CONST_CAST
 #endif
 #if defined(__cplusplus)
-#define JSON_HEDLEY_CONST_CAST(T, expr) (const_cast<T>(expr))
-#elif JSON_HEDLEY_HAS_WARNING("-Wcast-qual") || JSON_HEDLEY_GCC_VERSION_CHECK(4, 6, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
-#define JSON_HEDLEY_CONST_CAST(T, expr) \
+#define _azure_JSON_HEDLEY_CONST_CAST(T, expr) (const_cast<T>(expr))
+#elif _azure_JSON_HEDLEY_HAS_WARNING("-Wcast-qual") || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 6, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
+#define _azure_JSON_HEDLEY_CONST_CAST(T, expr) \
   (__extension__({ \
-    JSON_HEDLEY_DIAGNOSTIC_PUSH \
-    JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL((T)(expr)); \
-    JSON_HEDLEY_DIAGNOSTIC_POP \
+    _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
+    _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL((T)(expr)); \
+    _azure_JSON_HEDLEY_DIAGNOSTIC_POP \
   }))
 #else
-#define JSON_HEDLEY_CONST_CAST(T, expr) ((T)(expr))
+#define _azure_JSON_HEDLEY_CONST_CAST(T, expr) ((T)(expr))
 #endif
 
-#if defined(JSON_HEDLEY_REINTERPRET_CAST)
-#undef JSON_HEDLEY_REINTERPRET_CAST
+#if defined(_azure_JSON_HEDLEY_REINTERPRET_CAST)
+#undef _azure_JSON_HEDLEY_REINTERPRET_CAST
 #endif
 #if defined(__cplusplus)
-#define JSON_HEDLEY_REINTERPRET_CAST(T, expr) (reinterpret_cast<T>(expr))
+#define _azure_JSON_HEDLEY_REINTERPRET_CAST(T, expr) (reinterpret_cast<T>(expr))
 #else
-#define JSON_HEDLEY_REINTERPRET_CAST(T, expr) ((T)(expr))
+#define _azure_JSON_HEDLEY_REINTERPRET_CAST(T, expr) ((T)(expr))
 #endif
 
-#if defined(JSON_HEDLEY_STATIC_CAST)
-#undef JSON_HEDLEY_STATIC_CAST
+#if defined(_azure_JSON_HEDLEY_STATIC_CAST)
+#undef _azure_JSON_HEDLEY_STATIC_CAST
 #endif
 #if defined(__cplusplus)
-#define JSON_HEDLEY_STATIC_CAST(T, expr) (static_cast<T>(expr))
+#define _azure_JSON_HEDLEY_STATIC_CAST(T, expr) (static_cast<T>(expr))
 #else
-#define JSON_HEDLEY_STATIC_CAST(T, expr) ((T)(expr))
+#define _azure_JSON_HEDLEY_STATIC_CAST(T, expr) ((T)(expr))
 #endif
 
-#if defined(JSON_HEDLEY_CPP_CAST)
-#undef JSON_HEDLEY_CPP_CAST
+#if defined(_azure_JSON_HEDLEY_CPP_CAST)
+#undef _azure_JSON_HEDLEY_CPP_CAST
 #endif
 #if defined(__cplusplus)
-#if JSON_HEDLEY_HAS_WARNING("-Wold-style-cast")
-#define JSON_HEDLEY_CPP_CAST(T, expr) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("clang diagnostic ignored \"-Wold-style-cast\"")((T)(expr)) JSON_HEDLEY_DIAGNOSTIC_POP
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 3, 0)
-#define JSON_HEDLEY_CPP_CAST(T, expr) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  _Pragma("diag_suppress=Pe137") JSON_HEDLEY_DIAGNOSTIC_POP
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wold-style-cast")
+#define _azure_JSON_HEDLEY_CPP_CAST(T, expr) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
+  _Pragma("clang diagnostic ignored \"-Wold-style-cast\"")((T)(expr)) _azure_JSON_HEDLEY_DIAGNOSTIC_POP
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 3, 0)
+#define _azure_JSON_HEDLEY_CPP_CAST(T, expr) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
+  _Pragma("diag_suppress=Pe137") _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #else
-#define JSON_HEDLEY_CPP_CAST(T, expr) ((T)(expr))
+#define _azure_JSON_HEDLEY_CPP_CAST(T, expr) ((T)(expr))
 #endif
 #else
-#define JSON_HEDLEY_CPP_CAST(T, expr) (expr)
+#define _azure_JSON_HEDLEY_CPP_CAST(T, expr) (expr)
 #endif
 
-#if defined(JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED)
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wdeprecated-declarations")
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wdeprecated-declarations")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
   _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
-#elif JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("warning(disable:1478 1786)")
-#elif JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED __pragma(warning(disable : 1478 1786))
-#elif JSON_HEDLEY_PGI_VERSION_CHECK(20, 7, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1215,1216,1444,1445")
-#elif JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1215,1444")
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(4, 3, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
+#elif _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("warning(disable:1478 1786)")
+#elif _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED __pragma(warning(disable : 1478 1786))
+#elif _azure_JSON_HEDLEY_PGI_VERSION_CHECK(20, 7, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1215,1216,1444,1445")
+#elif _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1215,1444")
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 3, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
   _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED __pragma(warning(disable : 4996))
-#elif JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1215,1444")
-#elif JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1291,1718")
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) && !defined(__cplusplus)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED __pragma(warning(disable : 4996))
+#elif _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1215,1444")
+#elif _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress 1291,1718")
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) && !defined(__cplusplus)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
   _Pragma("error_messages(off,E_DEPRECATED_ATT,E_DEPRECATED_ATT_MESS)")
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) && defined(__cplusplus)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) && defined(__cplusplus)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED \
   _Pragma("error_messages(off,symdeprecated,symdeprecated2)")
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress=Pe1444,Pe1215")
-#elif JSON_HEDLEY_PELLES_VERSION_CHECK(2, 90, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("warn(disable:2241)")
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("diag_suppress=Pe1444,Pe1215")
+#elif _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(2, 90, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED _Pragma("warn(disable:2241)")
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED
 #endif
 
-#if defined(JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS)
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
   _Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"")
-#elif JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("warning(disable:161)")
-#elif JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS __pragma(warning(disable : 161))
-#elif JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 1675")
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(4, 3, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
+#elif _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("warning(disable:161)")
+#elif _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS __pragma(warning(disable : 161))
+#elif _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 1675")
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 3, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
   _Pragma("GCC diagnostic ignored \"-Wunknown-pragmas\"")
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS __pragma(warning(disable : 4068))
-#elif JSON_HEDLEY_TI_VERSION_CHECK(16, 9, 0) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0) \
-    || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 163")
-#elif JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 163")
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress=Pe161")
-#elif JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 161")
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS __pragma(warning(disable : 4068))
+#elif _azure_JSON_HEDLEY_TI_VERSION_CHECK(16, 9, 0) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0) \
+    || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 163")
+#elif _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 163")
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress=Pe161")
+#elif _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS _Pragma("diag_suppress 161")
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS
 #endif
 
-#if defined(JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES)
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wunknown-attributes")
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES \
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wunknown-attributes")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES \
   _Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(4, 6, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES \
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 6, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES \
   _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
-#elif JSON_HEDLEY_INTEL_VERSION_CHECK(17, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("warning(disable:1292)")
-#elif JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES __pragma(warning(disable : 1292))
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(19, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES __pragma(warning(disable : 5030))
-#elif JSON_HEDLEY_PGI_VERSION_CHECK(20, 7, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1097,1098")
-#elif JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1097")
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 14, 0) && defined(__cplusplus)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES \
+#elif _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(17, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("warning(disable:1292)")
+#elif _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES __pragma(warning(disable : 1292))
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(19, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES __pragma(warning(disable : 5030))
+#elif _azure_JSON_HEDLEY_PGI_VERSION_CHECK(20, 7, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1097,1098")
+#elif _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1097")
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 14, 0) && defined(__cplusplus)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES \
   _Pragma("error_messages(off,attrskipunsup)")
-#elif JSON_HEDLEY_TI_VERSION_CHECK(18, 1, 0) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 3, 0) \
-    || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1173")
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress=Pe1097")
-#elif JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1097")
+#elif _azure_JSON_HEDLEY_TI_VERSION_CHECK(18, 1, 0) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 3, 0) \
+    || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1173")
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress=Pe1097")
+#elif _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES _Pragma("diag_suppress 1097")
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES
 #endif
 
-#if defined(JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL)
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wcast-qual")
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("clang diagnostic ignored \"-Wcast-qual\"")
-#elif JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("warning(disable:2203 2331)")
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("GCC diagnostic ignored \"-Wcast-qual\"")
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wcast-qual")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("clang diagnostic ignored \"-Wcast-qual\"")
+#elif _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("warning(disable:2203 2331)")
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL _Pragma("GCC diagnostic ignored \"-Wcast-qual\"")
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
 #endif
 
-#if defined(JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION)
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
+#if defined(_azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION)
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wunused-function")
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION \
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wunused-function")
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION \
   _Pragma("clang diagnostic ignored \"-Wunused-function\"")
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION \
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION \
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"")
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(1, 0, 0)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION __pragma(warning(disable : 4505))
-#elif JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION _Pragma("diag_suppress 3142")
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(1, 0, 0)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION __pragma(warning(disable : 4505))
+#elif _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION _Pragma("diag_suppress 3142")
 #else
-#define JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
+#define _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
 #endif
 
-#if defined(JSON_HEDLEY_DEPRECATED)
-#undef JSON_HEDLEY_DEPRECATED
+#if defined(_azure_JSON_HEDLEY_DEPRECATED)
+#undef _azure_JSON_HEDLEY_DEPRECATED
 #endif
-#if defined(JSON_HEDLEY_DEPRECATED_FOR)
-#undef JSON_HEDLEY_DEPRECATED_FOR
+#if defined(_azure_JSON_HEDLEY_DEPRECATED_FOR)
+#undef _azure_JSON_HEDLEY_DEPRECATED_FOR
 #endif
-#if JSON_HEDLEY_MSVC_VERSION_CHECK(14, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_DEPRECATED(since) __declspec(deprecated("Since " #since))
-#define JSON_HEDLEY_DEPRECATED_FOR(since, replacement) \
+#if _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(14, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_DEPRECATED(since) __declspec(deprecated("Since " #since))
+#define _azure_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) \
   __declspec(deprecated("Since " #since "; use " #replacement))
 #elif ( \
-    JSON_HEDLEY_HAS_EXTENSION(attribute_deprecated_with_message) \
-    && !defined(JSON_HEDLEY_IAR_VERSION)) \
-    || JSON_HEDLEY_GCC_VERSION_CHECK(4, 5, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) \
-    || JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) || JSON_HEDLEY_TI_VERSION_CHECK(18, 1, 0) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(18, 1, 0) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 3, 0) \
-    || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_DEPRECATED(since) __attribute__((__deprecated__("Since " #since)))
-#define JSON_HEDLEY_DEPRECATED_FOR(since, replacement) \
+    _azure_JSON_HEDLEY_HAS_EXTENSION(attribute_deprecated_with_message) \
+    && !defined(_azure_JSON_HEDLEY_IAR_VERSION)) \
+    || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 5, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 13, 0) \
+    || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) || _azure_JSON_HEDLEY_TI_VERSION_CHECK(18, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(18, 1, 0) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 3, 0) \
+    || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 3, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_DEPRECATED(since) __attribute__((__deprecated__("Since " #since)))
+#define _azure_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) \
   __attribute__((__deprecated__("Since " #since "; use " #replacement)))
 #elif defined(__cplusplus) && (__cplusplus >= 201402L)
-#define JSON_HEDLEY_DEPRECATED(since) \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[deprecated("Since " #since)]])
-#define JSON_HEDLEY_DEPRECATED_FOR(since, replacement) \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_( \
+#define _azure_JSON_HEDLEY_DEPRECATED(since) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[deprecated("Since " #since)]])
+#define _azure_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_( \
       [[deprecated("Since " #since "; use " #replacement)]])
-#elif JSON_HEDLEY_HAS_ATTRIBUTE(deprecated) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10) || JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
-#define JSON_HEDLEY_DEPRECATED(since) __attribute__((__deprecated__))
-#define JSON_HEDLEY_DEPRECATED_FOR(since, replacement) __attribute__((__deprecated__))
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || JSON_HEDLEY_PELLES_VERSION_CHECK(6, 50, 0) \
-    || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_DEPRECATED(since) __declspec(deprecated)
-#define JSON_HEDLEY_DEPRECATED_FOR(since, replacement) __declspec(deprecated)
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_DEPRECATED(since) _Pragma("deprecated")
-#define JSON_HEDLEY_DEPRECATED_FOR(since, replacement) _Pragma("deprecated")
+#elif _azure_JSON_HEDLEY_HAS_ATTRIBUTE(deprecated) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10) || _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
+#define _azure_JSON_HEDLEY_DEPRECATED(since) __attribute__((__deprecated__))
+#define _azure_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) __attribute__((__deprecated__))
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(6, 50, 0) \
+    || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_DEPRECATED(since) __declspec(deprecated)
+#define _azure_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) __declspec(deprecated)
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_DEPRECATED(since) _Pragma("deprecated")
+#define _azure_JSON_HEDLEY_DEPRECATED_FOR(since, replacement) _Pragma("deprecated")
 #else
-#define JSON_HEDLEY_DEPRECATED(since)
-#define JSON_HEDLEY_DEPRECATED_FOR(since, replacement)
+#define _azure_JSON_HEDLEY_DEPRECATED(since)
+#define _azure_JSON_HEDLEY_DEPRECATED_FOR(since, replacement)
 #endif
 
-#if defined(JSON_HEDLEY_UNAVAILABLE)
-#undef JSON_HEDLEY_UNAVAILABLE
+#if defined(_azure_JSON_HEDLEY_UNAVAILABLE)
+#undef _azure_JSON_HEDLEY_UNAVAILABLE
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(warning) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 3, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_UNAVAILABLE(available_since) \
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(warning) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 3, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_UNAVAILABLE(available_since) \
   __attribute__((__warning__("Not available until " #available_since)))
 #else
-#define JSON_HEDLEY_UNAVAILABLE(available_since)
+#define _azure_JSON_HEDLEY_UNAVAILABLE(available_since)
 #endif
 
-#if defined(JSON_HEDLEY_WARN_UNUSED_RESULT)
-#undef JSON_HEDLEY_WARN_UNUSED_RESULT
+#if defined(_azure_JSON_HEDLEY_WARN_UNUSED_RESULT)
+#undef _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
 #endif
-#if defined(JSON_HEDLEY_WARN_UNUSED_RESULT_MSG)
-#undef JSON_HEDLEY_WARN_UNUSED_RESULT_MSG
+#if defined(_azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG)
+#undef _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(warn_unused_result) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || (JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0) && defined(__cplusplus)) \
-    || JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
-#define JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) __attribute__((__warn_unused_result__))
-#elif (JSON_HEDLEY_HAS_CPP_ATTRIBUTE(nodiscard) >= 201907L)
-#define JSON_HEDLEY_WARN_UNUSED_RESULT \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
-#define JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard(msg)]])
-#elif JSON_HEDLEY_HAS_CPP_ATTRIBUTE(nodiscard)
-#define JSON_HEDLEY_WARN_UNUSED_RESULT \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
-#define JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(warn_unused_result) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || (_azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0) && defined(__cplusplus)) \
+    || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) __attribute__((__warn_unused_result__))
+#elif (_azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(nodiscard) >= 201907L)
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard(msg)]])
+#elif _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(nodiscard)
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[nodiscard]])
 #elif defined(_Check_return_) /* SAL */
-#define JSON_HEDLEY_WARN_UNUSED_RESULT _Check_return_
-#define JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) _Check_return_
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT _Check_return_
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg) _Check_return_
 #else
-#define JSON_HEDLEY_WARN_UNUSED_RESULT
-#define JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg)
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+#define _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG(msg)
 #endif
 
-#if defined(JSON_HEDLEY_SENTINEL)
-#undef JSON_HEDLEY_SENTINEL
+#if defined(_azure_JSON_HEDLEY_SENTINEL)
+#undef _azure_JSON_HEDLEY_SENTINEL
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(sentinel) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_ARM_VERSION_CHECK(5, 4, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_SENTINEL(position) __attribute__((__sentinel__(position)))
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(sentinel) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(5, 4, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_SENTINEL(position) __attribute__((__sentinel__(position)))
 #else
-#define JSON_HEDLEY_SENTINEL(position)
+#define _azure_JSON_HEDLEY_SENTINEL(position)
 #endif
 
-#if defined(JSON_HEDLEY_NO_RETURN)
-#undef JSON_HEDLEY_NO_RETURN
+#if defined(_azure_JSON_HEDLEY_NO_RETURN)
+#undef _azure_JSON_HEDLEY_NO_RETURN
 #endif
-#if JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_NO_RETURN __noreturn
-#elif JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_NO_RETURN __attribute__((__noreturn__))
+#if _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_NO_RETURN __noreturn
+#elif _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_NO_RETURN __attribute__((__noreturn__))
 #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-#define JSON_HEDLEY_NO_RETURN _Noreturn
+#define _azure_JSON_HEDLEY_NO_RETURN _Noreturn
 #elif defined(__cplusplus) && (__cplusplus >= 201103L)
-#define JSON_HEDLEY_NO_RETURN JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[noreturn]])
-#elif JSON_HEDLEY_HAS_ATTRIBUTE(noreturn) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 2, 0) \
-    || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) \
-    || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
-#define JSON_HEDLEY_NO_RETURN __attribute__((__noreturn__))
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
-#define JSON_HEDLEY_NO_RETURN _Pragma("does_not_return")
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_NO_RETURN __declspec(noreturn)
-#elif JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 0, 0) && defined(__cplusplus)
-#define JSON_HEDLEY_NO_RETURN _Pragma("FUNC_NEVER_RETURNS;")
-#elif JSON_HEDLEY_COMPCERT_VERSION_CHECK(3, 2, 0)
-#define JSON_HEDLEY_NO_RETURN __attribute((noreturn))
-#elif JSON_HEDLEY_PELLES_VERSION_CHECK(9, 0, 0)
-#define JSON_HEDLEY_NO_RETURN __declspec(noreturn)
+#define _azure_JSON_HEDLEY_NO_RETURN _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[noreturn]])
+#elif _azure_JSON_HEDLEY_HAS_ATTRIBUTE(noreturn) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 2, 0) \
+    || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) \
+    || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
+#define _azure_JSON_HEDLEY_NO_RETURN __attribute__((__noreturn__))
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
+#define _azure_JSON_HEDLEY_NO_RETURN _Pragma("does_not_return")
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_NO_RETURN __declspec(noreturn)
+#elif _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 0, 0) && defined(__cplusplus)
+#define _azure_JSON_HEDLEY_NO_RETURN _Pragma("FUNC_NEVER_RETURNS;")
+#elif _azure_JSON_HEDLEY_COMPCERT_VERSION_CHECK(3, 2, 0)
+#define _azure_JSON_HEDLEY_NO_RETURN __attribute((noreturn))
+#elif _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(9, 0, 0)
+#define _azure_JSON_HEDLEY_NO_RETURN __declspec(noreturn)
 #else
-#define JSON_HEDLEY_NO_RETURN
+#define _azure_JSON_HEDLEY_NO_RETURN
 #endif
 
-#if defined(JSON_HEDLEY_NO_ESCAPE)
-#undef JSON_HEDLEY_NO_ESCAPE
+#if defined(_azure_JSON_HEDLEY_NO_ESCAPE)
+#undef _azure_JSON_HEDLEY_NO_ESCAPE
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(noescape)
-#define JSON_HEDLEY_NO_ESCAPE __attribute__((__noescape__))
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(noescape)
+#define _azure_JSON_HEDLEY_NO_ESCAPE __attribute__((__noescape__))
 #else
-#define JSON_HEDLEY_NO_ESCAPE
+#define _azure_JSON_HEDLEY_NO_ESCAPE
 #endif
 
-#if defined(JSON_HEDLEY_UNREACHABLE)
-#undef JSON_HEDLEY_UNREACHABLE
+#if defined(_azure_JSON_HEDLEY_UNREACHABLE)
+#undef _azure_JSON_HEDLEY_UNREACHABLE
 #endif
-#if defined(JSON_HEDLEY_UNREACHABLE_RETURN)
-#undef JSON_HEDLEY_UNREACHABLE_RETURN
+#if defined(_azure_JSON_HEDLEY_UNREACHABLE_RETURN)
+#undef _azure_JSON_HEDLEY_UNREACHABLE_RETURN
 #endif
-#if defined(JSON_HEDLEY_ASSUME)
-#undef JSON_HEDLEY_ASSUME
+#if defined(_azure_JSON_HEDLEY_ASSUME)
+#undef _azure_JSON_HEDLEY_ASSUME
 #endif
-#if JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_ASSUME(expr) __assume(expr)
-#elif JSON_HEDLEY_HAS_BUILTIN(__builtin_assume)
-#define JSON_HEDLEY_ASSUME(expr) __builtin_assume(expr)
-#elif JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
+#if _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_ASSUME(expr) __assume(expr)
+#elif _azure_JSON_HEDLEY_HAS_BUILTIN(__builtin_assume)
+#define _azure_JSON_HEDLEY_ASSUME(expr) __builtin_assume(expr)
+#elif _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
 #if defined(__cplusplus)
-#define JSON_HEDLEY_ASSUME(expr) std::_nassert(expr)
+#define _azure_JSON_HEDLEY_ASSUME(expr) std::_nassert(expr)
 #else
-#define JSON_HEDLEY_ASSUME(expr) _nassert(expr)
+#define _azure_JSON_HEDLEY_ASSUME(expr) _nassert(expr)
 #endif
 #endif
-#if (JSON_HEDLEY_HAS_BUILTIN(__builtin_unreachable) && (!defined(JSON_HEDLEY_ARM_VERSION))) \
-    || JSON_HEDLEY_GCC_VERSION_CHECK(4, 5, 0) || JSON_HEDLEY_PGI_VERSION_CHECK(18, 10, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 5) \
-    || JSON_HEDLEY_CRAY_VERSION_CHECK(10, 0, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_UNREACHABLE() __builtin_unreachable()
-#elif defined(JSON_HEDLEY_ASSUME)
-#define JSON_HEDLEY_UNREACHABLE() JSON_HEDLEY_ASSUME(0)
+#if (_azure_JSON_HEDLEY_HAS_BUILTIN(__builtin_unreachable) && (!defined(_azure_JSON_HEDLEY_ARM_VERSION))) \
+    || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 5, 0) || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(18, 10, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 5) \
+    || _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(10, 0, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_UNREACHABLE() __builtin_unreachable()
+#elif defined(_azure_JSON_HEDLEY_ASSUME)
+#define _azure_JSON_HEDLEY_UNREACHABLE() _azure_JSON_HEDLEY_ASSUME(0)
 #endif
-#if !defined(JSON_HEDLEY_ASSUME)
-#if defined(JSON_HEDLEY_UNREACHABLE)
-#define JSON_HEDLEY_ASSUME(expr) \
-  JSON_HEDLEY_STATIC_CAST(void, ((expr) ? 1 : (JSON_HEDLEY_UNREACHABLE(), 1)))
+#if !defined(_azure_JSON_HEDLEY_ASSUME)
+#if defined(_azure_JSON_HEDLEY_UNREACHABLE)
+#define _azure_JSON_HEDLEY_ASSUME(expr) \
+  _azure_JSON_HEDLEY_STATIC_CAST(void, ((expr) ? 1 : (_azure_JSON_HEDLEY_UNREACHABLE(), 1)))
 #else
-#define JSON_HEDLEY_ASSUME(expr) JSON_HEDLEY_STATIC_CAST(void, expr)
+#define _azure_JSON_HEDLEY_ASSUME(expr) _azure_JSON_HEDLEY_STATIC_CAST(void, expr)
 #endif
 #endif
-#if defined(JSON_HEDLEY_UNREACHABLE)
-#if JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
-#define JSON_HEDLEY_UNREACHABLE_RETURN(value) \
-  return (JSON_HEDLEY_STATIC_CAST(void, JSON_HEDLEY_ASSUME(0)), (value))
+#if defined(_azure_JSON_HEDLEY_UNREACHABLE)
+#if _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0)
+#define _azure_JSON_HEDLEY_UNREACHABLE_RETURN(value) \
+  return (_azure_JSON_HEDLEY_STATIC_CAST(void, _azure_JSON_HEDLEY_ASSUME(0)), (value))
 #else
-#define JSON_HEDLEY_UNREACHABLE_RETURN(value) JSON_HEDLEY_UNREACHABLE()
+#define _azure_JSON_HEDLEY_UNREACHABLE_RETURN(value) _azure_JSON_HEDLEY_UNREACHABLE()
 #endif
 #else
-#define JSON_HEDLEY_UNREACHABLE_RETURN(value) return (value)
+#define _azure_JSON_HEDLEY_UNREACHABLE_RETURN(value) return (value)
 #endif
-#if !defined(JSON_HEDLEY_UNREACHABLE)
-#define JSON_HEDLEY_UNREACHABLE() JSON_HEDLEY_ASSUME(0)
+#if !defined(_azure_JSON_HEDLEY_UNREACHABLE)
+#define _azure_JSON_HEDLEY_UNREACHABLE() _azure_JSON_HEDLEY_ASSUME(0)
 #endif
 
-JSON_HEDLEY_DIAGNOSTIC_PUSH
-#if JSON_HEDLEY_HAS_WARNING("-Wpedantic")
+_azure_JSON_HEDLEY_DIAGNOSTIC_PUSH
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wpedantic")
 #pragma clang diagnostic ignored "-Wpedantic"
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wc++98-compat-pedantic") && defined(__cplusplus)
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wc++98-compat-pedantic") && defined(__cplusplus)
 #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
 #endif
-#if JSON_HEDLEY_GCC_HAS_WARNING("-Wvariadic-macros", 4, 0, 0)
+#if _azure_JSON_HEDLEY_GCC_HAS_WARNING("-Wvariadic-macros", 4, 0, 0)
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wvariadic-macros"
-#elif defined(JSON_HEDLEY_GCC_VERSION)
+#elif defined(_azure_JSON_HEDLEY_GCC_VERSION)
 #pragma GCC diagnostic ignored "-Wvariadic-macros"
 #endif
 #endif
-#if defined(JSON_HEDLEY_NON_NULL)
-#undef JSON_HEDLEY_NON_NULL
+#if defined(_azure_JSON_HEDLEY_NON_NULL)
+#undef _azure_JSON_HEDLEY_NON_NULL
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(nonnull) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 3, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0)
-#define JSON_HEDLEY_NON_NULL(...) __attribute__((__nonnull__(__VA_ARGS__)))
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(nonnull) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 3, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0)
+#define _azure_JSON_HEDLEY_NON_NULL(...) __attribute__((__nonnull__(__VA_ARGS__)))
 #else
-#define JSON_HEDLEY_NON_NULL(...)
+#define _azure_JSON_HEDLEY_NON_NULL(...)
 #endif
-JSON_HEDLEY_DIAGNOSTIC_POP
+_azure_JSON_HEDLEY_DIAGNOSTIC_POP
 
-#if defined(JSON_HEDLEY_PRINTF_FORMAT)
-#undef JSON_HEDLEY_PRINTF_FORMAT
+#if defined(_azure_JSON_HEDLEY_PRINTF_FORMAT)
+#undef _azure_JSON_HEDLEY_PRINTF_FORMAT
 #endif
-#if defined(__MINGW32__) && JSON_HEDLEY_GCC_HAS_ATTRIBUTE(format, 4, 4, 0) \
+#if defined(__MINGW32__) && _azure_JSON_HEDLEY_GCC_HAS_ATTRIBUTE(format, 4, 4, 0) \
     && !defined(__USE_MINGW_ANSI_STDIO)
-#define JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
+#define _azure_JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
   __attribute__((__format__(ms_printf, string_idx, first_to_check)))
-#elif defined(__MINGW32__) && JSON_HEDLEY_GCC_HAS_ATTRIBUTE(format, 4, 4, 0) \
+#elif defined(__MINGW32__) && _azure_JSON_HEDLEY_GCC_HAS_ATTRIBUTE(format, 4, 4, 0) \
     && defined(__USE_MINGW_ANSI_STDIO)
-#define JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
+#define _azure_JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
   __attribute__((__format__(gnu_printf, string_idx, first_to_check)))
-#elif JSON_HEDLEY_HAS_ATTRIBUTE(format) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0) \
-    || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
+#elif _azure_JSON_HEDLEY_HAS_ATTRIBUTE(format) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(5, 6, 0) \
+    || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
   __attribute__((__format__(__printf__, string_idx, first_to_check)))
-#elif JSON_HEDLEY_PELLES_VERSION_CHECK(6, 0, 0)
-#define JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
+#elif _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(6, 0, 0)
+#define _azure_JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check) \
   __declspec(vaformat(printf, string_idx, first_to_check))
 #else
-#define JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check)
+#define _azure_JSON_HEDLEY_PRINTF_FORMAT(string_idx, first_to_check)
 #endif
 
-#if defined(JSON_HEDLEY_CONSTEXPR)
-#undef JSON_HEDLEY_CONSTEXPR
+#if defined(_azure_JSON_HEDLEY_CONSTEXPR)
+#undef _azure_JSON_HEDLEY_CONSTEXPR
 #endif
 #if defined(__cplusplus)
 #if __cplusplus >= 201103L
-#define JSON_HEDLEY_CONSTEXPR JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(constexpr)
+#define _azure_JSON_HEDLEY_CONSTEXPR _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(constexpr)
 #endif
 #endif
-#if !defined(JSON_HEDLEY_CONSTEXPR)
-#define JSON_HEDLEY_CONSTEXPR
+#if !defined(_azure_JSON_HEDLEY_CONSTEXPR)
+#define _azure_JSON_HEDLEY_CONSTEXPR
 #endif
 
-#if defined(JSON_HEDLEY_PREDICT)
-#undef JSON_HEDLEY_PREDICT
+#if defined(_azure_JSON_HEDLEY_PREDICT)
+#undef _azure_JSON_HEDLEY_PREDICT
 #endif
-#if defined(JSON_HEDLEY_LIKELY)
-#undef JSON_HEDLEY_LIKELY
+#if defined(_azure_JSON_HEDLEY_LIKELY)
+#undef _azure_JSON_HEDLEY_LIKELY
 #endif
-#if defined(JSON_HEDLEY_UNLIKELY)
-#undef JSON_HEDLEY_UNLIKELY
+#if defined(_azure_JSON_HEDLEY_UNLIKELY)
+#undef _azure_JSON_HEDLEY_UNLIKELY
 #endif
-#if defined(JSON_HEDLEY_UNPREDICTABLE)
-#undef JSON_HEDLEY_UNPREDICTABLE
+#if defined(_azure_JSON_HEDLEY_UNPREDICTABLE)
+#undef _azure_JSON_HEDLEY_UNPREDICTABLE
 #endif
-#if JSON_HEDLEY_HAS_BUILTIN(__builtin_unpredictable)
-#define JSON_HEDLEY_UNPREDICTABLE(expr) __builtin_unpredictable((expr))
+#if _azure_JSON_HEDLEY_HAS_BUILTIN(__builtin_unpredictable)
+#define _azure_JSON_HEDLEY_UNPREDICTABLE(expr) __builtin_unpredictable((expr))
 #endif
 #if ( \
-    JSON_HEDLEY_HAS_BUILTIN(__builtin_expect_with_probability) \
-    && !defined(JSON_HEDLEY_PGI_VERSION)) \
-    || JSON_HEDLEY_GCC_VERSION_CHECK(9, 0, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_PREDICT(expr, value, probability) \
+    _azure_JSON_HEDLEY_HAS_BUILTIN(__builtin_expect_with_probability) \
+    && !defined(_azure_JSON_HEDLEY_PGI_VERSION)) \
+    || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(9, 0, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_PREDICT(expr, value, probability) \
   __builtin_expect_with_probability((expr), (value), (probability))
-#define JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
+#define _azure_JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
   __builtin_expect_with_probability(!!(expr), 1, (probability))
-#define JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
+#define _azure_JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
   __builtin_expect_with_probability(!!(expr), 0, (probability))
-#define JSON_HEDLEY_LIKELY(expr) __builtin_expect(!!(expr), 1)
-#define JSON_HEDLEY_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
-#elif (JSON_HEDLEY_HAS_BUILTIN(__builtin_expect) && !defined(JSON_HEDLEY_INTEL_CL_VERSION)) \
-    || JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || (JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0) && defined(__cplusplus)) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
-    || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 27) \
-    || JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_PREDICT(expr, expected, probability) \
+#define _azure_JSON_HEDLEY_LIKELY(expr) __builtin_expect(!!(expr), 1)
+#define _azure_JSON_HEDLEY_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
+#elif (_azure_JSON_HEDLEY_HAS_BUILTIN(__builtin_expect) && !defined(_azure_JSON_HEDLEY_INTEL_CL_VERSION)) \
+    || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 0, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || (_azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 15, 0) && defined(__cplusplus)) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 7, 0) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || _azure_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 27) \
+    || _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_PREDICT(expr, expected, probability) \
   (((probability) >= 0.9) ? __builtin_expect((expr), (expected)) \
-                          : (JSON_HEDLEY_STATIC_CAST(void, expected), (expr)))
-#define JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
+                          : (_azure_JSON_HEDLEY_STATIC_CAST(void, expected), (expr)))
+#define _azure_JSON_HEDLEY_PREDICT_TRUE(expr, probability) \
   (__extension__({ \
     double hedley_probability_ = (probability); \
     ((hedley_probability_ >= 0.9) \
          ? __builtin_expect(!!(expr), 1) \
          : ((hedley_probability_ <= 0.1) ? __builtin_expect(!!(expr), 0) : !!(expr))); \
   }))
-#define JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
+#define _azure_JSON_HEDLEY_PREDICT_FALSE(expr, probability) \
   (__extension__({ \
     double hedley_probability_ = (probability); \
     ((hedley_probability_ >= 0.9) \
          ? __builtin_expect(!!(expr), 0) \
          : ((hedley_probability_ <= 0.1) ? __builtin_expect(!!(expr), 1) : !!(expr))); \
   }))
-#define JSON_HEDLEY_LIKELY(expr) __builtin_expect(!!(expr), 1)
-#define JSON_HEDLEY_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
+#define _azure_JSON_HEDLEY_LIKELY(expr) __builtin_expect(!!(expr), 1)
+#define _azure_JSON_HEDLEY_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
 #else
-#define JSON_HEDLEY_PREDICT(expr, expected, probability) \
-  (JSON_HEDLEY_STATIC_CAST(void, expected), (expr))
-#define JSON_HEDLEY_PREDICT_TRUE(expr, probability) (!!(expr))
-#define JSON_HEDLEY_PREDICT_FALSE(expr, probability) (!!(expr))
-#define JSON_HEDLEY_LIKELY(expr) (!!(expr))
-#define JSON_HEDLEY_UNLIKELY(expr) (!!(expr))
+#define _azure_JSON_HEDLEY_PREDICT(expr, expected, probability) \
+  (_azure_JSON_HEDLEY_STATIC_CAST(void, expected), (expr))
+#define _azure_JSON_HEDLEY_PREDICT_TRUE(expr, probability) (!!(expr))
+#define _azure_JSON_HEDLEY_PREDICT_FALSE(expr, probability) (!!(expr))
+#define _azure_JSON_HEDLEY_LIKELY(expr) (!!(expr))
+#define _azure_JSON_HEDLEY_UNLIKELY(expr) (!!(expr))
 #endif
-#if !defined(JSON_HEDLEY_UNPREDICTABLE)
-#define JSON_HEDLEY_UNPREDICTABLE(expr) JSON_HEDLEY_PREDICT(expr, 1, 0.5)
+#if !defined(_azure_JSON_HEDLEY_UNPREDICTABLE)
+#define _azure_JSON_HEDLEY_UNPREDICTABLE(expr) _azure_JSON_HEDLEY_PREDICT(expr, 1, 0.5)
 #endif
 
-#if defined(JSON_HEDLEY_MALLOC)
-#undef JSON_HEDLEY_MALLOC
+#if defined(_azure_JSON_HEDLEY_MALLOC)
+#undef _azure_JSON_HEDLEY_MALLOC
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(malloc) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(12, 1, 0) \
-    || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_MALLOC __attribute__((__malloc__))
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
-#define JSON_HEDLEY_MALLOC _Pragma("returns_new_memory")
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(14, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_MALLOC __declspec(restrict)
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(malloc) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(12, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_MALLOC __attribute__((__malloc__))
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
+#define _azure_JSON_HEDLEY_MALLOC _Pragma("returns_new_memory")
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(14, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_MALLOC __declspec(restrict)
 #else
-#define JSON_HEDLEY_MALLOC
+#define _azure_JSON_HEDLEY_MALLOC
 #endif
 
-#if defined(JSON_HEDLEY_PURE)
-#undef JSON_HEDLEY_PURE
+#if defined(_azure_JSON_HEDLEY_PURE)
+#undef _azure_JSON_HEDLEY_PURE
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(pure) || JSON_HEDLEY_GCC_VERSION_CHECK(2, 96, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
-    || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_PURE __attribute__((__pure__))
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
-#define JSON_HEDLEY_PURE _Pragma("does_not_write_global_data")
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(pure) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(2, 96, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_PURE __attribute__((__pure__))
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
+#define _azure_JSON_HEDLEY_PURE _Pragma("does_not_write_global_data")
 #elif defined(__cplusplus) \
-    && (JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0) \
-        || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0))
-#define JSON_HEDLEY_PURE _Pragma("FUNC_IS_PURE;")
+    && (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(2, 0, 1) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(4, 0, 0) \
+        || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0))
+#define _azure_JSON_HEDLEY_PURE _Pragma("FUNC_IS_PURE;")
 #else
-#define JSON_HEDLEY_PURE
+#define _azure_JSON_HEDLEY_PURE
 #endif
 
-#if defined(JSON_HEDLEY_CONST)
-#undef JSON_HEDLEY_CONST
+#if defined(_azure_JSON_HEDLEY_CONST)
+#undef _azure_JSON_HEDLEY_CONST
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(const) || JSON_HEDLEY_GCC_VERSION_CHECK(2, 5, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
-    || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_CONST __attribute__((__const__))
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
-#define JSON_HEDLEY_CONST _Pragma("no_side_effect")
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(const) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(2, 5, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_CONST __attribute__((__const__))
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0)
+#define _azure_JSON_HEDLEY_CONST _Pragma("no_side_effect")
 #else
-#define JSON_HEDLEY_CONST JSON_HEDLEY_PURE
+#define _azure_JSON_HEDLEY_CONST _azure_JSON_HEDLEY_PURE
 #endif
 
-#if defined(JSON_HEDLEY_RESTRICT)
-#undef JSON_HEDLEY_RESTRICT
+#if defined(_azure_JSON_HEDLEY_RESTRICT)
+#undef _azure_JSON_HEDLEY_RESTRICT
 #endif
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) && !defined(__cplusplus)
-#define JSON_HEDLEY_RESTRICT restrict
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) || JSON_HEDLEY_MSVC_VERSION_CHECK(14, 0, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
-    || JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 4) || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) \
-    || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || (JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 14, 0) && defined(__cplusplus)) \
-    || JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0) || defined(__clang__) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_RESTRICT __restrict
-#elif JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 3, 0) && !defined(__cplusplus)
-#define JSON_HEDLEY_RESTRICT _Restrict
+#define _azure_JSON_HEDLEY_RESTRICT restrict
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 1, 0) || _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(14, 0, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
+    || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(17, 10, 0) || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 4) || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || (_azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 14, 0) && defined(__cplusplus)) \
+    || _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0) || defined(__clang__) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_RESTRICT __restrict
+#elif _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 3, 0) && !defined(__cplusplus)
+#define _azure_JSON_HEDLEY_RESTRICT _Restrict
 #else
-#define JSON_HEDLEY_RESTRICT
+#define _azure_JSON_HEDLEY_RESTRICT
 #endif
 
-#if defined(JSON_HEDLEY_INLINE)
-#undef JSON_HEDLEY_INLINE
+#if defined(_azure_JSON_HEDLEY_INLINE)
+#undef _azure_JSON_HEDLEY_INLINE
 #endif
 #if (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)) \
     || (defined(__cplusplus) && (__cplusplus >= 199711L))
-#define JSON_HEDLEY_INLINE inline
-#elif defined(JSON_HEDLEY_GCC_VERSION) || JSON_HEDLEY_ARM_VERSION_CHECK(6, 2, 0)
-#define JSON_HEDLEY_INLINE __inline__
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(12, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 1, 0) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_INLINE __inline
+#define _azure_JSON_HEDLEY_INLINE inline
+#elif defined(_azure_JSON_HEDLEY_GCC_VERSION) || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(6, 2, 0)
+#define _azure_JSON_HEDLEY_INLINE __inline__
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(12, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(3, 1, 0) || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(8, 0, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_INLINE __inline
 #else
-#define JSON_HEDLEY_INLINE
+#define _azure_JSON_HEDLEY_INLINE
 #endif
 
-#if defined(JSON_HEDLEY_ALWAYS_INLINE)
-#undef JSON_HEDLEY_ALWAYS_INLINE
+#if defined(_azure_JSON_HEDLEY_ALWAYS_INLINE)
+#undef _azure_JSON_HEDLEY_ALWAYS_INLINE
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(always_inline) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
-    || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10) || JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
-#define JSON_HEDLEY_ALWAYS_INLINE __attribute__((__always_inline__)) JSON_HEDLEY_INLINE
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(12, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_ALWAYS_INLINE __forceinline
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(always_inline) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10) || _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
+#define _azure_JSON_HEDLEY_ALWAYS_INLINE __attribute__((__always_inline__)) _azure_JSON_HEDLEY_INLINE
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(12, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_ALWAYS_INLINE __forceinline
 #elif defined(__cplusplus) \
-    && (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-        || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-        || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) \
-        || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-        || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0))
-#define JSON_HEDLEY_ALWAYS_INLINE _Pragma("FUNC_ALWAYS_INLINE;")
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_ALWAYS_INLINE _Pragma("inline=forced")
+    && (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+        || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+        || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) \
+        || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+        || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0))
+#define _azure_JSON_HEDLEY_ALWAYS_INLINE _Pragma("FUNC_ALWAYS_INLINE;")
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_ALWAYS_INLINE _Pragma("inline=forced")
 #else
-#define JSON_HEDLEY_ALWAYS_INLINE JSON_HEDLEY_INLINE
+#define _azure_JSON_HEDLEY_ALWAYS_INLINE _azure_JSON_HEDLEY_INLINE
 #endif
 
-#if defined(JSON_HEDLEY_NEVER_INLINE)
-#undef JSON_HEDLEY_NEVER_INLINE
+#if defined(_azure_JSON_HEDLEY_NEVER_INLINE)
+#undef _azure_JSON_HEDLEY_NEVER_INLINE
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(noinline) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
-    || JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
-    || (JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
-    || (JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
-    || (JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
-    || (JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
-    || JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10) || JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
-#define JSON_HEDLEY_NEVER_INLINE __attribute__((__noinline__))
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_NEVER_INLINE __declspec(noinline)
-#elif JSON_HEDLEY_PGI_VERSION_CHECK(10, 2, 0)
-#define JSON_HEDLEY_NEVER_INLINE _Pragma("noinline")
-#elif JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 0, 0) && defined(__cplusplus)
-#define JSON_HEDLEY_NEVER_INLINE _Pragma("FUNC_CANNOT_INLINE;")
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_NEVER_INLINE _Pragma("inline=never")
-#elif JSON_HEDLEY_COMPCERT_VERSION_CHECK(3, 2, 0)
-#define JSON_HEDLEY_NEVER_INLINE __attribute((noinline))
-#elif JSON_HEDLEY_PELLES_VERSION_CHECK(9, 0, 0)
-#define JSON_HEDLEY_NEVER_INLINE __declspec(noinline)
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(noinline) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 0, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(10, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_VERSION_CHECK(15, 12, 0) \
+    || (_azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(4, 8, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK(5, 2, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK(6, 4, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 0, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(4, 3, 0) \
+    || (_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0) || _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK(1, 2, 0) \
+    || _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK(2, 1, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10) || _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 10, 0)
+#define _azure_JSON_HEDLEY_NEVER_INLINE __attribute__((__noinline__))
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 10, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_NEVER_INLINE __declspec(noinline)
+#elif _azure_JSON_HEDLEY_PGI_VERSION_CHECK(10, 2, 0)
+#define _azure_JSON_HEDLEY_NEVER_INLINE _Pragma("noinline")
+#elif _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 0, 0) && defined(__cplusplus)
+#define _azure_JSON_HEDLEY_NEVER_INLINE _Pragma("FUNC_CANNOT_INLINE;")
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_NEVER_INLINE _Pragma("inline=never")
+#elif _azure_JSON_HEDLEY_COMPCERT_VERSION_CHECK(3, 2, 0)
+#define _azure_JSON_HEDLEY_NEVER_INLINE __attribute((noinline))
+#elif _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(9, 0, 0)
+#define _azure_JSON_HEDLEY_NEVER_INLINE __declspec(noinline)
 #else
-#define JSON_HEDLEY_NEVER_INLINE
+#define _azure_JSON_HEDLEY_NEVER_INLINE
 #endif
 
-#if defined(JSON_HEDLEY_PRIVATE)
-#undef JSON_HEDLEY_PRIVATE
+#if defined(_azure_JSON_HEDLEY_PRIVATE)
+#undef _azure_JSON_HEDLEY_PRIVATE
 #endif
-#if defined(JSON_HEDLEY_PUBLIC)
-#undef JSON_HEDLEY_PUBLIC
+#if defined(_azure_JSON_HEDLEY_PUBLIC)
+#undef _azure_JSON_HEDLEY_PUBLIC
 #endif
-#if defined(JSON_HEDLEY_IMPORT)
-#undef JSON_HEDLEY_IMPORT
+#if defined(_azure_JSON_HEDLEY_IMPORT)
+#undef _azure_JSON_HEDLEY_IMPORT
 #endif
 #if defined(_WIN32) || defined(__CYGWIN__)
-#define JSON_HEDLEY_PRIVATE
-#define JSON_HEDLEY_PUBLIC __declspec(dllexport)
-#define JSON_HEDLEY_IMPORT __declspec(dllimport)
+#define _azure_JSON_HEDLEY_PRIVATE
+#define _azure_JSON_HEDLEY_PUBLIC __declspec(dllexport)
+#define _azure_JSON_HEDLEY_IMPORT __declspec(dllimport)
 #else
-#if JSON_HEDLEY_HAS_ATTRIBUTE(visibility) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 3, 0) \
-    || JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(visibility) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 3, 0) \
+    || _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 11, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
     || (defined(__TI_EABI__) \
-        && ((JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
-            || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0))) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_PRIVATE __attribute__((__visibility__("hidden")))
-#define JSON_HEDLEY_PUBLIC __attribute__((__visibility__("default")))
+        && ((_azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 2, 0) && defined(__TI_GNU_ATTRIBUTE_SUPPORT__)) \
+            || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(7, 5, 0))) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_PRIVATE __attribute__((__visibility__("hidden")))
+#define _azure_JSON_HEDLEY_PUBLIC __attribute__((__visibility__("default")))
 #else
-#define JSON_HEDLEY_PRIVATE
-#define JSON_HEDLEY_PUBLIC
+#define _azure_JSON_HEDLEY_PRIVATE
+#define _azure_JSON_HEDLEY_PUBLIC
 #endif
-#define JSON_HEDLEY_IMPORT extern
+#define _azure_JSON_HEDLEY_IMPORT extern
 #endif
 
-#if defined(JSON_HEDLEY_NO_THROW)
-#undef JSON_HEDLEY_NO_THROW
+#if defined(_azure_JSON_HEDLEY_NO_THROW)
+#undef _azure_JSON_HEDLEY_NO_THROW
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(nothrow) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 3, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_NO_THROW __attribute__((__nothrow__))
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(13, 1, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0)
-#define JSON_HEDLEY_NO_THROW __declspec(nothrow)
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(nothrow) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 3, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_NO_THROW __attribute__((__nothrow__))
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(13, 1, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0)
+#define _azure_JSON_HEDLEY_NO_THROW __declspec(nothrow)
 #else
-#define JSON_HEDLEY_NO_THROW
+#define _azure_JSON_HEDLEY_NO_THROW
 #endif
 
-#if defined(JSON_HEDLEY_FALL_THROUGH)
-#undef JSON_HEDLEY_FALL_THROUGH
+#if defined(_azure_JSON_HEDLEY_FALL_THROUGH)
+#undef _azure_JSON_HEDLEY_FALL_THROUGH
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(fallthrough) || JSON_HEDLEY_GCC_VERSION_CHECK(7, 0, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_FALL_THROUGH __attribute__((__fallthrough__))
-#elif JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(clang, fallthrough)
-#define JSON_HEDLEY_FALL_THROUGH \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[clang::fallthrough]])
-#elif JSON_HEDLEY_HAS_CPP_ATTRIBUTE(fallthrough)
-#define JSON_HEDLEY_FALL_THROUGH JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[fallthrough]])
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(fallthrough) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(7, 0, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_FALL_THROUGH __attribute__((__fallthrough__))
+#elif _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS(clang, fallthrough)
+#define _azure_JSON_HEDLEY_FALL_THROUGH \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[clang::fallthrough]])
+#elif _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(fallthrough)
+#define _azure_JSON_HEDLEY_FALL_THROUGH _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[fallthrough]])
 #elif defined(__fallthrough) /* SAL */
-#define JSON_HEDLEY_FALL_THROUGH __fallthrough
+#define _azure_JSON_HEDLEY_FALL_THROUGH __fallthrough
 #else
-#define JSON_HEDLEY_FALL_THROUGH
+#define _azure_JSON_HEDLEY_FALL_THROUGH
 #endif
 
-#if defined(JSON_HEDLEY_RETURNS_NON_NULL)
-#undef JSON_HEDLEY_RETURNS_NON_NULL
+#if defined(_azure_JSON_HEDLEY_RETURNS_NON_NULL)
+#undef _azure_JSON_HEDLEY_RETURNS_NON_NULL
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(returns_nonnull) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0) \
-    || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_RETURNS_NON_NULL __attribute__((__returns_nonnull__))
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(returns_nonnull) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0) \
+    || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_RETURNS_NON_NULL __attribute__((__returns_nonnull__))
 #elif defined(_Ret_notnull_) /* SAL */
-#define JSON_HEDLEY_RETURNS_NON_NULL _Ret_notnull_
+#define _azure_JSON_HEDLEY_RETURNS_NON_NULL _Ret_notnull_
 #else
-#define JSON_HEDLEY_RETURNS_NON_NULL
+#define _azure_JSON_HEDLEY_RETURNS_NON_NULL
 #endif
 
-#if defined(JSON_HEDLEY_ARRAY_PARAM)
-#undef JSON_HEDLEY_ARRAY_PARAM
+#if defined(_azure_JSON_HEDLEY_ARRAY_PARAM)
+#undef _azure_JSON_HEDLEY_ARRAY_PARAM
 #endif
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) && !defined(__STDC_NO_VLA__) \
-    && !defined(__cplusplus) && !defined(JSON_HEDLEY_PGI_VERSION) \
-    && !defined(JSON_HEDLEY_TINYC_VERSION)
-#define JSON_HEDLEY_ARRAY_PARAM(name) (name)
+    && !defined(__cplusplus) && !defined(_azure_JSON_HEDLEY_PGI_VERSION) \
+    && !defined(_azure_JSON_HEDLEY_TINYC_VERSION)
+#define _azure_JSON_HEDLEY_ARRAY_PARAM(name) (name)
 #else
-#define JSON_HEDLEY_ARRAY_PARAM(name)
+#define _azure_JSON_HEDLEY_ARRAY_PARAM(name)
 #endif
 
-#if defined(JSON_HEDLEY_IS_CONSTANT)
-#undef JSON_HEDLEY_IS_CONSTANT
+#if defined(_azure_JSON_HEDLEY_IS_CONSTANT)
+#undef _azure_JSON_HEDLEY_IS_CONSTANT
 #endif
-#if defined(JSON_HEDLEY_REQUIRE_CONSTEXPR)
-#undef JSON_HEDLEY_REQUIRE_CONSTEXPR
+#if defined(_azure_JSON_HEDLEY_REQUIRE_CONSTEXPR)
+#undef _azure_JSON_HEDLEY_REQUIRE_CONSTEXPR
 #endif
-/* JSON_HEDLEY_IS_CONSTEXPR_ is for
+/* _azure_JSON_HEDLEY_IS_CONSTEXPR_ is for
    HEDLEY INTERNAL USE ONLY.  API subject to change without notice. */
-#if defined(JSON_HEDLEY_IS_CONSTEXPR_)
-#undef JSON_HEDLEY_IS_CONSTEXPR_
+#if defined(_azure_JSON_HEDLEY_IS_CONSTEXPR_)
+#undef _azure_JSON_HEDLEY_IS_CONSTEXPR_
 #endif
-#if JSON_HEDLEY_HAS_BUILTIN(__builtin_constant_p) || JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 19) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
-    || JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) \
-    || (JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0) && !defined(__cplusplus)) \
-    || JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0) || JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
-#define JSON_HEDLEY_IS_CONSTANT(expr) __builtin_constant_p(expr)
+#if _azure_JSON_HEDLEY_HAS_BUILTIN(__builtin_constant_p) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) || _azure_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 19) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(4, 1, 0) || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) \
+    || _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK(6, 1, 0) \
+    || (_azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK(5, 10, 0) && !defined(__cplusplus)) \
+    || _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0) || _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK(1, 25, 10)
+#define _azure_JSON_HEDLEY_IS_CONSTANT(expr) __builtin_constant_p(expr)
 #endif
 #if !defined(__cplusplus)
-#if JSON_HEDLEY_HAS_BUILTIN(__builtin_types_compatible_p) \
-    || JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
-    || JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) || JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0) \
-    || JSON_HEDLEY_ARM_VERSION_CHECK(5, 4, 0) || JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 24)
+#if _azure_JSON_HEDLEY_HAS_BUILTIN(__builtin_types_compatible_p) \
+    || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(3, 4, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+    || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(13, 1, 0) || _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(8, 1, 0) \
+    || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(5, 4, 0) || _azure_JSON_HEDLEY_TINYC_VERSION_CHECK(0, 9, 24)
 #if defined(__INTPTR_TYPE__)
-#define JSON_HEDLEY_IS_CONSTEXPR_(expr) \
+#define _azure_JSON_HEDLEY_IS_CONSTEXPR_(expr) \
   __builtin_types_compatible_p( \
       __typeof__((1 ? (void*)((__INTPTR_TYPE__)((expr)*0)) : (int*)0)), int*)
 #else
 #include <stdint.h>
-#define JSON_HEDLEY_IS_CONSTEXPR_(expr) \
+#define _azure_JSON_HEDLEY_IS_CONSTEXPR_(expr) \
   __builtin_types_compatible_p(__typeof__((1 ? (void*)((intptr_t)((expr)*0)) : (int*)0)), int*)
 #endif
 #elif ( \
     defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) \
-    && !defined(JSON_HEDLEY_SUNPRO_VERSION) && !defined(JSON_HEDLEY_PGI_VERSION) \
-    && !defined(JSON_HEDLEY_IAR_VERSION)) \
-    || (JSON_HEDLEY_HAS_EXTENSION(c_generic_selections) && !defined(JSON_HEDLEY_IAR_VERSION)) \
-    || JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(17, 0, 0) \
-    || JSON_HEDLEY_IBM_VERSION_CHECK(12, 1, 0) || JSON_HEDLEY_ARM_VERSION_CHECK(5, 3, 0)
+    && !defined(_azure_JSON_HEDLEY_SUNPRO_VERSION) && !defined(_azure_JSON_HEDLEY_PGI_VERSION) \
+    && !defined(_azure_JSON_HEDLEY_IAR_VERSION)) \
+    || (_azure_JSON_HEDLEY_HAS_EXTENSION(c_generic_selections) && !defined(_azure_JSON_HEDLEY_IAR_VERSION)) \
+    || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(17, 0, 0) \
+    || _azure_JSON_HEDLEY_IBM_VERSION_CHECK(12, 1, 0) || _azure_JSON_HEDLEY_ARM_VERSION_CHECK(5, 3, 0)
 #if defined(__INTPTR_TYPE__)
-#define JSON_HEDLEY_IS_CONSTEXPR_(expr) \
+#define _azure_JSON_HEDLEY_IS_CONSTEXPR_(expr) \
   _Generic((1 ? (void*)((__INTPTR_TYPE__)((expr)*0)) : (int*)0), int* : 1, void* : 0)
 #else
 #include <stdint.h>
-#define JSON_HEDLEY_IS_CONSTEXPR_(expr) \
+#define _azure_JSON_HEDLEY_IS_CONSTEXPR_(expr) \
   _Generic((1 ? (void*)((intptr_t)*0) : (int*)0), int* : 1, void* : 0)
 #endif
-#elif defined(JSON_HEDLEY_GCC_VERSION) || defined(JSON_HEDLEY_INTEL_VERSION) \
-    || defined(JSON_HEDLEY_TINYC_VERSION) || defined(JSON_HEDLEY_TI_ARMCL_VERSION) \
-    || JSON_HEDLEY_TI_CL430_VERSION_CHECK(18, 12, 0) || defined(JSON_HEDLEY_TI_CL2000_VERSION) \
-    || defined(JSON_HEDLEY_TI_CL6X_VERSION) || defined(JSON_HEDLEY_TI_CL7X_VERSION) \
-    || defined(JSON_HEDLEY_TI_CLPRU_VERSION) || defined(__clang__)
-#define JSON_HEDLEY_IS_CONSTEXPR_(expr) \
+#elif defined(_azure_JSON_HEDLEY_GCC_VERSION) || defined(_azure_JSON_HEDLEY_INTEL_VERSION) \
+    || defined(_azure_JSON_HEDLEY_TINYC_VERSION) || defined(_azure_JSON_HEDLEY_TI_ARMCL_VERSION) \
+    || _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK(18, 12, 0) || defined(_azure_JSON_HEDLEY_TI_CL2000_VERSION) \
+    || defined(_azure_JSON_HEDLEY_TI_CL6X_VERSION) || defined(_azure_JSON_HEDLEY_TI_CL7X_VERSION) \
+    || defined(_azure_JSON_HEDLEY_TI_CLPRU_VERSION) || defined(__clang__)
+#define _azure_JSON_HEDLEY_IS_CONSTEXPR_(expr) \
   (sizeof(void) != sizeof(*(1 ? ((void*)((expr)*0L)) : ((struct { char v[sizeof(void) * 2]; }*)1))))
 #endif
 #endif
-#if defined(JSON_HEDLEY_IS_CONSTEXPR_)
-#if !defined(JSON_HEDLEY_IS_CONSTANT)
-#define JSON_HEDLEY_IS_CONSTANT(expr) JSON_HEDLEY_IS_CONSTEXPR_(expr)
+#if defined(_azure_JSON_HEDLEY_IS_CONSTEXPR_)
+#if !defined(_azure_JSON_HEDLEY_IS_CONSTANT)
+#define _azure_JSON_HEDLEY_IS_CONSTANT(expr) _azure_JSON_HEDLEY_IS_CONSTEXPR_(expr)
 #endif
-#define JSON_HEDLEY_REQUIRE_CONSTEXPR(expr) (JSON_HEDLEY_IS_CONSTEXPR_(expr) ? (expr) : (-1))
+#define _azure_JSON_HEDLEY_REQUIRE_CONSTEXPR(expr) (_azure_JSON_HEDLEY_IS_CONSTEXPR_(expr) ? (expr) : (-1))
 #else
-#if !defined(JSON_HEDLEY_IS_CONSTANT)
-#define JSON_HEDLEY_IS_CONSTANT(expr) (0)
+#if !defined(_azure_JSON_HEDLEY_IS_CONSTANT)
+#define _azure_JSON_HEDLEY_IS_CONSTANT(expr) (0)
 #endif
-#define JSON_HEDLEY_REQUIRE_CONSTEXPR(expr) (expr)
+#define _azure_JSON_HEDLEY_REQUIRE_CONSTEXPR(expr) (expr)
 #endif
 
-#if defined(JSON_HEDLEY_BEGIN_C_DECLS)
-#undef JSON_HEDLEY_BEGIN_C_DECLS
+#if defined(_azure_JSON_HEDLEY_BEGIN_C_DECLS)
+#undef _azure_JSON_HEDLEY_BEGIN_C_DECLS
 #endif
-#if defined(JSON_HEDLEY_END_C_DECLS)
-#undef JSON_HEDLEY_END_C_DECLS
+#if defined(_azure_JSON_HEDLEY_END_C_DECLS)
+#undef _azure_JSON_HEDLEY_END_C_DECLS
 #endif
-#if defined(JSON_HEDLEY_C_DECL)
-#undef JSON_HEDLEY_C_DECL
+#if defined(_azure_JSON_HEDLEY_C_DECL)
+#undef _azure_JSON_HEDLEY_C_DECL
 #endif
 #if defined(__cplusplus)
-#define JSON_HEDLEY_BEGIN_C_DECLS \
+#define _azure_JSON_HEDLEY_BEGIN_C_DECLS \
   extern "C" \
   {
-#define JSON_HEDLEY_END_C_DECLS }
-#define JSON_HEDLEY_C_DECL extern "C"
+#define _azure_JSON_HEDLEY_END_C_DECLS }
+#define _azure_JSON_HEDLEY_C_DECL extern "C"
 #else
-#define JSON_HEDLEY_BEGIN_C_DECLS
-#define JSON_HEDLEY_END_C_DECLS
-#define JSON_HEDLEY_C_DECL
+#define _azure_JSON_HEDLEY_BEGIN_C_DECLS
+#define _azure_JSON_HEDLEY_END_C_DECLS
+#define _azure_JSON_HEDLEY_C_DECL
 #endif
 
-#if defined(JSON_HEDLEY_STATIC_ASSERT)
-#undef JSON_HEDLEY_STATIC_ASSERT
+#if defined(_azure_JSON_HEDLEY_STATIC_ASSERT)
+#undef _azure_JSON_HEDLEY_STATIC_ASSERT
 #endif
 #if !defined(__cplusplus) \
     && ((defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)) \
-        || (JSON_HEDLEY_HAS_FEATURE(c_static_assert) && !defined(JSON_HEDLEY_INTEL_CL_VERSION)) \
-        || JSON_HEDLEY_GCC_VERSION_CHECK(6, 0, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
+        || (_azure_JSON_HEDLEY_HAS_FEATURE(c_static_assert) && !defined(_azure_JSON_HEDLEY_INTEL_CL_VERSION)) \
+        || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(6, 0, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0) \
         || defined(_Static_assert))
-#define JSON_HEDLEY_STATIC_ASSERT(expr, message) _Static_assert(expr, message)
+#define _azure_JSON_HEDLEY_STATIC_ASSERT(expr, message) _Static_assert(expr, message)
 #elif (defined(__cplusplus) && (__cplusplus >= 201103L)) \
-    || JSON_HEDLEY_MSVC_VERSION_CHECK(16, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_STATIC_ASSERT(expr, message) \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(static_assert(expr, message))
+    || _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(16, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_STATIC_ASSERT(expr, message) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(static_assert(expr, message))
 #else
-#define JSON_HEDLEY_STATIC_ASSERT(expr, message)
+#define _azure_JSON_HEDLEY_STATIC_ASSERT(expr, message)
 #endif
 
-#if defined(JSON_HEDLEY_NULL)
-#undef JSON_HEDLEY_NULL
+#if defined(_azure_JSON_HEDLEY_NULL)
+#undef _azure_JSON_HEDLEY_NULL
 #endif
 #if defined(__cplusplus)
 #if __cplusplus >= 201103L
-#define JSON_HEDLEY_NULL JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(nullptr)
+#define _azure_JSON_HEDLEY_NULL _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(nullptr)
 #elif defined(NULL)
-#define JSON_HEDLEY_NULL NULL
+#define _azure_JSON_HEDLEY_NULL NULL
 #else
-#define JSON_HEDLEY_NULL JSON_HEDLEY_STATIC_CAST(void*, 0)
+#define _azure_JSON_HEDLEY_NULL _azure_JSON_HEDLEY_STATIC_CAST(void*, 0)
 #endif
 #elif defined(NULL)
-#define JSON_HEDLEY_NULL NULL
+#define _azure_JSON_HEDLEY_NULL NULL
 #else
-#define JSON_HEDLEY_NULL ((void*)0)
+#define _azure_JSON_HEDLEY_NULL ((void*)0)
 #endif
 
-#if defined(JSON_HEDLEY_MESSAGE)
-#undef JSON_HEDLEY_MESSAGE
+#if defined(_azure_JSON_HEDLEY_MESSAGE)
+#undef _azure_JSON_HEDLEY_MESSAGE
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
-#define JSON_HEDLEY_MESSAGE(msg) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
-  JSON_HEDLEY_PRAGMA(message msg) \
-  JSON_HEDLEY_DIAGNOSTIC_POP
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(4, 4, 0) || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
-#define JSON_HEDLEY_MESSAGE(msg) JSON_HEDLEY_PRAGMA(message msg)
-#elif JSON_HEDLEY_CRAY_VERSION_CHECK(5, 0, 0)
-#define JSON_HEDLEY_MESSAGE(msg) JSON_HEDLEY_PRAGMA(_CRI message msg)
-#elif JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
-#define JSON_HEDLEY_MESSAGE(msg) JSON_HEDLEY_PRAGMA(message(msg))
-#elif JSON_HEDLEY_PELLES_VERSION_CHECK(2, 0, 0)
-#define JSON_HEDLEY_MESSAGE(msg) JSON_HEDLEY_PRAGMA(message(msg))
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
+#define _azure_JSON_HEDLEY_MESSAGE(msg) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
+  _azure_JSON_HEDLEY_PRAGMA(message msg) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_POP
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 4, 0) || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
+#define _azure_JSON_HEDLEY_MESSAGE(msg) _azure_JSON_HEDLEY_PRAGMA(message msg)
+#elif _azure_JSON_HEDLEY_CRAY_VERSION_CHECK(5, 0, 0)
+#define _azure_JSON_HEDLEY_MESSAGE(msg) _azure_JSON_HEDLEY_PRAGMA(_CRI message msg)
+#elif _azure_JSON_HEDLEY_IAR_VERSION_CHECK(8, 0, 0)
+#define _azure_JSON_HEDLEY_MESSAGE(msg) _azure_JSON_HEDLEY_PRAGMA(message(msg))
+#elif _azure_JSON_HEDLEY_PELLES_VERSION_CHECK(2, 0, 0)
+#define _azure_JSON_HEDLEY_MESSAGE(msg) _azure_JSON_HEDLEY_PRAGMA(message(msg))
 #else
-#define JSON_HEDLEY_MESSAGE(msg)
+#define _azure_JSON_HEDLEY_MESSAGE(msg)
 #endif
 
-#if defined(JSON_HEDLEY_WARNING)
-#undef JSON_HEDLEY_WARNING
+#if defined(_azure_JSON_HEDLEY_WARNING)
+#undef _azure_JSON_HEDLEY_WARNING
 #endif
-#if JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
-#define JSON_HEDLEY_WARNING(msg) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
-  JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
-  JSON_HEDLEY_PRAGMA(clang warning msg) \
-  JSON_HEDLEY_DIAGNOSTIC_POP
-#elif JSON_HEDLEY_GCC_VERSION_CHECK(4, 8, 0) || JSON_HEDLEY_PGI_VERSION_CHECK(18, 4, 0) \
-    || JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
-#define JSON_HEDLEY_WARNING(msg) JSON_HEDLEY_PRAGMA(GCC warning msg)
-#elif JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0) || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_WARNING(msg) JSON_HEDLEY_PRAGMA(message(msg))
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wunknown-pragmas")
+#define _azure_JSON_HEDLEY_WARNING(msg) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS \
+  _azure_JSON_HEDLEY_PRAGMA(clang warning msg) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_POP
+#elif _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 8, 0) || _azure_JSON_HEDLEY_PGI_VERSION_CHECK(18, 4, 0) \
+    || _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(13, 0, 0)
+#define _azure_JSON_HEDLEY_WARNING(msg) _azure_JSON_HEDLEY_PRAGMA(GCC warning msg)
+#elif _azure_JSON_HEDLEY_MSVC_VERSION_CHECK(15, 0, 0) || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_WARNING(msg) _azure_JSON_HEDLEY_PRAGMA(message(msg))
 #else
-#define JSON_HEDLEY_WARNING(msg) JSON_HEDLEY_MESSAGE(msg)
+#define _azure_JSON_HEDLEY_WARNING(msg) _azure_JSON_HEDLEY_MESSAGE(msg)
 #endif
 
-#if defined(JSON_HEDLEY_REQUIRE)
-#undef JSON_HEDLEY_REQUIRE
+#if defined(_azure_JSON_HEDLEY_REQUIRE)
+#undef _azure_JSON_HEDLEY_REQUIRE
 #endif
-#if defined(JSON_HEDLEY_REQUIRE_MSG)
-#undef JSON_HEDLEY_REQUIRE_MSG
+#if defined(_azure_JSON_HEDLEY_REQUIRE_MSG)
+#undef _azure_JSON_HEDLEY_REQUIRE_MSG
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(diagnose_if)
-#if JSON_HEDLEY_HAS_WARNING("-Wgcc-compat")
-#define JSON_HEDLEY_REQUIRE(expr) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(diagnose_if)
+#if _azure_JSON_HEDLEY_HAS_WARNING("-Wgcc-compat")
+#define _azure_JSON_HEDLEY_REQUIRE(expr) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
   _Pragma("clang diagnostic ignored \"-Wgcc-compat\"") \
-      __attribute__((diagnose_if(!(expr), #expr, "error"))) JSON_HEDLEY_DIAGNOSTIC_POP
-#define JSON_HEDLEY_REQUIRE_MSG(expr, msg) \
-  JSON_HEDLEY_DIAGNOSTIC_PUSH \
+      __attribute__((diagnose_if(!(expr), #expr, "error"))) _azure_JSON_HEDLEY_DIAGNOSTIC_POP
+#define _azure_JSON_HEDLEY_REQUIRE_MSG(expr, msg) \
+  _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
   _Pragma("clang diagnostic ignored \"-Wgcc-compat\"") \
-      __attribute__((diagnose_if(!(expr), msg, "error"))) JSON_HEDLEY_DIAGNOSTIC_POP
+      __attribute__((diagnose_if(!(expr), msg, "error"))) _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #else
-#define JSON_HEDLEY_REQUIRE(expr) __attribute__((diagnose_if(!(expr), #expr, "error")))
-#define JSON_HEDLEY_REQUIRE_MSG(expr, msg) __attribute__((diagnose_if(!(expr), msg, "error")))
+#define _azure_JSON_HEDLEY_REQUIRE(expr) __attribute__((diagnose_if(!(expr), #expr, "error")))
+#define _azure_JSON_HEDLEY_REQUIRE_MSG(expr, msg) __attribute__((diagnose_if(!(expr), msg, "error")))
 #endif
 #else
-#define JSON_HEDLEY_REQUIRE(expr)
-#define JSON_HEDLEY_REQUIRE_MSG(expr, msg)
+#define _azure_JSON_HEDLEY_REQUIRE(expr)
+#define _azure_JSON_HEDLEY_REQUIRE_MSG(expr, msg)
 #endif
 
-#if defined(JSON_HEDLEY_FLAGS)
-#undef JSON_HEDLEY_FLAGS
+#if defined(_azure_JSON_HEDLEY_FLAGS)
+#undef _azure_JSON_HEDLEY_FLAGS
 #endif
-#if JSON_HEDLEY_HAS_ATTRIBUTE(flag_enum) \
-    && (!defined(__cplusplus) || JSON_HEDLEY_HAS_WARNING("-Wbitfield-enum-conversion"))
-#define JSON_HEDLEY_FLAGS __attribute__((__flag_enum__))
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(flag_enum) \
+    && (!defined(__cplusplus) || _azure_JSON_HEDLEY_HAS_WARNING("-Wbitfield-enum-conversion"))
+#define _azure_JSON_HEDLEY_FLAGS __attribute__((__flag_enum__))
 #else
-#define JSON_HEDLEY_FLAGS
+#define _azure_JSON_HEDLEY_FLAGS
 #endif
 
-#if defined(JSON_HEDLEY_FLAGS_CAST)
-#undef JSON_HEDLEY_FLAGS_CAST
+#if defined(_azure_JSON_HEDLEY_FLAGS_CAST)
+#undef _azure_JSON_HEDLEY_FLAGS_CAST
 #endif
-#if JSON_HEDLEY_INTEL_VERSION_CHECK(19, 0, 0)
-#define JSON_HEDLEY_FLAGS_CAST(T, expr) \
+#if _azure_JSON_HEDLEY_INTEL_VERSION_CHECK(19, 0, 0)
+#define _azure_JSON_HEDLEY_FLAGS_CAST(T, expr) \
   (__extension__({ \
-    JSON_HEDLEY_DIAGNOSTIC_PUSH \
+    _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH \
     _Pragma("warning(disable:188)")((T)(expr)); \
-    JSON_HEDLEY_DIAGNOSTIC_POP \
+    _azure_JSON_HEDLEY_DIAGNOSTIC_POP \
   }))
 #else
-#define JSON_HEDLEY_FLAGS_CAST(T, expr) JSON_HEDLEY_STATIC_CAST(T, expr)
+#define _azure_JSON_HEDLEY_FLAGS_CAST(T, expr) _azure_JSON_HEDLEY_STATIC_CAST(T, expr)
 #endif
 
-#if defined(JSON_HEDLEY_EMPTY_BASES)
-#undef JSON_HEDLEY_EMPTY_BASES
+#if defined(_azure_JSON_HEDLEY_EMPTY_BASES)
+#undef _azure_JSON_HEDLEY_EMPTY_BASES
 #endif
-#if (JSON_HEDLEY_MSVC_VERSION_CHECK(19, 0, 23918) && !JSON_HEDLEY_MSVC_VERSION_CHECK(20, 0, 0)) \
-    || JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
-#define JSON_HEDLEY_EMPTY_BASES __declspec(empty_bases)
+#if (_azure_JSON_HEDLEY_MSVC_VERSION_CHECK(19, 0, 23918) && !_azure_JSON_HEDLEY_MSVC_VERSION_CHECK(20, 0, 0)) \
+    || _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021, 1, 0)
+#define _azure_JSON_HEDLEY_EMPTY_BASES __declspec(empty_bases)
 #else
-#define JSON_HEDLEY_EMPTY_BASES
+#define _azure_JSON_HEDLEY_EMPTY_BASES
 #endif
 
 /* Remaining macros are deprecated. */
 
-#if defined(JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK)
-#undef JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK
+#if defined(_azure_JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK)
+#undef _azure_JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK
 #endif
 #if defined(__clang__)
-#define JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK(major, minor, patch) (0)
+#define _azure_JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK(major, minor, patch) (0)
 #else
-#define JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK(major, minor, patch) \
-  JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
+#define _azure_JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK(major, minor, patch) \
+  _azure_JSON_HEDLEY_GCC_VERSION_CHECK(major, minor, patch)
 #endif
 
-#if defined(JSON_HEDLEY_CLANG_HAS_ATTRIBUTE)
-#undef JSON_HEDLEY_CLANG_HAS_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_CLANG_HAS_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_CLANG_HAS_ATTRIBUTE
 #endif
-#define JSON_HEDLEY_CLANG_HAS_ATTRIBUTE(attribute) JSON_HEDLEY_HAS_ATTRIBUTE(attribute)
+#define _azure_JSON_HEDLEY_CLANG_HAS_ATTRIBUTE(attribute) _azure_JSON_HEDLEY_HAS_ATTRIBUTE(attribute)
 
-#if defined(JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE)
-#undef JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE
 #endif
-#define JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE(attribute) JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute)
+#define _azure_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE(attribute) _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE(attribute)
 
-#if defined(JSON_HEDLEY_CLANG_HAS_BUILTIN)
-#undef JSON_HEDLEY_CLANG_HAS_BUILTIN
+#if defined(_azure_JSON_HEDLEY_CLANG_HAS_BUILTIN)
+#undef _azure_JSON_HEDLEY_CLANG_HAS_BUILTIN
 #endif
-#define JSON_HEDLEY_CLANG_HAS_BUILTIN(builtin) JSON_HEDLEY_HAS_BUILTIN(builtin)
+#define _azure_JSON_HEDLEY_CLANG_HAS_BUILTIN(builtin) _azure_JSON_HEDLEY_HAS_BUILTIN(builtin)
 
-#if defined(JSON_HEDLEY_CLANG_HAS_FEATURE)
-#undef JSON_HEDLEY_CLANG_HAS_FEATURE
+#if defined(_azure_JSON_HEDLEY_CLANG_HAS_FEATURE)
+#undef _azure_JSON_HEDLEY_CLANG_HAS_FEATURE
 #endif
-#define JSON_HEDLEY_CLANG_HAS_FEATURE(feature) JSON_HEDLEY_HAS_FEATURE(feature)
+#define _azure_JSON_HEDLEY_CLANG_HAS_FEATURE(feature) _azure_JSON_HEDLEY_HAS_FEATURE(feature)
 
-#if defined(JSON_HEDLEY_CLANG_HAS_EXTENSION)
-#undef JSON_HEDLEY_CLANG_HAS_EXTENSION
+#if defined(_azure_JSON_HEDLEY_CLANG_HAS_EXTENSION)
+#undef _azure_JSON_HEDLEY_CLANG_HAS_EXTENSION
 #endif
-#define JSON_HEDLEY_CLANG_HAS_EXTENSION(extension) JSON_HEDLEY_HAS_EXTENSION(extension)
+#define _azure_JSON_HEDLEY_CLANG_HAS_EXTENSION(extension) _azure_JSON_HEDLEY_HAS_EXTENSION(extension)
 
-#if defined(JSON_HEDLEY_CLANG_HAS_DECLSPEC_DECLSPEC_ATTRIBUTE)
-#undef JSON_HEDLEY_CLANG_HAS_DECLSPEC_DECLSPEC_ATTRIBUTE
+#if defined(_azure_JSON_HEDLEY_CLANG_HAS_DECLSPEC_DECLSPEC_ATTRIBUTE)
+#undef _azure_JSON_HEDLEY_CLANG_HAS_DECLSPEC_DECLSPEC_ATTRIBUTE
 #endif
-#define JSON_HEDLEY_CLANG_HAS_DECLSPEC_ATTRIBUTE(attribute) \
-  JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE(attribute)
+#define _azure_JSON_HEDLEY_CLANG_HAS_DECLSPEC_ATTRIBUTE(attribute) \
+  _azure_JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE(attribute)
 
-#if defined(JSON_HEDLEY_CLANG_HAS_WARNING)
-#undef JSON_HEDLEY_CLANG_HAS_WARNING
+#if defined(_azure_JSON_HEDLEY_CLANG_HAS_WARNING)
+#undef _azure_JSON_HEDLEY_CLANG_HAS_WARNING
 #endif
-#define JSON_HEDLEY_CLANG_HAS_WARNING(warning) JSON_HEDLEY_HAS_WARNING(warning)
+#define _azure_JSON_HEDLEY_CLANG_HAS_WARNING(warning) _azure_JSON_HEDLEY_HAS_WARNING(warning)
 
-#endif /* !defined(JSON_HEDLEY_VERSION) || (JSON_HEDLEY_VERSION < X) */
+#endif /* !defined(_azure_JSON_HEDLEY_VERSION) || (_azure_JSON_HEDLEY_VERSION < X) */
 
 // This file contains all internal macro definitions (except those affecting
 // ABI) You MUST include macro_unscope.hpp at the end of json.hpp to undef all
@@ -2240,23 +2240,23 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 
 // C++ language standard detection
 // if the user manually specified the used c++ version this is skipped
-#if !defined(JSON_HAS_CPP_20) && !defined(JSON_HAS_CPP_17) && !defined(JSON_HAS_CPP_14) \
-    && !defined(JSON_HAS_CPP_11)
+#if !defined(_azure_JSON_HAS_CPP_20) && !defined(_azure_JSON_HAS_CPP_17) && !defined(_azure_JSON_HAS_CPP_14) \
+    && !defined(_azure_JSON_HAS_CPP_11)
 #if (defined(__cplusplus) && __cplusplus >= 202002L) \
     || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L)
-#define JSON_HAS_CPP_20
-#define JSON_HAS_CPP_17
-#define JSON_HAS_CPP_14
+#define _azure_JSON_HAS_CPP_20
+#define _azure_JSON_HAS_CPP_17
+#define _azure_JSON_HAS_CPP_14
 #elif (defined(__cplusplus) && __cplusplus >= 201703L) \
     || (defined(_HAS_CXX17) && _HAS_CXX17 == 1) // fix for issue #464
-#define JSON_HAS_CPP_17
-#define JSON_HAS_CPP_14
+#define _azure_JSON_HAS_CPP_17
+#define _azure_JSON_HAS_CPP_14
 #elif (defined(__cplusplus) && __cplusplus >= 201402L) || (defined(_HAS_CXX14) && _HAS_CXX14 == 1)
-#define JSON_HAS_CPP_14
+#define _azure_JSON_HAS_CPP_14
 #endif
 // the cpp 11 flag is always specified because it is the minimal required
 // version
-#define JSON_HAS_CPP_11
+#define _azure_JSON_HAS_CPP_11
 #endif
 
 #ifdef __has_include
@@ -2265,108 +2265,108 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #endif
 
-#if !defined(JSON_HAS_FILESYSTEM) && !defined(JSON_HAS_EXPERIMENTAL_FILESYSTEM)
-#ifdef JSON_HAS_CPP_17
+#if !defined(_azure_JSON_HAS_FILESYSTEM) && !defined(_azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM)
+#ifdef _azure_JSON_HAS_CPP_17
 #if defined(__cpp_lib_filesystem)
-#define JSON_HAS_FILESYSTEM 1
+#define _azure_JSON_HAS_FILESYSTEM 1
 #elif defined(__cpp_lib_experimental_filesystem)
-#define JSON_HAS_EXPERIMENTAL_FILESYSTEM 1
+#define _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM 1
 #elif !defined(__has_include)
-#define JSON_HAS_EXPERIMENTAL_FILESYSTEM 1
+#define _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM 1
 #elif __has_include(<filesystem>)
-#define JSON_HAS_FILESYSTEM 1
+#define _azure_JSON_HAS_FILESYSTEM 1
 #elif __has_include(<experimental/filesystem>)
-#define JSON_HAS_EXPERIMENTAL_FILESYSTEM 1
+#define _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM 1
 #endif
 
 // std::filesystem does not work on MinGW GCC 8:
 // https://sourceforge.net/p/mingw-w64/bugs/737/
 #if defined(__MINGW32__) && defined(__GNUC__) && __GNUC__ == 8
-#undef JSON_HAS_FILESYSTEM
-#undef JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#undef _azure_JSON_HAS_FILESYSTEM
+#undef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
 #endif
 
 // no filesystem support before GCC 8:
 // https://en.cppreference.com/w/cpp/compiler_support
 #if defined(__GNUC__) && !defined(__clang__) && __GNUC__ < 8
-#undef JSON_HAS_FILESYSTEM
-#undef JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#undef _azure_JSON_HAS_FILESYSTEM
+#undef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
 #endif
 
 // no filesystem support before Clang 7:
 // https://en.cppreference.com/w/cpp/compiler_support
 #if defined(__clang_major__) && __clang_major__ < 7
-#undef JSON_HAS_FILESYSTEM
-#undef JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#undef _azure_JSON_HAS_FILESYSTEM
+#undef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
 #endif
 
 // no filesystem support before MSVC 19.14:
 // https://en.cppreference.com/w/cpp/compiler_support
 #if defined(_MSC_VER) && _MSC_VER < 1914
-#undef JSON_HAS_FILESYSTEM
-#undef JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#undef _azure_JSON_HAS_FILESYSTEM
+#undef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
 #endif
 
 // no filesystem support before iOS 13
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < 130000
-#undef JSON_HAS_FILESYSTEM
-#undef JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#undef _azure_JSON_HAS_FILESYSTEM
+#undef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
 #endif
 
 // no filesystem support before macOS Catalina
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-#undef JSON_HAS_FILESYSTEM
-#undef JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#undef _azure_JSON_HAS_FILESYSTEM
+#undef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
 #endif
 #endif
 #endif
 
-#ifndef JSON_HAS_EXPERIMENTAL_FILESYSTEM
-#define JSON_HAS_EXPERIMENTAL_FILESYSTEM 0
+#ifndef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#define _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM 0
 #endif
 
-#ifndef JSON_HAS_FILESYSTEM
-#define JSON_HAS_FILESYSTEM 0
+#ifndef _azure_JSON_HAS_FILESYSTEM
+#define _azure_JSON_HAS_FILESYSTEM 0
 #endif
 
-#ifndef JSON_HAS_THREE_WAY_COMPARISON
+#ifndef _azure_JSON_HAS_THREE_WAY_COMPARISON
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L \
     && defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
-#define JSON_HAS_THREE_WAY_COMPARISON 1
+#define _azure_JSON_HAS_THREE_WAY_COMPARISON 1
 #else
-#define JSON_HAS_THREE_WAY_COMPARISON 0
+#define _azure_JSON_HAS_THREE_WAY_COMPARISON 0
 #endif
 #endif
 
-#ifndef JSON_HAS_RANGES
+#ifndef _azure_JSON_HAS_RANGES
 // ranges header shipping in GCC 11.1.0 (released 2021-04-27) has syntax error
 #if defined(__GLIBCXX__) && __GLIBCXX__ == 20210427
-#define JSON_HAS_RANGES 0
+#define _azure_JSON_HAS_RANGES 0
 #elif defined(__cpp_lib_ranges)
-#define JSON_HAS_RANGES 1
+#define _azure_JSON_HAS_RANGES 1
 #else
-#define JSON_HAS_RANGES 0
+#define _azure_JSON_HAS_RANGES 0
 #endif
 #endif
 
-#ifndef JSON_HAS_STATIC_RTTI
+#ifndef _azure_JSON_HAS_STATIC_RTTI
 #if !defined(_HAS_STATIC_RTTI) || _HAS_STATIC_RTTI != 0
-#define JSON_HAS_STATIC_RTTI 1
+#define _azure_JSON_HAS_STATIC_RTTI 1
 #else
-#define JSON_HAS_STATIC_RTTI 0
+#define _azure_JSON_HAS_STATIC_RTTI 0
 #endif
 #endif
 
-#ifdef JSON_HAS_CPP_17
-#define JSON_INLINE_VARIABLE inline
+#ifdef _azure_JSON_HAS_CPP_17
+#define _azure_JSON_INLINE_VARIABLE inline
 #else
-#define JSON_INLINE_VARIABLE
+#define _azure_JSON_INLINE_VARIABLE
 #endif
 
-#if JSON_HEDLEY_HAS_ATTRIBUTE(no_unique_address)
-#define JSON_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#if _azure_JSON_HEDLEY_HAS_ATTRIBUTE(no_unique_address)
+#define _azure_JSON_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
-#define JSON_NO_UNIQUE_ADDRESS
+#define _azure_JSON_NO_UNIQUE_ADDRESS
 #endif
 
 // disable documentation warnings on clang
@@ -2379,57 +2379,57 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 // allow disabling exceptions
 #if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) \
     && !defined(JSON_NOEXCEPTION)
-#define JSON_THROW(exception) throw exception
-#define JSON_TRY try
-#define JSON_CATCH(exception) catch (exception)
-#define JSON_INTERNAL_CATCH(exception) catch (exception)
+#define _azure_JSON_THROW(exception) throw exception
+#define _azure_JSON_TRY try
+#define _azure_JSON_CATCH(exception) catch (exception)
+#define _azure_JSON_INTERNAL_CATCH(exception) catch (exception)
 #else
 #include <cstdlib>
-#define JSON_THROW(exception) std::abort()
-#define JSON_TRY if (true)
-#define JSON_CATCH(exception) if (false)
-#define JSON_INTERNAL_CATCH(exception) if (false)
+#define _azure_JSON_THROW(exception) std::abort()
+#define _azure_JSON_TRY if (true)
+#define _azure_JSON_CATCH(exception) if (false)
+#define _azure_JSON_INTERNAL_CATCH(exception) if (false)
 #endif
 
 // override exception macros
-#if defined(JSON_THROW_USER)
-#undef JSON_THROW
-#define JSON_THROW JSON_THROW_USER
+#if defined(_azure_JSON_THROW_USER)
+#undef _azure_JSON_THROW
+#define _azure_JSON_THROW _azure_JSON_THROW_USER
 #endif
-#if defined(JSON_TRY_USER)
-#undef JSON_TRY
-#define JSON_TRY JSON_TRY_USER
+#if defined(_azure_JSON_TRY_USER)
+#undef _azure_JSON_TRY
+#define _azure_JSON_TRY _azure_JSON_TRY_USER
 #endif
-#if defined(JSON_CATCH_USER)
-#undef JSON_CATCH
-#define JSON_CATCH JSON_CATCH_USER
-#undef JSON_INTERNAL_CATCH
-#define JSON_INTERNAL_CATCH JSON_CATCH_USER
+#if defined(_azure_JSON_CATCH_USER)
+#undef _azure_JSON_CATCH
+#define _azure_JSON_CATCH _azure_JSON_CATCH_USER
+#undef _azure_JSON_INTERNAL_CATCH
+#define _azure_JSON_INTERNAL_CATCH _azure_JSON_CATCH_USER
 #endif
-#if defined(JSON_INTERNAL_CATCH_USER)
-#undef JSON_INTERNAL_CATCH
-#define JSON_INTERNAL_CATCH JSON_INTERNAL_CATCH_USER
+#if defined(_azure_JSON_INTERNAL_CATCH_USER)
+#undef _azure_JSON_INTERNAL_CATCH
+#define _azure_JSON_INTERNAL_CATCH _azure_JSON_INTERNAL_CATCH_USER
 #endif
 
 // allow overriding assert
-#if !defined(JSON_ASSERT)
+#if !defined(_azure_JSON_ASSERT)
 #include <cassert> // assert
-#define JSON_ASSERT(x) assert(x)
+#define _azure_JSON_ASSERT(x) assert(x)
 #endif
 
 // allow to access some private functions (needed by the test suite)
 #if defined(JSON_TESTS_PRIVATE)
-#define JSON_PRIVATE_UNLESS_TESTED public
+#define _azure_JSON_PRIVATE_UNLESS_TESTED public
 #else
-#define JSON_PRIVATE_UNLESS_TESTED private
+#define _azure_JSON_PRIVATE_UNLESS_TESTED private
 #endif
 
 /*!
 @brief macro to briefly define a mapping between an enum and JSON
-@def NLOHMANN_JSON_SERIALIZE_ENUM
+@def _azure_NLOHMANN_JSON_SERIALIZE_ENUM
 @since version 3.4.0
 */
-#define NLOHMANN_JSON_SERIALIZE_ENUM(ENUM_TYPE, ...) \
+#define _azure_NLOHMANN_JSON_SERIALIZE_ENUM(ENUM_TYPE, ...) \
   template <typename BasicJsonType> inline void to_json(BasicJsonType& j, const ENUM_TYPE& e) \
   { \
     static_assert(std::is_enum<ENUM_TYPE>::value, #ENUM_TYPE " must be an enum!"); \
@@ -2458,7 +2458,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 // Ugly macros to avoid uglier copy-paste when specializing basic_json. They
 // may be removed in the future once the class is split.
 
-#define NLOHMANN_BASIC_JSON_TPL_DECLARATION \
+#define _azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION \
   template < \
       template <typename, typename, typename...> \
       class ObjectType, \
@@ -2476,7 +2476,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       class BinaryType, \
       class CustomBaseClass>
 
-#define NLOHMANN_BASIC_JSON_TPL \
+#define _azure_NLOHMANN_BASIC_JSON_TPL \
   basic_json< \
       ObjectType, \
       ArrayType, \
@@ -2492,8 +2492,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 
 // Macros to simplify conversion from/to types
 
-#define NLOHMANN_JSON_EXPAND(x) x
-#define NLOHMANN_JSON_GET_MACRO( \
+#define _azure_NLOHMANN_JSON_EXPAND(x) x
+#define _azure_NLOHMANN_JSON_GET_MACRO( \
     _1, \
     _2, \
     _3, \
@@ -2561,132 +2561,132 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     NAME, \
     ...) \
   NAME
-#define NLOHMANN_JSON_PASTE(...) \
-  NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_GET_MACRO( \
+#define _azure_NLOHMANN_JSON_PASTE(...) \
+  _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_GET_MACRO( \
       __VA_ARGS__, \
-      NLOHMANN_JSON_PASTE64, \
-      NLOHMANN_JSON_PASTE63, \
-      NLOHMANN_JSON_PASTE62, \
-      NLOHMANN_JSON_PASTE61, \
-      NLOHMANN_JSON_PASTE60, \
-      NLOHMANN_JSON_PASTE59, \
-      NLOHMANN_JSON_PASTE58, \
-      NLOHMANN_JSON_PASTE57, \
-      NLOHMANN_JSON_PASTE56, \
-      NLOHMANN_JSON_PASTE55, \
-      NLOHMANN_JSON_PASTE54, \
-      NLOHMANN_JSON_PASTE53, \
-      NLOHMANN_JSON_PASTE52, \
-      NLOHMANN_JSON_PASTE51, \
-      NLOHMANN_JSON_PASTE50, \
-      NLOHMANN_JSON_PASTE49, \
-      NLOHMANN_JSON_PASTE48, \
-      NLOHMANN_JSON_PASTE47, \
-      NLOHMANN_JSON_PASTE46, \
-      NLOHMANN_JSON_PASTE45, \
-      NLOHMANN_JSON_PASTE44, \
-      NLOHMANN_JSON_PASTE43, \
-      NLOHMANN_JSON_PASTE42, \
-      NLOHMANN_JSON_PASTE41, \
-      NLOHMANN_JSON_PASTE40, \
-      NLOHMANN_JSON_PASTE39, \
-      NLOHMANN_JSON_PASTE38, \
-      NLOHMANN_JSON_PASTE37, \
-      NLOHMANN_JSON_PASTE36, \
-      NLOHMANN_JSON_PASTE35, \
-      NLOHMANN_JSON_PASTE34, \
-      NLOHMANN_JSON_PASTE33, \
-      NLOHMANN_JSON_PASTE32, \
-      NLOHMANN_JSON_PASTE31, \
-      NLOHMANN_JSON_PASTE30, \
-      NLOHMANN_JSON_PASTE29, \
-      NLOHMANN_JSON_PASTE28, \
-      NLOHMANN_JSON_PASTE27, \
-      NLOHMANN_JSON_PASTE26, \
-      NLOHMANN_JSON_PASTE25, \
-      NLOHMANN_JSON_PASTE24, \
-      NLOHMANN_JSON_PASTE23, \
-      NLOHMANN_JSON_PASTE22, \
-      NLOHMANN_JSON_PASTE21, \
-      NLOHMANN_JSON_PASTE20, \
-      NLOHMANN_JSON_PASTE19, \
-      NLOHMANN_JSON_PASTE18, \
-      NLOHMANN_JSON_PASTE17, \
-      NLOHMANN_JSON_PASTE16, \
-      NLOHMANN_JSON_PASTE15, \
-      NLOHMANN_JSON_PASTE14, \
-      NLOHMANN_JSON_PASTE13, \
-      NLOHMANN_JSON_PASTE12, \
-      NLOHMANN_JSON_PASTE11, \
-      NLOHMANN_JSON_PASTE10, \
-      NLOHMANN_JSON_PASTE9, \
-      NLOHMANN_JSON_PASTE8, \
-      NLOHMANN_JSON_PASTE7, \
-      NLOHMANN_JSON_PASTE6, \
-      NLOHMANN_JSON_PASTE5, \
-      NLOHMANN_JSON_PASTE4, \
-      NLOHMANN_JSON_PASTE3, \
-      NLOHMANN_JSON_PASTE2, \
-      NLOHMANN_JSON_PASTE1)(__VA_ARGS__))
-#define NLOHMANN_JSON_PASTE2(func, v1) func(v1)
-#define NLOHMANN_JSON_PASTE3(func, v1, v2) \
-  NLOHMANN_JSON_PASTE2(func, v1) NLOHMANN_JSON_PASTE2(func, v2)
-#define NLOHMANN_JSON_PASTE4(func, v1, v2, v3) \
-  NLOHMANN_JSON_PASTE2(func, v1) NLOHMANN_JSON_PASTE3(func, v2, v3)
-#define NLOHMANN_JSON_PASTE5(func, v1, v2, v3, v4) \
-  NLOHMANN_JSON_PASTE2(func, v1) NLOHMANN_JSON_PASTE4(func, v2, v3, v4)
-#define NLOHMANN_JSON_PASTE6(func, v1, v2, v3, v4, v5) \
-  NLOHMANN_JSON_PASTE2(func, v1) NLOHMANN_JSON_PASTE5(func, v2, v3, v4, v5)
-#define NLOHMANN_JSON_PASTE7(func, v1, v2, v3, v4, v5, v6) \
-  NLOHMANN_JSON_PASTE2(func, v1) NLOHMANN_JSON_PASTE6(func, v2, v3, v4, v5, v6)
-#define NLOHMANN_JSON_PASTE8(func, v1, v2, v3, v4, v5, v6, v7) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE7(func, v2, v3, v4, v5, v6, v7)
-#define NLOHMANN_JSON_PASTE9(func, v1, v2, v3, v4, v5, v6, v7, v8) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE8(func, v2, v3, v4, v5, v6, v7, v8)
-#define NLOHMANN_JSON_PASTE10(func, v1, v2, v3, v4, v5, v6, v7, v8, v9) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE9(func, v2, v3, v4, v5, v6, v7, v8, v9)
-#define NLOHMANN_JSON_PASTE11(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE10(func, v2, v3, v4, v5, v6, v7, v8, v9, v10)
-#define NLOHMANN_JSON_PASTE12(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE11(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11)
-#define NLOHMANN_JSON_PASTE13(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE12(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12)
-#define NLOHMANN_JSON_PASTE14(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE13(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13)
-#define NLOHMANN_JSON_PASTE15(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE14(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14)
-#define NLOHMANN_JSON_PASTE16( \
+      _azure_NLOHMANN_JSON_PASTE64, \
+      _azure_NLOHMANN_JSON_PASTE63, \
+      _azure_NLOHMANN_JSON_PASTE62, \
+      _azure_NLOHMANN_JSON_PASTE61, \
+      _azure_NLOHMANN_JSON_PASTE60, \
+      _azure_NLOHMANN_JSON_PASTE59, \
+      _azure_NLOHMANN_JSON_PASTE58, \
+      _azure_NLOHMANN_JSON_PASTE57, \
+      _azure_NLOHMANN_JSON_PASTE56, \
+      _azure_NLOHMANN_JSON_PASTE55, \
+      _azure_NLOHMANN_JSON_PASTE54, \
+      _azure_NLOHMANN_JSON_PASTE53, \
+      _azure_NLOHMANN_JSON_PASTE52, \
+      _azure_NLOHMANN_JSON_PASTE51, \
+      _azure_NLOHMANN_JSON_PASTE50, \
+      _azure_NLOHMANN_JSON_PASTE49, \
+      _azure_NLOHMANN_JSON_PASTE48, \
+      _azure_NLOHMANN_JSON_PASTE47, \
+      _azure_NLOHMANN_JSON_PASTE46, \
+      _azure_NLOHMANN_JSON_PASTE45, \
+      _azure_NLOHMANN_JSON_PASTE44, \
+      _azure_NLOHMANN_JSON_PASTE43, \
+      _azure_NLOHMANN_JSON_PASTE42, \
+      _azure_NLOHMANN_JSON_PASTE41, \
+      _azure_NLOHMANN_JSON_PASTE40, \
+      _azure_NLOHMANN_JSON_PASTE39, \
+      _azure_NLOHMANN_JSON_PASTE38, \
+      _azure_NLOHMANN_JSON_PASTE37, \
+      _azure_NLOHMANN_JSON_PASTE36, \
+      _azure_NLOHMANN_JSON_PASTE35, \
+      _azure_NLOHMANN_JSON_PASTE34, \
+      _azure_NLOHMANN_JSON_PASTE33, \
+      _azure_NLOHMANN_JSON_PASTE32, \
+      _azure_NLOHMANN_JSON_PASTE31, \
+      _azure_NLOHMANN_JSON_PASTE30, \
+      _azure_NLOHMANN_JSON_PASTE29, \
+      _azure_NLOHMANN_JSON_PASTE28, \
+      _azure_NLOHMANN_JSON_PASTE27, \
+      _azure_NLOHMANN_JSON_PASTE26, \
+      _azure_NLOHMANN_JSON_PASTE25, \
+      _azure_NLOHMANN_JSON_PASTE24, \
+      _azure_NLOHMANN_JSON_PASTE23, \
+      _azure_NLOHMANN_JSON_PASTE22, \
+      _azure_NLOHMANN_JSON_PASTE21, \
+      _azure_NLOHMANN_JSON_PASTE20, \
+      _azure_NLOHMANN_JSON_PASTE19, \
+      _azure_NLOHMANN_JSON_PASTE18, \
+      _azure_NLOHMANN_JSON_PASTE17, \
+      _azure_NLOHMANN_JSON_PASTE16, \
+      _azure_NLOHMANN_JSON_PASTE15, \
+      _azure_NLOHMANN_JSON_PASTE14, \
+      _azure_NLOHMANN_JSON_PASTE13, \
+      _azure_NLOHMANN_JSON_PASTE12, \
+      _azure_NLOHMANN_JSON_PASTE11, \
+      _azure_NLOHMANN_JSON_PASTE10, \
+      _azure_NLOHMANN_JSON_PASTE9, \
+      _azure_NLOHMANN_JSON_PASTE8, \
+      _azure_NLOHMANN_JSON_PASTE7, \
+      _azure_NLOHMANN_JSON_PASTE6, \
+      _azure_NLOHMANN_JSON_PASTE5, \
+      _azure_NLOHMANN_JSON_PASTE4, \
+      _azure_NLOHMANN_JSON_PASTE3, \
+      _azure_NLOHMANN_JSON_PASTE2, \
+      _azure_NLOHMANN_JSON_PASTE1)(__VA_ARGS__))
+#define _azure_NLOHMANN_JSON_PASTE2(func, v1) func(v1)
+#define _azure_NLOHMANN_JSON_PASTE3(func, v1, v2) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) _azure_NLOHMANN_JSON_PASTE2(func, v2)
+#define _azure_NLOHMANN_JSON_PASTE4(func, v1, v2, v3) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) _azure_NLOHMANN_JSON_PASTE3(func, v2, v3)
+#define _azure_NLOHMANN_JSON_PASTE5(func, v1, v2, v3, v4) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) _azure_NLOHMANN_JSON_PASTE4(func, v2, v3, v4)
+#define _azure_NLOHMANN_JSON_PASTE6(func, v1, v2, v3, v4, v5) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) _azure_NLOHMANN_JSON_PASTE5(func, v2, v3, v4, v5)
+#define _azure_NLOHMANN_JSON_PASTE7(func, v1, v2, v3, v4, v5, v6) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) _azure_NLOHMANN_JSON_PASTE6(func, v2, v3, v4, v5, v6)
+#define _azure_NLOHMANN_JSON_PASTE8(func, v1, v2, v3, v4, v5, v6, v7) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE7(func, v2, v3, v4, v5, v6, v7)
+#define _azure_NLOHMANN_JSON_PASTE9(func, v1, v2, v3, v4, v5, v6, v7, v8) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE8(func, v2, v3, v4, v5, v6, v7, v8)
+#define _azure_NLOHMANN_JSON_PASTE10(func, v1, v2, v3, v4, v5, v6, v7, v8, v9) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE9(func, v2, v3, v4, v5, v6, v7, v8, v9)
+#define _azure_NLOHMANN_JSON_PASTE11(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE10(func, v2, v3, v4, v5, v6, v7, v8, v9, v10)
+#define _azure_NLOHMANN_JSON_PASTE12(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE11(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11)
+#define _azure_NLOHMANN_JSON_PASTE13(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE12(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12)
+#define _azure_NLOHMANN_JSON_PASTE14(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE13(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13)
+#define _azure_NLOHMANN_JSON_PASTE15(func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14) \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE14(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14)
+#define _azure_NLOHMANN_JSON_PASTE16( \
     func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE15(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15)
-#define NLOHMANN_JSON_PASTE17( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE15(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15)
+#define _azure_NLOHMANN_JSON_PASTE17( \
     func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE16(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16)
-#define NLOHMANN_JSON_PASTE18( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE16(func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16)
+#define _azure_NLOHMANN_JSON_PASTE18( \
     func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE17( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE17( \
       func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17)
-#define NLOHMANN_JSON_PASTE19( \
+#define _azure_NLOHMANN_JSON_PASTE19( \
     func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE18( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE18( \
       func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18)
-#define NLOHMANN_JSON_PASTE20( \
+#define _azure_NLOHMANN_JSON_PASTE20( \
     func, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE19( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE19( \
       func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19)
-#define NLOHMANN_JSON_PASTE21( \
+#define _azure_NLOHMANN_JSON_PASTE21( \
     func, \
     v1, \
     v2, \
@@ -2708,10 +2708,10 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v18, \
     v19, \
     v20) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE20( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE20( \
       func, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20)
-#define NLOHMANN_JSON_PASTE22( \
+#define _azure_NLOHMANN_JSON_PASTE22( \
     func, \
     v1, \
     v2, \
@@ -2734,8 +2734,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v19, \
     v20, \
     v21) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE21( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE21( \
       func, \
       v2, \
       v3, \
@@ -2757,7 +2757,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v19, \
       v20, \
       v21)
-#define NLOHMANN_JSON_PASTE23( \
+#define _azure_NLOHMANN_JSON_PASTE23( \
     func, \
     v1, \
     v2, \
@@ -2781,8 +2781,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v20, \
     v21, \
     v22) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE22( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE22( \
       func, \
       v2, \
       v3, \
@@ -2805,7 +2805,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v20, \
       v21, \
       v22)
-#define NLOHMANN_JSON_PASTE24( \
+#define _azure_NLOHMANN_JSON_PASTE24( \
     func, \
     v1, \
     v2, \
@@ -2830,8 +2830,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v21, \
     v22, \
     v23) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE23( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE23( \
       func, \
       v2, \
       v3, \
@@ -2855,7 +2855,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v21, \
       v22, \
       v23)
-#define NLOHMANN_JSON_PASTE25( \
+#define _azure_NLOHMANN_JSON_PASTE25( \
     func, \
     v1, \
     v2, \
@@ -2881,8 +2881,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v22, \
     v23, \
     v24) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE24( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE24( \
       func, \
       v2, \
       v3, \
@@ -2907,7 +2907,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v22, \
       v23, \
       v24)
-#define NLOHMANN_JSON_PASTE26( \
+#define _azure_NLOHMANN_JSON_PASTE26( \
     func, \
     v1, \
     v2, \
@@ -2934,8 +2934,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v23, \
     v24, \
     v25) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE25( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE25( \
       func, \
       v2, \
       v3, \
@@ -2961,7 +2961,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v23, \
       v24, \
       v25)
-#define NLOHMANN_JSON_PASTE27( \
+#define _azure_NLOHMANN_JSON_PASTE27( \
     func, \
     v1, \
     v2, \
@@ -2989,8 +2989,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v24, \
     v25, \
     v26) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE26( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE26( \
       func, \
       v2, \
       v3, \
@@ -3017,7 +3017,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v24, \
       v25, \
       v26)
-#define NLOHMANN_JSON_PASTE28( \
+#define _azure_NLOHMANN_JSON_PASTE28( \
     func, \
     v1, \
     v2, \
@@ -3046,8 +3046,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v25, \
     v26, \
     v27) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE27( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE27( \
       func, \
       v2, \
       v3, \
@@ -3075,7 +3075,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v25, \
       v26, \
       v27)
-#define NLOHMANN_JSON_PASTE29( \
+#define _azure_NLOHMANN_JSON_PASTE29( \
     func, \
     v1, \
     v2, \
@@ -3105,8 +3105,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v26, \
     v27, \
     v28) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE28( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE28( \
       func, \
       v2, \
       v3, \
@@ -3135,7 +3135,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v26, \
       v27, \
       v28)
-#define NLOHMANN_JSON_PASTE30( \
+#define _azure_NLOHMANN_JSON_PASTE30( \
     func, \
     v1, \
     v2, \
@@ -3166,8 +3166,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v27, \
     v28, \
     v29) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE29( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE29( \
       func, \
       v2, \
       v3, \
@@ -3197,7 +3197,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v27, \
       v28, \
       v29)
-#define NLOHMANN_JSON_PASTE31( \
+#define _azure_NLOHMANN_JSON_PASTE31( \
     func, \
     v1, \
     v2, \
@@ -3229,8 +3229,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v28, \
     v29, \
     v30) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE30( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE30( \
       func, \
       v2, \
       v3, \
@@ -3261,7 +3261,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v28, \
       v29, \
       v30)
-#define NLOHMANN_JSON_PASTE32( \
+#define _azure_NLOHMANN_JSON_PASTE32( \
     func, \
     v1, \
     v2, \
@@ -3294,8 +3294,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v29, \
     v30, \
     v31) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE31( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE31( \
       func, \
       v2, \
       v3, \
@@ -3327,7 +3327,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v29, \
       v30, \
       v31)
-#define NLOHMANN_JSON_PASTE33( \
+#define _azure_NLOHMANN_JSON_PASTE33( \
     func, \
     v1, \
     v2, \
@@ -3361,8 +3361,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v30, \
     v31, \
     v32) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE32( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE32( \
       func, \
       v2, \
       v3, \
@@ -3395,7 +3395,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v30, \
       v31, \
       v32)
-#define NLOHMANN_JSON_PASTE34( \
+#define _azure_NLOHMANN_JSON_PASTE34( \
     func, \
     v1, \
     v2, \
@@ -3430,8 +3430,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v31, \
     v32, \
     v33) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE33( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE33( \
       func, \
       v2, \
       v3, \
@@ -3465,7 +3465,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v31, \
       v32, \
       v33)
-#define NLOHMANN_JSON_PASTE35( \
+#define _azure_NLOHMANN_JSON_PASTE35( \
     func, \
     v1, \
     v2, \
@@ -3501,8 +3501,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v32, \
     v33, \
     v34) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE34( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE34( \
       func, \
       v2, \
       v3, \
@@ -3537,7 +3537,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v32, \
       v33, \
       v34)
-#define NLOHMANN_JSON_PASTE36( \
+#define _azure_NLOHMANN_JSON_PASTE36( \
     func, \
     v1, \
     v2, \
@@ -3574,8 +3574,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v33, \
     v34, \
     v35) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE35( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE35( \
       func, \
       v2, \
       v3, \
@@ -3611,7 +3611,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v33, \
       v34, \
       v35)
-#define NLOHMANN_JSON_PASTE37( \
+#define _azure_NLOHMANN_JSON_PASTE37( \
     func, \
     v1, \
     v2, \
@@ -3649,8 +3649,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v34, \
     v35, \
     v36) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE36( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE36( \
       func, \
       v2, \
       v3, \
@@ -3687,7 +3687,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v34, \
       v35, \
       v36)
-#define NLOHMANN_JSON_PASTE38( \
+#define _azure_NLOHMANN_JSON_PASTE38( \
     func, \
     v1, \
     v2, \
@@ -3726,8 +3726,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v35, \
     v36, \
     v37) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE37( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE37( \
       func, \
       v2, \
       v3, \
@@ -3765,7 +3765,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v35, \
       v36, \
       v37)
-#define NLOHMANN_JSON_PASTE39( \
+#define _azure_NLOHMANN_JSON_PASTE39( \
     func, \
     v1, \
     v2, \
@@ -3805,8 +3805,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v36, \
     v37, \
     v38) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE38( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE38( \
       func, \
       v2, \
       v3, \
@@ -3845,7 +3845,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v36, \
       v37, \
       v38)
-#define NLOHMANN_JSON_PASTE40( \
+#define _azure_NLOHMANN_JSON_PASTE40( \
     func, \
     v1, \
     v2, \
@@ -3886,8 +3886,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v37, \
     v38, \
     v39) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE39( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE39( \
       func, \
       v2, \
       v3, \
@@ -3927,7 +3927,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v37, \
       v38, \
       v39)
-#define NLOHMANN_JSON_PASTE41( \
+#define _azure_NLOHMANN_JSON_PASTE41( \
     func, \
     v1, \
     v2, \
@@ -3969,8 +3969,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v38, \
     v39, \
     v40) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE40( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE40( \
       func, \
       v2, \
       v3, \
@@ -4011,7 +4011,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v38, \
       v39, \
       v40)
-#define NLOHMANN_JSON_PASTE42( \
+#define _azure_NLOHMANN_JSON_PASTE42( \
     func, \
     v1, \
     v2, \
@@ -4054,8 +4054,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v39, \
     v40, \
     v41) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE41( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE41( \
       func, \
       v2, \
       v3, \
@@ -4097,7 +4097,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v39, \
       v40, \
       v41)
-#define NLOHMANN_JSON_PASTE43( \
+#define _azure_NLOHMANN_JSON_PASTE43( \
     func, \
     v1, \
     v2, \
@@ -4141,8 +4141,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v40, \
     v41, \
     v42) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE42( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE42( \
       func, \
       v2, \
       v3, \
@@ -4185,7 +4185,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v40, \
       v41, \
       v42)
-#define NLOHMANN_JSON_PASTE44( \
+#define _azure_NLOHMANN_JSON_PASTE44( \
     func, \
     v1, \
     v2, \
@@ -4230,8 +4230,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v41, \
     v42, \
     v43) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE43( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE43( \
       func, \
       v2, \
       v3, \
@@ -4275,7 +4275,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v41, \
       v42, \
       v43)
-#define NLOHMANN_JSON_PASTE45( \
+#define _azure_NLOHMANN_JSON_PASTE45( \
     func, \
     v1, \
     v2, \
@@ -4321,8 +4321,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v42, \
     v43, \
     v44) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE44( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE44( \
       func, \
       v2, \
       v3, \
@@ -4367,7 +4367,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v42, \
       v43, \
       v44)
-#define NLOHMANN_JSON_PASTE46( \
+#define _azure_NLOHMANN_JSON_PASTE46( \
     func, \
     v1, \
     v2, \
@@ -4414,8 +4414,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v43, \
     v44, \
     v45) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE45( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE45( \
       func, \
       v2, \
       v3, \
@@ -4461,7 +4461,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v43, \
       v44, \
       v45)
-#define NLOHMANN_JSON_PASTE47( \
+#define _azure_NLOHMANN_JSON_PASTE47( \
     func, \
     v1, \
     v2, \
@@ -4509,8 +4509,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v44, \
     v45, \
     v46) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE46( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE46( \
       func, \
       v2, \
       v3, \
@@ -4557,7 +4557,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v44, \
       v45, \
       v46)
-#define NLOHMANN_JSON_PASTE48( \
+#define _azure_NLOHMANN_JSON_PASTE48( \
     func, \
     v1, \
     v2, \
@@ -4606,8 +4606,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v45, \
     v46, \
     v47) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE47( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE47( \
       func, \
       v2, \
       v3, \
@@ -4655,7 +4655,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v45, \
       v46, \
       v47)
-#define NLOHMANN_JSON_PASTE49( \
+#define _azure_NLOHMANN_JSON_PASTE49( \
     func, \
     v1, \
     v2, \
@@ -4705,8 +4705,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v46, \
     v47, \
     v48) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE48( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE48( \
       func, \
       v2, \
       v3, \
@@ -4755,7 +4755,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v46, \
       v47, \
       v48)
-#define NLOHMANN_JSON_PASTE50( \
+#define _azure_NLOHMANN_JSON_PASTE50( \
     func, \
     v1, \
     v2, \
@@ -4806,8 +4806,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v47, \
     v48, \
     v49) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE49( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE49( \
       func, \
       v2, \
       v3, \
@@ -4857,7 +4857,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v47, \
       v48, \
       v49)
-#define NLOHMANN_JSON_PASTE51( \
+#define _azure_NLOHMANN_JSON_PASTE51( \
     func, \
     v1, \
     v2, \
@@ -4909,8 +4909,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v48, \
     v49, \
     v50) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE50( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE50( \
       func, \
       v2, \
       v3, \
@@ -4961,7 +4961,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v48, \
       v49, \
       v50)
-#define NLOHMANN_JSON_PASTE52( \
+#define _azure_NLOHMANN_JSON_PASTE52( \
     func, \
     v1, \
     v2, \
@@ -5014,8 +5014,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v49, \
     v50, \
     v51) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE51( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE51( \
       func, \
       v2, \
       v3, \
@@ -5067,7 +5067,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v49, \
       v50, \
       v51)
-#define NLOHMANN_JSON_PASTE53( \
+#define _azure_NLOHMANN_JSON_PASTE53( \
     func, \
     v1, \
     v2, \
@@ -5121,8 +5121,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v50, \
     v51, \
     v52) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE52( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE52( \
       func, \
       v2, \
       v3, \
@@ -5175,7 +5175,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v50, \
       v51, \
       v52)
-#define NLOHMANN_JSON_PASTE54( \
+#define _azure_NLOHMANN_JSON_PASTE54( \
     func, \
     v1, \
     v2, \
@@ -5230,8 +5230,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v51, \
     v52, \
     v53) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE53( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE53( \
       func, \
       v2, \
       v3, \
@@ -5285,7 +5285,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v51, \
       v52, \
       v53)
-#define NLOHMANN_JSON_PASTE55( \
+#define _azure_NLOHMANN_JSON_PASTE55( \
     func, \
     v1, \
     v2, \
@@ -5341,8 +5341,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v52, \
     v53, \
     v54) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE54( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE54( \
       func, \
       v2, \
       v3, \
@@ -5397,7 +5397,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v52, \
       v53, \
       v54)
-#define NLOHMANN_JSON_PASTE56( \
+#define _azure_NLOHMANN_JSON_PASTE56( \
     func, \
     v1, \
     v2, \
@@ -5454,8 +5454,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v53, \
     v54, \
     v55) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE55( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE55( \
       func, \
       v2, \
       v3, \
@@ -5511,7 +5511,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v53, \
       v54, \
       v55)
-#define NLOHMANN_JSON_PASTE57( \
+#define _azure_NLOHMANN_JSON_PASTE57( \
     func, \
     v1, \
     v2, \
@@ -5569,8 +5569,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v54, \
     v55, \
     v56) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE56( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE56( \
       func, \
       v2, \
       v3, \
@@ -5627,7 +5627,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v54, \
       v55, \
       v56)
-#define NLOHMANN_JSON_PASTE58( \
+#define _azure_NLOHMANN_JSON_PASTE58( \
     func, \
     v1, \
     v2, \
@@ -5686,8 +5686,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v55, \
     v56, \
     v57) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE57( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE57( \
       func, \
       v2, \
       v3, \
@@ -5745,7 +5745,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v55, \
       v56, \
       v57)
-#define NLOHMANN_JSON_PASTE59( \
+#define _azure_NLOHMANN_JSON_PASTE59( \
     func, \
     v1, \
     v2, \
@@ -5805,8 +5805,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v56, \
     v57, \
     v58) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE58( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE58( \
       func, \
       v2, \
       v3, \
@@ -5865,7 +5865,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v56, \
       v57, \
       v58)
-#define NLOHMANN_JSON_PASTE60( \
+#define _azure_NLOHMANN_JSON_PASTE60( \
     func, \
     v1, \
     v2, \
@@ -5926,8 +5926,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v57, \
     v58, \
     v59) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE59( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE59( \
       func, \
       v2, \
       v3, \
@@ -5987,7 +5987,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v57, \
       v58, \
       v59)
-#define NLOHMANN_JSON_PASTE61( \
+#define _azure_NLOHMANN_JSON_PASTE61( \
     func, \
     v1, \
     v2, \
@@ -6049,8 +6049,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v58, \
     v59, \
     v60) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE60( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE60( \
       func, \
       v2, \
       v3, \
@@ -6111,7 +6111,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v58, \
       v59, \
       v60)
-#define NLOHMANN_JSON_PASTE62( \
+#define _azure_NLOHMANN_JSON_PASTE62( \
     func, \
     v1, \
     v2, \
@@ -6174,8 +6174,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v59, \
     v60, \
     v61) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE61( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE61( \
       func, \
       v2, \
       v3, \
@@ -6237,7 +6237,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v59, \
       v60, \
       v61)
-#define NLOHMANN_JSON_PASTE63( \
+#define _azure_NLOHMANN_JSON_PASTE63( \
     func, \
     v1, \
     v2, \
@@ -6301,8 +6301,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v60, \
     v61, \
     v62) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE62( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE62( \
       func, \
       v2, \
       v3, \
@@ -6365,7 +6365,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v60, \
       v61, \
       v62)
-#define NLOHMANN_JSON_PASTE64( \
+#define _azure_NLOHMANN_JSON_PASTE64( \
     func, \
     v1, \
     v2, \
@@ -6430,8 +6430,8 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     v61, \
     v62, \
     v63) \
-  NLOHMANN_JSON_PASTE2(func, v1) \
-  NLOHMANN_JSON_PASTE63( \
+  _azure_NLOHMANN_JSON_PASTE2(func, v1) \
+  _azure_NLOHMANN_JSON_PASTE63( \
       func, \
       v2, \
       v3, \
@@ -6496,82 +6496,82 @@ JSON_HEDLEY_DIAGNOSTIC_POP
       v62, \
       v63)
 
-#define NLOHMANN_JSON_TO(v1) nlohmann_json_j[#v1] = nlohmann_json_t.v1;
-#define NLOHMANN_JSON_FROM(v1) nlohmann_json_j.at(#v1).get_to(nlohmann_json_t.v1);
-#define NLOHMANN_JSON_FROM_WITH_DEFAULT(v1) \
+#define _azure_NLOHMANN_JSON_TO(v1) nlohmann_json_j[#v1] = nlohmann_json_t.v1;
+#define _azure_NLOHMANN_JSON_FROM(v1) nlohmann_json_j.at(#v1).get_to(nlohmann_json_t.v1);
+#define _azure_NLOHMANN_JSON_FROM_WITH_DEFAULT(v1) \
   nlohmann_json_t.v1 = nlohmann_json_j.value(#v1, nlohmann_json_default_obj.v1);
 
 /*!
 @brief macro
-@def NLOHMANN_DEFINE_TYPE_INTRUSIVE
+@def _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE
 @since version 3.9.0
 */
-#define NLOHMANN_DEFINE_TYPE_INTRUSIVE(Type, ...) \
+#define _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE(Type, ...) \
   friend void to_json(Azure::Core:: ::json& nlohmann_json_j, const Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_TO, __VA_ARGS__)) \
   } \
   friend void from_json( \
       const Azure::Core::Json::_internal::json& nlohmann_json_j, Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_FROM, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_FROM, __VA_ARGS__)) \
   }
 
-#define NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Type, ...) \
+#define _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Type, ...) \
   friend void to_json( \
       Azure::Core::Json::_internal::json& nlohmann_json_j, const Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_TO, __VA_ARGS__)) \
   } \
   friend void from_json( \
       const Azure::Core::Json::_internal::json& nlohmann_json_j, Type& nlohmann_json_t) \
   { \
     const Type nlohmann_json_default_obj{}; \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_FROM_WITH_DEFAULT, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_FROM_WITH_DEFAULT, __VA_ARGS__)) \
   }
 
-#define NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE(Type, ...) \
+#define _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE(Type, ...) \
   friend void to_json( \
       Azure::Core::Json::_internal::json& nlohmann_json_j, const Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_TO, __VA_ARGS__)) \
   }
 
 /*!
 @brief macro
-@def NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE
+@def _azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE
 @since version 3.9.0
 */
-#define NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Type, ...) \
+#define _azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Type, ...) \
   inline void to_json( \
       Azure::Core::Json::_internal::json& nlohmann_json_j, const Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_TO, __VA_ARGS__)) \
   } \
   inline void from_json( \
       const Azure::Core::Json::_internal::json& nlohmann_json_j, Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_FROM, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_FROM, __VA_ARGS__)) \
   }
 
-#define NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_ONLY_SERIALIZE(Type, ...) \
+#define _azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_ONLY_SERIALIZE(Type, ...) \
   inline void to_json( \
       Azure::Core::Json::_internal::json& nlohmann_json_j, const Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_TO, __VA_ARGS__)) \
   }
 
-#define NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Type, ...) \
+#define _azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Type, ...) \
   inline void to_json( \
       Azure::Core::Json::_internal::json& nlohmann_json_j, const Type& nlohmann_json_t) \
   { \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_TO, __VA_ARGS__)) \
   } \
   inline void from_json( \
       const Azure::Core::Json::_internal::json& nlohmann_json_j, Type& nlohmann_json_t) \
   { \
     const Type nlohmann_json_default_obj{}; \
-    NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_FROM_WITH_DEFAULT, __VA_ARGS__)) \
+    _azure_NLOHMANN_JSON_EXPAND(_azure_NLOHMANN_JSON_PASTE(_azure_NLOHMANN_JSON_FROM_WITH_DEFAULT, __VA_ARGS__)) \
   }
 
 // inspired from https://stackoverflow.com/a/26745591
@@ -6580,7 +6580,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 //
 // it allows using the detected idiom to retrieve the return type
 // of such an expression
-#define NLOHMANN_CAN_CALL_STD_FUNC_IMPL(std_name) \
+#define _azure_NLOHMANN_CAN_CALL_STD_FUNC_IMPL(std_name) \
   namespace detail { \
     using std::std_name; \
 \
@@ -6610,25 +6610,25 @@ JSON_HEDLEY_DIAGNOSTIC_POP
   { \
   }
 
-#ifndef JSON_USE_IMPLICIT_CONVERSIONS
-#define JSON_USE_IMPLICIT_CONVERSIONS 1
+#ifndef _azure_JSON_USE_IMPLICIT_CONVERSIONS
+#define _azure_JSON_USE_IMPLICIT_CONVERSIONS 1
 #endif
 
-#if JSON_USE_IMPLICIT_CONVERSIONS
-#define JSON_EXPLICIT
+#if _azure_JSON_USE_IMPLICIT_CONVERSIONS
+#define _azure_JSON_EXPLICIT
 #else
-#define JSON_EXPLICIT explicit
+#define _azure_JSON_EXPLICIT explicit
 #endif
 
-#ifndef JSON_DISABLE_ENUM_SERIALIZATION
-#define JSON_DISABLE_ENUM_SERIALIZATION 0
+#ifndef _azure_JSON_DISABLE_ENUM_SERIALIZATION
+#define _azure_JSON_DISABLE_ENUM_SERIALIZATION 0
 #endif
 
-#ifndef JSON_USE_GLOBAL_UDLS
-#define JSON_USE_GLOBAL_UDLS 1
+#ifndef _azure_JSON_USE_GLOBAL_UDLS
+#define _azure_JSON_USE_GLOBAL_UDLS 1
 #endif
 
-#if JSON_HAS_THREE_WAY_COMPARISON
+#if _azure_JSON_HAS_THREE_WAY_COMPARISON
 #include <compare> // partial_ordering
 #endif
 
@@ -6689,7 +6689,7 @@ Returns an ordering that is similar to Python:
 
 @since version 1.0.0
 */
-#if JSON_HAS_THREE_WAY_COMPARISON
+#if _azure_JSON_HAS_THREE_WAY_COMPARISON
         inline std::partial_ordering operator<=>(
             const value_t lhs,
             const value_t rhs) noexcept // *NOPAD*
@@ -6711,7 +6711,7 @@ Returns an ordering that is similar to Python:
 
           const auto l_index = static_cast<std::size_t>(lhs);
           const auto r_index = static_cast<std::size_t>(rhs);
-#if JSON_HAS_THREE_WAY_COMPARISON
+#if _azure_JSON_HAS_THREE_WAY_COMPARISON
           if (l_index < order.size() && r_index < order.size())
           {
             return order[l_index] <=> order[r_index]; // *NOPAD*
@@ -6727,7 +6727,7 @@ Returns an ordering that is similar to Python:
 // a user-defined spaceship operator
 // Clang, MSVC, and ICC select the rewritten candidate
 // (see GCC bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105200)
-#if JSON_HAS_THREE_WAY_COMPARISON && defined(__GNUC__)
+#if _azure_JSON_HAS_THREE_WAY_COMPARISON && defined(__GNUC__)
         inline bool operator<(const value_t lhs, const value_t rhs) noexcept
         {
           return std::is_lt(lhs <=> rhs); // *NOPAD*
@@ -6764,7 +6764,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   template <typename StringType>
   inline void replace_substring(StringType& s, const StringType& f, const StringType& t)
   {
-    JSON_ASSERT(!f.empty());
+    _azure_JSON_ASSERT(!f.empty());
     for (auto pos = s.find(f); // find first occurrence of f
          pos != StringType::npos; // make sure f was found
          s.replace(pos, f.size(), t), // replace with t, and
@@ -6857,7 +6857,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   template <typename T>
   using uncvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 
-#ifdef JSON_HAS_CPP_14
+#ifdef _azure_JSON_HAS_CPP_14
 
   // the following utilities are natively available in C++14
   using std::enable_if_t;
@@ -6979,10 +6979,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   // taken from ranges-v3
   template <typename T> struct static_const
   {
-    static JSON_INLINE_VARIABLE constexpr T value{};
+    static _azure_JSON_INLINE_VARIABLE constexpr T value{};
   };
 
-#ifndef JSON_HAS_CPP_17
+#ifndef _azure_JSON_HAS_CPP_17
   template <typename T> constexpr T static_const<T>::value;
 #endif
 
@@ -7086,7 +7086,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
 namespace Azure { namespace Core { namespace Json { namespace _internal {
 
-  NLOHMANN_CAN_CALL_STD_FUNC_IMPL(begin);
+  _azure_NLOHMANN_CAN_CALL_STD_FUNC_IMPL(begin);
 
 }}}} // namespace Azure::Core::Json::_internal
 
@@ -7103,7 +7103,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
 namespace Azure { namespace Core { namespace Json { namespace _internal {
 
-  NLOHMANN_CAN_CALL_STD_FUNC_IMPL(end);
+  _azure_NLOHMANN_CAN_CALL_STD_FUNC_IMPL(end);
 
 }}}} // namespace Azure::Core::Json::_internal
 
@@ -7119,9 +7119,6 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 //
 // SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
 // SPDX-License-Identifier: MIT
-
-#ifndef INCLUDE_NLOHMANN_JSON_FWD_HPP_
-#define INCLUDE_NLOHMANN_JSON_FWD_HPP_
 
 #include <cstdint> // int64_t, uint64_t
 #include <map> // map
@@ -7184,7 +7181,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
 }}}} // namespace Azure::Core::Json::_internal
 
-#endif // INCLUDE_NLOHMANN_JSON_FWD_HPP_
+
 
 namespace Azure { namespace Core { namespace Json { namespace _internal {
   /*!
@@ -7214,8 +7211,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     {
     };
 
-    NLOHMANN_BASIC_JSON_TPL_DECLARATION
-    struct is_basic_json<NLOHMANN_BASIC_JSON_TPL> : std::true_type
+    _azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
+    struct is_basic_json<_azure_NLOHMANN_BASIC_JSON_TPL> : std::true_type
     {
     };
 
@@ -8227,7 +8224,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     const int id; // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
 
   protected:
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     exception(int id_, const char* what_arg)
         : id(id_), m(what_arg) {} // NOLINT(bugprone-throw-keyword-missing)
 
@@ -8241,7 +8238,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     template <typename BasicJsonType>
     static std::string diagnostics(const BasicJsonType* leaf_element)
     {
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
       std::vector<std::string> tokens;
       for (const auto* current = leaf_element; current != nullptr && current->m_parent != nullptr;
            current = current->m_parent)
@@ -8402,7 +8399,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
   private:
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     invalid_iterator(int id_, const char* what_arg) : exception(id_, what_arg) {}
   };
 
@@ -8421,7 +8418,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
   private:
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     type_error(int id_, const char* what_arg) : exception(id_, what_arg) {}
   };
 
@@ -8440,7 +8437,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
   private:
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     out_of_range(int id_, const char* what_arg) : exception(id_, what_arg) {}
   };
 
@@ -8459,7 +8456,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
   private:
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     other_error(int id_, const char* what_arg) : exception(id_, what_arg) {}
   };
 
@@ -8500,12 +8497,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
-#if JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#if _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
 #include <experimental/filesystem>
 namespace Azure { namespace Core { namespace Json { namespace _internal { namespace detail {
   namespace std_fs = std::experimental::filesystem;
 }}}}} // namespace Azure::Core::Json::_internal::detail
-#elif JSON_HAS_FILESYSTEM
+#elif _azure_JSON_HAS_FILESYSTEM
 #include <filesystem>
 namespace Azure { namespace Core { namespace Json { namespace _internal { namespace detail {
   namespace std_fs = std::filesystem;
@@ -8524,9 +8521,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <typename BasicJsonType>
     inline void from_json(const BasicJsonType& j, typename std::nullptr_t& n)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_null()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_null()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be null, but is ", j.type_name()), &j));
       }
       n = nullptr;
@@ -8568,7 +8565,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::binary:
         case value_t::discarded:
         default:
-          JSON_THROW(
+          _azure_JSON_THROW(
               type_error::create(302, concat("type must be number, but is ", j.type_name()), &j));
       }
     }
@@ -8576,9 +8573,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <typename BasicJsonType>
     inline void from_json(const BasicJsonType& j, typename BasicJsonType::boolean_t& b)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_boolean()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_boolean()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be boolean, but is ", j.type_name()), &j));
       }
       b = *j.template get_ptr<const typename BasicJsonType::boolean_t*>();
@@ -8587,9 +8584,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <typename BasicJsonType>
     inline void from_json(const BasicJsonType& j, typename BasicJsonType::string_t& s)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_string()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_string()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be string, but is ", j.type_name()), &j));
       }
       s = *j.template get_ptr<const typename BasicJsonType::string_t*>();
@@ -8609,9 +8606,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
             int> = 0>
     inline void from_json(const BasicJsonType& j, StringType& s)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_string()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_string()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be string, but is ", j.type_name()), &j));
       }
 
@@ -8636,7 +8633,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       get_arithmetic_value(j, val);
     }
 
-#if !JSON_DISABLE_ENUM_SERIALIZATION
+#if !_azure_JSON_DISABLE_ENUM_SERIALIZATION
     template <
         typename BasicJsonType,
         typename EnumType,
@@ -8647,7 +8644,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       get_arithmetic_value(j, val);
       e = static_cast<EnumType>(val);
     }
-#endif // JSON_DISABLE_ENUM_SERIALIZATION
+#endif // _azure_JSON_DISABLE_ENUM_SERIALIZATION
 
     // forward_list doesn't have an insert method
     template <
@@ -8657,9 +8654,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         enable_if_t<is_getable<BasicJsonType, T>::value, int> = 0>
     inline void from_json(const BasicJsonType& j, std::forward_list<T, Allocator>& l)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be array, but is ", j.type_name()), &j));
       }
       l.clear();
@@ -8675,9 +8672,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         enable_if_t<is_getable<BasicJsonType, T>::value, int> = 0>
     inline void from_json(const BasicJsonType& j, std::valarray<T>& l)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be array, but is ", j.type_name()), &j));
       }
       l.resize(j.size());
@@ -8784,9 +8781,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         j.template get<typename ConstructibleArrayType::value_type>(),
         void())
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be array, but is ", j.type_name()), &j));
       }
 
@@ -8806,9 +8803,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     auto from_json(BasicJsonType&& j, identity_tag<std::array<T, N>> tag) -> decltype(
         from_json_inplace_array_impl(std::forward<BasicJsonType>(j), tag, make_index_sequence<N>{}))
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be array, but is ", j.type_name()), &j));
       }
 
@@ -8819,9 +8816,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <typename BasicJsonType>
     inline void from_json(const BasicJsonType& j, typename BasicJsonType::binary_t& bin)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_binary()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_binary()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be binary, but is ", j.type_name()), &j));
       }
 
@@ -8836,9 +8833,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
             int> = 0>
     inline void from_json(const BasicJsonType& j, ConstructibleObjectType& obj)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be object, but is ", j.type_name()), &j));
       }
 
@@ -8902,7 +8899,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::binary:
         case value_t::discarded:
         default:
-          JSON_THROW(
+          _azure_JSON_THROW(
               type_error::create(302, concat("type must be number, but is ", j.type_name()), &j));
       }
     }
@@ -8962,9 +8959,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         std::forward<TupleRelated>(t),
         priority_tag<3>{}))
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be array, but is ", j.type_name()), &j));
       }
 
@@ -8982,17 +8979,17 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         = enable_if_t<!std::is_constructible<typename BasicJsonType::string_t, Key>::value>>
     inline void from_json(const BasicJsonType& j, std::map<Key, Value, Compare, Allocator>& m)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be array, but is ", j.type_name()), &j));
       }
       m.clear();
       for (const auto& p : j)
       {
-        if (JSON_HEDLEY_UNLIKELY(!p.is_array()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!p.is_array()))
         {
-          JSON_THROW(
+          _azure_JSON_THROW(
               type_error::create(302, concat("type must be array, but is ", p.type_name()), &j));
         }
         m.emplace(p.at(0).template get<Key>(), p.at(1).template get<Value>());
@@ -9012,29 +9009,29 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         const BasicJsonType& j,
         std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>& m)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be array, but is ", j.type_name()), &j));
       }
       m.clear();
       for (const auto& p : j)
       {
-        if (JSON_HEDLEY_UNLIKELY(!p.is_array()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!p.is_array()))
         {
-          JSON_THROW(
+          _azure_JSON_THROW(
               type_error::create(302, concat("type must be array, but is ", p.type_name()), &j));
         }
         m.emplace(p.at(0).template get<Key>(), p.at(1).template get<Value>());
       }
     }
 
-#if JSON_HAS_FILESYSTEM || JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#if _azure_JSON_HAS_FILESYSTEM || _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
     template <typename BasicJsonType> inline void from_json(const BasicJsonType& j, std_fs::path& p)
     {
-      if (JSON_HEDLEY_UNLIKELY(!j.is_string()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!j.is_string()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(302, concat("type must be string, but is ", j.type_name()), &j));
       }
       p = *j.template get_ptr<const typename BasicJsonType::string_t*>();
@@ -9054,16 +9051,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
   } // namespace detail
 
-#ifndef JSON_HAS_CPP_17
+#ifndef _azure_JSON_HAS_CPP_17
   /// namespace to hold default `from_json` function
   /// to see why this is required:
   /// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4381.html
   namespace // NOLINT(cert-dcl59-cpp,fuchsia-header-anon-namespaces,google-build-namespaces)
   {
 #endif
-    JSON_INLINE_VARIABLE constexpr const auto& from_json = // NOLINT(misc-definitions-in-headers)
+    _azure_JSON_INLINE_VARIABLE constexpr const auto& from_json = // NOLINT(misc-definitions-in-headers)
         detail::static_const<detail::from_json_fn>::value;
-#ifndef JSON_HAS_CPP_17
+#ifndef _azure_JSON_HAS_CPP_17
   } // namespace
 #endif
 
@@ -9102,7 +9099,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 #include <tuple> // tuple_size, get, tuple_element
 #include <utility> // move
 
-#if JSON_HAS_RANGES
+#if _azure_JSON_HAS_RANGES
 #include <ranges> // enable_borrowed_range
 #endif
 
@@ -9194,7 +9191,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     /// return key of the iterator
     const string_type& key() const
     {
-      JSON_ASSERT(anchor.m_object != nullptr);
+      _azure_JSON_ASSERT(anchor.m_object != nullptr);
 
       switch (anchor.m_object->type())
       {
@@ -9315,7 +9312,7 @@ public:
 
 } // namespace std
 
-#if JSON_HAS_RANGES
+#if _azure_JSON_HAS_RANGES
 template <typename IteratorType>
 inline constexpr bool ::std::ranges::enable_borrowed_range<
     ::Azure::Core::Json::_internal::detail::iteration_proxy<IteratorType>> = true;
@@ -9657,7 +9654,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           j, static_cast<typename BasicJsonType::number_integer_t>(val));
     }
 
-#if !JSON_DISABLE_ENUM_SERIALIZATION
+#if !_azure_JSON_DISABLE_ENUM_SERIALIZATION
     template <
         typename BasicJsonType,
         typename EnumType,
@@ -9667,7 +9664,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       using underlying_type = typename std::underlying_type<EnumType>::type;
       external_constructor<value_t::number_integer>::construct(j, static_cast<underlying_type>(e));
     }
-#endif // JSON_DISABLE_ENUM_SERIALIZATION
+#endif // _azure_JSON_DISABLE_ENUM_SERIALIZATION
 
     template <typename BasicJsonType>
     inline void to_json(BasicJsonType& j, const std::vector<bool>& e)
@@ -9790,7 +9787,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       to_json_tuple_impl(j, t, make_index_sequence<std::tuple_size<T>::value>{});
     }
 
-#if JSON_HAS_FILESYSTEM || JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#if _azure_JSON_HAS_FILESYSTEM || _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
     template <typename BasicJsonType> inline void to_json(BasicJsonType& j, const std_fs::path& p)
     {
       j = p.string();
@@ -9809,16 +9806,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     };
   } // namespace detail
 
-#ifndef JSON_HAS_CPP_17
+#ifndef _azure_JSON_HAS_CPP_17
   /// namespace to hold default `to_json` function
   /// to see why this is required:
   /// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4381.html
   namespace // NOLINT(cert-dcl59-cpp,fuchsia-header-anon-namespaces,google-build-namespaces)
   {
 #endif
-    JSON_INLINE_VARIABLE constexpr const auto& to_json = // NOLINT(misc-definitions-in-headers)
+    _azure_JSON_INLINE_VARIABLE constexpr const auto& to_json = // NOLINT(misc-definitions-in-headers)
         detail::static_const<detail::to_json_fn>::value;
-#ifndef JSON_HAS_CPP_17
+#ifndef _azure_JSON_HAS_CPP_17
   } // namespace
 #endif
 
@@ -10090,7 +10087,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
 
       default: // LCOV_EXCL_LINE
-        JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+        _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                             // LCOV_EXCL_LINE
         return 0; // LCOV_EXCL_LINE
     }
@@ -10178,10 +10175,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   public:
     using char_type = char;
 
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     explicit file_input_adapter(std::FILE* f) noexcept : m_file(f)
     {
-      JSON_ASSERT(m_file != nullptr);
+      _azure_JSON_ASSERT(m_file != nullptr);
     }
 
     // make class move-only
@@ -10241,7 +10238,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     {
       auto res = sb->sbumpc();
       // set eof manually, as we don't use the istream interface.
-      if (JSON_HEDLEY_UNLIKELY(res == std::char_traits<char>::eof()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(res == std::char_traits<char>::eof()))
       {
         is->clear(is->rdstate() | std::ios::eofbit);
       }
@@ -10268,7 +10265,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
     typename char_traits<char_type>::int_type get_character()
     {
-      if (JSON_HEDLEY_LIKELY(current != end))
+      if (_azure_JSON_HEDLEY_LIKELY(current != end))
       {
         auto result = char_traits<char_type>::to_int_type(*current);
         std::advance(current, 1);
@@ -10300,7 +10297,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     {
       utf8_bytes_index = 0;
 
-      if (JSON_HEDLEY_UNLIKELY(input.empty()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(input.empty()))
       {
         utf8_bytes[0] = std::char_traits<char>::eof();
         utf8_bytes_filled = 1;
@@ -10367,7 +10364,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     {
       utf8_bytes_index = 0;
 
-      if (JSON_HEDLEY_UNLIKELY(input.empty()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(input.empty()))
       {
         utf8_bytes[0] = std::char_traits<char>::eof();
         utf8_bytes_filled = 1;
@@ -10403,7 +10400,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         }
         else
         {
-          if (JSON_HEDLEY_UNLIKELY(!input.empty()))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!input.empty()))
           {
             const auto wc2 = static_cast<unsigned int>(input.get_character());
             const auto charcode
@@ -10443,13 +10440,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       {
         fill_buffer<sizeof(WideCharType)>();
 
-        JSON_ASSERT(utf8_bytes_filled > 0);
-        JSON_ASSERT(utf8_bytes_index == 0);
+        _azure_JSON_ASSERT(utf8_bytes_filled > 0);
+        _azure_JSON_ASSERT(utf8_bytes_index == 0);
       }
 
       // use buffer
-      JSON_ASSERT(utf8_bytes_filled > 0);
-      JSON_ASSERT(utf8_bytes_index < utf8_bytes_filled);
+      _azure_JSON_ASSERT(utf8_bytes_filled > 0);
+      _azure_JSON_ASSERT(utf8_bytes_index < utf8_bytes_filled);
       return utf8_bytes[utf8_bytes_index++];
     }
 
@@ -10874,10 +10871,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       {
         ref_stack.push_back(handle_value(BasicJsonType::value_t::object));
 
-        if (JSON_HEDLEY_UNLIKELY(
+        if (_azure_JSON_HEDLEY_UNLIKELY(
                 len != static_cast<std::size_t>(-1) && len > ref_stack.back()->max_size()))
         {
-          JSON_THROW(out_of_range::create(
+          _azure_JSON_THROW(out_of_range::create(
               408, concat("excessive object size: ", std::to_string(len)), ref_stack.back()));
         }
 
@@ -10886,8 +10883,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
       bool key(string_t& val)
       {
-        JSON_ASSERT(!ref_stack.empty());
-        JSON_ASSERT(ref_stack.back()->is_object());
+        _azure_JSON_ASSERT(!ref_stack.empty());
+        _azure_JSON_ASSERT(ref_stack.back()->is_object());
 
         // add null at given key and store the reference for later
         object_element = &(ref_stack.back()->m_data.m_value.object->operator[](val));
@@ -10896,8 +10893,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
       bool end_object()
       {
-        JSON_ASSERT(!ref_stack.empty());
-        JSON_ASSERT(ref_stack.back()->is_object());
+        _azure_JSON_ASSERT(!ref_stack.empty());
+        _azure_JSON_ASSERT(ref_stack.back()->is_object());
 
         ref_stack.back()->set_parents();
         ref_stack.pop_back();
@@ -10908,10 +10905,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       {
         ref_stack.push_back(handle_value(BasicJsonType::value_t::array));
 
-        if (JSON_HEDLEY_UNLIKELY(
+        if (_azure_JSON_HEDLEY_UNLIKELY(
                 len != static_cast<std::size_t>(-1) && len > ref_stack.back()->max_size()))
         {
-          JSON_THROW(out_of_range::create(
+          _azure_JSON_THROW(out_of_range::create(
               408, concat("excessive array size: ", std::to_string(len)), ref_stack.back()));
         }
 
@@ -10920,8 +10917,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
       bool end_array()
       {
-        JSON_ASSERT(!ref_stack.empty());
-        JSON_ASSERT(ref_stack.back()->is_array());
+        _azure_JSON_ASSERT(!ref_stack.empty());
+        _azure_JSON_ASSERT(ref_stack.back()->is_array());
 
         ref_stack.back()->set_parents();
         ref_stack.pop_back();
@@ -10935,7 +10932,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         static_cast<void>(ex);
         if (allow_exceptions)
         {
-          JSON_THROW(ex);
+          _azure_JSON_THROW(ex);
         }
         return false;
       }
@@ -10949,7 +10946,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       @invariant If the ref stack contains a value, then it is an array or an
                  object to which we can add elements
       */
-      template <typename Value> JSON_HEDLEY_RETURNS_NON_NULL BasicJsonType* handle_value(Value&& v)
+      template <typename Value> _azure_JSON_HEDLEY_RETURNS_NON_NULL BasicJsonType* handle_value(Value&& v)
       {
         if (ref_stack.empty())
         {
@@ -10957,7 +10954,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           return &root;
         }
 
-        JSON_ASSERT(ref_stack.back()->is_array() || ref_stack.back()->is_object());
+        _azure_JSON_ASSERT(ref_stack.back()->is_array() || ref_stack.back()->is_object());
 
         if (ref_stack.back()->is_array())
         {
@@ -10965,8 +10962,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           return &(ref_stack.back()->m_data.m_value.array->back());
         }
 
-        JSON_ASSERT(ref_stack.back()->is_object());
-        JSON_ASSERT(object_element);
+        _azure_JSON_ASSERT(ref_stack.back()->is_object());
+        _azure_JSON_ASSERT(object_element);
         *object_element = BasicJsonType(std::forward<Value>(v));
         return object_element;
       }
@@ -11065,10 +11062,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
         // check object limit
         if (ref_stack.back()
-            && JSON_HEDLEY_UNLIKELY(
+            && _azure_JSON_HEDLEY_UNLIKELY(
                 len != static_cast<std::size_t>(-1) && len > ref_stack.back()->max_size()))
         {
-          JSON_THROW(out_of_range::create(
+          _azure_JSON_THROW(out_of_range::create(
               408, concat("excessive object size: ", std::to_string(len)), ref_stack.back()));
         }
 
@@ -11110,8 +11107,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           }
         }
 
-        JSON_ASSERT(!ref_stack.empty());
-        JSON_ASSERT(!keep_stack.empty());
+        _azure_JSON_ASSERT(!ref_stack.empty());
+        _azure_JSON_ASSERT(!keep_stack.empty());
         ref_stack.pop_back();
         keep_stack.pop_back();
 
@@ -11142,10 +11139,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
         // check array limit
         if (ref_stack.back()
-            && JSON_HEDLEY_UNLIKELY(
+            && _azure_JSON_HEDLEY_UNLIKELY(
                 len != static_cast<std::size_t>(-1) && len > ref_stack.back()->max_size()))
         {
-          JSON_THROW(out_of_range::create(
+          _azure_JSON_THROW(out_of_range::create(
               408, concat("excessive array size: ", std::to_string(len)), ref_stack.back()));
         }
 
@@ -11171,8 +11168,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           }
         }
 
-        JSON_ASSERT(!ref_stack.empty());
-        JSON_ASSERT(!keep_stack.empty());
+        _azure_JSON_ASSERT(!ref_stack.empty());
+        _azure_JSON_ASSERT(!keep_stack.empty());
         ref_stack.pop_back();
         keep_stack.pop_back();
 
@@ -11192,7 +11189,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         static_cast<void>(ex);
         if (allow_exceptions)
         {
-          JSON_THROW(ex);
+          _azure_JSON_THROW(ex);
         }
         return false;
       }
@@ -11218,7 +11215,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       template <typename Value>
       std::pair<bool, BasicJsonType*> handle_value(Value&& v, const bool skip_callback = false)
       {
-        JSON_ASSERT(!keep_stack.empty());
+        _azure_JSON_ASSERT(!keep_stack.empty());
 
         // do not handle this value if we know it would be added to a discarded
         // container
@@ -11254,7 +11251,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         }
 
         // we now only expect arrays and objects
-        JSON_ASSERT(ref_stack.back()->is_array() || ref_stack.back()->is_object());
+        _azure_JSON_ASSERT(ref_stack.back()->is_array() || ref_stack.back()->is_object());
 
         // array
         if (ref_stack.back()->is_array())
@@ -11264,9 +11261,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         }
 
         // object
-        JSON_ASSERT(ref_stack.back()->is_object());
+        _azure_JSON_ASSERT(ref_stack.back()->is_object());
         // check if we should store an element for the current key
-        JSON_ASSERT(!key_keep_stack.empty());
+        _azure_JSON_ASSERT(!key_keep_stack.empty());
         const bool store_element = key_keep_stack.back();
         key_keep_stack.pop_back();
 
@@ -11275,7 +11272,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           return {false, nullptr};
         }
 
-        JSON_ASSERT(object_element);
+        _azure_JSON_ASSERT(object_element);
         *object_element = std::move(value);
         return {true, object_element};
       }
@@ -11406,8 +11403,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     };
 
     /// return name of values of type token_type (only used for errors)
-    JSON_HEDLEY_RETURNS_NON_NULL
-    JSON_HEDLEY_CONST
+    _azure_JSON_HEDLEY_RETURNS_NON_NULL
+    _azure_JSON_HEDLEY_CONST
     static const char* token_type_name(const token_type t) noexcept
     {
       switch (t)
@@ -11488,11 +11485,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     /////////////////////
 
     /// return the locale-dependent decimal point
-    JSON_HEDLEY_PURE
+    _azure_JSON_HEDLEY_PURE
     static char get_decimal_point() noexcept
     {
       const auto* loc = localeconv();
-      JSON_ASSERT(loc != nullptr);
+      _azure_JSON_ASSERT(loc != nullptr);
       return (loc->decimal_point == nullptr) ? '.' : *(loc->decimal_point);
     }
 
@@ -11518,7 +11515,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     int get_codepoint()
     {
       // this function only makes sense after reading `\u`
-      JSON_ASSERT(current == 'u');
+      _azure_JSON_ASSERT(current == 'u');
       int codepoint = 0;
 
       const auto factors = {12u, 8u, 4u, 0u};
@@ -11544,7 +11541,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         }
       }
 
-      JSON_ASSERT(0x0000 <= codepoint && codepoint <= 0xFFFF);
+      _azure_JSON_ASSERT(0x0000 <= codepoint && codepoint <= 0xFFFF);
       return codepoint;
     }
 
@@ -11565,13 +11562,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool next_byte_in_range(std::initializer_list<char_int_type> ranges)
     {
-      JSON_ASSERT(ranges.size() == 2 || ranges.size() == 4 || ranges.size() == 6);
+      _azure_JSON_ASSERT(ranges.size() == 2 || ranges.size() == 4 || ranges.size() == 6);
       add(current);
 
       for (auto range = ranges.begin(); range != ranges.end(); ++range)
       {
         get();
-        if (JSON_HEDLEY_LIKELY(
+        if (_azure_JSON_HEDLEY_LIKELY(
                 *range <= current
                 && current <= *(++range))) // NOLINT(bugprone-inc-dec-in-conditions)
         {
@@ -11608,7 +11605,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       reset();
 
       // we entered the function by reading an open quote
-      JSON_ASSERT(current == '\"');
+      _azure_JSON_ASSERT(current == '\"');
 
       while (true)
       {
@@ -11668,7 +11665,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                 const int codepoint1 = get_codepoint();
                 int codepoint = codepoint1; // start with codepoint1
 
-                if (JSON_HEDLEY_UNLIKELY(codepoint1 == -1))
+                if (_azure_JSON_HEDLEY_UNLIKELY(codepoint1 == -1))
                 {
                   error_message = "invalid string: '\\u' must be followed by 4 hex digits";
                   return token_type::parse_error;
@@ -11678,18 +11675,18 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                 if (0xD800 <= codepoint1 && codepoint1 <= 0xDBFF)
                 {
                   // expect next \uxxxx entry
-                  if (JSON_HEDLEY_LIKELY(get() == '\\' && get() == 'u'))
+                  if (_azure_JSON_HEDLEY_LIKELY(get() == '\\' && get() == 'u'))
                   {
                     const int codepoint2 = get_codepoint();
 
-                    if (JSON_HEDLEY_UNLIKELY(codepoint2 == -1))
+                    if (_azure_JSON_HEDLEY_UNLIKELY(codepoint2 == -1))
                     {
                       error_message = "invalid string: '\\u' must be followed by 4 hex digits";
                       return token_type::parse_error;
                     }
 
                     // check if codepoint2 is a low surrogate
-                    if (JSON_HEDLEY_LIKELY(0xDC00 <= codepoint2 && codepoint2 <= 0xDFFF))
+                    if (_azure_JSON_HEDLEY_LIKELY(0xDC00 <= codepoint2 && codepoint2 <= 0xDFFF))
                     {
                       // overwrite codepoint
                       codepoint = static_cast<int>(
@@ -11718,7 +11715,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                 }
                 else
                 {
-                  if (JSON_HEDLEY_UNLIKELY(0xDC00 <= codepoint1 && codepoint1 <= 0xDFFF))
+                  if (_azure_JSON_HEDLEY_UNLIKELY(0xDC00 <= codepoint1 && codepoint1 <= 0xDFFF))
                   {
                     error_message = "invalid string: surrogate U+DC00..U+DFFF must "
                                     "follow U+D800..U+DBFF";
@@ -11727,7 +11724,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                 }
 
                 // result of the above calculation yields a proper codepoint
-                JSON_ASSERT(0x00 <= codepoint && codepoint <= 0x10FFFF);
+                _azure_JSON_ASSERT(0x00 <= codepoint && codepoint <= 0x10FFFF);
 
                 // translate codepoint into bytes
                 if (codepoint < 0x80)
@@ -12101,7 +12098,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           case 0xDD:
           case 0xDE:
           case 0xDF: {
-            if (JSON_HEDLEY_UNLIKELY(!next_byte_in_range({0x80, 0xBF})))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!next_byte_in_range({0x80, 0xBF})))
             {
               return token_type::parse_error;
             }
@@ -12110,7 +12107,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
           // U+0800..U+0FFF: bytes E0 A0..BF 80..BF
           case 0xE0: {
-            if (JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0xA0, 0xBF, 0x80, 0xBF}))))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0xA0, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -12133,7 +12130,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           case 0xEC:
           case 0xEE:
           case 0xEF: {
-            if (JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF}))))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -12142,7 +12139,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
           // U+D000..U+D7FF: bytes ED 80..9F 80..BF
           case 0xED: {
-            if (JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0x9F, 0x80, 0xBF}))))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0x9F, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -12151,7 +12148,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
           // U+10000..U+3FFFF F0 90..BF 80..BF 80..BF
           case 0xF0: {
-            if (JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x90, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x90, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -12162,7 +12159,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           case 0xF1:
           case 0xF2:
           case 0xF3: {
-            if (JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -12171,7 +12168,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
           // U+100000..U+10FFFF F4 80..8F 80..BF 80..BF
           case 0xF4: {
-            if (JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0x8F, 0x80, 0xBF, 0x80, 0xBF}))))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!(next_byte_in_range({0x80, 0x8F, 0x80, 0xBF, 0x80, 0xBF}))))
             {
               return token_type::parse_error;
             }
@@ -12252,19 +12249,19 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
     }
 
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     static void strtof(float& f, const char* str, char** endptr) noexcept
     {
       f = std::strtof(str, endptr);
     }
 
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     static void strtof(double& f, const char* str, char** endptr) noexcept
     {
       f = std::strtod(str, endptr);
     }
 
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     static void strtof(long double& f, const char* str, char** endptr) noexcept
     {
       f = std::strtold(str, endptr);
@@ -12349,7 +12346,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
         // all other characters are rejected outside scan_number()
         default: // LCOV_EXCL_LINE
-          JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+          _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                               // LCOV_EXCL_LINE
       }
 
@@ -12578,7 +12575,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         const auto x = std::strtoull(token_buffer.data(), &endptr, 10);
 
         // we checked the number format before
-        JSON_ASSERT(endptr == token_buffer.data() + token_buffer.size());
+        _azure_JSON_ASSERT(endptr == token_buffer.data() + token_buffer.size());
 
         if (errno == 0)
         {
@@ -12594,7 +12591,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         const auto x = std::strtoll(token_buffer.data(), &endptr, 10);
 
         // we checked the number format before
-        JSON_ASSERT(endptr == token_buffer.data() + token_buffer.size());
+        _azure_JSON_ASSERT(endptr == token_buffer.data() + token_buffer.size());
 
         if (errno == 0)
         {
@@ -12611,7 +12608,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       strtof(value_float, token_buffer.data(), &endptr);
 
       // we checked the number format before
-      JSON_ASSERT(endptr == token_buffer.data() + token_buffer.size());
+      _azure_JSON_ASSERT(endptr == token_buffer.data() + token_buffer.size());
 
       return token_type::value_float;
     }
@@ -12621,16 +12618,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     @param[in] length        the length of the passed literal text
     @param[in] return_type   the token type to return on success
     */
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     token_type scan_literal(
         const char_type* literal_text,
         const std::size_t length,
         token_type return_type)
     {
-      JSON_ASSERT(char_traits<char_type>::to_char_type(current) == literal_text[0]);
+      _azure_JSON_ASSERT(char_traits<char_type>::to_char_type(current) == literal_text[0]);
       for (std::size_t i = 1; i < length; ++i)
       {
-        if (JSON_HEDLEY_UNLIKELY(char_traits<char_type>::to_char_type(get()) != literal_text[i]))
+        if (_azure_JSON_HEDLEY_UNLIKELY(char_traits<char_type>::to_char_type(get()) != literal_text[i]))
         {
           error_message = "invalid literal";
           return token_type::parse_error;
@@ -12676,7 +12673,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         current = ia.get_character();
       }
 
-      if (JSON_HEDLEY_LIKELY(current != char_traits<char_type>::eof()))
+      if (_azure_JSON_HEDLEY_LIKELY(current != char_traits<char_type>::eof()))
       {
         token_string.push_back(char_traits<char_type>::to_char_type(current));
       }
@@ -12717,9 +12714,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         --position.chars_read_current_line;
       }
 
-      if (JSON_HEDLEY_LIKELY(current != char_traits<char_type>::eof()))
+      if (_azure_JSON_HEDLEY_LIKELY(current != char_traits<char_type>::eof()))
       {
-        JSON_ASSERT(!token_string.empty());
+        _azure_JSON_ASSERT(!token_string.empty());
         token_string.pop_back();
       }
     }
@@ -12787,7 +12784,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
     /// return syntax error message
-    JSON_HEDLEY_RETURNS_NON_NULL
+    _azure_JSON_HEDLEY_RETURNS_NON_NULL
     constexpr const char* get_error_message() const noexcept { return error_message; }
 
     /////////////////////
@@ -13195,7 +13192,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
     @return whether parsing was successful
     */
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     bool sax_parse(
         const input_format_t format,
         json_sax_t* sax_,
@@ -13226,7 +13223,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
         case input_format_t::json: // LCOV_EXCL_LINE
         default: // LCOV_EXCL_LINE
-          JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+          _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                               // LCOV_EXCL_LINE
       }
 
@@ -13242,7 +13239,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           get();
         }
 
-        if (JSON_HEDLEY_UNLIKELY(current != char_traits<char_type>::eof()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(current != char_traits<char_type>::eof()))
         {
           return sax->parse_error(
               chars_read,
@@ -13275,12 +13272,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       std::int32_t document_size{};
       get_number<std::int32_t, true>(input_format_t::bson, document_size);
 
-      if (JSON_HEDLEY_UNLIKELY(!sax->start_object(static_cast<std::size_t>(-1))))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_object(static_cast<std::size_t>(-1))))
       {
         return false;
       }
 
-      if (JSON_HEDLEY_UNLIKELY(!parse_bson_element_list(/*is_array*/ false)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!parse_bson_element_list(/*is_array*/ false)))
       {
         return false;
       }
@@ -13301,7 +13298,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       while (true)
       {
         get();
-        if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::bson, "cstring")))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::bson, "cstring")))
         {
           return false;
         }
@@ -13326,7 +13323,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     template <typename NumberType> bool get_bson_string(const NumberType len, string_t& result)
     {
-      if (JSON_HEDLEY_UNLIKELY(len < 1))
+      if (_azure_JSON_HEDLEY_UNLIKELY(len < 1))
       {
         auto last_token = get_token_string();
         return sax->parse_error(
@@ -13357,7 +13354,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     template <typename NumberType> bool get_bson_binary(const NumberType len, binary_t& result)
     {
-      if (JSON_HEDLEY_UNLIKELY(len < 0))
+      if (_azure_JSON_HEDLEY_UNLIKELY(len < 0))
       {
         auto last_token = get_token_string();
         return sax->parse_error(
@@ -13495,13 +13492,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
       while (auto element_type = get())
       {
-        if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::bson, "element list")))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::bson, "element list")))
         {
           return false;
         }
 
         const std::size_t element_type_parse_position = chars_read;
-        if (JSON_HEDLEY_UNLIKELY(!get_bson_cstr(key)))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!get_bson_cstr(key)))
         {
           return false;
         }
@@ -13511,7 +13508,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           return false;
         }
 
-        if (JSON_HEDLEY_UNLIKELY(
+        if (_azure_JSON_HEDLEY_UNLIKELY(
                 !parse_bson_element_internal(element_type, element_type_parse_position)))
         {
           return false;
@@ -13533,12 +13530,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       std::int32_t document_size{};
       get_number<std::int32_t, true>(input_format_t::bson, document_size);
 
-      if (JSON_HEDLEY_UNLIKELY(!sax->start_array(static_cast<std::size_t>(-1))))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_array(static_cast<std::size_t>(-1))))
       {
         return false;
       }
 
-      if (JSON_HEDLEY_UNLIKELY(!parse_bson_element_list(/*is_array*/ true)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!parse_bson_element_list(/*is_array*/ true)))
       {
         return false;
       }
@@ -13969,7 +13966,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             default: // LCOV_EXCL_LINE
-              JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+              _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                                   // LCOV_EXCL_LINE
               return false; // LCOV_EXCL_LINE
           }
@@ -13987,12 +13984,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         case 0xF9: // Half-Precision Float (two-byte IEEE 754)
         {
           const auto byte1_raw = get();
-          if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "number")))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "number")))
           {
             return false;
           }
           const auto byte2_raw = get();
-          if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "number")))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "number")))
           {
             return false;
           }
@@ -14012,8 +14009,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           const double val = [&half] {
             const int exp = (half >> 10u) & 0x1Fu;
             const unsigned int mant = half & 0x3FFu;
-            JSON_ASSERT(0 <= exp && exp <= 32);
-            JSON_ASSERT(mant <= 1024);
+            _azure_JSON_ASSERT(0 <= exp && exp <= 32);
+            _azure_JSON_ASSERT(mant <= 1024);
             switch (exp)
             {
               case 0:
@@ -14074,7 +14071,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool get_cbor_string(string_t& result)
     {
-      if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "string")))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "string")))
       {
         return false;
       }
@@ -14185,7 +14182,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool get_cbor_binary(binary_t& result)
     {
-      if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "binary")))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::cbor, "binary")))
       {
         return false;
       }
@@ -14291,7 +14288,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool get_cbor_array(const std::size_t len, const cbor_tag_handler_t tag_handler)
     {
-      if (JSON_HEDLEY_UNLIKELY(!sax->start_array(len)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_array(len)))
       {
         return false;
       }
@@ -14300,7 +14297,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       {
         for (std::size_t i = 0; i < len; ++i)
         {
-          if (JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(true, tag_handler)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(true, tag_handler)))
           {
             return false;
           }
@@ -14310,7 +14307,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       {
         while (get() != 0xFF)
         {
-          if (JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(false, tag_handler)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(false, tag_handler)))
           {
             return false;
           }
@@ -14328,7 +14325,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool get_cbor_object(const std::size_t len, const cbor_tag_handler_t tag_handler)
     {
-      if (JSON_HEDLEY_UNLIKELY(!sax->start_object(len)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_object(len)))
       {
         return false;
       }
@@ -14341,12 +14338,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           for (std::size_t i = 0; i < len; ++i)
           {
             get();
-            if (JSON_HEDLEY_UNLIKELY(!get_cbor_string(key) || !sax->key(key)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!get_cbor_string(key) || !sax->key(key)))
             {
               return false;
             }
 
-            if (JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(true, tag_handler)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(true, tag_handler)))
             {
               return false;
             }
@@ -14357,12 +14354,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         {
           while (get() != 0xFF)
           {
-            if (JSON_HEDLEY_UNLIKELY(!get_cbor_string(key) || !sax->key(key)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!get_cbor_string(key) || !sax->key(key)))
             {
               return false;
             }
 
-            if (JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(true, tag_handler)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!parse_cbor_internal(true, tag_handler)))
             {
               return false;
             }
@@ -14779,7 +14776,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool get_msgpack_string(string_t& result)
     {
-      if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::msgpack, "string")))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format_t::msgpack, "string")))
       {
         return false;
       }
@@ -14981,14 +14978,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool get_msgpack_array(const std::size_t len)
     {
-      if (JSON_HEDLEY_UNLIKELY(!sax->start_array(len)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_array(len)))
       {
         return false;
       }
 
       for (std::size_t i = 0; i < len; ++i)
       {
-        if (JSON_HEDLEY_UNLIKELY(!parse_msgpack_internal()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!parse_msgpack_internal()))
         {
           return false;
         }
@@ -15003,7 +15000,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     bool get_msgpack_object(const std::size_t len)
     {
-      if (JSON_HEDLEY_UNLIKELY(!sax->start_object(len)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_object(len)))
       {
         return false;
       }
@@ -15012,12 +15009,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       for (std::size_t i = 0; i < len; ++i)
       {
         get();
-        if (JSON_HEDLEY_UNLIKELY(!get_msgpack_string(key) || !sax->key(key)))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!get_msgpack_string(key) || !sax->key(key)))
         {
           return false;
         }
 
-        if (JSON_HEDLEY_UNLIKELY(!parse_msgpack_internal()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!parse_msgpack_internal()))
         {
           return false;
         }
@@ -15064,7 +15061,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         get(); // TODO(niels): may we ignore N here?
       }
 
-      if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "value")))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "value")))
       {
         return false;
       }
@@ -15156,7 +15153,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       size_t dimlen = 0;
       bool no_ndarray = true;
 
-      if (JSON_HEDLEY_UNLIKELY(!get_ubjson_size_type(size_and_type, no_ndarray)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_size_type(size_and_type, no_ndarray)))
       {
         return false;
       }
@@ -15169,7 +15166,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           {
             for (std::size_t i = 0; i < size_and_type.first; ++i)
             {
-              if (JSON_HEDLEY_UNLIKELY(
+              if (_azure_JSON_HEDLEY_UNLIKELY(
                       !get_ubjson_size_value(dimlen, no_ndarray, size_and_type.second)))
               {
                 return false;
@@ -15182,7 +15179,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         {
           for (std::size_t i = 0; i < size_and_type.first; ++i)
           {
-            if (JSON_HEDLEY_UNLIKELY(!get_ubjson_size_value(dimlen, no_ndarray)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_size_value(dimlen, no_ndarray)))
             {
               return false;
             }
@@ -15194,7 +15191,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       {
         while (current != ']')
         {
-          if (JSON_HEDLEY_UNLIKELY(!get_ubjson_size_value(dimlen, no_ndarray, current)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_size_value(dimlen, no_ndarray, current)))
           {
             return false;
           }
@@ -15226,7 +15223,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       {
         case 'U': {
           std::uint8_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15236,7 +15233,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
         case 'i': {
           std::int8_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15260,7 +15257,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
         case 'I': {
           std::int16_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15282,7 +15279,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
         case 'l': {
           std::int32_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15304,7 +15301,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
         case 'L': {
           std::int64_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15340,7 +15337,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             break;
           }
           std::uint16_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15354,7 +15351,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             break;
           }
           std::uint32_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15368,7 +15365,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             break;
           }
           std::uint64_t number{};
-          if (JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_number(input_format, number)))
           {
             return false;
           }
@@ -15405,7 +15402,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                     nullptr));
           }
           std::vector<size_t> dim;
-          if (JSON_HEDLEY_UNLIKELY(!get_ubjson_ndarray_size(dim)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_ndarray_size(dim)))
           {
             return false;
           }
@@ -15429,7 +15426,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             string_t key = "_ArraySize_";
-            if (JSON_HEDLEY_UNLIKELY(
+            if (_azure_JSON_HEDLEY_UNLIKELY(
                     !sax->start_object(3) || !sax->key(key) || !sax->start_array(dim.size())))
             {
               return false;
@@ -15452,7 +15449,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                             input_format, "excessive ndarray size caused overflow", "size"),
                         nullptr));
               }
-              if (JSON_HEDLEY_UNLIKELY(!sax->number_unsigned(static_cast<number_unsigned_t>(i))))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->number_unsigned(static_cast<number_unsigned_t>(i))))
               {
                 return false;
               }
@@ -15515,7 +15512,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       {
         result.second = get(); // must not ignore 'N', because 'N' maybe the type
         if (input_format == input_format_t::bjdata
-            && JSON_HEDLEY_UNLIKELY(std::binary_search(
+            && _azure_JSON_HEDLEY_UNLIKELY(std::binary_search(
                 bjd_optimized_type_markers.begin(),
                 bjd_optimized_type_markers.end(),
                 result.second)))
@@ -15534,15 +15531,15 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                   nullptr));
         }
 
-        if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "type")))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "type")))
         {
           return false;
         }
 
         get_ignore_noop();
-        if (JSON_HEDLEY_UNLIKELY(current != '#'))
+        if (_azure_JSON_HEDLEY_UNLIKELY(current != '#'))
         {
-          if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "value")))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "value")))
           {
             return false;
           }
@@ -15677,12 +15674,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             break;
           }
           const auto byte1_raw = get();
-          if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "number")))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "number")))
           {
             return false;
           }
           const auto byte2_raw = get();
-          if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "number")))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "number")))
           {
             return false;
           }
@@ -15702,8 +15699,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           const double val = [&half] {
             const int exp = (half >> 10u) & 0x1Fu;
             const unsigned int mant = half & 0x3FFu;
-            JSON_ASSERT(0 <= exp && exp <= 32);
-            JSON_ASSERT(mant <= 1024);
+            _azure_JSON_ASSERT(0 <= exp && exp <= 32);
+            _azure_JSON_ASSERT(mant <= 1024);
             switch (exp)
             {
               case 0:
@@ -15740,11 +15737,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         case 'C': // char
         {
           get();
-          if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "char")))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "char")))
           {
             return false;
           }
-          if (JSON_HEDLEY_UNLIKELY(current > 127))
+          if (_azure_JSON_HEDLEY_UNLIKELY(current > 127))
           {
             auto last_token = get_token_string();
             return sax->parse_error(
@@ -15798,7 +15795,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     bool get_ubjson_array()
     {
       std::pair<std::size_t, char_int_type> size_and_type;
-      if (JSON_HEDLEY_UNLIKELY(!get_ubjson_size_type(size_and_type)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_size_type(size_and_type)))
       {
         return false;
       }
@@ -15821,7 +15818,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             size_and_type.second,
             [](const bjd_type& p, char_int_type t) { return p.first < t; });
         string_t key = "_ArrayType_";
-        if (JSON_HEDLEY_UNLIKELY(it == bjd_types_map.end() || it->first != size_and_type.second))
+        if (_azure_JSON_HEDLEY_UNLIKELY(it == bjd_types_map.end() || it->first != size_and_type.second))
         {
           auto last_token = get_token_string();
           return sax->parse_error(
@@ -15835,7 +15832,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         }
 
         string_t type = it->second; // sax->string() takes a reference
-        if (JSON_HEDLEY_UNLIKELY(!sax->key(key) || !sax->string(type)))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!sax->key(key) || !sax->string(type)))
         {
           return false;
         }
@@ -15846,14 +15843,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         }
 
         key = "_ArrayData_";
-        if (JSON_HEDLEY_UNLIKELY(!sax->key(key) || !sax->start_array(size_and_type.first)))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!sax->key(key) || !sax->start_array(size_and_type.first)))
         {
           return false;
         }
 
         for (std::size_t i = 0; i < size_and_type.first; ++i)
         {
-          if (JSON_HEDLEY_UNLIKELY(!get_ubjson_value(size_and_type.second)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_value(size_and_type.second)))
           {
             return false;
           }
@@ -15864,7 +15861,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
       if (size_and_type.first != npos)
       {
-        if (JSON_HEDLEY_UNLIKELY(!sax->start_array(size_and_type.first)))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_array(size_and_type.first)))
         {
           return false;
         }
@@ -15875,7 +15872,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           {
             for (std::size_t i = 0; i < size_and_type.first; ++i)
             {
-              if (JSON_HEDLEY_UNLIKELY(!get_ubjson_value(size_and_type.second)))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_value(size_and_type.second)))
               {
                 return false;
               }
@@ -15886,7 +15883,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         {
           for (std::size_t i = 0; i < size_and_type.first; ++i)
           {
-            if (JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal()))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal()))
             {
               return false;
             }
@@ -15895,14 +15892,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
       else
       {
-        if (JSON_HEDLEY_UNLIKELY(!sax->start_array(static_cast<std::size_t>(-1))))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_array(static_cast<std::size_t>(-1))))
         {
           return false;
         }
 
         while (current != ']')
         {
-          if (JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal(false)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal(false)))
           {
             return false;
           }
@@ -15919,7 +15916,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     bool get_ubjson_object()
     {
       std::pair<std::size_t, char_int_type> size_and_type;
-      if (JSON_HEDLEY_UNLIKELY(!get_ubjson_size_type(size_and_type)))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_size_type(size_and_type)))
       {
         return false;
       }
@@ -15946,7 +15943,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       string_t key;
       if (size_and_type.first != npos)
       {
-        if (JSON_HEDLEY_UNLIKELY(!sax->start_object(size_and_type.first)))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_object(size_and_type.first)))
         {
           return false;
         }
@@ -15955,11 +15952,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         {
           for (std::size_t i = 0; i < size_and_type.first; ++i)
           {
-            if (JSON_HEDLEY_UNLIKELY(!get_ubjson_string(key) || !sax->key(key)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_string(key) || !sax->key(key)))
             {
               return false;
             }
-            if (JSON_HEDLEY_UNLIKELY(!get_ubjson_value(size_and_type.second)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_value(size_and_type.second)))
             {
               return false;
             }
@@ -15970,11 +15967,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         {
           for (std::size_t i = 0; i < size_and_type.first; ++i)
           {
-            if (JSON_HEDLEY_UNLIKELY(!get_ubjson_string(key) || !sax->key(key)))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_string(key) || !sax->key(key)))
             {
               return false;
             }
-            if (JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal()))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal()))
             {
               return false;
             }
@@ -15984,18 +15981,18 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
       else
       {
-        if (JSON_HEDLEY_UNLIKELY(!sax->start_object(static_cast<std::size_t>(-1))))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_object(static_cast<std::size_t>(-1))))
         {
           return false;
         }
 
         while (current != '}')
         {
-          if (JSON_HEDLEY_UNLIKELY(!get_ubjson_string(key, false) || !sax->key(key)))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!get_ubjson_string(key, false) || !sax->key(key)))
           {
             return false;
           }
-          if (JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal()))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!parse_ubjson_internal()))
           {
             return false;
           }
@@ -16016,7 +16013,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       std::size_t size{};
       bool no_ndarray = true;
       auto res = get_ubjson_size_value(size, no_ndarray);
-      if (JSON_HEDLEY_UNLIKELY(!res))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!res))
       {
         return res;
       }
@@ -16026,7 +16023,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       for (std::size_t i = 0; i < size; ++i)
       {
         get();
-        if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "number")))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "number")))
         {
           return false;
         }
@@ -16043,7 +16040,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
       using token_type = typename detail::lexer_base<BasicJsonType>::token_type;
 
-      if (JSON_HEDLEY_UNLIKELY(result_remainder != token_type::end_of_input))
+      if (_azure_JSON_HEDLEY_UNLIKELY(result_remainder != token_type::end_of_input))
       {
         return sax->parse_error(
             chars_read,
@@ -16150,7 +16147,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       for (std::size_t i = 0; i < sizeof(NumberType); ++i)
       {
         get();
-        if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(format, "number")))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(format, "number")))
         {
           return false;
         }
@@ -16192,7 +16189,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       for (NumberType i = 0; i < len; i++)
       {
         get();
-        if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(format, "string")))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(format, "string")))
         {
           success = false;
           break;
@@ -16223,7 +16220,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       for (NumberType i = 0; i < len; i++)
       {
         get();
-        if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(format, "binary")))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!unexpect_eof(format, "binary")))
         {
           success = false;
           break;
@@ -16238,10 +16235,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     @param[in] context  further context information (for diagnostics)
     @return whether the last read character is not EOF
     */
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     bool unexpect_eof(const input_format_t format, const char* context) const
     {
-      if (JSON_HEDLEY_UNLIKELY(current == char_traits<char_type>::eof()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(current == char_traits<char_type>::eof()))
       {
         return sax->parse_error(
             chars_read,
@@ -16307,7 +16304,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
         case input_format_t::json: // LCOV_EXCL_LINE
         default: // LCOV_EXCL_LINE
-          JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+          _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                               // LCOV_EXCL_LINE
       }
 
@@ -16315,7 +16312,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
   private:
-    static JSON_INLINE_VARIABLE constexpr std::size_t npos = static_cast<std::size_t>(-1);
+    static _azure_JSON_INLINE_VARIABLE constexpr std::size_t npos = static_cast<std::size_t>(-1);
 
     /// input adapter
     InputAdapterType ia;
@@ -16336,10 +16333,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     json_sax_t* sax = nullptr;
 
     // excluded markers in bjdata optimized type
-#define JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_ \
+#define _azure_JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_ \
   make_array<char_int_type>('F', 'H', 'N', 'S', 'T', 'Z', '[', '{')
 
-#define JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_ \
+#define _azure_JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_ \
   make_array<bjd_type>( \
       bjd_type{'C', "char"}, \
       bjd_type{'D', "double"}, \
@@ -16353,23 +16350,23 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       bjd_type{'m', "uint32"}, \
       bjd_type{'u', "uint16"})
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         // lookup tables
         // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
         const decltype(
-            JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_) bjd_optimized_type_markers
-        = JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_;
+            _azure_JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_) bjd_optimized_type_markers
+        = _azure_JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_;
 
     using bjd_type = std::pair<char_int_type, string_t>;
     // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
-    const decltype(JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_) bjd_types_map
-        = JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_;
+    const decltype(_azure_JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_) bjd_types_map
+        = _azure_JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_;
 
-#undef JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_
-#undef JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_
+#undef _azure_JSON_BINARY_READER_MAKE_BJD_OPTIMIZED_TYPE_MARKERS_
+#undef _azure_JSON_BINARY_READER_MAKE_BJD_TYPES_MAP_
   };
 
-#ifndef JSON_HAS_CPP_17
+#ifndef _azure_JSON_HAS_CPP_17
   template <typename BasicJsonType, typename InputAdapterType, typename SAX>
   constexpr std::size_t binary_reader<BasicJsonType, InputAdapterType, SAX>::npos;
 #endif
@@ -16550,7 +16547,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
     template <typename SAX>
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     bool sax_parse(SAX* sax, const bool strict = true)
     {
       (void)detail::is_sax_static_asserts<SAX, BasicJsonType>{};
@@ -16573,7 +16570,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     }
 
   private:
-    template <typename SAX> JSON_HEDLEY_NON_NULL(2) bool sax_parse_internal(SAX* sax)
+    template <typename SAX> _azure_JSON_HEDLEY_NON_NULL(2) bool sax_parse_internal(SAX* sax)
     {
       // stack to remember the hierarchy of structured values we are parsing
       // true = array; false = object
@@ -16589,7 +16586,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           switch (last_token)
           {
             case token_type::begin_object: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->start_object(static_cast<std::size_t>(-1))))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_object(static_cast<std::size_t>(-1))))
               {
                 return false;
               }
@@ -16597,7 +16594,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
               // closing } -> we are done
               if (get_token() == token_type::end_object)
               {
-                if (JSON_HEDLEY_UNLIKELY(!sax->end_object()))
+                if (_azure_JSON_HEDLEY_UNLIKELY(!sax->end_object()))
                 {
                   return false;
                 }
@@ -16605,7 +16602,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
               }
 
               // parse key
-              if (JSON_HEDLEY_UNLIKELY(last_token != token_type::value_string))
+              if (_azure_JSON_HEDLEY_UNLIKELY(last_token != token_type::value_string))
               {
                 return sax->parse_error(
                     m_lexer.get_position(),
@@ -16616,13 +16613,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                         exception_message(token_type::value_string, "object key"),
                         nullptr));
               }
-              if (JSON_HEDLEY_UNLIKELY(!sax->key(m_lexer.get_string())))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->key(m_lexer.get_string())))
               {
                 return false;
               }
 
               // parse separator (:)
-              if (JSON_HEDLEY_UNLIKELY(get_token() != token_type::name_separator))
+              if (_azure_JSON_HEDLEY_UNLIKELY(get_token() != token_type::name_separator))
               {
                 return sax->parse_error(
                     m_lexer.get_position(),
@@ -16643,7 +16640,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             case token_type::begin_array: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->start_array(static_cast<std::size_t>(-1))))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->start_array(static_cast<std::size_t>(-1))))
               {
                 return false;
               }
@@ -16651,7 +16648,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
               // closing ] -> we are done
               if (get_token() == token_type::end_array)
               {
-                if (JSON_HEDLEY_UNLIKELY(!sax->end_array()))
+                if (_azure_JSON_HEDLEY_UNLIKELY(!sax->end_array()))
                 {
                   return false;
                 }
@@ -16668,7 +16665,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             case token_type::value_float: {
               const auto res = m_lexer.get_number_float();
 
-              if (JSON_HEDLEY_UNLIKELY(!std::isfinite(res)))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!std::isfinite(res)))
               {
                 return sax->parse_error(
                     m_lexer.get_position(),
@@ -16679,7 +16676,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                         nullptr));
               }
 
-              if (JSON_HEDLEY_UNLIKELY(!sax->number_float(res, m_lexer.get_string())))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->number_float(res, m_lexer.get_string())))
               {
                 return false;
               }
@@ -16688,7 +16685,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             case token_type::literal_false: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->boolean(false)))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->boolean(false)))
               {
                 return false;
               }
@@ -16696,7 +16693,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             case token_type::literal_null: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->null()))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->null()))
               {
                 return false;
               }
@@ -16704,7 +16701,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             case token_type::literal_true: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->boolean(true)))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->boolean(true)))
               {
                 return false;
               }
@@ -16712,7 +16709,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             case token_type::value_integer: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->number_integer(m_lexer.get_number_integer())))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->number_integer(m_lexer.get_number_integer())))
               {
                 return false;
               }
@@ -16720,7 +16717,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             case token_type::value_string: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->string(m_lexer.get_string())))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->string(m_lexer.get_string())))
               {
                 return false;
               }
@@ -16728,7 +16725,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             case token_type::value_unsigned: {
-              if (JSON_HEDLEY_UNLIKELY(!sax->number_unsigned(m_lexer.get_number_unsigned())))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!sax->number_unsigned(m_lexer.get_number_unsigned())))
               {
                 return false;
               }
@@ -16747,7 +16744,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                       nullptr));
             }
             case token_type::end_of_input: {
-              if (JSON_HEDLEY_UNLIKELY(m_lexer.get_position().chars_read_total == 1))
+              if (_azure_JSON_HEDLEY_UNLIKELY(m_lexer.get_position().chars_read_total == 1))
               {
                 return sax->parse_error(
                     m_lexer.get_position(),
@@ -16811,9 +16808,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           }
 
           // closing ]
-          if (JSON_HEDLEY_LIKELY(last_token == token_type::end_array))
+          if (_azure_JSON_HEDLEY_LIKELY(last_token == token_type::end_array))
           {
-            if (JSON_HEDLEY_UNLIKELY(!sax->end_array()))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!sax->end_array()))
             {
               return false;
             }
@@ -16822,7 +16819,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             // new value, we need to evaluate the new state first.
             // By setting skip_to_state_evaluation to false, we
             // are effectively jumping to the beginning of this if.
-            JSON_ASSERT(!states.empty());
+            _azure_JSON_ASSERT(!states.empty());
             states.pop_back();
             skip_to_state_evaluation = true;
             continue;
@@ -16844,7 +16841,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         if (get_token() == token_type::value_separator)
         {
           // parse key
-          if (JSON_HEDLEY_UNLIKELY(get_token() != token_type::value_string))
+          if (_azure_JSON_HEDLEY_UNLIKELY(get_token() != token_type::value_string))
           {
             return sax->parse_error(
                 m_lexer.get_position(),
@@ -16856,13 +16853,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
                     nullptr));
           }
 
-          if (JSON_HEDLEY_UNLIKELY(!sax->key(m_lexer.get_string())))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!sax->key(m_lexer.get_string())))
           {
             return false;
           }
 
           // parse separator (:)
-          if (JSON_HEDLEY_UNLIKELY(get_token() != token_type::name_separator))
+          if (_azure_JSON_HEDLEY_UNLIKELY(get_token() != token_type::name_separator))
           {
             return sax->parse_error(
                 m_lexer.get_position(),
@@ -16880,9 +16877,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         }
 
         // closing }
-        if (JSON_HEDLEY_LIKELY(last_token == token_type::end_object))
+        if (_azure_JSON_HEDLEY_LIKELY(last_token == token_type::end_object))
         {
-          if (JSON_HEDLEY_UNLIKELY(!sax->end_object()))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!sax->end_object()))
           {
             return false;
           }
@@ -16891,7 +16888,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           // new value, we need to evaluate the new state first.
           // By setting skip_to_state_evaluation to false, we
           // are effectively jumping to the beginning of this if.
-          JSON_ASSERT(!states.empty());
+          _azure_JSON_ASSERT(!states.empty());
           states.pop_back();
           skip_to_state_evaluation = true;
           continue;
@@ -16995,7 +16992,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     static constexpr difference_type begin_value = 0;
     static constexpr difference_type end_value = begin_value + 1;
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         /// iterator as signed integer type
         difference_type m_it
         = (std::numeric_limits<std::ptrdiff_t>::min)();
@@ -17220,7 +17217,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     explicit iter_impl(pointer object) noexcept : m_object(object)
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
@@ -17310,7 +17307,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       return *this;
     }
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         /*!
         @brief set the iterator to the first value
         @pre The iterator is initialized; i.e. `m_object != nullptr`.
@@ -17318,7 +17315,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         void
         set_begin() noexcept
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
@@ -17358,7 +17355,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     void set_end() noexcept
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
@@ -17394,22 +17391,22 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     reference operator*() const
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
         case value_t::object: {
-          JSON_ASSERT(m_it.object_iterator != m_object->m_data.m_value.object->end());
+          _azure_JSON_ASSERT(m_it.object_iterator != m_object->m_data.m_value.object->end());
           return m_it.object_iterator->second;
         }
 
         case value_t::array: {
-          JSON_ASSERT(m_it.array_iterator != m_object->m_data.m_value.array->end());
+          _azure_JSON_ASSERT(m_it.array_iterator != m_object->m_data.m_value.array->end());
           return *m_it.array_iterator;
         }
 
         case value_t::null:
-          JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
+          _azure_JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
 
         case value_t::string:
         case value_t::boolean:
@@ -17419,12 +17416,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         case value_t::binary:
         case value_t::discarded:
         default: {
-          if (JSON_HEDLEY_LIKELY(m_it.primitive_iterator.is_begin()))
+          if (_azure_JSON_HEDLEY_LIKELY(m_it.primitive_iterator.is_begin()))
           {
             return *m_object;
           }
 
-          JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
+          _azure_JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
         }
       }
     }
@@ -17435,17 +17432,17 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     pointer operator->() const
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
         case value_t::object: {
-          JSON_ASSERT(m_it.object_iterator != m_object->m_data.m_value.object->end());
+          _azure_JSON_ASSERT(m_it.object_iterator != m_object->m_data.m_value.object->end());
           return &(m_it.object_iterator->second);
         }
 
         case value_t::array: {
-          JSON_ASSERT(m_it.array_iterator != m_object->m_data.m_value.array->end());
+          _azure_JSON_ASSERT(m_it.array_iterator != m_object->m_data.m_value.array->end());
           return &*m_it.array_iterator;
         }
 
@@ -17458,12 +17455,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         case value_t::binary:
         case value_t::discarded:
         default: {
-          if (JSON_HEDLEY_LIKELY(m_it.primitive_iterator.is_begin()))
+          if (_azure_JSON_HEDLEY_LIKELY(m_it.primitive_iterator.is_begin()))
           {
             return m_object;
           }
 
-          JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
+          _azure_JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
         }
       }
     }
@@ -17485,7 +17482,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     iter_impl& operator++()
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
@@ -17533,7 +17530,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     iter_impl& operator--()
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
@@ -17577,13 +17574,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     bool operator==(const IterImpl& other) const
     {
       // if objects are not the same, the comparison is undefined
-      if (JSON_HEDLEY_UNLIKELY(m_object != other.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(m_object != other.m_object))
       {
-        JSON_THROW(invalid_iterator::create(
+        _azure_JSON_THROW(invalid_iterator::create(
             212, "cannot compare iterators of different containers", m_object));
       }
 
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
@@ -17628,18 +17625,18 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     bool operator<(const iter_impl& other) const
     {
       // if objects are not the same, the comparison is undefined
-      if (JSON_HEDLEY_UNLIKELY(m_object != other.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(m_object != other.m_object))
       {
-        JSON_THROW(invalid_iterator::create(
+        _azure_JSON_THROW(invalid_iterator::create(
             212, "cannot compare iterators of different containers", m_object));
       }
 
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
         case value_t::object:
-          JSON_THROW(
+          _azure_JSON_THROW(
               invalid_iterator::create(213, "cannot compare order of object iterators", m_object));
 
         case value_t::array:
@@ -17682,12 +17679,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     iter_impl& operator+=(difference_type i)
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
         case value_t::object:
-          JSON_THROW(
+          _azure_JSON_THROW(
               invalid_iterator::create(209, "cannot use offsets with object iterators", m_object));
 
         case value_t::array: {
@@ -17757,12 +17754,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     difference_type operator-(const iter_impl& other) const
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
         case value_t::object:
-          JSON_THROW(
+          _azure_JSON_THROW(
               invalid_iterator::create(209, "cannot use offsets with object iterators", m_object));
 
         case value_t::array:
@@ -17787,19 +17784,19 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     reference operator[](difference_type n) const
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
       switch (m_object->m_data.m_type)
       {
         case value_t::object:
-          JSON_THROW(invalid_iterator::create(
+          _azure_JSON_THROW(invalid_iterator::create(
               208, "cannot use operator[] for object iterators", m_object));
 
         case value_t::array:
           return *std::next(m_it.array_iterator, n);
 
         case value_t::null:
-          JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
+          _azure_JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
 
         case value_t::string:
         case value_t::boolean:
@@ -17809,12 +17806,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         case value_t::binary:
         case value_t::discarded:
         default: {
-          if (JSON_HEDLEY_LIKELY(m_it.primitive_iterator.get_value() == -n))
+          if (_azure_JSON_HEDLEY_LIKELY(m_it.primitive_iterator.get_value() == -n))
           {
             return *m_object;
           }
 
-          JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
+          _azure_JSON_THROW(invalid_iterator::create(214, "cannot get value", m_object));
         }
       }
     }
@@ -17825,14 +17822,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     const typename object_t::key_type& key() const
     {
-      JSON_ASSERT(m_object != nullptr);
+      _azure_JSON_ASSERT(m_object != nullptr);
 
-      if (JSON_HEDLEY_LIKELY(m_object->is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(m_object->is_object()))
       {
         return m_it.object_iterator->first;
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           invalid_iterator::create(207, "cannot use key() for non-object iterators", m_object));
     }
 
@@ -17842,7 +17839,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     reference value() const { return operator*(); }
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         /// associated JSON instance
         pointer m_object
         = nullptr;
@@ -18054,7 +18051,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   /// @sa https://json.nlohmann.me/api/json_pointer/
   template <typename RefStringType> class json_pointer {
     // allow basic_json to access private members
-    NLOHMANN_BASIC_JSON_TPL_DECLARATION
+    _azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
     friend class basic_json;
 
     template <typename> friend class json_pointer;
@@ -18064,8 +18061,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       using type = T;
     };
 
-    NLOHMANN_BASIC_JSON_TPL_DECLARATION
-    struct string_t_helper<NLOHMANN_BASIC_JSON_TPL>
+    _azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
+    struct string_t_helper<_azure_NLOHMANN_BASIC_JSON_TPL>
     {
       using type = StringType;
     };
@@ -18093,7 +18090,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief return a string representation of the JSON pointer
     /// @sa https://json.nlohmann.me/api/json_pointer/operator_string/
-    JSON_HEDLEY_DEPRECATED_FOR(3.11.0, to_string())
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.0, to_string())
     operator string_t() const { return to_string(); }
 
 #ifndef JSON_NO_IO
@@ -18171,9 +18168,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @sa https://json.nlohmann.me/api/json_pointer/pop_back/
     void pop_back()
     {
-      if (JSON_HEDLEY_UNLIKELY(empty()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(empty()))
       {
-        JSON_THROW(detail::out_of_range::create(405, "JSON pointer has no parent", nullptr));
+        _azure_JSON_THROW(detail::out_of_range::create(405, "JSON pointer has no parent", nullptr));
       }
 
       reference_tokens.pop_back();
@@ -18183,9 +18180,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @sa https://json.nlohmann.me/api/json_pointer/back/
     const string_t& back() const
     {
-      if (JSON_HEDLEY_UNLIKELY(empty()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(empty()))
       {
-        JSON_THROW(detail::out_of_range::create(405, "JSON pointer has no parent", nullptr));
+        _azure_JSON_THROW(detail::out_of_range::create(405, "JSON pointer has no parent", nullptr));
       }
 
       return reference_tokens.back();
@@ -18220,16 +18217,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       using size_type = typename BasicJsonType::size_type;
 
       // error condition (cf. RFC 6901, Sect. 4)
-      if (JSON_HEDLEY_UNLIKELY(s.size() > 1 && s[0] == '0'))
+      if (_azure_JSON_HEDLEY_UNLIKELY(s.size() > 1 && s[0] == '0'))
       {
-        JSON_THROW(detail::parse_error::create(
+        _azure_JSON_THROW(detail::parse_error::create(
             106, 0, detail::concat("array index '", s, "' must not begin with '0'"), nullptr));
       }
 
       // error condition (cf. RFC 6901, Sect. 4)
-      if (JSON_HEDLEY_UNLIKELY(s.size() > 1 && !(s[0] >= '1' && s[0] <= '9')))
+      if (_azure_JSON_HEDLEY_UNLIKELY(s.size() > 1 && !(s[0] >= '1' && s[0] <= '9')))
       {
-        JSON_THROW(detail::parse_error::create(
+        _azure_JSON_THROW(detail::parse_error::create(
             109, 0, detail::concat("array index '", s, "' is not a number"), nullptr));
       }
 
@@ -18239,10 +18236,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       const unsigned long long res = std::strtoull(p, &p_end, 10); // NOLINT(runtime/int)
       if (p == p_end // invalid input or empty string
           || errno == ERANGE // out of range
-          || JSON_HEDLEY_UNLIKELY(
+          || _azure_JSON_HEDLEY_UNLIKELY(
               static_cast<std::size_t>(p_end - p) != s.size())) // incomplete read
       {
-        JSON_THROW(detail::out_of_range::create(
+        _azure_JSON_THROW(detail::out_of_range::create(
             404, detail::concat("unresolved reference token '", s, "'"), nullptr));
       }
 
@@ -18251,7 +18248,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       if (res >= static_cast<unsigned long long>(
               (std::numeric_limits<size_type>::max)())) // NOLINT(runtime/int)
       {
-        JSON_THROW(detail::out_of_range::create(
+        _azure_JSON_THROW(detail::out_of_range::create(
             410,
             detail::concat("array index ", s, " exceeds size_type"),
             nullptr)); // LCOV_EXCL_LINE
@@ -18260,11 +18257,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       return static_cast<size_type>(res);
     }
 
-    JSON_PRIVATE_UNLESS_TESTED : json_pointer top() const
+    _azure_JSON_PRIVATE_UNLESS_TESTED : json_pointer top() const
     {
-      if (JSON_HEDLEY_UNLIKELY(empty()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(empty()))
       {
-        JSON_THROW(detail::out_of_range::create(405, "JSON pointer has no parent", nullptr));
+        _azure_JSON_THROW(detail::out_of_range::create(405, "JSON pointer has no parent", nullptr));
       }
 
       json_pointer result = *this;
@@ -18331,7 +18328,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           case detail::value_t::binary:
           case detail::value_t::discarded:
           default:
-            JSON_THROW(detail::type_error::create(313, "invalid value to unflatten", &j));
+            _azure_JSON_THROW(detail::type_error::create(313, "invalid value to unflatten", &j));
         }
       }
 
@@ -18406,7 +18403,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           case detail::value_t::binary:
           case detail::value_t::discarded:
           default:
-            JSON_THROW(detail::out_of_range::create(
+            _azure_JSON_THROW(detail::out_of_range::create(
                 404, detail::concat("unresolved reference token '", reference_token, "'"), ptr));
         }
       }
@@ -18433,10 +18430,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           }
 
           case detail::value_t::array: {
-            if (JSON_HEDLEY_UNLIKELY(reference_token == "-"))
+            if (_azure_JSON_HEDLEY_UNLIKELY(reference_token == "-"))
             {
               // "-" always fails the range check
-              JSON_THROW(detail::out_of_range::create(
+              _azure_JSON_THROW(detail::out_of_range::create(
                   402,
                   detail::concat(
                       "array index '-' (",
@@ -18459,7 +18456,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           case detail::value_t::binary:
           case detail::value_t::discarded:
           default:
-            JSON_THROW(detail::out_of_range::create(
+            _azure_JSON_THROW(detail::out_of_range::create(
                 404, detail::concat("unresolved reference token '", reference_token, "'"), ptr));
         }
       }
@@ -18494,10 +18491,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           }
 
           case detail::value_t::array: {
-            if (JSON_HEDLEY_UNLIKELY(reference_token == "-"))
+            if (_azure_JSON_HEDLEY_UNLIKELY(reference_token == "-"))
             {
               // "-" cannot be used for const access
-              JSON_THROW(detail::out_of_range::create(
+              _azure_JSON_THROW(detail::out_of_range::create(
                   402,
                   detail::concat(
                       "array index '-' (",
@@ -18520,7 +18517,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           case detail::value_t::binary:
           case detail::value_t::discarded:
           default:
-            JSON_THROW(detail::out_of_range::create(
+            _azure_JSON_THROW(detail::out_of_range::create(
                 404, detail::concat("unresolved reference token '", reference_token, "'"), ptr));
         }
       }
@@ -18548,10 +18545,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           }
 
           case detail::value_t::array: {
-            if (JSON_HEDLEY_UNLIKELY(reference_token == "-"))
+            if (_azure_JSON_HEDLEY_UNLIKELY(reference_token == "-"))
             {
               // "-" always fails the range check
-              JSON_THROW(detail::out_of_range::create(
+              _azure_JSON_THROW(detail::out_of_range::create(
                   402,
                   detail::concat(
                       "array index '-' (",
@@ -18574,7 +18571,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           case detail::value_t::binary:
           case detail::value_t::discarded:
           default:
-            JSON_THROW(detail::out_of_range::create(
+            _azure_JSON_THROW(detail::out_of_range::create(
                 404, detail::concat("unresolved reference token '", reference_token, "'"), ptr));
         }
       }
@@ -18604,28 +18601,28 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           }
 
           case detail::value_t::array: {
-            if (JSON_HEDLEY_UNLIKELY(reference_token == "-"))
+            if (_azure_JSON_HEDLEY_UNLIKELY(reference_token == "-"))
             {
               // "-" always fails the range check
               return false;
             }
-            if (JSON_HEDLEY_UNLIKELY(
+            if (_azure_JSON_HEDLEY_UNLIKELY(
                     reference_token.size() == 1
                     && !("0" <= reference_token && reference_token <= "9")))
             {
               // invalid char
               return false;
             }
-            if (JSON_HEDLEY_UNLIKELY(reference_token.size() > 1))
+            if (_azure_JSON_HEDLEY_UNLIKELY(reference_token.size() > 1))
             {
-              if (JSON_HEDLEY_UNLIKELY(!('1' <= reference_token[0] && reference_token[0] <= '9')))
+              if (_azure_JSON_HEDLEY_UNLIKELY(!('1' <= reference_token[0] && reference_token[0] <= '9')))
               {
                 // first char should be between '1' and '9'
                 return false;
               }
               for (std::size_t i = 1; i < reference_token.size(); i++)
               {
-                if (JSON_HEDLEY_UNLIKELY(!('0' <= reference_token[i] && reference_token[i] <= '9')))
+                if (_azure_JSON_HEDLEY_UNLIKELY(!('0' <= reference_token[i] && reference_token[i] <= '9')))
                 {
                   // other char should be between '0' and '9'
                   return false;
@@ -18684,9 +18681,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       }
 
       // check if nonempty reference string begins with slash
-      if (JSON_HEDLEY_UNLIKELY(reference_string[0] != '/'))
+      if (_azure_JSON_HEDLEY_UNLIKELY(reference_string[0] != '/'))
       {
-        JSON_THROW(detail::parse_error::create(
+        _azure_JSON_THROW(detail::parse_error::create(
             107,
             1,
             detail::concat(
@@ -18718,14 +18715,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         for (std::size_t pos = reference_token.find_first_of('~'); pos != string_t::npos;
              pos = reference_token.find_first_of('~', pos + 1))
         {
-          JSON_ASSERT(reference_token[pos] == '~');
+          _azure_JSON_ASSERT(reference_token[pos] == '~');
 
           // ~ must be followed by 0 or 1
-          if (JSON_HEDLEY_UNLIKELY(
+          if (_azure_JSON_HEDLEY_UNLIKELY(
                   pos == reference_token.size() - 1
                   || (reference_token[pos + 1] != '0' && reference_token[pos + 1] != '1')))
           {
-            JSON_THROW(detail::parse_error::create(
+            _azure_JSON_THROW(detail::parse_error::create(
                 108, 0, "escape character '~' must be followed with '0' or '1'", nullptr));
           }
         }
@@ -18822,9 +18819,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     */
     template <typename BasicJsonType> static BasicJsonType unflatten(const BasicJsonType& value)
     {
-      if (JSON_HEDLEY_UNLIKELY(!value.is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!value.is_object()))
       {
-        JSON_THROW(detail::type_error::create(314, "only objects can be unflattened", &value));
+        _azure_JSON_THROW(detail::type_error::create(314, "only objects can be unflattened", &value));
       }
 
       BasicJsonType result;
@@ -18832,9 +18829,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       // iterate the JSON object values
       for (const auto& element : *value.m_data.m_value.object)
       {
-        if (JSON_HEDLEY_UNLIKELY(!element.second.is_primitive()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!element.second.is_primitive()))
         {
-          JSON_THROW(detail::type_error::create(
+          _azure_JSON_THROW(detail::type_error::create(
               315, "values in object must be primitive", &element.second));
         }
 
@@ -18864,7 +18861,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 
   public:
-#if JSON_HAS_THREE_WAY_COMPARISON
+#if _azure_JSON_HAS_THREE_WAY_COMPARISON
     /// @brief compares two JSON pointers for equality
     /// @sa https://json.nlohmann.me/api/json_pointer/operator_eq/
     template <typename RefStringTypeRhs>
@@ -18875,7 +18872,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief compares JSON pointer and string for equality
     /// @sa https://json.nlohmann.me/api/json_pointer/operator_eq/
-    JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator==(json_pointer))
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator==(json_pointer))
     bool operator==(const string_t& rhs) const { return *this == json_pointer(rhs); }
 
     /// @brief 3-way compares two JSON pointers
@@ -18939,7 +18936,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     std::vector<string_t> reference_tokens;
   };
 
-#if !JSON_HAS_THREE_WAY_COMPARISON
+#if !_azure_JSON_HAS_THREE_WAY_COMPARISON
   // functions cannot be defined inside class due to ODR violations
   template <typename RefStringTypeLhs, typename RefStringTypeRhs>
   inline bool operator==(
@@ -18952,7 +18949,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   template <
       typename RefStringTypeLhs,
       typename StringType = typename json_pointer<RefStringTypeLhs>::string_t>
-  JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator==(json_pointer, json_pointer))
+  _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator==(json_pointer, json_pointer))
   inline bool operator==(const json_pointer<RefStringTypeLhs>& lhs, const StringType& rhs)
   {
     return lhs == json_pointer<RefStringTypeLhs>(rhs);
@@ -18961,7 +18958,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   template <
       typename RefStringTypeRhs,
       typename StringType = typename json_pointer<RefStringTypeRhs>::string_t>
-  JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator==(json_pointer, json_pointer))
+  _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator==(json_pointer, json_pointer))
   inline bool operator==(const StringType& lhs, const json_pointer<RefStringTypeRhs>& rhs)
   {
     return json_pointer<RefStringTypeRhs>(lhs) == rhs;
@@ -18978,7 +18975,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   template <
       typename RefStringTypeLhs,
       typename StringType = typename json_pointer<RefStringTypeLhs>::string_t>
-  JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator!=(json_pointer, json_pointer))
+  _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator!=(json_pointer, json_pointer))
   inline bool operator!=(const json_pointer<RefStringTypeLhs>& lhs, const StringType& rhs)
   {
     return !(lhs == rhs);
@@ -18987,7 +18984,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   template <
       typename RefStringTypeRhs,
       typename StringType = typename json_pointer<RefStringTypeRhs>::string_t>
-  JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator!=(json_pointer, json_pointer))
+  _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.2, operator!=(json_pointer, json_pointer))
   inline bool operator!=(const StringType& lhs, const json_pointer<RefStringTypeRhs>& rhs)
   {
     return !(lhs == rhs);
@@ -19151,7 +19148,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
     void write_character(CharType c) override { v.push_back(c); }
 
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     void write_characters(const CharType* s, std::size_t length) override
     {
       v.insert(v.end(), s, s + length);
@@ -19170,7 +19167,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
     void write_character(CharType c) override { stream.put(c); }
 
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     void write_characters(const CharType* s, std::size_t length) override
     {
       stream.write(s, static_cast<std::streamsize>(length));
@@ -19189,7 +19186,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
     void write_character(CharType c) override { str.push_back(c); }
 
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     void write_characters(const CharType* s, std::size_t length) override { str.append(s, length); }
 
   private:
@@ -19249,7 +19246,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     explicit binary_writer(output_adapter_t<CharType> adapter) : oa(std::move(adapter))
     {
-      JSON_ASSERT(oa);
+      _azure_JSON_ASSERT(oa);
     }
 
     /*!
@@ -19275,7 +19272,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         case value_t::binary:
         case value_t::discarded:
         default: {
-          JSON_THROW(type_error::create(
+          _azure_JSON_THROW(type_error::create(
               317,
               concat("to serialize to BSON, top-level type must be object, but is ", j.type_name()),
               &j));
@@ -19983,7 +19980,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           bool prefix_required = true;
           if (use_type && !j.m_data.m_value.array->empty())
           {
-            JSON_ASSERT(use_count);
+            _azure_JSON_ASSERT(use_count);
             const CharType first_prefix = ubjson_prefix(j.front(), use_bjdata);
             const bool same_prefix = std::all_of(
                 j.begin() + 1, j.end(), [this, first_prefix, use_bjdata](const BasicJsonType& v) {
@@ -20030,7 +20027,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
           if (use_type && !j.m_data.m_value.binary->empty())
           {
-            JSON_ASSERT(use_count);
+            _azure_JSON_ASSERT(use_count);
             oa->write_character(to_char_type('$'));
             oa->write_character('U');
           }
@@ -20088,7 +20085,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           bool prefix_required = true;
           if (use_type && !j.m_data.m_value.object->empty())
           {
-            JSON_ASSERT(use_count);
+            _azure_JSON_ASSERT(use_count);
             const CharType first_prefix = ubjson_prefix(j.front(), use_bjdata);
             const bool same_prefix = std::all_of(
                 j.begin(), j.end(), [this, first_prefix, use_bjdata](const BasicJsonType& v) {
@@ -20148,9 +20145,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     static std::size_t calc_bson_entry_header_size(const string_t& name, const BasicJsonType& j)
     {
       const auto it = name.find(static_cast<typename string_t::value_type>(0));
-      if (JSON_HEDLEY_UNLIKELY(it != BasicJsonType::string_t::npos))
+      if (_azure_JSON_HEDLEY_UNLIKELY(it != BasicJsonType::string_t::npos))
       {
-        JSON_THROW(out_of_range::create(
+        _azure_JSON_THROW(out_of_range::create(
             409,
             concat("BSON key cannot contain code point U+0000 (at byte ", std::to_string(it), ")"),
             &j));
@@ -20272,7 +20269,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
       else
       {
-        JSON_THROW(out_of_range::create(
+        _azure_JSON_THROW(out_of_range::create(
             407,
             concat(
                 "integer number ",
@@ -20394,7 +20391,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         // LCOV_EXCL_START
         case value_t::discarded:
         default:
-          JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+          _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
           return 0ul;
           // LCOV_EXCL_STOP
       }
@@ -20440,7 +20437,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         // LCOV_EXCL_START
         case value_t::discarded:
         default:
-          JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+          _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
           return;
           // LCOV_EXCL_STOP
       }
@@ -21185,8 +21182,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       */
       static diyfp sub(const diyfp& x, const diyfp& y) noexcept
       {
-        JSON_ASSERT(x.e == y.e);
-        JSON_ASSERT(x.f >= y.f);
+        _azure_JSON_ASSERT(x.e == y.e);
+        _azure_JSON_ASSERT(x.f >= y.f);
 
         return {x.f - y.f, x.e};
       }
@@ -21263,7 +21260,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       */
       static diyfp normalize(diyfp x) noexcept
       {
-        JSON_ASSERT(x.f != 0);
+        _azure_JSON_ASSERT(x.f != 0);
 
         while ((x.f >> 63u) == 0)
         {
@@ -21282,8 +21279,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       {
         const int delta = x.e - target_exponent;
 
-        JSON_ASSERT(delta >= 0);
-        JSON_ASSERT(((x.f << delta) >> delta) == x.f);
+        _azure_JSON_ASSERT(delta >= 0);
+        _azure_JSON_ASSERT(((x.f << delta) >> delta) == x.f);
 
         return {x.f << delta, target_exponent};
       }
@@ -21304,8 +21301,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     */
     template <typename FloatType> boundaries compute_boundaries(FloatType value)
     {
-      JSON_ASSERT(std::isfinite(value));
-      JSON_ASSERT(value > 0);
+      _azure_JSON_ASSERT(std::isfinite(value));
+      _azure_JSON_ASSERT(value > 0);
 
       // Convert the IEEE representation into a diyfp.
       //
@@ -21545,19 +21542,19 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       //      k = ceil((kAlpha - e - 1) * 0.30102999566398114)
       // for |e| <= 1500, but doesn't require floating-point operations.
       // NB: log_10(2) ~= 78913 / 2^18
-      JSON_ASSERT(e >= -1500);
-      JSON_ASSERT(e <= 1500);
+      _azure_JSON_ASSERT(e >= -1500);
+      _azure_JSON_ASSERT(e <= 1500);
       const int f = kAlpha - e - 1;
       const int k = (f * 78913) / (1 << 18) + static_cast<int>(f > 0);
 
       const int index
           = (-kCachedPowersMinDecExp + k + (kCachedPowersDecStep - 1)) / kCachedPowersDecStep;
-      JSON_ASSERT(index >= 0);
-      JSON_ASSERT(static_cast<std::size_t>(index) < kCachedPowers.size());
+      _azure_JSON_ASSERT(index >= 0);
+      _azure_JSON_ASSERT(static_cast<std::size_t>(index) < kCachedPowers.size());
 
       const cached_power cached = kCachedPowers[static_cast<std::size_t>(index)];
-      JSON_ASSERT(kAlpha <= cached.e + e + 64);
-      JSON_ASSERT(kGamma >= cached.e + e + 64);
+      _azure_JSON_ASSERT(kAlpha <= cached.e + e + 64);
+      _azure_JSON_ASSERT(kGamma >= cached.e + e + 64);
 
       return cached;
     }
@@ -21628,10 +21625,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         std::uint64_t rest,
         std::uint64_t ten_k)
     {
-      JSON_ASSERT(len >= 1);
-      JSON_ASSERT(dist <= delta);
-      JSON_ASSERT(rest <= delta);
-      JSON_ASSERT(ten_k > 0);
+      _azure_JSON_ASSERT(len >= 1);
+      _azure_JSON_ASSERT(dist <= delta);
+      _azure_JSON_ASSERT(rest <= delta);
+      _azure_JSON_ASSERT(ten_k > 0);
 
       //               <--------------------------- delta ---->
       //                                  <---- dist --------->
@@ -21655,7 +21652,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       while (rest < dist && delta - rest >= ten_k
              && (rest + ten_k < dist || dist - rest > rest + ten_k - dist))
       {
-        JSON_ASSERT(buf[len - 1] != '0');
+        _azure_JSON_ASSERT(buf[len - 1] != '0');
         buf[len - 1]--;
         rest += ten_k;
       }
@@ -21689,8 +21686,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       // Grisu2 generates the digits of M+ from left to right and stops as soon as
       // V is in [M-,M+].
 
-      JSON_ASSERT(M_plus.e >= kAlpha);
-      JSON_ASSERT(M_plus.e <= kGamma);
+      _azure_JSON_ASSERT(M_plus.e >= kAlpha);
+      _azure_JSON_ASSERT(M_plus.e <= kGamma);
 
       std::uint64_t delta
           = diyfp::sub(M_plus, M_minus).f; // (significand of (M+ - M-), implicit exponent is e)
@@ -21714,7 +21711,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       //
       // Generate the digits of the integral part p1 = d[n-1]...d[1]d[0]
 
-      JSON_ASSERT(p1 > 0);
+      _azure_JSON_ASSERT(p1 > 0);
 
       std::uint32_t pow10{};
       const int k = find_largest_pow10(p1, pow10);
@@ -21750,7 +21747,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         //      M+ = buffer * 10^n + (d * 10^(n-1) + r) + p2 * 2^e
         //         = (buffer * 10 + d) * 10^(n-1) + (r + p2 * 2^e)
         //
-        JSON_ASSERT(d <= 9);
+        _azure_JSON_ASSERT(d <= 9);
         buffer[length++] = static_cast<char>('0' + d); // buffer := buffer * 10 + d
         //
         //      M+ = buffer * 10^(n-1) + (r + p2 * 2^e)
@@ -21837,7 +21834,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       //
       // and stop as soon as 10^-m * r * 2^e <= delta * 2^e
 
-      JSON_ASSERT(p2 > delta);
+      _azure_JSON_ASSERT(p2 > delta);
 
       int m = 0;
       for (;;)
@@ -21850,7 +21847,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         //         buffer * 10^-m + 10^-m * (1/10 * ((10*p2 div 2^-e) * 2^-e +
         //         (10*p2 mod 2^-e)) * 2^e
         //
-        JSON_ASSERT(p2 <= (std::numeric_limits<std::uint64_t>::max)() / 10);
+        _azure_JSON_ASSERT(p2 <= (std::numeric_limits<std::uint64_t>::max)() / 10);
         p2 *= 10;
         const std::uint64_t d = p2 >> -one.e; // d = (10 * p2) div 2^-e
         const std::uint64_t r = p2 & (one.f - 1); // r = (10 * p2) mod 2^-e
@@ -21859,7 +21856,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         //         = buffer * 10^-m + 10^-m * (1/10 * (d + r * 2^e))
         //         = (buffer * 10 + d) * 10^(-m-1) + 10^(-m-1) * r * 2^e
         //
-        JSON_ASSERT(d <= 9);
+        _azure_JSON_ASSERT(d <= 9);
         buffer[length++] = static_cast<char>('0' + d); // buffer := buffer * 10 + d
         //
         //      M+ = buffer * 10^(-m-1) + 10^(-m-1) * r * 2^e
@@ -21916,12 +21913,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     len is the length of the buffer (number of decimal digits)
     The buffer must be large enough, i.e. >= max_digits10.
     */
-    JSON_HEDLEY_NON_NULL(1)
+    _azure_JSON_HEDLEY_NON_NULL(1)
     inline void
     grisu2(char* buf, int& len, int& decimal_exponent, diyfp m_minus, diyfp v, diyfp m_plus)
     {
-      JSON_ASSERT(m_plus.e == m_minus.e);
-      JSON_ASSERT(m_plus.e == v.e);
+      _azure_JSON_ASSERT(m_plus.e == m_minus.e);
+      _azure_JSON_ASSERT(m_plus.e == v.e);
 
       //  --------(-----------------------+-----------------------)--------    (A)
       //          m-                      v                       m+
@@ -21977,15 +21974,15 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     The buffer must be large enough, i.e. >= max_digits10.
     */
     template <typename FloatType>
-    JSON_HEDLEY_NON_NULL(1)
+    _azure_JSON_HEDLEY_NON_NULL(1)
     void grisu2(char* buf, int& len, int& decimal_exponent, FloatType value)
     {
       static_assert(
           diyfp::kPrecision >= std::numeric_limits<FloatType>::digits + 3,
           "internal error: not enough precision");
 
-      JSON_ASSERT(std::isfinite(value));
-      JSON_ASSERT(value > 0);
+      _azure_JSON_ASSERT(std::isfinite(value));
+      _azure_JSON_ASSERT(value > 0);
 
       // If the neighbors (and boundaries) of 'value' are always computed for
       // double-precision numbers, all float's can be recovered using strtod (and
@@ -22020,12 +22017,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     @return a pointer to the element following the exponent.
     @pre -1000 < e < 1000
     */
-    JSON_HEDLEY_NON_NULL(1)
-    JSON_HEDLEY_RETURNS_NON_NULL
+    _azure_JSON_HEDLEY_NON_NULL(1)
+    _azure_JSON_HEDLEY_RETURNS_NON_NULL
     inline char* append_exponent(char* buf, int e)
     {
-      JSON_ASSERT(e > -1000);
-      JSON_ASSERT(e < 1000);
+      _azure_JSON_ASSERT(e > -1000);
+      _azure_JSON_ASSERT(e < 1000);
 
       if (e < 0)
       {
@@ -22072,12 +22069,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     @pre min_exp < 0
     @pre max_exp > 0
     */
-    JSON_HEDLEY_NON_NULL(1)
-    JSON_HEDLEY_RETURNS_NON_NULL
+    _azure_JSON_HEDLEY_NON_NULL(1)
+    _azure_JSON_HEDLEY_RETURNS_NON_NULL
     inline char* format_buffer(char* buf, int len, int decimal_exponent, int min_exp, int max_exp)
     {
-      JSON_ASSERT(min_exp < 0);
-      JSON_ASSERT(max_exp > 0);
+      _azure_JSON_ASSERT(min_exp < 0);
+      _azure_JSON_ASSERT(max_exp > 0);
 
       const int k = len;
       const int n = len + decimal_exponent;
@@ -22103,7 +22100,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         // dig.its
         // len <= max_digits10 + 1
 
-        JSON_ASSERT(k > n);
+        _azure_JSON_ASSERT(k > n);
 
         std::memmove(
             buf + (static_cast<size_t>(n) + 1),
@@ -22160,11 +22157,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   @note The result is NOT null-terminated.
   */
   template <typename FloatType>
-  JSON_HEDLEY_NON_NULL(1, 2)
-  JSON_HEDLEY_RETURNS_NON_NULL char* to_chars(char* first, const char* last, FloatType value)
+  _azure_JSON_HEDLEY_NON_NULL(1, 2)
+  _azure_JSON_HEDLEY_RETURNS_NON_NULL char* to_chars(char* first, const char* last, FloatType value)
   {
     static_cast<void>(last); // maybe unused - fix warning
-    JSON_ASSERT(std::isfinite(value));
+    _azure_JSON_ASSERT(std::isfinite(value));
 
     // Use signbit(value) instead of (value < 0) since signbit works for -0.
     if (std::signbit(value))
@@ -22189,7 +22186,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 #pragma GCC diagnostic pop
 #endif
 
-    JSON_ASSERT(last - first >= std::numeric_limits<FloatType>::max_digits10);
+    _azure_JSON_ASSERT(last - first >= std::numeric_limits<FloatType>::max_digits10);
 
     // Compute v = buffer * 10^decimal_exponent.
     // The decimal digits are stored in the buffer, which needs to be interpreted
@@ -22199,16 +22196,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     int decimal_exponent = 0;
     dtoa_impl::grisu2(first, len, decimal_exponent, value);
 
-    JSON_ASSERT(len <= std::numeric_limits<FloatType>::max_digits10);
+    _azure_JSON_ASSERT(len <= std::numeric_limits<FloatType>::max_digits10);
 
     // Format the buffer like printf("%.*g", prec, value)
     constexpr int kMinExp = -4;
     // Use digits10 here to increase compatibility with version 2.
     constexpr int kMaxExp = std::numeric_limits<FloatType>::digits10;
 
-    JSON_ASSERT(last - first >= kMaxExp + 2);
-    JSON_ASSERT(last - first >= 2 + (-kMinExp - 1) + std::numeric_limits<FloatType>::max_digits10);
-    JSON_ASSERT(last - first >= std::numeric_limits<FloatType>::max_digits10 + 6);
+    _azure_JSON_ASSERT(last - first >= kMaxExp + 2);
+    _azure_JSON_ASSERT(last - first >= 2 + (-kMinExp - 1) + std::numeric_limits<FloatType>::max_digits10);
+    _azure_JSON_ASSERT(last - first >= std::numeric_limits<FloatType>::max_digits10 + 6);
 
     return dtoa_impl::format_buffer(first, len, decimal_exponent, kMinExp, kMaxExp);
   }
@@ -22326,7 +22323,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
             // variable to hold indentation for recursive calls
             const auto new_indent = current_indent + indent_step;
-            if (JSON_HEDLEY_UNLIKELY(indent_string.size() < new_indent))
+            if (_azure_JSON_HEDLEY_UNLIKELY(indent_string.size() < new_indent))
             {
               indent_string.resize(indent_string.size() * 2, ' ');
             }
@@ -22344,8 +22341,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             // last element
-            JSON_ASSERT(i != val.m_data.m_value.object->cend());
-            JSON_ASSERT(std::next(i) == val.m_data.m_value.object->cend());
+            _azure_JSON_ASSERT(i != val.m_data.m_value.object->cend());
+            _azure_JSON_ASSERT(std::next(i) == val.m_data.m_value.object->cend());
             o->write_characters(indent_string.c_str(), new_indent);
             o->write_character('\"');
             dump_escaped(i->first, ensure_ascii);
@@ -22372,8 +22369,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             // last element
-            JSON_ASSERT(i != val.m_data.m_value.object->cend());
-            JSON_ASSERT(std::next(i) == val.m_data.m_value.object->cend());
+            _azure_JSON_ASSERT(i != val.m_data.m_value.object->cend());
+            _azure_JSON_ASSERT(std::next(i) == val.m_data.m_value.object->cend());
             o->write_character('\"');
             dump_escaped(i->first, ensure_ascii);
             o->write_characters("\":", 2);
@@ -22398,7 +22395,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
             // variable to hold indentation for recursive calls
             const auto new_indent = current_indent + indent_step;
-            if (JSON_HEDLEY_UNLIKELY(indent_string.size() < new_indent))
+            if (_azure_JSON_HEDLEY_UNLIKELY(indent_string.size() < new_indent))
             {
               indent_string.resize(indent_string.size() * 2, ' ');
             }
@@ -22414,7 +22411,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             // last element
-            JSON_ASSERT(!val.m_data.m_value.array->empty());
+            _azure_JSON_ASSERT(!val.m_data.m_value.array->empty());
             o->write_characters(indent_string.c_str(), new_indent);
             dump(val.m_data.m_value.array->back(), true, ensure_ascii, indent_step, new_indent);
 
@@ -22436,7 +22433,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             }
 
             // last element
-            JSON_ASSERT(!val.m_data.m_value.array->empty());
+            _azure_JSON_ASSERT(!val.m_data.m_value.array->empty());
             dump(
                 val.m_data.m_value.array->back(), false, ensure_ascii, indent_step, current_indent);
 
@@ -22460,7 +22457,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 
             // variable to hold indentation for recursive calls
             const auto new_indent = current_indent + indent_step;
-            if (JSON_HEDLEY_UNLIKELY(indent_string.size() < new_indent))
+            if (_azure_JSON_HEDLEY_UNLIKELY(indent_string.size() < new_indent))
             {
               indent_string.resize(indent_string.size() * 2, ' ');
             }
@@ -22565,12 +22562,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         }
 
         default: // LCOV_EXCL_LINE
-          JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+          _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                               // LCOV_EXCL_LINE
       }
     }
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         /*!
         @brief dump escaped string
 
@@ -22712,7 +22709,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
             switch (error_handler)
             {
               case error_handler_t::strict: {
-                JSON_THROW(type_error::create(
+                _azure_JSON_THROW(type_error::create(
                     316,
                     concat(
                         "invalid UTF-8 byte at index ",
@@ -22779,7 +22776,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
               }
 
               default: // LCOV_EXCL_LINE
-                JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+                _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                                     // LCOV_EXCL_LINE
             }
             break;
@@ -22799,7 +22796,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
 
       // we finished processing the string
-      if (JSON_HEDLEY_LIKELY(state == UTF8_ACCEPT))
+      if (_azure_JSON_HEDLEY_LIKELY(state == UTF8_ACCEPT))
       {
         // write buffer
         if (bytes > 0)
@@ -22813,7 +22810,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         switch (error_handler)
         {
           case error_handler_t::strict: {
-            JSON_THROW(type_error::create(
+            _azure_JSON_THROW(type_error::create(
                 316,
                 concat(
                     "incomplete UTF-8 string; last byte: 0x",
@@ -22843,7 +22840,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           }
 
           default: // LCOV_EXCL_LINE
-            JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+            _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                                 // LCOV_EXCL_LINE
         }
       }
@@ -22981,7 +22978,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
 
       // spare 1 byte for '\0'
-      JSON_ASSERT(n_chars < number_buffer.size() - 1);
+      _azure_JSON_ASSERT(n_chars < number_buffer.size() - 1);
 
       // jump to the end to generate the string from backward,
       // so we later avoid reversing the result
@@ -23064,9 +23061,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           = (std::snprintf)(number_buffer.data(), number_buffer.size(), "%.*g", d, x);
 
       // negative value indicates an error
-      JSON_ASSERT(len > 0);
+      _azure_JSON_ASSERT(len > 0);
       // check if buffer was large enough
-      JSON_ASSERT(static_cast<std::size_t>(len) < number_buffer.size());
+      _azure_JSON_ASSERT(static_cast<std::size_t>(len) < number_buffer.size());
 
       // erase thousands separator
       if (thousands_sep != '\0')
@@ -23077,7 +23074,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         const auto end
             = std::remove(number_buffer.begin(), number_buffer.begin() + len, thousands_sep);
         std::fill(end, number_buffer.end(), '\0');
-        JSON_ASSERT((end - number_buffer.begin()) <= len);
+        _azure_JSON_ASSERT((end - number_buffer.begin()) <= len);
         len = (end - number_buffer.begin());
       }
 
@@ -23162,13 +23159,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           1,   3,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1 // s7..s8
       }};
 
-      JSON_ASSERT(byte < utf8d.size());
+      _azure_JSON_ASSERT(byte < utf8d.size());
       const std::uint8_t type = utf8d[byte];
 
       codep = (state != UTF8_ACCEPT) ? (byte & 0x3fu) | (codep << 6u) : (0xFFu >> type) & (byte);
 
       const std::size_t index = 256u + static_cast<size_t>(state) * 16u + static_cast<size_t>(type);
-      JSON_ASSERT(index < utf8d.size());
+      _azure_JSON_ASSERT(index < utf8d.size());
       state = utf8d[index];
       return state;
     }
@@ -23180,7 +23177,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
      */
     number_unsigned_t remove_sign(number_unsigned_t x)
     {
-      JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+      _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                           // LCOV_EXCL_LINE
       return x; // LCOV_EXCL_LINE
     }
@@ -23196,7 +23193,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
      */
     inline number_unsigned_t remove_sign(number_integer_t x) noexcept
     {
-      JSON_ASSERT(
+      _azure_JSON_ASSERT(
           x < 0
           && x < (std::numeric_limits<
                   number_integer_t>::max)()); // NOLINT(misc-redundant-expression)
@@ -23275,7 +23272,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     using const_iterator = typename Container::const_iterator;
     using size_type = typename Container::size_type;
     using value_type = typename Container::value_type;
-#ifdef JSON_HAS_CPP_14
+#ifdef _azure_JSON_HAS_CPP_14
     using key_compare = std::equal_to<>;
 #else
     using key_compare = std::equal_to<Key>;
@@ -23363,7 +23360,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         }
       }
 
-      JSON_THROW(std::out_of_range("key not found"));
+      _azure_JSON_THROW(std::out_of_range("key not found"));
     }
 
     template <
@@ -23381,7 +23378,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         }
       }
 
-      JSON_THROW(std::out_of_range("key not found"));
+      _azure_JSON_THROW(std::out_of_range("key not found"));
     }
 
     const T& at(const key_type& key) const
@@ -23394,7 +23391,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         }
       }
 
-      JSON_THROW(std::out_of_range("key not found"));
+      _azure_JSON_THROW(std::out_of_range("key not found"));
     }
 
     template <
@@ -23412,7 +23409,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         }
       }
 
-      JSON_THROW(std::out_of_range("key not found"));
+      _azure_JSON_THROW(std::out_of_range("key not found"));
     }
 
     size_type erase(const key_type& key)
@@ -23617,13 +23614,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 
   private:
-    JSON_NO_UNIQUE_ADDRESS key_compare m_compare = key_compare();
+    _azure_JSON_NO_UNIQUE_ADDRESS key_compare m_compare = key_compare();
   };
 
 }}}} // namespace Azure::Core::Json::_internal
 
-#if defined(JSON_HAS_CPP_17)
-#if JSON_HAS_STATIC_RTTI
+#if defined(_azure_JSON_HAS_CPP_17)
+#if _azure_JSON_HAS_STATIC_RTTI
 #include <any>
 #endif
 #include <string_view>
@@ -23654,7 +23651,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
   @nosubgrouping
   */
-  NLOHMANN_BASIC_JSON_TPL_DECLARATION
+  _azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
   class
       basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-special-member-functions)
       : public ::Azure::Core::Json::_internal::detail::json_base_class<CustomBaseClass> {
@@ -23681,11 +23678,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     friend class ::Azure::Core::Json::_internal::detail::exception;
 
     /// workaround type for MSVC
-    using basic_json_t = NLOHMANN_BASIC_JSON_TPL;
+    using basic_json_t = _azure_NLOHMANN_BASIC_JSON_TPL;
     using json_base_class_t
         = ::Azure::Core::Json::_internal::detail::json_base_class<CustomBaseClass>;
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         // convenience aliases for types residing in namespace detail;
         using lexer
         = ::Azure::Core::Json::_internal::detail::lexer_base<basic_json>;
@@ -23724,7 +23721,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     using binary_writer
         = ::Azure::Core::Json::_internal::detail::binary_writer<basic_json, CharType>;
 
-    JSON_PRIVATE_UNLESS_TESTED : using serializer
+    _azure_JSON_PRIVATE_UNLESS_TESTED : using serializer
                                  = ::Azure::Core::Json::_internal::detail::serializer<basic_json>;
 
   public:
@@ -23818,7 +23815,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// The actual object key comparator type (@ref object_comparator_t) may be
     /// different.
     /// @sa https://json.nlohmann.me/api/basic_json/default_object_comparator_t/
-#if defined(JSON_HAS_CPP_14)
+#if defined(_azure_JSON_HAS_CPP_14)
     // use of transparent comparator avoids unnecessary repeated construction of
     // temporaries in functions involving lookup by key with types other than
     // object_t::key_type (aka. StringType)
@@ -23872,7 +23869,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   private:
     /// helper for exception-safe object creation
     template <typename T, typename... Args>
-    JSON_HEDLEY_RETURNS_NON_NULL static T* create(Args&&... args)
+    _azure_JSON_HEDLEY_RETURNS_NON_NULL static T* create(Args&&... args)
     {
       AllocatorType<T> alloc;
       using AllocatorTraits = std::allocator_traits<AllocatorType<T>>;
@@ -23880,7 +23877,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       auto deleter = [&](T* obj) { AllocatorTraits::deallocate(alloc, obj, 1); };
       std::unique_ptr<T, decltype(deleter)> obj(AllocatorTraits::allocate(alloc, 1), deleter);
       AllocatorTraits::construct(alloc, obj.get(), std::forward<Args>(args)...);
-      JSON_ASSERT(obj != nullptr);
+      _azure_JSON_ASSERT(obj != nullptr);
       return obj.release();
     }
 
@@ -23888,7 +23885,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     // JSON value storage //
     ////////////////////////
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         /*!
         @brief a JSON value
 
@@ -23996,9 +23993,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           case value_t::discarded:
           default: {
             object = nullptr; // silence warning, see #821
-            if (JSON_HEDLEY_UNLIKELY(t == value_t::null))
+            if (_azure_JSON_HEDLEY_UNLIKELY(t == value_t::null))
             {
-              JSON_THROW(other_error::create(
+              _azure_JSON_THROW(other_error::create(
                   500,
                   "961c151d2e87f2686a955a9be24d316f1362bf21 3.11.3",
                   nullptr)); // LCOV_EXCL_LINE
@@ -24168,28 +24165,28 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     */
     void assert_invariant(bool check_parents = true) const noexcept
     {
-      JSON_ASSERT(m_data.m_type != value_t::object || m_data.m_value.object != nullptr);
-      JSON_ASSERT(m_data.m_type != value_t::array || m_data.m_value.array != nullptr);
-      JSON_ASSERT(m_data.m_type != value_t::string || m_data.m_value.string != nullptr);
-      JSON_ASSERT(m_data.m_type != value_t::binary || m_data.m_value.binary != nullptr);
+      _azure_JSON_ASSERT(m_data.m_type != value_t::object || m_data.m_value.object != nullptr);
+      _azure_JSON_ASSERT(m_data.m_type != value_t::array || m_data.m_value.array != nullptr);
+      _azure_JSON_ASSERT(m_data.m_type != value_t::string || m_data.m_value.string != nullptr);
+      _azure_JSON_ASSERT(m_data.m_type != value_t::binary || m_data.m_value.binary != nullptr);
 
-#if JSON_DIAGNOSTICS
-      JSON_TRY
+#if _azure_JSON_DIAGNOSTICS
+      _azure_JSON_TRY
       {
         // cppcheck-suppress assertWithSideEffect
-        JSON_ASSERT(
+        _azure_JSON_ASSERT(
             !check_parents || !is_structured()
             || std::all_of(
                 begin(), end(), [this](const basic_json& j) { return j.m_parent == this; }));
       }
-      JSON_CATCH(...) {} // LCOV_EXCL_LINE
+      _azure_JSON_CATCH(...) {} // LCOV_EXCL_LINE
 #endif
       static_cast<void>(check_parents);
     }
 
     void set_parents()
     {
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
       switch (m_data.m_type)
       {
         case value_t::array: {
@@ -24224,7 +24221,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     iterator set_parents(iterator it, typename iterator::difference_type count_set_parents)
     {
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
       for (typename iterator::difference_type i = 0; i < count_set_parents; ++i)
       {
         (it + i)->m_parent = this;
@@ -24237,12 +24234,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     reference set_parent(reference j, std::size_t old_capacity = static_cast<std::size_t>(-1))
     {
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
       if (old_capacity != static_cast<std::size_t>(-1))
       {
         // see https://github.com/nlohmann/json/issues/2838
-        JSON_ASSERT(type() == value_t::array);
-        if (JSON_HEDLEY_UNLIKELY(m_data.m_value.array->capacity() != old_capacity))
+        _azure_JSON_ASSERT(type() == value_t::array);
+        if (_azure_JSON_HEDLEY_UNLIKELY(m_data.m_value.array->capacity() != old_capacity))
         {
           // capacity has changed: update all parents
           set_parents();
@@ -24252,7 +24249,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
       // ordered_json uses a vector internally, so pointers could have
       // been invalidated; see https://github.com/nlohmann/json/issues/2962
-#ifdef JSON_HEDLEY_MSVC_VERSION
+#ifdef _azure_JSON_HEDLEY_MSVC_VERSION
 #pragma warning(push)
 #pragma warning(disable : 4127) // ignore warning to replace if with if constexpr
 #endif
@@ -24261,7 +24258,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         set_parents();
         return j;
       }
-#ifdef JSON_HEDLEY_MSVC_VERSION
+#ifdef _azure_JSON_HEDLEY_MSVC_VERSION
 #pragma warning(pop)
 #endif
 
@@ -24385,10 +24382,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           m_data.m_type = value_t::discarded;
           break;
         default: // LCOV_EXCL_LINE
-          JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+          _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                               // LCOV_EXCL_LINE
       }
-      JSON_ASSERT(m_data.m_type == val.type());
+      _azure_JSON_ASSERT(m_data.m_type == val.type());
       set_parents();
       assert_invariant();
     }
@@ -24422,9 +24419,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         }
 
         // if object is wanted but impossible, throw an exception
-        if (JSON_HEDLEY_UNLIKELY(manual_type == value_t::object && !is_an_object))
+        if (_azure_JSON_HEDLEY_UNLIKELY(manual_type == value_t::object && !is_an_object))
         {
-          JSON_THROW(
+          _azure_JSON_THROW(
               type_error::create(301, "cannot create object from initializer list", nullptr));
         }
       }
@@ -24456,7 +24453,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief explicitly create a binary array (without subtype)
     /// @sa https://json.nlohmann.me/api/basic_json/binary/
-    JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
     static basic_json binary(const typename binary_t::container_type& init)
     {
       auto res = basic_json();
@@ -24467,7 +24464,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief explicitly create a binary array (with subtype)
     /// @sa https://json.nlohmann.me/api/basic_json/binary/
-    JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
     static basic_json binary(
         const typename binary_t::container_type& init,
         typename binary_t::subtype_type subtype)
@@ -24480,7 +24477,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief explicitly create a binary array
     /// @sa https://json.nlohmann.me/api/basic_json/binary/
-    JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
     static basic_json binary(typename binary_t::container_type&& init)
     {
       auto res = basic_json();
@@ -24491,7 +24488,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief explicitly create a binary array (with subtype)
     /// @sa https://json.nlohmann.me/api/basic_json/binary/
-    JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
     static basic_json binary(
         typename binary_t::container_type&& init,
         typename binary_t::subtype_type subtype)
@@ -24504,7 +24501,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief explicitly create an array from an initializer list
     /// @sa https://json.nlohmann.me/api/basic_json/array/
-    JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
     static basic_json array(initializer_list_t init = {})
     {
       return basic_json(init, false, value_t::array);
@@ -24512,7 +24509,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief explicitly create an object from an initializer list
     /// @sa https://json.nlohmann.me/api/basic_json/object/
-    JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
     static basic_json object(initializer_list_t init = {})
     {
       return basic_json(init, false, value_t::object);
@@ -24537,13 +24534,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         = 0>
     basic_json(InputIT first, InputIT last)
     {
-      JSON_ASSERT(first.m_object != nullptr);
-      JSON_ASSERT(last.m_object != nullptr);
+      _azure_JSON_ASSERT(first.m_object != nullptr);
+      _azure_JSON_ASSERT(last.m_object != nullptr);
 
       // make sure iterator fits the current value
-      if (JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
       {
-        JSON_THROW(invalid_iterator::create(201, "iterators are not compatible", nullptr));
+        _azure_JSON_THROW(invalid_iterator::create(201, "iterators are not compatible", nullptr));
       }
 
       // copy type from first iterator
@@ -24557,11 +24554,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::number_integer:
         case value_t::number_unsigned:
         case value_t::string: {
-          if (JSON_HEDLEY_UNLIKELY(
+          if (_azure_JSON_HEDLEY_UNLIKELY(
                   !first.m_it.primitive_iterator.is_begin()
                   || !last.m_it.primitive_iterator.is_end()))
           {
-            JSON_THROW(invalid_iterator::create(204, "iterators out of range", first.m_object));
+            _azure_JSON_THROW(invalid_iterator::create(204, "iterators out of range", first.m_object));
           }
           break;
         }
@@ -24622,7 +24619,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::null:
         case value_t::discarded:
         default:
-          JSON_THROW(invalid_iterator::create(
+          _azure_JSON_THROW(invalid_iterator::create(
               206,
               detail::concat("cannot construct with iterators from ", first.m_object->type_name()),
               first.m_object));
@@ -24864,12 +24861,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// get a boolean (explicit)
     boolean_t get_impl(boolean_t* /*unused*/) const
     {
-      if (JSON_HEDLEY_LIKELY(is_boolean()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_boolean()))
       {
         return m_data.m_value.boolean;
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           302, detail::concat("type must be boolean, but is ", type_name()), this));
     }
 
@@ -24988,12 +24985,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       // delegate the call to get_ptr<>()
       auto* ptr = obj.template get_ptr<typename std::add_pointer<ReferenceType>::type>();
 
-      if (JSON_HEDLEY_LIKELY(ptr != nullptr))
+      if (_azure_JSON_HEDLEY_LIKELY(ptr != nullptr))
       {
         return *ptr;
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           303,
           detail::concat(
               "incompatible ReferenceType for get_ref, actual type is ", obj.type_name()),
@@ -25218,7 +25215,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     @since version 2.1.0
     */
     template <typename ValueTypeCV, typename ValueType = detail::uncvref_t<ValueTypeCV>>
-#if defined(JSON_HAS_CPP_14)
+#if defined(_azure_JSON_HAS_CPP_14)
     constexpr
 #endif
         auto
@@ -25382,11 +25379,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
                 detail::negation<detail::is_basic_json<ValueType>>,
                 detail::negation<
                     std::is_same<ValueType, std::initializer_list<typename string_t::value_type>>>,
-#if defined(JSON_HAS_CPP_17) \
+#if defined(_azure_JSON_HAS_CPP_17) \
     && (defined(__GNUC__) || (defined(_MSC_VER) && _MSC_VER >= 1910 && _MSC_VER <= 1914))
                 detail::negation<std::is_same<ValueType, std::string_view>>,
 #endif
-#if defined(JSON_HAS_CPP_17) && JSON_HAS_STATIC_RTTI
+#if defined(_azure_JSON_HAS_CPP_17) && _azure_JSON_HAS_STATIC_RTTI
                 detail::negation<std::is_same<ValueType, std::any>>,
 #endif
                 detail::is_detected_lazy<
@@ -25395,7 +25392,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
                     ValueType>>::value,
             int>::type
         = 0>
-    JSON_EXPLICIT operator ValueType() const
+    _azure_JSON_EXPLICIT operator ValueType() const
     {
       // delegate the call to get<>() const
       return get<ValueType>();
@@ -25407,7 +25404,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     {
       if (!is_binary())
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             302, detail::concat("type must be binary, but is ", type_name()), this));
       }
 
@@ -25420,7 +25417,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     {
       if (!is_binary())
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             302, detail::concat("type must be binary, but is ", type_name()), this));
       }
 
@@ -25442,19 +25439,19 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     reference at(size_type idx)
     {
       // at only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
-        JSON_TRY { return set_parent(m_data.m_value.array->at(idx)); }
-        JSON_CATCH(std::out_of_range&)
+        _azure_JSON_TRY { return set_parent(m_data.m_value.array->at(idx)); }
+        _azure_JSON_CATCH(std::out_of_range&)
         {
           // create better exception explanation
-          JSON_THROW(out_of_range::create(
+          _azure_JSON_THROW(out_of_range::create(
               401, detail::concat("array index ", std::to_string(idx), " is out of range"), this));
         }
       }
       else
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
       }
     }
@@ -25464,19 +25461,19 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     const_reference at(size_type idx) const
     {
       // at only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
-        JSON_TRY { return m_data.m_value.array->at(idx); }
-        JSON_CATCH(std::out_of_range&)
+        _azure_JSON_TRY { return m_data.m_value.array->at(idx); }
+        _azure_JSON_CATCH(std::out_of_range&)
         {
           // create better exception explanation
-          JSON_THROW(out_of_range::create(
+          _azure_JSON_THROW(out_of_range::create(
               401, detail::concat("array index ", std::to_string(idx), " is out of range"), this));
         }
       }
       else
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
       }
     }
@@ -25486,16 +25483,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     reference at(const typename object_t::key_type& key)
     {
       // at only works for objects
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
       }
 
       auto it = m_data.m_value.object->find(key);
       if (it == m_data.m_value.object->end())
       {
-        JSON_THROW(out_of_range::create(403, detail::concat("key '", key, "' not found"), this));
+        _azure_JSON_THROW(out_of_range::create(403, detail::concat("key '", key, "' not found"), this));
       }
       return set_parent(it->second);
     }
@@ -25510,16 +25507,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     reference at(KeyType&& key)
     {
       // at only works for objects
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
       }
 
       auto it = m_data.m_value.object->find(std::forward<KeyType>(key));
       if (it == m_data.m_value.object->end())
       {
-        JSON_THROW(out_of_range::create(
+        _azure_JSON_THROW(out_of_range::create(
             403,
             detail::concat("key '", string_t(std::forward<KeyType>(key)), "' not found"),
             this));
@@ -25532,16 +25529,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     const_reference at(const typename object_t::key_type& key) const
     {
       // at only works for objects
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
       }
 
       auto it = m_data.m_value.object->find(key);
       if (it == m_data.m_value.object->end())
       {
-        JSON_THROW(out_of_range::create(403, detail::concat("key '", key, "' not found"), this));
+        _azure_JSON_THROW(out_of_range::create(403, detail::concat("key '", key, "' not found"), this));
       }
       return it->second;
     }
@@ -25556,16 +25553,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     const_reference at(KeyType&& key) const
     {
       // at only works for objects
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
       }
 
       auto it = m_data.m_value.object->find(std::forward<KeyType>(key));
       if (it == m_data.m_value.object->end())
       {
-        JSON_THROW(out_of_range::create(
+        _azure_JSON_THROW(out_of_range::create(
             403,
             detail::concat("key '", string_t(std::forward<KeyType>(key)), "' not found"),
             this));
@@ -25586,20 +25583,20 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       }
 
       // operator[] only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
         // fill up array with null values if given idx is outside range
         if (idx >= m_data.m_value.array->size())
         {
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
           // remember array size & capacity before resizing
           const auto old_size = m_data.m_value.array->size();
           const auto old_capacity = m_data.m_value.array->capacity();
 #endif
           m_data.m_value.array->resize(idx + 1);
 
-#if JSON_DIAGNOSTICS
-          if (JSON_HEDLEY_UNLIKELY(m_data.m_value.array->capacity() != old_capacity))
+#if _azure_JSON_DIAGNOSTICS
+          if (_azure_JSON_HEDLEY_UNLIKELY(m_data.m_value.array->capacity() != old_capacity))
           {
             // capacity has changed: update all parents
             set_parents();
@@ -25618,7 +25615,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         return m_data.m_value.array->operator[](idx);
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           305,
           detail::concat("cannot use operator[] with a numeric argument with ", type_name()),
           this));
@@ -25629,12 +25626,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     const_reference operator[](size_type idx) const
     {
       // const operator[] only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
         return m_data.m_value.array->operator[](idx);
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           305,
           detail::concat("cannot use operator[] with a numeric argument with ", type_name()),
           this));
@@ -25653,13 +25650,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       }
 
       // operator[] only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         auto result = m_data.m_value.object->emplace(std::move(key), nullptr);
         return set_parent(result.first->second);
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           305,
           detail::concat("cannot use operator[] with a string argument with ", type_name()),
           this));
@@ -25670,14 +25667,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     const_reference operator[](const typename object_t::key_type& key) const
     {
       // const operator[] only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         auto it = m_data.m_value.object->find(key);
-        JSON_ASSERT(it != m_data.m_value.object->end());
+        _azure_JSON_ASSERT(it != m_data.m_value.object->end());
         return it->second;
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           305,
           detail::concat("cannot use operator[] with a string argument with ", type_name()),
           this));
@@ -25713,13 +25710,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       }
 
       // operator[] only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         auto result = m_data.m_value.object->emplace(std::forward<KeyType>(key), nullptr);
         return set_parent(result.first->second);
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           305,
           detail::concat("cannot use operator[] with a string argument with ", type_name()),
           this));
@@ -25735,14 +25732,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     const_reference operator[](KeyType&& key) const
     {
       // const operator[] only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         auto it = m_data.m_value.object->find(std::forward<KeyType>(key));
-        JSON_ASSERT(it != m_data.m_value.object->end());
+        _azure_JSON_ASSERT(it != m_data.m_value.object->end());
         return it->second;
       }
 
-      JSON_THROW(type_error::create(
+      _azure_JSON_THROW(type_error::create(
           305,
           detail::concat("cannot use operator[] with a string argument with ", type_name()),
           this));
@@ -25772,7 +25769,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ValueType value(const typename object_t::key_type& key, const ValueType& default_value) const
     {
       // value only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         // if key is found, return value and given default value otherwise
         const auto it = find(key);
@@ -25784,7 +25781,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         return default_value;
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
@@ -25801,7 +25798,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ReturnType value(const typename object_t::key_type& key, ValueType&& default_value) const
     {
       // value only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         // if key is found, return value and given default value otherwise
         const auto it = find(key);
@@ -25813,7 +25810,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         return std::forward<ValueType>(default_value);
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
@@ -25832,7 +25829,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ValueType value(KeyType&& key, const ValueType& default_value) const
     {
       // value only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         // if key is found, return value and given default value otherwise
         const auto it = find(std::forward<KeyType>(key));
@@ -25844,7 +25841,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         return default_value;
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
@@ -25864,7 +25861,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ReturnType value(KeyType&& key, ValueType&& default_value) const
     {
       // value only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         // if key is found, return value and given default value otherwise
         const auto it = find(std::forward<KeyType>(key));
@@ -25876,7 +25873,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         return std::forward<ValueType>(default_value);
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
@@ -25891,14 +25888,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ValueType value(const json_pointer& ptr, const ValueType& default_value) const
     {
       // value only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         // if pointer resolves a value, return it or use default value
-        JSON_TRY { return ptr.get_checked(this).template get<ValueType>(); }
-        JSON_INTERNAL_CATCH(out_of_range&) { return default_value; }
+        _azure_JSON_TRY { return ptr.get_checked(this).template get<ValueType>(); }
+        _azure_JSON_INTERNAL_CATCH(out_of_range&) { return default_value; }
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
@@ -25914,14 +25911,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ReturnType value(const json_pointer& ptr, ValueType&& default_value) const
     {
       // value only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         // if pointer resolves a value, return it or use default value
-        JSON_TRY { return ptr.get_checked(this).template get<ReturnType>(); }
-        JSON_INTERNAL_CATCH(out_of_range&) { return std::forward<ValueType>(default_value); }
+        _azure_JSON_TRY { return ptr.get_checked(this).template get<ReturnType>(); }
+        _azure_JSON_INTERNAL_CATCH(out_of_range&) { return std::forward<ValueType>(default_value); }
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
@@ -25933,7 +25930,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
                 && detail::is_getable<basic_json_t, ValueType>::value
                 && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value,
             int> = 0>
-    JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.11.0,
         basic_json::json_pointer
             or Azure::Core::Json::_internal::json_pointer<
@@ -25954,7 +25951,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
                 && detail::is_getable<basic_json_t, ReturnType>::value
                 && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value,
             int> = 0>
-    JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.11.0,
         basic_json::json_pointer
             or Azure::Core::Json::_internal::json_pointer<
@@ -26003,9 +26000,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     IteratorType erase(IteratorType pos)
     {
       // make sure iterator fits the current value
-      if (JSON_HEDLEY_UNLIKELY(this != pos.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(this != pos.m_object))
       {
-        JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
+        _azure_JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
       }
 
       IteratorType result = end();
@@ -26018,9 +26015,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::number_unsigned:
         case value_t::string:
         case value_t::binary: {
-          if (JSON_HEDLEY_UNLIKELY(!pos.m_it.primitive_iterator.is_begin()))
+          if (_azure_JSON_HEDLEY_UNLIKELY(!pos.m_it.primitive_iterator.is_begin()))
           {
-            JSON_THROW(invalid_iterator::create(205, "iterator out of range", this));
+            _azure_JSON_THROW(invalid_iterator::create(205, "iterator out of range", this));
           }
 
           if (is_string())
@@ -26056,7 +26053,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::null:
         case value_t::discarded:
         default:
-          JSON_THROW(type_error::create(
+          _azure_JSON_THROW(type_error::create(
               307, detail::concat("cannot use erase() with ", type_name()), this));
       }
 
@@ -26074,9 +26071,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     IteratorType erase(IteratorType first, IteratorType last)
     {
       // make sure iterator fits the current value
-      if (JSON_HEDLEY_UNLIKELY(this != first.m_object || this != last.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(this != first.m_object || this != last.m_object))
       {
-        JSON_THROW(invalid_iterator::create(203, "iterators do not fit current value", this));
+        _azure_JSON_THROW(invalid_iterator::create(203, "iterators do not fit current value", this));
       }
 
       IteratorType result = end();
@@ -26089,11 +26086,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::number_unsigned:
         case value_t::string:
         case value_t::binary: {
-          if (JSON_HEDLEY_LIKELY(
+          if (_azure_JSON_HEDLEY_LIKELY(
                   !first.m_it.primitive_iterator.is_begin()
                   || !last.m_it.primitive_iterator.is_end()))
           {
-            JSON_THROW(invalid_iterator::create(204, "iterators out of range", this));
+            _azure_JSON_THROW(invalid_iterator::create(204, "iterators out of range", this));
           }
 
           if (is_string())
@@ -26131,7 +26128,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         case value_t::null:
         case value_t::discarded:
         default:
-          JSON_THROW(type_error::create(
+          _azure_JSON_THROW(type_error::create(
               307, detail::concat("cannot use erase() with ", type_name()), this));
       }
 
@@ -26145,9 +26142,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     size_type erase_internal(KeyType&& key)
     {
       // this erase only works for objects
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(307, detail::concat("cannot use erase() with ", type_name()), this));
       }
 
@@ -26161,9 +26158,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     size_type erase_internal(KeyType&& key)
     {
       // this erase only works for objects
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(307, detail::concat("cannot use erase() with ", type_name()), this));
       }
 
@@ -26203,11 +26200,11 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     void erase(const size_type idx)
     {
       // this erase only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
-        if (JSON_HEDLEY_UNLIKELY(idx >= size()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(idx >= size()))
         {
-          JSON_THROW(out_of_range::create(
+          _azure_JSON_THROW(out_of_range::create(
               401, detail::concat("array index ", std::to_string(idx), " is out of range"), this));
         }
 
@@ -26216,7 +26213,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       }
       else
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             type_error::create(307, detail::concat("cannot use erase() with ", type_name()), this));
       }
     }
@@ -26346,7 +26343,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <
         typename BasicJsonType,
         detail::enable_if_t<detail::is_basic_json<BasicJsonType>::value, int> = 0>
-    JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.11.0,
         basic_json::json_pointer
             or Azure::Core::Json::_internal::json_pointer<
@@ -26440,7 +26437,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @deprecated This function is deprecated since 3.1.0 and will be removed in
     ///             version 4.0.0 of the library. Please use @ref items() instead;
     ///             that is, replace `json::iterator_wrapper(j)` with `j.items()`.
-    JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items())
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items())
     static iteration_proxy<iterator> iterator_wrapper(reference ref) noexcept
     {
       return ref.items();
@@ -26451,7 +26448,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @deprecated This function is deprecated since 3.1.0 and will be removed in
     ///         version 4.0.0 of the library. Please use @ref items() instead;
     ///         that is, replace `json::iterator_wrapper(j)` with `j.items()`.
-    JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items())
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items())
     static iteration_proxy<const_iterator> iterator_wrapper(const_reference ref) noexcept
     {
       return ref.items();
@@ -26645,9 +26642,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     void push_back(basic_json&& val)
     {
       // push_back only works for null objects or arrays
-      if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             308, detail::concat("cannot use push_back() with ", type_name()), this));
       }
 
@@ -26680,9 +26677,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     void push_back(const basic_json& val)
     {
       // push_back only works for null objects or arrays
-      if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             308, detail::concat("cannot use push_back() with ", type_name()), this));
       }
 
@@ -26713,9 +26710,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     void push_back(const typename object_t::value_type& val)
     {
       // push_back only works for null objects or objects
-      if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             308, detail::concat("cannot use push_back() with ", type_name()), this));
       }
 
@@ -26769,9 +26766,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <class... Args> reference emplace_back(Args&&... args)
     {
       // emplace_back only works for null objects or arrays
-      if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             311, detail::concat("cannot use emplace_back() with ", type_name()), this));
       }
 
@@ -26794,9 +26791,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <class... Args> std::pair<iterator, bool> emplace(Args&&... args)
     {
       // emplace only works for null objects or arrays
-      if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             311, detail::concat("cannot use emplace() with ", type_name()), this));
       }
 
@@ -26826,7 +26823,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <typename... Args> iterator insert_iterator(const_iterator pos, Args&&... args)
     {
       iterator result(this);
-      JSON_ASSERT(m_data.m_value.array != nullptr);
+      _azure_JSON_ASSERT(m_data.m_value.array != nullptr);
 
       auto insert_pos = std::distance(m_data.m_value.array->begin(), pos.m_it.array_iterator);
       m_data.m_value.array->insert(pos.m_it.array_iterator, std::forward<Args>(args)...);
@@ -26847,19 +26844,19 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     iterator insert(const_iterator pos, const basic_json& val)
     {
       // insert only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
         // check if iterator pos fits to this JSON value
-        if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
+        if (_azure_JSON_HEDLEY_UNLIKELY(pos.m_object != this))
         {
-          JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
+          _azure_JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
         }
 
         // insert to array and return iterator
         return insert_iterator(pos, val);
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(309, detail::concat("cannot use insert() with ", type_name()), this));
     }
 
@@ -26872,19 +26869,19 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     iterator insert(const_iterator pos, size_type cnt, const basic_json& val)
     {
       // insert only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
         // check if iterator pos fits to this JSON value
-        if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
+        if (_azure_JSON_HEDLEY_UNLIKELY(pos.m_object != this))
         {
-          JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
+          _azure_JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
         }
 
         // insert to array and return iterator
         return insert_iterator(pos, cnt, val);
       }
 
-      JSON_THROW(
+      _azure_JSON_THROW(
           type_error::create(309, detail::concat("cannot use insert() with ", type_name()), this));
     }
 
@@ -26893,27 +26890,27 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     iterator insert(const_iterator pos, const_iterator first, const_iterator last)
     {
       // insert only works for arrays
-      if (JSON_HEDLEY_UNLIKELY(!is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_array()))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             309, detail::concat("cannot use insert() with ", type_name()), this));
       }
 
       // check if iterator pos fits to this JSON value
-      if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
+      if (_azure_JSON_HEDLEY_UNLIKELY(pos.m_object != this))
       {
-        JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
+        _azure_JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
       }
 
       // check if range iterators belong to the same JSON object
-      if (JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
       {
-        JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
+        _azure_JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
       }
 
-      if (JSON_HEDLEY_UNLIKELY(first.m_object == this))
+      if (_azure_JSON_HEDLEY_UNLIKELY(first.m_object == this))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             invalid_iterator::create(211, "passed iterators may not belong to container", this));
       }
 
@@ -26926,16 +26923,16 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     iterator insert(const_iterator pos, initializer_list_t ilist)
     {
       // insert only works for arrays
-      if (JSON_HEDLEY_UNLIKELY(!is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_array()))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             309, detail::concat("cannot use insert() with ", type_name()), this));
       }
 
       // check if iterator pos fits to this JSON value
-      if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
+      if (_azure_JSON_HEDLEY_UNLIKELY(pos.m_object != this))
       {
-        JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
+        _azure_JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", this));
       }
 
       // insert to array and return iterator
@@ -26947,22 +26944,22 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     void insert(const_iterator first, const_iterator last)
     {
       // insert only works for objects
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             309, detail::concat("cannot use insert() with ", type_name()), this));
       }
 
       // check if range iterators belong to the same JSON object
-      if (JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
       {
-        JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
+        _azure_JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
       }
 
       // passed iterators must belong to objects
-      if (JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             invalid_iterator::create(202, "iterators first and last must point to objects", this));
       }
 
@@ -26990,22 +26987,22 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         assert_invariant();
       }
 
-      if (JSON_HEDLEY_UNLIKELY(!is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!is_object()))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             312, detail::concat("cannot use update() with ", type_name()), this));
       }
 
       // check if range iterators belong to the same JSON object
-      if (JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
+      if (_azure_JSON_HEDLEY_UNLIKELY(first.m_object != last.m_object))
       {
-        JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
+        _azure_JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
       }
 
       // passed iterators must belong to objects
-      if (JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             312,
             detail::concat("cannot use update() with ", first.m_object->type_name()),
             first.m_object));
@@ -27023,7 +27020,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           }
         }
         m_data.m_value.object->operator[](it.key()) = it.value();
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
         m_data.m_value.object->operator[](it.key()).m_parent = this;
 #endif
       }
@@ -27063,14 +27060,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
             other) // NOLINT(bugprone-exception-escape,cppcoreguidelines-noexcept-swap,performance-noexcept-swap)
     {
       // swap only works for arrays
-      if (JSON_HEDLEY_LIKELY(is_array()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_array()))
       {
         using std::swap;
         swap(*(m_data.m_value.array), other);
       }
       else
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             310, detail::concat("cannot use swap(array_t&) with ", type_name()), this));
       }
     }
@@ -27082,14 +27079,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
             other) // NOLINT(bugprone-exception-escape,cppcoreguidelines-noexcept-swap,performance-noexcept-swap)
     {
       // swap only works for objects
-      if (JSON_HEDLEY_LIKELY(is_object()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_object()))
       {
         using std::swap;
         swap(*(m_data.m_value.object), other);
       }
       else
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             310, detail::concat("cannot use swap(object_t&) with ", type_name()), this));
       }
     }
@@ -27101,14 +27098,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
             other) // NOLINT(bugprone-exception-escape,cppcoreguidelines-noexcept-swap,performance-noexcept-swap)
     {
       // swap only works for strings
-      if (JSON_HEDLEY_LIKELY(is_string()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_string()))
       {
         using std::swap;
         swap(*(m_data.m_value.string), other);
       }
       else
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             310, detail::concat("cannot use swap(string_t&) with ", type_name()), this));
       }
     }
@@ -27120,14 +27117,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
             other) // NOLINT(bugprone-exception-escape,cppcoreguidelines-noexcept-swap,performance-noexcept-swap)
     {
       // swap only works for strings
-      if (JSON_HEDLEY_LIKELY(is_binary()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_binary()))
       {
         using std::swap;
         swap(*(m_data.m_value.binary), other);
       }
       else
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             310, detail::concat("cannot use swap(binary_t&) with ", type_name()), this));
       }
     }
@@ -27137,14 +27134,14 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     void swap(typename binary_t::container_type& other) // NOLINT(bugprone-exception-escape)
     {
       // swap only works for strings
-      if (JSON_HEDLEY_LIKELY(is_binary()))
+      if (_azure_JSON_HEDLEY_LIKELY(is_binary()))
       {
         using std::swap;
         swap(*(m_data.m_value.binary), other);
       }
       else
       {
-        JSON_THROW(type_error::create(
+        _azure_JSON_THROW(type_error::create(
             310,
             detail::concat("cannot use swap(binary_t::container_type&) with ", type_name()),
             this));
@@ -27162,7 +27159,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     // note parentheses around operands are necessary; see
     // https://github.com/nlohmann/json/issues/1530
-#define JSON_IMPLEMENT_OPERATOR(op, null_result, unordered_result, default_result) \
+#define _azure_JSON_IMPLEMENT_OPERATOR(op, null_result, unordered_result, default_result) \
   const auto lhs_type = lhs.type(); \
   const auto rhs_type = rhs.type(); \
 \
@@ -27239,7 +27236,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 \
   return (default_result);
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         // returns true if:
         // - any operand is NaN and the other operand is of number type
         // - any operand is discarded
@@ -27254,7 +27251,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       {
         return true;
       }
-#if JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
+#if _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
       return (lhs.is_discarded() || rhs.is_discarded()) && !inverse;
 #else
       static_cast<void>(inverse);
@@ -27269,7 +27266,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 
   public:
-#if JSON_HAS_THREE_WAY_COMPARISON
+#if _azure_JSON_HAS_THREE_WAY_COMPARISON
     /// @brief comparison: equal
     /// @sa https://json.nlohmann.me/api/basic_json/operator_eq/
     bool operator==(const_reference rhs) const noexcept
@@ -27279,7 +27276,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 #endif
       const_reference lhs = *this;
-      JSON_IMPLEMENT_OPERATOR(==, true, false, false)
+      _azure_JSON_IMPLEMENT_OPERATOR(==, true, false, false)
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif
@@ -27311,7 +27308,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       const_reference lhs = *this;
       // default_result is used if we cannot compare values. In that case,
       // we compare types.
-      JSON_IMPLEMENT_OPERATOR(
+      _azure_JSON_IMPLEMENT_OPERATOR(
           <=>, // *NOPAD*
           std::partial_ordering::equivalent,
           std::partial_ordering::unordered,
@@ -27327,13 +27324,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       return *this <=> basic_json(rhs); // *NOPAD*
     }
 
-#if JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
+#if _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
     // all operators that are computed as an odd number of inverses of others
     // need to be overloaded to emulate the legacy comparison behavior
 
     /// @brief comparison: less than or equal
     /// @sa https://json.nlohmann.me/api/basic_json/operator_le/
-    JSON_HEDLEY_DEPRECATED_FOR(3.11.0, undef JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON)
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.0, undef _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON)
     bool operator<=(const_reference rhs) const noexcept
     {
       if (compares_unordered(rhs, true))
@@ -27353,7 +27350,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief comparison: greater than or equal
     /// @sa https://json.nlohmann.me/api/basic_json/operator_ge/
-    JSON_HEDLEY_DEPRECATED_FOR(3.11.0, undef JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON)
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.0, undef _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON)
     bool operator>=(const_reference rhs) const noexcept
     {
       if (compares_unordered(rhs, true))
@@ -27380,7 +27377,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 #endif
-      JSON_IMPLEMENT_OPERATOR(==, true, false, false)
+      _azure_JSON_IMPLEMENT_OPERATOR(==, true, false, false)
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif
@@ -27444,7 +27441,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       // default_result is used if we cannot compare values. In that case,
       // we compare types. Note we have to call the operator explicitly,
       // because MSVC has problems otherwise.
-      JSON_IMPLEMENT_OPERATOR(<, false, false, operator<(lhs_type, rhs_type))
+      _azure_JSON_IMPLEMENT_OPERATOR(<, false, false, operator<(lhs_type, rhs_type))
     }
 
     /// @brief comparison: less than
@@ -27562,7 +27559,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 #endif
 
-#undef JSON_IMPLEMENT_OPERATOR
+#undef _azure_JSON_IMPLEMENT_OPERATOR
 
     /// @}
 
@@ -27596,7 +27593,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ///             version 4.0.0 of the library. Please use
     ///             operator<<(std::ostream&, const basic_json&) instead; that is,
     ///             replace calls like `j >> o;` with `o << j;`.
-    JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator<<(std::ostream&, const basic_json&))
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator<<(std::ostream&, const basic_json&))
     friend std::ostream& operator>>(const basic_json& j, std::ostream& o) { return o << j; }
 #endif // JSON_NO_IO
     /// @}
@@ -27611,7 +27608,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief deserialize from a compatible input
     /// @sa https://json.nlohmann.me/api/basic_json/parse/
     template <typename InputType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json parse(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json parse(
         InputType&& i,
         const parser_callback_t cb = nullptr,
         const bool allow_exceptions = true,
@@ -27627,7 +27624,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief deserialize from a pair of character iterators
     /// @sa https://json.nlohmann.me/api/basic_json/parse/
     template <typename IteratorType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json parse(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json parse(
         IteratorType first,
         IteratorType last,
         const parser_callback_t cb = nullptr,
@@ -27644,8 +27641,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       return result;
     }
 
-    JSON_HEDLEY_WARN_UNUSED_RESULT
-    JSON_HEDLEY_DEPRECATED_FOR(3.8.0, parse(ptr, ptr + len))
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, parse(ptr, ptr + len))
     static basic_json parse(
         detail::span_input_adapter&& i,
         const parser_callback_t cb = nullptr,
@@ -27680,8 +27677,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           .accept(true);
     }
 
-    JSON_HEDLEY_WARN_UNUSED_RESULT
-    JSON_HEDLEY_DEPRECATED_FOR(3.8.0, accept(ptr, ptr + len))
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, accept(ptr, ptr + len))
     static bool accept(detail::span_input_adapter&& i, const bool ignore_comments = false)
     {
       return parser(i.get(), nullptr, false, ignore_comments).accept(true);
@@ -27690,7 +27687,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief generate SAX events
     /// @sa https://json.nlohmann.me/api/basic_json/sax_parse/
     template <typename InputType, typename SAX>
-    JSON_HEDLEY_NON_NULL(2)
+    _azure_JSON_HEDLEY_NON_NULL(2)
     static bool sax_parse(
         InputType&& i,
         SAX* sax,
@@ -27708,7 +27705,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief generate SAX events
     /// @sa https://json.nlohmann.me/api/basic_json/sax_parse/
     template <class IteratorType, class SAX>
-    JSON_HEDLEY_NON_NULL(3)
+    _azure_JSON_HEDLEY_NON_NULL(3)
     static bool sax_parse(
         IteratorType first,
         IteratorType last,
@@ -27730,8 +27727,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ///             version 4.0.0 of the library. Please use
     ///             sax_parse(ptr, ptr + len) instead.
     template <typename SAX>
-    JSON_HEDLEY_DEPRECATED_FOR(3.8.0, sax_parse(ptr, ptr + len, ...))
-    JSON_HEDLEY_NON_NULL(2) static bool sax_parse(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, sax_parse(ptr, ptr + len, ...))
+    _azure_JSON_HEDLEY_NON_NULL(2) static bool sax_parse(
         detail::span_input_adapter&& i,
         SAX* sax,
         input_format_t format = input_format_t::json,
@@ -27754,7 +27751,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ///             version 4.0.0 of the library. Please use
     ///             operator>>(std::istream&, basic_json&) instead; that is,
     ///             replace calls like `j << i;` with `i >> j;`.
-    JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator>>(std::istream&, basic_json&))
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator>>(std::istream&, basic_json&))
     friend std::istream& operator<<(basic_json& j, std::istream& i) { return operator>>(i, j); }
 
     /// @brief deserialize from stream
@@ -27773,7 +27770,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief return the type as string
     /// @sa https://json.nlohmann.me/api/basic_json/type_name/
-    JSON_HEDLEY_RETURNS_NON_NULL
+    _azure_JSON_HEDLEY_RETURNS_NON_NULL
     const char* type_name() const noexcept
     {
       switch (m_data.m_type)
@@ -27800,7 +27797,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       }
     }
 
-    JSON_PRIVATE_UNLESS_TESTED :
+    _azure_JSON_PRIVATE_UNLESS_TESTED :
         //////////////////////
         // member variables //
         //////////////////////
@@ -27831,7 +27828,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     data m_data = {};
 
-#if JSON_DIAGNOSTICS
+#if _azure_JSON_DIAGNOSTICS
     /// a pointer to a parent value (for debugging purposes)
     basic_json* m_parent = nullptr;
 #endif
@@ -27984,7 +27981,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in CBOR format
     /// @sa https://json.nlohmann.me/api/basic_json/from_cbor/
     template <typename InputType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_cbor(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_cbor(
         InputType&& i,
         const bool strict = true,
         const bool allow_exceptions = true,
@@ -28001,7 +27998,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in CBOR format
     /// @sa https://json.nlohmann.me/api/basic_json/from_cbor/
     template <typename IteratorType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_cbor(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_cbor(
         IteratorType first,
         IteratorType last,
         const bool strict = true,
@@ -28017,7 +28014,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 
     template <typename T>
-    JSON_HEDLEY_WARN_UNUSED_RESULT JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.8.0,
         from_cbor(ptr, ptr + len)) static basic_json
         from_cbor(
@@ -28030,8 +28027,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       return from_cbor(ptr, ptr + len, strict, allow_exceptions, tag_handler);
     }
 
-    JSON_HEDLEY_WARN_UNUSED_RESULT
-    JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_cbor(ptr, ptr + len))
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_cbor(ptr, ptr + len))
     static basic_json from_cbor(
         detail::span_input_adapter&& i,
         const bool strict = true,
@@ -28050,7 +28047,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in MessagePack format
     /// @sa https://json.nlohmann.me/api/basic_json/from_msgpack/
     template <typename InputType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_msgpack(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_msgpack(
         InputType&& i,
         const bool strict = true,
         const bool allow_exceptions = true)
@@ -28066,7 +28063,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in MessagePack format
     /// @sa https://json.nlohmann.me/api/basic_json/from_msgpack/
     template <typename IteratorType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_msgpack(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_msgpack(
         IteratorType first,
         IteratorType last,
         const bool strict = true,
@@ -28081,7 +28078,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 
     template <typename T>
-    JSON_HEDLEY_WARN_UNUSED_RESULT JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.8.0,
         from_msgpack(ptr, ptr + len)) static basic_json
         from_msgpack(
@@ -28093,8 +28090,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       return from_msgpack(ptr, ptr + len, strict, allow_exceptions);
     }
 
-    JSON_HEDLEY_WARN_UNUSED_RESULT
-    JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_msgpack(ptr, ptr + len))
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_msgpack(ptr, ptr + len))
     static basic_json from_msgpack(
         detail::span_input_adapter&& i,
         const bool strict = true,
@@ -28112,7 +28109,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in UBJSON format
     /// @sa https://json.nlohmann.me/api/basic_json/from_ubjson/
     template <typename InputType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_ubjson(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_ubjson(
         InputType&& i,
         const bool strict = true,
         const bool allow_exceptions = true)
@@ -28128,7 +28125,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in UBJSON format
     /// @sa https://json.nlohmann.me/api/basic_json/from_ubjson/
     template <typename IteratorType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_ubjson(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_ubjson(
         IteratorType first,
         IteratorType last,
         const bool strict = true,
@@ -28143,7 +28140,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 
     template <typename T>
-    JSON_HEDLEY_WARN_UNUSED_RESULT JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.8.0,
         from_ubjson(ptr, ptr + len)) static basic_json
         from_ubjson(
@@ -28155,8 +28152,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       return from_ubjson(ptr, ptr + len, strict, allow_exceptions);
     }
 
-    JSON_HEDLEY_WARN_UNUSED_RESULT
-    JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_ubjson(ptr, ptr + len))
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_ubjson(ptr, ptr + len))
     static basic_json from_ubjson(
         detail::span_input_adapter&& i,
         const bool strict = true,
@@ -28174,7 +28171,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in BJData format
     /// @sa https://json.nlohmann.me/api/basic_json/from_bjdata/
     template <typename InputType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bjdata(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bjdata(
         InputType&& i,
         const bool strict = true,
         const bool allow_exceptions = true)
@@ -28190,7 +28187,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in BJData format
     /// @sa https://json.nlohmann.me/api/basic_json/from_bjdata/
     template <typename IteratorType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bjdata(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bjdata(
         IteratorType first,
         IteratorType last,
         const bool strict = true,
@@ -28207,7 +28204,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in BSON format
     /// @sa https://json.nlohmann.me/api/basic_json/from_bson/
     template <typename InputType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bson(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bson(
         InputType&& i,
         const bool strict = true,
         const bool allow_exceptions = true)
@@ -28223,7 +28220,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     /// @brief create a JSON value from an input in BSON format
     /// @sa https://json.nlohmann.me/api/basic_json/from_bson/
     template <typename IteratorType>
-    JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bson(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT static basic_json from_bson(
         IteratorType first,
         IteratorType last,
         const bool strict = true,
@@ -28238,7 +28235,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     }
 
     template <typename T>
-    JSON_HEDLEY_WARN_UNUSED_RESULT JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.8.0,
         from_bson(ptr, ptr + len)) static basic_json
         from_bson(
@@ -28250,8 +28247,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       return from_bson(ptr, ptr + len, strict, allow_exceptions);
     }
 
-    JSON_HEDLEY_WARN_UNUSED_RESULT
-    JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_bson(ptr, ptr + len))
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(3.8.0, from_bson(ptr, ptr + len))
     static basic_json from_bson(
         detail::span_input_adapter&& i,
         const bool strict = true,
@@ -28281,7 +28278,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <
         typename BasicJsonType,
         detail::enable_if_t<detail::is_basic_json<BasicJsonType>::value, int> = 0>
-    JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.11.0,
         basic_json::json_pointer
             or Azure::Core::Json::_internal::json_pointer<
@@ -28299,7 +28296,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <
         typename BasicJsonType,
         detail::enable_if_t<detail::is_basic_json<BasicJsonType>::value, int> = 0>
-    JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.11.0,
         basic_json::json_pointer
             or Azure::Core::Json::_internal::json_pointer<
@@ -28317,7 +28314,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <
         typename BasicJsonType,
         detail::enable_if_t<detail::is_basic_json<BasicJsonType>::value, int> = 0>
-    JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.11.0,
         basic_json::json_pointer
             or Azure::Core::Json::_internal::json_pointer<
@@ -28334,7 +28331,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     template <
         typename BasicJsonType,
         detail::enable_if_t<detail::is_basic_json<BasicJsonType>::value, int> = 0>
-    JSON_HEDLEY_DEPRECATED_FOR(
+    _azure_JSON_HEDLEY_DEPRECATED_FOR(
         3.11.0,
         basic_json::json_pointer
             or Azure::Core::Json::_internal::json_pointer<
@@ -28452,10 +28449,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
             else
             {
               const auto idx = json_pointer::template array_index<basic_json_t>(last_path);
-              if (JSON_HEDLEY_UNLIKELY(idx > parent.size()))
+              if (_azure_JSON_HEDLEY_UNLIKELY(idx > parent.size()))
               {
                 // avoid undefined behavior
-                JSON_THROW(out_of_range::create(
+                _azure_JSON_THROW(out_of_range::create(
                     401,
                     detail::concat("array index ", std::to_string(idx), " is out of range"),
                     &parent));
@@ -28476,7 +28473,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           case value_t::binary: // LCOV_EXCL_LINE
           case value_t::discarded: // LCOV_EXCL_LINE
           default: // LCOV_EXCL_LINE
-            JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
+            _azure_JSON_ASSERT(false); // NOLINT(cert-dcl03-c,hicpp-static-assert,misc-static-assert)
                                 // LCOV_EXCL_LINE
         }
       };
@@ -28493,13 +28490,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         {
           // perform range check
           auto it = parent.find(last_path);
-          if (JSON_HEDLEY_LIKELY(it != parent.end()))
+          if (_azure_JSON_HEDLEY_LIKELY(it != parent.end()))
           {
             parent.erase(it);
           }
           else
           {
-            JSON_THROW(
+            _azure_JSON_THROW(
                 out_of_range::create(403, detail::concat("key '", last_path, "' not found"), this));
           }
         }
@@ -28511,9 +28508,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       };
 
       // type check: top level value must be an array
-      if (JSON_HEDLEY_UNLIKELY(!json_patch.is_array()))
+      if (_azure_JSON_HEDLEY_UNLIKELY(!json_patch.is_array()))
       {
-        JSON_THROW(
+        _azure_JSON_THROW(
             parse_error::create(104, 0, "JSON patch must be an array of objects", &json_patch));
       }
 
@@ -28532,18 +28529,18 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
               = (op == "op") ? "operation" : detail::concat("operation '", op, '\'');
 
           // check if desired value is present
-          if (JSON_HEDLEY_UNLIKELY(it == val.m_data.m_value.object->end()))
+          if (_azure_JSON_HEDLEY_UNLIKELY(it == val.m_data.m_value.object->end()))
           {
             // NOLINTNEXTLINE(performance-inefficient-string-concatenation)
-            JSON_THROW(parse_error::create(
+            _azure_JSON_THROW(parse_error::create(
                 105, 0, detail::concat(error_msg, " must have member '", member, "'"), &val));
           }
 
           // check if result is of type string
-          if (JSON_HEDLEY_UNLIKELY(string_type && !it->second.is_string()))
+          if (_azure_JSON_HEDLEY_UNLIKELY(string_type && !it->second.is_string()))
           {
             // NOLINTNEXTLINE(performance-inefficient-string-concatenation)
-            JSON_THROW(parse_error::create(
+            _azure_JSON_THROW(parse_error::create(
                 105,
                 0,
                 detail::concat(error_msg, " must have string member '", member, "'"),
@@ -28555,9 +28552,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
         };
 
         // type check: every element of the array must be an object
-        if (JSON_HEDLEY_UNLIKELY(!val.is_object()))
+        if (_azure_JSON_HEDLEY_UNLIKELY(!val.is_object()))
         {
-          JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of objects", &val));
+          _azure_JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of objects", &val));
         }
 
         // collect mandatory members
@@ -28615,21 +28612,21 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
           case patch_operations::test: {
             bool success = false;
-            JSON_TRY
+            _azure_JSON_TRY
             {
               // check if "value" matches the one at "path"
               // the "path" location must exist - use at()
               success = (result.at(ptr) == get_value("test", "value", false));
             }
-            JSON_INTERNAL_CATCH(out_of_range&)
+            _azure_JSON_INTERNAL_CATCH(out_of_range&)
             {
               // ignore out of range errors: success remains false
             }
 
             // throw an exception if test fails
-            if (JSON_HEDLEY_UNLIKELY(!success))
+            if (_azure_JSON_HEDLEY_UNLIKELY(!success))
             {
-              JSON_THROW(
+              _azure_JSON_THROW(
                   other_error::create(501, detail::concat("unsuccessful: ", val.dump()), &val));
             }
 
@@ -28640,7 +28637,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           default: {
             // op must be "add", "remove", "replace", "move", "copy", or
             // "test"
-            JSON_THROW(parse_error::create(
+            _azure_JSON_THROW(parse_error::create(
                 105, 0, detail::concat("operation value '", op, "' is invalid"), &val));
           }
         }
@@ -28658,7 +28655,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief creates a diff as a JSON patch
     /// @sa https://json.nlohmann.me/api/basic_json/diff/
-    JSON_HEDLEY_WARN_UNUSED_RESULT
+    _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
     static basic_json diff(
         const basic_json& source,
         const basic_json& target,
@@ -28813,15 +28810,15 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
   /// @brief user-defined to_string function for JSON values
   /// @sa https://json.nlohmann.me/api/basic_json/to_string/
-  NLOHMANN_BASIC_JSON_TPL_DECLARATION
-  std::string to_string(const NLOHMANN_BASIC_JSON_TPL& j) { return j.dump(); }
+  _azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
+  std::string to_string(const _azure_NLOHMANN_BASIC_JSON_TPL& j) { return j.dump(); }
 
   inline namespace literals { inline namespace json_literals {
 
     /// @brief user-defined string literal for JSON values
     /// @sa https://json.nlohmann.me/api/basic_json/operator_literal_json/
-    JSON_HEDLEY_NON_NULL(1)
-#if !defined(JSON_HEDLEY_GCC_VERSION) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0)
+    _azure_JSON_HEDLEY_NON_NULL(1)
+#if !defined(_azure_JSON_HEDLEY_GCC_VERSION) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0)
     inline Azure::Core::Json::_internal::json operator""_json(const char* s, std::size_t n)
 #else
     inline Azure::Core::Json::_internal::json operator"" _json(const char* s, std::size_t n)
@@ -28832,8 +28829,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @brief user-defined string literal for JSON pointer
     /// @sa https://json.nlohmann.me/api/basic_json/operator_literal_json_pointer/
-    JSON_HEDLEY_NON_NULL(1)
-#if !defined(JSON_HEDLEY_GCC_VERSION) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0)
+    _azure_JSON_HEDLEY_NON_NULL(1)
+#if !defined(_azure_JSON_HEDLEY_GCC_VERSION) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0)
     inline Azure::Core::Json::_internal::json::json_pointer operator""_json_pointer(
         const char* s,
         std::size_t n)
@@ -28858,10 +28855,10 @@ namespace std // NOLINT(cert-dcl58-cpp)
 
 /// @brief hash value for JSON objects
 /// @sa https://json.nlohmann.me/api/basic_json/std_hash/
-NLOHMANN_BASIC_JSON_TPL_DECLARATION
-struct hash<Azure::Core::Json::_internal::NLOHMANN_BASIC_JSON_TPL> // NOLINT(cert-dcl58-cpp)
+_azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
+struct hash<Azure::Core::Json::_internal::_azure_NLOHMANN_BASIC_JSON_TPL> // NOLINT(cert-dcl58-cpp)
 {
-  std::size_t operator()(const Azure::Core::Json::_internal::NLOHMANN_BASIC_JSON_TPL& j) const
+  std::size_t operator()(const Azure::Core::Json::_internal::_azure_NLOHMANN_BASIC_JSON_TPL& j) const
   {
     return Azure::Core::Json::_internal::detail::hash(j);
   }
@@ -28881,7 +28878,7 @@ struct less<
       ::Azure::Core::Json::_internal::detail::value_t lhs,
       ::Azure::Core::Json::_internal::detail::value_t rhs) const noexcept
   {
-#if JSON_HAS_THREE_WAY_COMPARISON
+#if _azure_JSON_HAS_THREE_WAY_COMPARISON
     return std::is_lt(lhs <=> rhs); // *NOPAD*
 #else
     return ::Azure::Core::Json::_internal::detail::operator<(lhs, rhs);
@@ -28890,20 +28887,20 @@ struct less<
 };
 
 // C++20 prohibit function specialization in the std namespace.
-#ifndef JSON_HAS_CPP_20
+#ifndef _azure_JSON_HAS_CPP_20
 
 /// @brief exchanges the values of two JSON objects
 /// @sa https://json.nlohmann.me/api/basic_json/std_swap/
-NLOHMANN_BASIC_JSON_TPL_DECLARATION
+_azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
 inline void swap(
-    Azure::Core::Json::_internal::NLOHMANN_BASIC_JSON_TPL& j1,
-    Azure::Core::Json::_internal::NLOHMANN_BASIC_JSON_TPL&
+    Azure::Core::Json::_internal::_azure_NLOHMANN_BASIC_JSON_TPL& j1,
+    Azure::Core::Json::_internal::_azure_NLOHMANN_BASIC_JSON_TPL&
         j2) noexcept( // NOLINT(readability-inconsistent-declaration-parameter-name,
                       // cert-dcl58-cpp)
-    is_nothrow_move_constructible<Azure::Core::Json::_internal::NLOHMANN_BASIC_JSON_TPL>::
+    is_nothrow_move_constructible<Azure::Core::Json::_internal::_azure_NLOHMANN_BASIC_JSON_TPL>::
         value&& // NOLINT(misc-redundant-expression,cppcoreguidelines-noexcept-swap,performance-noexcept-swap)
             is_nothrow_move_assignable<
-                Azure::Core::Json::_internal::NLOHMANN_BASIC_JSON_TPL>::value)
+                Azure::Core::Json::_internal::_azure_NLOHMANN_BASIC_JSON_TPL>::value)
 {
   j1.swap(j2);
 }
@@ -28912,8 +28909,8 @@ inline void swap(
 
 } // namespace std
 
-#if JSON_USE_GLOBAL_UDLS
-#if !defined(JSON_HEDLEY_GCC_VERSION) || JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0)
+#if _azure_JSON_USE_GLOBAL_UDLS
+#if !defined(_azure_JSON_HEDLEY_GCC_VERSION) || _azure_JSON_HEDLEY_GCC_VERSION_CHECK(4, 9, 0)
 using Azure::Core::Json::_internal::literals::json_literals::
 operator""_json; // NOLINT(misc-unused-using-decls,google-global-names-in-headers)
 using Azure::Core::Json::_internal::literals::json_literals::
@@ -28941,32 +28938,32 @@ operator"" _json_pointer; // NOLINT(misc-unused-using-decls,google-global-names-
 #endif
 
 // clean up
-#undef JSON_ASSERT
-#undef JSON_INTERNAL_CATCH
-#undef JSON_THROW
-#undef JSON_PRIVATE_UNLESS_TESTED
-#undef NLOHMANN_BASIC_JSON_TPL_DECLARATION
-#undef NLOHMANN_BASIC_JSON_TPL
-#undef JSON_EXPLICIT
-#undef NLOHMANN_CAN_CALL_STD_FUNC_IMPL
-#undef JSON_INLINE_VARIABLE
-#undef JSON_NO_UNIQUE_ADDRESS
-#undef JSON_DISABLE_ENUM_SERIALIZATION
-#undef JSON_USE_GLOBAL_UDLS
+#undef _azure_JSON_ASSERT
+#undef _azure_JSON_INTERNAL_CATCH
+#undef _azure_JSON_THROW
+#undef _azure_JSON_PRIVATE_UNLESS_TESTED
+#undef _azure_NLOHMANN_BASIC_JSON_TPL_DECLARATION
+#undef _azure_NLOHMANN_BASIC_JSON_TPL
+#undef _azure_JSON_EXPLICIT
+#undef _azure_NLOHMANN_CAN_CALL_STD_FUNC_IMPL
+#undef _azure_JSON_INLINE_VARIABLE
+#undef _azure_JSON_NO_UNIQUE_ADDRESS
+#undef _azure_JSON_DISABLE_ENUM_SERIALIZATION
+#undef _azure_JSON_USE_GLOBAL_UDLS
 
 #ifndef JSON_TEST_KEEP_MACROS
-#undef JSON_CATCH
-#undef JSON_TRY
-#undef JSON_HAS_CPP_11
-#undef JSON_HAS_CPP_14
-#undef JSON_HAS_CPP_17
-#undef JSON_HAS_CPP_20
-#undef JSON_HAS_FILESYSTEM
-#undef JSON_HAS_EXPERIMENTAL_FILESYSTEM
-#undef JSON_HAS_THREE_WAY_COMPARISON
-#undef JSON_HAS_RANGES
-#undef JSON_HAS_STATIC_RTTI
-#undef JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
+#undef _azure_JSON_CATCH
+#undef _azure_JSON_TRY
+#undef _azure_JSON_HAS_CPP_11
+#undef _azure_JSON_HAS_CPP_14
+#undef _azure_JSON_HAS_CPP_17
+#undef _azure_JSON_HAS_CPP_20
+#undef _azure_JSON_HAS_FILESYSTEM
+#undef _azure_JSON_HAS_EXPERIMENTAL_FILESYSTEM
+#undef _azure_JSON_HAS_THREE_WAY_COMPARISON
+#undef _azure_JSON_HAS_RANGES
+#undef _azure_JSON_HAS_STATIC_RTTI
+#undef _azure_JSON_USE_LEGACY_DISCARDED_VALUE_COMPARISON
 #endif
 
 // #include <nlohmann/thirdparty/hedley/hedley_undef.hpp>
@@ -28978,151 +28975,151 @@ operator"" _json_pointer; // NOLINT(misc-unused-using-decls,google-global-names-
 // SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
 // SPDX-License-Identifier: MIT
 
-#undef JSON_HEDLEY_ALWAYS_INLINE
-#undef JSON_HEDLEY_ARM_VERSION
-#undef JSON_HEDLEY_ARM_VERSION_CHECK
-#undef JSON_HEDLEY_ARRAY_PARAM
-#undef JSON_HEDLEY_ASSUME
-#undef JSON_HEDLEY_BEGIN_C_DECLS
-#undef JSON_HEDLEY_CLANG_HAS_ATTRIBUTE
-#undef JSON_HEDLEY_CLANG_HAS_BUILTIN
-#undef JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE
-#undef JSON_HEDLEY_CLANG_HAS_DECLSPEC_DECLSPEC_ATTRIBUTE
-#undef JSON_HEDLEY_CLANG_HAS_EXTENSION
-#undef JSON_HEDLEY_CLANG_HAS_FEATURE
-#undef JSON_HEDLEY_CLANG_HAS_WARNING
-#undef JSON_HEDLEY_COMPCERT_VERSION
-#undef JSON_HEDLEY_COMPCERT_VERSION_CHECK
-#undef JSON_HEDLEY_CONCAT
-#undef JSON_HEDLEY_CONCAT3
-#undef JSON_HEDLEY_CONCAT3_EX
-#undef JSON_HEDLEY_CONCAT_EX
-#undef JSON_HEDLEY_CONST
-#undef JSON_HEDLEY_CONSTEXPR
-#undef JSON_HEDLEY_CONST_CAST
-#undef JSON_HEDLEY_CPP_CAST
-#undef JSON_HEDLEY_CRAY_VERSION
-#undef JSON_HEDLEY_CRAY_VERSION_CHECK
-#undef JSON_HEDLEY_C_DECL
-#undef JSON_HEDLEY_DEPRECATED
-#undef JSON_HEDLEY_DEPRECATED_FOR
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS
-#undef JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
-#undef JSON_HEDLEY_DIAGNOSTIC_POP
-#undef JSON_HEDLEY_DIAGNOSTIC_PUSH
-#undef JSON_HEDLEY_DMC_VERSION
-#undef JSON_HEDLEY_DMC_VERSION_CHECK
-#undef JSON_HEDLEY_EMPTY_BASES
-#undef JSON_HEDLEY_EMSCRIPTEN_VERSION
-#undef JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK
-#undef JSON_HEDLEY_END_C_DECLS
-#undef JSON_HEDLEY_FLAGS
-#undef JSON_HEDLEY_FLAGS_CAST
-#undef JSON_HEDLEY_GCC_HAS_ATTRIBUTE
-#undef JSON_HEDLEY_GCC_HAS_BUILTIN
-#undef JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE
-#undef JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE
-#undef JSON_HEDLEY_GCC_HAS_EXTENSION
-#undef JSON_HEDLEY_GCC_HAS_FEATURE
-#undef JSON_HEDLEY_GCC_HAS_WARNING
-#undef JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK
-#undef JSON_HEDLEY_GCC_VERSION
-#undef JSON_HEDLEY_GCC_VERSION_CHECK
-#undef JSON_HEDLEY_GNUC_HAS_ATTRIBUTE
-#undef JSON_HEDLEY_GNUC_HAS_BUILTIN
-#undef JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE
-#undef JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE
-#undef JSON_HEDLEY_GNUC_HAS_EXTENSION
-#undef JSON_HEDLEY_GNUC_HAS_FEATURE
-#undef JSON_HEDLEY_GNUC_HAS_WARNING
-#undef JSON_HEDLEY_GNUC_VERSION
-#undef JSON_HEDLEY_GNUC_VERSION_CHECK
-#undef JSON_HEDLEY_HAS_ATTRIBUTE
-#undef JSON_HEDLEY_HAS_BUILTIN
-#undef JSON_HEDLEY_HAS_CPP_ATTRIBUTE
-#undef JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS
-#undef JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE
-#undef JSON_HEDLEY_HAS_EXTENSION
-#undef JSON_HEDLEY_HAS_FEATURE
-#undef JSON_HEDLEY_HAS_WARNING
-#undef JSON_HEDLEY_IAR_VERSION
-#undef JSON_HEDLEY_IAR_VERSION_CHECK
-#undef JSON_HEDLEY_IBM_VERSION
-#undef JSON_HEDLEY_IBM_VERSION_CHECK
-#undef JSON_HEDLEY_IMPORT
-#undef JSON_HEDLEY_INLINE
-#undef JSON_HEDLEY_INTEL_CL_VERSION
-#undef JSON_HEDLEY_INTEL_CL_VERSION_CHECK
-#undef JSON_HEDLEY_INTEL_VERSION
-#undef JSON_HEDLEY_INTEL_VERSION_CHECK
-#undef JSON_HEDLEY_IS_CONSTANT
-#undef JSON_HEDLEY_IS_CONSTEXPR_
-#undef JSON_HEDLEY_LIKELY
-#undef JSON_HEDLEY_MALLOC
-#undef JSON_HEDLEY_MCST_LCC_VERSION
-#undef JSON_HEDLEY_MCST_LCC_VERSION_CHECK
-#undef JSON_HEDLEY_MESSAGE
-#undef JSON_HEDLEY_MSVC_VERSION
-#undef JSON_HEDLEY_MSVC_VERSION_CHECK
-#undef JSON_HEDLEY_NEVER_INLINE
-#undef JSON_HEDLEY_NON_NULL
-#undef JSON_HEDLEY_NO_ESCAPE
-#undef JSON_HEDLEY_NO_RETURN
-#undef JSON_HEDLEY_NO_THROW
-#undef JSON_HEDLEY_NULL
-#undef JSON_HEDLEY_PELLES_VERSION
-#undef JSON_HEDLEY_PELLES_VERSION_CHECK
-#undef JSON_HEDLEY_PGI_VERSION
-#undef JSON_HEDLEY_PGI_VERSION_CHECK
-#undef JSON_HEDLEY_PREDICT
-#undef JSON_HEDLEY_PRINTF_FORMAT
-#undef JSON_HEDLEY_PRIVATE
-#undef JSON_HEDLEY_PUBLIC
-#undef JSON_HEDLEY_PURE
-#undef JSON_HEDLEY_REINTERPRET_CAST
-#undef JSON_HEDLEY_REQUIRE
-#undef JSON_HEDLEY_REQUIRE_CONSTEXPR
-#undef JSON_HEDLEY_REQUIRE_MSG
-#undef JSON_HEDLEY_RESTRICT
-#undef JSON_HEDLEY_RETURNS_NON_NULL
-#undef JSON_HEDLEY_SENTINEL
-#undef JSON_HEDLEY_STATIC_ASSERT
-#undef JSON_HEDLEY_STATIC_CAST
-#undef JSON_HEDLEY_STRINGIFY
-#undef JSON_HEDLEY_STRINGIFY_EX
-#undef JSON_HEDLEY_SUNPRO_VERSION
-#undef JSON_HEDLEY_SUNPRO_VERSION_CHECK
-#undef JSON_HEDLEY_TINYC_VERSION
-#undef JSON_HEDLEY_TINYC_VERSION_CHECK
-#undef JSON_HEDLEY_TI_ARMCL_VERSION
-#undef JSON_HEDLEY_TI_ARMCL_VERSION_CHECK
-#undef JSON_HEDLEY_TI_CL2000_VERSION
-#undef JSON_HEDLEY_TI_CL2000_VERSION_CHECK
-#undef JSON_HEDLEY_TI_CL430_VERSION
-#undef JSON_HEDLEY_TI_CL430_VERSION_CHECK
-#undef JSON_HEDLEY_TI_CL6X_VERSION
-#undef JSON_HEDLEY_TI_CL6X_VERSION_CHECK
-#undef JSON_HEDLEY_TI_CL7X_VERSION
-#undef JSON_HEDLEY_TI_CL7X_VERSION_CHECK
-#undef JSON_HEDLEY_TI_CLPRU_VERSION
-#undef JSON_HEDLEY_TI_CLPRU_VERSION_CHECK
-#undef JSON_HEDLEY_TI_VERSION
-#undef JSON_HEDLEY_TI_VERSION_CHECK
-#undef JSON_HEDLEY_UNAVAILABLE
-#undef JSON_HEDLEY_UNLIKELY
-#undef JSON_HEDLEY_UNPREDICTABLE
-#undef JSON_HEDLEY_UNREACHABLE
-#undef JSON_HEDLEY_UNREACHABLE_RETURN
-#undef JSON_HEDLEY_VERSION
-#undef JSON_HEDLEY_VERSION_DECODE_MAJOR
-#undef JSON_HEDLEY_VERSION_DECODE_MINOR
-#undef JSON_HEDLEY_VERSION_DECODE_REVISION
-#undef JSON_HEDLEY_VERSION_ENCODE
-#undef JSON_HEDLEY_WARNING
-#undef JSON_HEDLEY_WARN_UNUSED_RESULT
-#undef JSON_HEDLEY_WARN_UNUSED_RESULT_MSG
-#undef JSON_HEDLEY_FALL_THROUGH
+#undef _azure_JSON_HEDLEY_ALWAYS_INLINE
+#undef _azure_JSON_HEDLEY_ARM_VERSION
+#undef _azure_JSON_HEDLEY_ARM_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_ARRAY_PARAM
+#undef _azure_JSON_HEDLEY_ASSUME
+#undef _azure_JSON_HEDLEY_BEGIN_C_DECLS
+#undef _azure_JSON_HEDLEY_CLANG_HAS_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_CLANG_HAS_BUILTIN
+#undef _azure_JSON_HEDLEY_CLANG_HAS_CPP_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_CLANG_HAS_DECLSPEC_DECLSPEC_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_CLANG_HAS_EXTENSION
+#undef _azure_JSON_HEDLEY_CLANG_HAS_FEATURE
+#undef _azure_JSON_HEDLEY_CLANG_HAS_WARNING
+#undef _azure_JSON_HEDLEY_COMPCERT_VERSION
+#undef _azure_JSON_HEDLEY_COMPCERT_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_CONCAT
+#undef _azure_JSON_HEDLEY_CONCAT3
+#undef _azure_JSON_HEDLEY_CONCAT3_EX
+#undef _azure_JSON_HEDLEY_CONCAT_EX
+#undef _azure_JSON_HEDLEY_CONST
+#undef _azure_JSON_HEDLEY_CONSTEXPR
+#undef _azure_JSON_HEDLEY_CONST_CAST
+#undef _azure_JSON_HEDLEY_CPP_CAST
+#undef _azure_JSON_HEDLEY_CRAY_VERSION
+#undef _azure_JSON_HEDLEY_CRAY_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_C_DECL
+#undef _azure_JSON_HEDLEY_DEPRECATED
+#undef _azure_JSON_HEDLEY_DEPRECATED_FOR
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CAST_QUAL
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_DEPRECATED
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_CPP_ATTRIBUTES
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_POP
+#undef _azure_JSON_HEDLEY_DIAGNOSTIC_PUSH
+#undef _azure_JSON_HEDLEY_DMC_VERSION
+#undef _azure_JSON_HEDLEY_DMC_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_EMPTY_BASES
+#undef _azure_JSON_HEDLEY_EMSCRIPTEN_VERSION
+#undef _azure_JSON_HEDLEY_EMSCRIPTEN_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_END_C_DECLS
+#undef _azure_JSON_HEDLEY_FLAGS
+#undef _azure_JSON_HEDLEY_FLAGS_CAST
+#undef _azure_JSON_HEDLEY_GCC_HAS_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_GCC_HAS_BUILTIN
+#undef _azure_JSON_HEDLEY_GCC_HAS_CPP_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_GCC_HAS_DECLSPEC_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_GCC_HAS_EXTENSION
+#undef _azure_JSON_HEDLEY_GCC_HAS_FEATURE
+#undef _azure_JSON_HEDLEY_GCC_HAS_WARNING
+#undef _azure_JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_GCC_VERSION
+#undef _azure_JSON_HEDLEY_GCC_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_GNUC_HAS_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_GNUC_HAS_BUILTIN
+#undef _azure_JSON_HEDLEY_GNUC_HAS_CPP_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_GNUC_HAS_DECLSPEC_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_GNUC_HAS_EXTENSION
+#undef _azure_JSON_HEDLEY_GNUC_HAS_FEATURE
+#undef _azure_JSON_HEDLEY_GNUC_HAS_WARNING
+#undef _azure_JSON_HEDLEY_GNUC_VERSION
+#undef _azure_JSON_HEDLEY_GNUC_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_HAS_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_HAS_BUILTIN
+#undef _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_HAS_CPP_ATTRIBUTE_NS
+#undef _azure_JSON_HEDLEY_HAS_DECLSPEC_ATTRIBUTE
+#undef _azure_JSON_HEDLEY_HAS_EXTENSION
+#undef _azure_JSON_HEDLEY_HAS_FEATURE
+#undef _azure_JSON_HEDLEY_HAS_WARNING
+#undef _azure_JSON_HEDLEY_IAR_VERSION
+#undef _azure_JSON_HEDLEY_IAR_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_IBM_VERSION
+#undef _azure_JSON_HEDLEY_IBM_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_IMPORT
+#undef _azure_JSON_HEDLEY_INLINE
+#undef _azure_JSON_HEDLEY_INTEL_CL_VERSION
+#undef _azure_JSON_HEDLEY_INTEL_CL_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_INTEL_VERSION
+#undef _azure_JSON_HEDLEY_INTEL_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_IS_CONSTANT
+#undef _azure_JSON_HEDLEY_IS_CONSTEXPR_
+#undef _azure_JSON_HEDLEY_LIKELY
+#undef _azure_JSON_HEDLEY_MALLOC
+#undef _azure_JSON_HEDLEY_MCST_LCC_VERSION
+#undef _azure_JSON_HEDLEY_MCST_LCC_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_MESSAGE
+#undef _azure_JSON_HEDLEY_MSVC_VERSION
+#undef _azure_JSON_HEDLEY_MSVC_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_NEVER_INLINE
+#undef _azure_JSON_HEDLEY_NON_NULL
+#undef _azure_JSON_HEDLEY_NO_ESCAPE
+#undef _azure_JSON_HEDLEY_NO_RETURN
+#undef _azure_JSON_HEDLEY_NO_THROW
+#undef _azure_JSON_HEDLEY_NULL
+#undef _azure_JSON_HEDLEY_PELLES_VERSION
+#undef _azure_JSON_HEDLEY_PELLES_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_PGI_VERSION
+#undef _azure_JSON_HEDLEY_PGI_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_PREDICT
+#undef _azure_JSON_HEDLEY_PRINTF_FORMAT
+#undef _azure_JSON_HEDLEY_PRIVATE
+#undef _azure_JSON_HEDLEY_PUBLIC
+#undef _azure_JSON_HEDLEY_PURE
+#undef _azure_JSON_HEDLEY_REINTERPRET_CAST
+#undef _azure_JSON_HEDLEY_REQUIRE
+#undef _azure_JSON_HEDLEY_REQUIRE_CONSTEXPR
+#undef _azure_JSON_HEDLEY_REQUIRE_MSG
+#undef _azure_JSON_HEDLEY_RESTRICT
+#undef _azure_JSON_HEDLEY_RETURNS_NON_NULL
+#undef _azure_JSON_HEDLEY_SENTINEL
+#undef _azure_JSON_HEDLEY_STATIC_ASSERT
+#undef _azure_JSON_HEDLEY_STATIC_CAST
+#undef _azure_JSON_HEDLEY_STRINGIFY
+#undef _azure_JSON_HEDLEY_STRINGIFY_EX
+#undef _azure_JSON_HEDLEY_SUNPRO_VERSION
+#undef _azure_JSON_HEDLEY_SUNPRO_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TINYC_VERSION
+#undef _azure_JSON_HEDLEY_TINYC_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TI_ARMCL_VERSION
+#undef _azure_JSON_HEDLEY_TI_ARMCL_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TI_CL2000_VERSION
+#undef _azure_JSON_HEDLEY_TI_CL2000_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TI_CL430_VERSION
+#undef _azure_JSON_HEDLEY_TI_CL430_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TI_CL6X_VERSION
+#undef _azure_JSON_HEDLEY_TI_CL6X_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TI_CL7X_VERSION
+#undef _azure_JSON_HEDLEY_TI_CL7X_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TI_CLPRU_VERSION
+#undef _azure_JSON_HEDLEY_TI_CLPRU_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_TI_VERSION
+#undef _azure_JSON_HEDLEY_TI_VERSION_CHECK
+#undef _azure_JSON_HEDLEY_UNAVAILABLE
+#undef _azure_JSON_HEDLEY_UNLIKELY
+#undef _azure_JSON_HEDLEY_UNPREDICTABLE
+#undef _azure_JSON_HEDLEY_UNREACHABLE
+#undef _azure_JSON_HEDLEY_UNREACHABLE_RETURN
+#undef _azure_JSON_HEDLEY_VERSION
+#undef _azure_JSON_HEDLEY_VERSION_DECODE_MAJOR
+#undef _azure_JSON_HEDLEY_VERSION_DECODE_MINOR
+#undef _azure_JSON_HEDLEY_VERSION_DECODE_REVISION
+#undef _azure_JSON_HEDLEY_VERSION_ENCODE
+#undef _azure_JSON_HEDLEY_WARNING
+#undef _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
+#undef _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG
+#undef _azure_JSON_HEDLEY_FALL_THROUGH
