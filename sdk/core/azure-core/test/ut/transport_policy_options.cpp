@@ -458,7 +458,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         // CURL returns a connection error which triggers a transport exception.
         GTEST_LOG_(INFO) << "DisableCrlValidation test iteration " << i
-                         << " failed with a TransportException.";
+                         << " failed with a TransportException. " << ex.what();
         failedCounter++;
         // We allow 1 intermittent failure, due to networking issues.
         if (failedCounter > 1)

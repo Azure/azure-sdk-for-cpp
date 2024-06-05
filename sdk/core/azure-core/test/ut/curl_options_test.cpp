@@ -90,10 +90,11 @@ namespace Azure { namespace Core { namespace Test {
             response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
         break; // Test passed, no need to retry.
       }
-      catch (Azure::Core::Http::TransportException const&)
+      catch (Azure::Core::Http::TransportException const& ex)
       {
         // CURL returns a connection error which triggers a transport exception.
-        GTEST_LOG_(INFO) << "noRevoke test iteration " << i << " failed with a TransportException.";
+        GTEST_LOG_(INFO) << "noRevoke test iteration " << i << " failed with a TransportException. "
+                         << ex.what();
         failedCounter++;
         // We allow 1 intermittent failure, due to networking issues.
         if (failedCounter > 1)
@@ -253,11 +254,11 @@ namespace Azure { namespace Core { namespace Test {
             response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
         break; // Test passed, no need to retry.
       }
-      catch (Azure::Core::Http::TransportException const&)
+      catch (Azure::Core::Http::TransportException const& ex)
       {
         // CURL returns a connection error which triggers a transport exception.
         GTEST_LOG_(INFO) << "sslVerifyOff test iteration " << i
-                         << " failed with a TransportException.";
+                         << " failed with a TransportException. " << ex.what();
         failedCounter++;
         // We allow 1 intermittent failure, due to networking issues.
         if (failedCounter > 1)
@@ -369,11 +370,11 @@ namespace Azure { namespace Core { namespace Test {
             response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
         break; // Test passed, no need to retry.
       }
-      catch (Azure::Core::Http::TransportException const&)
+      catch (Azure::Core::Http::TransportException const& ex)
       {
         // CURL returns a connection error which triggers a transport exception.
         GTEST_LOG_(INFO) << "httpsDefault test iteration " << i
-                         << " failed with a TransportException.";
+                         << " failed with a TransportException. " << ex.what();
         failedCounter++;
         // We allow 1 intermittent failure, due to networking issues.
         if (failedCounter > 1)
@@ -428,11 +429,11 @@ namespace Azure { namespace Core { namespace Test {
               response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
           break; // Test passed, no need to retry.
         }
-        catch (Azure::Core::Http::TransportException const&)
+        catch (Azure::Core::Http::TransportException const& ex)
         {
           // CURL returns a connection error which triggers a transport exception.
           GTEST_LOG_(INFO) << "disableKeepAlive test iteration " << i
-                           << " failed with a TransportException.";
+                           << " failed with a TransportException. " << ex.what();
           failedCounter++;
           // We allow 1 intermittent failure, due to networking issues.
           if (failedCounter > 1)

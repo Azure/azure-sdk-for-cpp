@@ -612,11 +612,11 @@ namespace Azure { namespace Core { namespace Test {
           EXPECT_EQ(CURLE_SEND_ERROR, r);
           break; // Test passed, no need to retry.
         }
-        catch (Azure::Core::Http::TransportException const&)
+        catch (Azure::Core::Http::TransportException const& ex)
         {
           // CURL returns a connection error which triggers a transport exception.
           GTEST_LOG_(INFO) << "resiliencyOnConnectionClosed test iteration " << i
-                           << " failed with a TransportException.";
+                           << " failed with a TransportException. " << ex.what();
           failedCounter++;
           // We allow 1 intermittent failure, due to networking issues.
           if (failedCounter > 1)
@@ -655,12 +655,12 @@ namespace Azure { namespace Core { namespace Test {
           EXPECT_EQ("close", response->GetHeaders().find("Connection")->second);
           break; // Test passed, no need to retry.
         }
-        catch (Azure::Core::Http::TransportException const&)
+        catch (Azure::Core::Http::TransportException const& ex)
         {
 
           // CURL returns a connection error which triggers a transport exception.
           GTEST_LOG_(INFO) << "forceConnectionClosed test iteration " << i
-                           << " failed with a TransportException.";
+                           << " failed with a TransportException. " << ex.what();
           failedCounter++;
           // We allow 1 intermittent failure, due to networking issues.
           if (failedCounter > 1)
