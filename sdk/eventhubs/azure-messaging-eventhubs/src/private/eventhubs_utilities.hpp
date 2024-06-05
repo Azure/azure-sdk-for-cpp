@@ -263,7 +263,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   public:
     template <typename T> static void SetUserAgent(T& options, std::string const& applicationId)
     {
-      constexpr const char* packageName = "cpp-azure-messaging-eventhubs-cpp";
+      constexpr const char* packageName = "azure-messaging-eventhubs-cpp";
 
       options.Properties.emplace("product", +packageName);
       options.Properties.emplace("version", PackageVersion::ToString());
