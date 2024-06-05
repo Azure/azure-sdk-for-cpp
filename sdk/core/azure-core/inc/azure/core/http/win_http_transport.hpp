@@ -11,13 +11,13 @@
 #include "azure/core/context.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/url.hpp
-#include "azure/core/internal/unique_handle.hpp"
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/transport.hpp"
 #include "azure/core/http/policies/policy.hpp"
+#include "azure/core/http/transport.hpp"
+#include "azure/core/internal/unique_handle.hpp"
 
-#include <string>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace Azure { namespace Core {

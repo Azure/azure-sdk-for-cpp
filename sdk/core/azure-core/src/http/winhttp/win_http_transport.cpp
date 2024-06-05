@@ -54,7 +54,6 @@ void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLast
   throw Azure::Core::Http::TransportException(exceptionMessage + GetErrorMessage(error));
 }
 
-
 const std::string HttpScheme = "http";
 const std::string WebSocketScheme = "ws";
 
