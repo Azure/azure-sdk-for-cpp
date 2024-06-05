@@ -30,8 +30,8 @@
                                 // 'GetProcAddress'.
 #include <wil\resource.h>
 #pragma warning(pop)
-#include <winhttp.h>
 #include <wincrypt.h>
+#include <winhttp.h>
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
