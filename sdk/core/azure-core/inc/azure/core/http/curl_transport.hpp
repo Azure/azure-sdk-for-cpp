@@ -8,11 +8,13 @@
 
 #pragma once
 
-#include "azure/core/context.hpp"
-#include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/platform.hpp"
+#include "azure/core/nullable.hpp"
+
+#include <chrono>
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Core { namespace Http {
   class CurlNetworkConnection;
