@@ -5,7 +5,7 @@
 
 using namespace Azure::Core;
 
-Context Context::ApplicationContext;
+Context Context::ApplicationContext{Context::CreateNewRoot()};
 
 Azure::DateTime Azure::Core::Context::GetDeadline() const
 {
