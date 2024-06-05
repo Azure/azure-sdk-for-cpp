@@ -20,7 +20,7 @@
 #define NOMINMAX
 #endif
 
-#include <Windows.h>
+#include <windows.h>
 
 #include <memory>
 #include <mutex>
@@ -31,6 +31,7 @@
 #include <wil\resource.h>
 #pragma warning(pop)
 #include <winhttp.h>
+#include <wincrypt.h>
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 

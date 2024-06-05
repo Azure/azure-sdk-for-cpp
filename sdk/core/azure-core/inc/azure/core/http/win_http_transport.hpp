@@ -9,12 +9,12 @@
 #pragma once
 
 #include "azure/core/context.hpp"
-#include "azure/core/nullable.hpp"
-#include "azure/core/url.hpp
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/unique_handle.hpp"
+#include "azure/core/nullable.hpp"
+#include "azure/core/url.hpp"
 
 #include <memory>
 #include <string>
@@ -22,7 +22,6 @@
 
 namespace Azure { namespace Core {
   namespace _detail {
-    class WinHttpRequest;
     void FreeWinHttpHandleImpl(void* obj);
 
     /**
@@ -41,6 +40,10 @@ namespace Azure { namespace Core {
   } // namespace _detail
 
   namespace Http {
+    namespace _detail {
+      class WinHttpRequest;
+    }
+
     /**
      * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
      * transport.
@@ -123,14 +126,15 @@ namespace Azure { namespace Core {
       Azure::Core::_internal::UniqueHandle<void*> CreateConnectionHandle(
           Azure::Core::Url const& url,
           Azure::Core::Context const& context);
-      std::unique_ptr<Core::_detail::WinHttpRequest> CreateRequestHandle(
+
+      std::unique_ptr<_detail::WinHttpRequest> CreateRequestHandle(
           Azure::Core::_internal::UniqueHandle<void*> const& connectionHandle,
           Azure::Core::Url const& url,
           Azure::Core::Http::HttpMethod const& method);
 
       // Callback to allow a derived transport to extract the request handle. Used for WebSocket
       // transports.
-      virtual void OnUpgradedConnection(std::unique_ptr<Core::_detail::WinHttpRequest> const&){};
+      virtual void OnUpgradedConnection(std::unique_ptr<_detail::WinHttpRequest> const&){};
 
     public:
       /**

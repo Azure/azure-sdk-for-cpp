@@ -49,6 +49,41 @@ namespace {
 constexpr static const size_t DefaultUploadChunkSize = 1024 * 64;
 constexpr static const size_t MaximumUploadChunkSize = 1024 * 1024;
 
+std::string GetErrorMessage(DWORD error)
+{
+  std::string errorMessage = " Error Code: " + std::to_string(error);
+
+  char* errorMsg = nullptr;
+  if (FormatMessageA(
+          FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+          GetModuleHandleA("winhttp.dll"),
+          error,
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+          reinterpret_cast<LPSTR>(&errorMsg),
+          0,
+          nullptr)
+      != 0)
+  {
+    // Use a unique_ptr to manage the lifetime of errorMsg.
+    std::unique_ptr<char, decltype(&LocalFree)> errorString(errorMsg, &LocalFree);
+    errorMsg = nullptr;
+
+    errorMessage += ": ";
+    errorMessage += errorString.get();
+    // If the end of the error message is a CRLF, remove it.
+    if (errorMessage.back() == '\n')
+    {
+      errorMessage.erase(errorMessage.size() - 1);
+      if (errorMessage.back() == '\r')
+      {
+        errorMessage.erase(errorMessage.size() - 1);
+      }
+    }
+  }
+  errorMessage += '.';
+  return errorMessage;
+}
+
 void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError())
 {
   throw Azure::Core::Http::TransportException(exceptionMessage + GetErrorMessage(error));
@@ -252,7 +287,7 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 }
 } // namespace
 
-void _detail::FreeWinHttpHandleImpl(void* obj)
+void Azure::Core::_detail::FreeWinHttpHandleImpl(void* obj)
 {
   // If definitions from windows.h are only being used as private members and not a public API, we
   // don't want to include windows.h in inc/ headers, so that it does not end up being included in
@@ -427,41 +462,6 @@ std::string InternetStatusToString(DWORD internetStatus)
   return rv;
 }
 #undef APPEND_ENUM_STRING
-
-std::string GetErrorMessage(DWORD error)
-{
-  std::string errorMessage = " Error Code: " + std::to_string(error);
-
-  char* errorMsg = nullptr;
-  if (FormatMessage(
-          FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-          GetModuleHandle("winhttp.dll"),
-          error,
-          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-          reinterpret_cast<LPSTR>(&errorMsg),
-          0,
-          nullptr)
-      != 0)
-  {
-    // Use a unique_ptr to manage the lifetime of errorMsg.
-    std::unique_ptr<char, decltype(&LocalFree)> errorString(errorMsg, &LocalFree);
-    errorMsg = nullptr;
-
-    errorMessage += ": ";
-    errorMessage += errorString.get();
-    // If the end of the error message is a CRLF, remove it.
-    if (errorMessage.back() == '\n')
-    {
-      errorMessage.erase(errorMessage.size() - 1);
-      if (errorMessage.back() == '\r')
-      {
-        errorMessage.erase(errorMessage.size() - 1);
-      }
-    }
-  }
-  errorMessage += '.';
-  return errorMessage;
-}
 } // namespace
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
