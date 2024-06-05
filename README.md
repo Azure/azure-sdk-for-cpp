@@ -188,11 +188,11 @@ Most Azure SDK Service Client methods accept an optional `Azure::Core::Context` 
 establish an absolute deadline for the operation.
 
 This is useful when you want to assign a time limit on an operation to ensure that it completes in a "reasonable" timeframe. For instance, the 
-snippet below will cancel a blob client upload after 500 milliseconds.
+snippet below will cancel a blob client upload after 5 seconds.
 
 ```cpp
   Azure::Core::Context cancelledIn500ms = Azure::Core::Context::ApplicationContext.WithDeadline(
-          std::chrono::system_clock::now() + std::chrono::milliseconds(500));
+          std::chrono::system_clock::now() + std::chrono::seconds(5);
 
   std::cout << "Uploading blob: " << blobName << std::endl;
   blobClient.UploadFrom(blobContent, sizeof(blobContent), cancelledIn500ms);
@@ -202,7 +202,6 @@ snippet below will cancel a blob client upload after 500 milliseconds.
 
 `Context` objects form a directed tree, where a child context can be created from a parent context. 
 The context tree is unidirectional and acyclic.
-
 
 There are five basic operations that can be performed on a 'Context' object:
 
