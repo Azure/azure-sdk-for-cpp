@@ -147,19 +147,6 @@ namespace Azure { namespace Core {
       }
 
       /**
-       * @brief Create a new ContextSharedState from another ContextSharedState with no deadline and
-       * no value
-       */
-      explicit ContextSharedState(const std::shared_ptr<ContextSharedState>& parent)
-          : Parent(parent), Deadline(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr)
-#if defined(AZ_CORE_RTTI)
-            ,
-            ValueType(typeid(std::nullptr_t))
-#endif
-      {
-      }
-
-      /**
        * @brief Create a new ContextSharedState from another ContextSharedState with a deadline.
        *
        * @param parent The parent context to create a child context from.
@@ -168,7 +155,7 @@ namespace Azure { namespace Core {
        */
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          DateTime const& deadline)
+          DateTime const& deadline = (DateTime::max)())
           : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Value(nullptr)
 #if defined(AZ_CORE_RTTI)
             ,
