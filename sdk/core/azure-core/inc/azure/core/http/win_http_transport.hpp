@@ -123,14 +123,14 @@ namespace Azure { namespace Core {
       Azure::Core::_internal::UniqueHandle<void*> CreateConnectionHandle(
           Azure::Core::Url const& url,
           Azure::Core::Context const& context);
-      std::unique_ptr<_detail::WinHttpRequest> CreateRequestHandle(
+      std::unique_ptr<Core::_detail::WinHttpRequest> CreateRequestHandle(
           Azure::Core::_internal::UniqueHandle<void*> const& connectionHandle,
           Azure::Core::Url const& url,
           Azure::Core::Http::HttpMethod const& method);
 
       // Callback to allow a derived transport to extract the request handle. Used for WebSocket
       // transports.
-      virtual void OnUpgradedConnection(std::unique_ptr<_detail::WinHttpRequest> const&){};
+      virtual void OnUpgradedConnection(std::unique_ptr<Core::_detail::WinHttpRequest> const&){};
 
     public:
       /**
