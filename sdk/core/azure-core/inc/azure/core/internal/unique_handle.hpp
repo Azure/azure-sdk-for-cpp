@@ -67,4 +67,22 @@ namespace Azure { namespace Core {
     template <typename T, template <typename> class U = _detail::UniqueHandleHelper>
     using UniqueHandle = typename U<T>::type;
   } // namespace _internal
+
+  namespace _detail {
+    void FreeWinHttpHandleImpl(void* obj);
+
+    /**
+     * @brief Unique handle for WinHTTP HINTERNET handles.
+     *
+     * @note HINTERNET is declared as a "void *". This means that this definition subsumes all other
+     * `void *` types when used with Azure::Core::_internal::UniqueHandle.
+     *
+     */
+    template <> struct UniqueHandleHelper<void*>
+    {
+      static void FreeWinHttpHandle(void* obj) { FreeWinHttpHandleImpl(obj); }
+
+      using type = _internal::BasicUniqueHandle<void, FreeWinHttpHandle>;
+    };
+  } // namespace _detail
 }} // namespace Azure::Core
