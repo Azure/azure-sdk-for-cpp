@@ -265,7 +265,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     {
       constexpr const char* packageName = "azure-messaging-eventhubs-cpp";
 
-      options.Properties.emplace("product", +packageName);
+      options.Properties.emplace("product", packageName);
       options.Properties.emplace("version", PackageVersion::ToString());
 #if defined(AZ_PLATFORM_WINDOWS)
       options.Properties.emplace("platform", "Windows");
