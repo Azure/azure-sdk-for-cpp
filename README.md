@@ -203,7 +203,7 @@ snippet below will cancel a blob client upload after 5 seconds.
   }
 ```
 
-`Context` objects can also be directly cancelled using the `Context::Cancel` method.
+`Context` objects can also be directly cancelled using the `Cancel()` method.
 
 `Context` objects form a directed tree, where a child context can be created from a parent context. 
 The context tree is unidirectional and acyclic.
