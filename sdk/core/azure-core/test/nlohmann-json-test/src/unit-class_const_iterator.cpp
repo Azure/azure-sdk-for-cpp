@@ -1,421 +1,394 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
 #define private public
-#include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json.hpp> 
 using Azure::Core::Json::_internal::json;
 #undef private
 
 TEST_CASE("const_iterator class")
 {
-  SECTION("construction")
-  {
-    SECTION("constructor")
+    SECTION("construction")
     {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it(&j);
-      }
+        SECTION("constructor")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator const it(&j);
+            }
 
-      SECTION("object")
-      {
-        json j(json::value_t::object);
-        json::const_iterator it(&j);
-      }
+            SECTION("object")
+            {
+                json const j(json::value_t::object);
+                json::const_iterator const it(&j);
+            }
 
-      SECTION("array")
-      {
-        json j(json::value_t::array);
-        json::const_iterator it(&j);
-      }
+            SECTION("array")
+            {
+                json const j(json::value_t::array);
+                json::const_iterator const it(&j);
+            }
+        }
+
+        SECTION("copy assignment")
+        {
+            json const j(json::value_t::null);
+            json::const_iterator const it(&j);
+            json::const_iterator it2(&j);
+            it2 = it;
+        }
+
+        SECTION("copy constructor from non-const iterator")
+        {
+            SECTION("create from uninitialized iterator")
+            {
+                const json::iterator it {};
+                json::const_iterator const cit(it);
+            }
+
+            SECTION("create from initialized iterator")
+            {
+                json j;
+                const json::iterator it = j.begin();
+                json::const_iterator const cit(it);
+            }
+        }
     }
 
-    SECTION("copy assignment")
+    SECTION("initialization")
     {
-      json j(json::value_t::null);
-      json::const_iterator it(&j);
-      json::const_iterator it2(&j);
-      it2 = it;
+        SECTION("set_begin")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator it(&j);
+                it.set_begin();
+                CHECK((it == j.cbegin()));
+            }
+
+            SECTION("object")
+            {
+                json const j(json::value_t::object);
+                json::const_iterator it(&j);
+                it.set_begin();
+                CHECK((it == j.cbegin()));
+            }
+
+            SECTION("array")
+            {
+                json const j(json::value_t::array);
+                json::const_iterator it(&j);
+                it.set_begin();
+                CHECK((it == j.cbegin()));
+            }
+        }
+
+        SECTION("set_end")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator it(&j);
+                it.set_end();
+                CHECK((it == j.cend()));
+            }
+
+            SECTION("object")
+            {
+                json const j(json::value_t::object);
+                json::const_iterator it(&j);
+                it.set_end();
+                CHECK((it == j.cend()));
+            }
+
+            SECTION("array")
+            {
+                json const j(json::value_t::array);
+                json::const_iterator it(&j);
+                it.set_end();
+                CHECK((it == j.cend()));
+            }
+        }
     }
 
-    SECTION("copy constructor from non-const iterator")
+    SECTION("element access")
     {
-      SECTION("create from uninitialized iterator")
-      {
-        const json::iterator it{};
-        json::const_iterator cit(it);
-      }
+        SECTION("operator*")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator const it = j.cbegin();
+                CHECK_THROWS_WITH_AS(*it, "[json.exception.invalid_iterator.214] cannot get value", json::invalid_iterator&);
+            }
 
-      SECTION("create from initialized iterator")
-      {
-        json j;
-        const json::iterator it = j.begin();
-        json::const_iterator cit(it);
-      }
-    }
-  }
+            SECTION("number")
+            {
+                json const j(17);
+                json::const_iterator it = j.cbegin();
+                CHECK(*it == json(17));
+                it = j.cend();
+                CHECK_THROWS_WITH_AS(*it, "[json.exception.invalid_iterator.214] cannot get value", json::invalid_iterator&);
+            }
 
-  SECTION("initialization")
-  {
-    SECTION("set_begin")
-    {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it(&j);
-        it.set_begin();
-        CHECK((it == j.cbegin()));
-      }
+            SECTION("object")
+            {
+                json const j({{"foo", "bar"}});
+                json::const_iterator const it = j.cbegin();
+                CHECK(*it == json("bar"));
+            }
 
-      SECTION("object")
-      {
-        json j(json::value_t::object);
-        json::const_iterator it(&j);
-        it.set_begin();
-        CHECK((it == j.cbegin()));
-      }
+            SECTION("array")
+            {
+                json const j({1, 2, 3, 4});
+                json::const_iterator const it = j.cbegin();
+                CHECK(*it == json(1));
+            }
+        }
 
-      SECTION("array")
-      {
-        json j(json::value_t::array);
-        json::const_iterator it(&j);
-        it.set_begin();
-        CHECK((it == j.cbegin()));
-      }
-    }
+        SECTION("operator->")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator const it = j.cbegin();
+                CHECK_THROWS_WITH_AS(std::string(it->type_name()), "[json.exception.invalid_iterator.214] cannot get value", json::invalid_iterator&);
+            }
 
-    SECTION("set_end")
-    {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it(&j);
-        it.set_end();
-        CHECK((it == j.cend()));
-      }
+            SECTION("number")
+            {
+                json const j(17);
+                json::const_iterator it = j.cbegin();
+                CHECK(std::string(it->type_name()) == "number");
+                it = j.cend();
+                CHECK_THROWS_WITH_AS(std::string(it->type_name()), "[json.exception.invalid_iterator.214] cannot get value", json::invalid_iterator&);
+            }
 
-      SECTION("object")
-      {
-        json j(json::value_t::object);
-        json::const_iterator it(&j);
-        it.set_end();
-        CHECK((it == j.cend()));
-      }
+            SECTION("object")
+            {
+                json const j({{"foo", "bar"}});
+                json::const_iterator const it = j.cbegin();
+                CHECK(std::string(it->type_name()) == "string");
+            }
 
-      SECTION("array")
-      {
-        json j(json::value_t::array);
-        json::const_iterator it(&j);
-        it.set_end();
-        CHECK((it == j.cend()));
-      }
-    }
-  }
-
-  SECTION("element access")
-  {
-    SECTION("operator*")
-    {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it = j.cbegin();
-        CHECK_THROWS_AS(*it, json::invalid_iterator&);
-        CHECK_THROWS_WITH(*it, "[json.exception.invalid_iterator.214] cannot get value");
-      }
-
-      SECTION("number")
-      {
-        json j(17);
-        json::const_iterator it = j.cbegin();
-        CHECK(*it == json(17));
-        it = j.cend();
-        CHECK_THROWS_AS(*it, json::invalid_iterator&);
-        CHECK_THROWS_WITH(*it, "[json.exception.invalid_iterator.214] cannot get value");
-      }
-
-      SECTION("object")
-      {
-        json j({{"foo", "bar"}});
-        json::const_iterator it = j.cbegin();
-        CHECK(*it == json("bar"));
-      }
-
-      SECTION("array")
-      {
-        json j({1, 2, 3, 4});
-        json::const_iterator it = j.cbegin();
-        CHECK(*it == json(1));
-      }
+            SECTION("array")
+            {
+                json const j({1, 2, 3, 4});
+                json::const_iterator const it = j.cbegin();
+                CHECK(std::string(it->type_name()) == "number");
+            }
+        }
     }
 
-    SECTION("operator->")
+    SECTION("increment/decrement")
     {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it = j.cbegin();
-        CHECK_THROWS_AS(std::string(it->type_name()), json::invalid_iterator&);
-        CHECK_THROWS_WITH(
-            std::string(it->type_name()), "[json.exception.invalid_iterator.214] cannot get value");
-      }
+        SECTION("post-increment")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+                it++;
+                CHECK((it.m_it.primitive_iterator.m_it != 0 && it.m_it.primitive_iterator.m_it != 1));
+            }
 
-      SECTION("number")
-      {
-        json j(17);
-        json::const_iterator it = j.cbegin();
-        CHECK(std::string(it->type_name()) == "number");
-        it = j.cend();
-        CHECK_THROWS_AS(std::string(it->type_name()), json::invalid_iterator&);
-        CHECK_THROWS_WITH(
-            std::string(it->type_name()), "[json.exception.invalid_iterator.214] cannot get value");
-      }
+            SECTION("number")
+            {
+                json const j(17);
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.primitive_iterator.m_it == 0));
+                it++;
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+                it++;
+                CHECK((it.m_it.primitive_iterator.m_it != 0 && it.m_it.primitive_iterator.m_it != 1));
+            }
 
-      SECTION("object")
-      {
-        json j({{"foo", "bar"}});
-        json::const_iterator it = j.cbegin();
-        CHECK(std::string(it->type_name()) == "string");
-      }
+            SECTION("object")
+            {
+                json const j({{"foo", "bar"}});
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->begin()));
+                it++;
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->end()));
+            }
 
-      SECTION("array")
-      {
-        json j({1, 2, 3, 4});
-        json::const_iterator it = j.cbegin();
-        CHECK(std::string(it->type_name()) == "number");
-      }
+            SECTION("array")
+            {
+                json const j({1, 2, 3, 4});
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->begin()));
+                it++;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                it++;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                it++;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                it++;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->end()));
+            }
+        }
+
+        SECTION("pre-increment")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+                ++it;
+                CHECK((it.m_it.primitive_iterator.m_it != 0 && it.m_it.primitive_iterator.m_it != 1));
+            }
+
+            SECTION("number")
+            {
+                json const j(17);
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.primitive_iterator.m_it == 0));
+                ++it;
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+                ++it;
+                CHECK((it.m_it.primitive_iterator.m_it != 0 && it.m_it.primitive_iterator.m_it != 1));
+            }
+
+            SECTION("object")
+            {
+                json const j({{"foo", "bar"}});
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->begin()));
+                ++it;
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->end()));
+            }
+
+            SECTION("array")
+            {
+                json const j({1, 2, 3, 4});
+                json::const_iterator it = j.cbegin();
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->begin()));
+                ++it;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                ++it;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                ++it;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                ++it;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->end()));
+            }
+        }
+
+        SECTION("post-decrement")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator const it = j.cend();
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+            }
+
+            SECTION("number")
+            {
+                json const j(17);
+                json::const_iterator it = j.cend();
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+                it--;
+                CHECK((it.m_it.primitive_iterator.m_it == 0));
+                it--;
+                CHECK((it.m_it.primitive_iterator.m_it != 0 && it.m_it.primitive_iterator.m_it != 1));
+            }
+
+            SECTION("object")
+            {
+                json const j({{"foo", "bar"}});
+                json::const_iterator it = j.cend();
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->end()));
+                it--;
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->begin()));
+            }
+
+            SECTION("array")
+            {
+                json const j({1, 2, 3, 4});
+                json::const_iterator it = j.cend();
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->end()));
+                it--;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                it--;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                it--;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                it--;
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+            }
+        }
+
+        SECTION("pre-decrement")
+        {
+            SECTION("null")
+            {
+                json const j(json::value_t::null);
+                json::const_iterator const it = j.cend();
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+            }
+
+            SECTION("number")
+            {
+                json const j(17);
+                json::const_iterator it = j.cend();
+                CHECK((it.m_it.primitive_iterator.m_it == 1));
+                --it;
+                CHECK((it.m_it.primitive_iterator.m_it == 0));
+                --it;
+                CHECK((it.m_it.primitive_iterator.m_it != 0 && it.m_it.primitive_iterator.m_it != 1));
+            }
+
+            SECTION("object")
+            {
+                json const j({{"foo", "bar"}});
+                json::const_iterator it = j.cend();
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->end()));
+                --it;
+                CHECK((it.m_it.object_iterator == it.m_object->m_data.m_value.object->begin()));
+            }
+
+            SECTION("array")
+            {
+                json const j({1, 2, 3, 4});
+                json::const_iterator it = j.cend();
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->end()));
+                --it;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                --it;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                --it;
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+                --it;
+                CHECK((it.m_it.array_iterator == it.m_object->m_data.m_value.array->begin()));
+                CHECK((it.m_it.array_iterator != it.m_object->m_data.m_value.array->end()));
+            }
+        }
     }
-  }
-
-  SECTION("increment/decrement")
-  {
-    SECTION("post-increment")
-    {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-        it++;
-        CHECK((it.m_it.primitive_iterator.m_it != 0 and it.m_it.primitive_iterator.m_it != 1));
-      }
-
-      SECTION("number")
-      {
-        json j(17);
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.primitive_iterator.m_it == 0));
-        it++;
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-        it++;
-        CHECK((it.m_it.primitive_iterator.m_it != 0 and it.m_it.primitive_iterator.m_it != 1));
-      }
-
-      SECTION("object")
-      {
-        json j({{"foo", "bar"}});
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->begin()));
-        it++;
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->end()));
-      }
-
-      SECTION("array")
-      {
-        json j({1, 2, 3, 4});
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->begin()));
-        it++;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        it++;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        it++;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        it++;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->end()));
-      }
-    }
-
-    SECTION("pre-increment")
-    {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-        ++it;
-        CHECK((it.m_it.primitive_iterator.m_it != 0 and it.m_it.primitive_iterator.m_it != 1));
-      }
-
-      SECTION("number")
-      {
-        json j(17);
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.primitive_iterator.m_it == 0));
-        ++it;
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-        ++it;
-        CHECK((it.m_it.primitive_iterator.m_it != 0 and it.m_it.primitive_iterator.m_it != 1));
-      }
-
-      SECTION("object")
-      {
-        json j({{"foo", "bar"}});
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->begin()));
-        ++it;
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->end()));
-      }
-
-      SECTION("array")
-      {
-        json j({1, 2, 3, 4});
-        json::const_iterator it = j.cbegin();
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->begin()));
-        ++it;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        ++it;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        ++it;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        ++it;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->end()));
-      }
-    }
-
-    SECTION("post-decrement")
-    {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-      }
-
-      SECTION("number")
-      {
-        json j(17);
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-        it--;
-        CHECK((it.m_it.primitive_iterator.m_it == 0));
-        it--;
-        CHECK((it.m_it.primitive_iterator.m_it != 0 and it.m_it.primitive_iterator.m_it != 1));
-      }
-
-      SECTION("object")
-      {
-        json j({{"foo", "bar"}});
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->end()));
-        it--;
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->begin()));
-      }
-
-      SECTION("array")
-      {
-        json j({1, 2, 3, 4});
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->end()));
-        it--;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        it--;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        it--;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        it--;
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-      }
-    }
-
-    SECTION("pre-decrement")
-    {
-      SECTION("null")
-      {
-        json j(json::value_t::null);
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-      }
-
-      SECTION("number")
-      {
-        json j(17);
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.primitive_iterator.m_it == 1));
-        --it;
-        CHECK((it.m_it.primitive_iterator.m_it == 0));
-        --it;
-        CHECK((it.m_it.primitive_iterator.m_it != 0 and it.m_it.primitive_iterator.m_it != 1));
-      }
-
-      SECTION("object")
-      {
-        json j({{"foo", "bar"}});
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->end()));
-        --it;
-        CHECK((it.m_it.object_iterator == it.m_object->m_value.object->begin()));
-      }
-
-      SECTION("array")
-      {
-        json j({1, 2, 3, 4});
-        json::const_iterator it = j.cend();
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->end()));
-        --it;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        --it;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        --it;
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-        --it;
-        CHECK((it.m_it.array_iterator == it.m_object->m_value.array->begin()));
-        CHECK((it.m_it.array_iterator != it.m_object->m_value.array->end()));
-      }
-    }
-  }
 }

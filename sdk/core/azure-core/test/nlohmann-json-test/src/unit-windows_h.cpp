@@ -7,23 +7,17 @@
 // SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
+#undef WIN32_LEAN_AND_MEAN
+#undef NOMINMAX
+
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 
 #include <nlohmann/json.hpp>
 using nlohmann::json;
 
-#include <algorithm>
-
-TEST_CASE("tests on very large JSONs")
+TEST_CASE("include windows.h")
 {
-    SECTION("issue #1419 - Segmentation fault (stack overflow) due to unbounded recursion")
-    {
-        const auto depth = 5000000;
-
-        std::string s(static_cast<std::size_t>(2 * depth), '[');
-        std::fill(s.begin() + depth, s.end(), ']');
-
-        json _;
-        CHECK_NOTHROW(_ = nlohmann::json::parse(s));
-    }
+    CHECK(true);
 }
-
