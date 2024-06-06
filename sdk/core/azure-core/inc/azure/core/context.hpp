@@ -134,6 +134,11 @@ namespace Azure { namespace Core {
         return DateTime(DateTime::time_point(DateTime::duration(dtRepresentation)));
       }
 
+      ContextSharedState(ContextSharedState const&) = delete;
+      ContextSharedState(ContextSharedState&&) = delete;
+      ContextSharedState& operator=(ContextSharedState const&) = delete;
+      ContextSharedState&& operator=(ContextSharedState&&) = delete;
+
       /**
        * @brief Creates a new ContextSharedState object with no deadline and no value.
        */
