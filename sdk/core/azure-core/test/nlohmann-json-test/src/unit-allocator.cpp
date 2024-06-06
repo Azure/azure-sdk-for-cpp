@@ -8,10 +8,9 @@
 
 #include "doctest_compatibility.h"
 
-#define private public
-#include <azure/core/internal/json/json.hpp>
-using Azure::Core::Json::_internal::json;
-#undef private
+#define JSON_TESTS_PRIVATE
+#include <nlohmann/json.hpp>
+using nlohmann::json;
 
 namespace {
 // special test case to check if memory is leaked if constructor throws
@@ -42,7 +41,7 @@ TEST_CASE("bad_alloc")
   SECTION("bad_alloc")
   {
     // create JSON type using the throwing allocator
-    using bad_json = Azure::Core::Json::_internal::json::basic_json<
+    using bad_json = nlohmann::basic_json<
         std::map,
         std::vector,
         std::string,
@@ -119,7 +118,7 @@ template <class T> void my_allocator_clean_up(T* p)
 TEST_CASE("controlled bad_alloc")
 {
   // create JSON type using the throwing allocator
-  using my_json = Azure::Core::Json::_internal::json::basic_json<
+  using my_json = nlohmann::basic_json<
       std::map,
       std::vector,
       std::string,
@@ -228,7 +227,7 @@ template <class T> struct allocator_no_forward : std::allocator<T>
   };
 
   template <class... Args>
-  void construct(T* p, const Args&... args) noexcept(noexcept(::new (static_cast<void*>(p))
+  void construct(T* p, const Args&... args) noexcept(noexcept(::new(static_cast<void*>(p))
                                                                   T(args...)))
   {
     // force copy even if move is available
@@ -241,7 +240,7 @@ TEST_CASE("bad my_allocator::construct")
 {
   SECTION("my_allocator::construct doesn't forward")
   {
-    using bad_alloc_json = Azure::Core::Json::_internal::json::basic_json<
+    using bad_alloc_json = nlohmann::basic_json<
         std::map,
         std::vector,
         std::string,

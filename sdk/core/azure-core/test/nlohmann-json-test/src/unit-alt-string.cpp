@@ -9,10 +9,10 @@
 
 #include "doctest_compatibility.h"
 
-#include <azure/core/internal/json/json.hpp>
-
 #include <string>
 #include <utility>
+
+#include <nlohmann/json.hpp>
 
 /* forward declarations */
 class alt_string;
@@ -112,7 +112,7 @@ void int_to_string(alt_string& target, std::size_t value)
   target = std::to_string(value).c_str();
 }
 
-using alt_json = Azure::Core::Json::_internal::basic_json<
+using alt_json = nlohmann::basic_json<
     std::map,
     std::vector,
     alt_string,
@@ -121,7 +121,7 @@ using alt_json = Azure::Core::Json::_internal::basic_json<
     std::uint64_t,
     double,
     std::allocator,
-    Azure::Core::Json::_internal::adl_serializer>;
+    nlohmann::adl_serializer>;
 
 bool operator<(const char* op1, const alt_string& op2) noexcept { return op1 < op2.str_impl; }
 

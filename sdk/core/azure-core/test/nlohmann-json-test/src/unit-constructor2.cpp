@@ -8,10 +8,8 @@
 
 #include "doctest_compatibility.h"
 
-#define private public
-#include <azure/core/internal/json/json.hpp>
-using Azure::Core::Json::_internal::json;
-#undef private
+#include <nlohmann/json.hpp>
+using nlohmann::json;
 
 TEST_CASE("other constructors and destructor")
 {

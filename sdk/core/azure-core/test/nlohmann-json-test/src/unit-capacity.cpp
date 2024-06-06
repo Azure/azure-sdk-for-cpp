@@ -9,8 +9,8 @@
 
 #include "doctest_compatibility.h"
 
-#include <azure/core/internal/json/json.hpp>
-using Azure::Core::Json::_internal::json;
+#include <nlohmann/json.hpp>
+using nlohmann::json;
 
 TEST_CASE("capacity")
 {

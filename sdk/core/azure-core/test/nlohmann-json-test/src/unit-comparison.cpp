@@ -15,10 +15,9 @@
 
 #include "doctest_compatibility.h"
 
-#define private public
-#include <azure/core/internal/json/json.hpp>
-using Azure::Core::Json::_internal::json;
-#undef private
+#define JSON_TESTS_PRIVATE
+#include <nlohmann/json.hpp>
+using nlohmann::json;
 
 #if JSON_HAS_THREE_WAY_COMPARISON
 // this can be replaced with the doctest stl extension header in version 2.5

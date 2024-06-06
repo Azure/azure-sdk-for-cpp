@@ -8,10 +8,10 @@
 
 #include "doctest_compatibility.h"
 
-#include <azure/core/internal/json/json.hpp>
-
 #include <algorithm>
-using Azure::Core::Json::_internal::json;
+
+#include <nlohmann/json.hpp>
+using nlohmann::json;
 
 TEST_CASE("algorithms")
 {
