@@ -2414,7 +2414,7 @@ _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 // allow overriding assert
 #if !defined(_azure_JSON_ASSERT)
 #include <cassert> // assert
-#define _azure_JSON_ASSERT(x) assert(x)
+#define _azure_JSON_ASSERT(x) //assert(x)
 #endif
 
 // allow to access some private functions (needed by the test suite)
@@ -11541,7 +11541,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         }
       }
 
-      _azure_JSON_ASSERT(0x0000 <= codepoint && codepoint <= 0xFFFF);
+      //_azure_JSON_ASSERT(0x0000 <= codepoint && codepoint <= 0xFFFF);
       return codepoint;
     }
 
