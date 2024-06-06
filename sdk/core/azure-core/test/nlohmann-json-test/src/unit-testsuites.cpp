@@ -1510,7 +1510,8 @@ TEST_CASE("nst's JSONTestSuite (2)")
            "/nst_json_testsuite2/test_parsing/i_number_double_huge_neg_exp.json",
            // TEST_DATA_DIRECTORY "/nst_json_testsuite2/test_parsing/i_number_huge_exp.json",
            // TEST_DATA_DIRECTORY
-           // "/nst_json_testsuite2/test_parsing/i_number_neg_int_huge_exp.json", TEST_DATA_DIRECTORY
+           // "/nst_json_testsuite2/test_parsing/i_number_neg_int_huge_exp.json",
+           // TEST_DATA_DIRECTORY
            // "/nst_json_testsuite2/test_parsing/i_number_pos_double_huge_exp.json",
            // TEST_DATA_DIRECTORY
            // "/nst_json_testsuite2/test_parsing/i_number_real_neg_overflow.json",
