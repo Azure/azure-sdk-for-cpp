@@ -8,8 +8,8 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 // This test suite uses range for loops where values are copied. This is inefficient in usual code,
 // but required to achieve 100% coverage.

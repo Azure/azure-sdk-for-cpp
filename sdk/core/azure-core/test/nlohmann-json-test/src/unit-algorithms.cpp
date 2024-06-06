@@ -10,8 +10,8 @@
 
 #include <algorithm>
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 TEST_CASE("algorithms")
 {

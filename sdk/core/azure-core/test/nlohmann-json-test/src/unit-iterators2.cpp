@@ -15,10 +15,10 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
-#if JSON_HAS_RANGES
+#if _azure_JSON_HAS_RANGES
 #include <algorithm>
 #include <ranges>
 #endif
@@ -1423,20 +1423,20 @@ TEST_CASE("iterators 2")
     }
   }
 
-#if JSON_HAS_RANGES
+#if _azure_JSON_HAS_RANGES
   // JSON_HAS_CPP_20 (do not remove; see note at top of file)
   SECTION("ranges")
   {
     SECTION("concepts")
     {
-      using nlohmann::detail::iteration_proxy_value;
+      using Azure::Core::Json::_internal::detail::iteration_proxy_value;
       CHECK(std::bidirectional_iterator<json::iterator>);
       CHECK(std::input_iterator<iteration_proxy_value<json::iterator>>);
 
       CHECK(std::is_same<json::iterator, std::ranges::iterator_t<json>>::value);
       CHECK(std::ranges::bidirectional_range<json>);
 
-      using nlohmann::detail::iteration_proxy;
+      using Azure::Core::Json::_internal::detail::iteration_proxy;
       using items_type = decltype(std::declval<json&>().items());
       CHECK(std::is_same<items_type, iteration_proxy<json::iterator>>::value);
       CHECK(

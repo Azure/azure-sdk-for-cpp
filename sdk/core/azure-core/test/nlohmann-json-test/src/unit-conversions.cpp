@@ -16,9 +16,9 @@
 
 #include "doctest_compatibility.h"
 
-#define JSON_TESTS_PRIVATE
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#define _azure_JSON_TESTS_PRIVATE
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 #include <deque>
 #include <forward_list>
@@ -28,7 +28,7 @@ using nlohmann::json;
 #include <unordered_set>
 #include <valarray>
 
-// NLOHMANN_JSON_SERIALIZE_ENUM uses a static std::pair
+// _azure_NLOHMANN_JSON_SERIALIZE_ENUM uses a static std::pair
 DOCTEST_CLANG_SUPPRESS_WARNING_PUSH
 DOCTEST_CLANG_SUPPRESS_WARNING("-Wexit-time-destructors")
 
@@ -36,18 +36,18 @@ TEST_CASE("value conversion")
 {
   SECTION("get an object (explicit)")
   {
-    const json::object_t o_reference
+    const Azure::Core::Json::_internal::json::object_t o_reference
         = {{"object", json::object()},
            {"array", {1, 2, 3, 4}},
            {"number", 42},
            {"boolean", false},
            {"null", nullptr},
            {"string", "Hello world"}};
-    json j(o_reference);
+    Azure::Core::Json::_internal::json j(o_reference);
 
     SECTION("json::object_t")
     {
-      json::object_t const o = j.get<json::object_t>();
+      Azure::Core::Json::_internal::json::object_t const o = j.get<json::object_t>();
       CHECK(json(o) == j);
     }
 
@@ -216,13 +216,15 @@ TEST_CASE("value conversion")
 
     SECTION("std::list<json>")
     {
-      const std::list<json> a = j.get<std::list<json>>();
+      const std::list<Azure::Core::Json::_internal::json> a
+          = j.get<std::list<Azure::Core::Json::_internal::json>>();
       CHECK(json(a) == j);
     }
 
     SECTION("std::forward_list<json>")
     {
-      const std::forward_list<json> a = j.get<std::forward_list<json>>();
+      const std::forward_list<Azure::Core::Json::_internal::json> a
+          = j.get<std::forward_list<Azure::Core::Json::_internal::json>>();
       CHECK(json(a) == j);
 
       CHECK_THROWS_WITH_AS(
@@ -233,7 +235,8 @@ TEST_CASE("value conversion")
 
     SECTION("std::vector<json>")
     {
-      const std::vector<json> a = j.get<std::vector<json>>();
+      const std::vector<Azure::Core::Json::_internal::json> a
+          = j.get<std::vector<Azure::Core::Json::_internal::json>>();
       CHECK(json(a) == j);
 
       CHECK_THROWS_WITH_AS(
@@ -245,7 +248,7 @@ TEST_CASE("value conversion")
       SECTION("reserve is called on containers that supports it")
       {
         // make sure all values are properly copied
-        const json j2({1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+        const Azure::Core::Json::_internal::json j2({1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
         auto v2 = j2.get<std::vector<int>>();
         CHECK(v2.size() == 10);
       }
@@ -261,8 +264,8 @@ TEST_CASE("value conversion")
           1,
           2}; // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 
-      const json j2 = nbs;
-      const json j3 = str;
+      const Azure::Core::Json::_internal::json j2 = nbs;
+      const Azure::Core::Json::_internal::json j3 = str;
 
       auto v = j2.get<std::vector<int>>();
       auto s = j3.get<std::string>();
@@ -272,7 +275,8 @@ TEST_CASE("value conversion")
 
     SECTION("std::deque<json>")
     {
-      const std::deque<json> a = j.get<std::deque<json>>();
+      const std::deque<Azure::Core::Json::_internal::json> a
+          = j.get<std::deque<Azure::Core::Json::_internal::json>>();
       CHECK(json(a) == j);
     }
 
@@ -315,7 +319,7 @@ TEST_CASE("value conversion")
 
   SECTION("get an array (explicit, get_to)")
   {
-    const json::array_t a_reference{
+    const Azure::Core::Json::_internal::json::array_t a_reference{
         json(1), json(1u), json(2.2), json(false), json("string"), json()};
     json j(a_reference);
 
@@ -328,28 +332,28 @@ TEST_CASE("value conversion")
 
     SECTION("std::valarray<json>")
     {
-      std::valarray<json> a{"previous", "value"};
+      std::valarray<Azure::Core::Json::_internal::json> a{"previous", "value"};
       j.get_to(a);
       CHECK(json(a) == j);
     }
 
     SECTION("std::list<json>")
     {
-      std::list<json> a{"previous", "value"};
+      std::list<Azure::Core::Json::_internal::json> a{"previous", "value"};
       j.get_to(a);
       CHECK(json(a) == j);
     }
 
     SECTION("std::forward_list<json>")
     {
-      std::forward_list<json> a{"previous", "value"};
+      std::forward_list<Azure::Core::Json::_internal::json> a{"previous", "value"};
       j.get_to(a);
       CHECK(json(a) == j);
     }
 
     SECTION("std::vector<json>")
     {
-      std::vector<json> a{"previous", "value"};
+      std::vector<Azure::Core::Json::_internal::json> a{"previous", "value"};
       j.get_to(a);
       CHECK(json(a) == j);
     }
@@ -365,14 +369,14 @@ TEST_CASE("value conversion")
           0,
           0}; // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 
-      const json j2 = nbs;
+      const Azure::Core::Json::_internal::json j2 = nbs;
       j2.get_to(nbs2);
       CHECK(std::equal(std::begin(nbs), std::end(nbs), std::begin(nbs2)));
     }
 
     SECTION("std::deque<json>")
     {
-      std::deque<json> a{"previous", "value"};
+      std::deque<Azure::Core::Json::_internal::json> a{"previous", "value"};
       j.get_to(a);
       CHECK(json(a) == j);
     }
@@ -1603,11 +1607,11 @@ TEST_CASE("value conversion")
             "[json.exception.type_error.302] type must be array, but is null",
             json::type_error&);
         CHECK_THROWS_WITH_AS(
-            (json().get<std::vector<json>>()),
+            (json().get<std::vector<Azure::Core::Json::_internal::json>>()),
             "[json.exception.type_error.302] type must be array, but is null",
             json::type_error&);
         CHECK_THROWS_WITH_AS(
-            (json().get<std::list<json>>()),
+            (json().get<std::list<Azure::Core::Json::_internal::json>>()),
             "[json.exception.type_error.302] type must be array, but is null",
             json::type_error&);
         CHECK_THROWS_WITH_AS(
@@ -1633,7 +1637,7 @@ enum class cards
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays) -
 // false positive
-NLOHMANN_JSON_SERIALIZE_ENUM(
+_azure_NLOHMANN_JSON_SERIALIZE_ENUM(
     cards,
     {{cards::kreuz, "kreuz"},
      {cards::pik, "pik"},
@@ -1651,7 +1655,7 @@ enum TaskState
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays) -
 // false positive
-NLOHMANN_JSON_SERIALIZE_ENUM(
+_azure_NLOHMANN_JSON_SERIALIZE_ENUM(
     TaskState,
     {
         {TS_INVALID, nullptr},

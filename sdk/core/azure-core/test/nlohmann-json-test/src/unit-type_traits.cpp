@@ -8,18 +8,14 @@
 
 #include "doctest_compatibility.h"
 
-#if JSON_TEST_USING_MULTIPLE_HEADERS
-#include <nlohmann/detail/meta/type_traits.hpp>
-#else
-#include <nlohmann/json.hpp>
-#endif
+#include <azure/core/internal/json/json.hpp>
 
 TEST_CASE("type traits")
 {
   SECTION("is_c_string")
   {
-    using nlohmann::detail::is_c_string;
-    using nlohmann::detail::is_c_string_uncvref;
+    using Azure::Core::Json::_internal::detail::is_c_string;
+    using Azure::Core::Json::_internal::detail::is_c_string_uncvref;
 
     SECTION("char *")
     {

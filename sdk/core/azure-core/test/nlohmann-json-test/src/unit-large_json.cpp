@@ -8,8 +8,8 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 #include <algorithm>
 
@@ -23,6 +23,6 @@ TEST_CASE("tests on very large JSONs")
     std::fill(s.begin() + depth, s.end(), ']');
 
     json _;
-    CHECK_NOTHROW(_ = nlohmann::json::parse(s));
+    CHECK_NOTHROW(_ = Azure::Core::Json::_internal::json::parse(s));
   }
 }

@@ -11,8 +11,8 @@
 #include <string>
 #include <vector>
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 namespace persons {
 class person_with_private_data {
@@ -33,7 +33,7 @@ public:
   {
   }
 
-  NLOHMANN_DEFINE_TYPE_INTRUSIVE(person_with_private_data, age, name, metadata)
+  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE(person_with_private_data, age, name, metadata)
 };
 
 class person_with_private_data_2 {
@@ -58,7 +58,7 @@ public:
   int getAge() const { return age; }
   json getMetadata() const { return metadata; }
 
-  NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(person_with_private_data_2, age, name, metadata)
+  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(person_with_private_data_2, age, name, metadata)
 };
 
 class person_without_private_data_1 {
@@ -78,7 +78,7 @@ public:
   {
   }
 
-  NLOHMANN_DEFINE_TYPE_INTRUSIVE(person_without_private_data_1, age, name, metadata)
+  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE(person_without_private_data_1, age, name, metadata)
 };
 
 class person_without_private_data_2 {
@@ -99,7 +99,7 @@ public:
   }
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(person_without_private_data_2, age, name, metadata)
+_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(person_without_private_data_2, age, name, metadata)
 
 class person_without_private_data_3 {
 public:
@@ -123,7 +123,7 @@ public:
   json getMetadata() const { return metadata; }
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(person_without_private_data_3, age, name, metadata)
+_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(person_without_private_data_3, age, name, metadata)
 
 class person_with_private_alphabet {
 public:
@@ -164,7 +164,7 @@ private:
   int x = 0;
   int y = 0;
   int z = 0;
-  NLOHMANN_DEFINE_TYPE_INTRUSIVE(
+  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE(
       person_with_private_alphabet,
       a,
       b,
@@ -234,7 +234,7 @@ public:
   int z = 0;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     person_with_public_alphabet,
     a,
     b,
@@ -278,7 +278,7 @@ public:
   {
   }
 
-  NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE(person_without_default_constructor_1, name, age)
+  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE(person_without_default_constructor_1, name, age)
 };
 
 class person_without_default_constructor_2 {
@@ -297,13 +297,16 @@ public:
   }
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_ONLY_SERIALIZE(person_without_default_constructor_2, name, age)
+_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_ONLY_SERIALIZE(
+    person_without_default_constructor_2,
+    name,
+    age)
 
 } // namespace persons
 
 TEST_CASE_TEMPLATE(
     "Serialization/deserialization via NLOHMANN_DEFINE_TYPE_INTRUSIVE and "
-    "NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE",
+    "_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE",
     T,
     persons::person_with_private_data,
     persons::person_without_private_data_1,
@@ -332,8 +335,8 @@ TEST_CASE_TEMPLATE(
 }
 
 TEST_CASE_TEMPLATE(
-    "Serialization/deserialization via NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT and "
-    "NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT",
+    "Serialization/deserialization via _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT and "
+    "_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT",
     T,
     persons::person_with_private_data_2,
     persons::person_without_private_data_3)
@@ -370,7 +373,7 @@ TEST_CASE_TEMPLATE(
 
 TEST_CASE_TEMPLATE(
     "Serialization/deserialization of classes with 26 public/private member variables via "
-    "NLOHMANN_DEFINE_TYPE_INTRUSIVE and NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE",
+    "_azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE and _azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE",
     T,
     persons::person_with_private_alphabet,
     persons::person_with_public_alphabet)
@@ -379,7 +382,7 @@ TEST_CASE_TEMPLATE(
   {
     {
       T obj1;
-      nlohmann::json const j = obj1; // via json object
+      Azure::Core::Json::_internal::json const j = obj1; // via json object
       T obj2;
       j.get_to(obj2);
       bool ok = (obj1 == obj2);
@@ -388,9 +391,9 @@ TEST_CASE_TEMPLATE(
 
     {
       T obj1;
-      nlohmann::json const j1 = obj1; // via json string
+      Azure::Core::Json::_internal::json const j1 = obj1; // via json string
       std::string const s = j1.dump();
-      nlohmann::json const j2 = nlohmann::json::parse(s);
+      nlohmann::json const j2 = Azure::Core::Json::_internal::json::parse(s);
       T obj2;
       j2.get_to(obj2);
       bool ok = (obj1 == obj2);
@@ -399,9 +402,10 @@ TEST_CASE_TEMPLATE(
 
     {
       T obj1;
-      nlohmann::json const j1 = obj1; // via msgpack
-      std::vector<uint8_t> const buf = nlohmann::json::to_msgpack(j1);
-      nlohmann::json const j2 = nlohmann::json::from_msgpack(buf);
+      Azure::Core::Json::_internal::json const j1 = obj1; // via msgpack
+      std::vector<uint8_t> const buf = Azure::Core::Json::_internal::json::to_msgpack(j1);
+      Azure::Core::Json::_internal::json const j2
+          = Azure::Core::Json::_internal::json::from_msgpack(buf);
       T obj2;
       j2.get_to(obj2);
       bool ok = (obj1 == obj2);
@@ -410,9 +414,10 @@ TEST_CASE_TEMPLATE(
 
     {
       T obj1;
-      nlohmann::json const j1 = obj1; // via bson
-      std::vector<uint8_t> const buf = nlohmann::json::to_bson(j1);
-      nlohmann::json const j2 = nlohmann::json::from_bson(buf);
+      Azure::Core::Json::_internal::json const j1 = obj1; // via bson
+      std::vector<uint8_t> const buf = Azure::Core::Json::_internal::json::to_bson(j1);
+      Azure::Core::Json::_internal::json const j2
+          = Azure::Core::Json::_internal::json::from_bson(buf);
       T obj2;
       j2.get_to(obj2);
       bool ok = (obj1 == obj2);
@@ -421,9 +426,10 @@ TEST_CASE_TEMPLATE(
 
     {
       T obj1;
-      nlohmann::json const j1 = obj1; // via cbor
-      std::vector<uint8_t> const buf = nlohmann::json::to_cbor(j1);
-      nlohmann::json const j2 = nlohmann::json::from_cbor(buf);
+      Azure::Core::Json::_internal::json const j1 = obj1; // via cbor
+      std::vector<uint8_t> const buf = Azure::Core::Json::_internal::json::to_cbor(j1);
+      Azure::Core::Json::_internal::json const j2
+          = Azure::Core::Json::_internal::json::from_cbor(buf);
       T obj2;
       j2.get_to(obj2);
       bool ok = (obj1 == obj2);
@@ -432,9 +438,10 @@ TEST_CASE_TEMPLATE(
 
     {
       T obj1;
-      nlohmann::json const j1 = obj1; // via ubjson
-      std::vector<uint8_t> const buf = nlohmann::json::to_ubjson(j1);
-      nlohmann::json const j2 = nlohmann::json::from_ubjson(buf);
+      Azure::Core::Json::_internal::json const j1 = obj1; // via ubjson
+      std::vector<uint8_t> const buf = Azure::Core::Json::_internal::json::to_ubjson(j1);
+      Azure::Core::Json::_internal::json const j2
+          = Azure::Core::Json::_internal::json::from_ubjson(buf);
       T obj2;
       j2.get_to(obj2);
       bool ok = (obj1 == obj2);
@@ -445,8 +452,8 @@ TEST_CASE_TEMPLATE(
 
 TEST_CASE_TEMPLATE(
     "Serialization of non-default-constructible classes via "
-    "NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE and "
-    "NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_ONLY_SERIALIZE",
+    "_azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE and "
+    "_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_ONLY_SERIALIZE",
     T,
     persons::person_without_default_constructor_1,
     persons::person_without_default_constructor_2)

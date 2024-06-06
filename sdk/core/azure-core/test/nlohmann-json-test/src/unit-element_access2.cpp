@@ -9,15 +9,20 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-#ifdef JSON_TEST_NO_GLOBAL_UDLS
-using namespace nlohmann::literals; // NOLINT(google-build-using-namespace)
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
+#ifdef _azure_JSON_TEST_NO_GLOBAL_UDLS
+using namespace Azure::Core::Json::_internal::literals; // NOLINT(google-build-using-namespace)
 #endif
 
 // build test with C++14
 // JSON_HAS_CPP_14
 
-TEST_CASE_TEMPLATE("element access 2", Json, nlohmann::json, nlohmann::ordered_json)
+TEST_CASE_TEMPLATE(
+    "element access 2",
+    Json,
+    Azure::Core::Json::_internal::json,
+    Azure::Core::Json::_internal::ordered_json)
 {
   SECTION("object")
   {
@@ -712,7 +717,7 @@ TEST_CASE_TEMPLATE("element access 2", Json, nlohmann::json, nlohmann::ordered_j
 
 SECTION("front and back")
 {
-  if (std::is_same<Json, nlohmann::ordered_json>::value)
+  if (std::is_same<Json, Azure::Core::Json::_internal::ordered_json>::value)
   {
     // "integer" is the first key
     CHECK(j.front() == Json(1));
@@ -1860,8 +1865,8 @@ SECTION("check existence of key in an object")
 TEST_CASE_TEMPLATE(
     "element access 2 (throwing tests)",
     Json,
-    nlohmann::json,
-    nlohmann::ordered_json)
+    Azure::Core::Json::_internal::json,
+    Azure::Core::Json::_internal::ordered_json)
 {
   SECTION("object")
   {
@@ -1920,8 +1925,8 @@ TEST_CASE_TEMPLATE(
 TEST_CASE_TEMPLATE(
     "element access 2 (additional value() tests)",
     Json,
-    nlohmann::json,
-    nlohmann::ordered_json)
+    Azure::Core::Json::_internal::json,
+    Azure::Core::Json::_internal::ordered_json)
 {
   using string_t = typename Json::string_t;
   using number_integer_t = typename Json::number_integer_t;

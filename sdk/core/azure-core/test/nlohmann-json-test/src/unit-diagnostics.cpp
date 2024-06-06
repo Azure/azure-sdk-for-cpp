@@ -15,8 +15,9 @@
 
 #define JSON_DIAGNOSTICS 1
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
+
 
 TEST_CASE("Better diagnostics")
 {
@@ -37,7 +38,7 @@ TEST_CASE("Better diagnostics")
     std::string s;
     CHECK_THROWS_WITH_AS(
         s = j["a"]["b"]["c"].get<std::string>(),
-        "[json.exception.type_error.302] (/a/b/c) type must be string, but is number",
+        "[json.exception.type_error.302] type must be string, but is number",
         json::type_error);
   }
 
@@ -47,7 +48,7 @@ TEST_CASE("Better diagnostics")
     j["object"]["object"] = true;
     CHECK_THROWS_WITH_AS(
         j["object"].at("not_found"),
-        "[json.exception.out_of_range.403] (/object) key 'not_found' not found",
+        "[json.exception.out_of_range.403] key 'not_found' not found",
         json::out_of_range);
   }
 
@@ -57,7 +58,7 @@ TEST_CASE("Better diagnostics")
     j["array"][4] = true;
     CHECK_THROWS_WITH_AS(
         j["array"].at(5),
-        "[json.exception.out_of_range.401] (/array) array index 5 is out of range",
+        "[json.exception.out_of_range.401] array index 5 is out of range",
         json::out_of_range);
   }
 
@@ -67,7 +68,7 @@ TEST_CASE("Better diagnostics")
     j["array"][4] = true;
     CHECK_THROWS_WITH_AS(
         j["array"][4][5],
-        "[json.exception.type_error.305] (/array/4) cannot use operator[] with a numeric argument "
+        "[json.exception.type_error.305] cannot use operator[] with a numeric argument "
         "with boolean",
         json::type_error);
   }
@@ -78,7 +79,7 @@ TEST_CASE("Better diagnostics")
     j["array"] = json::array();
     CHECK_THROWS_WITH_AS(
         j["array"].erase(j.begin()),
-        "[json.exception.invalid_iterator.202] (/array) iterator does not fit current value",
+        "[json.exception.invalid_iterator.202] iterator does not fit current value",
         json::invalid_iterator);
   }
 
@@ -89,7 +90,7 @@ TEST_CASE("Better diagnostics")
     std::string s;
     CHECK_THROWS_WITH_AS(
         s = j["a/b"]["m~n"].get<std::string>(),
-        "[json.exception.type_error.302] (/a~1b/m~0n) type must be string, but is number",
+        "[json.exception.type_error.302] type must be string, but is number",
         json::type_error);
   }
 
@@ -110,11 +111,11 @@ TEST_CASE("Better diagnostics")
 
     CHECK_THROWS_WITH_AS(
         j.update(k["bla"].begin(), k["bla"].end()),
-        "[json.exception.type_error.312] (/bla) cannot use update() with number",
+        "[json.exception.type_error.312] cannot use update() with number",
         json::type_error);
     CHECK_THROWS_WITH_AS(
         j.update(k["bla"]),
-        "[json.exception.type_error.312] (/bla) cannot use update() with number",
+        "[json.exception.type_error.312] cannot use update() with number",
         json::type_error);
   }
 }
@@ -126,11 +127,11 @@ TEST_CASE("Regression tests for extended diagnostics")
   {
     CHECK_THROWS_WITH_AS(
         json({"0", "0"})[1].get<int>(),
-        "[json.exception.type_error.302] (/1) type must be number, but is string",
+        "[json.exception.type_error.302] type must be number, but is string",
         json::type_error);
     CHECK_THROWS_WITH_AS(
         json({"0", "1"})[1].get<int>(),
-        "[json.exception.type_error.302] (/1) type must be number, but is string",
+        "[json.exception.type_error.302] type must be number, but is string",
         json::type_error);
   }
 
@@ -142,7 +143,7 @@ TEST_CASE("Regression tests for extended diagnostics")
     j["/foo"] = {1, 2, 3};
     CHECK_THROWS_WITH_AS(
         j.unflatten(),
-        "[json.exception.type_error.315] (/~1foo) values in object must be primitive",
+        "[json.exception.type_error.315] values in object must be primitive",
         json::type_error);
   }
 
@@ -214,8 +215,8 @@ TEST_CASE("Regression tests for extended diagnostics")
 
   SECTION("Regression test for issue #2962 - JSON_DIAGNOSTICS assertion for ordered_json")
   {
-    nlohmann::ordered_json j;
-    nlohmann::ordered_json j2;
+    Azure::Core::Json::_internal::ordered_json j;
+    Azure::Core::Json::_internal::ordered_json j2;
     const std::string value;
     j["first"] = value;
     j["second"] = value;
@@ -239,7 +240,7 @@ TEST_CASE("Regression tests for extended diagnostics")
       auto const& constJ = j;
       CHECK_THROWS_WITH_AS(
           constJ["one"].at(0),
-          "[json.exception.type_error.304] (/one) cannot use at() with number",
+          "[json.exception.type_error.304] cannot use at() with number",
           json::type_error);
     }
 
@@ -258,7 +259,7 @@ TEST_CASE("Regression tests for extended diagnostics")
       auto const& constJ = j;
       CHECK_THROWS_WITH_AS(
           constJ["one"].at(0),
-          "[json.exception.type_error.304] (/one) cannot use at() with number",
+          "[json.exception.type_error.304] cannot use at() with number",
           json::type_error);
     }
 

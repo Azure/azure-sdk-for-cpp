@@ -8,9 +8,9 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
-using nlohmann::ordered_json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
+using Azure::Core::Json::_internal::ordered_json;
 
 TEST_CASE("ordered_json")
 {

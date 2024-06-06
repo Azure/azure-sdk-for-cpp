@@ -8,40 +8,40 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 TEST_CASE("user-defined string literals")
 {
-  auto j_expected = nlohmann::json::parse(R"({"foo": "bar", "baz": 42})");
-  auto ptr_expected = nlohmann::json::json_pointer("/foo/bar");
+  auto j_expected = Azure::Core::Json::_internal::json::parse(R"({"foo": "bar", "baz": 42})");
+  auto ptr_expected = Azure::Core::Json::_internal::json::json_pointer("/foo/bar");
 
-  SECTION("using namespace nlohmann::literals::json_literals")
+  SECTION("using namespace Azure::Core::Json::_internal::literals::json_literals")
   {
-    using namespace nlohmann::literals::json_literals; // NOLINT(google-build-using-namespace)
+    using namespace Azure::Core::Json::_internal::literals::json_literals; // NOLINT(google-build-using-namespace)
 
     CHECK(R"({"foo": "bar", "baz": 42})"_json == j_expected);
     CHECK("/foo/bar"_json_pointer == ptr_expected);
   }
 
-  SECTION("using namespace nlohmann::json_literals")
+  SECTION("using namespace Azure::Core::Json::_internal::json_literals")
   {
-    using namespace nlohmann::json_literals; // NOLINT(google-build-using-namespace)
+    using namespace Azure::Core::Json::_internal::json_literals; // NOLINT(google-build-using-namespace)
 
     CHECK(R"({"foo": "bar", "baz": 42})"_json == j_expected);
     CHECK("/foo/bar"_json_pointer == ptr_expected);
   }
 
-  SECTION("using namespace nlohmann::literals")
+  SECTION("using namespace Azure::Core::Json::_internal::literals")
   {
-    using namespace nlohmann::literals; // NOLINT(google-build-using-namespace)
+    using namespace Azure::Core::Json::_internal::literals; // NOLINT(google-build-using-namespace)
 
     CHECK(R"({"foo": "bar", "baz": 42})"_json == j_expected);
     CHECK("/foo/bar"_json_pointer == ptr_expected);
   }
 
-  SECTION("using namespace nlohmann")
+  SECTION("using namespace Azure::Core::Json::_internal")
   {
-    using namespace nlohmann; // NOLINT(google-build-using-namespace)
+    using namespace Azure::Core::Json::_internal; // NOLINT(google-build-using-namespace)
 
     CHECK(R"({"foo": "bar", "baz": 42})"_json == j_expected);
     CHECK("/foo/bar"_json_pointer == ptr_expected);

@@ -8,9 +8,9 @@
 
 #include "doctest_compatibility.h"
 
-#define JSON_TESTS_PRIVATE
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#define _azure_JSON_TESTS_PRIVATE
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 namespace {
 // special test case to check if memory is leaked if constructor throws
@@ -41,7 +41,7 @@ TEST_CASE("bad_alloc")
   SECTION("bad_alloc")
   {
     // create JSON type using the throwing allocator
-    using bad_json = nlohmann::basic_json<
+    using bad_json = Azure::Core::Json::_internal::basic_json<
         std::map,
         std::vector,
         std::string,
@@ -118,7 +118,7 @@ template <class T> void my_allocator_clean_up(T* p)
 TEST_CASE("controlled bad_alloc")
 {
   // create JSON type using the throwing allocator
-  using my_json = nlohmann::basic_json<
+  using my_json = Azure::Core::Json::_internal::basic_json<
       std::map,
       std::vector,
       std::string,
@@ -240,7 +240,7 @@ TEST_CASE("bad my_allocator::construct")
 {
   SECTION("my_allocator::construct doesn't forward")
   {
-    using bad_alloc_json = nlohmann::basic_json<
+    using bad_alloc_json = Azure::Core::Json::_internal::basic_json<
         std::map,
         std::vector,
         std::string,

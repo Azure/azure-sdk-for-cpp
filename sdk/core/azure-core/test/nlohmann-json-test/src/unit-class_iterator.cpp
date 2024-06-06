@@ -8,9 +8,9 @@
 
 #include "doctest_compatibility.h"
 
-#define JSON_TESTS_PRIVATE
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#define _azure_JSON_TESTS_PRIVATE
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 template <typename Iter> using can_post_increment_temporary = decltype((std::declval<Iter>()++)++);
 
@@ -392,18 +392,18 @@ TEST_CASE("iterator class")
     {
       SECTION("primitive_iterator_t")
       {
-        using Iter = nlohmann::detail::primitive_iterator_t;
+        using Iter = Azure::Core::Json::_internal::detail::primitive_iterator_t;
         CHECK(std::is_same<decltype(std::declval<Iter&>()++), Iter>::value);
       }
       SECTION("iter_impl")
       {
-        using Iter = nlohmann::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::iter_impl<json>;
         CHECK(std::is_same<decltype(std::declval<Iter&>()++), Iter>::value);
       }
       SECTION("json_reverse_iterator")
       {
-        using Base = nlohmann::detail::iter_impl<json>;
-        using Iter = nlohmann::detail::json_reverse_iterator<Base>;
+        using Base = Azure::Core::Json::_internal::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::json_reverse_iterator<Base>;
         CHECK(std::is_same<decltype(std::declval<Iter&>()++), Iter>::value);
       }
     }
@@ -411,18 +411,18 @@ TEST_CASE("iterator class")
     {
       SECTION("primitive_iterator_t")
       {
-        using Iter = nlohmann::detail::primitive_iterator_t;
+        using Iter = Azure::Core::Json::_internal::detail::primitive_iterator_t;
         CHECK(std::is_same<decltype(std::declval<Iter&>()--), Iter>::value);
       }
       SECTION("iter_impl")
       {
-        using Iter = nlohmann::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::iter_impl<json>;
         CHECK(std::is_same<decltype(std::declval<Iter&>()--), Iter>::value);
       }
       SECTION("json_reverse_iterator")
       {
-        using Base = nlohmann::detail::iter_impl<json>;
-        using Iter = nlohmann::detail::json_reverse_iterator<Base>;
+        using Base = Azure::Core::Json::_internal::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::json_reverse_iterator<Base>;
         CHECK(std::is_same<decltype(std::declval<Iter&>()--), Iter>::value);
       }
     }
@@ -430,23 +430,23 @@ TEST_CASE("iterator class")
   // prevent "accidental mutation of a temporary object"
   SECTION("cert-dcl21-cpp")
   {
-    using nlohmann::detail::is_detected;
+    using Azure::Core::Json::_internal::detail::is_detected;
     SECTION("post-increment")
     {
       SECTION("primitive_iterator_t")
       {
-        using Iter = nlohmann::detail::primitive_iterator_t;
+        using Iter = Azure::Core::Json::_internal::detail::primitive_iterator_t;
         CHECK_FALSE(is_detected<can_post_increment_temporary, Iter&>::value);
       }
       SECTION("iter_impl")
       {
-        using Iter = nlohmann::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::iter_impl<json>;
         CHECK_FALSE(is_detected<can_post_increment_temporary, Iter&>::value);
       }
       SECTION("json_reverse_iterator")
       {
-        using Base = nlohmann::detail::iter_impl<json>;
-        using Iter = nlohmann::detail::json_reverse_iterator<Base>;
+        using Base = Azure::Core::Json::_internal::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::json_reverse_iterator<Base>;
         CHECK_FALSE(is_detected<can_post_increment_temporary, Iter&>::value);
       }
     }
@@ -454,18 +454,18 @@ TEST_CASE("iterator class")
     {
       SECTION("primitive_iterator_t")
       {
-        using Iter = nlohmann::detail::primitive_iterator_t;
+        using Iter = Azure::Core::Json::_internal::detail::primitive_iterator_t;
         CHECK_FALSE(is_detected<can_post_decrement_temporary, Iter&>::value);
       }
       SECTION("iter_impl")
       {
-        using Iter = nlohmann::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::iter_impl<json>;
         CHECK_FALSE(is_detected<can_post_decrement_temporary, Iter&>::value);
       }
       SECTION("json_reverse_iterator")
       {
-        using Base = nlohmann::detail::iter_impl<json>;
-        using Iter = nlohmann::detail::json_reverse_iterator<Base>;
+        using Base = Azure::Core::Json::_internal::detail::iter_impl<json>;
+        using Iter = Azure::Core::Json::_internal::detail::json_reverse_iterator<Base>;
         CHECK_FALSE(is_detected<can_post_decrement_temporary, Iter&>::value);
       }
     }

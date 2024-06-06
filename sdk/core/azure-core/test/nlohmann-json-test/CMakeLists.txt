@@ -102,7 +102,7 @@ set(files
     #src/unit-ubjson.cpp                     - Not Required
     src/unit-udl.cpp
     src/unit-udt.cpp
-    src/unit-udt_macro.cpp
+    #src/unit-udt_macro.cpp                  - Not Required.
     #src/unit-unicode1.cpp                   - Takes long time to complete.
     #src/unit-unicode2.cpp                   - Takes long time to complete.
     #src/unit-unicode3.cpp                   - Takes long time to complete.

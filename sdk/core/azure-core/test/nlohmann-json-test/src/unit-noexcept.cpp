@@ -12,9 +12,8 @@
 DOCTEST_GCC_SUPPRESS_WARNING_PUSH
 DOCTEST_GCC_SUPPRESS_WARNING("-Wnoexcept")
 
-#include <nlohmann/json.hpp>
-
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 namespace {
 enum test
@@ -38,12 +37,14 @@ void from_json(const json& /*unused*/, pod /*unused*/) noexcept {}
 void from_json(const json& /*unused*/, pod_bis /*unused*/) {}
 
 static_assert(noexcept(json{}), "");
-static_assert(noexcept(nlohmann::to_json(std::declval<json&>(), 2)), "");
-static_assert(noexcept(nlohmann::to_json(std::declval<json&>(), 2.5)), "");
-static_assert(noexcept(nlohmann::to_json(std::declval<json&>(), true)), "");
-static_assert(noexcept(nlohmann::to_json(std::declval<json&>(), test{})), "");
-static_assert(noexcept(nlohmann::to_json(std::declval<json&>(), pod{})), "");
-static_assert(!noexcept(nlohmann::to_json(std::declval<json&>(), pod_bis{})), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), 2)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), 2.5)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), true)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), test{})), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), pod{})), "");
+static_assert(
+    !noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), pod_bis{})),
+    "");
 static_assert(noexcept(json(2)), "");
 static_assert(noexcept(json(test{})), "");
 static_assert(noexcept(json(pod{})), "");

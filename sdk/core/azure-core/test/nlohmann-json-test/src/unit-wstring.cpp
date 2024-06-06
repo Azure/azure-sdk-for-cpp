@@ -8,8 +8,8 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 // ICPC errors out on multibyte character sequences in source files
 #ifndef __INTEL_COMPILER

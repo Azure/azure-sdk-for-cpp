@@ -2418,7 +2418,7 @@ _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 
 // allow to access some private functions (needed by the test suite)
-#if defined(JSON_TESTS_PRIVATE)
+#if defined(_azure_JSON_TESTS_PRIVATE)
 #define _azure_JSON_PRIVATE_UNLESS_TESTED public
 #else
 #define _azure_JSON_PRIVATE_UNLESS_TESTED private

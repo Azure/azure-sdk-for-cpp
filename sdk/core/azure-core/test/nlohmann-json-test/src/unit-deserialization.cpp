@@ -9,10 +9,10 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::json;
-#ifdef JSON_TEST_NO_GLOBAL_UDLS
-using namespace nlohmann::literals; // NOLINT(google-build-using-namespace)
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
+#ifdef _azure_JSON_TEST_NO_GLOBAL_UDLS
+using namespace Azure::Core::Json::_internal::literals; // NOLINT(google-build-using-namespace)
 #endif
 
 #include <iostream>
@@ -21,7 +21,7 @@ using namespace nlohmann::literals; // NOLINT(google-build-using-namespace)
 #include <valarray>
 
 namespace {
-struct SaxEventLogger : public nlohmann::json_sax<json>
+struct SaxEventLogger : public Azure::Core::Json::_internal::json_sax<json>
 {
   bool null() override
   {
@@ -627,9 +627,9 @@ TEST_CASE("deserialization")
 
       SECTION("iterator_input_adapter advances iterators correctly")
       {
-        using nlohmann::json;
-        using nlohmann::detail::input_format_t;
-        using nlohmann::detail::json_sax_dom_parser;
+        using Azure::Core::Json::_internal::json;
+        using Azure::Core::Json::_internal::detail::input_format_t;
+        using Azure::Core::Json::_internal::detail::json_sax_dom_parser;
         using proxy = proxy_iterator<std::string>;
 
         std::string str1 = "[1]";

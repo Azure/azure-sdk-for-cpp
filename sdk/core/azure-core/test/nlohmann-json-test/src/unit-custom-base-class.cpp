@@ -13,9 +13,9 @@
 #include <sstream>
 #include <string>
 
-#include <nlohmann/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
-// Test extending nlohmann::json by using a custom base class.
+// Test extending Azure::Core::Json::_internal::json by using a custom base class.
 // Add some metadata to each node and test the behaviour of copy / move
 template <class MetaDataType> class json_metadata {
 public:
@@ -28,7 +28,7 @@ private:
 };
 
 template <class T>
-using json_with_metadata = nlohmann::basic_json<
+using json_with_metadata = Azure::Core::Json::_internal::basic_json<
     std::map,
     std::vector,
     std::string,
@@ -37,7 +37,7 @@ using json_with_metadata = nlohmann::basic_json<
     std::uint64_t,
     double,
     std::allocator,
-    nlohmann::adl_serializer,
+    Azure::Core::Json::_internal::adl_serializer,
     std::vector<std::uint8_t>,
     json_metadata<T>>;
 
@@ -174,7 +174,7 @@ TEST_CASE("JSON Node Metadata")
   }
 }
 
-// Test extending nlohmann::json by using a custom base class.
+// Test extending Azure::Core::Json::_internal::json by using a custom base class.
 // Add a custom member function template iterating over the whole json tree.
 class visitor_adaptor {
 public:
@@ -184,7 +184,7 @@ private:
   template <class Ptr, class Fnc> void do_visit(const Ptr& ptr, const Fnc& fnc) const;
 };
 
-using json_with_visitor_t = nlohmann::basic_json<
+using json_with_visitor_t = Azure::Core::Json::_internal::basic_json<
     std::map,
     std::vector,
     std::string,
@@ -193,7 +193,7 @@ using json_with_visitor_t = nlohmann::basic_json<
     std::uint64_t,
     double,
     std::allocator,
-    nlohmann::adl_serializer,
+    Azure::Core::Json::_internal::adl_serializer,
     std::vector<std::uint8_t>,
     visitor_adaptor>;
 
@@ -204,7 +204,7 @@ template <class Fnc> void visitor_adaptor::visit(const Fnc& fnc) const
 
 template <class Ptr, class Fnc> void visitor_adaptor::do_visit(const Ptr& ptr, const Fnc& fnc) const
 {
-  using value_t = nlohmann::detail::value_t;
+  using value_t = Azure::Core::Json::_internal::detail::value_t;
   const json_with_visitor_t& json = *static_cast<const json_with_visitor_t*>(
       this); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
   switch (json.type())
@@ -270,7 +270,7 @@ TEST_CASE("JSON Visit Node")
   json.visit([&](const json_with_visitor_t::json_pointer& p, const json_with_visitor_t& j) {
     std::stringstream str;
     str << p.to_string() << " - ";
-    using value_t = nlohmann::detail::value_t;
+    using value_t = Azure::Core::Json::_internal::detail::value_t;
     switch (j.type())
     {
       case value_t::object:

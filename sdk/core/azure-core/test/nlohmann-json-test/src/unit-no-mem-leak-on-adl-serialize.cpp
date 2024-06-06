@@ -11,7 +11,7 @@
 #include <exception>
 #include <iostream>
 
-#include <nlohmann/json.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 struct Foo
 {
@@ -19,35 +19,35 @@ struct Foo
   int b;
 };
 
-namespace nlohmann {
-template <> struct adl_serializer<Foo>
-{
-  static void to_json(json& j, Foo const& f)
+namespace Azure { namespace Core { namespace Json { namespace _internal {
+  template <> struct adl_serializer<Foo>
   {
-    switch (f.b)
+    static void to_json(json& j, Foo const& f)
     {
-      case 0:
-        j["a"] = f.a;
-        break;
-      case 1:
-        j[0] = f.a;
-        break;
-      default:
-        j = "test";
+      switch (f.b)
+      {
+        case 0:
+          j["a"] = f.a;
+          break;
+        case 1:
+          j[0] = f.a;
+          break;
+        default:
+          j = "test";
+      }
+      if (f.a == 1)
+      {
+        throw std::runtime_error("b is invalid");
+      }
     }
-    if (f.a == 1)
-    {
-      throw std::runtime_error("b is invalid");
-    }
-  }
-};
-} // namespace nlohmann
+  };
+}}}} // namespace Azure::Core::Json::_internal
 
-TEST_CASE("check_for_mem_leak_on_adl_to_json-1")
+  TEST_CASE("check_for_mem_leak_on_adl_to_json-1")
 {
   try
   {
-    const nlohmann::json j = Foo{1, 0};
+    const Azure::Core::Json::_internal::json j = Foo{1, 0};
     std::cout << j.dump() << "\n";
   }
   catch (...) // NOLINT(bugprone-empty-catch)
@@ -60,7 +60,7 @@ TEST_CASE("check_for_mem_leak_on_adl_to_json-2")
 {
   try
   {
-    const nlohmann::json j = Foo{1, 1};
+    const Azure::Core::Json::_internal::json j = Foo{1, 1};
     std::cout << j.dump() << "\n";
   }
   catch (...) // NOLINT(bugprone-empty-catch)
@@ -73,7 +73,7 @@ TEST_CASE("check_for_mem_leak_on_adl_to_json-2")
 {
   try
   {
-    const nlohmann::json j = Foo{1, 2};
+    const Azure::Core::Json::_internal::json j = Foo{1, 2};
     std::cout << j.dump() << "\n";
   }
   catch (...) // NOLINT(bugprone-empty-catch)

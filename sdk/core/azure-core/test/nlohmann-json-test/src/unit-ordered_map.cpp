@@ -8,8 +8,8 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::ordered_map;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::ordered_map;
 
 TEST_CASE("ordered_map")
 {

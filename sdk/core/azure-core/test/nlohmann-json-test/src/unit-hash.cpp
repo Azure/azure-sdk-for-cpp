@@ -8,13 +8,13 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-using ordered_json = nlohmann::ordered_json;
+#include <azure/core/internal/json/json.hpp>
+using json = Azure::Core::Json::_internal::json;
+using ordered_json = Azure::Core::Json::_internal::ordered_json;
 
 #include <set>
 
-TEST_CASE("hash<nlohmann::json>")
+TEST_CASE("hash<Azure::Core::Json::_internal::json>")
 {
   // Collect hashes for different JSON values and make sure that they are distinct
   // We cannot compare against fixed values, because the implementation of
@@ -63,7 +63,7 @@ TEST_CASE("hash<nlohmann::json>")
   CHECK(hashes.size() == 21);
 }
 
-TEST_CASE("hash<nlohmann::ordered_json>")
+TEST_CASE("hash<Azure::Core::Json::_internal::ordered_json>")
 {
   // Collect hashes for different JSON values and make sure that they are distinct
   // We cannot compare against fixed values, because the implementation of

@@ -13,16 +13,19 @@
 DOCTEST_GCC_SUPPRESS_WARNING_PUSH
 DOCTEST_GCC_SUPPRESS_WARNING("-Wnoexcept")
 
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::json;
 
 /////////////////////////////////////////////////////////////////////
 // for #2824
 /////////////////////////////////////////////////////////////////////
 
-class sax_no_exception : public nlohmann::detail::json_sax_dom_parser<json> {
+class sax_no_exception : public Azure::Core::Json::_internal::detail::json_sax_dom_parser<json> {
 public:
-  explicit sax_no_exception(json& j) : nlohmann::detail::json_sax_dom_parser<json>(j, false) {}
+  explicit sax_no_exception(json& j)
+      : Azure::Core::Json::_internal::detail::json_sax_dom_parser<json>(j, false)
+  {
+  }
 
   static bool parse_error(
       std::size_t /*position*/,

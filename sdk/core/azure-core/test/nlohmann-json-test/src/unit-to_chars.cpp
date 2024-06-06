@@ -12,8 +12,8 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp>
-using nlohmann::detail::dtoa_impl::reinterpret_bits;
+#include <azure/core/internal/json/json.hpp>
+using Azure::Core::Json::_internal::detail::dtoa_impl::reinterpret_bits;
 
 namespace {
 float make_float(uint32_t sign_bit, uint32_t biased_exponent, uint32_t significand)
@@ -133,7 +133,7 @@ TEST_CASE("digit gen")
       std::array<char, 32> buf{};
       int len = 0;
       int exponent = 0;
-      nlohmann::detail::dtoa_impl::grisu2(buf.data(), len, exponent, number);
+      Azure::Core::Json::_internal::detail::dtoa_impl::grisu2(buf.data(), len, exponent, number);
 
       CHECK(digits == std::string(buf.data(), buf.data() + len));
       CHECK(expected_exponent == exponent);
@@ -208,7 +208,7 @@ TEST_CASE("digit gen")
       std::array<char, 32> buf{};
       int len = 0;
       int exponent = 0;
-      nlohmann::detail::dtoa_impl::grisu2(buf.data(), len, exponent, number);
+      Azure::Core::Json::_internal::detail::dtoa_impl::grisu2(buf.data(), len, exponent, number);
 
       CHECK(digits == std::string(buf.data(), buf.data() + len));
       CHECK(expected_exponent == exponent);
@@ -506,7 +506,7 @@ TEST_CASE("formatting")
   {
     auto check_float = [](float number, const std::string& expected) {
       std::array<char, 33> buf{};
-      char* end = nlohmann::detail::to_chars(
+      char* end = Azure::Core::Json::_internal::detail::to_chars(
           buf.data(),
           buf.data() + 32,
           number); // NOLINT(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
@@ -568,7 +568,7 @@ TEST_CASE("formatting")
   {
     auto check_double = [](double number, const std::string& expected) {
       std::array<char, 33> buf{};
-      char* end = nlohmann::detail::to_chars(
+      char* end = Azure::Core::Json::_internal::detail::to_chars(
           buf.data(),
           buf.data() + 32,
           number); // NOLINT(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
@@ -660,7 +660,7 @@ TEST_CASE("formatting")
   SECTION("integer")
   {
     auto check_integer = [](std::int64_t number, const std::string& expected) {
-      const nlohmann::json j = number;
+      const Azure::Core::Json::_internal::json j = number;
       CHECK(j.dump() == expected);
     };
 
