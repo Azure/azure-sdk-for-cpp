@@ -2,7 +2,7 @@
 //  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
 // |  |  |__   |  |  | | | |  version 3.11.3
 // |_____|_____|_____|_|___|  https://github.com/nlohmann/json
-// 
+//
 // SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
 // SPDX-License-Identifier: MIT
 
@@ -16,12 +16,17 @@ DOCTEST_GCC_SUPPRESS_WARNING("-Wnoexcept")
 
 using nlohmann::json;
 
-namespace
+namespace {
+enum test
 {
-enum test {};
+};
 
-struct pod {};
-struct pod_bis {};
+struct pod
+{
+};
+struct pod_bis
+{
+};
 
 void to_json(json& /*unused*/, pod /*unused*/) noexcept;
 void to_json(json& /*unused*/, pod_bis /*unused*/);
@@ -49,26 +54,38 @@ static_assert(noexcept(json(pod{})), "");
 
 TEST_CASE("noexcept")
 {
-    // silence -Wunneeded-internal-declaration errors
-    static_cast<void>(static_cast<void(*)(json&, pod)>(&to_json));
-    static_cast<void>(static_cast<void(*)(json&, pod_bis)>(&to_json));
-    static_cast<void>(static_cast<void(*)(const json&, pod)>(&from_json));
-    static_cast<void>(static_cast<void(*)(const json&, pod_bis)>(&from_json));
+  // silence -Wunneeded-internal-declaration errors
+  static_cast<void>(static_cast<void (*)(json&, pod)>(&to_json));
+  static_cast<void>(static_cast<void (*)(json&, pod_bis)>(&to_json));
+  static_cast<void>(static_cast<void (*)(const json&, pod)>(&from_json));
+  static_cast<void>(static_cast<void (*)(const json&, pod_bis)>(&from_json));
 
-    SECTION("nothrow-copy-constructible exceptions")
-    {
-        // for ERR60-CPP (https://github.com/nlohmann/json/issues/531):
-        // Exceptions should be nothrow-copy-constructible. However, compilers
-        // treat std::runtime_exception differently in this regard. Therefore,
-        // we can only demand nothrow-copy-constructibility for our exceptions
-        // if std::runtime_exception is.
-        CHECK(std::is_nothrow_copy_constructible<json::exception>::value == std::is_nothrow_copy_constructible<std::runtime_error>::value);
-        CHECK(std::is_nothrow_copy_constructible<json::parse_error>::value == std::is_nothrow_copy_constructible<std::runtime_error>::value);
-        CHECK(std::is_nothrow_copy_constructible<json::invalid_iterator>::value == std::is_nothrow_copy_constructible<std::runtime_error>::value);
-        CHECK(std::is_nothrow_copy_constructible<json::type_error>::value == std::is_nothrow_copy_constructible<std::runtime_error>::value);
-        CHECK(std::is_nothrow_copy_constructible<json::out_of_range>::value == std::is_nothrow_copy_constructible<std::runtime_error>::value);
-        CHECK(std::is_nothrow_copy_constructible<json::other_error>::value == std::is_nothrow_copy_constructible<std::runtime_error>::value);
-    }
+  SECTION("nothrow-copy-constructible exceptions")
+  {
+    // for ERR60-CPP (https://github.com/nlohmann/json/issues/531):
+    // Exceptions should be nothrow-copy-constructible. However, compilers
+    // treat std::runtime_exception differently in this regard. Therefore,
+    // we can only demand nothrow-copy-constructibility for our exceptions
+    // if std::runtime_exception is.
+    CHECK(
+        std::is_nothrow_copy_constructible<json::exception>::value
+        == std::is_nothrow_copy_constructible<std::runtime_error>::value);
+    CHECK(
+        std::is_nothrow_copy_constructible<json::parse_error>::value
+        == std::is_nothrow_copy_constructible<std::runtime_error>::value);
+    CHECK(
+        std::is_nothrow_copy_constructible<json::invalid_iterator>::value
+        == std::is_nothrow_copy_constructible<std::runtime_error>::value);
+    CHECK(
+        std::is_nothrow_copy_constructible<json::type_error>::value
+        == std::is_nothrow_copy_constructible<std::runtime_error>::value);
+    CHECK(
+        std::is_nothrow_copy_constructible<json::out_of_range>::value
+        == std::is_nothrow_copy_constructible<std::runtime_error>::value);
+    CHECK(
+        std::is_nothrow_copy_constructible<json::other_error>::value
+        == std::is_nothrow_copy_constructible<std::runtime_error>::value);
+  }
 }
 
 DOCTEST_GCC_SUPPRESS_WARNING_POP

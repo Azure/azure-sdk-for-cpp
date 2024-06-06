@@ -8,79 +8,76 @@
 
 #include "doctest_compatibility.h"
 
-#include <nlohmann/json.hpp> 
 #include <exception>
 #include <iostream>
 
+#include <nlohmann/json.hpp>
+
 struct Foo
 {
-    int a;
-    int b;
+  int a;
+  int b;
 };
 
-namespace nlohmann
+namespace nlohmann {
+template <> struct adl_serializer<Foo>
 {
-template <>
-struct adl_serializer<Foo>
-{
-    static void to_json(json& j, Foo const& f)
+  static void to_json(json& j, Foo const& f)
+  {
+    switch (f.b)
     {
-        switch (f.b)
-        {
-            case 0:
-                j["a"] = f.a;
-                break;
-            case 1:
-                j[0] = f.a;
-                break;
-            default:
-                j = "test";
-        }
-        if (f.a == 1)
-        {
-            throw std::runtime_error("b is invalid");
-        }
+      case 0:
+        j["a"] = f.a;
+        break;
+      case 1:
+        j[0] = f.a;
+        break;
+      default:
+        j = "test";
     }
+    if (f.a == 1)
+    {
+      throw std::runtime_error("b is invalid");
+    }
+  }
 };
 } // namespace nlohmann
 
 TEST_CASE("check_for_mem_leak_on_adl_to_json-1")
 {
-    try
-    {
-        const nlohmann::json j = Foo {1, 0};
-        std::cout << j.dump() << "\n";
-    }
-    catch (...) // NOLINT(bugprone-empty-catch)
-    {
-        // just ignore the exception in this POC
-    }
+  try
+  {
+    const nlohmann::json j = Foo{1, 0};
+    std::cout << j.dump() << "\n";
+  }
+  catch (...) // NOLINT(bugprone-empty-catch)
+  {
+    // just ignore the exception in this POC
+  }
 }
 
 TEST_CASE("check_for_mem_leak_on_adl_to_json-2")
 {
-    try
-    {
-        const nlohmann::json j = Foo {1, 1};
-        std::cout << j.dump() << "\n";
-    }
-    catch (...) // NOLINT(bugprone-empty-catch)
-    {
-        // just ignore the exception in this POC
-    }
+  try
+  {
+    const nlohmann::json j = Foo{1, 1};
+    std::cout << j.dump() << "\n";
+  }
+  catch (...) // NOLINT(bugprone-empty-catch)
+  {
+    // just ignore the exception in this POC
+  }
 }
 
 TEST_CASE("check_for_mem_leak_on_adl_to_json-2")
 {
-    try
-    {
-        const nlohmann::json j = Foo {1, 2};
-        std::cout << j.dump() << "\n";
-    }
-    catch (...) // NOLINT(bugprone-empty-catch)
-    {
-        // just ignore the exception in this POC
-    }
+  try
+  {
+    const nlohmann::json j = Foo{1, 2};
+    std::cout << j.dump() << "\n";
+  }
+  catch (...) // NOLINT(bugprone-empty-catch)
+  {
+    // just ignore the exception in this POC
+  }
 }
-
-
