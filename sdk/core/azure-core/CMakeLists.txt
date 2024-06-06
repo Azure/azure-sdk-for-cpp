@@ -212,9 +212,9 @@ if(BUILD_TESTING)
   endif()
   
   add_subdirectory(test/ut)
-  if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
+  #if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
     add_subdirectory(test/nlohmann-json-test)
-  endif()
+  #endif()
   add_subdirectory(test/fault-injector)
   
   if(BUILD_TRANSPORT_CURL)

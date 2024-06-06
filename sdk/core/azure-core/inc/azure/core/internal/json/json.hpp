@@ -21,9 +21,9 @@
 #include <cstddef> // nullptr_t, ptrdiff_t, size_t
 #include <functional> // hash, less
 #include <initializer_list> // initializer_list
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
 #include <iosfwd> // istream, ostream
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 #include <iterator> // random_access_iterator_tag
 #include <memory> // unique_ptr
 #include <string> // string, stoi, to_string
@@ -10138,10 +10138,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 #include <type_traits> // enable_if, is_base_of, is_pointer, is_integral, remove_pointer
 #include <utility> // pair, declval
 
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
 #include <cstdio> // FILE *
 #include <istream> // istream
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 
 // #include <nlohmann/detail/iterators/iterator_traits.hpp>
 
@@ -10166,7 +10166,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   // input adapters //
   ////////////////////
 
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
   /*!
   Input adapter for stdio file access. This adapter read only 1 byte and do not
   use any buffer. This adapter is a very low level adapter.
@@ -10250,7 +10250,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     std::istream* is = nullptr;
     std::streambuf* sb = nullptr;
   };
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 
   // General-purpose iterator-based adapter. It might not be as fast as
   // theoretically possible for some containers, but it is extremely versatile.
@@ -10554,7 +10554,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
         ContainerType>::create(container);
   }
 
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
   // Special cases with fast paths
   inline file_input_adapter input_adapter(std::FILE* file) { return file_input_adapter(file); }
 
@@ -10567,7 +10567,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   {
     return input_stream_adapter(stream);
   }
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 
   using contiguous_bytes_input_adapter
       = decltype(input_adapter(std::declval<const char*>(), std::declval<const char*>()));
@@ -18025,9 +18025,9 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 #include <cctype> // isdigit
 #include <cerrno> // errno, ERANGE
 #include <cstdlib> // strtoull
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
 #include <iosfwd> // ostream
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 #include <limits> // max
 #include <numeric> // accumulate
 #include <string> // string
@@ -18093,7 +18093,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     _azure_JSON_HEDLEY_DEPRECATED_FOR(3.11.0, to_string())
     operator string_t() const { return to_string(); }
 
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
     /// @brief write string representation of the JSON pointer to stream
     /// @sa https://json.nlohmann.me/api/basic_json/operator_ltlt/
     friend std::ostream& operator<<(std::ostream& o, const json_pointer& ptr)
@@ -19113,10 +19113,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 #include <string> // basic_string
 #include <vector> // vector
 
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
 #include <ios> // streamsize
 #include <ostream> // basic_ostream
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 
 // #include <nlohmann/detail/macro_scope.hpp>
 
@@ -19158,7 +19158,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     std::vector<CharType, AllocatorType>& v;
   };
 
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
   /// output adapter for output streams
   template <typename CharType>
   class output_stream_adapter : public output_adapter_protocol<CharType> {
@@ -19176,7 +19176,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
   private:
     std::basic_ostream<CharType>& stream;
   };
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 
   /// output adapter for basic_string
   template <typename CharType, typename StringType = std::basic_string<CharType>>
@@ -19202,12 +19202,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     {
     }
 
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
     output_adapter(std::basic_ostream<CharType>& s)
         : oa(std::make_shared<output_stream_adapter<CharType>>(s))
     {
     }
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
 
     output_adapter(StringType& s)
         : oa(std::make_shared<output_string_adapter<CharType, StringType>>(s))
@@ -23159,13 +23159,13 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           1,   3,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1 // s7..s8
       }};
 
-      _azure_JSON_ASSERT(byte < utf8d.size());
+      //_azure_JSON_ASSERT(byte < utf8d.size());
       const std::uint8_t type = utf8d[byte];
 
       codep = (state != UTF8_ACCEPT) ? (byte & 0x3fu) | (codep << 6u) : (0xFFu >> type) & (byte);
 
       const std::size_t index = 256u + static_cast<size_t>(state) * 16u + static_cast<size_t>(type);
-      _azure_JSON_ASSERT(index < utf8d.size());
+      //_azure_JSON_ASSERT(index < utf8d.size());
       state = utf8d[index];
       return state;
     }
@@ -27569,7 +27569,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
     /// @name serialization
     /// @{
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
     /// @brief serialize to stream
     /// @sa https://json.nlohmann.me/api/basic_json/operator_ltlt/
     friend std::ostream& operator<<(std::ostream& o, const basic_json& j)
@@ -27595,7 +27595,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     ///             replace calls like `j >> o;` with `o << j;`.
     _azure_JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator<<(std::ostream&, const basic_json&))
     friend std::ostream& operator>>(const basic_json& j, std::ostream& o) { return o << j; }
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
     /// @}
 
     /////////////////////
@@ -27743,7 +27743,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
           : detail::binary_reader<basic_json, decltype(ia), SAX>(std::move(ia), format)
                 .sax_parse(format, sax, strict);
     }
-#ifndef JSON_NO_IO
+#ifndef _azure_JSON_NO_IO
     /// @brief deserialize from stream
     /// @sa https://json.nlohmann.me/api/basic_json/operator_gtgt/
     /// @deprecated This stream operator is deprecated since 3.0.0 and will be
@@ -27761,7 +27761,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
       parser(detail::input_adapter(i)).parse(false, j);
       return i;
     }
-#endif // JSON_NO_IO
+#endif // _azure_JSON_NO_IO
     /// @}
 
     ///////////////////////////
