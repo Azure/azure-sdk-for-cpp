@@ -9,10 +9,10 @@
 
 #include "doctest_compatibility.h"
 
+#include <azure/core/internal/json/json.hpp>
+
 #include <string>
 #include <utility>
-
-#include <azure/core/internal/json/json.hpp>
 
 /* forward declarations */
 class alt_string;

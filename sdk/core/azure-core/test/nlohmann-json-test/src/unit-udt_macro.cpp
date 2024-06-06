@@ -8,10 +8,10 @@
 
 #include "doctest_compatibility.h"
 
+#include <azure/core/internal/json/json.hpp>
+
 #include <string>
 #include <vector>
-
-#include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::json;
 
 namespace persons {
@@ -58,7 +58,11 @@ public:
   int getAge() const { return age; }
   json getMetadata() const { return metadata; }
 
-  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(person_with_private_data_2, age, name, metadata)
+  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
+      person_with_private_data_2,
+      age,
+      name,
+      metadata)
 };
 
 class person_without_private_data_1 {
@@ -101,7 +105,7 @@ public:
 
 _azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(person_without_private_data_2, age, name, metadata)
 
-class person_without_private_data_3 {
+    class person_without_private_data_3 {
 public:
   std::string name{}; // NOLINT(readability-redundant-member-init)
   int age = 0;
@@ -123,9 +127,13 @@ public:
   json getMetadata() const { return metadata; }
 };
 
-_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(person_without_private_data_3, age, name, metadata)
+_azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    person_without_private_data_3,
+    age,
+    name,
+    metadata)
 
-class person_with_private_alphabet {
+    class person_with_private_alphabet {
 public:
   bool operator==(const person_with_private_alphabet& other) const
   {
@@ -263,7 +271,7 @@ _azure_NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     y,
     z)
 
-class person_without_default_constructor_1 {
+    class person_without_default_constructor_1 {
 public:
   std::string name;
   int age;
@@ -278,7 +286,10 @@ public:
   {
   }
 
-  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE(person_without_default_constructor_1, name, age)
+  _azure_NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE(
+      person_without_default_constructor_1,
+      name,
+      age)
 };
 
 class person_without_default_constructor_2 {

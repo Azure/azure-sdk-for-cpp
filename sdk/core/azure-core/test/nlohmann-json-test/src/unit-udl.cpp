@@ -17,7 +17,8 @@ TEST_CASE("user-defined string literals")
 
   SECTION("using namespace Azure::Core::Json::_internal::literals::json_literals")
   {
-    using namespace Azure::Core::Json::_internal::literals::json_literals; // NOLINT(google-build-using-namespace)
+    using namespace Azure::Core::Json::_internal::literals::
+        json_literals; // NOLINT(google-build-using-namespace)
 
     CHECK(R"({"foo": "bar", "baz": 42})"_json == j_expected);
     CHECK("/foo/bar"_json_pointer == ptr_expected);
@@ -25,7 +26,8 @@ TEST_CASE("user-defined string literals")
 
   SECTION("using namespace Azure::Core::Json::_internal::json_literals")
   {
-    using namespace Azure::Core::Json::_internal::json_literals; // NOLINT(google-build-using-namespace)
+    using namespace Azure::Core::Json::_internal::
+        json_literals; // NOLINT(google-build-using-namespace)
 
     CHECK(R"({"foo": "bar", "baz": 42})"_json == j_expected);
     CHECK("/foo/bar"_json_pointer == ptr_expected);

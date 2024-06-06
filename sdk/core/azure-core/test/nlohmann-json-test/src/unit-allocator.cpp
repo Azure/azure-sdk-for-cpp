@@ -227,7 +227,7 @@ template <class T> struct allocator_no_forward : std::allocator<T>
   };
 
   template <class... Args>
-  void construct(T* p, const Args&... args) noexcept(noexcept(::new(static_cast<void*>(p))
+  void construct(T* p, const Args&... args) noexcept(noexcept(::new (static_cast<void*>(p))
                                                                   T(args...)))
   {
     // force copy even if move is available

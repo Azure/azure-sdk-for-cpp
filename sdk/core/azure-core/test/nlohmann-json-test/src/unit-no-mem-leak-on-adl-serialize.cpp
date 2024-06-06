@@ -8,10 +8,10 @@
 
 #include "doctest_compatibility.h"
 
+#include <azure/core/internal/json/json.hpp>
+
 #include <exception>
 #include <iostream>
-
-#include <azure/core/internal/json/json.hpp>
 
 struct Foo
 {
@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
   };
 }}}} // namespace Azure::Core::Json::_internal
 
-  TEST_CASE("check_for_mem_leak_on_adl_to_json-1")
+TEST_CASE("check_for_mem_leak_on_adl_to_json-1")
 {
   try
   {

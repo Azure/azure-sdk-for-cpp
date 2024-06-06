@@ -9,11 +9,11 @@
 
 #include "doctest_compatibility.h"
 
+#include <azure/core/internal/json/json.hpp>
+
 #include <set>
 #include <sstream>
 #include <string>
-
-#include <azure/core/internal/json/json.hpp>
 
 // Test extending Azure::Core::Json::_internal::json by using a custom base class.
 // Add some metadata to each node and test the behaviour of copy / move

@@ -8,9 +8,9 @@
 
 #include "doctest_compatibility.h"
 
-#include <algorithm>
-
 #include <azure/core/internal/json/json.hpp>
+
+#include <algorithm>
 using Azure::Core::Json::_internal::json;
 
 TEST_CASE("algorithms")

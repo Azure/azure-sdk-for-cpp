@@ -1645,13 +1645,12 @@ _azure_NLOHMANN_JSON_SERIALIZE_ENUM(
      {cards::herz, "herz"},
      {cards::karo, "karo"}})
 
-enum TaskState
-{
-  TS_STOPPED,
-  TS_RUNNING,
-  TS_COMPLETED,
-  TS_INVALID = -1,
-};
+    enum TaskState {
+      TS_STOPPED,
+      TS_RUNNING,
+      TS_COMPLETED,
+      TS_INVALID = -1,
+    };
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays) -
 // false positive
@@ -1664,7 +1663,7 @@ _azure_NLOHMANN_JSON_SERIALIZE_ENUM(
         {TS_COMPLETED, "completed"},
     })
 
-TEST_CASE("JSON to enum mapping")
+    TEST_CASE("JSON to enum mapping")
 {
   SECTION("enum class")
   {

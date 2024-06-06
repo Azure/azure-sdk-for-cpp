@@ -10,7 +10,7 @@
 
 #define _azure_JSON_TESTS_PRIVATE
 #include <azure/core/internal/json/json.hpp>
-using Azure::Core::Json::_internal::json; 
+using Azure::Core::Json::_internal::json;
 
 #include <sstream>
 
