@@ -10,6 +10,9 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/raw_response.hpp"
+
+#include <memory>
 
 namespace Azure { namespace Core { namespace Http {
 

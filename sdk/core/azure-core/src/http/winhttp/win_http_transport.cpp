@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #pragma warning(push)
 #pragma warning(disable : 6553)
 #pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
@@ -44,6 +45,49 @@ using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
 
 namespace {
+
+constexpr static const size_t DefaultUploadChunkSize = 1024 * 64;
+constexpr static const size_t MaximumUploadChunkSize = 1024 * 1024;
+
+std::string GetErrorMessage(DWORD error)
+{
+  std::string errorMessage = " Error Code: " + std::to_string(error);
+
+  char* errorMsg = nullptr;
+  if (FormatMessageA(
+          FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+          GetModuleHandleA("winhttp.dll"),
+          error,
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+          reinterpret_cast<LPSTR>(&errorMsg),
+          0,
+          nullptr)
+      != 0)
+  {
+    // Use a unique_ptr to manage the lifetime of errorMsg.
+    std::unique_ptr<char, decltype(&LocalFree)> errorString(errorMsg, &LocalFree);
+    errorMsg = nullptr;
+
+    errorMessage += ": ";
+    errorMessage += errorString.get();
+    // If the end of the error message is a CRLF, remove it.
+    if (errorMessage.back() == '\n')
+    {
+      errorMessage.erase(errorMessage.size() - 1);
+      if (errorMessage.back() == '\r')
+      {
+        errorMessage.erase(errorMessage.size() - 1);
+      }
+    }
+  }
+  errorMessage += '.';
+  return errorMessage;
+}
+
+void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError())
+{
+  throw Azure::Core::Http::TransportException(exceptionMessage + GetErrorMessage(error));
+}
 
 const std::string HttpScheme = "http";
 const std::string WebSocketScheme = "ws";
@@ -243,6 +287,18 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 }
 } // namespace
 
+void Azure::Core::_detail::FreeWinHttpHandleImpl(void* obj)
+{
+  // If definitions from windows.h are only being used as private members and not a public API, we
+  // don't want to include windows.h in inc/ headers, so that it does not end up being included in
+  // customer code.
+  // Formally, WinHttpCloseHandle() takes HINTERNET, which is LPVOID, which is void*. That is why we
+  // defined it that way in the header, and here, we are going to static_assert that it is the same
+  // type and safely cast it to HINTERNET.
+  static_assert(std::is_same<HINTERNET, void*>::value, "HINTERNET == void*");
+  WinHttpCloseHandle(static_cast<HINTERNET>(obj));
+}
+
 // For each certificate specified in trustedCertificate, add to certificateStore.
 bool _detail::WinHttpRequest::AddCertificatesToStore(
     std::vector<std::string> const& trustedCertificates,
@@ -406,41 +462,6 @@ std::string InternetStatusToString(DWORD internetStatus)
   return rv;
 }
 #undef APPEND_ENUM_STRING
-
-std::string GetErrorMessage(DWORD error)
-{
-  std::string errorMessage = " Error Code: " + std::to_string(error);
-
-  char* errorMsg = nullptr;
-  if (FormatMessage(
-          FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-          GetModuleHandle("winhttp.dll"),
-          error,
-          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-          reinterpret_cast<LPSTR>(&errorMsg),
-          0,
-          nullptr)
-      != 0)
-  {
-    // Use a unique_ptr to manage the lifetime of errorMsg.
-    std::unique_ptr<char, decltype(&LocalFree)> errorString(errorMsg, &LocalFree);
-    errorMsg = nullptr;
-
-    errorMessage += ": ";
-    errorMessage += errorString.get();
-    // If the end of the error message is a CRLF, remove it.
-    if (errorMessage.back() == '\n')
-    {
-      errorMessage.erase(errorMessage.size() - 1);
-      if (errorMessage.back() == '\r')
-      {
-        errorMessage.erase(errorMessage.size() - 1);
-      }
-    }
-  }
-  errorMessage += '.';
-  return errorMessage;
-}
 } // namespace
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
@@ -737,21 +758,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       }
     }
   }
-
-  void WinHttpRequest::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error) const
-  {
-    std::string errorMessage = exceptionMessage + GetErrorMessage(error);
-
-    throw Azure::Core::Http::TransportException(errorMessage);
-  }
 }}}} // namespace Azure::Core::Http::_detail
-
-void WinHttpTransport::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error)
-{
-  std::string errorMessage = exceptionMessage + GetErrorMessage(error);
-
-  throw Azure::Core::Http::TransportException(errorMessage);
-}
 
 Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionHandle()
 {
@@ -1101,8 +1108,8 @@ void _detail::WinHttpRequest::Upload(
   int64_t streamLength = streamBody->Length();
 
   // Consider using `MaximumUploadChunkSize` here, after some perf measurements
-  size_t uploadChunkSize = _detail::DefaultUploadChunkSize;
-  if (streamLength < _detail::MaximumUploadChunkSize)
+  size_t uploadChunkSize = DefaultUploadChunkSize;
+  if (streamLength < MaximumUploadChunkSize)
   {
     uploadChunkSize = static_cast<size_t>(streamLength);
   }
