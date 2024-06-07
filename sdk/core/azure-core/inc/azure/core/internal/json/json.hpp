@@ -6631,7 +6631,10 @@ _azure_JSON_HEDLEY_DIAGNOSTIC_POP
 #if _azure_JSON_HAS_THREE_WAY_COMPARISON
 #include <compare> // partial_ordering
 #endif
-
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 28020)
+#endif
 namespace Azure { namespace Core { namespace Json { namespace _internal { namespace detail {
 
   ///////////////////////////
@@ -28936,6 +28939,10 @@ operator"" _json_pointer; // NOLINT(misc-unused-using-decls,google-global-names-
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif // _MSC_VER
 
 // clean up
 #undef _azure_JSON_ASSERT
