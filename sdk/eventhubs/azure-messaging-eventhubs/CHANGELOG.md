@@ -8,13 +8,15 @@
 
 ### Bugs Fixed
 
+- Fixed eventhub connection properties to better align with the names used by other Azure SDKs.
+
 ### Other Changes
 
 ## 1.0.0-beta.8 (2024-05-07)
 
 ### Features Added
 
-- Added new features for upcoming Event Hubs service release.
+- Added support for the EventHubs emulator.
 
 ## 1.0.0-beta.7 (2024-04-09)
 
