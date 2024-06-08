@@ -161,12 +161,17 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
       // overriden ShouldRetry is not called. This is expected, since overriding ShouldRetry enables
       // loosening the retry conditions (retrying where otherwise the request wouldn't be), but not
       // strengthening it.
-      if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter)
+      if (!ShouldRetryOnResponse(*response.get(), m_retryOptions)
           && !ShouldRetry(response, m_retryOptions))
       {
         // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
         // trying to perform same request would use last retry query/headers
         return response;
+      }
+
+      if (!GetResponseHeaderBasedDelay(*response.get(), retryAfter))
+      {
+        retryAfter = CalculateExponentialDelay(m_retryOptions, attempt, -1);
       }
     }
     catch (const TransportException& e)
@@ -227,10 +232,7 @@ bool RetryPolicy::ShouldRetryOnTransportFailure(
 
 bool RetryPolicy::ShouldRetryOnResponse(
     RawResponse const& response,
-    RetryOptions const& retryOptions,
-    int32_t attempt,
-    std::chrono::milliseconds& retryAfter,
-    double jitterFactor) const
+    RetryOptions const& retryOptions) const
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
@@ -258,11 +260,6 @@ bool RetryPolicy::ShouldRetryOnResponse(
           std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
               + " will be retried.");
     }
-  }
-
-  if (!GetResponseHeaderBasedDelay(response, retryAfter))
-  {
-    retryAfter = CalculateExponentialDelay(retryOptions, attempt, jitterFactor);
   }
 
   return true;

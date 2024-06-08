@@ -407,10 +407,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
       virtual bool ShouldRetryOnResponse(
           RawResponse const& response,
-          RetryOptions const& retryOptions,
-          int32_t attempt,
-          std::chrono::milliseconds& retryAfter,
-          double jitterFactor = -1) const;
+          RetryOptions const& retryOptions) const;
 
       /**
        * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
