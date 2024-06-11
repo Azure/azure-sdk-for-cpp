@@ -803,22 +803,30 @@ TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
 
 // This helper creates the necessary directories required for the Azure Arc tests, and returns where
 // we expect the valid arc key to exist.
-std::string CreateDirectoryAndGetValidKeyPath()
+std::string CreateDirectoryAndGetKeyPath()
 {
-  std::string validKeyPath;
+  std::string keyPath;
 #if defined(AZ_PLATFORM_LINUX)
-  validKeyPath = "/var/opt/azcmagent/tokens";
-  int result = system(std::string("sudo mkdir -p ").append(validKeyPath).c_str());
+  keyPath = "/var/opt/azcmagent/tokens";
+  int result = system(std::string("sudo mkdir -p ").append(keyPath).c_str());
   if (result != 0 && errno != EEXIST)
   {
-    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
+    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << keyPath
                       << " Result: " << result << " Error : " << errno;
     EXPECT_TRUE(false);
   }
-  validKeyPath += "/";
+  // Add write permission for owner, group, and others
+  result = system(std::string("sudo chmod -R 0777 ").append(keyPath).c_str());
+  if (result != 0)
+  {
+    GTEST_LOG_(ERROR) << "Failed to change permissions for " << keyPath << ": " << strerror(errno)
+                      << std::endl;
+    EXPECT_TRUE(false);
+  }
+  keyPath += "/";
 #elif defined(AZ_PLATFORM_WINDOWS)
-  validKeyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
-  if (validKeyPath.empty())
+  keyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
+  if (keyPath.empty())
   {
     GTEST_LOG_(ERROR) << "We can't get ProgramData folder path in an AzureArc test.";
     EXPECT_TRUE(false);
@@ -826,23 +834,23 @@ std::string CreateDirectoryAndGetValidKeyPath()
   // Unlike linux, we can't use mkdir on Windows, since it is deprecated. We will use
   // CreateDirectory instead.
   // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/mkdir?view=msvc-170
-  validKeyPath += "\\AzureConnectedMachineAgent";
-  if (!CreateDirectory(validKeyPath.c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
+  keyPath += "\\AzureConnectedMachineAgent";
+  if (!CreateDirectory(keyPath.c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
   {
-    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
+    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << keyPath
                       << " Error: " << GetLastError();
     EXPECT_TRUE(false);
   }
-  validKeyPath += "\\Tokens";
-  if (!CreateDirectory(validKeyPath.c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
+  keyPath += "\\Tokens";
+  if (!CreateDirectory(keyPath.c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
   {
-    GTEST_LOG_(ERROR) << "Directory creation failure in an an AzureArc test: " << validKeyPath
+    GTEST_LOG_(ERROR) << "Directory creation failure in an an AzureArc test: " << keyPath
                       << " Error: " << GetLastError();
     EXPECT_TRUE(false);
   }
-  validKeyPath += "\\";
+  keyPath += "\\";
 #endif
-  return validKeyPath;
+  return keyPath;
 }
 
 TEST(ManagedIdentityCredential, AzureArc)
@@ -853,15 +861,15 @@ TEST(ManagedIdentityCredential, AzureArc)
   Logger::SetLevel(Logger::Level::Verbose);
   Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
 
-  std::string validKeyPath = CreateDirectoryAndGetValidKeyPath();
-  if (validKeyPath.empty())
+  std::string keyPath = CreateDirectoryAndGetKeyPath();
+  if (keyPath.empty())
   {
     GTEST_SKIP_("Skipping AzureArc test on unsupported OSes.");
   }
 
   {
     std::ofstream secretFile(
-        validKeyPath + "managed_identity_credential_test1.key",
+        keyPath + "managed_identity_credential_test1.key",
         std::ios_base::out | std::ios_base::trunc);
 
     secretFile << "SECRET1";
@@ -869,7 +877,7 @@ TEST(ManagedIdentityCredential, AzureArc)
 
   {
     std::ofstream secretFile(
-        validKeyPath + "managed_identity_credential_test2.key",
+        keyPath + "managed_identity_credential_test2.key",
         std::ios_base::out | std::ios_base::trunc);
 
     secretFile << "SECRET2";
@@ -877,7 +885,7 @@ TEST(ManagedIdentityCredential, AzureArc)
 
   {
     std::ofstream secretFile(
-        validKeyPath + "managed_identity_credential_test3.key",
+        keyPath + "managed_identity_credential_test3.key",
         std::ios_base::out | std::ios_base::trunc);
 
     secretFile << "SECRET3";
@@ -931,18 +939,15 @@ TEST(ManagedIdentityCredential, AzureArc)
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       {{HttpStatusCode::Unauthorized,
         "",
-        {{"WWW-Authenticate",
-          "ABC ABC=" + validKeyPath + "managed_identity_credential_test1.key"}}},
+        {{"WWW-Authenticate", "ABC ABC=" + keyPath + "managed_identity_credential_test1.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
        {HttpStatusCode::Unauthorized,
         "",
-        {{"WWW-Authenticate",
-          "XYZ XYZ=" + validKeyPath + "managed_identity_credential_test2.key"}}},
+        {{"WWW-Authenticate", "XYZ XYZ=" + keyPath + "managed_identity_credential_test2.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}", {}},
        {HttpStatusCode::Unauthorized,
         "",
-        {{"WWW-Authenticate",
-          "ABC ABC=" + validKeyPath + "managed_identity_credential_test3.key"}}},
+        {{"WWW-Authenticate", "ABC ABC=" + keyPath + "managed_identity_credential_test3.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}", {}}});
 
   EXPECT_EQ(actual.Requests.size(), 6U);
@@ -1219,18 +1224,18 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
-  std::string validKeyPath;
+  std::string keyPath;
 
 #if defined(AZ_PLATFORM_LINUX)
   validKeyPath = "/var/opt/azcmagent/tokens/";
 #elif defined(AZ_PLATFORM_WINDOWS)
-  validKeyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
-  if (validKeyPath.empty())
+  keyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
+  if (keyPath.empty())
   {
     GTEST_LOG_(ERROR) << "We can't get ProgramData folder path in AzureArcInvalidKey test.";
     EXPECT_TRUE(false);
   }
-  validKeyPath += "\\AzureConnectedMachineAgent\\Tokens\\";
+  keyPath += "\\AzureConnectedMachineAgent\\Tokens\\";
 #else
   // Unsupported OS
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
@@ -1334,9 +1339,7 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
         return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}},
-      {{HttpStatusCode::Unauthorized,
-        "",
-        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "a.b"}}},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC ABC=" + keyPath + "a.b"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -1363,9 +1366,7 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
         return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}},
-      {{HttpStatusCode::Unauthorized,
-        "",
-        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "foo.txt"}}},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC ABC=" + keyPath + "foo.txt"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -1392,9 +1393,7 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
         return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}},
-      {{HttpStatusCode::Unauthorized,
-        "",
-        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "foo.key"}}},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC ABC=" + keyPath + "foo.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -1403,15 +1402,14 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
         return token;
       }));
 
-  validKeyPath = CreateDirectoryAndGetValidKeyPath();
-  if (validKeyPath.empty())
+  keyPath = CreateDirectoryAndGetKeyPath();
+  if (keyPath.empty())
   {
     GTEST_SKIP_("Skipping AzureArcInvalidKey test on unsupported OSes.");
   }
 
   {
-    std::ofstream secretFile(
-        validKeyPath + "toolarge.key", std::ios_base::out | std::ios_base::trunc);
+    std::ofstream secretFile(keyPath + "toolarge.key", std::ios_base::out | std::ios_base::trunc);
 
     if (!secretFile.is_open())
     {
@@ -1444,7 +1442,7 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
       {{"https://azure.com/.default"}},
       {{HttpStatusCode::Unauthorized,
         "",
-        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "toolarge.key"}}},
+        {{"WWW-Authenticate", "ABC ABC=" + keyPath + "toolarge.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
