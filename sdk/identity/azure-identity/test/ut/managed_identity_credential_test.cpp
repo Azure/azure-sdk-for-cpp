@@ -5,10 +5,26 @@
 #include "credential_test_helper.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include <fstream>
 
 #include <gtest/gtest.h>
+
+#if defined(AZ_PLATFORM_LINUX)
+#include <unistd.h>
+
+#include <sys/stat.h> // for mkdir
+#include <sys/types.h>
+#elif defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
 
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Http::HttpMethod;
@@ -785,6 +801,61 @@ TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
 }
 
+// This helper creates the necessary directories required for the Azure Arc tests, and returns where
+// we expect the valid arc key to exist.
+std::string CreateDirectoryAndGetValidKeyPath()
+{
+  std::string validKeyPath;
+#if defined(AZ_PLATFORM_LINUX)
+  validKeyPath = "/var/opt/azcmagent";
+
+  int result = mkdir(validKeyPath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO | S_IFDIR);
+  if (result != 0 && errno != EEXIST)
+  {
+    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
+                      << " Result: " << result << " Error : " << errno;
+    EXPECT_TRUE(false);
+  }
+  validKeyPath += "/tokens";
+  result = mkdir(validKeyPath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO | S_IFDIR);
+  if (result != 0 && errno != EEXIST)
+  {
+    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
+                      << " Result: " << result << " Error : " << errno;
+    EXPECT_TRUE(false);
+  }
+  validKeyPath += "/";
+#elif defined(AZ_PLATFORM_WINDOWS)
+  validKeyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
+  if (validKeyPath.empty())
+  {
+    GTEST_LOG_(ERROR) << "We can't get ProgramData folder path in an AzureArc test.";
+    EXPECT_TRUE(false);
+  }
+  // Unlike linux, we can't use mkdir on Windows, since it is deprecated. We will use
+  // CreateDirectory instead.
+  // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/mkdir?view=msvc-170
+  validKeyPath += "\\AzureConnectedMachineAgent";
+  if (!CreateDirectory(validKeyPath.c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
+  {
+    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
+                      << " Error: " << GetLastError();
+    EXPECT_TRUE(false);
+  }
+  validKeyPath += "\\Tokens";
+  if (!CreateDirectory(validKeyPath.c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
+  {
+    GTEST_LOG_(ERROR) << "Directory creation failure in an an AzureArc test: " << validKeyPath
+                      << " Error: " << GetLastError();
+    EXPECT_TRUE(false);
+  }
+  validKeyPath += "\\";
+#else
+  GTEST_SKIP() << "Skipping an AzureArc test on unsupported OSes.";
+#endif
+  return validKeyPath;
+}
+
 TEST(ManagedIdentityCredential, AzureArc)
 {
   using Azure::Core::Diagnostics::Logger;
@@ -793,23 +864,28 @@ TEST(ManagedIdentityCredential, AzureArc)
   Logger::SetLevel(Logger::Level::Verbose);
   Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
 
+  std::string validKeyPath = CreateDirectoryAndGetValidKeyPath();
+
   {
     std::ofstream secretFile(
-        "managed_identity_credential_test1.txt", std::ios_base::out | std::ios_base::trunc);
+        validKeyPath + "managed_identity_credential_test1.key",
+        std::ios_base::out | std::ios_base::trunc);
 
     secretFile << "SECRET1";
   }
 
   {
     std::ofstream secretFile(
-        "managed_identity_credential_test2.txt", std::ios_base::out | std::ios_base::trunc);
+        validKeyPath + "managed_identity_credential_test2.key",
+        std::ios_base::out | std::ios_base::trunc);
 
     secretFile << "SECRET2";
   }
 
   {
     std::ofstream secretFile(
-        "managed_identity_credential_test3.txt", std::ios_base::out | std::ios_base::trunc);
+        validKeyPath + "managed_identity_credential_test3.key",
+        std::ios_base::out | std::ios_base::trunc);
 
     secretFile << "SECRET3";
   }
@@ -862,15 +938,18 @@ TEST(ManagedIdentityCredential, AzureArc)
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       {{HttpStatusCode::Unauthorized,
         "",
-        {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test1.txt"}}},
+        {{"WWW-Authenticate",
+          "ABC ABC=" + validKeyPath + "managed_identity_credential_test1.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
        {HttpStatusCode::Unauthorized,
         "",
-        {{"WWW-Authenticate", "XYZ XYZ=managed_identity_credential_test2.txt"}}},
+        {{"WWW-Authenticate",
+          "XYZ XYZ=" + validKeyPath + "managed_identity_credential_test2.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}", {}},
        {HttpStatusCode::Unauthorized,
         "",
-        {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test3.txt"}}},
+        {{"WWW-Authenticate",
+          "ABC ABC=" + validKeyPath + "managed_identity_credential_test3.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}", {}}});
 
   EXPECT_EQ(actual.Requests.size(), 6U);
@@ -1133,6 +1212,242 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderTwoEquals)
       },
       {{"https://azure.com/.default"}},
       {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1=SECRET2"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
+
+TEST(ManagedIdentityCredential, AzureArcInvalidKey)
+{
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  std::string validKeyPath;
+
+#if defined(AZ_PLATFORM_LINUX)
+  validKeyPath = "/var/opt/azcmagent/tokens/";
+#elif defined(AZ_PLATFORM_WINDOWS)
+  validKeyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
+  if (validKeyPath.empty())
+  {
+    GTEST_LOG_(ERROR) << "We can't get ProgramData folder path in AzureArcInvalidKey test.";
+    EXPECT_TRUE(false);
+  }
+  validKeyPath += "\\AzureConnectedMachineAgent\\Tokens\\";
+#else
+  // Unsupported OS
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC ABC=foo.key"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+
+  GTEST_SKIP() << "Skipping the rest of AzureArcInvalidKey tests on unsupported OSes.";
+#endif
+
+  // Invalid Key Path - empty directory
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC ABC=foo.key"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+
+  // Invalid Key Path - unexpected directory
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC ABC=C:\\Foo\\foo.key"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+
+  // Invalid Key Path - unexpected extension, filename is short
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{HttpStatusCode::Unauthorized,
+        "",
+        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "a.b"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+
+  // Invalid Key Path - unexpected extension
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{HttpStatusCode::Unauthorized,
+        "",
+        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "foo.txt"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+
+  // Invalid Key Path - file missing
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{HttpStatusCode::Unauthorized,
+        "",
+        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "foo.key"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+
+  validKeyPath = CreateDirectoryAndGetValidKeyPath();
+
+  {
+    std::ofstream secretFile(
+        validKeyPath + "toolarge.key", std::ios_base::out | std::ios_base::trunc);
+
+    if (!secretFile.is_open())
+    {
+      GTEST_LOG_(ERROR) << "Failed to create a test file required in AzureArcInvalidKey test.";
+      EXPECT_TRUE(false);
+    }
+
+    std::string fileContents(4097, '.');
+
+    secretFile << fileContents;
+  }
+
+  // Invalid Key Path - file too large
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{HttpStatusCode::Unauthorized,
+        "",
+        {{"WWW-Authenticate", "ABC ABC=" + validKeyPath + "toolarge.key"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
