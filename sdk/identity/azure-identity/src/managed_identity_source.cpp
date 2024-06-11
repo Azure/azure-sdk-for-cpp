@@ -71,9 +71,6 @@ void ValidateArcKeyFile(std::string fileName)
 {
   using Azure::Core::Credentials::AuthenticationException;
 
-  IdentityLog::Write(
-      IdentityLog::Level::Verbose, "VALIDATING... Azure Arc key file: '" + fileName + "'.");
-
   std::string directory;
   const size_t lastSlashIndex = fileName.rfind(DirectorySeparator);
   if (std::string::npos != lastSlashIndex)

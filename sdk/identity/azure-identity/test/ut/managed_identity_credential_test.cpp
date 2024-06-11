@@ -851,7 +851,7 @@ std::string CreateDirectoryAndGetValidKeyPath()
   }
   validKeyPath += "\\";
 #else
-  GTEST_SKIP() << "Skipping an AzureArc test on unsupported OSes.";
+  GTEST_SKIP_("Skipping an AzureArc test on unsupported OSes.");
 #endif
   return validKeyPath;
 }
@@ -1266,7 +1266,7 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
         return token;
       }));
 
-  GTEST_SKIP() << "Skipping the rest of AzureArcInvalidKey tests on unsupported OSes.";
+  GTEST_SKIP_("Skipping the rest of AzureArcInvalidKey tests on unsupported OSes.");
 #endif
 
   // Invalid Key Path - empty directory
