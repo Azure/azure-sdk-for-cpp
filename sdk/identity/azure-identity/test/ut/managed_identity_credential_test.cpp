@@ -801,8 +801,6 @@ std::string CreateDirectoryAndGetValidKeyPath()
     EXPECT_TRUE(false);
   }
   validKeyPath += "";
-#else
-  GTEST_SKIP_("Skipping an AzureArc test on unsupported OSes.");
 #endif
   return validKeyPath;
 }
