@@ -850,8 +850,6 @@ std::string CreateDirectoryAndGetValidKeyPath()
     EXPECT_TRUE(false);
   }
   validKeyPath += "\\";
-#else
-  GTEST_SKIP_("Skipping an AzureArc test on unsupported OSes.");
 #endif
   return validKeyPath;
 }
@@ -865,6 +863,10 @@ TEST(ManagedIdentityCredential, AzureArc)
   Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
 
   std::string validKeyPath = CreateDirectoryAndGetValidKeyPath();
+  if (validKeyPath.empty())
+  {
+    GTEST_SKIP_("Skipping AzureArc test on unsupported OSes.");
+  }
 
   {
     std::ofstream secretFile(
@@ -1411,6 +1413,10 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
       }));
 
   validKeyPath = CreateDirectoryAndGetValidKeyPath();
+  if (validKeyPath.empty())
+  {
+    GTEST_SKIP_("Skipping AzureArcInvalidKey test on unsupported OSes.");
+  }
 
   {
     std::ofstream secretFile(
