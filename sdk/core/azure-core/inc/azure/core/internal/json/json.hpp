@@ -28958,7 +28958,7 @@ operator"" _json_pointer; // NOLINT(misc-unused-using-decls,google-global-names-
 #undef _azure_JSON_DISABLE_ENUM_SERIALIZATION
 #undef _azure_JSON_USE_GLOBAL_UDLS
 
-#ifndef JSON_TEST_KEEP_MACROS
+#ifndef _azure_JSON_TEST_KEEP_MACROS
 #undef _azure_JSON_CATCH
 #undef _azure_JSON_TRY
 #undef _azure_JSON_HAS_CPP_11
