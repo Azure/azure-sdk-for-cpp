@@ -42,7 +42,8 @@ std::string ExpectedArcKeyDirectory()
 #if defined(AZ_PLATFORM_LINUX)
   return "/var/opt/azcmagent/tokens";
 #elif defined(AZ_PLATFORM_WINDOWS)
-  std::string programDataPath{Azure::Core::_internal::Environment::GetVariable("ProgramData")};
+  const std::string programDataPath{
+      Azure::Core::_internal::Environment::GetVariable("ProgramData")};
   if (programDataPath.empty())
   {
     throw AuthenticationException("Unable to get ProgramData folder path.");
