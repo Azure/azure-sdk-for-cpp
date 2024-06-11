@@ -808,7 +808,7 @@ std::string CreateDirectoryAndGetValidKeyPath()
   std::string validKeyPath;
 #if defined(AZ_PLATFORM_LINUX)
   validKeyPath = "/var/opt/azcmagent/tokens";
-  int result = system("sudo mkdir -p " + validKeyPath);
+  int result = system(std::string("sudo mkdir -p ").append(validKeyPath).c_str());
   if (result != 0 && errno != EEXIST)
   {
     GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
