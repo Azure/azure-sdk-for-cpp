@@ -81,7 +81,7 @@ void ValidateArcKeyFile(std::string fileName)
       || fileName.substr(fileName.size() - 4) != ".key")
   {
     throw AuthenticationException(
-        "The file specified in the WWW-Authenticate header in the response from Azure Arc "
+        "The file specified in the 'WWW-Authenticate' header in the response from Azure Arc "
         "Managed Identity Endpoint has an unexpected file path.");
   }
 
@@ -91,13 +91,13 @@ void ValidateArcKeyFile(std::string fileName)
     if (s.st_size > MaximumAzureArcKeySize)
     {
       throw AuthenticationException(
-          "The file specified in the WWW-Authenticate header in the response from Azure Arc "
+          "The file specified in the 'WWW-Authenticate' header in the response from Azure Arc "
           "Managed Identity Endpoint is larger than 4096 bytes.");
     }
   }
   else
   {
-    throw AuthenticationException("Failed to get size of file. File name: '" + fileName + "'");
+    throw AuthenticationException("Failed to get file size for '" + fileName + "'.");
   }
 }
 } // namespace
