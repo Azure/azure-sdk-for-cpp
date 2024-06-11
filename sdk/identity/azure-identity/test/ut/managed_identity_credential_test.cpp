@@ -807,17 +807,8 @@ std::string CreateDirectoryAndGetValidKeyPath()
 {
   std::string validKeyPath;
 #if defined(AZ_PLATFORM_LINUX)
-  validKeyPath = "/var/opt/azcmagent";
-
-  int result = mkdir(validKeyPath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO | S_IFDIR);
-  if (result != 0 && errno != EEXIST)
-  {
-    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
-                      << " Result: " << result << " Error : " << errno;
-    EXPECT_TRUE(false);
-  }
-  validKeyPath += "/tokens";
-  result = mkdir(validKeyPath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO | S_IFDIR);
+  validKeyPath = "/var/opt/azcmagent/tokens";
+  int result = system("sudo mkdir -p " + validKeyPath);
   if (result != 0 && errno != EEXIST)
   {
     GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test: " << validKeyPath
