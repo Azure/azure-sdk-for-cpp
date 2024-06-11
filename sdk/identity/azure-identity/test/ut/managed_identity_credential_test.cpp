@@ -1227,7 +1227,7 @@ TEST(ManagedIdentityCredential, AzureArcInvalidKey)
   std::string keyPath;
 
 #if defined(AZ_PLATFORM_LINUX)
-  validKeyPath = "/var/opt/azcmagent/tokens/";
+  keyPath = "/var/opt/azcmagent/tokens/";
 #elif defined(AZ_PLATFORM_WINDOWS)
   keyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
   if (keyPath.empty())
