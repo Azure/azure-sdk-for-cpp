@@ -785,6 +785,28 @@ TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
 }
 
+// This helper creates the necessary directories required for the Azure Arc tests, and returns where
+// we expect the valid arc key to exist.
+std::string CreateDirectoryAndGetValidKeyPath()
+{
+  std::string validKeyPath = "/var/opt/azcmagent";
+
+#if defined(AZ_PLATFORM_LINUX)
+  int result = system("sudo mkdir -p /var/opt/azcmagent/tokens");
+
+  if (result != 0)
+  {
+    GTEST_LOG_(ERROR) << "Directory creation failure in an AzureArc test 1: " << validKeyPath
+                      << " Result: " << result << " Error : " << errno;
+    EXPECT_TRUE(false);
+  }
+  validKeyPath += "";
+#else
+  GTEST_SKIP_("Skipping an AzureArc test on unsupported OSes.");
+#endif
+  return validKeyPath;
+}
+
 TEST(ManagedIdentityCredential, AzureArc)
 {
   using Azure::Core::Diagnostics::Logger;
@@ -792,6 +814,9 @@ TEST(ManagedIdentityCredential, AzureArc)
   LogMsgVec log;
   Logger::SetLevel(Logger::Level::Verbose);
   Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+  std::string path = CreateDirectoryAndGetValidKeyPath();
+  EXPECT_EQ(path, "/var/opt/azcmagent");
 
   {
     std::ofstream secretFile(
