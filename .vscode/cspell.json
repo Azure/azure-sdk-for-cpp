@@ -70,6 +70,7 @@
     "authcid",
     "avro",
     "antkmsft",
+    "azcmagent",
     "azcore",
     "azsdk",
     "azsdkengsys",
