@@ -7131,11 +7131,6 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
 // #include <nlohmann/detail/abi_macros.hpp>
 
-/*!
-@brief namespace for Niels Lohmann
-@see https://github.com/nlohmann
-@since version 1.0.0
-*/
 namespace Azure { namespace Core { namespace Json { namespace _internal {
 
   /*!
@@ -23629,11 +23624,6 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 #include <string_view>
 #endif
 
-/*!
-@brief namespace for Niels Lohmann
-@see https://github.com/nlohmann
-@since version 1.0.0
-*/
 namespace Azure { namespace Core { namespace Json { namespace _internal {
 
   /*!
