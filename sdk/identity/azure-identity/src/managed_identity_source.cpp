@@ -406,7 +406,7 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
           if (authHeader == headers.end())
           {
             throw AuthenticationException(
-                "Did not receive expected WWW-Authenticate header "
+                "Did not receive expected 'WWW-Authenticate' header "
                 "in the response from Azure Arc Managed Identity Endpoint.");
           }
 
@@ -417,7 +417,7 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
               || challenge.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
           {
             throw AuthenticationException(
-                "The WWW-Authenticate header in the response from Azure Arc "
+                "The 'WWW-Authenticate' header in the response from Azure Arc "
                 "Managed Identity Endpoint did not match the expected format.");
           }
 
