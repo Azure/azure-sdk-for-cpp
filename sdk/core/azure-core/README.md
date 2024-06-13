@@ -6,7 +6,7 @@ The library allows client libraries to expose common functionality in a consiste
 
 ## Getting started
 
-Typically, you will not need to download `azure-core`; it will be downloaded for you as a dependency of the client libraries. In case you want to download it explicitly (to implement your own client library, for example), you can find the source in here, or use vcpkg to install the package `azure-core-cpp`.
+Typically, you will not need to download `azure-core`; it will be downloaded for you as a dependency of the client libraries. In case you want to download it explicitly (to implement your own client library, for example), you can find the source in here, or use vcpkg to install the package `azure-core-cpp`. 
 
 ### Include the package
 
