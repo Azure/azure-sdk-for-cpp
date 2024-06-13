@@ -46,7 +46,7 @@ endif()
 
 set(files
     src/make_test_data_available.hpp
-    src/test_utils.hpp
+    #src/test_utils.hpp                    - Not Required.
     #src/unit-32bit.cpp                    - Not required.
     src/unit-algorithms.cpp
     src/unit-allocator.cpp
