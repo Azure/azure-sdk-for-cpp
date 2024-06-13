@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated JSON library to 3.11.3.
+
 ## 1.13.0-beta.1 (2024-06-06)
 
 ### Bugs Fixed
@@ -20,7 +22,6 @@
 
 - [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
 - [[#5515]](https://github.com/Azure/azure-sdk-for-cpp/issues/5515) Add a `ShouldRetry` virtual method to the retry policy to enable customization of service-specific retry logic.
-- Updated JSON library to 3.11.3.
 
 ### Acknowledgments
 
