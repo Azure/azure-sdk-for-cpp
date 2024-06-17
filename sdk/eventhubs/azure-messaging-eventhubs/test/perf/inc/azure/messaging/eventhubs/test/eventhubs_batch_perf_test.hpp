@@ -177,12 +177,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
       std::cout << "[r: " << round << "/" << m_rounds << "p: " << m_partitionId
                 << "] Starting to receive messages from partition" << std::endl;
 
-      //size_t total = 0;
+      //      size_t total = 0;
       //      uint32_t numCancels = 0;
       //      constexpr const uint32_t cancelLimit = 5;
 
       auto events = partitionClient.ReceiveEvents(m_batchSize, context);
-      //total += events.size();
+      //      total += events.size();
     }
 
     void AddEndProperty(
