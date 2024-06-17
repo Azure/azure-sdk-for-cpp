@@ -336,11 +336,27 @@ namespace Azure { namespace Storage { namespace Test {
     auto res = serviceClient.SetProperties(originalProperties);
   }
 
-  TEST_F(BlobServiceClientTest, AccountInfo)
+  TEST_F(BlobServiceClientTest, AccountInfo_LIVEONLY_)
   {
-    auto serviceClient = *m_blobServiceClient;
+    // This operation doesn't support OAuth-based authorization.
+    auto serviceClient
+        = Blobs::BlobServiceClient::CreateFromConnectionString(StandardStorageConnectionString());
 
     auto accountInfo = serviceClient.GetAccountInfo().Value;
+    EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
+    EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
+    EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
+
+    auto containerClient = serviceClient.GetBlobContainerClient(LowercaseRandomString());
+
+    accountInfo = containerClient.GetAccountInfo().Value;
+    EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
+    EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
+    EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
+
+    auto blobClient = containerClient.GetBlobClient(RandomString());
+
+    accountInfo = blobClient.GetAccountInfo().Value;
     EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
     EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
     EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
@@ -352,12 +368,12 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_THROW(serviceClient.GetStatistics(), StorageException);
 
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    const auto servicePrimaryUrl = GetBlobServiceUrl();
+    const auto serviceSecondaryUrl = InferSecondaryUrl(servicePrimaryUrl);
 
     auto secondaryServiceClient = Blobs::BlobServiceClient(
-        InferSecondaryUrl(serviceClient.GetUrl()),
-        keyCredential,
+        serviceSecondaryUrl,
+        GetTestCredential(),
         InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
 
     auto serviceStatistics = secondaryServiceClient.GetStatistics().Value;
@@ -443,19 +459,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, UserDelegationKey)
   {
-    auto serviceClient = *m_blobServiceClient;
-
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
-    Blobs::BlobClientOptions options;
-    InitStorageClientOptions(options);
-
-    auto blobServiceClient1 = Blobs::BlobServiceClient(serviceClient.GetUrl(), credential, options);
-
-    auto userDelegationKey = blobServiceClient1.GetUserDelegationKey(sasExpiresOn).Value;
+    auto userDelegationKey = m_blobServiceClient->GetUserDelegationKey(sasExpiresOn).Value;
 
     EXPECT_FALSE(userDelegationKey.SignedObjectId.empty());
     EXPECT_FALSE(userDelegationKey.SignedTenantId.empty());
@@ -500,11 +506,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
 
     // default audience

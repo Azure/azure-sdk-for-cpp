@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->CreateIfNotExists();
   }
 
-  TEST_F(DataLakeFileClientTest, Constructors)
+  TEST_F(DataLakeFileClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
     {
@@ -58,8 +58,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto fileClient = Files::DataLake::DataLakeFileClient(
           Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileClient->GetUrl()),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          GetTestCredential(),
           clientOptions);
       EXPECT_NO_THROW(fileClient.GetProperties());
     }
@@ -69,10 +68,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto containerName = m_fileSystemName;
     auto blobName = m_fileName;
-    auto blobClient = Blobs::BlobClient::CreateFromConnectionString(
-        AdlsGen2ConnectionString(),
-        containerName,
-        blobName,
+    auto blobClient = Blobs::BlobClient(
+        Files::DataLake::_detail::GetBlobUrlFromUrl(GetDataLakeFileUrl(containerName, blobName)),
+        GetTestCredential(),
         InitStorageClientOptions<Blobs::BlobClientOptions>());
     EXPECT_NO_THROW(blobClient.GetProperties());
     blobClient.Delete();
@@ -145,8 +143,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto oauthFileSystemClient = Files::DataLake::DataLakeFileSystemClient(
         Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+        GetTestCredential(),
         InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
     const std::string oauthFileName = RandomString();
     auto oauthFileClient = oauthFileSystemClient.GetFileClient(oauthFileName);

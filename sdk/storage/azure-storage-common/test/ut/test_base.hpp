@@ -39,14 +39,12 @@ namespace Azure { namespace Storage {
       constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
 
     protected:
+      const std::string& StandardStorageAccountName();
       const std::string& StandardStorageConnectionString();
-      const std::string& PremiumStorageConnectionString();
-      const std::string& BlobStorageConnectionString();
+      const std::string& PremiumFileAccountName();
       const std::string& PremiumFileConnectionString();
+      const std::string& AdlsGen2AccountName();
       const std::string& AdlsGen2ConnectionString();
-      const std::string& AadTenantId();
-      const std::string& AadClientId();
-      const std::string& AadClientSecret();
 
       void SetUp() override;
       void TearDown() override;

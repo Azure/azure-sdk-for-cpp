@@ -17,6 +17,11 @@ namespace Azure { namespace Storage { namespace Test {
         const std::string& fileSystemName,
         Files::DataLake::DataLakeClientOptions clientOptions
         = Files::DataLake::DataLakeClientOptions());
+    
+    std::string GetDataLakeFileSystemUrl(const std::string& fileSystemName)
+    {
+      return GetDataLakeServiceUrl() + "/" + fileSystemName;
+    }
 
   protected:
     std::shared_ptr<Files::DataLake::DataLakeFileSystemClient> m_fileSystemClient;

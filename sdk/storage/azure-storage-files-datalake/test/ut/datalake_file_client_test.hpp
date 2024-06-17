@@ -11,6 +11,11 @@ namespace Azure { namespace Storage { namespace Test {
   protected:
     void SetUp() override;
 
+    std::string GetDataLakeFileUrl(const std::string& fileSystemName, const std::string& filePath)
+    {
+      return GetDataLakeFileSystemUrl(fileSystemName) + "/" + filePath;
+    }
+
   protected:
     std::shared_ptr<Files::DataLake::DataLakeFileClient> m_fileClient;
     std::string m_fileName;

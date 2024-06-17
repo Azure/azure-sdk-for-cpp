@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   };
 
-  TEST_F(QueueSasTest, AccountSasPermissions)
+  TEST_F(QueueSasTest, AccountSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(QueueSasTest, ServiceSasPermissions)
+  TEST_F(QueueSasTest, ServiceSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(QueueSasTest, QueueSasExpired)
+  TEST_F(QueueSasTest, QueueSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyQueueSasRead(queueClient, sasToken);
   }
 
-  TEST_F(QueueSasTest, QueueSasWithoutStartTime)
+  TEST_F(QueueSasTest, QueueSasWithoutStartTime_LIVEONLY_)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
@@ -261,7 +261,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyQueueSasRead(queueClient, sasToken);
   }
 
-  TEST_F(QueueSasTest, QueueSasWithIP)
+  TEST_F(QueueSasTest, QueueSasWithIP_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -286,12 +286,14 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyQueueSasNonRead(queueClient, sasToken);
   }
 
-  TEST_F(QueueSasTest, QueueSasWithIdentifier)
+  TEST_F(QueueSasTest, QueueSasWithIdentifier_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    auto queueClient = *m_queueClient;
+    auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
+    auto queueClient = Queues::QueueClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_queueName, clientOptions);
     Queues::Models::SignedIdentifier identifier;
     identifier.Id = RandomString(64);
     identifier.StartsOn = sasStartsOn;

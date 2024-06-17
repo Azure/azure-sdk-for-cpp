@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::function<ResponseType(Region)> m_failPolicy;
   };
 
-  TEST_F(StorageTest, StorageRetryPolicyTest_Basic)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Basic_LIVEONLY_)
   {
     std::string primaryContent = "primary content";
     auto transportPolicyPtr = std::make_unique<MockTransportPolicy>(primaryContent);
@@ -261,7 +261,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
   }
 
-  TEST_F(StorageTest, StorageRetryPolicyTest_Retry)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Retry_LIVEONLY_)
   {
     std::string primaryContent = "primary content";
     auto transportPolicyPtr = std::make_unique<MockTransportPolicy>(primaryContent);
@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_LE(elapsedTime, delayMs * 4);
   }
 
-  TEST_F(StorageTest, StorageRetryPolicyTest_Failover)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Failover_LIVEONLY_)
   {
     std::string primaryContent = "primary content";
     std::string secondaryContent = "secondary content";
@@ -332,7 +332,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), secondaryContent);
   }
 
-  TEST_F(StorageTest, StorageRetryPolicyTest_Secondary404)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Secondary404_LIVEONLY_)
   {
     std::string primaryContent = "primary content";
     std::string secondaryContent = "secondary content";
@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(numSecondaryTrial, 1);
   }
 
-  TEST_F(StorageTest, StorageRetryPolicyTest_Secondary412)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Secondary412_LIVEONLY_)
   {
     std::string primaryContent = "primary content";
     std::string secondaryContent = "secondary content";

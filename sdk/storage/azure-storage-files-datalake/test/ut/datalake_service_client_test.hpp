@@ -13,9 +13,13 @@ namespace Azure { namespace Storage { namespace Test {
     {
       StorageTest::SetUp();
       auto options = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+      const auto serviceUrl = GetDataLakeServiceUrl();
       m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
-          Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), options));
+          Files::DataLake::DataLakeServiceClient(serviceUrl, GetTestCredential(), options));
+    }
+
+    std::string GetDataLakeServiceUrl() {
+      return "https://" + AdlsGen2AccountName() + ".dfs.core.windows.net";
     }
 
   protected:
