@@ -1978,11 +1978,19 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const auto sourceContainerName = "container1";
     const auto sourceBlobName = "b1";
-    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    auto clientOptions = Blobs::BlobClientOptions();
     auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
         AdlsGen2ConnectionString(), clientOptions);
     auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient(sourceContainerName);
     auto sourceBlobClient = sourceContainerClient.GetBlockBlobClient(sourceBlobName);
+    
+    if (!m_testContext.IsPlaybackMode())
+    {
+      // recording, need to create a big blob
+      std::vector<uint8_t> buffer = RandomBuffer(512 * 1024 * 1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+    }
+    
 
     auto getSas = [&]() {
       Sas::BlobSasBuilder sasBuilder;

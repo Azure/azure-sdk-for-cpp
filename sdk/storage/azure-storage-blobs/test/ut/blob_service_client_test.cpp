@@ -472,8 +472,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
 
-  TEST_F(BlobServiceClientTest, RenameBlobContainer_PLAYBACKONLY_)
+  TEST_F(BlobServiceClientTest, DISABLED_RenameBlobContainer)
   {
+    // This feature is not enabled everywhere
     auto serviceClient = *m_blobServiceClient;
     const std::string prefix = LowercaseRandomString() + "2";
 
