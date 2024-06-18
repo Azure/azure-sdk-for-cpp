@@ -1162,8 +1162,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // OAuth Constructor
     auto directoryClient1 = Files::Shares::ShareDirectoryClient(
-        m_fileShareDirectoryClient->GetUrl(), GetTestCredential(),
-        options);
+        m_fileShareDirectoryClient->GetUrl(), GetTestCredential(), options);
     EXPECT_NO_THROW(directoryClient1.GetProperties());
   }
 

@@ -1464,8 +1464,8 @@ namespace Azure { namespace Storage { namespace Test {
       options.AllowTrailingDot = allowTrailingDot;
       options.AllowSourceTrailingDot = allowSourceTrailingDot;
 
-      auto shareServiceClient = Files::Shares::ShareServiceClient(
-          GetShareServiceUrl(), GetTestCredential(), options);
+      auto shareServiceClient
+          = Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options);
       auto shareClient = shareServiceClient.GetShareClient(shareName);
       auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
       auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);
@@ -1580,8 +1580,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
 
-      auto shareServiceClient = Files::Shares::ShareServiceClient(
-          GetShareServiceUrl(), GetTestCredential(), options);
+      auto shareServiceClient
+          = Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options);
       auto shareClient = shareServiceClient.GetShareClient(shareName);
       auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
       auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);

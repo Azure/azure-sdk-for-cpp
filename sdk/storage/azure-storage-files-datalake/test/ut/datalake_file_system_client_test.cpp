@@ -71,9 +71,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     InitStorageClientOptions(clientOptions);
     auto fsClient = Files::DataLake::DataLakeFileSystemClient(
-        GetDataLakeFileSystemUrl(fileSystemName),
-        GetTestCredential(),
-        clientOptions);
+        GetDataLakeFileSystemUrl(fileSystemName), GetTestCredential(), clientOptions);
     m_resourceCleanupFunctions.push_back([fsClient]() { fsClient.DeleteIfExists(); });
     return fsClient;
   }

@@ -594,8 +594,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto accountName = keyCredential->AccountName;
 
     Files::DataLake::Models::UserDelegationKey userDelegationKey
-        = m_dataLakeServiceClient->GetUserDelegationKey(sasExpiresOn)
-              .Value;
+        = m_dataLakeServiceClient->GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string fileName = RandomString();
 

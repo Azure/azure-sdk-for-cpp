@@ -18,7 +18,8 @@ namespace Azure { namespace Storage { namespace Test {
           Files::DataLake::DataLakeServiceClient(serviceUrl, GetTestCredential(), options));
     }
 
-    std::string GetDataLakeServiceUrl() {
+    std::string GetDataLakeServiceUrl()
+    {
       return "https://" + AdlsGen2AccountName() + ".dfs.core.windows.net";
     }
 
