@@ -1,31 +1,10 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
@@ -83,7 +62,7 @@ TEST_CASE("concepts")
 
     // the expression "X u" has the post-condition "u.empty()"
     {
-      json u;
+      const json u;
       CHECK(u.empty());
     }
 
@@ -141,7 +120,7 @@ TEST_CASE("concepts")
         json j{1, 2, 3};
         json::iterator it1 = j.begin();
         json::iterator it2 = j.end();
-        std::swap(it1, it2);
+        swap(it1, it2);
         CHECK(it1 == j.end());
         CHECK(it2 == j.begin());
       }
@@ -149,7 +128,7 @@ TEST_CASE("concepts")
         json j{1, 2, 3};
         json::const_iterator it1 = j.cbegin();
         json::const_iterator it2 = j.cend();
-        std::swap(it1, it2);
+        swap(it1, it2);
         CHECK(it1 == j.end());
         CHECK(it2 == j.begin());
       }

@@ -115,7 +115,7 @@ namespace Azure { namespace Core { namespace Test {
       std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("PROXY_URL")};
       if (proxyUrl.empty())
       {
-        proxyUrl = "https://localhost:5001";
+        proxyUrl = "http://localhost:5000";
       }
       return proxyUrl;
     }
@@ -777,7 +777,7 @@ namespace Azure { namespace Core { namespace Test {
         std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("PROXY_URL")};
         if (proxyUrl.empty())
         {
-          proxyUrl = "https://localhost:5001";
+          proxyUrl = "http://localhost:5000";
         }
         return proxyUrl;
       }

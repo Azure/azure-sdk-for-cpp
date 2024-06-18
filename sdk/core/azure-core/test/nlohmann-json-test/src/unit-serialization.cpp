@@ -1,31 +1,10 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
@@ -42,7 +21,7 @@ TEST_CASE("serialization")
     SECTION("no given width")
     {
       std::stringstream ss;
-      json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
+      const json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
       ss << j;
       CHECK(ss.str() == "[\"foo\",1,2,3,false,{\"one\":1}]");
     }
@@ -50,7 +29,7 @@ TEST_CASE("serialization")
     SECTION("given width")
     {
       std::stringstream ss;
-      json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
+      const json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
       ss << std::setw(4) << j;
       CHECK(
           ss.str()
@@ -61,7 +40,7 @@ TEST_CASE("serialization")
     SECTION("given fill")
     {
       std::stringstream ss;
-      json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
+      const json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
       ss << std::setw(1) << std::setfill('\t') << j;
       CHECK(ss.str() == "[\n\t\"foo\",\n\t1,\n\t2,\n\t3,\n\tfalse,\n\t{\n\t\t\"one\": 1\n\t}\n]");
     }
@@ -72,7 +51,7 @@ TEST_CASE("serialization")
     SECTION("no given width")
     {
       std::stringstream ss;
-      json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
+      const json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
       j >> ss;
       CHECK(ss.str() == "[\"foo\",1,2,3,false,{\"one\":1}]");
     }
@@ -80,7 +59,7 @@ TEST_CASE("serialization")
     SECTION("given width")
     {
       std::stringstream ss;
-      json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
+      const json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
       ss.width(4);
       j >> ss;
       CHECK(
@@ -92,7 +71,7 @@ TEST_CASE("serialization")
     SECTION("given fill")
     {
       std::stringstream ss;
-      json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
+      const json j = {"foo", 1, 2, 3, false, {{"one", 1}}};
       ss.width(1);
       ss.fill('\t');
       j >> ss;
@@ -104,15 +83,16 @@ TEST_CASE("serialization")
   {
     SECTION("invalid character")
     {
-      json j = "ä\xA9ü";
+      const json j = "ä\xA9ü";
 
-      CHECK_THROWS_AS(j.dump(), json::type_error&);
-      CHECK_THROWS_WITH(
-          j.dump(), "[json.exception.type_error.316] invalid UTF-8 byte at index 2: 0xA9");
-      CHECK_THROWS_AS(j.dump(1, ' ', false, json::error_handler_t::strict), json::type_error&);
-      CHECK_THROWS_WITH(
+      CHECK_THROWS_WITH_AS(
+          j.dump(),
+          "[json.exception.type_error.316] invalid UTF-8 byte at index 2: 0xA9",
+          json::type_error&);
+      CHECK_THROWS_WITH_AS(
           j.dump(1, ' ', false, json::error_handler_t::strict),
-          "[json.exception.type_error.316] invalid UTF-8 byte at index 2: 0xA9");
+          "[json.exception.type_error.316] invalid UTF-8 byte at index 2: 0xA9",
+          json::type_error&);
       CHECK(j.dump(-1, ' ', false, json::error_handler_t::ignore) == "\"äü\"");
       CHECK(j.dump(-1, ' ', false, json::error_handler_t::replace) == "\"ä\xEF\xBF\xBDü\"");
       CHECK(j.dump(-1, ' ', true, json::error_handler_t::replace) == "\"\\u00e4\\ufffd\\u00fc\"");
@@ -120,11 +100,12 @@ TEST_CASE("serialization")
 
     SECTION("ending with incomplete character")
     {
-      json j = "123\xC2";
+      const json j = "123\xC2";
 
-      CHECK_THROWS_AS(j.dump(), json::type_error&);
-      CHECK_THROWS_WITH(
-          j.dump(), "[json.exception.type_error.316] incomplete UTF-8 string; last byte: 0xC2");
+      CHECK_THROWS_WITH_AS(
+          j.dump(),
+          "[json.exception.type_error.316] incomplete UTF-8 string; last byte: 0xC2",
+          json::type_error&);
       CHECK_THROWS_AS(j.dump(1, ' ', false, json::error_handler_t::strict), json::type_error&);
       CHECK(j.dump(-1, ' ', false, json::error_handler_t::ignore) == "\"123\"");
       CHECK(j.dump(-1, ' ', false, json::error_handler_t::replace) == "\"123\xEF\xBF\xBD\"");
@@ -133,11 +114,12 @@ TEST_CASE("serialization")
 
     SECTION("unexpected character")
     {
-      json j = "123\xF1\xB0\x34\x35\x36";
+      const json j = "123\xF1\xB0\x34\x35\x36";
 
-      CHECK_THROWS_AS(j.dump(), json::type_error&);
-      CHECK_THROWS_WITH(
-          j.dump(), "[json.exception.type_error.316] invalid UTF-8 byte at index 5: 0x34");
+      CHECK_THROWS_WITH_AS(
+          j.dump(),
+          "[json.exception.type_error.316] invalid UTF-8 byte at index 5: 0x34",
+          json::type_error&);
       CHECK_THROWS_AS(j.dump(1, ' ', false, json::error_handler_t::strict), json::type_error&);
       CHECK(j.dump(-1, ' ', false, json::error_handler_t::ignore) == "\"123456\"");
       CHECK(
@@ -153,7 +135,7 @@ TEST_CASE("serialization")
       // Section 3.9 -- U+FFFD Substitution of Maximal Subparts
 
       auto test = [&](std::string const& input, std::string const& expected) {
-        json j = input;
+        const json j = input;
         CHECK(j.dump(-1, ' ', true, json::error_handler_t::replace) == "\"" + expected + "\"");
       };
 
@@ -273,14 +255,14 @@ TEST_CASE("serialization")
   {
     auto test = [&](std::string const& input, std::string const& expected) {
       using std::to_string;
-      json j = input;
+      const json j = input;
       CHECK(to_string(j) == "\"" + expected + "\"");
     };
 
-    test("{\"x\":5,\"y\":6}", "{\\\"x\\\":5,\\\"y\\\":6}");
-    test("{\"x\":[10,null,null,null]}", "{\\\"x\\\":[10,null,null,null]}");
+    test(R"({"x":5,"y":6})", R"({\"x\":5,\"y\":6})");
+    test("{\"x\":[10,null,null,null]}", R"({\"x\":[10,null,null,null]})");
     test("test", "test");
-    test("[3,\"false\",false]", "[3,\\\"false\\\",false]");
+    test("[3,\"false\",false]", R"([3,\"false\",false])");
   }
 }
 
@@ -295,14 +277,14 @@ TEST_CASE_TEMPLATE(
   SECTION("minimum")
   {
     constexpr auto minimum = (std::numeric_limits<T>::min)();
-    json j = minimum;
+    const json j = minimum;
     CHECK(j.dump() == std::to_string(minimum));
   }
 
   SECTION("maximum")
   {
     constexpr auto maximum = (std::numeric_limits<T>::max)();
-    json j = maximum;
+    const json j = maximum;
     CHECK(j.dump() == std::to_string(maximum));
   }
 }
@@ -314,15 +296,15 @@ TEST_CASE("dump with binary values")
   auto binary_with_subtype = json::binary({1, 2, 3, 4}, 128);
   auto binary_empty_with_subtype = json::binary({}, 128);
 
-  json object = {{"key", binary}};
-  json object_empty = {{"key", binary_empty}};
-  json object_with_subtype = {{"key", binary_with_subtype}};
-  json object_empty_with_subtype = {{"key", binary_empty_with_subtype}};
+  const json object = {{"key", binary}};
+  const json object_empty = {{"key", binary_empty}};
+  const json object_with_subtype = {{"key", binary_with_subtype}};
+  const json object_empty_with_subtype = {{"key", binary_empty_with_subtype}};
 
-  json array = {"value", 1, binary};
-  json array_empty = {"value", 1, binary_empty};
-  json array_with_subtype = {"value", 1, binary_with_subtype};
-  json array_empty_with_subtype = {"value", 1, binary_empty_with_subtype};
+  const json array = {"value", 1, binary};
+  const json array_empty = {"value", 1, binary_empty};
+  const json array_with_subtype = {"value", 1, binary_with_subtype};
+  const json array_empty_with_subtype = {"value", 1, binary_empty_with_subtype};
 
   SECTION("normal")
   {

@@ -1,31 +1,10 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
@@ -54,12 +33,37 @@ struct MyContainer
 
 const char* begin(const MyContainer& c) { return c.data; }
 
-const char* end(const MyContainer& c) { return c.data + strlen(c.data); }
+const char* end(const MyContainer& c)
+{
+  return c.data + strlen(c.data); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+}
 
-TEST_CASE("Custom container")
+TEST_CASE("Custom container non-member begin/end")
 {
 
-  MyContainer data{"[1,2,3,4]"};
+  const MyContainer data{"[1,2,3,4]"};
+  json as_json = json::parse(data);
+  CHECK(as_json.at(0) == 1);
+  CHECK(as_json.at(1) == 2);
+  CHECK(as_json.at(2) == 3);
+  CHECK(as_json.at(3) == 4);
+}
+
+TEST_CASE("Custom container member begin/end")
+{
+  struct MyContainer2
+  {
+    const char* data;
+
+    const char* begin() const { return data; }
+
+    const char* end() const
+    {
+      return data + strlen(data); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    }
+  };
+
+  const MyContainer2 data{"[1,2,3,4]"};
   json as_json = json::parse(data);
   CHECK(as_json.at(0) == 1);
   CHECK(as_json.at(1) == 2);
@@ -81,7 +85,7 @@ TEST_CASE("Custom iterator")
 
     MyIterator& operator++()
     {
-      ++ptr;
+      ++ptr; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
       return *this;
     }
 
@@ -92,8 +96,16 @@ TEST_CASE("Custom iterator")
     const char* ptr;
   };
 
-  MyIterator begin{raw_data};
-  MyIterator end{raw_data + strlen(raw_data)};
+  // avoid -Wunused-local-typedefs
+  CHECK(std::is_same<MyIterator::difference_type, std::size_t>::value);
+  CHECK(std::is_same<MyIterator::value_type, char>::value);
+  CHECK(std::is_same<MyIterator::pointer, const char*>::value);
+  CHECK(std::is_same<MyIterator::reference, const char&>::value);
+  CHECK(std::is_same<MyIterator::iterator_category, std::input_iterator_tag>::value);
+
+  const MyIterator begin{raw_data};
+  const MyIterator end{
+      raw_data + strlen(raw_data)}; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
   json as_json = json::parse(begin, end);
   CHECK(as_json.at(0) == 1);

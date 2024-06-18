@@ -7,22 +7,14 @@
 // SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
+#undef WIN32_LEAN_AND_MEAN
+#undef NOMINMAX
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::json;
 
-#include <algorithm>
-
-TEST_CASE("tests on very large JSONs")
-{
-  SECTION("issue #1419 - Segmentation fault (stack overflow) due to unbounded recursion")
-  {
-    const auto depth = 5000000;
-
-    std::string s(static_cast<std::size_t>(2 * depth), '[');
-    std::fill(s.begin() + depth, s.end(), ']');
-
-    json _;
-    CHECK_NOTHROW(_ = Azure::Core::Json::_internal::json::parse(s));
-  }
-}
+TEST_CASE("include windows.h") { CHECK(true); }
