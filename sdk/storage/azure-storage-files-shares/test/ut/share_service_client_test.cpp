@@ -48,7 +48,9 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& shareName,
       Files::Shares::ShareClientOptions clientOptions)
   {
-    auto shareClient = m_premiumShareServiceClient->GetShareClient(shareName);
+    InitStorageClientOptions(clientOptions);
+    auto shareClient = Files::Shares::ShareClient(
+        GetShareServiceUrl() + "/" + shareName, GetTestCredential(), clientOptions);
     m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
 
     return shareClient;
