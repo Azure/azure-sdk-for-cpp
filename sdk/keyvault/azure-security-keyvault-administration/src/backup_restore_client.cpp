@@ -16,7 +16,7 @@
 
 using namespace Azure::Security::KeyVault::Administration;
 
-KeyVaultClient::KeyVaultClient(std::string const& vaultBaseUrl)
+BackupRestoreClient::BackupRestoreClient(std::string const& vaultBaseUrl)
     : m_pipeline(new Core::Http::_internal::HttpPipeline(
         {},
         "security-keyvault-administration",
@@ -27,7 +27,7 @@ KeyVaultClient::KeyVaultClient(std::string const& vaultBaseUrl)
 {
 }
 
-Azure::Response<FullBackupOperation> KeyVaultClient::FullBackup(
+Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
     FullBackupOptions const& options,
     Core::Context const& context)
 {
@@ -105,7 +105,7 @@ Azure::Response<FullBackupOperation> KeyVaultClient::FullBackup(
   return Response<FullBackupOperation>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<FullBackupOperation> KeyVaultClient::FullBackupStatus(
+Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
     FullBackupStatusOptions const& options,
     Core::Context const& context)
 {
@@ -159,7 +159,7 @@ Azure::Response<FullBackupOperation> KeyVaultClient::FullBackupStatus(
   return Response<FullBackupOperation>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<RestoreOperation> KeyVaultClient::FullRestoreOperation(
+Azure::Response<RestoreOperation> BackupRestoreClient::FullRestoreOperation(
     FullRestoreOperationOptions const& options,
     Core::Context const& context)
 {
@@ -238,7 +238,7 @@ Azure::Response<RestoreOperation> KeyVaultClient::FullRestoreOperation(
   return Response<RestoreOperation>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<RestoreOperation> KeyVaultClient::RestoreStatus(
+Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
     RestoreStatusOptions const& options,
     Core::Context const& context)
 {
@@ -289,7 +289,7 @@ Azure::Response<RestoreOperation> KeyVaultClient::RestoreStatus(
   return Response<RestoreOperation>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<SelectiveKeyRestoreOperation> KeyVaultClient::SelectiveKeyRestoreOperationF(
+Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyRestoreOperationF(
     SelectiveKeyRestoreOperationOptions const& options,
     Core::Context const& context)
 {

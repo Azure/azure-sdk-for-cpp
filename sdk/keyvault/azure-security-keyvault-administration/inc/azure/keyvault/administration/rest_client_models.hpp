@@ -74,4 +74,86 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
       std::vector<Setting> Value;
     };
 
+    struct Error final
+    {
+      std::string Code;
+      std::string Message;
+      std::unique_ptr<Error> InnerError;
+    };
+
+    struct FullBackupOperation final
+    {
+      std::string Status;
+      std::string StatusDetails;
+      Error Error;
+      DateTime StartTime;
+      Nullable<DateTime> EndTime;
+      std::string JobId;
+      std::string AzureStorageBlobContainerUri;
+    };
+
+    struct SasTokenParameter final
+    {
+      std::string StorageResourceUri;
+      Nullable<std::string> Token;
+      Nullable<bool> UseManagedIdentity;
+    };
+
+    struct FullBackupOptions final
+    {
+      SasTokenParameter AzureStorageBlobContainerUri;
+    };
+
+    struct FullBackupStatusOptions final
+    {
+      std::string JobId;
+    };
+
+    struct RestoreOperation final
+    {
+      std::string Status;
+      std::string StatusDetails;
+      Error Error;
+      std::string JobId;
+      DateTime StartTime;
+      Nullable<DateTime> EndTime;
+    };
+
+    struct RestoreOperationParameters final
+    {
+      SasTokenParameter SasTokenParameters;
+      std::string FolderToRestore;
+    };
+
+    struct FullRestoreOperationOptions final
+    {
+      RestoreOperationParameters RestoreBlobDetails;
+    };
+
+    struct RestoreStatusOptions final
+    {
+      std::string JobId;
+    };
+
+    struct SelectiveKeyRestoreOperation final
+    {
+      std::string Status;
+      std::string StatusDetails;
+      Error Error;
+      std::string JobId;
+      DateTime StartTime;
+      Nullable<DateTime> EndTime;
+    };
+
+    struct SelectiveKeyRestoreOperationParameters final
+    {
+      SasTokenParameter SasTokenParameters;
+      std::string Folder;
+    };
+
+    struct SelectiveKeyRestoreOperationOptions final
+    {
+      std::string KeyName;
+      SelectiveKeyRestoreOperationParameters RestoreBlobDetails;
+    };
 }}}}} // namespace Azure::Security::KeyVault::Administration::Models

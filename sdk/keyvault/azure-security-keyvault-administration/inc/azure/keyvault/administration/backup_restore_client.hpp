@@ -4,6 +4,7 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 #pragma once
+#include "azure/keyvault/administration/rest_client_models.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
@@ -15,90 +16,13 @@
 #include <memory>
 #include <string>
 
+using namespace Azure::Security::KeyVault::Administration::Models;
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
-  struct Error final
-  {
-  };
 
-  struct FullBackupOperation final
-  {
-    std::string Status;
-    std::string StatusDetails;
-    Administration::Error Error;
-    DateTime StartTime;
-    Nullable<DateTime> EndTime;
-    std::string JobId;
-    std::string AzureStorageBlobContainerUri;
-  };
-
-  struct SasTokenParameter final
-  {
-    std::string StorageResourceUri;
-    Nullable<std::string> Token;
-    Nullable<bool> UseManagedIdentity;
-  };
-
-  struct FullBackupOptions final
-  {
-    SasTokenParameter AzureStorageBlobContainerUri;
-  };
-
-  struct FullBackupStatusOptions final
-  {
-    std::string JobId;
-  };
-
-  struct RestoreOperation final
-  {
-    std::string Status;
-    std::string StatusDetails;
-    Administration::Error Error;
-    std::string JobId;
-    DateTime StartTime;
-    Nullable<DateTime> EndTime;
-  };
-
-  struct RestoreOperationParameters final
-  {
-    SasTokenParameter SasTokenParameters;
-    std::string FolderToRestore;
-  };
-
-  struct FullRestoreOperationOptions final
-  {
-    RestoreOperationParameters RestoreBlobDetails;
-  };
-
-  struct RestoreStatusOptions final
-  {
-    std::string JobId;
-  };
-
-  struct SelectiveKeyRestoreOperation final
-  {
-    std::string Status;
-    std::string StatusDetails;
-    Administration::Error Error;
-    std::string JobId;
-    DateTime StartTime;
-    Nullable<DateTime> EndTime;
-  };
-
-  struct SelectiveKeyRestoreOperationParameters final
-  {
-    SasTokenParameter SasTokenParameters;
-    std::string Folder;
-  };
-
-  struct SelectiveKeyRestoreOperationOptions final
-  {
-    std::string KeyName;
-    SelectiveKeyRestoreOperationParameters RestoreBlobDetails;
-  };
-
-  class KeyVaultClient final {
+  class BackupRestoreClient final {
   public:
-    explicit KeyVaultClient(std::string const& vaultBaseUrl);
+    explicit BackupRestoreClient(std::string const& vaultBaseUrl);
 
     Response<FullBackupOperation> FullBackup(
         FullBackupOptions const& options = {},
