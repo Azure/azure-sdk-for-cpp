@@ -1,5 +1,7 @@
 # Azure SDK Core Library for C++
 
+<!-- trivial change -->
+
 Azure::Core (`azure-core`) provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++. These libraries follow the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
 The library allows client libraries to expose common functionality in a consistent fashion. Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
