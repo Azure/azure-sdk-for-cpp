@@ -48,6 +48,7 @@ endif()
 set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_HEADER
     inc/azure/keyvault/administration.hpp
+    inc/azure/keyvault/administration/backup_restore_client.hpp
     inc/azure/keyvault/administration/dll_import_export.hpp
     inc/azure/keyvault/administration/rest_client_models.hpp
     inc/azure/keyvault/administration/rtti.hpp
@@ -57,6 +58,7 @@ set(
 
 set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_SOURCE
+    src/backup_restore_client.cpp
     src/keyvault_settings_common_request.cpp
     src/private/administration_constants.hpp
     src/private/keyvault_settings_common_request.hpp
