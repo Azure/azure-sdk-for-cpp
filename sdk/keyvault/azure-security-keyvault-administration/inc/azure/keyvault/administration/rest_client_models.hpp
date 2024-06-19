@@ -74,7 +74,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
       std::vector<Setting> Value;
     };
 
-      /**
+    /**
      * @brief Define the options to create an SDK Keys client.
      *
      */
@@ -86,86 +86,284 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        */
       const std::string ApiVersion{"7.5"};
     };
+
+    /**
+     * @brief Error model.
+     *
+     */
     struct Error final
     {
+      /**
+       * @brief The error code.
+       *
+       */
       std::string Code;
+      /**
+       * @brief The error message.
+       *
+       */
       std::string Message;
+      /**
+       * @brief Inner error details.
+       *
+       */
       std::unique_ptr<Error> InnerError;
     };
 
+    /**
+     * @brief The full backup operation.
+     *
+     */
     struct FullBackupOperation final
     {
+      /**
+       * @brief Status of the backup operation.
+       *
+       */
       std::string Status;
+      /**
+       * @brief The status details of backup operation.
+       *
+       */
       std::string StatusDetails;
+      /**
+       * @brief Error encountered, if any, during the full backup operation.
+       *
+       */
       Error Error;
+      /**
+       * @brief The start time of the backup operation in UTC
+       *
+       */
       DateTime StartTime;
+      /**
+       * @brief The end time of the backup operation in UTC
+       *
+       */
       Nullable<DateTime> EndTime;
+      /**
+       * @brief Identifier for the full backup operation.
+       *
+       */
       std::string JobId;
+      /**
+       * @brief The Azure blob storage container Uri which contains the full backup
+       *
+       */
       std::string AzureStorageBlobContainerUri;
     };
 
+    /**
+     * @brief
+     *
+     */
     struct SasTokenParameter final
     {
+      /**
+       * @brief Azure Blob storage container Uri
+       *
+       */
       std::string StorageResourceUri;
+      /**
+       * @brief The SAS token pointing to an Azure Blob storage container
+       *
+       */
       Nullable<std::string> Token;
+      /**
+       * @brief Indicates which authentication method should be used. If set to true, Managed HSM
+       * will use the configured user-assigned managed identity to authenticate with Azure Storage.
+       * Otherwise, a SAS token has to be specified.
+       *
+       */
       Nullable<bool> UseManagedIdentity;
     };
 
+    /**
+     * @brief Full backup options.
+     *
+     */
     struct FullBackupOptions final
     {
+      /**
+       * @brief Azure blob shared access signature token pointing to a valid Azure blob container
+       * where full backup needs to be stored. This token needs to be valid for at least next 24
+       * hours from the time of making this call.
+       *
+       */
       SasTokenParameter AzureStorageBlobContainerUri;
     };
 
+    /**
+     * @brief Full backup status options.
+     *
+     */
     struct FullBackupStatusOptions final
     {
+      /**
+       * @brief Identifier for the full backup operation.
+       *
+       */
       std::string JobId;
     };
 
+    /**
+     * @brief Full restore operation.
+     *
+     */
     struct RestoreOperation final
     {
+      /**
+       * @brief Status of the restore operation.
+       *
+       */
       std::string Status;
+      /**
+       * @brief The status details of restore operation.
+       *
+       */
       std::string StatusDetails;
+      /**
+       * @brief Error encountered, if any, during the restore operation.
+       *
+       */
       Error Error;
+      /**
+       * @brief Identifier for the restore operation.
+       *
+       */
       std::string JobId;
+      /**
+       * @brief The start time of the restore operation.
+       *
+       */
       DateTime StartTime;
+      /**
+       * @brief The end time of the restore operation.
+       *
+       */
       Nullable<DateTime> EndTime;
     };
 
+    /**
+     * @brief Restore operation parameters.
+     *
+     */
     struct RestoreOperationParameters final
     {
+      /**
+       * @brief The SAS token pointing to an Azure Blob storage container where the previous
+       * successful full backup was stored
+       *
+       */
       SasTokenParameter SasTokenParameters;
+      /**
+       * @brief The Folder name of the blob where the previous successful full backup was stored
+       *
+       */
       std::string FolderToRestore;
     };
 
+    /**
+     * @brief Full restore operation options.
+     *
+     */
     struct FullRestoreOperationOptions final
     {
+      /**
+       * @brief The Azure blob SAS token pointing to a folder where the previous successful full
+       * backup was stored.
+       *
+       */
       RestoreOperationParameters RestoreBlobDetails;
     };
 
+    /**
+     * @brief Restore status options.
+     *
+     */
     struct RestoreStatusOptions final
     {
+      /**
+       * @brief Identifier for the restore operation.
+       *
+       */
       std::string JobId;
     };
 
+    /**
+     * @brief The selective key restore operation.
+     *
+     */
     struct SelectiveKeyRestoreOperation final
     {
+      /**
+       * @brief The status of the selective key restore operation.
+       *
+       */
       std::string Status;
+      /**
+       * @brief The status details of the selective key restore operation.
+       *
+       */
       std::string StatusDetails;
+      /**
+       * @brief Error encountered, if any, during the selective key restore operation.
+       *
+       */
       Error Error;
+      /**
+       * @brief Identifier for the selective key restore operation.
+       *
+       */
       std::string JobId;
+      /**
+       * @brief The start time of the selective key restore operation.
+       *
+       */
       DateTime StartTime;
+      /**
+       * @brief The end time of the selective key restore operation.
+       *
+       */
       Nullable<DateTime> EndTime;
     };
 
+    /**
+     * @brief The Azure blob SAS token pointing to a folder where the previous successful full
+     * backup was stored.
+     *
+     */
     struct SelectiveKeyRestoreOperationParameters final
     {
+      /**
+       * @brief The SAS token pointing to an Azure Blob storage container where the previous
+       * successful full backup was stored.
+       *
+       */
       SasTokenParameter SasTokenParameters;
+      /**
+       * @brief The Folder name of the blob where the previous successful full backup was stored.
+       *
+       */
       std::string Folder;
     };
 
+    /**
+     * @brief
+     *
+     */
     struct SelectiveKeyRestoreOperationOptions final
     {
+      /**
+       * @brief The name of the key to be restored from the user supplied backup.
+       *
+       */
       std::string KeyName;
+      /**
+       * @brief The Azure blob SAS token pointing to a folder where the previous successful full
+       * backup was stored
+       *
+       */
       SelectiveKeyRestoreOperationParameters RestoreBlobDetails;
     };
 }}}}} // namespace Azure::Security::KeyVault::Administration::Models

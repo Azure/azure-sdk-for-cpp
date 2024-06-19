@@ -22,6 +22,8 @@ using namespace std::chrono_literals;
 
 TEST_F(BackupRestoreClientTest, CreateClient1)
 {
-  auto const& client = GetClientForTest("CreateClient1");
+  auto& client = GetClientForTest("CreateClient1");
   (void)client;
+  client.FullBackup();
+  // client.~BackupRestoreClient->FullBackup();
 }

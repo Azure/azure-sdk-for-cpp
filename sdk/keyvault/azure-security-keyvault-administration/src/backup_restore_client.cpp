@@ -183,7 +183,7 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
   return Response<FullBackupOperation>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<RestoreOperation> BackupRestoreClient::FullRestoreOperation(
+Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
     FullRestoreOperationOptions const& options,
     Core::Context const& context)
 {
@@ -313,7 +313,7 @@ Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
   return Response<RestoreOperation>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyRestoreOperationF(
+Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyRestore(
     SelectiveKeyRestoreOperationOptions const& options,
     Core::Context const& context)
 {

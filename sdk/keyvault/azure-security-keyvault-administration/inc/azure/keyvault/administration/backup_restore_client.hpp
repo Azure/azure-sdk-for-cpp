@@ -18,10 +18,9 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   using namespace Models;
-  
+
   class BackupRestoreClient final {
   public:
-   
     /**
      * @brief Destructor.
      *
@@ -46,24 +45,58 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param backupRestoreClient An existing backup restore client.
      */
     explicit BackupRestoreClient(BackupRestoreClient const& backupRestoreClient) = default;
-
+    /*
+     * @brief Creates a full backup using a user-provided SAS token to an Azure blob storage
+     * container.
+     *
+     * @param options The options for the full backup operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A full backup operation.
+     */
     Response<FullBackupOperation> FullBackup(
         FullBackupOptions const& options = {},
         Core::Context const& context = {});
 
+    /*
+     * @brief Returns the status of full backup operation.
+     *
+     * @param options The options for the full backup status operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A full backup operation.
+     */
     Response<FullBackupOperation> FullBackupStatus(
         FullBackupStatusOptions const& options = {},
         Core::Context const& context = {});
-
-    Response<RestoreOperation> FullRestoreOperation(
+    /*
+     * @brief Restores all key materials using the SAS token pointing to a previously stored Azure
+     * Blob storage backup folder
+     *
+     * @param options The options for the full restore operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A full restore operation.
+     */
+    Response<RestoreOperation> FullRestore(
         FullRestoreOperationOptions const& options = {},
         Core::Context const& context = {});
-
+    /*
+     * @brief Returns the status of restore operation.
+     *
+     * @param options The options for the restore status operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A restore operation.
+     */
     Response<RestoreOperation> RestoreStatus(
         RestoreStatusOptions const& options = {},
         Core::Context const& context = {});
-
-    Response<SelectiveKeyRestoreOperation> SelectiveKeyRestoreOperationF(
+    /*
+     * @brief  Restores all key versions of a given key using user supplied SAS token pointing to a
+     * previously stored Azure Blob storage backup folder.
+     *
+     * @param options The options for the selective key restore operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A selective key restore operation.
+     */
+    Response<SelectiveKeyRestoreOperation> SelectiveKeyRestore(
         SelectiveKeyRestoreOperationOptions const& options = {},
         Core::Context const& context = {});
 
@@ -73,4 +106,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     std::string m_apiVersion;
   };
 
-  }}}} // namespace Azure::Security::KeyVault::Administration
+}}}} // namespace Azure::Security::KeyVault::Administration
