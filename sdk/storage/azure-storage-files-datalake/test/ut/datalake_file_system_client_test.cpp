@@ -25,11 +25,19 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.FileSystemName = m_fileSystemName;
     sasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
     sasBuilder.SetPermissions(Sas::DataLakeFileSystemSasPermissions::All);
-    auto userDelegationKey
-        = m_dataLakeServiceClient
-              ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
-              .Value;
-    return sasBuilder.GenerateSasToken(userDelegationKey, AdlsGen2AccountName());
+    if (m_useTokenCredentialByDefault)
+    {
+      auto userDelegationKey
+          = m_dataLakeServiceClient
+                ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
+                .Value;
+      return sasBuilder.GenerateSasToken(userDelegationKey, AdlsGen2AccountName());
+    }
+    else
+    {
+      return sasBuilder.GenerateSasToken(
+          *_internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential);
+    }
   }
 
   void DataLakeFileSystemClientTest::SetUp()
@@ -70,8 +78,11 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::DataLakeClientOptions clientOptions)
   {
     InitStorageClientOptions(clientOptions);
-    auto fsClient = Files::DataLake::DataLakeFileSystemClient(
-        GetDataLakeFileSystemUrl(fileSystemName), GetTestCredential(), clientOptions);
+    auto fsClient = m_useTokenCredentialByDefault
+        ? Files::DataLake::DataLakeFileSystemClient(
+            GetDataLakeFileSystemUrl(fileSystemName), GetTestCredential(), clientOptions)
+        : Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), fileSystemName, clientOptions);
     m_resourceCleanupFunctions.push_back([fsClient]() { fsClient.DeleteIfExists(); });
     return fsClient;
   }

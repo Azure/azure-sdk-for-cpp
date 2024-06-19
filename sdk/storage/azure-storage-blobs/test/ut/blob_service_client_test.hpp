@@ -17,14 +17,37 @@ namespace Azure { namespace Storage { namespace Test {
       return "https://" + StandardStorageAccountName() + ".blob.core.windows.net";
     }
 
+    Blobs::BlobServiceClient GetBlobServiceClientOAuth()
+    {
+      if (m_useTokenCredentialByDefault)
+      {
+        return *m_blobServiceClient;
+      }
+      else
+      {
+        auto options = InitStorageClientOptions<Blobs::BlobClientOptions>();
+        return Blobs::BlobServiceClient(
+            m_blobServiceClient->GetUrl(), GetTestCredential(), options);
+      }
+    }
+
     void SetUp() override
     {
       StorageTest::SetUp();
 
       m_accountName = StandardStorageAccountName();
       auto options = InitStorageClientOptions<Blobs::BlobClientOptions>();
-      m_blobServiceClient = std::make_shared<Blobs::BlobServiceClient>(
-          GetBlobServiceUrl(), GetTestCredential(), options);
+      if (m_useTokenCredentialByDefault)
+      {
+        m_blobServiceClient = std::make_shared<Blobs::BlobServiceClient>(
+            GetBlobServiceUrl(), GetTestCredential(), options);
+      }
+      else
+      {
+        m_blobServiceClient = std::make_shared<Blobs::BlobServiceClient>(
+            Blobs::BlobServiceClient::CreateFromConnectionString(
+                StandardStorageConnectionString(), options));
+      }
     }
   };
 

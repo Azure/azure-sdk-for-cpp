@@ -62,7 +62,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     InitStorageClientOptions(clientOptions);
     const std::string queueUrl = GetQueueUrl(queueName);
-    auto queueClient = Queues::QueueClient(queueUrl, GetTestCredential(), clientOptions);
+    auto queueClient = m_useTokenCredentialByDefault
+        ? Queues::QueueClient(queueUrl, GetTestCredential(), clientOptions)
+        : Queues::QueueClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), queueName, clientOptions);
     m_resourceCleanupFunctions.push_back([queueClient]() { queueClient.Delete(); });
 
     return queueClient;

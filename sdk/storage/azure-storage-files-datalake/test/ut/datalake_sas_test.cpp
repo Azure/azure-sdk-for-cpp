@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto accountName = keyCredential->AccountName;
 
     Files::DataLake::Models::UserDelegationKey userDelegationKey
-        = m_dataLakeServiceClient->GetUserDelegationKey(sasExpiresOn).Value;
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string directoryName = RandomString();
     std::string fileName = RandomString();
@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto accountName = keyCredential->AccountName;
 
     Files::DataLake::Models::UserDelegationKey userDelegationKey
-        = m_dataLakeServiceClient->GetUserDelegationKey(sasExpiresOn).Value;
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string fileName = RandomString();
 
@@ -362,7 +362,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto accountName = keyCredential->AccountName;
 
     Files::DataLake::Models::UserDelegationKey userDelegationKey
-        = m_dataLakeServiceClient->GetUserDelegationKey(sasExpiresOn).Value;
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string directoryName = RandomString();
 
@@ -594,7 +594,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto accountName = keyCredential->AccountName;
 
     Files::DataLake::Models::UserDelegationKey userDelegationKey
-        = m_dataLakeServiceClient->GetUserDelegationKey(sasExpiresOn).Value;
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string fileName = RandomString();
 

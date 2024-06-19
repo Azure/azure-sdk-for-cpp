@@ -57,8 +57,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     InitStorageClientOptions(clientOptions);
     auto containerUrl = GetBlobContainerUrl(containerName);
-    auto blobContainerClient
-        = Blobs::BlobContainerClient(containerUrl, GetTestCredential(), clientOptions);
+    auto blobContainerClient = m_useTokenCredentialByDefault
+        ? Blobs::BlobContainerClient(containerUrl, GetTestCredential(), clientOptions)
+        : Blobs::BlobContainerClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), containerName, clientOptions);
     m_resourceCleanupFunctions.push_back(
         [blobContainerClient]() { blobContainerClient.DeleteIfExists(); });
 
@@ -73,12 +75,19 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.BlobContainerName = m_containerName;
     sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
-    auto userDelegationKey
-        = m_blobServiceClient
-              ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
-              .Value;
-
-    return sasBuilder.GenerateSasToken(userDelegationKey, m_accountName);
+    if (m_useTokenCredentialByDefault)
+    {
+      auto userDelegationKey
+          = m_blobServiceClient
+                ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
+                .Value;
+      return sasBuilder.GenerateSasToken(userDelegationKey, m_accountName);
+    }
+    else
+    {
+      return sasBuilder.GenerateSasToken(
+          *_internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+    }
   }
 
   Blobs::Models::BlobItem BlobContainerClientTest::GetBlobItem(

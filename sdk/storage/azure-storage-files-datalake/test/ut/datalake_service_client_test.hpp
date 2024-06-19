@@ -14,8 +14,31 @@ namespace Azure { namespace Storage { namespace Test {
       StorageTest::SetUp();
       auto options = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
       const auto serviceUrl = GetDataLakeServiceUrl();
-      m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
-          Files::DataLake::DataLakeServiceClient(serviceUrl, GetTestCredential(), options));
+      if (m_useTokenCredentialByDefault)
+      {
+        m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+            Files::DataLake::DataLakeServiceClient(serviceUrl, GetTestCredential(), options));
+      }
+      else
+      {
+        m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+            Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+                AdlsGen2ConnectionString(), options));
+      }
+    }
+
+    Files::DataLake::DataLakeServiceClient GetDataLakeServiceClientOAuth()
+    {
+      if (m_useTokenCredentialByDefault)
+      {
+        return *m_dataLakeServiceClient;
+      }
+      else
+      {
+        auto options = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+        return Files::DataLake::DataLakeServiceClient(
+            m_dataLakeServiceClient->GetUrl(), GetTestCredential(), options);
+      }
     }
 
     std::string GetDataLakeServiceUrl()

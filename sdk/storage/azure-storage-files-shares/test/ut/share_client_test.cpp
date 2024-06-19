@@ -69,8 +69,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     InitStorageClientOptions(clientOptions);
     clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
-    auto shareClient
-        = Files::Shares::ShareClient(GetShareUrl(shareName), GetTestCredential(), clientOptions);
+    auto shareClient = m_useTokenCredentialByDefault
+        ? Files::Shares::ShareClient(GetShareUrl(shareName), GetTestCredential(), clientOptions)
+        : Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), shareName, clientOptions);
     m_resourceCleanupFunctions.push_back([shareClient]() {
       Files::Shares::DeleteShareOptions options;
       options.DeleteSnapshots = true;
@@ -531,8 +533,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, PremiumShare_LIVEONLY_)
   {
-    auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
-    shareClientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
     auto shareServiceClient = *m_premiumShareServiceClient;
     {
       auto shareName = LowercaseRandomString();

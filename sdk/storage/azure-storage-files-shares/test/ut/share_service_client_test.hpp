@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Test {
       return "https://" + StandardStorageAccountName() + ".file.core.windows.net";
     }
 
-    std::string GetPremiumServiceUrl()
+    std::string GetPremiumShareServiceUrl()
     {
       return "https://" + PremiumFileAccountName() + ".file.core.windows.net";
     }

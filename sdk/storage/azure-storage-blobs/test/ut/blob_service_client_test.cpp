@@ -461,7 +461,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    auto userDelegationKey = m_blobServiceClient->GetUserDelegationKey(sasExpiresOn).Value;
+    auto blobServiceClient = GetBlobServiceClientOAuth();
+    auto userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
 
     EXPECT_FALSE(userDelegationKey.SignedObjectId.empty());
     EXPECT_FALSE(userDelegationKey.SignedTenantId.empty());

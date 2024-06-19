@@ -42,8 +42,17 @@ namespace Azure { namespace Storage { namespace Test {
   {
     StorageTest::SetUp();
     m_options = InitStorageClientOptions<Queues::QueueClientOptions>();
-    m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
-        GetQueueServiceUrl(), GetTestCredential(), m_options);
+    if (m_useTokenCredentialByDefault)
+    {
+      m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
+          GetQueueServiceUrl(), GetTestCredential(), m_options);
+    }
+    else
+    {
+      m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
+          Queues::QueueServiceClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), m_options));
+    }
   }
 
   TEST_F(QueueServiceClientTest, Constructors_LIVEONLY_)

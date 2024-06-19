@@ -517,8 +517,8 @@ namespace Azure { namespace Storage { namespace Test {
       builder.EncryptionScope = encryptionScope;
       builder.SetPermissions("r");
       auto userDelegationKey
-          = m_blobServiceClient
-                ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
+          = GetBlobServiceClientOAuth()
+                .GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
                 .Value;
       auto sasToken = builder.GenerateSasToken(userDelegationKey, m_accountName);
 
@@ -1983,14 +1983,13 @@ namespace Azure { namespace Storage { namespace Test {
         AdlsGen2ConnectionString(), clientOptions);
     auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient(sourceContainerName);
     auto sourceBlobClient = sourceContainerClient.GetBlockBlobClient(sourceBlobName);
-    
+
     if (!m_testContext.IsPlaybackMode())
     {
       // recording, need to create a big blob
       std::vector<uint8_t> buffer = RandomBuffer(512 * 1024 * 1024);
       sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
     }
-    
 
     auto getSas = [&]() {
       Sas::BlobSasBuilder sasBuilder;

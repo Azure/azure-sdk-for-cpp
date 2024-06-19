@@ -22,8 +22,17 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
-    m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
-        Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options));
+    if (m_useTokenCredentialByDefault)
+    {
+      m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+          Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options));
+    }
+    else
+    {
+      m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+          Files::Shares::ShareServiceClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), options));
+    }
 
     // Most APIs don't work for premium shares
     {
@@ -49,8 +58,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ShareClientOptions clientOptions)
   {
     InitStorageClientOptions(clientOptions);
-    auto shareClient = Files::Shares::ShareClient(
-        GetShareServiceUrl() + "/" + shareName, GetTestCredential(), clientOptions);
+    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+        PremiumFileConnectionString(), shareName, clientOptions);
     m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
 
     return shareClient;
