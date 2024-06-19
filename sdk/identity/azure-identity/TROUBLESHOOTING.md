@@ -1,3 +1,4 @@
+<!-- cspell:words azurecli azureclicredential -->
 # Troubleshoot Azure Identity authentication issues
 
 This troubleshooting guide covers failure investigation techniques, common errors for the credential types in the Azure Identity library for C++, and mitigation steps to resolve these errors.
