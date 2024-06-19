@@ -16,13 +16,36 @@
 #include <memory>
 #include <string>
 
-using namespace Azure::Security::KeyVault::Administration::Models;
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
-
+  using namespace Models;
+  
   class BackupRestoreClient final {
   public:
-    explicit BackupRestoreClient(std::string const& vaultBaseUrl);
+   
+    /**
+     * @brief Destructor.
+     *
+     */
+    virtual ~BackupRestoreClient() = default;
+
+    /**
+     * @brief Construct a new BackupRestoreClient object
+     *
+     * @param vaultUrl The URL address where the client will send the requests to.
+     * @param credential The authentication method to use.
+     * @param options The options to customize the client behavior.
+     */
+    explicit BackupRestoreClient(
+        std::string const& vaultUrl,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        BackupRestoreClientOptions options = BackupRestoreClientOptions());
+
+    /**
+     * @brief Construct a new BackupRestoreClient object from another key client.
+     *
+     * @param backupRestoreClient An existing backup restore client.
+     */
+    explicit BackupRestoreClient(BackupRestoreClient const& backupRestoreClient) = default;
 
     Response<FullBackupOperation> FullBackup(
         FullBackupOptions const& options = {},
@@ -47,5 +70,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_vaultBaseUrl;
+    std::string m_apiVersion;
   };
-}}}} // namespace Azure::Security::KeyVault::Administration
+
+  }}}} // namespace Azure::Security::KeyVault::Administration

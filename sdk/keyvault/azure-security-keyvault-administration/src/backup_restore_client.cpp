@@ -4,27 +4,51 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 #include "azure/keyvault/administration/backup_restore_client.hpp"
+#include "private/administration_constants.hpp"
+#include "private/package_version.hpp"
 
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/http_status_code.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
+#include <azure/keyvault/shared/keyvault_challenge_based_auth.hpp>
+#include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include <cstdint>
 #include <utility>
 
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Core::Http::_internal;
 
-BackupRestoreClient::BackupRestoreClient(std::string const& vaultBaseUrl)
-    : m_pipeline(new Core::Http::_internal::HttpPipeline(
-        {},
-        "security-keyvault-administration",
-        "",
-        {},
-        {})),
-      m_vaultBaseUrl(vaultBaseUrl)
+BackupRestoreClient::BackupRestoreClient(
+    std::string const& vaultUrl,
+    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    BackupRestoreClientOptions options)
+    : m_vaultBaseUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
+  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
+  {
+    Azure::Core::Credentials::TokenRequestContext tokenContext;
+    tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultBaseUrl)};
+
+    perRetrypolicies.emplace_back(
+        std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
+            credential, std::move(tokenContext)));
+  }
+  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+
+  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+      options,
+      _detail::KeyVaultServicePackageName,
+      _detail::PackageVersion::ToString(),
+      std::move(perRetrypolicies),
+      std::move(perCallpolicies));
 }
 
 Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(

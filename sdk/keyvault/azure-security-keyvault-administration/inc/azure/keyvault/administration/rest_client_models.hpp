@@ -74,6 +74,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
       std::vector<Setting> Value;
     };
 
+      /**
+     * @brief Define the options to create an SDK Keys client.
+     *
+     */
+    struct BackupRestoreClientOptions final : public Azure::Core::_internal::ClientOptions
+    {
+      /**
+       * @brief Service Version used.
+       *
+       */
+      const std::string ApiVersion{"7.5"};
+    };
     struct Error final
     {
       std::string Code;
