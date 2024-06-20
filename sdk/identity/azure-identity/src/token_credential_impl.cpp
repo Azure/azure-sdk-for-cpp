@@ -421,6 +421,7 @@ AccessToken TokenCredentialImpl::ParseToken(
       auto const tzOffsetStr = TimeZoneOffsetAsString(utcDiffSeconds);
       if (expiresOn.is_string())
       {
+        bool successfulParse = false;
         auto const expiresOnAsString = expiresOn.get<std::string>();
         for (auto const& parse : {
                  std::function<DateTime(std::string const&)>([&](auto const& s) {
@@ -447,21 +448,21 @@ AccessToken TokenCredentialImpl::ParseToken(
         {
           try
           {
-#if defined(_MSC_VER)
-#pragma warning(push)
-// Warning C26800 - Use of a moved from object: 'accessToken' (lifetime.1)
-#pragma warning(disable : 26800)
-#endif
             accessToken.ExpiresOn = parse(expiresOnAsString);
-            return accessToken;
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
+            // Workaround for Warning C26800 - Use of a moved from object: 'accessToken'
+            // (lifetime.1) on MSVC version 14.40.33807+.
+            // Returning accessToken here directly causes the warning.
+            successfulParse = true;
+            break;
           }
           catch (std::exception const&)
           {
             // parse() has thrown, we may throw later.
           }
+        }
+        if (successfulParse)
+        {
+          return accessToken;
         }
       }
     }
