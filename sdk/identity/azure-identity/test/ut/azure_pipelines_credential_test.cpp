@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+using Azure::Core::_internal::Environment;
+using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
@@ -491,4 +493,35 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
           {{{"https://azure.com/.default"}}},
           std::vector<std::string>{"{\"oidcToken\":5}", ""}),
       AuthenticationException);
+}
+
+TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
+{
+  std::string clientId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string serviceConnectionId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
+  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
+
+  if (clientId.empty() || serviceConnectionId.empty() || systemAccessToken.empty()
+      || tenantId.empty())
+  {
+    GTEST_SKIP_("Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
+                "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
+                "AzurePipelinesCredential test.");
+  }
+
+  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://vault.azure.net/.default");
+
+  AccessToken token = cred.GetToken(trc, {});
+  EXPECT_NE(token.Token, "") << "GetToken returned an invalid token.";
+
+  EXPECT_TRUE(token.ExpiresOn >= std::chrono::system_clock::now())
+      << "GetToken returned an invalid expiration time.";
+
+  AccessToken token2 = cred.GetToken(trc, {});
+  EXPECT_TRUE(token.Token == token2.Token && token.ExpiresOn == token2.ExpiresOn)
+      << "Expected a cached token.";
 }
