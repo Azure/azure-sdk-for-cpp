@@ -155,9 +155,10 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
 
     std::string message = GetCredentialName() + " : "
         + std::to_string(static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
-        + " response from the OIDC endpoint. Check service connection ID and Pipeline "
-          "configuration. "
-        + response->GetReasonPhrase() + "\n\n" + responseBody;
+        + " (" + response->GetReasonPhrase()
+        + ") response from the OIDC endpoint. Check service connection ID and Pipeline "
+          "configuration.\n\n"
+        + responseBody;
     IdentityLog::Write(IdentityLog::Level::Verbose, message);
 
     throw AuthenticationException(message);
@@ -214,22 +215,6 @@ AccessToken AzurePipelinesCredential::GetToken(
   auto const scopesStr
       = m_clientCredentialCore.GetScopesString(tenantId, tokenRequestContext.Scopes);
 
-  Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
-  std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
-
-  if (!response)
-  {
-    throw AuthenticationException(
-        GetCredentialName() + " couldn't send OIDC token request: null response.");
-  }
-
-  auto const bodyStream = response->ExtractBodyStream();
-  auto const bodyVec = bodyStream ? bodyStream->ReadToEnd(context) : response->GetBody();
-  auto const responseBody
-      = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
-
-  std::string assertion = GetOidcTokenResponse(response, responseBody);
-
   // TokenCache::GetToken() and m_tokenCredentialImpl->GetToken() can only use the lambda
   // argument when they are being executed. They are not supposed to keep a reference to lambda
   // argument to call it later. Therefore, any capture made here will outlive the possible time
@@ -243,6 +228,22 @@ AccessToken AzurePipelinesCredential::GetToken(
       }
 
       auto const requestUrl = m_clientCredentialCore.GetRequestUrl(tenantId);
+
+      Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
+      std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
+
+      if (!response)
+      {
+        throw AuthenticationException(
+            GetCredentialName() + " couldn't send OIDC token request: null response.");
+      }
+
+      auto const bodyStream = response->ExtractBodyStream();
+      auto const bodyVec = bodyStream ? bodyStream->ReadToEnd(context) : response->GetBody();
+      auto const responseBody
+          = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
+
+      std::string assertion = GetOidcTokenResponse(response, responseBody);
 
       body += "&client_assertion=" + Azure::Core::Url::Encode(assertion);
 

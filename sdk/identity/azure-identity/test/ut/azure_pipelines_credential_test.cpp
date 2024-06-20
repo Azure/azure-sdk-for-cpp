@@ -445,8 +445,8 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
   catch (AuthenticationException const& ex)
   {
     std::string expectedMessage
-        = "AzurePipelinesCredential : 400 response from the OIDC endpoint. Check service "
-          "connection ID and Pipeline configuration. Test\n\nInvalid response body";
+        = "AzurePipelinesCredential : 400 (Test) response from the OIDC endpoint. Check service "
+          "connection ID and Pipeline configuration.\n\nInvalid response body";
     EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
   }
 
