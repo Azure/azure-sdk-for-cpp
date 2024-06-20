@@ -328,7 +328,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareFileClientTest, HandlesFunctionalityWorks_PLAYBACKONLY_)
   {
     auto shareClient = m_shareServiceClient->GetShareClient("myshare");
-    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient("myfile");
+    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient("myfile.txt");
     Files::Shares::ListFileHandlesOptions options;
     options.PageSizeHint = 1;
     std::unordered_set<std::string> handles;
@@ -1745,10 +1745,7 @@ namespace Azure { namespace Storage { namespace Test {
   // cspell:ignore myshare myfile
   TEST_F(FileShareFileClientTest, ListHandlesAccessRights_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient(
-        GetShareUrl("myshare"),
-        GetTestCredential(),
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient("myfile");
     auto fileHandles = fileClient.ListHandles().FileHandles;
     Files::Shares::Models::ShareFileHandleAccessRights allAccessRights
@@ -1762,10 +1759,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, ListHandlesWithClientName_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient(
-        GetShareUrl("myshare"),
-        GetTestCredential(),
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto fileClient
         = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("dir1").GetFileClient(
             "test.txt");

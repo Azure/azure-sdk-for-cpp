@@ -899,10 +899,7 @@ namespace Azure { namespace Storage { namespace Test {
   // cspell:ignore myshare mydirectory
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient(
-        GetShareUrl("myshare"),
-        GetTestCredential(),
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto directoryClient
         = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("mydirectory");
     Files::Shares::ListDirectoryHandlesOptions options;
