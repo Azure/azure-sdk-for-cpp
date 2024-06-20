@@ -101,18 +101,18 @@ AzurePipelinesCredential::AzurePipelinesCredential(
             + "' needed by " + GetCredentialName() + ". This should be set by Azure Pipelines.");
   }
 
+  m_tokenCredentialImpl = std::make_unique<TokenCredentialImpl>(options);
+  m_requestBody
+      = std::string(
+            "grant_type=client_credentials"
+            "&client_assertion_type="
+            "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
+            "&client_id=")
+      + Url::Encode(clientId);
+
   if (isTenantIdValid && !clientId.empty() && !serviceConnectionId.empty()
       && !systemAccessToken.empty() && !m_oidcRequestUrl.empty())
   {
-    m_tokenCredentialImpl = std::make_unique<TokenCredentialImpl>(options);
-    m_requestBody
-        = std::string(
-              "grant_type=client_credentials"
-              "&client_assertion_type="
-              "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
-              "&client_id=")
-        + Url::Encode(clientId);
-
     IdentityLog::Write(
         IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
   }
@@ -228,6 +228,14 @@ AccessToken AzurePipelinesCredential::GetToken(
   auto const responseBody
       = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
 
+  std::cout << "OIDC_RESPONSE_STATUSCODE: " << static_cast<int>(response->GetStatusCode())
+            << std::endl;
+  std::cout << "OIDC_RESPONSE_ReasonPhrase: " << response->GetReasonPhrase() << std::endl;
+  for (const auto& header : response->GetHeaders())
+  {
+    std::cout << "OIDC_RESPONSE_HEADER: " << header.first << ": " << header.second << std::endl;
+  }
+  std::cout << "OIDC_RESPONSE: " << responseBody << std::endl;
   std::string assertion = GetOidcTokenResponse(response, responseBody);
 
   // TokenCache::GetToken() and m_tokenCredentialImpl->GetToken() can only use the lambda

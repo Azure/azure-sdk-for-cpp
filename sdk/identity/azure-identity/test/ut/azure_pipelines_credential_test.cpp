@@ -497,17 +497,20 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
 
 TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
 {
+  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
   std::string clientId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
   std::string serviceConnectionId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
-  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
 
-  if (clientId.empty() || serviceConnectionId.empty() || systemAccessToken.empty()
-      || tenantId.empty())
+  if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty()
+      || systemAccessToken.empty())
   {
-    GTEST_SKIP_("Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
-                "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
-                "AzurePipelinesCredential test.");
+    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
+                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
+                          "AzurePipelinesCredential test. "
+        + tenantId + " : " + clientId + " : " + serviceConnectionId + " : " + systemAccessToken
+        + ".";
+    GTEST_SKIP_(message.c_str());
   }
 
   AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
@@ -524,4 +527,100 @@ TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
   AccessToken token2 = cred.GetToken(trc, {});
   EXPECT_TRUE(token.Token == token2.Token && token.ExpiresOn == token2.ExpiresOn)
       << "Expected a cached token.";
+}
+
+TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
+{
+  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
+  std::string clientId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
+
+  std::string serviceConnectionId = "invalidServiceConnectionId";
+
+  /*if (tenantId.empty() || clientId.empty() || systemAccessToken.empty())
+  {
+    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
+                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
+                          "AzurePipelinesCredential test.";
+    GTEST_SKIP_(message.c_str());
+  }*/
+
+  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://vault.azure.net/.default");
+
+  try
+  {
+    AccessToken token = cred.GetToken(trc, {});
+  }
+  catch (AuthenticationException const& ex)
+  {
+    std::string expectedMessage = "";
+    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+  }
+}
+
+TEST(AzurePipelinesCredential, InvalidClientId_LIVEONLY_)
+{
+  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
+  std::string serviceConnectionId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
+
+  std::string clientId = "invalidClientId";
+
+  /*if (tenantId.empty() || serviceConnectionId.empty() || systemAccessToken.empty())
+  {
+    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
+                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
+                          "AzurePipelinesCredential test.";
+    GTEST_SKIP_(message.c_str());
+  }*/
+
+  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://vault.azure.net/.default");
+
+  try
+  {
+    AccessToken token = cred.GetToken(trc, {});
+  }
+  catch (AuthenticationException const& ex)
+  {
+    std::string expectedMessage = "";
+    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+  }
+}
+
+TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
+{
+  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
+  std::string clientId = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
+  std::string serviceConnectionId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+
+  std::string systemAccessToken = "invalidSystemAccessToken";
+
+  /*if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty())
+  {
+    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
+                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
+                          "AzurePipelinesCredential test.";
+    GTEST_SKIP_(message.c_str());
+  }*/
+
+  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://vault.azure.net/.default");
+
+  try
+  {
+    AccessToken token = cred.GetToken(trc, {});
+  }
+  catch (AuthenticationException const& ex)
+  {
+    std::string expectedMessage = "";
+    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+  }
 }
