@@ -15,6 +15,7 @@ using Azure::Identity::AzurePipelinesCredentialOptions;
 
 using Azure::Core::Context;
 using Azure::Core::Url;
+using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
@@ -96,8 +97,8 @@ AzurePipelinesCredential::AzurePipelinesCredential(
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        "No value for environment variable '" + OidcRequestUrlEnvVarName + "' needed by "
-            + GetCredentialName() + ". This should be set by Azure Pipelines.".);
+        "No value for environment variable '" + Azure::Identity::_detail::OidcRequestUrlEnvVarName
+            + "' needed by " + GetCredentialName() + ". This should be set by Azure Pipelines.");
   }
 
   if (isTenantIdValid && !clientId.empty() && !serviceConnectionId.empty()
@@ -129,7 +130,7 @@ Request AzurePipelinesCredential::CreateOidcRequestMessage() const
   const std::string oidcApiVersion = "7.1";
 
   Url requestUrl = Url(
-      Url::Encode(m_oidcRequestUrl) + "?api-version=" + Url::Encode(oidcApiVersion)
+      m_oidcRequestUrl + "?api-version=" + Url::Encode(oidcApiVersion)
       + "&serviceConnectionId=" + Url::Encode(m_serviceConnectionId));
   Request request = Request(HttpMethod::Post, requestUrl);
   request.SetHeader("content-type", "application/json");
@@ -151,7 +152,7 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
     std::string message = GetCredentialName() + " : "
         + std::to_string(static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
         + " response from the OIDC endpoint. Check service connection ID and Pipeline "
-          "configuration."
+          "configuration. "
         + response->GetReasonPhrase() + "\n\n" + responseBody;
     IdentityLog::Write(IdentityLog::Level::Verbose, message);
 
@@ -165,8 +166,7 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
   }
   catch (json::exception const&)
   {
-    std::string message
-        = GetCredentialName() + " : " + "Cannot parse the string '" + responseBody + "' as JSON.";
+    std::string message = GetCredentialName() + " : Cannot parse the response string as JSON.";
     IdentityLog::Write(IdentityLog::Level::Verbose, message);
 
     throw AuthenticationException(message);

@@ -17,7 +17,7 @@ namespace Azure { namespace Identity { namespace _detail {
   constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
   constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
   constexpr auto AzureFederatedTokenFileEnvVarName = "AZURE_FEDERATED_TOKEN_FILE";
-  constexpr auto OidcRequestUrlEnvVarName = "SYSTEM_OIDCREQUESTURI";
+  const std::string OidcRequestUrlEnvVarName = "SYSTEM_OIDCREQUESTURI";
   const std::string AadGlobalAuthority = "https://login.microsoftonline.com/";
 
   class DefaultOptionValues final {
@@ -50,7 +50,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
     static std::string GetOidcRequestUrl()
     {
-      return Core::_internal::Environment::GetVariable(OidcRequestUrlEnvVarName);
+      return Core::_internal::Environment::GetVariable(OidcRequestUrlEnvVarName.c_str());
     }
   };
 
