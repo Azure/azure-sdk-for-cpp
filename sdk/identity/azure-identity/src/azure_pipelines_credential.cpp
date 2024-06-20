@@ -118,6 +118,10 @@ AzurePipelinesCredential::AzurePipelinesCredential(
   }
   else
   {
+    // Rather than throwing an exception in the ctor, following the pattern in existing credentials
+    // to log the errors, and defer throwing an exception to the first call of GetToken(). This is
+    // primarily needed for credentials that are part of the DefaultAzureCredential, which this
+    // credential is not intended for.
     IdentityLog::Write(
         IdentityLog::Level::Warning,
         "Azure Pipelines environment is not set up for the " + GetCredentialName()
