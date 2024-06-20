@@ -55,14 +55,14 @@ namespace Azure { namespace Identity {
    */
   class AzurePipelinesCredential final : public Core::Credentials::TokenCredential {
   private:
-    _detail::TokenCache m_tokenCache;
+    std::string m_serviceConnectionId;
+    std::string m_systemAccessToken;
     _detail::ClientCredentialCore m_clientCredentialCore;
+    Azure::Core::Http::_internal::HttpPipeline m_httpPipeline;
+    std::string m_oidcRequestUrl;
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
     std::string m_requestBody;
-    std::string m_systemAccessToken;
-    std::string m_serviceConnectionId;
-    std::string m_oidcRequestUrl;
-    Azure::Core::Http::_internal::HttpPipeline m_httpPipeline;
+    _detail::TokenCache m_tokenCache;
 
     Azure::Core::Http::Request CreateOidcRequestMessage() const;
     std::string GetOidcTokenResponse(
