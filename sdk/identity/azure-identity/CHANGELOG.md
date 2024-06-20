@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `AzurePipelinesCredential` for authenticating an Azure Pipelines service connection with workload identity federation.
+
 ### Breaking Changes
 
 ### Bugs Fixed
