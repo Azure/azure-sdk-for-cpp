@@ -73,7 +73,7 @@ AzurePipelinesCredential::AzurePipelinesCredential(
         IdentityLog::Level::Warning,
         "Invalid tenant ID provided  for " + GetCredentialName()
             + ". The tenant ID must be a non-empty string containing only alphanumeric characters, "
-              "periods, or hyphens. You can locate your tenantID by following the instructions "
+              "periods, or hyphens. You can locate your tenant ID by following the instructions "
               "listed here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names");
   }
   if (clientId.empty())
