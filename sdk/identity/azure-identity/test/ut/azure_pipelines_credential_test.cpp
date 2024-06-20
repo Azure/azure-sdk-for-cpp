@@ -36,7 +36,8 @@ TEST(AzurePipelinesCredential, GetOptionsFromEnvironment)
   std::string systemAccessToken = "123";
 
   {
-    CredentialTestHelper::EnvironmentOverride const env({{"AZURE_AUTHORITY_HOST", ""}});
+    std::map<std::string, std::string> envVars = {{"AZURE_AUTHORITY_HOST", ""}};
+    CredentialTestHelper::EnvironmentOverride const env(envVars);
 
     AzurePipelinesCredentialOptions options;
     AzurePipelinesCredential const cred(
@@ -72,9 +73,13 @@ TEST(AzurePipelinesCredential, InvalidArgs)
   std::string serviceConnectionId = "abc";
   std::string systemAccessToken = "123";
 
+  std::map<std::string, std::string> validEnvVars
+      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
+
   // Empty Oidc Request Uri
   {
-    CredentialTestHelper::EnvironmentOverride const env({{"SYSTEM_OIDCREQUESTURI", ""}});
+    std::map<std::string, std::string> invalidEnvVars = {{"SYSTEM_OIDCREQUESTURI", ""}};
+    CredentialTestHelper::EnvironmentOverride const env(invalidEnvVars);
 
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
@@ -89,8 +94,7 @@ TEST(AzurePipelinesCredential, InvalidArgs)
 
   // Empty Tenant ID
   {
-    CredentialTestHelper::EnvironmentOverride const env(
-        {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
@@ -101,8 +105,7 @@ TEST(AzurePipelinesCredential, InvalidArgs)
 
   // Invalid Tenant ID
   {
-    CredentialTestHelper::EnvironmentOverride const env(
-        {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
@@ -114,8 +117,7 @@ TEST(AzurePipelinesCredential, InvalidArgs)
 
   // Empty client ID
   {
-    CredentialTestHelper::EnvironmentOverride const env(
-        {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
@@ -126,8 +128,7 @@ TEST(AzurePipelinesCredential, InvalidArgs)
 
   // Empty service connection ID
   {
-    CredentialTestHelper::EnvironmentOverride const env(
-        {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
@@ -138,8 +139,7 @@ TEST(AzurePipelinesCredential, InvalidArgs)
 
   // Empty system access token
   {
-    CredentialTestHelper::EnvironmentOverride const env(
-        {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
@@ -151,8 +151,9 @@ TEST(AzurePipelinesCredential, InvalidArgs)
 
 TEST(AzurePipelinesCredential, Regular)
 {
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+  std::map<std::string, std::string> validEnvVars
+      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
+  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -227,8 +228,9 @@ TEST(AzurePipelinesCredential, Regular)
 
 TEST(AzurePipelinesCredential, AzureStack)
 {
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+  std::map<std::string, std::string> validEnvVars
+      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
+  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -409,8 +411,9 @@ TEST(AzurePipelinesCredential, HttpSchemeNotSupported)
 
 TEST(AzurePipelinesCredential, InvalidOidcResponse)
 {
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}});
+  std::map<std::string, std::string> validEnvVars
+      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
+  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
 
   std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
   std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
