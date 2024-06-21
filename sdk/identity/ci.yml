@@ -30,6 +30,8 @@ extends:
       LiveTestCtestRegex: azure-identity.
       LineCoverageTarget: 95
       BranchCoverageTarget: 56
+      # TODO: Revert before merge
+      UseFederatedAuth: true
       Artifacts:
         - Name: azure-identity
           Path: azure-identity
