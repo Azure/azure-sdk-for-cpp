@@ -125,12 +125,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * @brief The status details of backup operation.
        *
        */
-      std::string StatusDetails;
+      Azure::Nullable<std::string> StatusDetails;
       /**
        * @brief Error encountered, if any, during the full backup operation.
        *
        */
-      Error Error;
+      Azure::Nullable<Error> Error;
       /**
        * @brief The start time of the backup operation in UTC
        *
@@ -179,21 +179,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     };
 
     /**
-     * @brief Full backup options.
-     *
-     */
-    struct FullBackupOptions final
-    {
-      /**
-       * @brief Azure blob shared access signature token pointing to a valid Azure blob container
-       * where full backup needs to be stored. This token needs to be valid for at least next 24
-       * hours from the time of making this call.
-       *
-       */
-      SasTokenParameter AzureStorageBlobContainerUri;
-    };
-
-    /**
      * @brief Full backup status options.
      *
      */
@@ -221,12 +206,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * @brief The status details of restore operation.
        *
        */
-      std::string StatusDetails;
+      Azure::Nullable<std::string> StatusDetails;
       /**
        * @brief Error encountered, if any, during the restore operation.
        *
        */
-      Error Error;
+      Azure::Nullable<Error> Error;
       /**
        * @brief Identifier for the restore operation.
        *
@@ -261,33 +246,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        *
        */
       std::string FolderToRestore;
-    };
-
-    /**
-     * @brief Full restore operation options.
-     *
-     */
-    struct FullRestoreOperationOptions final
-    {
-      /**
-       * @brief The Azure blob SAS token pointing to a folder where the previous successful full
-       * backup was stored.
-       *
-       */
-      RestoreOperationParameters RestoreBlobDetails;
-    };
-
-    /**
-     * @brief Restore status options.
-     *
-     */
-    struct RestoreStatusOptions final
-    {
-      /**
-       * @brief Identifier for the restore operation.
-       *
-       */
-      std::string JobId;
     };
 
     /**

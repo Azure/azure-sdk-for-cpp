@@ -4,6 +4,7 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 #include "azure/keyvault/administration/backup_restore_client.hpp"
+
 #include "private/administration_constants.hpp"
 #include "private/package_version.hpp"
 
@@ -52,29 +53,28 @@ BackupRestoreClient::BackupRestoreClient(
 }
 
 Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
-    FullBackupOptions const& options,
+    SasTokenParameter const& azureStorageBlobContainerUri,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
-  url.AppendPath("backup");
+  url.AppendPath("/backup");
 
-  url.SetQueryParameters({{"api-version", "7.5"}});
+  url.SetQueryParameters({{"api-version", m_apiVersion}});
 
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
 
-    jsonRoot["storageResourceUri"] = options.AzureStorageBlobContainerUri.StorageResourceUri;
+    jsonRoot["storageResourceUri"] = azureStorageBlobContainerUri.StorageResourceUri;
 
-    if (options.AzureStorageBlobContainerUri.Token.HasValue())
+    if (azureStorageBlobContainerUri.Token.HasValue())
     {
-      jsonRoot["token"] = options.AzureStorageBlobContainerUri.Token.Value();
+      jsonRoot["token"] = azureStorageBlobContainerUri.Token.Value();
     }
 
-    if (options.AzureStorageBlobContainerUri.UseManagedIdentity.HasValue())
+    if (azureStorageBlobContainerUri.UseManagedIdentity.HasValue())
     {
-      jsonRoot["useManagedIdentity"]
-          = options.AzureStorageBlobContainerUri.UseManagedIdentity.Value();
+      jsonRoot["useManagedIdentity"] = azureStorageBlobContainerUri.UseManagedIdentity.Value();
     }
 
     jsonBody = jsonRoot.dump();
@@ -85,7 +85,8 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
 
   Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/json");
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);
@@ -106,7 +107,10 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
 
       response.Status = jsonRoot["status"].get<std::string>();
 
-      response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
+      {
+        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      }
 
       response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
           jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
@@ -121,8 +125,12 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
 
       response.JobId = jsonRoot["jobId"].get<std::string>();
 
-      response.AzureStorageBlobContainerUri
-          = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
+      if (jsonRoot.contains("azureStorageBlobContainerUri")
+          && !jsonRoot["azureStorageBlobContainerUri"].is_null())
+      {
+        response.AzureStorageBlobContainerUri
+            = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
+      }
     }
   }
 
@@ -130,17 +138,19 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
 }
 
 Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
-    FullBackupStatusOptions const& options,
+    std::string const& jobId,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
   url.AppendPath("backup/");
-  url.AppendPath(!options.JobId.empty() ? Core::Url::Encode(options.JobId) : "null");
+  url.AppendPath(!jobId.empty() ? Core::Url::Encode(jobId) : "null");
   url.AppendPath("pending");
 
-  url.SetQueryParameters({{"api-version", "7.5"}});
+  url.SetQueryParameters({{"api-version", m_apiVersion}});
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
 
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -160,7 +170,10 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
 
       response.Status = jsonRoot["status"].get<std::string>();
 
-      response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
+      {
+        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      }
 
       response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
           jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
@@ -175,8 +188,12 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
 
       response.JobId = jsonRoot["jobId"].get<std::string>();
 
-      response.AzureStorageBlobContainerUri
-          = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
+      if (jsonRoot.contains("azureStorageBlobContainerUri")
+          && !jsonRoot["azureStorageBlobContainerUri"].is_null())
+      {
+        response.AzureStorageBlobContainerUri
+            = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
+      }
     }
   }
 
@@ -184,34 +201,33 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
 }
 
 Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
-    FullRestoreOperationOptions const& options,
+    RestoreOperationParameters const& restoreBlobDetails,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
   url.AppendPath("restore");
 
-  url.SetQueryParameters({{"api-version", "7.5"}});
+  url.SetQueryParameters({{"api-version", m_apiVersion}});
 
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
 
     jsonRoot["sasTokenParameters"]["storageResourceUri"]
-        = options.RestoreBlobDetails.SasTokenParameters.StorageResourceUri;
+        = restoreBlobDetails.SasTokenParameters.StorageResourceUri;
 
-    if (options.RestoreBlobDetails.SasTokenParameters.Token.HasValue())
+    if (restoreBlobDetails.SasTokenParameters.Token.HasValue())
     {
-      jsonRoot["sasTokenParameters"]["token"]
-          = options.RestoreBlobDetails.SasTokenParameters.Token.Value();
+      jsonRoot["sasTokenParameters"]["token"] = restoreBlobDetails.SasTokenParameters.Token.Value();
     }
 
-    if (options.RestoreBlobDetails.SasTokenParameters.UseManagedIdentity.HasValue())
+    if (restoreBlobDetails.SasTokenParameters.UseManagedIdentity.HasValue())
     {
       jsonRoot["sasTokenParameters"]["useManagedIdentity"]
-          = options.RestoreBlobDetails.SasTokenParameters.UseManagedIdentity.Value();
+          = restoreBlobDetails.SasTokenParameters.UseManagedIdentity.Value();
     }
 
-    jsonRoot["folderToRestore"] = options.RestoreBlobDetails.FolderToRestore;
+    jsonRoot["folderToRestore"] = restoreBlobDetails.FolderToRestore;
 
     jsonBody = jsonRoot.dump();
   }
@@ -242,7 +258,10 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
 
       response.Status = jsonRoot["status"].get<std::string>();
 
-      response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
+      {
+        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      }
 
       response.JobId = jsonRoot["jobId"].get<std::string>();
 
@@ -263,12 +282,12 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
 }
 
 Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
-    RestoreStatusOptions const& options,
+    std::string const& jobId,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
   url.AppendPath("restore/");
-  url.AppendPath(!options.JobId.empty() ? Core::Url::Encode(options.JobId) : "null");
+  url.AppendPath(!jobId.empty() ? Core::Url::Encode(jobId) : "null");
   url.AppendPath("pending");
 
   url.SetQueryParameters({{"api-version", "7.5"}});
@@ -293,7 +312,10 @@ Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
 
       response.Status = jsonRoot["status"].get<std::string>();
 
-      response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
+      {
+        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      }
 
       response.JobId = jsonRoot["jobId"].get<std::string>();
 

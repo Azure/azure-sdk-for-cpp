@@ -27,6 +27,23 @@ namespace Azure {
 
   public:
     BackupRestoreClientTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
+    void CreateHSMClientForTest(std::string hsmUrl = "")
+    {
+      BackupRestoreClientOptions options;
+      m_client = InitTestClient<
+          Azure::Security::KeyVault::Administration::BackupRestoreClient,
+          Azure::Security::KeyVault::Administration::BackupRestoreClientOptions>(
+          hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
+    }
+
+    SasTokenParameter GetSasTokenBackup(bool managedIdentity = false)
+    {
+      SasTokenParameter sasTokenParameter;
+      sasTokenParameter.Token = "sp=racwdl&st=2024-06-21T19:37:53Z&se=2024-06-30T03:37:53Z&spr=https&sv=2022-11-02&sr=c&sig=9SgLMOQIXEhTPmU6FzhOUMoAkmZyhoJ5nrDPCwyIDdQ%3D";
+      sasTokenParameter.StorageResourceUri = "https://tdb694d9204c847a6.blob.core.windows.net/backup";
+      sasTokenParameter.UseManagedIdentity = managedIdentity;
+      return sasTokenParameter;
+    }
 
   private:
     std::unique_ptr<Azure::Security::KeyVault::Administration::BackupRestoreClient> m_client;
