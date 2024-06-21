@@ -321,5 +321,6 @@ jobs:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
+      UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
       EnvVars: ${{ parameters.EnvVars }}
       ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
