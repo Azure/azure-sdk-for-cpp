@@ -64,6 +64,7 @@ namespace Azure { namespace Identity {
     std::string m_requestBody;
     _detail::TokenCache m_tokenCache;
 
+    std::string GetAssertion(Core::Context const& context) const;
     Azure::Core::Http::Request CreateOidcRequestMessage() const;
     std::string GetOidcTokenResponse(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& response,

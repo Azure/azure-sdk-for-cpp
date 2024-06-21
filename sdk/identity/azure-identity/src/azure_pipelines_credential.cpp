@@ -191,6 +191,25 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
 
 AzurePipelinesCredential::~AzurePipelinesCredential() = default;
 
+std::string AzurePipelinesCredential::GetAssertion(Context const& context) const
+{
+  Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
+  std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
+
+  if (!response)
+  {
+    throw AuthenticationException(
+        GetCredentialName() + " couldn't send OIDC token request: null response.");
+  }
+
+  auto const bodyStream = response->ExtractBodyStream();
+  auto const bodyVec = bodyStream ? bodyStream->ReadToEnd(context) : response->GetBody();
+  auto const responseBody
+      = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
+
+  return GetOidcTokenResponse(response, responseBody);
+}
+
 AccessToken AzurePipelinesCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
@@ -227,23 +246,12 @@ AccessToken AzurePipelinesCredential::GetToken(
         body += "&scope=" + scopesStr;
       }
 
+      // Get the request url before calling GetAssertion to validate the authority host scheme.
+      // This is to avoid making a request to the OIDC endpoint if the authority host scheme is
+      // invalid.
       auto const requestUrl = m_clientCredentialCore.GetRequestUrl(tenantId);
 
-      Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
-      std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
-
-      if (!response)
-      {
-        throw AuthenticationException(
-            GetCredentialName() + " couldn't send OIDC token request: null response.");
-      }
-
-      auto const bodyStream = response->ExtractBodyStream();
-      auto const bodyVec = bodyStream ? bodyStream->ReadToEnd(context) : response->GetBody();
-      auto const responseBody
-          = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
-
-      std::string assertion = GetOidcTokenResponse(response, responseBody);
+      const std::string assertion = GetAssertion(context);
 
       body += "&client_assertion=" + Azure::Core::Url::Encode(assertion);
 
