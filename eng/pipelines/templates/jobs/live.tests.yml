@@ -181,7 +181,7 @@ jobs:
 
   - ${{ parameters.PreTestSteps }}
 
-  - ${{ if UseFederatedAuth }}:
+  - ${{ if parameters.UseFederatedAuth }}:
     - task: AzurePowerShell@5
       displayName: ctest
       # Runs only if test-resources are happily deployed.
@@ -240,7 +240,7 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['RunSamples'], '1'))
 
 
-  - ${{ if UseFederatedAuth }}:
+  - ${{ if parameters.UseFederatedAuth }}:
       # Running Samples step.
       # Will run samples described on a file name [service]-samples.txt within the build directory.
       # For example keyvault-samples.txt.
