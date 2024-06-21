@@ -6,8 +6,8 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @LarryOsterman
-/sdk/                    @rickwinter @LarryOsterman
+/**                      @rickwinter @LarryOsterman @ahsonkhan @antkmsft @gearama
+/sdk/                    @rickwinter @LarryOsterman @ahsonkhan @antkmsft @gearama
 
 # Samples
 /samples/                @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
