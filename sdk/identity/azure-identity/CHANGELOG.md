@@ -1,16 +1,10 @@
 # Release History
 
-## 1.9.0-beta.1 (Unreleased)
+## 1.9.0-beta.1 (2024-06-21)
 
 ### Features Added
 
 - Added `AzurePipelinesCredential` for authenticating an Azure Pipelines service connection with workload identity federation.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.8.0 (2024-06-11)
 
