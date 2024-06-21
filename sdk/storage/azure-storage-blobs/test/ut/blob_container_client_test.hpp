@@ -15,6 +15,11 @@ namespace Azure { namespace Storage { namespace Test {
         const std::string& containerName,
         Blobs::BlobClientOptions clientOptions = Blobs::BlobClientOptions());
 
+    std::string GetBlobContainerUrl(const std::string& containerName)
+    {
+      return GetBlobServiceUrl() + "/" + containerName;
+    }
+
     std::string GetSas();
 
     Blobs::Models::BlobItem GetBlobItem(

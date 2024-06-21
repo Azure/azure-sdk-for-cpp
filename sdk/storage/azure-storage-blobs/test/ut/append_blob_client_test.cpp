@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.insert(m_blobContent.end(), blobContent2.begin(), blobContent2.end());
   }
 
-  TEST_F(AppendBlobClientTest, Constructors)
+  TEST_F(AppendBlobClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
     {
@@ -453,14 +453,10 @@ namespace Azure { namespace Storage { namespace Test {
     auto sourceBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
     sourceBlobClient.Upload(contentStream);
 
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+
+    auto oauthToken = GetTestCredential()->GetToken(requestContext, Azure::Core::Context());
 
     auto destBlobClient = GetAppendBlobClientForTest(RandomString());
     EXPECT_NO_THROW(destBlobClient.Create());

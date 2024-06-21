@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   };
 
-  TEST_F(BlobSasTest, AccountSasPermissions)
+  TEST_F(BlobSasTest, AccountSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -183,8 +183,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto blobServiceClient = Blobs::BlobServiceClient(
           m_blobServiceClient->GetUrl(),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          GetTestCredential(),
           InitStorageClientOptions<Blobs::BlobClientOptions>());
       userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
     }
@@ -293,8 +292,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto blobServiceClient = Blobs::BlobServiceClient(
           m_blobServiceClient->GetUrl(),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          GetTestCredential(),
           InitStorageClientOptions<Blobs::BlobClientOptions>());
       userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
     }
@@ -380,7 +378,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobSasTest, AccountSasExpired)
+  TEST_F(BlobSasTest, AccountSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -407,7 +405,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, ServiceSasExpired)
+  TEST_F(BlobSasTest, ServiceSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -436,7 +434,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, AccountSasWithoutStarttime)
+  TEST_F(BlobSasTest, AccountSasWithoutStarttime_LIVEONLY_)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
@@ -456,7 +454,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, ServiceSasWithoutStartTime)
+  TEST_F(BlobSasTest, ServiceSasWithoutStartTime_LIVEONLY_)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
@@ -478,7 +476,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, AccountSasWithIP)
+  TEST_F(BlobSasTest, AccountSasWithIP_LIVEONLY_)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
@@ -502,7 +500,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasNonRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, ServiceSasWithIP)
+  TEST_F(BlobSasTest, ServiceSasWithIP_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -530,7 +528,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasNonRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, AccountSasService)
+  TEST_F(BlobSasTest, AccountSasService_LIVEONLY_)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
@@ -555,7 +553,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, AccountSasResourceTypes)
+  TEST_F(BlobSasTest, AccountSasResourceTypes_LIVEONLY_)
   {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
@@ -578,7 +576,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobServiceClient1.ListBlobContainers());
   }
 
-  TEST_F(BlobSasTest, BlobSasWithIdentifier)
+  TEST_F(BlobSasTest, BlobSasWithIdentifier_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -615,7 +613,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyBlobSasRead(blobClient, sasToken);
   }
 
-  TEST_F(BlobSasTest, BlobSasResponseHeadersOverride)
+  TEST_F(BlobSasTest, BlobSasResponseHeadersOverride_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -650,7 +648,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.HttpHeaders.ContentEncoding, blobSasBuilder.ContentEncoding);
   }
 
-  TEST_F(BlobSasTest, AccountSasEncryptionScope)
+  TEST_F(BlobSasTest, AccountSasEncryptionScope_LIVEONLY_)
   {
     const auto encryptionScope = GetTestEncryptionScope();
 
@@ -679,7 +677,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
   }
 
-  TEST_F(BlobSasTest, ServiceSasEncryptionScope)
+  TEST_F(BlobSasTest, ServiceSasEncryptionScope_LIVEONLY_)
   {
     const auto encryptionScope = GetTestEncryptionScope();
 
@@ -710,7 +708,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
   }
 
-  TEST_F(BlobSasTest, ServiceSasPermissionDeleteVersion)
+  TEST_F(BlobSasTest, ServiceSasPermissionDeleteVersion_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

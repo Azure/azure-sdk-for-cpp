@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(fileSystems.empty());
   }
 
-  TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks)
+  TEST_F(DataLakeServiceClientTest, AnonymousConstructors_LIVEONLY_)
   {
     auto keyCredential
         = Azure::Storage::_internal::ParseConnectionString(AdlsGen2ConnectionString())
@@ -345,11 +345,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeServiceClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
 
     // default audience

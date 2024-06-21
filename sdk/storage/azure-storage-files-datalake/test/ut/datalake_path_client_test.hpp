@@ -13,6 +13,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::vector<Files::DataLake::Models::Acl> GetAclsForTesting();
 
+    std::string GetDataLakePathUrl(const std::string& fileSystemName, const std::string& path)
+    {
+      return GetDataLakeFileSystemUrl(fileSystemName) + "/" + path;
+    }
+
   protected:
     std::shared_ptr<Files::DataLake::DataLakePathClient> m_pathClient;
     std::string m_pathName;
