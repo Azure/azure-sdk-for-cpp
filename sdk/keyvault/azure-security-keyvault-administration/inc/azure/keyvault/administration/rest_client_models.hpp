@@ -305,23 +305,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        */
       std::string Folder;
     };
-
-    /**
-     * @brief
-     *
-     */
-    struct SelectiveKeyRestoreOperationOptions final
-    {
-      /**
-       * @brief The name of the key to be restored from the user supplied backup.
-       *
-       */
-      std::string KeyName;
-      /**
-       * @brief The Azure blob SAS token pointing to a folder where the previous successful full
-       * backup was stored
-       *
-       */
-      SelectiveKeyRestoreOperationParameters RestoreBlobDetails;
-    };
 }}}}} // namespace Azure::Security::KeyVault::Administration::Models

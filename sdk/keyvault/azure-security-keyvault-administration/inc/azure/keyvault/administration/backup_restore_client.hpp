@@ -99,12 +99,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief  Restores all key versions of a given key using user supplied SAS token pointing to a
      * previously stored Azure Blob storage backup folder.
      *
-     * @param options The options for the selective key restore operation.
+     * @param keyName The name of the key to be restored from the user supplied backup.
+     * @param restoreBlobDetails The Azure blob SAS token pointing to a folder where the previous successful full
+       * backup was stored
      * @param context The context for the operation can be used for request cancellation.
      * @return A selective key restore operation.
      */
     Response<SelectiveKeyRestoreOperation> SelectiveKeyRestore(
-        SelectiveKeyRestoreOperationOptions const& options = {},
+        std::string const& keyName,
+        SelectiveKeyRestoreOperationParameters const& restoreBlobDetails,
         Core::Context const& context = {});
 
   private:

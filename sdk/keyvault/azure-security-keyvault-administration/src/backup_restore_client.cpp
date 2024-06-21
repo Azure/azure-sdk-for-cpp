@@ -336,12 +336,13 @@ Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
 }
 
 Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyRestore(
-    SelectiveKeyRestoreOperationOptions const& options,
+    std::string const& keyName,
+    SelectiveKeyRestoreOperationParameters const& restoreBlobDetails,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
   url.AppendPath("keys/");
-  url.AppendPath(!options.KeyName.empty() ? Core::Url::Encode(options.KeyName) : "null");
+  url.AppendPath(!keyName.empty() ? Core::Url::Encode(keyName) : "null");
   url.AppendPath("restore");
 
   url.SetQueryParameters({{"api-version", "7.5"}});
@@ -351,21 +352,20 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
     auto jsonRoot = Core::Json::_internal::json::object();
 
     jsonRoot["sasTokenParameters"]["storageResourceUri"]
-        = options.RestoreBlobDetails.SasTokenParameters.StorageResourceUri;
+        = restoreBlobDetails.SasTokenParameters.StorageResourceUri;
 
-    if (options.RestoreBlobDetails.SasTokenParameters.Token.HasValue())
+    if (restoreBlobDetails.SasTokenParameters.Token.HasValue())
     {
-      jsonRoot["sasTokenParameters"]["token"]
-          = options.RestoreBlobDetails.SasTokenParameters.Token.Value();
+      jsonRoot["sasTokenParameters"]["token"] = restoreBlobDetails.SasTokenParameters.Token.Value();
     }
 
-    if (options.RestoreBlobDetails.SasTokenParameters.UseManagedIdentity.HasValue())
+    if (restoreBlobDetails.SasTokenParameters.UseManagedIdentity.HasValue())
     {
       jsonRoot["sasTokenParameters"]["useManagedIdentity"]
-          = options.RestoreBlobDetails.SasTokenParameters.UseManagedIdentity.Value();
+          = restoreBlobDetails.SasTokenParameters.UseManagedIdentity.Value();
     }
 
-    jsonRoot["folder"] = options.RestoreBlobDetails.Folder;
+    jsonRoot["folder"] = restoreBlobDetails.Folder;
 
     jsonBody = jsonRoot.dump();
   }
@@ -396,7 +396,10 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
 
       response.Status = jsonRoot["status"].get<std::string>();
 
-      response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
+      {
+        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+      }
 
       response.JobId = jsonRoot["jobId"].get<std::string>();
 
