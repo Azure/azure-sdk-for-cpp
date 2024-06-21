@@ -47,7 +47,6 @@ extends:
       EnvVars:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
       RunLiveTests: true
-      ServiceDirectory: identity/azure-identity
       UsePipelineProxy: false
       MatrixConfigs:
         - Name: managed_identity_matrix

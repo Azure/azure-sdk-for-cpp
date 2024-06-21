@@ -106,10 +106,6 @@ jobs:
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
-    
-    env:
-      ${{ each var in parameters.EnvVars }}:
-        ${{ var.key }}: ${{ var.value }}
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
