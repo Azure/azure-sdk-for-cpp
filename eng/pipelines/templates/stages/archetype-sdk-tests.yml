@@ -35,6 +35,9 @@ parameters:
 - name: PostTestSteps
   type: stepList
   default: []
+- name: EnvVars
+  type: object
+  default: {}
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
@@ -67,3 +70,4 @@ stages:
                 TimeoutInMinutes: ${{ parameters.TimeoutInMinutes}}
                 PreTestSteps: ${{ parameters.PreTestSteps }}
                 PostTestSteps: ${{ parameters.PostTestSteps }}
+                EnvVars: ${{ parameters.EnvVars }}

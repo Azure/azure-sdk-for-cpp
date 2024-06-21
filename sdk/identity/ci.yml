@@ -38,8 +38,25 @@ extends:
         - Name: azure-identity
           Path: azure-identity
           VcpkgPortName: azure-identity-cpp
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-identity-test-resources)
+          ServiceConnection: azure-sdk-tests   
       EnvVars:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+      RunLiveTests: true
+      ServiceDirectory: identity/azure-identity
+      UsePipelineProxy: false
+      MatrixConfigs:
+        - Name: managed_identity_matrix
+            GenerateVMJobs: true
+            Path: sdk/identity/azure-identity/managed-identity-matrix.json
+            Selection: sparse
+      MatrixReplace:
+        - Pool=.*LINUXPOOL.*/azsdk-pool-mms-ubuntu-2204-identitymsi
+        - OSVmImage=.*LINUXNEXTVMIMAGE.*/azsdk-pool-mms-ubuntu-2204-1espt
       TestEnv:
         # Tenant ID should use the uniqueID format for playback recordings
         - Name: AZURE_TENANT_ID
