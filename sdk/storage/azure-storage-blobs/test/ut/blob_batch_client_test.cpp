@@ -189,14 +189,34 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BatchTokenAuthorization_LIVEONLY_)
   {
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret());
     Blobs::BlobClientOptions clientOptions;
     InitStorageClientOptions(clientOptions);
 
-    auto serviceClient
-        = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);
+    auto serviceClient = Blobs::BlobServiceClient(
+        m_blobServiceClient->GetUrl(), GetTestCredential(), clientOptions);
+
+    const std::string containerName = LowercaseRandomString();
+    const std::string blobName = "b1";
+
+    auto containerClient = serviceClient.GetBlobContainerClient(containerName);
+    containerClient.CreateIfNotExists();
+    auto blobClient = containerClient.GetAppendBlobClient(blobName);
+    blobClient.Create();
+
+    auto batch = containerClient.CreateBatch();
+    auto delete1Response = batch.DeleteBlobUrl(blobClient.GetUrl());
+    auto submitBatchResponse = containerClient.SubmitBatch(batch);
+
+    EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
+  }
+
+  TEST_F(BlobContainerClientTest, BatchSharedKeyAuthorization_LIVEONLY_)
+  {
+    Blobs::BlobClientOptions clientOptions;
+    InitStorageClientOptions(clientOptions);
+
+    auto serviceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), clientOptions);
 
     const std::string containerName = LowercaseRandomString();
     const std::string blobName = "b1";

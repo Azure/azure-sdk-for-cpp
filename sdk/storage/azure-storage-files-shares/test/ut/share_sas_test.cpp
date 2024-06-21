@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   };
 
-  TEST_F(ShareSasTest, AccountSasPermissions)
+  TEST_F(ShareSasTest, AccountSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, ShareServiceSasPermissions)
+  TEST_F(ShareSasTest, ShareServiceSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, FileServiceSasPermissions)
+  TEST_F(ShareSasTest, FileServiceSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, AccountSasExpired)
+  TEST_F(ShareSasTest, AccountSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, ServiceSasExpired)
+  TEST_F(ShareSasTest, ServiceSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, AccountSasWithoutStarttime)
+  TEST_F(ShareSasTest, AccountSasWithoutStarttime_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -335,7 +335,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, ServiceSasWithoutStarttime)
+  TEST_F(ShareSasTest, ServiceSasWithoutStarttime_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -361,7 +361,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, AccountSasWithIP)
+  TEST_F(ShareSasTest, AccountSasWithIP_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -390,7 +390,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasNonRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, ServiceSasWithIP)
+  TEST_F(ShareSasTest, ServiceSasWithIP_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -420,7 +420,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasNonRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, SasWithIdentifier)
+  TEST_F(ShareSasTest, SasWithIdentifier_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -457,7 +457,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, FileSasResponseHeadersOverride)
+  TEST_F(ShareSasTest, FileSasResponseHeadersOverride_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

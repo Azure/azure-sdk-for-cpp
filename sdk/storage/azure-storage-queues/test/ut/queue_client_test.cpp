@@ -23,15 +23,12 @@ namespace Azure { namespace Storage { namespace Test {
 
   void QueueClientTest::SetUp()
   {
-    StorageTest::SetUp();
+    QueueServiceClientTest::SetUp();
+
     if (shouldSkipTest())
     {
       return;
     }
-    auto options = InitStorageClientOptions<Queues::QueueClientOptions>();
-    m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
-        Queues::QueueServiceClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), options));
 
     m_queueName = GetLowercaseIdentifier();
     m_queueClient
@@ -64,14 +61,17 @@ namespace Azure { namespace Storage { namespace Test {
       Queues::QueueClientOptions clientOptions)
   {
     InitStorageClientOptions(clientOptions);
-    auto queueClient = Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), queueName, clientOptions);
+    const std::string queueUrl = GetQueueUrl(queueName);
+    auto queueClient = m_useTokenCredentialByDefault
+        ? Queues::QueueClient(queueUrl, GetTestCredential(), clientOptions)
+        : Queues::QueueClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), queueName, clientOptions);
     m_resourceCleanupFunctions.push_back([queueClient]() { queueClient.Delete(); });
 
     return queueClient;
   }
 
-  TEST_F(QueueClientTest, Constructors)
+  TEST_F(QueueClientTest, Constructors_LIVEONLY_)
   {
     auto keyCredential
         = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
@@ -185,9 +185,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.Metadata.empty());
   }
 
-  TEST_F(QueueClientTest, AccessControlList)
+  TEST_F(QueueClientTest, AccessControlList_LIVEONLY_)
   {
-    auto queueClient = *m_queueClient;
+    auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
+    auto queueClient = Queues::QueueClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_queueName, clientOptions);
 
     std::vector<Queues::Models::SignedIdentifier> signedIdentifiers;
     {
@@ -235,11 +237,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(QueueClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
 
     // audience by default
@@ -252,9 +250,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(queueClient.GetProperties());
 
     // service audience
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
+    const auto accountName = StandardStorageAccountName();
     clientOptions.Audience = Queues::QueueAudience::CreateQueueServiceAccountAudience(accountName);
     queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(queueClient.GetProperties());

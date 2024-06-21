@@ -59,8 +59,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto pathClient = Files::DataLake::DataLakePathClient(
           Files::DataLake::_detail::GetDfsUrlFromUrl(m_pathClient->GetUrl()),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          GetTestCredential(),
           clientOptions);
       EXPECT_NO_THROW(pathClient.GetProperties());
     }
@@ -292,9 +291,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     // This test should be tested locally because it needs an AAD app that has no RBAC permissions
     // to do the ACL check.
-    const std::string tenantId = AadTenantId();
-    const std::string appId = AadClientId();
-    const std::string appSecret = AadClientSecret();
+    const std::string tenantId = "";
+    const std::string appId = "";
+    const std::string appSecret = "";
 
     // Create resource
     std::string directoryName = RandomString();
@@ -421,10 +420,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string const baseName = RandomString();
     {
-      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(),
-          m_fileSystemName,
-          baseName + "1",
+      auto pathClient = Files::DataLake::DataLakePathClient(
+          GetDataLakePathUrl(m_fileSystemName, baseName + "1"),
+          GetTestCredential(),
           InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
       pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       std::string pathPermissions = "rwxrw-rw-";
@@ -443,10 +441,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // Set/Get Permissions works with last modified access condition.
-      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(),
-          m_fileSystemName,
-          baseName + "2",
+      auto pathClient = Files::DataLake::DataLakePathClient(
+          GetDataLakePathUrl(m_fileSystemName, baseName + "2"),
+          GetTestCredential(),
           InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
       auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       Files::DataLake::SetPathPermissionsOptions options1, options2;
@@ -458,10 +455,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // Set/Get Permissions works with if match access condition.
-      auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(),
-          m_fileSystemName,
-          baseName + "3",
+      auto pathClient = Files::DataLake::DataLakePathClient(
+          GetDataLakePathUrl(m_fileSystemName, baseName + "3"),
+          GetTestCredential(),
           InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
       auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       Files::DataLake::SetPathPermissionsOptions options1, options2;
@@ -558,11 +554,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
 
     // audience by default
@@ -577,8 +569,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pathClient.GetProperties());
 
     // service audience
-    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
+    const auto accountName = AdlsGen2AccountName();
     clientOptions.Audience
         = Files::DataLake::DataLakeAudience::CreateDataLakeServiceAccountAudience(accountName);
     pathClient
