@@ -42,6 +42,9 @@ parameters:
 - name: OSName
   type: string
   default: ''
+- name: EnvVars
+  type: object
+  default: {}
 - name: UseFederatedAuth
   type: boolean
   default: false
@@ -160,6 +163,7 @@ jobs:
       EnvVars:
         Pool: $(Pool)
       SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+      EnvVars: ${{ parameters.EnvVars }}
 
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
@@ -169,6 +173,7 @@ jobs:
       EnvVars:
         Pool: $(Pool)
       UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+      EnvVars: ${{ parameters.EnvVars }}
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
     parameters:
@@ -195,6 +200,9 @@ jobs:
 
           ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
         workingDirectory: build
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ else }}:
       # For non multi-config generator use the same build configuration to run tests
@@ -214,6 +222,8 @@ jobs:
       # This enables to run tests and samples at the same time as different matrix configuration.
       # Then unit-tests runs, samples should not run.
       condition: and(succeeded(), ne(variables['RunSamples'], '1'))
+      env:
+        ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ parameters.PostTestSteps }}
 
@@ -257,6 +267,8 @@ jobs:
       workingDirectory: build
       displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
       condition: and(succeeded(), eq(variables['RunSamples'], '1'))
+      env:
+        ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ else }}:
     - task: AzurePowerShell@5
@@ -284,6 +296,9 @@ jobs:
             }
           }
         workingDirectory: build
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
@@ -305,3 +320,4 @@ jobs:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
+      EnvVars: ${{ parameters.EnvVars }}

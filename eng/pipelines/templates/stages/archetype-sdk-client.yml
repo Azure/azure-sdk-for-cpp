@@ -90,6 +90,12 @@ parameters:
   - name: CMakeGenerationTimeoutInMinutes
     type: number
     default: 120
+  - name: EnvVars
+    type: object
+    default: {}
+  - name: UseFederatedAuth
+    type: boolean
+    default: false
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -197,6 +203,8 @@ extends:
               UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
               PreTestSteps: ${{ parameters.PreTestSteps }}
               PostTestSteps: ${{ parameters.PostTestSteps }}
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              EnvVars: ${{ parameters.EnvVars }}
 
       - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
           - template: archetype-cpp-release.yml@self
