@@ -100,8 +100,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * previously stored Azure Blob storage backup folder.
      *
      * @param keyName The name of the key to be restored from the user supplied backup.
-     * @param restoreBlobDetails The Azure blob SAS token pointing to a folder where the previous successful full
-       * backup was stored
+     * @param restoreBlobDetails The Azure blob SAS token pointing to a folder where the previous
+     * successful full backup was stored
      * @param context The context for the operation can be used for request cancellation.
      * @return A selective key restore operation.
      */
