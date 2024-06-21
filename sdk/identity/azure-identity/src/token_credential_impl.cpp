@@ -422,6 +422,7 @@ AccessToken TokenCredentialImpl::ParseToken(
       bool successfulParse = false;
       if (expiresOn.is_string())
       {
+        bool successfulParse = false;
         auto const expiresOnAsString = expiresOn.get<std::string>();
         for (auto const& parse : {
                  std::function<DateTime(std::string const&)>([&](auto const& s) {

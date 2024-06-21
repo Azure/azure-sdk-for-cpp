@@ -24,7 +24,7 @@ namespace Azure { namespace Identity {
   } // namespace _detail
 
   /**
-   * @brief Options for azure pipelines credential.
+   * @brief Options for Azure Pipelines credential.
    *
    */
   struct AzurePipelinesCredentialOptions final : public Core::Credentials::TokenCredentialOptions
@@ -64,6 +64,7 @@ namespace Azure { namespace Identity {
     std::string m_requestBody;
     _detail::TokenCache m_tokenCache;
 
+    std::string GetAssertion(Core::Context const& context) const;
     Azure::Core::Http::Request CreateOidcRequestMessage() const;
     std::string GetOidcTokenResponse(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& response,
@@ -75,7 +76,7 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId The tenant ID for the service connection.
      * @param clientId The client ID for the service connection.
-     * @param serviceConnectionId The service connection Id for the service connection associated
+     * @param serviceConnectionId The service connection ID for the service connection associated
      * with the pipeline.
      * @param systemAccessToken The pipeline's System.AccessToken value. See
      * https://learn.microsoft.com/azure/devops/pipelines/build/variables?view=azure-devops%26tabs=yaml#systemaccesstoken

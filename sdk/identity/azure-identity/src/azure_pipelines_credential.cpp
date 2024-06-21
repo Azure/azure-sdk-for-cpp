@@ -73,7 +73,7 @@ AzurePipelinesCredential::AzurePipelinesCredential(
         IdentityLog::Level::Warning,
         "Invalid tenant ID provided  for " + GetCredentialName()
             + ". The tenant ID must be a non-empty string containing only alphanumeric characters, "
-              "periods, or hyphens. You can locate your tenantID by following the instructions "
+              "periods, or hyphens. You can locate your tenant ID by following the instructions "
               "listed here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names");
   }
   if (clientId.empty())
@@ -155,9 +155,10 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
 
     std::string message = GetCredentialName() + " : "
         + std::to_string(static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
-        + " response from the OIDC endpoint. Check service connection ID and Pipeline "
-          "configuration. "
-        + response->GetReasonPhrase() + "\n\n" + responseBody;
+        + " (" + response->GetReasonPhrase()
+        + ") response from the OIDC endpoint. Check service connection ID and Pipeline "
+          "configuration.\n\n"
+        + responseBody;
     IdentityLog::Write(IdentityLog::Level::Verbose, message);
 
     throw AuthenticationException(message);
@@ -190,6 +191,25 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
 
 AzurePipelinesCredential::~AzurePipelinesCredential() = default;
 
+std::string AzurePipelinesCredential::GetAssertion(Context const& context) const
+{
+  Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
+  std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
+
+  if (!response)
+  {
+    throw AuthenticationException(
+        GetCredentialName() + " couldn't send OIDC token request: null response.");
+  }
+
+  auto const bodyStream = response->ExtractBodyStream();
+  auto const bodyVec = bodyStream ? bodyStream->ReadToEnd(context) : response->GetBody();
+  auto const responseBody
+      = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
+
+  return GetOidcTokenResponse(response, responseBody);
+}
+
 AccessToken AzurePipelinesCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
@@ -214,30 +234,6 @@ AccessToken AzurePipelinesCredential::GetToken(
   auto const scopesStr
       = m_clientCredentialCore.GetScopesString(tenantId, tokenRequestContext.Scopes);
 
-  Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
-  std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
-
-  if (!response)
-  {
-    throw AuthenticationException(
-        GetCredentialName() + " couldn't send OIDC token request: null response.");
-  }
-
-  auto const bodyStream = response->ExtractBodyStream();
-  auto const bodyVec = bodyStream ? bodyStream->ReadToEnd(context) : response->GetBody();
-  auto const responseBody
-      = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
-
-  std::cout << "OIDC_RESPONSE_STATUSCODE: " << static_cast<int>(response->GetStatusCode())
-            << std::endl;
-  std::cout << "OIDC_RESPONSE_ReasonPhrase: " << response->GetReasonPhrase() << std::endl;
-  for (const auto& header : response->GetHeaders())
-  {
-    std::cout << "OIDC_RESPONSE_HEADER: " << header.first << ": " << header.second << std::endl;
-  }
-  std::cout << "OIDC_RESPONSE: " << responseBody << std::endl;
-  std::string assertion = GetOidcTokenResponse(response, responseBody);
-
   // TokenCache::GetToken() and m_tokenCredentialImpl->GetToken() can only use the lambda
   // argument when they are being executed. They are not supposed to keep a reference to lambda
   // argument to call it later. Therefore, any capture made here will outlive the possible time
@@ -250,7 +246,12 @@ AccessToken AzurePipelinesCredential::GetToken(
         body += "&scope=" + scopesStr;
       }
 
+      // Get the request url before calling GetAssertion to validate the authority host scheme.
+      // This is to avoid making a request to the OIDC endpoint if the authority host scheme is
+      // invalid.
       auto const requestUrl = m_clientCredentialCore.GetRequestUrl(tenantId);
+
+      const std::string assertion = GetAssertion(context);
 
       body += "&client_assertion=" + Azure::Core::Url::Encode(assertion);
 
