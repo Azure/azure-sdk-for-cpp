@@ -64,7 +64,7 @@ jobs:
     ${{ else }}:
       image: $(OSVmImage)
     os: ${{ parameters.OSName }}
-    
+
 
   ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
     # Add a default so the job doesn't fail when the matrix is empty
@@ -107,7 +107,7 @@ jobs:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
       AgentImage: $(OSVmImage)
-          
+
   - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
   # Add g++5 repo to ubuntu

@@ -58,8 +58,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(deleteResult.Value.Deleted);
       }
       {
-        auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), LowercaseRandomString());
+        auto shareClient = m_shareServiceClient->GetShareClient(LowercaseRandomString());
         auto client = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "3");
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult.Value.Deleted);
@@ -328,11 +327,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, HandlesFunctionalityWorks_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(),
-        "myshare",
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
-    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient("myfile");
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
+    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient("myfile.txt");
     Files::Shares::ListFileHandlesOptions options;
     options.PageSizeHint = 1;
     std::unordered_set<std::string> handles;
@@ -1015,8 +1011,8 @@ namespace Azure { namespace Storage { namespace Test {
       }
     };
     options.PerOperationPolicies.emplace_back(std::make_unique<InvalidQueryParameterPolicy>());
-    auto fileClient = Azure::Storage::Files::Shares::ShareFileClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_shareName, RandomString(), options);
+    auto fileClient = Azure::Storage::Files::Shares::ShareFileClient(
+        GetShareFileUrl(m_shareName, RandomString()), GetTestCredential(), options);
     try
     {
       fileClient.Create(1024);
@@ -1035,7 +1031,7 @@ namespace Azure { namespace Storage { namespace Test {
     FAIL();
   }
 
-  TEST_F(FileShareFileClientTest, UploadRangeFromUri)
+  TEST_F(FileShareFileClientTest, UploadRangeFromUri_LIVEONLY_)
   {
     size_t fileSize = 1 * 1024;
     std::string fileName = RandomString() + "file";
@@ -1200,7 +1196,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, SourceOAuthUploadRangeFromUri)
+  TEST_F(FileShareFileClientTest, SourceOAuthUploadRangeFromUri_LIVEONLY_)
   {
     size_t fileSize = 1 * 1024;
     std::string containerName = LowercaseRandomString();
@@ -1225,14 +1221,9 @@ namespace Azure { namespace Storage { namespace Test {
     destRange.Length = fileSize;
 
     // Get oauth token of source file
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+    auto oauthToken = GetTestCredential()->GetToken(requestContext, Azure::Core::Context());
 
     Files::Shares::UploadFileRangeFromUriOptions options;
     options.SourceAuthorization = "Bearer " + oauthToken.Token;
@@ -1275,11 +1266,7 @@ namespace Azure { namespace Storage { namespace Test {
     sourceBlobClient.Upload(memBodyStream);
 
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> oauthCredential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(),
-            AadClientId(),
-            AadClientSecret(),
-            InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+        = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1361,15 +1348,15 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const std::string fileName = RandomString();
     const std::string fileNameWithTrailingDot = fileName + ".";
-    const std::string connectionString = StandardStorageConnectionString();
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
     auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
 
-      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-          connectionString, options);
+      auto shareServiceClient
+          = Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options);
       auto shareClient = shareServiceClient.GetShareClient(shareName);
       auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
       auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);
@@ -1463,21 +1450,22 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false);
   }
 
-  TEST_F(FileShareFileClientTest, CopyAllowTrailingDot)
+  TEST_F(FileShareFileClientTest, CopyAllowTrailingDot_LIVEONLY_)
   {
     const std::string fileName = RandomString();
     const std::string fileNameWithTrailingDot = fileName + ".";
     const std::string connectionString = StandardStorageConnectionString();
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
     auto testTrailingDot = [&](Nullable<bool> allowTrailingDot,
                                Nullable<bool> allowSourceTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
       options.AllowSourceTrailingDot = allowSourceTrailingDot;
 
-      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-          connectionString, options);
+      auto shareServiceClient
+          = Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options);
       auto shareClient = shareServiceClient.GetShareClient(shareName);
       auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
       auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);
@@ -1587,12 +1575,13 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string connectionString = StandardStorageConnectionString();
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
     auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
 
-      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-          connectionString, options);
+      auto shareServiceClient
+          = Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options);
       auto shareClient = shareServiceClient.GetShareClient(shareName);
       auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
       auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);
@@ -1629,9 +1618,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string fileName = RandomString();
 
     // Create from client secret credential.
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1705,11 +1692,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.Delete());
 
     // OAuth Constructor
-    auto fileClient1 = Files::Shares::ShareFileClient(
-        m_fileClient->GetUrl(),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
-        options);
+    auto fileClient1
+        = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), GetTestCredential(), options);
     EXPECT_NO_THROW(fileClient1.GetProperties());
   }
 
@@ -1718,9 +1702,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string fileName = RandomString();
 
     // Create from client secret credential.
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1763,10 +1745,7 @@ namespace Azure { namespace Storage { namespace Test {
   // cspell:ignore myshare myfile
   TEST_F(FileShareFileClientTest, ListHandlesAccessRights_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(),
-        "myshare",
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient("myfile");
     auto fileHandles = fileClient.ListHandles().FileHandles;
     Files::Shares::Models::ShareFileHandleAccessRights allAccessRights
@@ -1780,10 +1759,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, ListHandlesWithClientName_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(),
-        "testing",
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto fileClient
         = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("dir1").GetFileClient(
             "test.txt");
@@ -1810,11 +1786,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, Audience_PLAYBACKONLY_)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1829,9 +1801,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.GetProperties());
 
     // service audience
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
+    auto accountName = StandardStorageAccountName();
     clientOptions.Audience
         = Files::Shares::ShareAudience::CreateShareServiceAccountAudience(accountName);
     fileClient = Files::Shares::ShareFileClient(m_fileClient->GetUrl(), credential, clientOptions);

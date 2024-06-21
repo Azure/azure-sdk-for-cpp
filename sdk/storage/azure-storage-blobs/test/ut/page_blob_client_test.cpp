@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.resize(static_cast<size_t>(2_KB));
   }
 
-  TEST_F(PageBlobClientTest, Constructors)
+  TEST_F(PageBlobClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
     {
@@ -288,14 +288,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient2 = GetPageBlobClientTestForTest(RandomString());
     pageBlobClient2.Create(m_blobContent.size());
 
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+    auto oauthToken = GetTestCredential()->GetToken(requestContext, Azure::Core::Context());
 
     Storage::Blobs::UploadPagesFromUriOptions options;
     options.SourceAuthorization = "Bearer " + oauthToken.Token;
@@ -714,7 +709,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
   }
-  TEST_F(PageBlobClientTest, SharedKeySigningHeaderWithSymbols)
+  TEST_F(PageBlobClientTest, SharedKeySigningHeaderWithSymbols_LIVEONLY_)
   {
     class AdditionalHeaderPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
     public:
