@@ -497,19 +497,24 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
 
 TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
 {
-  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
-  std::string clientId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
-  std::string serviceConnectionId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
+  std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
+  std::string serviceConnectionId
+      = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
   if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty()
       || systemAccessToken.empty())
   {
-    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
-                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
-                          "AzurePipelinesCredential test. "
+    std::string message = "Set AZURESUBSCRIPTION_TENANT_ID, AZURESUBSCRIPTION_CLIENT_ID, "
+                          "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID, and SYSTEM_ACCESSTOKEN to run "
+                          "this AzurePipelinesCredential test. "
         + tenantId + " : " + clientId + " : " + serviceConnectionId + " : " + systemAccessToken
         + ".";
+    message += "\n " + Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID") + " : "
+        + Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID") + " : "
+        + Environment::GetVariable("AZURE_SERVICE_CONNECTION_ID") + ".";
+    std::cout << message << std::endl;
     GTEST_SKIP_(message.c_str());
   }
 
@@ -531,8 +536,8 @@ TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
 
 TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
 {
-  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
-  std::string clientId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
+  std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
   std::string serviceConnectionId = "invalidServiceConnectionId";
@@ -563,8 +568,9 @@ TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
 
 TEST(AzurePipelinesCredential, InvalidClientId_LIVEONLY_)
 {
-  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
-  std::string serviceConnectionId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
+  std::string serviceConnectionId
+      = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
   std::string clientId = "invalidClientId";
@@ -595,9 +601,10 @@ TEST(AzurePipelinesCredential, InvalidClientId_LIVEONLY_)
 
 TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
 {
-  std::string tenantId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID");
-  std::string clientId = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
-  std::string serviceConnectionId = Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID");
+  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
+  std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
+  std::string serviceConnectionId
+      = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
 
   std::string systemAccessToken = "invalidSystemAccessToken";
 
