@@ -419,7 +419,6 @@ AccessToken TokenCredentialImpl::ParseToken(
       }
 
       auto const tzOffsetStr = TimeZoneOffsetAsString(utcDiffSeconds);
-      bool successfulParse = false;
       if (expiresOn.is_string())
       {
         bool successfulParse = false;

@@ -207,6 +207,16 @@ std::string AzurePipelinesCredential::GetAssertion(Context const& context) const
   auto const responseBody
       = std::string(reinterpret_cast<char const*>(bodyVec.data()), bodyVec.size());
 
+  std::cout << "OIDC_RESPONSE_STATUSCODE: " << static_cast<int>(response->GetStatusCode())
+            << std::endl;
+  std::cout << "OIDC_RESPONSE_ReasonPhrase: " << response->GetReasonPhrase() << std::endl;
+  for (const auto& header : response->GetHeaders())
+  {
+    std::cout << "OIDC_RESPONSE_HEADER: " << header.first << ": " << header.second << std::endl;
+  }
+  std::cout << "OIDC_RESPONSE: " << responseBody << std::endl;
+  std::string assertion = GetOidcTokenResponse(response, responseBody);
+
   return GetOidcTokenResponse(response, responseBody);
 }
 
