@@ -83,9 +83,6 @@ parameters:
   - name: CMakeGenerationTimeoutInMinutes
     type: number
     default: 120
-  - name: EnvVars
-    type: object
-    default: {}
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -150,7 +147,6 @@ extends:
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
                 TestPipeline: true
               TestEnv: ${{ parameters.TestEnv }}
-              EnvVars: ${{ parameters.EnvVars }}
               PreTestSteps: ${{ parameters.PreTestSteps }}
               PostTestSteps: ${{ parameters.PostTestSteps }}
               RunMetaJobs: true
@@ -176,7 +172,6 @@ extends:
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
                 TestPipeline: true
               TestEnv: ${{ parameters.TestEnv }}
-              EnvVars: ${{ parameters.EnvVars }}
               PreTestSteps: ${{ parameters.PreTestSteps }}
               PostTestSteps: ${{ parameters.PostTestSteps }}
               RunMetaJobs: false

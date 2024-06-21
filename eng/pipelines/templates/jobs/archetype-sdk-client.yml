@@ -50,9 +50,6 @@ parameters:
   - name: RunMetaJobs
     type: boolean
     default: true
-  - name: EnvVars
-    type: object
-    default: {}
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
@@ -78,7 +75,6 @@ jobs:
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
         TestEnv: ${{ parameters.TestEnv }}
-        EnvVars: ${{ parameters.EnvVars }}
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
 
