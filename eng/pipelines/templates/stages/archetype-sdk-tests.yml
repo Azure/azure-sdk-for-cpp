@@ -65,6 +65,7 @@ stages:
                 Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                 Cloud: ${{ cloud.key }}
                 SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
+                ServiceConnection: ${{ cloud.value.ServiceConnection }}
               AdditionalParameters:
                 Location: ${{ parameters.Location}}
                 ServiceDirectory: ${{ parameters.ServiceDirectory}}
