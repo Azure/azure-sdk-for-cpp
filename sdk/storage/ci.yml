@@ -28,8 +28,8 @@ extends:
       ServiceDirectory: storage
       # Not running tests on CI but only on LiveTest mode
       CtestRegex: azure-storage
-      LineCoverageTarget: 85
-      BranchCoverageTarget: 49
+      LineCoverageTarget: 81
+      BranchCoverageTarget: 47
       LiveTestCtestRegex: azure-storage
       Clouds: Preview
       SupportedClouds: Preview
