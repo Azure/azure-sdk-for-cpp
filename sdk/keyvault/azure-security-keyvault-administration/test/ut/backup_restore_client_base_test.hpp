@@ -39,8 +39,6 @@ namespace Azure {
     SasTokenParameter GetSasTokenBackup(bool managedIdentity = false)
     {
       SasTokenParameter sasTokenParameter;
-      sasTokenParameter.Token = "sp=racwdl&st=2024-06-21T19:37:53Z&se=2024-06-30T03:37:53Z&spr=https&sv=2022-11-02&sr=c&sig=9SgLMOQIXEhTPmU6FzhOUMoAkmZyhoJ5nrDPCwyIDdQ%3D";
-      sasTokenParameter.StorageResourceUri = "https://tdb694d9204c847a6.blob.core.windows.net/backup";
       sasTokenParameter.UseManagedIdentity = managedIdentity;
       return sasTokenParameter;
     }
