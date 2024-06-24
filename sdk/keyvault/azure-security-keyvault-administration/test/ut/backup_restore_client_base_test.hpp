@@ -39,6 +39,11 @@ namespace Azure {
     SasTokenParameter GetSasTokenBackup(bool managedIdentity = false)
     {
       SasTokenParameter sasTokenParameter;
+      // the backup/restore needs a SAS token to access the storage account
+      sasTokenParameter.Token = GetEnv("AZURE_KEYVAULT_BACKUP_TOKEN");
+      // the backup/restore needs a url to a blob storage resource
+      sasTokenParameter.StorageResourceUri = GetEnv("AZURE_KEYVAULT_BACKUP_URL");
+
       sasTokenParameter.UseManagedIdentity = managedIdentity;
       return sasTokenParameter;
     }

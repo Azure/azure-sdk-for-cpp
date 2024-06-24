@@ -20,9 +20,9 @@ using namespace Azure::Security::KeyVault::Administration::Test;
 
 using namespace std::chrono_literals;
 
-TEST_F(BackupRestoreClientTest, BackupFull)
+TEST_F(BackupRestoreClientTest, BackupFull_RECORDEDONLY_)
 {
-  auto testName = "FullBackup";
+  auto testName = "BackupFull";
   CreateHSMClientForTest();
   auto& client = GetClientForTest(testName);
   SasTokenParameter sasTokenParameter = GetSasTokenBackup();
@@ -35,9 +35,9 @@ TEST_F(BackupRestoreClientTest, BackupFull)
   EXPECT_FALSE(response.Value.Error.HasValue());
 }
 
-TEST_F(BackupRestoreClientTest, BackupFullStatus)
+TEST_F(BackupRestoreClientTest, BackupFullStatus_RECORDEDONLY_)
 {
-  auto testName = "FullBackup";
+  auto testName = "BackupFullStatus";
   CreateHSMClientForTest();
   auto& client = GetClientForTest(testName);
   SasTokenParameter sasTokenParameter = GetSasTokenBackup();
@@ -60,9 +60,9 @@ TEST_F(BackupRestoreClientTest, BackupFullStatus)
   EXPECT_EQ(response.Value.JobId, response2.Value.JobId);
 }
 
-TEST_F(BackupRestoreClientTest, BackupFullErrorStatus)
+TEST_F(BackupRestoreClientTest, BackupFullErrorStatus_RECORDEDONLY_)
 {
-  auto testName = "FullBackup";
+  auto testName = "BackupFullErrorStatus";
   CreateHSMClientForTest();
   auto& client = GetClientForTest(testName);
   SasTokenParameter sasTokenParameter = GetSasTokenBackup();
@@ -86,7 +86,7 @@ TEST_F(BackupRestoreClientTest, BackupFullErrorStatus)
   EXPECT_EQ(response.Value.JobId, response2.Value.JobId);
 }
 
-TEST_F(BackupRestoreClientTest, RestoreFull)
+TEST_F(BackupRestoreClientTest, RestoreFull_RECORDEDONLY_)
 {
   auto testName = "RestoreFull";
   CreateHSMClientForTest();
@@ -123,9 +123,9 @@ TEST_F(BackupRestoreClientTest, RestoreFull)
   EXPECT_FALSE(response3.Value.EndTime.HasValue());
 }
 
-TEST_F(BackupRestoreClientTest, RestoreFullStatus)
+TEST_F(BackupRestoreClientTest, RestoreFullStatus_RECORDEDONLY_)
 {
-  auto testName = "RestoreFull";
+  auto testName = "RestoreFullStatus";
   CreateHSMClientForTest();
   auto& client = GetClientForTest(testName);
   SasTokenParameter sasTokenParameter = GetSasTokenBackup();
@@ -170,9 +170,9 @@ TEST_F(BackupRestoreClientTest, RestoreFullStatus)
   EXPECT_EQ(response3.Value.JobId, response4.Value.JobId);
 }
 
-TEST_F(BackupRestoreClientTest, RestoreSelectiveStatus)
+TEST_F(BackupRestoreClientTest, RestoreSelectiveStatus_RECORDEDONLY_)
 {
-  auto testName = "RestoreFull";
+  auto testName = "RestoreSelectiveStatus";
   CreateHSMClientForTest();
   auto& client = GetClientForTest(testName);
   SasTokenParameter sasTokenParameter = GetSasTokenBackup();
@@ -217,9 +217,9 @@ TEST_F(BackupRestoreClientTest, RestoreSelectiveStatus)
   EXPECT_EQ(response3.Value.JobId, response4.Value.JobId);
 }
 
-TEST_F(BackupRestoreClientTest, RestoreSelectiveInvalidKeyStatus)
+TEST_F(BackupRestoreClientTest, RestoreSelectiveInvalidKeyStatus_RECORDEDONLY_)
 {
-  auto testName = "RestoreFull";
+  auto testName = "RestoreSelectiveInvalidKeyStatus";
   CreateHSMClientForTest();
   auto& client = GetClientForTest(testName);
   SasTokenParameter sasTokenParameter = GetSasTokenBackup();
