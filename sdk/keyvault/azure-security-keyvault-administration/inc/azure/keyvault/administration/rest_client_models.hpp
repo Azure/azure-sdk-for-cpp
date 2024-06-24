@@ -88,10 +88,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     };
 
     /**
-     * @brief Error model.
+     * @brief KeyVault Service Error model.
      *
      */
-    struct Error final
+    struct KeyVaultServiceError final
     {
       /**
        * @brief The error code.
@@ -107,7 +107,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * @brief Inner error details.
        *
        */
-      std::unique_ptr<Error> InnerError;
+      std::unique_ptr<KeyVaultServiceError> InnerError;
     };
 
     /**
@@ -130,7 +130,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * @brief Error encountered, if any, during the full backup operation.
        *
        */
-      Azure::Nullable<Error> Error;
+      Azure::Nullable<KeyVaultServiceError> Error;
       /**
        * @brief The start time of the backup operation in UTC
        *
@@ -211,7 +211,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * @brief Error encountered, if any, during the restore operation.
        *
        */
-      Azure::Nullable<Error> Error;
+      Azure::Nullable<KeyVaultServiceError> Error;
       /**
        * @brief Identifier for the restore operation.
        *
@@ -263,12 +263,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * @brief The status details of the selective key restore operation.
        *
        */
-      std::string StatusDetails;
+      Azure::Nullable<std::string> StatusDetails;
       /**
        * @brief Error encountered, if any, during the selective key restore operation.
        *
        */
-      Error Error;
+      Azure::Nullable<KeyVaultServiceError> Error;
       /**
        * @brief Identifier for the selective key restore operation.
        *
