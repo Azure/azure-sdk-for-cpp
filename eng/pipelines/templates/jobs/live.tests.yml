@@ -200,6 +200,7 @@ jobs:
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants
 
           ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
+          exit $LASTEXITCODE
         workingDirectory: build
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
