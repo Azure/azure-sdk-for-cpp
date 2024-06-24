@@ -131,6 +131,11 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
         response.AzureStorageBlobContainerUri
             = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
       }
+
+      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
+      {
+        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
+      }
     }
   }
 
@@ -193,6 +198,11 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
       {
         response.AzureStorageBlobContainerUri
             = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
+      }
+
+      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
+      {
+        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
       }
     }
   }
@@ -275,6 +285,11 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
             jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
                                             : jsonRoot["endTime"].get<std::int64_t>());
       }
+
+      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
+      {
+        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
+      }
     }
   }
 
@@ -328,6 +343,11 @@ Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
         response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
             jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
                                             : jsonRoot["endTime"].get<std::int64_t>());
+      }
+
+      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
+      {
+        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
       }
     }
   }
@@ -406,7 +426,10 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
       response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
           jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
                                             : jsonRoot["startTime"].get<std::int64_t>());
-
+      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
+      {
+        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
+      }
       if (jsonRoot.contains("endTime") && !jsonRoot["endTime"].is_null())
       {
         response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
@@ -417,4 +440,24 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
   }
 
   return Response<SelectiveKeyRestoreOperation>(std::move(response), std::move(rawResponse));
+}
+
+KeyVaultServiceError BackupRestoreClient::DeserializeKeyVaultServiceError(
+    Azure::Core::Json::_internal::json errorFragment)
+{
+  KeyVaultServiceError result;
+  if (errorFragment.contains("code"))
+  {
+    result.Code = errorFragment["code"].get<std::string>();
+  }
+  if (errorFragment.contains("message"))
+  {
+    result.Message = errorFragment["message"].get<std::string>();
+  }
+  if (errorFragment.contains("innererror"))
+  {
+    result.InnerError = std::make_unique<KeyVaultServiceError>(
+        DeserializeKeyVaultServiceError(errorFragment["innererror"]));
+  }
+  return result;
 }

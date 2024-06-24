@@ -84,6 +84,7 @@ TEST_F(BackupRestoreClientTest, BackupFullErrorStatus_RECORDEDONLY_)
   EXPECT_TRUE(response2.Value.EndTime.Value() > response2.Value.StartTime);
   EXPECT_EQ(response2.Value.StatusDetails.Value(), "InvalidQueryParameterValue");
   EXPECT_EQ(response.Value.JobId, response2.Value.JobId);
+  EXPECT_EQ(response2.Value.Error.Value().Code, "InvalidQueryParameterValue");
 }
 
 TEST_F(BackupRestoreClientTest, RestoreFull_RECORDEDONLY_)
@@ -262,4 +263,6 @@ TEST_F(BackupRestoreClientTest, RestoreSelectiveInvalidKeyStatus_RECORDEDONLY_)
   EXPECT_TRUE(response4.Value.EndTime.Value() > response4.Value.StartTime);
   EXPECT_EQ(response4.Value.StatusDetails.Value(), "The given key or its versions NOT found");
   EXPECT_EQ(response3.Value.JobId, response4.Value.JobId);
+  EXPECT_EQ(response4.Value.Error.Value().Message, "The given key or its versions NOT found");
+  EXPECT_EQ(response4.Value.Error.Value().Code, "No key versions are updated");
 }

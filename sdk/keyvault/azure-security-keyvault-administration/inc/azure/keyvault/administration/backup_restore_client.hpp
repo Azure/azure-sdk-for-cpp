@@ -9,6 +9,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
@@ -114,6 +115,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_vaultBaseUrl;
     std::string m_apiVersion;
+    KeyVaultServiceError DeserializeKeyVaultServiceError(
+        Azure::Core::Json::_internal::json errorFragment);
   };
 
 }}}} // namespace Azure::Security::KeyVault::Administration
