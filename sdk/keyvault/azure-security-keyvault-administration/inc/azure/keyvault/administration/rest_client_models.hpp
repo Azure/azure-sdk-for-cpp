@@ -154,7 +154,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     };
 
     /**
-     * @brief
+     * @brief Sas token parameter for backup and restore operations.
      *
      */
     struct SasTokenParameter final
