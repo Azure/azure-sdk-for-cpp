@@ -32,7 +32,7 @@ namespace Azure {
       BackupRestoreClientOptions options;
       m_client = InitTestClient<
           Azure::Security::KeyVault::Administration::BackupRestoreClient,
-          Azure::Security::KeyVault::Administration::BackupRestoreClientOptions>(
+          Azure::Security::KeyVault::Administration::Models::BackupRestoreClientOptions>(
           hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
     }
 
@@ -90,7 +90,7 @@ namespace Azure {
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
           Azure::Security::KeyVault::Administration::BackupRestoreClient,
-          Azure::Security::KeyVault::Administration::BackupRestoreClientOptions>(
+          Azure::Security::KeyVault::Administration::Models::BackupRestoreClientOptions>(
           m_keyVaultUrl, m_credential, options);
 
       UpdateWaitingTime(m_testPollingIntervalMs);

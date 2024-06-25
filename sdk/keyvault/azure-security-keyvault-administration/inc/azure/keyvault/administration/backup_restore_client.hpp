@@ -17,8 +17,9 @@
 #include <memory>
 #include <string>
 
+using namespace Azure::Security::KeyVault::Administration::Models;
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
-  using namespace Models;
   /**
    * @brief Backup restore client.
    *
@@ -40,7 +41,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     explicit BackupRestoreClient(
         std::string const& vaultUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<Azure::Core::Credentials::TokenCredential const> credential,
         BackupRestoreClientOptions options = BackupRestoreClientOptions());
 
     /**
@@ -63,7 +64,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     Response<FullBackupOperation> FullBackup(
         SasTokenParameter const& azureStorageBlobContainerUri,
-        Core::Context const& context = {});
+        Azure::Core::Context const& context = {});
 
     /*
      * @brief Returns the status of full backup operation.
@@ -74,7 +75,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     Response<FullBackupOperation> FullBackupStatus(
         std::string const& jobId,
-        Core::Context const& context = {});
+        Azure::Core::Context const& context = {});
 
     /*
      * @brief Restores all key materials using the SAS token pointing to a previously stored Azure
@@ -87,7 +88,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     Response<RestoreOperation> FullRestore(
         RestoreOperationParameters const& restoreBlobDetails,
-        Core::Context const& context = {});
+        Azure::Core::Context const& context = {});
 
     /*
      * @brief Returns the status of restore operation.
@@ -98,7 +99,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     Response<RestoreOperation> RestoreStatus(
         std::string const& jobId,
-        Core::Context const& context = {});
+        Azure::Core::Context const& context = {});
 
     /*
      * @brief  Restores all key versions of a given key using user supplied SAS token pointing to a
@@ -113,11 +114,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     Response<SelectiveKeyRestoreOperation> SelectiveKeyRestore(
         std::string const& keyName,
         SelectiveKeyRestoreOperationParameters const& restoreBlobDetails,
-        Core::Context const& context = {});
+        Azure::Core::Context const& context = {});
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
-    Core::Url m_vaultBaseUrl;
+    Azure::Core::Url m_vaultBaseUrl;
     std::string m_apiVersion;
     KeyVaultServiceError DeserializeKeyVaultServiceError(
         Azure::Core::Json::_internal::json errorFragment);
