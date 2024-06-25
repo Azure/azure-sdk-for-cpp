@@ -29,7 +29,21 @@ int main()
 
   try
   {
-   
+    // Get all settings
+    SettingsListResult settingsList = settingsClient.GetSettings().Value;
+
+    std::cout << "Number of settings found : " << settingsList.Value.size() << std::endl;
+
+    Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
+
+    std::cout << "Retrieved setting with name " << setting.Name << ", with value " << setting.Value
+              << std::endl;
+
+    Setting updatedSetting
+        = settingsClient.UpdateSetting(settingsList.Value[0].Name, setting.Value).Value;
+
+    std::cout << "Retrieved updated setting with name " << updatedSetting.Name << ", with value "
+              << updatedSetting.Value << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
