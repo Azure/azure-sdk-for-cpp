@@ -68,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     /*
      * @brief Returns the status of full backup operation.
      *
-     * @param jobId Identifier for the full backup operation..
+     * @param jobId Identifier for the full backup operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return A full backup operation.
      */
@@ -78,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
 
     /*
      * @brief Restores all key materials using the SAS token pointing to a previously stored Azure
-     *        Blob storage backup folder
+     *        Blob storage backup folder.
      *
      * @param restoreBlobDetails The Azure blob SAS token pointing to a folder where the previous
      *        successful full backup was stored.
