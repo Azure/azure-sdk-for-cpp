@@ -19,7 +19,10 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   using namespace Models;
-
+  /**
+   * @brief Backup restore client.
+   *
+   */
   class BackupRestoreClient final {
   public:
     /**
@@ -51,9 +54,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Creates a full backup using a user-provided SAS token to an Azure blob storage
      * container.
      *
-     * @param options Azure blob shared access signature token pointing to a valid Azure blob
-     * container where full backup needs to be stored. This token needs to be valid for at least
-     * next 24 hours from the time of making this call.
+     * @param azureStorageBlobContainerUri Azure blob shared access signature token pointing to a
+     * valid Azure blob container where full backup needs to be stored. This token needs to be valid
+     * for at least next 24 hours from the time of making this call.
      * @param context The context for the operation can be used for request cancellation.
      * @return A full backup operation.
      */
@@ -66,7 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @param jobId Identifier for the full backup operation..
      * @param context The context for the operation can be used for request cancellation.
-     * @return A full backup operation.
+     * @return A full backup operation status.
      */
     Response<FullBackupOperation> FullBackupStatus(
         std::string const& jobId,
