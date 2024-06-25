@@ -51,7 +51,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     explicit BackupRestoreClient(BackupRestoreClient const& backupRestoreClient) = default;
 
-    /*
+    /**
      * @brief Creates a full backup using a user-provided SAS token to an Azure blob storage
      *        container.
      *
@@ -66,7 +66,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         SasTokenParameter const& azureStorageBlobContainerUri,
         Azure::Core::Context const& context = {});
 
-    /*
+    /**
      * @brief Returns the status of full backup operation.
      *
      * @param jobId Identifier for the full backup operation.
@@ -77,7 +77,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::string const& jobId,
         Azure::Core::Context const& context = {});
 
-    /*
+    /**
      * @brief Restores all key materials using the SAS token pointing to a previously stored Azure
      *        Blob storage backup folder.
      *
@@ -90,7 +90,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         RestoreOperationParameters const& restoreBlobDetails,
         Azure::Core::Context const& context = {});
 
-    /*
+    /**
      * @brief Returns the status of restore operation.
      *
      * @param jobId Identifier for the restore operation.
@@ -101,7 +101,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::string const& jobId,
         Azure::Core::Context const& context = {});
 
-    /*
+    /**
      * @brief  Restores all key versions of a given key using user supplied SAS token pointing to a
      *         previously stored Azure Blob storage backup folder.
      *
