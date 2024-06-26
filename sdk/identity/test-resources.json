@@ -14,6 +14,12 @@
       "metadata": {
         "description": "The application client ID used to run tests."
       }
+    },
+    "testApplicationSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "The application client secret used to run tests."
+      }
     }
   },
   "resources": [],
@@ -25,6 +31,10 @@
     "AZURE_CLIENT_ID": {
       "type": "string",
       "value": "[parameters('testApplicationId')]"
+    },
+    "AZURE_CLIENT_SECRET": {
+      "type": "string",
+      "value": "[parameters('testApplicationSecret')]"
     }
   }
 }

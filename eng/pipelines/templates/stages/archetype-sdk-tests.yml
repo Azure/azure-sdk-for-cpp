@@ -35,12 +35,6 @@ parameters:
 - name: PostTestSteps
   type: stepList
   default: []
-- name: EnvVars
-  type: object
-  default: {}
-- name: UseFederatedAuth
-  type: boolean
-  default: false
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
@@ -64,8 +58,6 @@ stages:
                 SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
                 Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                 Cloud: ${{ cloud.key }}
-                SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
-                ServiceConnection: ${{ cloud.value.ServiceConnection }}
               AdditionalParameters:
                 Location: ${{ parameters.Location}}
                 ServiceDirectory: ${{ parameters.ServiceDirectory}}
@@ -75,5 +67,3 @@ stages:
                 TimeoutInMinutes: ${{ parameters.TimeoutInMinutes}}
                 PreTestSteps: ${{ parameters.PreTestSteps }}
                 PostTestSteps: ${{ parameters.PostTestSteps }}
-                EnvVars: ${{ parameters.EnvVars }}
-                UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
