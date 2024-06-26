@@ -134,7 +134,7 @@ Setting updatedSetting
 
 To create a new `BackupRestoreClient` to perform these operations, you need the endpoint to an Azure Key Vault HSM and credentials.
 
-Key Vault BackupRerstoreClient client for C++ currently supports any `TokenCredential` for authenticating.
+Key Vault BackupRestoreClient client for C++ currently supports any `TokenCredential` for authenticating.
 
 ```cpp Snippet:SampleBackupRestoreCreateCredential
   auto credential
