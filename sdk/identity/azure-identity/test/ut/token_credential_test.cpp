@@ -53,6 +53,15 @@ namespace Azure { namespace Identity { namespace Test {
 using namespace Azure::Identity::Test;
 using namespace Azure::Identity;
 
+TEST_F(TokenCredentialTest, ThisShouldNotRun_LIVEONLY_)
+{
+  std::string const testName(GetTestName());
+
+  EXPECT_TRUE(testName.size() == 0) << testName << " : " << testName.size() << " : "
+                                   << "ThisShouldNotRun_LIVEONLY_ RAN AND FAILED!";
+  EXPECT_TRUE(false);
+}
+
 TEST_F(TokenCredentialTest, ClientSecret)
 {
   std::string const testName(GetTestName());
