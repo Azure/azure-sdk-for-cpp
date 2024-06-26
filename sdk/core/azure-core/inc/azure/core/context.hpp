@@ -62,7 +62,7 @@ namespace Azure { namespace Core {
    * - WithCancel(): creates a new child context that can be independently cancelled.
    * - WithValue(Key, T): creates a new child context with a key/value pair.
    *
-   * Context objects support two operations to retrieve data:
+   * Context objects support the following operations to retrieve data:
    * - GetDeadline(): gets the deadline for the context.
    * - TryGetValue(Key, T): gets the value associated with a key.
    *
