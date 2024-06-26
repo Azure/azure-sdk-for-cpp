@@ -11,6 +11,8 @@
 
 using namespace Azure::Core;
 
+TEST(Base64, FOOBAR_LIVEONLY_) { EXPECT_TRUE(false); }
+
 TEST(Base64, Basic)
 {
   int maxLength = 7;
