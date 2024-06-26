@@ -208,7 +208,7 @@ snippet below will cancel a blob client upload after 5 seconds.
 `Context` objects form a directed tree, where a child context can be created from a parent context. 
 The context tree is unidirectional and acyclic.
 
-There are five basic operations that can be performed on a 'Context' object:
+There are five basic operations that can be performed on a `Context` object:
 
 * Create a child context from a parent context which can be independently cancelled.
 * Create a child context from a parent context with a Key/Value pair. This is useful for associating metadata with a context.
