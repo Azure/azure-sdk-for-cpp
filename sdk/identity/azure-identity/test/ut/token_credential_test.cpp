@@ -10,6 +10,16 @@
 
 #include <gtest/gtest.h>
 
+namespace Azure { namespace Core { namespace Test {
+  class TestLiveTest : public Azure::Core::Test::TestBase {};
+  class TestLiveTest_F : public Azure::Core::Test::TestBase {};
+}}} // namespace Azure::Core::Test
+
+using namespace Azure::Core::Test;
+
+TEST_F(TestLiveTest_F, TestBaseTest1_LIVEONLY_) { EXPECT_TRUE(false); }
+TEST(TestLiveTest, TestBaseTest2_LIVEONLY_) { EXPECT_TRUE(false); }
+
 namespace Azure { namespace Identity { namespace Test {
   class TokenCredentialTest : public Azure::Core::Test::TestBase {
 
