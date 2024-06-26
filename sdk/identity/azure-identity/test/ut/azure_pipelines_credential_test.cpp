@@ -495,6 +495,25 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
       AuthenticationException);
 }
 
+constexpr auto TenantIdEnvVar = "AZURESUBSCRIPTION_TENANT_ID";
+constexpr auto ClientIdEnvVar = "AZURESUBSCRIPTION_CLIENT_ID";
+constexpr auto ServiceConnectionIdEnvVar = "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID";
+constexpr auto SystemAccessTokenEnv = "SYSTEM_ACCESSTOKEN";
+
+static std::string GetSkipTestMessage(
+    std::string tenantId,
+    std::string clientId,
+    std::string serviceConnectionId,
+    std::string systemAccessToken)
+{
+  std::string message = "Set " + std::string(TenantIdEnvVar) + ", " + ClientIdEnvVar + ", "
+      + ServiceConnectionIdEnvVar + ", and " + SystemAccessTokenEnv
+      + " to run this AzurePipelinesCredential test. Tenant ID - '" + tenantId + "', Client ID - '"
+      + clientId + "', Service Connection ID - '" + serviceConnectionId
+      + "', and System Access Token size : " + std::to_string(systemAccessToken.size()) + ".";
+  return message;
+}
+
 TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
 {
   std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
@@ -503,18 +522,11 @@ TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
       = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
-  std::string message = "Set AZURESUBSCRIPTION_TENANT_ID, AZURESUBSCRIPTION_CLIENT_ID, "
-                        "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID, and SYSTEM_ACCESSTOKEN to run "
-                        "this AzurePipelinesCredential test. "
-      + tenantId + " : " + clientId + " : " + serviceConnectionId + " : " + systemAccessToken + ".";
-  message += "\n " + Environment::GetVariable("AZURE_SERVICE_CONNECTION_TENANT_ID") + " : "
-      + Environment::GetVariable("AZURE_SERVICE_CONNECTION_CLIENT_ID") + " : "
-      + Environment::GetVariable("AZURE_SERVICE_CONNECTION_ID") + ".";
-  std::cout << message << std::endl;
-
   if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty()
       || systemAccessToken.empty())
   {
+    std::string message
+        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
     GTEST_SKIP_(message.c_str());
   }
 
@@ -541,15 +553,14 @@ TEST(AzurePipelinesCredential, InvalidTenantId_LIVEONLY_)
       = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
-  std::string tenantId = "invalidtenantId";
+  const std::string tenantId = "invalidtenantId";
 
-  /*if (tenantId.empty() || serviceConnectionId.empty() || systemAccessToken.empty())
+  if (clientId.empty() || serviceConnectionId.empty() || systemAccessToken.empty())
   {
-    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
-                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
-                          "AzurePipelinesCredential test.";
+    std::string message
+        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
     GTEST_SKIP_(message.c_str());
-  }*/
+  }
 
   AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
 
@@ -559,11 +570,12 @@ TEST(AzurePipelinesCredential, InvalidTenantId_LIVEONLY_)
   try
   {
     AccessToken token = cred.GetToken(trc, {});
+    GTEST_FAIL() << "GetToken should have thrown an exception due to an invalid tenant ID.";
   }
   catch (AuthenticationException const& ex)
   {
-    std::string expectedMessage = "";
-    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("400 Bad Request") != std::string::npos) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("AADSTS900023") != std::string::npos) << ex.what();
   }
 }
 
@@ -574,15 +586,14 @@ TEST(AzurePipelinesCredential, InvalidClientId_LIVEONLY_)
       = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
-  std::string clientId = "invalidClientId";
+  const std::string clientId = "invalidClientId";
 
-  /*if (tenantId.empty() || serviceConnectionId.empty() || systemAccessToken.empty())
+  if (tenantId.empty() || serviceConnectionId.empty() || systemAccessToken.empty())
   {
-    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
-                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
-                          "AzurePipelinesCredential test.";
+    std::string message
+        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
     GTEST_SKIP_(message.c_str());
-  }*/
+  }
 
   AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
 
@@ -592,11 +603,12 @@ TEST(AzurePipelinesCredential, InvalidClientId_LIVEONLY_)
   try
   {
     AccessToken token = cred.GetToken(trc, {});
+    GTEST_FAIL() << "GetToken should have thrown an exception due to an invalid client ID.";
   }
   catch (AuthenticationException const& ex)
   {
-    std::string expectedMessage = "";
-    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("400 Bad Request") != std::string::npos) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("AADSTS700016") != std::string::npos) << ex.what();
   }
 }
 
@@ -606,15 +618,14 @@ TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
   std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
   std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
-  std::string serviceConnectionId = "invalidServiceConnectionId";
+  const std::string serviceConnectionId = "invalidServiceConnectionId";
 
-  /*if (tenantId.empty() || clientId.empty() || systemAccessToken.empty())
+  if (tenantId.empty() || clientId.empty() || systemAccessToken.empty())
   {
-    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
-                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
-                          "AzurePipelinesCredential test.";
+    std::string message
+        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
     GTEST_SKIP_(message.c_str());
-  }*/
+  }
 
   AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
 
@@ -624,11 +635,12 @@ TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
   try
   {
     AccessToken token = cred.GetToken(trc, {});
+    GTEST_FAIL()
+        << "GetToken should have thrown an exception due to an invalid service connection ID.";
   }
   catch (AuthenticationException const& ex)
   {
-    std::string expectedMessage = "";
-    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("404 (Not Found)") != std::string::npos) << ex.what();
   }
 }
 
@@ -639,15 +651,14 @@ TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
   std::string serviceConnectionId
       = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
 
-  std::string systemAccessToken = "invalidSystemAccessToken";
+  const std::string systemAccessToken = "invalidSystemAccessToken";
 
-  /*if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty())
+  if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty())
   {
-    std::string message = "Set AZURE_SERVICE_CONNECTION_CLIENT_ID, AZURE_SERVICE_CONNECTION_ID, "
-                          "AZURE_SERVICE_CONNECTION_TENANT_ID, and SYSTEM_ACCESSTOKEN to run this "
-                          "AzurePipelinesCredential test.";
+    std::string message
+        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
     GTEST_SKIP_(message.c_str());
-  }*/
+  }
 
   AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
 
@@ -657,10 +668,11 @@ TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
   try
   {
     AccessToken token = cred.GetToken(trc, {});
+    GTEST_FAIL()
+        << "GetToken should have thrown an exception due to an invalid system access token.";
   }
   catch (AuthenticationException const& ex)
   {
-    std::string expectedMessage = "";
-    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("302 (Found)") != std::string::npos) << ex.what();
   }
 }
