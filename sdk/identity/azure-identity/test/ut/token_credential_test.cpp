@@ -63,14 +63,17 @@ static void OutputString(std::string envarName, std::string envVarValue)
   }
 }
 
+using Azure::Core::_internal::Environment;
+
 TEST_F(TokenCredentialTest, ClientSecret)
 {
-  OutputString("AZURE_TENANT_ID", GetEnv("AZURE_TENANT_ID"));
-  OutputString("AZURE_CLIENT_ID", GetEnv("AZURE_CLIENT_ID"));
-  OutputString("AZURE_CLIENT_SECRET", GetEnv("AZURE_CLIENT_SECRET"));
-  OutputString("AZURE_SERVICE_DIRECTORY", GetEnv("AZURE_SERVICE_DIRECTORY"));
-  OutputString("AZURE_CLIENT_CERTIFICATE_PATH", GetEnv("AZURE_CLIENT_CERTIFICATE_PATH"));
-  OutputString("AZURE_AUTHORITY_HOST", GetEnv("AZURE_AUTHORITY_HOST"));
+  OutputString("AZURE_TENANT_ID", Environment::GetVariable("AZURE_TENANT_ID"));
+  OutputString("AZURE_CLIENT_ID", Environment::GetVariable("AZURE_CLIENT_ID"));
+  OutputString("AZURE_CLIENT_SECRET", Environment::GetVariable("AZURE_CLIENT_SECRET"));
+  OutputString("AZURE_SERVICE_DIRECTORY", Environment::GetVariable("AZURE_SERVICE_DIRECTORY"));
+  OutputString(
+      "AZURE_CLIENT_CERTIFICATE_PATH", Environment::GetVariable("AZURE_CLIENT_CERTIFICATE_PATH"));
+  OutputString("AZURE_AUTHORITY_HOST", Environment::GetVariable("AZURE_AUTHORITY_HOST"));
 
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetClientSecretCredential(testName);
@@ -88,12 +91,13 @@ TEST_F(TokenCredentialTest, ClientSecret)
 
 TEST_F(TokenCredentialTest, EnvironmentCredential)
 {
-  OutputString("AZURE_TENANT_ID", GetEnv("AZURE_TENANT_ID"));
-  OutputString("AZURE_CLIENT_ID", GetEnv("AZURE_CLIENT_ID"));
-  OutputString("AZURE_CLIENT_SECRET", GetEnv("AZURE_CLIENT_SECRET"));
-  OutputString("AZURE_SERVICE_DIRECTORY", GetEnv("AZURE_SERVICE_DIRECTORY"));
-  OutputString("AZURE_CLIENT_CERTIFICATE_PATH", GetEnv("AZURE_CLIENT_CERTIFICATE_PATH"));
-  OutputString("AZURE_AUTHORITY_HOST", GetEnv("AZURE_AUTHORITY_HOST"));
+  OutputString("AZURE_TENANT_ID", Environment::GetVariable("AZURE_TENANT_ID"));
+  OutputString("AZURE_CLIENT_ID", Environment::GetVariable("AZURE_CLIENT_ID"));
+  OutputString("AZURE_CLIENT_SECRET", Environment::GetVariable("AZURE_CLIENT_SECRET"));
+  OutputString("AZURE_SERVICE_DIRECTORY", Environment::GetVariable("AZURE_SERVICE_DIRECTORY"));
+  OutputString(
+      "AZURE_CLIENT_CERTIFICATE_PATH", Environment::GetVariable("AZURE_CLIENT_CERTIFICATE_PATH"));
+  OutputString("AZURE_AUTHORITY_HOST", Environment::GetVariable("AZURE_AUTHORITY_HOST"));
 
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetEnvironmentCredential(testName);
