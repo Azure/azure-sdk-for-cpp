@@ -240,8 +240,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * successful full backup was stored. This token needs to be valid for at least next 24 hours
        * from the time of making.
        *
-       * @remark Sensitive information. Please ensure proper handling. 
-       * 
+       * @remark Sensitive information. Please ensure proper handling.
+       *
        */
       SasTokenParameter SasTokenParameters;
       /**
