@@ -28,6 +28,15 @@ TEST_F(KeyVaultKeyClient, GetSingleKey)
   EXPECT_EQ(key.GetKeyType(), KeyVaultKeyType::Ec);
 }
 
+TEST_F(KeyVaultKeyClient,
+       FOOBAZ_LIVEONLY_) // truncated json in the recording body
+{
+  auto const keyName = GetTestName();
+  EXPECT_TRUE(keyName.size() == 0) << keyName << " : " << keyName.size() << " : "
+                                   << "FOOBAZ_TEST RAN AND FAILED!";
+  EXPECT_TRUE(false);
+}
+
 TEST_F(
     KeyVaultKeyClient,
     GetPropertiesOfKeysAllPages_LIVEONLY_) // truncated json in the recording body
