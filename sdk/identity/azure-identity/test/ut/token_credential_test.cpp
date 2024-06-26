@@ -53,13 +53,24 @@ namespace Azure { namespace Identity { namespace Test {
 using namespace Azure::Identity::Test;
 using namespace Azure::Identity;
 
-static void OutputString(std::string envarName, std::string envVarValue)
+static void OutputString(std::string enVarName, std::string envVarValue)
 {
-  std::cout << envarName << ": " << envVarValue << std::endl;
+  std::cout << enVarName << ": " << envVarValue << std::endl;
   if (!envVarValue.empty())
   {
-    std::cout << "PARTIAL (first.last): " << envVarValue.at(0) << " . "
-              << envVarValue.at(envVarValue.size() - 1) << std::endl;
+    if (envVarValue.size() > 6)
+    {
+      std::cout << "PARTIAL (first...last): " << envVarValue.size() << " | " << envVarValue.at(0)
+                << " . " << envVarValue.at(1) << " . " << envVarValue.at(2)
+                << envVarValue.at(envVarValue.size() - 3) << " . "
+                << envVarValue.at(envVarValue.size() - 2) << " . "
+                << envVarValue.at(envVarValue.size() - 1) << std::endl;
+    }
+    else
+    {
+      std::cout << "PARTIAL (first.last): " << envVarValue.size() << " | " << envVarValue.at(0)
+                << " . " << envVarValue.at(envVarValue.size() - 1) << std::endl;
+    }
   }
 }
 
