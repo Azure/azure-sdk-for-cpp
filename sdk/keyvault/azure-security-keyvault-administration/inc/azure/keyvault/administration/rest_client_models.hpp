@@ -132,12 +132,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        */
       Azure::Nullable<KeyVaultServiceError> Error;
       /**
-       * @brief The start time of the backup operation in UTC
+       * @brief The start time of the backup operation in UTC.
        *
        */
       DateTime StartTime;
       /**
-       * @brief The end time of the backup operation in UTC
+       * @brief The end time of the backup operation in UTC.
        *
        */
       Nullable<DateTime> EndTime;
@@ -147,7 +147,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        */
       std::string JobId;
       /**
-       * @brief The Azure blob storage container Uri which contains the full backup
+       * @brief The Azure blob storage container Uri which contains the full backup.
        *
        */
       std::string AzureStorageBlobContainerUri;
@@ -160,12 +160,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     struct SasTokenParameter final
     {
       /**
-       * @brief Azure Blob storage container Uri
+       * @brief Azure Blob storage container Uri.
        *
        */
       std::string StorageResourceUri;
       /**
-       * @brief The SAS token pointing to an Azure Blob storage container
+       * @brief The SAS token pointing to an Azure Blob storage container.
        *
        */
       Nullable<std::string> Token;
@@ -237,12 +237,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     {
       /**
        * @brief The SAS token pointing to an Azure Blob storage container where the previous
-       * successful full backup was stored
+       * successful full backup was stored. This token needs to be valid for at least next 24 hours
+       * from the time of making.
        *
+       * @remark Sensitive information. Please ensure proper handling. 
+       * 
        */
       SasTokenParameter SasTokenParameters;
       /**
-       * @brief The Folder name of the blob where the previous successful full backup was stored
+       * @brief The Folder name of the blob where the previous successful full backup was stored.
        *
        */
       std::string FolderToRestore;
