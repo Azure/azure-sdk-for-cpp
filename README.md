@@ -268,15 +268,15 @@ The APIs defined in the Azure SDK for C++ fall into three rough categories:
 
 - **Public**: These are the types that are intended to be used by the consumers of the SDK.
 They are part of the public API and are stable. Breaking changes to these types will be avoided as much
-as possible. All public types and functions are located are in the `Azure` namespace.
+as possible. All public types and functions are located are in the `Azure` root namespace.
 - **Internal**: These are the types that are used internally by the packages within the SDK.
 They are intended for use by the packages which make up the Azure SDK. They are NOT intended to be used by the consumers of the SDK.
 Breaking changes to these types are allowed, within certain constraints. These types are located in an `Azure` namespace within the `_internal` terminal namespace (for instance, `Azure::Core::Http::Policies::_internal::RequestActivityPolicy`).
 - **Private**: These are the types that are used internally to individual Azure SDK Packages.
-They are not intended to be used by the consumers of the SDK, or by other SDK packages. Breaking changes
+They are not intended to be used by the consumers of the SDK, nor by other SDK packages. Breaking changes
 to these types are allowed. These types are located in an `Azure` namespace within the `_detail` terminal namespace.
 
-Within the source tree, Internal types are typically declared in directory named "internal", and Private types are typically declared in a directory named "private".
+Within the source tree, internal types are typically declared in directories named "internal", and private types are typically declared in directories named "private".
 
 #### Interacting with Azure SDK for C++
 
