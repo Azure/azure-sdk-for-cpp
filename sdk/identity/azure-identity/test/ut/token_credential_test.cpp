@@ -53,8 +53,25 @@ namespace Azure { namespace Identity { namespace Test {
 using namespace Azure::Identity::Test;
 using namespace Azure::Identity;
 
+static void OutputString(std::string envarName, std::string envVarValue)
+{
+  std::cout << envarName << ": " << envVarValue << std::endl;
+  if (!envVarValue.empty())
+  {
+    std::cout << "PARTIAL (first.last): " << envVarValue.at(0) << " . "
+              << envVarValue.at(envVarValue.size() - 1) << std::endl;
+  }
+}
+
 TEST_F(TokenCredentialTest, ClientSecret)
 {
+  OutputString("AZURE_TENANT_ID", GetEnv("AZURE_TENANT_ID"));
+  OutputString("AZURE_CLIENT_ID", GetEnv("AZURE_CLIENT_ID"));
+  OutputString("AZURE_CLIENT_SECRET", GetEnv("AZURE_CLIENT_SECRET"));
+  OutputString("AZURE_SERVICE_DIRECTORY", GetEnv("AZURE_SERVICE_DIRECTORY"));
+  OutputString("AZURE_CLIENT_CERTIFICATE_PATH", GetEnv("AZURE_CLIENT_CERTIFICATE_PATH"));
+  OutputString("AZURE_AUTHORITY_HOST", GetEnv("AZURE_AUTHORITY_HOST"));
+
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetClientSecretCredential(testName);
 
@@ -71,6 +88,13 @@ TEST_F(TokenCredentialTest, ClientSecret)
 
 TEST_F(TokenCredentialTest, EnvironmentCredential)
 {
+  OutputString("AZURE_TENANT_ID", GetEnv("AZURE_TENANT_ID"));
+  OutputString("AZURE_CLIENT_ID", GetEnv("AZURE_CLIENT_ID"));
+  OutputString("AZURE_CLIENT_SECRET", GetEnv("AZURE_CLIENT_SECRET"));
+  OutputString("AZURE_SERVICE_DIRECTORY", GetEnv("AZURE_SERVICE_DIRECTORY"));
+  OutputString("AZURE_CLIENT_CERTIFICATE_PATH", GetEnv("AZURE_CLIENT_CERTIFICATE_PATH"));
+  OutputString("AZURE_AUTHORITY_HOST", GetEnv("AZURE_AUTHORITY_HOST"));
+
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetEnvironmentCredential(testName);
 
