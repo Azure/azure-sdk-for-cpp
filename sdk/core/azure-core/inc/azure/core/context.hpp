@@ -70,7 +70,7 @@ namespace Azure { namespace Core {
    * - Cancel(): cancels the context.
    * - IsCancelled(): checks if the context is cancelled.
    *
-   * Context objects support one operation to throw if the context is cancelled:
+   * Context objects support the following operation to throw if the context is cancelled:
    * - ThrowIfCancelled(): throws an OperationCancelledException if the context is cancelled.
    *
    * Context objects support one operation to create a new root context:
