@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/context.hpp>
-
+#include "azure/core/context.hpp"
 #include <chrono>
 #include <memory>
 #include <string>

@@ -6,8 +6,9 @@
 
 ### Breaking Changes
 
-- All newly created `Azure::Core::Context` derive from a shared `Azure::Core::Context::ApplicationContext` object. Before this change, each `Azure::Core::Context` object created a new root `Context`.
-  - This change is not expected to impact most users, but it may affect users which had previously cancelled a copy of the Azure::Core::Context::ApplicationContext object.
+- Deprecated the `Azure::Core::Context::ApplicationContext` object. 
+  - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
+  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`.
 
 ### Bugs Fixed
 

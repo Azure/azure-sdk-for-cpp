@@ -190,17 +190,24 @@ establish an absolute deadline for the operation.
 This is useful when you want to assign a time limit on an operation to ensure that it completes in a "reasonable" timeframe. For instance, the 
 snippet below will cancel a blob client upload after 5 seconds.
 
+<!-- @insert_snippet: CreateBlobContext -->
 ```cpp
-  Azure::Core::Context cancelledIn5s = Azure::Core::Context::ApplicationContext.WithDeadline(
-          std::chrono::system_clock::now() + std::chrono::seconds(5);
+      Azure::Core::Context cancelledIn5s = Azure::Core::Context{}.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(5));
 
-  std::cout << "Uploading blob: " << blobName << std::endl;
-  try {
-    blobClient.UploadFrom(blobContent, sizeof(blobContent), cancelledIn5s);
-  }
-  catch (const Azure::Core::OperationCancelledException& e) {
-	std::cout << "Upload was cancelled: " << e.what() << std::endl;
-  }
+      auto containerClient = BlobContainerClient::CreateFromConnectionString(
+          GetConnectionString(), containerName + std::to_string(i));
+      containerClient.CreateIfNotExists({}, cancelledIn5s);
+      for (int j = 0; j < 3; ++j)
+      {
+        BlockBlobClient blobClient
+            = containerClient.GetBlockBlobClient(blobName + std::to_string(j));
+        blobClient.UploadFrom(
+            reinterpret_cast<const uint8_t*>(blobContent.data()),
+            blobContent.size(),
+            {},
+            cancelledIn5s);
+      }
 ```
 
 `Context` objects can also be directly cancelled using the `Cancel()` method.
@@ -208,63 +215,23 @@ snippet below will cancel a blob client upload after 5 seconds.
 `Context` objects form a directed tree, where a child context can be created from a parent context. 
 The context tree is unidirectional and acyclic.
 
-There are five basic operations that can be performed on a `Context` object:
+These are the basic operations that can be performed on a `Context` object:
 
-* Create a child context from a parent context which can be independently cancelled.
 * Create a child context from a parent context with a Key/Value pair. This is useful for associating metadata with a context.
 * Create a child context from a parent context with a deadline. This is useful for setting a timeout.
 * Cancel a context. This will cancel the context and all its children. Note that there is no way of un-cancelling a context.
 * Check if a context is cancelled.
 
-By default, when a `Context` is created, it is a child of the `ApplicationContext`. This allows a client application to cancel all the operations currently active in the process.
-
-If you do NOT want a newly created `Context` to be a child of `ApplicationContext`, use the `Azure::Core::Context::CreateNewRoot()` function, 
-which will create a new root context.
-
 When a context is copied from another context, the copied context will share state with the original context. 
 This means that if the original context is cancelled, the copied context will also be cancelled.
 
-Cancellation of a `Context` is a permanent operation. Once a non-root context is cancelled, it cannot be un-cancelled.
-
-Root `Contexts` are unique in that their cancellation *CAN* be reset. Cancelling a root context essentially creates a new root Context replacing the existing root.
-
-The following snippet shows creating a new context from the `ApplicationContext` and cancelling the root context..
-
-```cpp
-  // Create a child context from the root context
-  Azure::Core::Context childContext = Azure::Core::Context::ApplicationContext.WithDeadline(std::chrono::system_clock::now() + std::chrono::seconds(10));
-
-  // Check if the child context is cancelled - this will not be printed unless 10 seconds have passed from the creation of childContext.
-  if (childContext.IsCancelled())
-  {
-	std::cout << "Child context is cancelled" << std::endl;
-  }
-
-  // Cancel the root context
-  Azure::Core::Context::ApplicationContext.Cancel();
-
-  // Check if the child context is cancelled - this will be printed because the root context was cancelled.
-  if (childContext.IsCancelled())
-  {
-	std::cout << "Child context is cancelled" << std::endl;
-  }
-
-  // Reset the root context
-  Azure::Core::Context::ApplicationContext.Reset();
-
-  // Check the child context. This will be printed because even though the root context was reset, existing contexts created before
-  // the reset will still be cancelled.
-  if (childContext.IsCancelled())
-  {
-    std::cout << "Child context is still cancelled" << std::endl;
-  }
-```
+Cancellation of a `Context` is a permanent operation. Once a context is cancelled, it cannot be un-cancelled.
 
 When a `Context` is cancelled, it is typically indicated by throwing `Azure::Core::OperationCancelledException`. This exception can be caught and handled by the application.
 
 #### Public, Private and Internal Types
 
-The APIs defined in the Azure SDK for C++ fall into three rough categories:
+For the most part, the APIs defined in the Azure SDK for C++ fall into three categories:
 
 - **Public**: These are the types that are intended to be used by the consumers of the SDK.
 They are part of the public API and are stable. Breaking changes to these types will be avoided as much
@@ -276,7 +243,7 @@ Breaking changes to these types are allowed, within certain constraints. These t
 They are not intended to be used by the consumers of the SDK, nor by other SDK packages. Breaking changes
 to these types are allowed. These types are located in an `Azure` namespace within the `_detail` terminal namespace.
 
-Within the source tree, internal types are typically declared in directories named "internal", and private types are typically declared in directories named "private".
+Within the source tree, Internal types are typically declared in directories named "internal", and Private types are typically declared in directories named "private".
 
 #### Interacting with Azure SDK for C++
 
@@ -428,3 +395,4 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png)
+
