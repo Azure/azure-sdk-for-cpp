@@ -603,7 +603,7 @@ namespace Azure { namespace Core { namespace Test {
         // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
         auto session
             = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
-        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
+        auto r = session->Perform(Azure::Core::Context{});
         EXPECT_EQ(CURLE_SEND_ERROR, r);
       }
     }
@@ -623,7 +623,7 @@ namespace Azure { namespace Core { namespace Test {
         auto session
             = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
 
-        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
+        auto r = session->Perform(Azure::Core::Context{});
         EXPECT_EQ(CURLE_OK, r);
         auto response = session->ExtractResponse();
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::SwitchingProtocols);
@@ -652,7 +652,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         // Create a pipeline to send the request and dispose after it.
         Azure::Core::Http::_internal::HttpPipeline pipeline({}, "test", "test", {}, {});
-        auto response = pipeline.Send(req, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(req, Azure::Core::Context{});
         EXPECT_PRED2(
             [](Azure::Core::Http::HttpStatusCode a, Azure::Core::Http::HttpStatusCode b) {
               return a == b;

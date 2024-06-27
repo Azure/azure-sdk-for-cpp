@@ -192,7 +192,7 @@ snippet below will cancel a blob client upload after 5 seconds.
 
 <!-- @insert_snippet: CreateBlobContext -->
 ```cpp
-      Azure::Core::Context cancelledIn5s = Azure::Core::Context{}.WithDeadline(
+      Azure::Core::Context cancelledIn5s = Azure::Core::Context::CreateWithDeadline(
           std::chrono::system_clock::now() + std::chrono::seconds(5));
 
       auto containerClient = BlobContainerClient::CreateFromConnectionString(
@@ -229,7 +229,7 @@ Cancellation of a `Context` is a permanent operation. Once a context is cancelle
 
 When a `Context` is cancelled, it is typically indicated by throwing `Azure::Core::OperationCancelledException`. This exception can be caught and handled by the application.
 
-#### Public, Private and Internal Types
+#### Public, Private, and Internal Types
 
 For the most part, the APIs defined in the Azure SDK for C++ fall into three categories:
 

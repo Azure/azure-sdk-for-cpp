@@ -168,8 +168,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       // Ensure that we got an OnComplete callback within 5 seconds.
       auto transport = listenerEvents.WaitForResult(
           listener,
-          Azure::Core::Context::ApplicationContext.WithDeadline(
-              std::chrono::system_clock::now() + std::chrono::seconds(5)));
+          Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(5)});
 
       // Now we can close the connection.
       connection.Close("xxx", "yyy", {});

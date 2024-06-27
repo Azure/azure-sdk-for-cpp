@@ -5,7 +5,27 @@
 
 using namespace Azure::Core;
 
-Context Context::ApplicationContext{Context::CreateNewRoot()};
+// Disable deprecation warning
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+Context Context::ApplicationContext;
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
 
 Azure::DateTime Azure::Core::Context::GetDeadline() const
 {

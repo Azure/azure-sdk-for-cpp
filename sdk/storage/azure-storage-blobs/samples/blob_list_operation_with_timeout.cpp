@@ -4,7 +4,6 @@
 #include <azure/core/context.hpp>
 #include <azure/storage/blobs.hpp>
 
-#include <cstdio>
 #include <iostream>
 #include <stdexcept>
 
@@ -37,8 +36,8 @@ int main()
     for (int i = 0; i < 2; ++i)
     {
       // @begin_snippet: CreateBlobContext
-      Azure::Core::Context cancelledIn5s = Azure::Core::Context{}.WithDeadline(
-          std::chrono::system_clock::now() + std::chrono::seconds(5));
+      Azure::Core::Context cancelledIn5s
+          = Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(5)};
 
       auto containerClient = BlobContainerClient::CreateFromConnectionString(
           GetConnectionString(), containerName + std::to_string(i));

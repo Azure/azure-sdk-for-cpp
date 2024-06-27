@@ -394,8 +394,8 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url hostPath(AzureSdkHttpbinServer::Delay() + "/2"); // 2 seconds delay on server
     for (int i = 0; i < 10; i++)
     {
-      Azure::Core::Context cancelThis = Context{}.WithDeadline(
-          std::chrono::system_clock::now() + std::chrono::milliseconds(500));
+      Azure::Core::Context cancelThis
+          = Context(std::chrono::system_clock::now() + std::chrono::milliseconds(500));
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, hostPath);
 

@@ -50,9 +50,9 @@ namespace Azure { namespace Core { namespace Test {
 
       auto session
           = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
-      session->Perform(Azure::Core::Context::ApplicationContext);
+      session->Perform(Azure::Core::Context{});
       // Reading all the response
-      session->ReadToEnd(Azure::Core::Context::ApplicationContext);
+      session->ReadToEnd(Azure::Core::Context{});
 
       // If all three of these conditions are true, the connection should be moved to the connection
       // pool.

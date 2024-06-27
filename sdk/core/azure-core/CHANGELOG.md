@@ -26,12 +26,8 @@
 
 - [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
 - [[#5515]](https://github.com/Azure/azure-sdk-for-cpp/issues/5515) Add a `ShouldRetry` virtual method to the retry policy to enable customization of service-specific retry logic.
-- By default, `Azure::Core::Context` has been updated to be a child of `Azure::Core::Context::ApplicationContext`. In addition, the following new functions were added:
-  - `Azure::Core::Context::CreateNewRoot()` - this creates a new root context. This is useful when you want to create a new context that will not be affected by the cancellation of `Azure::Core::Context::ApplicationContext`
-    - It is also useful to restore the previous behavior of each `Azure::Core::Context` being created as an independent root.
-  - `Azure::Core::Context::WithCancel()` - this creates a new independently cancellable `Context` as a child of an existing Context.
-  - `Azure::Core::Context::Reset()` - This resets a Root context to its initial state. This is useful when you want to reset the cancellation state of `Azure::Core::Context::ApplicationContext`.
-- Made `ApplicationContext` mutable - this undoes an unintended breaking change introduced in version 1.8.1.
+- `Azure::Core::Context::ApplicationContext` has been deprecated. In addition, the following new functions were added:
+  - `Azure::Core::Context::CreateWithDeadline()` - this creates a new context with a deadline. This provides a convenient replacement for one common use of ApplicationContext - to create new Context objects with a deadline.
 
 ### Acknowledgments
 

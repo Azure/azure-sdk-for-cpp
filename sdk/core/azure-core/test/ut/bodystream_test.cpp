@@ -68,9 +68,9 @@ TEST(BodyStream, BadInput)
 {
   TestBodyStream tb;
   ASSERT_DEATH(tb.Read(NULL, 1), "");
-  ASSERT_DEATH(tb.Read(NULL, 1, Azure::Core::Context::ApplicationContext), "");
+  ASSERT_DEATH(tb.Read(NULL, 1, Azure::Core::Context{}), "");
   ASSERT_DEATH(tb.ReadToCount(NULL, 1), "");
-  ASSERT_DEATH(tb.ReadToCount(NULL, 1, Azure::Core::Context::ApplicationContext), "");
+  ASSERT_DEATH(tb.ReadToCount(NULL, 1, Azure::Core::Context{}), "");
 }
 
 TEST(MemoryBodyStream, BadInput) { ASSERT_DEATH(MemoryBodyStream(NULL, 1), ""); }
@@ -100,7 +100,7 @@ TEST(FileBodyStream, Length)
   Azure::Core::IO::FileBodyStream stream(testDataPath);
   EXPECT_EQ(stream.Length(), FileSize);
 
-  auto readResult = stream.ReadToEnd(Azure::Core::Context::ApplicationContext);
+  auto readResult = stream.ReadToEnd(Azure::Core::Context{});
   EXPECT_EQ(readResult.size(), FileSize);
 
   stream.Rewind();
@@ -120,7 +120,7 @@ TEST(FileBodyStream, Read)
 
   stream.Rewind();
 
-  readResult = stream.ReadToEnd(Azure::Core::Context::ApplicationContext);
+  readResult = stream.ReadToEnd(Azure::Core::Context{});
   EXPECT_EQ(readResult.size(), FileSize);
 
   stream.Rewind();
@@ -134,7 +134,7 @@ TEST(FileBodyStream, Read)
 
   stream.Rewind();
 
-  readSize = stream.ReadToCount(buffer.data(), 10, Azure::Core::Context::ApplicationContext);
+  readSize = stream.ReadToCount(buffer.data(), 10, Azure::Core::Context{});
   EXPECT_EQ(readSize, 10);
   EXPECT_EQ(buffer[10], 0);
 
@@ -147,7 +147,7 @@ TEST(FileBodyStream, Read)
 
   stream.Rewind();
 
-  readSize = stream.Read(buffer.data(), buffer.size(), Azure::Core::Context::ApplicationContext);
+  readSize = stream.Read(buffer.data(), buffer.size(), Azure::Core::Context{});
   EXPECT_EQ(readSize, FileSize);
   EXPECT_EQ(buffer[FileSize], 0);
 }

@@ -30,7 +30,7 @@ int main(int argc, char** argv)
       Azure::Core::Test::PipelineTest::GetTestMetadata(),
       Azure::Core::Test::UuidTest::GetTestMetadata()};
 
-  Azure::Perf::Program::Run(Azure::Core::Context::ApplicationContext, tests, argc, argv);
+  Azure::Perf::Program::Run(Azure::Core::Context{}, tests, argc, argv);
 
   return 0;
 }

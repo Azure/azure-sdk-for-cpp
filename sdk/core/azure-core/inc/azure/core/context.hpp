@@ -43,24 +43,19 @@ namespace Azure { namespace Core {
    * @brief A context is a node within a unidirectional tree that represents deadlines and key/value
    * pairs.
    *
-   * All Azure Service Client operations which can take a long time to complete accept a Context
-   * object. The Context object allows the caller to cancel the operation if it is taking too long,
-   * or to ensure that the operation completes before a specific deadline. This allows an
-   * application to apply timeouts to operations, or to cancel operations that are no longer needed.
+   * Most Azure Service Client operations accept a Context object. The Context object allows the
+   * caller to cancel the operation if it is taking too long, or to ensure that the operation
+   * completes before a specific deadline. This allows an application to apply timeouts to
+   * operations, or to cancel operations that need to be abandoned.
    *
-   * By default, each newly created Context object is a child of the singleton ApplicationContext
-   * object.
+   * After cancelling a Context, all service operations operations which have the cancelled context
+   * as a parent context will be cancelled. Cancellation is indicated by throwing an
+   * Azure::Core::OperationCancelledException from the operation.
    *
-   * After cancelling a Context, all operations which have the cancelled context as a parent context
-   * will be cancelled.
-   *
-   * Cancellation is indicated by throwing an Azure::Core::OperationCancelledException from the
-   * operation.
-   *
-   * Context objects support three operations to create new contexts:
+   * Context objects support the following operations to create new contexts:
    * - WithDeadline(DateTime): creates a new child context with a deadline.
-   * - WithCancel(): creates a new child context that can be independently cancelled.
    * - WithValue(Key, T): creates a new child context with a key/value pair.
+   * - CreateWithDeadline(DateTime): Static method to create a new context with a deadline.
    *
    * Context objects support the following operations to retrieve data:
    * - GetDeadline(): gets the deadline for the context.
@@ -73,11 +68,6 @@ namespace Azure { namespace Core {
    * Context objects support the following operation to throw if the context is cancelled:
    * - ThrowIfCancelled(): throws an OperationCancelledException if the context is cancelled.
    *
-   * Context objects support one operation to create a new root context:
-   * - CreateNewRoot(): creates a new root context.
-   *
-   * Root Context objects support one operation to reset the context:
-   * - Reset(): resets the context to its original state.
    *
    */
   class Context final {
@@ -208,9 +198,17 @@ namespace Azure { namespace Core {
      * @brief Constructs a new child context with no deadline, and no value associated.
      *
      */
-    Context()
-        : m_contextSharedState(
-            std::make_shared<ContextSharedState>(ApplicationContext.m_contextSharedState))
+    Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
+
+    /**
+     * @brief Creates a context with a deadline when you do not have an existing Context object.
+     *
+     * @param deadline A point in time after which a context expires.
+     *
+     * @return A new context with deadline.
+     */
+    Context(DateTime const& deadline)
+        : m_contextSharedState(std::make_shared<ContextSharedState>(nullptr, deadline))
     {
     }
 
@@ -267,7 +265,7 @@ namespace Azure { namespace Core {
     ~Context() = default;
 
     /**
-     * @brief Creates a context with a deadline.
+     * @brief Creates a context with a deadline from an existing Context object.
      *
      * @param deadline A point in time after which a context expires.
      *
@@ -276,16 +274,6 @@ namespace Azure { namespace Core {
     Context WithDeadline(DateTime const& deadline) const
     {
       return Context{std::make_shared<ContextSharedState>(m_contextSharedState, deadline)};
-    }
-
-    /**
-     * @brief Creates a new child context which can be cancelled independent of the current context.
-     *
-     * @return A child of the current context which can be independently cancelled.
-     */
-    Context WithCancel() const
-    {
-      return Context{std::make_shared<ContextSharedState>(m_contextSharedState)};
     }
 
     /**
@@ -354,39 +342,13 @@ namespace Azure { namespace Core {
      * operation explicitly checks the context's state to determine if it has been cancelled,
      * those checks may not happen immediately, or at all.
      *
-     * @note Cancellation of a Context must be explicitly undone by
+     * @note Once a context has been cancelled, the cancellation cannot be undone.
      *
      */
     void Cancel()
     {
       m_contextSharedState->Deadline
           = ContextSharedState::ToDateTimeRepresentation((DateTime::min)());
-    }
-
-    /**
-     * @brief Resets the context to its original state.
-     *
-     * @note This method is only available for root Context objects.
-     *
-     * @note This method will abandon the current shared state and reset it to a new root.
-     *
-     * @note This method can only be called on a cancelled context.
-     *
-     */
-    void Reset()
-    {
-      if (m_contextSharedState->Parent)
-      {
-        throw std::runtime_error("Reset is only available for root Context objects.");
-      }
-
-      if (!IsCancelled())
-      {
-        throw std::runtime_error("Cannot reset a non-cancelled context.");
-      }
-
-      // Abandon the current shared state and reset it to the root.
-      m_contextSharedState = std::make_shared<ContextSharedState>();
     }
 
     /**
@@ -407,24 +369,14 @@ namespace Azure { namespace Core {
       }
     }
 
-    /** @brief Creates a new root Context. This context is not a child of any other context, and
-     * thus can be independently cancelled.
-     *
-     * @return New root context.
-     *
-     */
-    static Context CreateNewRoot() { return Context{std::make_shared<ContextSharedState>()}; }
-
     /** @brief The `ApplicationContext` is the root of all Context objects.
      *
-     * @note Cancelling the `ApplicationContext` will cancel ALL operations currently active in the
-     * process, unless they were created with Azure::Core::Context::CreateNewRoot().
-     *
-     * @note If the `ApplicationContext` is cancelled, all current and future operations will be
-     * cancelled. To reset the `ApplicationContext` to a non-cancelled state, call
-     * Azure::Core::Context::ApplicationContext.Reset().
+     * @note: The `ApplicationContext` object is deprecated and will be removed in a future release.
+     * If your application is using `ApplicationContext`, you should create your own root context
+     * and us it where you would have otherwise used `ApplicationContext`.
      *
      */
-    static AZ_CORE_DLLEXPORT Context ApplicationContext;
+    [[deprecated("ApplicationContext is no longer supported. Instead customers should create their "
+                 "own root context objects.")]] static AZ_CORE_DLLEXPORT Context ApplicationContext;
   };
 }} // namespace Azure::Core

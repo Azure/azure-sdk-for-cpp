@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "azure/core/context.hpp"
+
 #include <chrono>
 #include <memory>
 #include <string>
@@ -238,7 +239,7 @@ struct SomeStructForContext final
 TEST(Context, InstanceValue)
 {
   Context::Key const key;
-  auto contextP = Context::ApplicationContext.WithValue(key, SomeStructForContext());
+  auto contextP = Context{}.WithValue(key, SomeStructForContext());
   SomeStructForContext contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext>(key, contextValueRef));
   EXPECT_EQ(contextValueRef.someField, 12345);
@@ -248,7 +249,7 @@ TEST(Context, Ptr)
 {
   Context::Key const key;
   SomeStructForContext value;
-  auto contextP = Context::ApplicationContext.WithValue(key, &value);
+  auto contextP = Context{}.WithValue(key, &value);
 
   SomeStructForContext* contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
@@ -274,7 +275,7 @@ TEST(Context, NestedClassPtr)
 
     Context::Key const key;
 
-    auto context = Context::ApplicationContext.WithValue(key, sharedPtr);
+    auto context = Context{}.WithValue(key, sharedPtr);
     EXPECT_EQ(sharedPtr.use_count(), 2);
 
     std::shared_ptr<TestClass> foundPtr;
@@ -510,18 +511,4 @@ TEST(Context, KeyTypePairPrecondition)
 
   EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
   EXPECT_EQ(strValue, s);
-}
-
-TEST(Context, NewRootContext)
-{
-  Context newRoot = Context::CreateNewRoot();
-  // Not cancelled new roots should throw.
-  EXPECT_THROW(newRoot.Reset(), std::runtime_error);
-
-  // Cancelled new root contexts should not throw.
-  newRoot.Cancel();
-  EXPECT_NO_THROW(newRoot.Reset());
-
-  // New contexts are not root contexts, so they should throw.
-  EXPECT_THROW(Context{}.Reset(), std::runtime_error);
 }

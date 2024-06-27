@@ -117,8 +117,7 @@ TEST(Policy, throwWhenNoTransportPolicy)
   Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
   Azure::Core::Url url("");
   Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-  EXPECT_THROW(
-      pipeline.Send(request, Azure::Core::Context::ApplicationContext), std::invalid_argument);
+  EXPECT_THROW(pipeline.Send(request, Azure::Core::Context{}), std::invalid_argument);
 }
 
 TEST(Policy, throwWhenNoTransportPolicyMessage)
@@ -140,7 +139,7 @@ TEST(Policy, throwWhenNoTransportPolicyMessage)
 
   try
   {
-    pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+    pipeline.Send(request, Azure::Core::Context{});
   }
   catch (const std::invalid_argument& ex)
   {
@@ -159,7 +158,7 @@ TEST(Policy, RetryPolicyCounter)
   retryCounterState = 0;
 
   // Check when there's no info about retry on the context
-  auto initialContext = Context::ApplicationContext;
+  Azure::Core::Context initialContext;
   EXPECT_EQ(-1, RetryPolicy::GetRetryCount(initialContext));
 
   // Pipeline with retry test
@@ -196,7 +195,7 @@ TEST(Policy, RetryPolicyRetryCycle)
 
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
-  pipeline.Send(request, Context::ApplicationContext);
+  pipeline.Send(request, Context{});
 }
 
 // Makes sure that the context tree is not corrupted/broken by some policy
@@ -221,6 +220,6 @@ TEST(Policy, RetryPolicyKeepContext)
 
   HttpPipeline pipeline(policies);
   Request request(HttpMethod::Get, Url("url"));
-  auto withValueContext = Context::ApplicationContext.WithValue(TheKey, std::string("TheValue"));
+  auto withValueContext = Context{}.WithValue(TheKey, std::string("TheValue"));
   pipeline.Send(request, withValueContext);
 }

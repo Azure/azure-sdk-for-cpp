@@ -19,6 +19,18 @@
 
 using namespace Azure::Core;
 
+// Disable deprecation warning
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 TEST(Context, ApplicationContext)
 {
   Context appContext = Context::ApplicationContext;
@@ -39,12 +51,11 @@ TEST(Context, ApplicationContext)
   //  The context should be cancelled
   Context appContext2 = Context::ApplicationContext;
   EXPECT_TRUE(appContext2.IsCancelled());
-
-  // Reset the cancelled state of ApplicationContext.
-  Context::ApplicationContext.Reset();
-  EXPECT_FALSE(Context::ApplicationContext.IsCancelled());
-  EXPECT_TRUE(appContext2.IsCancelled());
-
-  // ApplicationContext should throw if reset when not cancelled.
-  EXPECT_THROW(Context::ApplicationContext.Reset(), std::runtime_error);
 }
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
