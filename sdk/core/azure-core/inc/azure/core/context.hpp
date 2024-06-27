@@ -205,7 +205,6 @@ namespace Azure { namespace Core {
      *
      * @param deadline A point in time after which a context expires.
      *
-     * @return A new context with deadline.
      */
     Context(DateTime const& deadline)
         : m_contextSharedState(std::make_shared<ContextSharedState>(nullptr, deadline))
