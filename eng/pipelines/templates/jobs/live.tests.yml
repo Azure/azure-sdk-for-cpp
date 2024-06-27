@@ -162,8 +162,9 @@ jobs:
       SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
       EnvVars:
         Pool: $(Pool)
-      SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
-      EnvVars: ${{ parameters.EnvVars }}
+        ${{ insert }}: ${{ parameters.EnvVars }}
+      ${{ if parameters.UseFederatedAuth }}:
+        SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
 
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
@@ -172,8 +173,8 @@ jobs:
       SubscriptionConfiguration: $(SubscriptionConfiguration)
       EnvVars:
         Pool: $(Pool)
+        ${{ insert }}: ${{ parameters.EnvVars }}
       UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-      EnvVars: ${{ parameters.EnvVars }}
       ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
