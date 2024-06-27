@@ -506,7 +506,7 @@ namespace Azure { namespace Core { namespace Test {
 
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(request, Azure::Core::Context{});
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
     }
@@ -521,7 +521,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
         EXPECT_THROW(
-            pipeline.Send(request, Azure::Core::Context::ApplicationContext),
+            pipeline.Send(request, Azure::Core::Context{}),
             Azure::Core::Http::TransportException);
       }
     }
@@ -544,7 +544,7 @@ namespace Azure { namespace Core { namespace Test {
 
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(request, Azure::Core::Context{});
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
     }
@@ -692,7 +692,7 @@ namespace Azure { namespace Core { namespace Test {
 
         Azure::Core::Url url(AzureSdkHttpbinServer::Get());
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(request, Azure::Core::Context{});
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
 #endif
