@@ -1,6 +1,6 @@
 # Release History
 
-## 1.13.0-beta.1 (Unreleased)
+## 1.13.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 - Deprecated the `Azure::Core::Context::ApplicationContext` object. 
   - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
   wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`.
+
+### Bugs Fixed
+
+### Other Changes
+
+- Updated JSON library to 3.11.3.
+
+## 1.13.0-beta.1 (2024-06-06)
 
 ### Bugs Fixed
 

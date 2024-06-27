@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.10 (Unreleased)
+## 1.0.0-beta.11 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,13 @@
 
 ### Bugs Fixed
 
-- [[#5536]](https://github.com/Azure/azure-sdk-for-cpp/issues/5536) Fixed use-after free in MessageSender and MessageReceiver when opening a connection.
-
 ### Other Changes
+
+## 1.0.0-beta.10 (2024-06-06)
+
+### Bugs Fixed
+
+- [[#5536]](https://github.com/Azure/azure-sdk-for-cpp/issues/5536) Fixed use-after free in MessageSender and MessageReceiver when opening a connection.
 
 ## 1.0.0-beta.9 (2024-05-06)
 

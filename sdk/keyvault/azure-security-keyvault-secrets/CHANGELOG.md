@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0-beta.2 (Unreleased)
+## 4.3.0-beta.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.3.0-beta.2 (2024-06-11)
+
+### Other Changes
+
+- Relocated samples to the `samples` directory.
+- Updated the `README.md` file with the latest information.
+- Updated samples. 
 
 ## 4.3.0-beta.1 (2024-04-09)
 

@@ -45,10 +45,17 @@ endif()
 #############################################################################
 
 set(files
+    src/make_test_data_available.hpp
+    #src/test_utils.hpp                    - Not Required.
+    #src/unit-32bit.cpp                    - Not required.
     src/unit-algorithms.cpp
     src/unit-allocator.cpp
     src/unit-alt-string.cpp
+    #src/unit-assert_macro.cpp              - Not required.
+    #src/unit-binary_formats.cpp            - Not required.
+    #src/unit-bjdata.cpp                    - Not required.
     #src/unit-bson.cpp                      - Not required.
+    #src/unit-byte_container_with_subtype.cpp - Not required.
     src/unit-capacity.cpp
     #src/unit-cbor.cpp                      - Not required.
     src/unit-class_const_iterator.cpp
@@ -59,12 +66,16 @@ set(files
     src/unit-concepts.cpp
     src/unit-constructor1.cpp
     src/unit-constructor2.cpp
-    src/unit-convenience.cpp
+    #src/unit-convenience.cpp               - Not Required.
     src/unit-conversions.cpp
+    src/unit-custom-base-class.cpp
     src/unit-deserialization.cpp
+    src/unit-diagnostics.cpp
+    src/unit-disabled_exceptions.cpp
     src/unit-element_access1.cpp
     src/unit-element_access2.cpp
-    src/unit-inspection.cpp
+    src/unit-hash.cpp
+    #src/unit-inspection.cpp                - Not Required.
     src/unit-items.cpp
     src/unit-iterators1.cpp
     src/unit-iterators2.cpp
@@ -75,18 +86,30 @@ set(files
     #src/unit-meta.cpp                      - No meta() required/supported.
     src/unit-modifiers.cpp
     #src/unit-msgpack.cpp                   - Not required.
+    src/unit-no-mem-leak-on-adl-serialize.cpp
     src/unit-noexcept.cpp
+    src/unit-ordered_json.cpp
+    src/unit-ordered_map.cpp
     src/unit-pointer_access.cpp
     src/unit-readme.cpp
     src/unit-reference_access.cpp
-    #src/unit-regression.cpp                - No need to check for regressions as this version is unique.
+    #src/unit-regression1.cpp                - No need to check for regressions as this version is unique.
+    #src/unit-regression2.cpp                - No need to check for regressions as this version is unique.
     src/unit-serialization.cpp
-    src/unit-testsuites.cpp
+    #src/unit-testsuites.cpp                 - Not Required.
     src/unit-to_chars.cpp
-    #src/unit-ubjson.cpp                    - Not Required
+    src/unit-type_traits.cpp
+    #src/unit-ubjson.cpp                     - Not Required
+    src/unit-udl.cpp
     src/unit-udt.cpp
-    #src/unit-unicode.cpp                   - Takes long time to complete.
+    #src/unit-udt_macro.cpp                  - Not Required.
+    #src/unit-unicode1.cpp                   - Takes long time to complete.
+    #src/unit-unicode2.cpp                   - Takes long time to complete.
+    #src/unit-unicode3.cpp                   - Takes long time to complete.
+    #src/unit-unicode4.cpp                   - Takes long time to complete.
+    #src/unit-unicode5.cpp                   - Takes long time to complete.
     src/unit-user_defined_input.cpp
+    src/unit-windows_h.cpp
     src/unit-wstring.cpp
     )
 

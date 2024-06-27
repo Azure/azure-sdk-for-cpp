@@ -1,39 +1,19 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::json;
 
+#include "make_test_data_available.hpp"
+
 #include <fstream>
-#include <test_data.hpp>
 
 TEST_CASE("compliance tests from json.org")
 {
@@ -41,39 +21,39 @@ TEST_CASE("compliance tests from json.org")
 
   SECTION("expected failures")
   {
-    for (auto filename : {// TEST_DATA_DIRECTORY "/json_tests/fail1.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail2.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail3.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail4.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail5.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail6.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail7.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail8.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail9.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail10.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail11.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail12.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail13.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail14.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail15.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail16.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail17.json",
-                          // TEST_DATA_DIRECTORY "/json_tests/fail18.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail19.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail20.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail21.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail22.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail23.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail24.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail25.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail26.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail27.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail28.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail29.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail30.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail31.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail32.json",
-                          TEST_DATA_DIRECTORY "/json_tests/fail33.json"})
+    for (const auto* filename : {// TEST_DATA_DIRECTORY "/json_tests/fail1.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail2.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail3.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail4.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail5.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail6.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail7.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail8.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail9.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail10.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail11.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail12.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail13.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail14.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail15.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail16.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail17.json",
+                                 // TEST_DATA_DIRECTORY "/json_tests/fail18.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail19.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail20.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail21.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail22.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail23.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail24.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail25.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail26.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail27.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail28.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail29.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail30.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail31.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail32.json",
+                                 TEST_DATA_DIRECTORY "/json_tests/fail33.json"})
     {
       CAPTURE(filename)
       std::ifstream f(filename);
@@ -87,7 +67,7 @@ TEST_CASE("compliance tests from json.org")
     // these tests fail above, because the parser does not end on EOF;
     // they succeed when the operator>> is used, because it does not
     // have this constraint
-    for (auto filename : {
+    for (const auto* filename : {
              TEST_DATA_DIRECTORY "/json_tests/fail7.json",
              TEST_DATA_DIRECTORY "/json_tests/fail8.json",
              TEST_DATA_DIRECTORY "/json_tests/fail10.json",
@@ -102,7 +82,7 @@ TEST_CASE("compliance tests from json.org")
 
   SECTION("expected passes")
   {
-    for (auto filename :
+    for (const auto* filename :
          {TEST_DATA_DIRECTORY "/json_tests/pass1.json",
           TEST_DATA_DIRECTORY "/json_tests/pass2.json",
           TEST_DATA_DIRECTORY "/json_tests/pass3.json"})
@@ -241,13 +221,9 @@ TEST_CASE("compliance tests from nativejson-benchmark")
         5708990770823839524233143877797980545530986496.0);
 
     {
-      char n1e308[312]; // '1' followed by 308 '0'
+      std::string n1e308(312, '0'); // '1' followed by 308 '0'
       n1e308[0] = '[';
       n1e308[1] = '1';
-      for (int j = 2; j < 310; j++)
-      {
-        n1e308[j] = '0';
-      }
       n1e308[310] = ']';
       n1e308[311] = '\0';
       TEST_DOUBLE(n1e308, 1E308);
@@ -286,13 +262,13 @@ TEST_CASE("compliance tests from nativejson-benchmark")
 
     TEST_STRING("[\"\"]", "");
     TEST_STRING("[\"Hello\"]", "Hello");
-    TEST_STRING("[\"Hello\\nWorld\"]", "Hello\nWorld");
+    TEST_STRING(R"(["Hello\nWorld"])", "Hello\nWorld");
     // TEST_STRING("[\"Hello\\u0000World\"]", "Hello\0World");
-    TEST_STRING("[\"\\\"\\\\/\\b\\f\\n\\r\\t\"]", "\"\\/\b\f\n\r\t");
-    TEST_STRING("[\"\\u0024\"]", "\x24"); // Dollar sign U+0024
-    TEST_STRING("[\"\\u00A2\"]", "\xC2\xA2"); // Cents sign U+00A2
-    TEST_STRING("[\"\\u20AC\"]", "\xE2\x82\xAC"); // Euro sign U+20AC
-    TEST_STRING("[\"\\uD834\\uDD1E\"]", "\xF0\x9D\x84\x9E"); // G clef sign U+1D11E
+    TEST_STRING(R"(["\"\\/\b\f\n\r\t"])", "\"\\/\b\f\n\r\t");
+    TEST_STRING(R"(["\u0024"])", "$"); // Dollar sign U+0024
+    TEST_STRING(R"(["\u00A2"])", "\xC2\xA2"); // Cents sign U+00A2
+    TEST_STRING(R"(["\u20AC"])", "\xE2\x82\xAC"); // Euro sign U+20AC
+    TEST_STRING(R"(["\uD834\uDD1E"])", "\xF0\x9D\x84\x9E"); // G clef sign U+1D11E
   }
 
   SECTION("roundtrip")
@@ -300,7 +276,7 @@ TEST_CASE("compliance tests from nativejson-benchmark")
     // test cases are from
     // https://github.com/miloyip/nativejson-benchmark/tree/master/test/data/roundtrip
 
-    for (auto filename : {
+    for (const auto* filename : {
              TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip01.json",
              TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip02.json",
              TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip03.json",
@@ -342,7 +318,7 @@ TEST_CASE("compliance tests from nativejson-benchmark")
           (std::istreambuf_iterator<char>(f)), (std::istreambuf_iterator<char>()));
 
       CAPTURE(json_string)
-      json j = json::parse(json_string);
+      const json j = json::parse(json_string);
       CHECK(j.dump() == json_string);
     }
   }
@@ -403,7 +379,7 @@ TEST_CASE("json.org examples")
   }
   SECTION("FILE 1.json")
   {
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
         std::fopen(TEST_DATA_DIRECTORY "/json.org/1.json", "r"), &std::fclose);
     json _;
     CHECK_NOTHROW(_ = json::parse(f.get()));
@@ -411,7 +387,7 @@ TEST_CASE("json.org examples")
 
   SECTION("FILE 2.json")
   {
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
         std::fopen(TEST_DATA_DIRECTORY "/json.org/2.json", "r"), &std::fclose);
     json _;
     CHECK_NOTHROW(_ = json::parse(f.get()));
@@ -419,7 +395,7 @@ TEST_CASE("json.org examples")
 
   SECTION("FILE 3.json")
   {
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
         std::fopen(TEST_DATA_DIRECTORY "/json.org/3.json", "r"), &std::fclose);
     json _;
     CHECK_NOTHROW(_ = json::parse(f.get()));
@@ -427,7 +403,7 @@ TEST_CASE("json.org examples")
 
   SECTION("FILE 4.json")
   {
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
         std::fopen(TEST_DATA_DIRECTORY "/json.org/4.json", "r"), &std::fclose);
     json _;
     CHECK_NOTHROW(_ = json::parse(f.get()));
@@ -435,16 +411,16 @@ TEST_CASE("json.org examples")
 
   SECTION("FILE 5.json")
   {
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> f(
         std::fopen(TEST_DATA_DIRECTORY "/json.org/5.json", "r"), &std::fclose);
     json _;
     CHECK_NOTHROW(_ = json::parse(f.get()));
   }
 }
 
-TEST_CASE("RFC 7159 examples")
+TEST_CASE("RFC 8259 examples")
 {
-  // here, we list all JSON values from the RFC 7159 document
+  // here, we list all JSON values from the RFC 8259 document
 
   SECTION("7. Strings")
   {
@@ -461,7 +437,7 @@ TEST_CASE("RFC 7159 examples")
   SECTION("13 Examples")
   {
     {
-      auto json_contents = R"(
+      const auto* json_contents = R"(
             {
                  "Image": {
                      "Width":  800,
@@ -482,7 +458,7 @@ TEST_CASE("RFC 7159 examples")
     }
 
     {
-      auto json_contents = R"(
+      const auto* json_contents = R"(
                 [
                     {
                        "precision": "zip",
@@ -520,7 +496,7 @@ TEST_CASE("nst's JSONTestSuite")
   {
     SECTION("y")
     {
-      for (auto filename :
+      for (const auto* filename :
            {TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_arraysWithSpaces.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_empty-string.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_empty.json",
@@ -656,7 +632,7 @@ TEST_CASE("nst's JSONTestSuite")
 
     SECTION("n")
     {
-      for (auto filename :
+      for (const auto* filename :
            {TEST_DATA_DIRECTORY
             "/nst_json_testsuite/test_parsing/n_array_1_true_without_comma.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/n_array_a_invalid_utf8.json",
@@ -959,7 +935,7 @@ TEST_CASE("nst's JSONTestSuite")
       // these tests fail above, because the parser does not end on EOF;
       // they succeed when the operator>> is used, because it does not
       // have this constraint
-      for (auto filename :
+      for (const auto* filename :
            {TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/n_array_comma_after_close.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/n_array_extra_close.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/n_object_trailing_comment.json",
@@ -997,7 +973,7 @@ TEST_CASE("nst's JSONTestSuite")
 
     SECTION("i -> y")
     {
-      for (auto filename :
+      for (const auto* filename :
            {// we do not pose a limit on nesting
             TEST_DATA_DIRECTORY
             "/nst_json_testsuite/test_parsing/i_structure_500_nested_arrays.json",
@@ -1024,7 +1000,7 @@ TEST_CASE("nst's JSONTestSuite")
     // numbers that overflow during parsing
     SECTION("i/y -> n (out of range)")
     {
-      for (auto filename :
+      for (const auto* filename :
            {TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/i_number_neg_int_huge_exp.json",
             TEST_DATA_DIRECTORY
             "/nst_json_testsuite/test_parsing/i_number_pos_double_huge_exp.json",
@@ -1041,7 +1017,7 @@ TEST_CASE("nst's JSONTestSuite")
 
     SECTION("i -> n")
     {
-      for (auto filename :
+      for (const auto* filename :
            {TEST_DATA_DIRECTORY
             "/nst_json_testsuite/test_parsing/i_object_key_lone_2nd_surrogate.json",
             TEST_DATA_DIRECTORY
@@ -1083,7 +1059,7 @@ TEST_CASE("nst's JSONTestSuite (2)")
   {
     SECTION("y")
     {
-      for (auto filename :
+      for (const auto* filename :
            {TEST_DATA_DIRECTORY "/nst_json_testsuite2/test_parsing/y_array_arraysWithSpaces.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite2/test_parsing/y_array_empty-string.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite2/test_parsing/y_array_empty.json",
@@ -1226,7 +1202,7 @@ TEST_CASE("nst's JSONTestSuite (2)")
     SECTION("n")
     {
       for (
-          auto filename :
+          const auto* filename :
           {TEST_DATA_DIRECTORY
            "/nst_json_testsuite2/test_parsing/n_array_1_true_without_comma.json",
            TEST_DATA_DIRECTORY "/nst_json_testsuite2/test_parsing/n_array_a_invalid_utf8.json",
@@ -1508,13 +1484,13 @@ TEST_CASE("nst's JSONTestSuite (2)")
         json _;
         CHECK_THROWS_AS(_ = json::parse(f), json::parse_error&);
         std::ifstream f2(filename);
-        CHECK(not json::accept(f2));
+        CHECK(!json::accept(f2));
       }
     }
 
     SECTION("n (previously overflowed)")
     {
-      for (auto filename :
+      for (const auto* filename :
            {TEST_DATA_DIRECTORY
             "/nst_json_testsuite2/test_parsing/n_structure_100000_opening_arrays.json",
             TEST_DATA_DIRECTORY
@@ -1522,14 +1498,14 @@ TEST_CASE("nst's JSONTestSuite (2)")
       {
         CAPTURE(filename)
         std::ifstream f(filename);
-        CHECK(not json::accept(f));
+        CHECK(!json::accept(f));
       }
     }
 
     SECTION("i -> y")
     {
       for (
-          auto filename :
+          const auto* filename :
           {TEST_DATA_DIRECTORY
            "/nst_json_testsuite2/test_parsing/i_number_double_huge_neg_exp.json",
            // TEST_DATA_DIRECTORY "/nst_json_testsuite2/test_parsing/i_number_huge_exp.json",
@@ -1603,7 +1579,7 @@ TEST_CASE("nst's JSONTestSuite (2)")
 
     SECTION("i -> n")
     {
-      for (auto filename : {
+      for (const auto* filename : {
                // TEST_DATA_DIRECTORY
                // "/nst_json_testsuite2/test_parsing/i_number_double_huge_neg_exp.json",
                TEST_DATA_DIRECTORY "/nst_json_testsuite2/test_parsing/i_number_huge_exp.json",
@@ -1677,7 +1653,7 @@ TEST_CASE("nst's JSONTestSuite (2)")
         CHECK_THROWS_AS(
             _ = json::parse(f), json::exception&); // could be parse_error or out_of_range
         std::ifstream f2(filename);
-        CHECK(not json::accept(f2));
+        CHECK(!json::accept(f2));
       }
     }
   }
@@ -1689,12 +1665,12 @@ std::string trim(const std::string& str);
 // from https://stackoverflow.com/a/25829178/266378
 std::string trim(const std::string& str)
 {
-  size_t first = str.find_first_not_of(' ');
+  const size_t first = str.find_first_not_of(' ');
   if (std::string::npos == first)
   {
     return str;
   }
-  size_t last = str.find_last_not_of(' ');
+  const size_t last = str.find_last_not_of(' ');
   return str.substr(first, (last - first + 1));
 }
 } // namespace
@@ -1723,7 +1699,7 @@ TEST_CASE("Big List of Naughty Strings")
       line = trim(line);
 
       // remove trailing comma
-      line = line.substr(0, line.find_last_of(","));
+      line = line.substr(0, line.find_last_of(','));
 
       // discard lines without at least two characters (quotes)
       if (line.size() < 2)
@@ -1733,7 +1709,7 @@ TEST_CASE("Big List of Naughty Strings")
 
       // check roundtrip
       CAPTURE(line)
-      json j = json::parse(line);
+      const json j = json::parse(line);
       CHECK(j.dump() == line);
     }
   }

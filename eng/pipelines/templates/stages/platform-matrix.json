@@ -5,9 +5,9 @@
   "include": [
     {
       "OSConfiguration": {
-        "macOS-11": {
+        "macos-latest": {
           "OSVmImage": "env:MACVMIMAGE",
-          "XCODE_VERSION": "12.5.1"
+          "XCODE_VERSION": "14.2"
         }
       },
       "StaticConfigs": {

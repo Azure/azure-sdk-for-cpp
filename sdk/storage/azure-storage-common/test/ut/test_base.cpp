@@ -35,13 +35,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 namespace Azure { namespace Storage { namespace Test {
 
   constexpr static const char* StandardStorageConnectionStringValue = "";
-  constexpr static const char* PremiumStorageConnectionStringValue = "";
-  constexpr static const char* BlobStorageConnectionStringValue = "";
   constexpr static const char* PremiumFileConnectionStringValue = "";
   constexpr static const char* AdlsGen2ConnectionStringValue = "";
-  constexpr static const char* AadTenantIdValue = "";
-  constexpr static const char* AadClientIdValue = "";
-  constexpr static const char* AadClientSecretValue = "";
 
   void StorageTest::SetUp()
   {
@@ -84,6 +79,14 @@ namespace Azure { namespace Storage { namespace Test {
     TestBase::TearDown();
   }
 
+  const std::string& StorageTest::StandardStorageAccountName()
+  {
+    const static std::string accountName
+        = Azure::Storage::_internal::ParseConnectionString(StandardStorageConnectionString())
+              .AccountName;
+    return accountName;
+  }
+
   const std::string& StorageTest::StandardStorageConnectionString()
   {
     const static std::string connectionString = [&]() -> std::string {
@@ -96,28 +99,12 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& StorageTest::PremiumStorageConnectionString()
+  const std::string& StorageTest::PremiumFileAccountName()
   {
-    const static std::string connectionString = [&]() -> std::string {
-      if (strlen(PremiumStorageConnectionStringValue) != 0)
-      {
-        return PremiumStorageConnectionStringValue;
-      }
-      return GetEnv("PREMIUM_STORAGE_CONNECTION_STRING");
-    }();
-    return connectionString;
-  }
-
-  const std::string& StorageTest::BlobStorageConnectionString()
-  {
-    const static std::string connectionString = [&]() -> std::string {
-      if (strlen(BlobStorageConnectionStringValue) != 0)
-      {
-        return BlobStorageConnectionStringValue;
-      }
-      return GetEnv("BLOB_STORAGE_CONNECTION_STRING");
-    }();
-    return connectionString;
+    const static std::string accountName
+        = Azure::Storage::_internal::ParseConnectionString(PremiumFileConnectionString())
+              .AccountName;
+    return accountName;
   }
 
   const std::string& StorageTest::PremiumFileConnectionString()
@@ -132,6 +119,13 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
+  const std::string& StorageTest::AdlsGen2AccountName()
+  {
+    const static std::string accountName
+        = Azure::Storage::_internal::ParseConnectionString(AdlsGen2ConnectionString()).AccountName;
+    return accountName;
+  }
+
   const std::string& StorageTest::AdlsGen2ConnectionString()
   {
     const static std::string connectionString = [&]() -> std::string {
@@ -140,42 +134,6 @@ namespace Azure { namespace Storage { namespace Test {
         return AdlsGen2ConnectionStringValue;
       }
       return GetEnv("ADLS_GEN2_CONNECTION_STRING");
-    }();
-    return connectionString;
-  }
-
-  const std::string& StorageTest::AadTenantId()
-  {
-    const static std::string connectionString = [&]() -> std::string {
-      if (strlen(AadTenantIdValue) != 0)
-      {
-        return AadTenantIdValue;
-      }
-      return GetEnv("AAD_TENANT_ID");
-    }();
-    return connectionString;
-  }
-
-  const std::string& StorageTest::AadClientId()
-  {
-    const static std::string connectionString = [&]() -> std::string {
-      if (strlen(AadClientIdValue) != 0)
-      {
-        return AadClientIdValue;
-      }
-      return GetEnv("AAD_CLIENT_ID");
-    }();
-    return connectionString;
-  }
-
-  const std::string& StorageTest::AadClientSecret()
-  {
-    const static std::string connectionString = [&]() -> std::string {
-      if (strlen(AadClientSecretValue) != 0)
-      {
-        return AadClientSecretValue;
-      }
-      return GetEnv("AAD_CLIENT_SECRET");
     }();
     return connectionString;
   }
