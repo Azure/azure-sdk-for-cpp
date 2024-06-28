@@ -40,7 +40,7 @@ vcpkg add port azure-identity-cpp azure-storage-blobs-cpp
 }
 ```
 
-### Configure project files
+### Configure CMake project files
 
 - Replace the contents of `CMakeLists.txt` with the following:
 
@@ -56,6 +56,12 @@ add_executable(HelloWorld helloworld.cpp)
 
 target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
 ```
+
+### Installing Azure SDK packages in a Visual Studio MSBuild (.vcxproj) project
+
+Here's a walkthrough video on how to install the Azure SDK packages, using vcpkg, into an MSBuild project in VS: https://aka.ms/azsdk/cpp/gettingstarted-vcpkg-msbuild-video
+
+See the [vcpkg documentation](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-msbuild?pivots=shell-cmd) for more details.
 
 ### Additional methods for installing and configuring
 
