@@ -521,8 +521,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
         EXPECT_THROW(
-            pipeline.Send(request, Azure::Core::Context{}),
-            Azure::Core::Http::TransportException);
+            pipeline.Send(request, Azure::Core::Context{}), Azure::Core::Http::TransportException);
       }
     }
     {
