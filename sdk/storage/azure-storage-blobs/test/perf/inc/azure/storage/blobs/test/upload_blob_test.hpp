@@ -48,8 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       BlobsTest::Setup();
 
       long size = m_options.GetMandatoryOption<long>("Size");
-      m_uploadBuffer = Azure::Perf::RandomStream::Create(size)->ReadToEnd(
-          Azure::Core::Context::ApplicationContext);
+      m_uploadBuffer = Azure::Perf::RandomStream::Create(size)->ReadToEnd(Azure::Core::Context{});
     }
 
     /**

@@ -48,7 +48,7 @@ target_include_directories(
 
 if (MSVC)
     # allow msvc to use getenv()
-    target_compile_options(azure-storage-blobs-perf PUBLIC /wd4996)
+#    target_compile_options(azure-storage-blobs-perf PUBLIC /wd4996)
 endif()
 
 
