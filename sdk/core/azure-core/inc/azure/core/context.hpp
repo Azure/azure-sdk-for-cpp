@@ -372,7 +372,7 @@ namespace Azure { namespace Core {
      *
      * @note: The `ApplicationContext` object is deprecated and will be removed in a future release.
      * If your application is using `ApplicationContext`, you should create your own root context
-     * and us it where you would have otherwise used `ApplicationContext`.
+     * and use it where you would have otherwise used `ApplicationContext`.
      *
      */
     [[deprecated("ApplicationContext is no longer supported. Instead customers should create their "
