@@ -227,7 +227,7 @@ This means that if the original context is cancelled, the copied context will al
 
 Cancellation of a `Context` is a permanent operation. Once a context is cancelled, it cannot be un-cancelled.
 
-When a `Context` is cancelled, it is typically indicated by throwing `Azure::Core::OperationCancelledException`. This exception can be caught and handled by the application.
+When a client operation fails with an `Azure::Core::OperationCancelledException`, it is typically due to a `Context` getting cancelled. This exception can be caught and handled by the application.
 
 #### Public, Private, and Internal Types
 
