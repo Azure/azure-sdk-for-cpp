@@ -55,7 +55,6 @@ namespace Azure { namespace Core {
    * Context objects support the following operations to create new contexts:
    * - WithDeadline(DateTime): creates a new child context with a deadline.
    * - WithValue(Key, T): creates a new child context with a key/value pair.
-   * - CreateWithDeadline(DateTime): Static method to create a new context with a deadline.
    *
    * Context objects support the following operations to retrieve data:
    * - GetDeadline(): gets the deadline for the context.
@@ -195,7 +194,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Constructs a new child context with no deadline, and no value associated.
+     * @brief Constructs a context with no deadline, and no value associated.
      *
      */
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
