@@ -15,7 +15,7 @@ endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 # Disable deprecation warnings.
-  add_compile_options(/wd4996)
+#  add_compile_options(/wd4996)
 endif()
 
 

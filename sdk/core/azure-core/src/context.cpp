@@ -17,7 +17,7 @@ using namespace Azure::Core;
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
-Context Context::ApplicationContext;
+const Context Context::ApplicationContext;
 
 #if defined(_MSC_VER)
 #pragma warning(pop)

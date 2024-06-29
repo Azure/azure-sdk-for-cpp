@@ -26,8 +26,9 @@
 
 - [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
 - [[#5515]](https://github.com/Azure/azure-sdk-for-cpp/issues/5515) Add a `ShouldRetry` virtual method to the retry policy to enable customization of service-specific retry logic.
-- `Azure::Core::Context::ApplicationContext` has been deprecated. In addition, the following new functions were added:
-  - `Azure::Core::Context::CreateWithDeadline()` - this creates a new context with a deadline. This provides a convenient replacement for one common use of ApplicationContext - to create new Context objects with a deadline.
+- `Azure::Core::Context::ApplicationContext` has been deprecated. 
+- A new constructor was added to Azure::Core::Context to create a new context with a deadline directly.
+   
 
 ### Acknowledgments
 
