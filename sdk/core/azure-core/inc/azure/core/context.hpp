@@ -48,7 +48,7 @@ namespace Azure { namespace Core {
    * completes before a specific deadline. This allows an application to apply timeouts to
    * operations, or to cancel operations that need to be abandoned.
    *
-   * After cancelling a Context, all service operations operations which have the cancelled context
+   * After cancelling a Context, all service operations which have the cancelled context
    * as a parent context will be cancelled. Cancellation is indicated by throwing an
    * Azure::Core::OperationCancelledException from the operation.
    *
