@@ -48,7 +48,7 @@ namespace Azure { namespace Core {
    * completes before a specific deadline. This allows an application to apply timeouts to
    * operations, or to cancel operations that need to be abandoned.
    *
-   * After cancelling a Context, all service operations operations which have the cancelled context
+   * After cancelling a Context, all service operations which have the cancelled context
    * as a parent context will be cancelled. Cancellation is indicated by throwing an
    * Azure::Core::OperationCancelledException from the operation.
    *
@@ -372,7 +372,7 @@ namespace Azure { namespace Core {
      *
      * @note: The `ApplicationContext` object is deprecated and will be removed in a future release.
      * If your application is using `ApplicationContext`, you should create your own root context
-     * and us it where you would have otherwise used `ApplicationContext`.
+     * and use it where you would have otherwise used `ApplicationContext`.
      *
      */
     [[deprecated("ApplicationContext is no longer supported. Instead customers should create their "
