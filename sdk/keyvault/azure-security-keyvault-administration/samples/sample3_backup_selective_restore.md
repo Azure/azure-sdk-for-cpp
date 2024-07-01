@@ -32,8 +32,8 @@ In this sample we rely on a couple of extra environment variables.
  sasTokenParameter.Token
      = Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_TOKEN");
  // the backup/restore needs a url to a blob storage resource
- sasTokenParameter.StorageResourceUri
-     = Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_URL");
+ Azure::Core::Url blobUrl
+    = Azure::Core::Url(Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_URL"));
 ```
 
 ## The Backup operation 
@@ -44,7 +44,7 @@ Since this is a long running operation the service provides endpoints to determi
 
 ```cpp Snippet:SampleAdministration2StartBackup
 // Create a full backup using a user-provided SAS token to an Azure blob storage container.
-auto backupResponse = client.FullBackup(sasTokenParameter);
+auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter);
 
 std::cout << "Backup Job Id: " << backupResponse.Value.JobId << std::endl
           << "Backup Status: " << backupResponse.Value.Status << std::endl;
@@ -78,11 +78,9 @@ The selective restore operation requires a folder where a backup was previously 
 
 ```cpp Snippet:SampleAdministration2FullRestoreStart
 // Restore the full backup using a user-provided SAS token to an Azure blob storage container.
-RestoreOperationParameters restoreBlobDetails;
-restoreBlobDetails.SasTokenParameters = sasTokenParameter;
-restoreBlobDetails.FolderToRestore = "folder name here";
+std::string folderToRestore = ...;
 std::cout << "Folder to restore: " << restoreBlobDetails.FolderToRestore << std::endl;
-auto selectiveRestore = client.SelectiveKeyRestore(keyName, restoreBlobDetails);
+auto selectiveRestore = client.SelectiveKeyRestore("keyName", blobUrl, folderToRestore, sasTokenParameter);
 std::cout << "Restore Job Id: " << restoreResponse.Value.JobId << std::endl
           << "Restore Status: " << restoreResponse.Value.Status << std::endl;
 ```

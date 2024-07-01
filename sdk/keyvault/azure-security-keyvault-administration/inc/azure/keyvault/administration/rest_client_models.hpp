@@ -160,11 +160,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     struct SasTokenParameter final
     {
       /**
-       * @brief Azure Blob storage container Uri.
-       *
-       */
-      std::string StorageResourceUri;
-      /**
        * @brief The SAS token pointing to an Azure Blob storage container.
        *
        */
@@ -230,28 +225,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     };
 
     /**
-     * @brief Restore operation parameters.
-     *
-     */
-    struct RestoreOperationParameters final
-    {
-      /**
-       * @brief The SAS token pointing to an Azure Blob storage container where the previous
-       * successful full backup was stored. This token needs to be valid for at least next 24 hours
-       * from the time of making.
-       *
-       * @remark Sensitive information. Please ensure proper handling.
-       *
-       */
-      SasTokenParameter SasTokenParameters;
-      /**
-       * @brief The Folder name of the blob where the previous successful full backup was stored.
-       *
-       */
-      std::string FolderToRestore;
-    };
-
-    /**
      * @brief The selective key restore operation.
      *
      */
@@ -287,25 +260,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        *
        */
       Nullable<DateTime> EndTime;
-    };
-
-    /**
-     * @brief The Azure blob SAS token pointing to a folder where the previous successful full
-     * backup was stored.
-     *
-     */
-    struct SelectiveKeyRestoreOperationParameters final
-    {
-      /**
-       * @brief The SAS token pointing to an Azure Blob storage container where the previous
-       * successful full backup was stored.
-       *
-       */
-      SasTokenParameter SasTokenParameters;
-      /**
-       * @brief The Folder name of the blob where the previous successful full backup was stored.
-       *
-       */
-      std::string Folder;
     };
 }}}}} // namespace Azure::Security::KeyVault::Administration::Models

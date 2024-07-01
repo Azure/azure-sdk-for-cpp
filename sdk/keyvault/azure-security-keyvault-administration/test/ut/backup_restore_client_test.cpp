@@ -29,7 +29,7 @@ TEST_F(BackupRestoreClientTest, BackupFull_RECORDEDONLY_)
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
 
-    auto response = client.FullBackup(sasTokenParameter);
+    auto response = client.FullBackup(m_blobUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");
     EXPECT_TRUE(response.Value.StartTime > response.Value.StartTime.min());
@@ -51,7 +51,7 @@ TEST_F(BackupRestoreClientTest, BackupFullStatus_RECORDEDONLY_)
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
 
-    auto response = client.FullBackup(sasTokenParameter);
+    auto response = client.FullBackup(m_blobUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");
     EXPECT_TRUE(response.Value.StartTime > response.Value.StartTime.min());
@@ -82,9 +82,8 @@ TEST_F(BackupRestoreClientTest, BackupFullErrorStatus_RECORDEDONLY_)
     CreateHSMClientForTest();
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
-    Azure::Core::Url url(sasTokenParameter.StorageResourceUri);
-    sasTokenParameter.StorageResourceUri = url.GetScheme() + "://" + url.GetHost(); // invalid uri
-    auto response = client.FullBackup(sasTokenParameter);
+    Azure::Core::Url defectiveUrl ( m_blobUrl.GetScheme() + "://" + m_blobUrl.GetHost()); // invalid uri
+    auto response = client.FullBackup(defectiveUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");
     EXPECT_TRUE(response.Value.StartTime > response.Value.StartTime.min());
@@ -117,7 +116,7 @@ TEST_F(BackupRestoreClientTest, RestoreFull_RECORDEDONLY_)
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
 
-    auto response = client.FullBackup(sasTokenParameter);
+    auto response = client.FullBackup(m_blobUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");
     EXPECT_TRUE(response.Value.StartTime > response.Value.StartTime.min());
@@ -134,14 +133,11 @@ TEST_F(BackupRestoreClientTest, RestoreFull_RECORDEDONLY_)
     EXPECT_FALSE(response2.Value.Error.HasValue());
     EXPECT_EQ(response.Value.JobId, response2.Value.JobId);
 
-    RestoreOperationParameters restoreBlobDetails;
-    restoreBlobDetails.SasTokenParameters = sasTokenParameter;
     Azure::Core::Url url(response2.Value.AzureStorageBlobContainerUri);
     auto subPath = url.GetPath();
+    std::string folderToRestore = subPath.substr(7, subPath.size() - 1);
 
-    restoreBlobDetails.FolderToRestore = subPath.substr(7, subPath.size() - 1);
-
-    auto response3 = client.FullRestore(restoreBlobDetails);
+    auto response3 = client.FullRestore(m_blobUrl, folderToRestore, sasTokenParameter);
     EXPECT_EQ(response3.Value.Status, "InProgress");
     EXPECT_TRUE(response3.Value.StartTime > response3.Value.StartTime.min());
     EXPECT_FALSE(response3.Value.EndTime.HasValue());
@@ -161,7 +157,7 @@ TEST_F(BackupRestoreClientTest, RestoreFullStatus_RECORDEDONLY_)
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
 
-    auto response = client.FullBackup(sasTokenParameter);
+    auto response = client.FullBackup(m_blobUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");
     EXPECT_TRUE(response.Value.StartTime > response.Value.StartTime.min());
@@ -178,14 +174,11 @@ TEST_F(BackupRestoreClientTest, RestoreFullStatus_RECORDEDONLY_)
     EXPECT_FALSE(response2.Value.Error.HasValue());
     EXPECT_EQ(response.Value.JobId, response2.Value.JobId);
 
-    RestoreOperationParameters restoreBlobDetails;
-    restoreBlobDetails.SasTokenParameters = sasTokenParameter;
     Azure::Core::Url url(response2.Value.AzureStorageBlobContainerUri);
     auto subPath = url.GetPath();
+    std::string folderToRestore = subPath.substr(7, subPath.size() - 1);
 
-    restoreBlobDetails.FolderToRestore = subPath.substr(7, subPath.size() - 1);
-
-    auto response3 = client.FullRestore(restoreBlobDetails);
+    auto response3 = client.FullRestore(m_blobUrl, folderToRestore, sasTokenParameter);
     EXPECT_EQ(response3.Value.Status, "InProgress");
     EXPECT_TRUE(response3.Value.StartTime > response3.Value.StartTime.min());
     EXPECT_FALSE(response3.Value.EndTime.HasValue());
@@ -215,7 +208,7 @@ TEST_F(BackupRestoreClientTest, RestoreSelectiveStatus_RECORDEDONLY_)
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
 
-    auto response = client.FullBackup(sasTokenParameter);
+    auto response = client.FullBackup(m_blobUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");
     EXPECT_TRUE(response.Value.StartTime > response.Value.StartTime.min());
@@ -232,14 +225,12 @@ TEST_F(BackupRestoreClientTest, RestoreSelectiveStatus_RECORDEDONLY_)
     EXPECT_FALSE(response2.Value.Error.HasValue());
     EXPECT_EQ(response.Value.JobId, response2.Value.JobId);
 
-    SelectiveKeyRestoreOperationParameters restoreBlobDetails;
-    restoreBlobDetails.SasTokenParameters = sasTokenParameter;
-
     Azure::Core::Url url(response2.Value.AzureStorageBlobContainerUri);
     auto subPath = url.GetPath();
-    restoreBlobDetails.Folder = subPath.substr(7, subPath.size() - 1);
+    std::string folderToRestore = subPath.substr(7, subPath.size() - 1);
 
-    auto response3 = client.SelectiveKeyRestore("trytry", restoreBlobDetails);
+    auto response3
+        = client.SelectiveKeyRestore("trytry", m_blobUrl, folderToRestore, sasTokenParameter);
     EXPECT_EQ(response3.Value.Status, "InProgress");
     EXPECT_TRUE(response3.Value.StartTime > response3.Value.StartTime.min());
     EXPECT_FALSE(response3.Value.EndTime.HasValue());
@@ -269,7 +260,7 @@ TEST_F(BackupRestoreClientTest, RestoreSelectiveInvalidKeyStatus_RECORDEDONLY_)
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
 
-    auto response = client.FullBackup(sasTokenParameter);
+    auto response = client.FullBackup(m_blobUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");
     EXPECT_TRUE(response.Value.StartTime > response.Value.StartTime.min());
@@ -286,14 +277,12 @@ TEST_F(BackupRestoreClientTest, RestoreSelectiveInvalidKeyStatus_RECORDEDONLY_)
     EXPECT_FALSE(response2.Value.Error.HasValue());
     EXPECT_EQ(response.Value.JobId, response2.Value.JobId);
 
-    SelectiveKeyRestoreOperationParameters restoreBlobDetails;
-    restoreBlobDetails.SasTokenParameters = sasTokenParameter;
-
     Azure::Core::Url url(response2.Value.AzureStorageBlobContainerUri);
     auto subPath = url.GetPath();
-    restoreBlobDetails.Folder = subPath.substr(7, subPath.size() - 1);
+    std::string folderToRestore = subPath.substr(7, subPath.size() - 1);
 
-    auto response3 = client.SelectiveKeyRestore("trytry2", restoreBlobDetails);
+    auto response3
+        = client.SelectiveKeyRestore("trytry2", m_blobUrl, folderToRestore, sasTokenParameter);
     EXPECT_EQ(response3.Value.Status, "InProgress");
     EXPECT_TRUE(response3.Value.StartTime > response3.Value.StartTime.min());
     EXPECT_FALSE(response3.Value.EndTime.HasValue());

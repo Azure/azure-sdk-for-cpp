@@ -55,15 +55,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Creates a full backup using a user-provided SAS token to an Azure blob storage
      *        container.
      *
-     * @param azureStorageBlobContainerUri Azure blob shared access signature token pointing to a
-     *        valid Azure blob container where full backup needs to be
-     *        stored. This token needs to be valid for at least next 24
-     *        hours from the time of making this call.
+     * @param blobContainerUrl The URL for the blob storage resource.
+     * @param sasToken Azure blob shared access signature token pointing to a
+     * valid Azure blob container where full backup needs to be
+     * stored. This token needs to be valid for at least next 24
+     * hours from the time of making this call.
      * @param context The context for the operation can be used for request cancellation.
      * @return A full backup operation.
      */
     Response<FullBackupOperation> FullBackup(
-        SasTokenParameter const& azureStorageBlobContainerUri,
+        Azure::Core::Url const& blobContainerUrl,
+        SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
     /**
@@ -81,13 +83,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Restores all key materials using the SAS token pointing to a previously stored Azure
      *        Blob storage backup folder.
      *
-     * @param restoreBlobDetails The Azure blob SAS token pointing to a folder where the previous
-     *        successful full backup was stored.
+     * @param blobContainerUrl The URL for the blob storage resource, including the path to the blob
+     * @param folderToRestore The path to the blob container where the backup resides.
+     * @param sasToken Azure blob shared access signature token pointing to a valid Azure blob
+     * container where full backup needs to be stored. This token needs to be valid for at least
+     * next 24 hours from the time of making this call.
      * @param context The context for the operation can be used for request cancellation.
      * @return A full restore operation.
      */
     Response<RestoreOperation> FullRestore(
-        RestoreOperationParameters const& restoreBlobDetails,
+        Azure::Core::Url const& blobContainerUrl,
+        std::string folderToRestore,
+        SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
     /**
@@ -106,14 +113,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *         previously stored Azure Blob storage backup folder.
      *
      * @param keyName The name of the key to be restored from the user supplied backup.
-     * @param restoreBlobDetails The Azure blob SAS token pointing to a folder where the previous
-     *        successful full backup was stored
+     * @param blobContainerUrl The URL for the blob storage resource, including the path to the blob
+     * @param folderToRestore The path to the blob container where the backup resides.
+     * @param sasToken Azure blob shared access signature token pointing to a valid Azure blob
+     * container where full backup needs to be stored. This token needs to be valid for at least
+     * next 24 hours from the time of making this call.
      * @param context The context for the operation can be used for request cancellation.
      * @return A selective key restore operation.
      */
     Response<SelectiveKeyRestoreOperation> SelectiveKeyRestore(
         std::string const& keyName,
-        SelectiveKeyRestoreOperationParameters const& restoreBlobDetails,
+        Azure::Core::Url const& blobContainerUrl,
+        std::string folderToRestore,
+        SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
   private:

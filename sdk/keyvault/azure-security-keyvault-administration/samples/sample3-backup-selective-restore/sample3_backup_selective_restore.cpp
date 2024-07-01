@@ -31,14 +31,14 @@ int main()
   sasTokenParameter.Token
       = Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_TOKEN");
   // the backup/restore needs a url to a blob storage resource
-  sasTokenParameter.StorageResourceUri
-      = Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_URL");
+  Azure::Core::Url blobUrl
+      = Azure::Core::Url(Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_URL"));
   // the key name to restore from backup
   const std::string keyName = "trytry";
   try
   {
     // Create a full backup using a user-provided SAS token to an Azure blob storage container.
-    auto backupResponse = client.FullBackup(sasTokenParameter);
+    auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter);
 
     std::cout << "Backup Job Id: " << backupResponse.Value.JobId << std::endl
               << "Backup Status: " << backupResponse.Value.Status << std::endl;
@@ -55,13 +55,13 @@ int main()
               << "Backup Status: " << backupStatus.Value.Status << std::endl;
     // Restore a selected key from the backup using a user-provided SAS token to an Azure blob
     // storage container.
-    SelectiveKeyRestoreOperationParameters restoreBlobDetails;
-    restoreBlobDetails.SasTokenParameters = sasTokenParameter;
-
     Azure::Core::Url url(backupStatus.Value.AzureStorageBlobContainerUri);
     auto subPath = url.GetPath();
-    restoreBlobDetails.Folder = subPath.substr(7, subPath.size() - 1);
-    auto selectiveRestore = client.SelectiveKeyRestore(keyName, restoreBlobDetails);
+    std::string folderToRestore = subPath.substr(7, subPath.size() - 1);
+
+    std::cout << "Folder to restore: " << folderToRestore << std::endl;
+    auto selectiveRestore
+        = client.SelectiveKeyRestore("trytry", blobUrl, folderToRestore, sasTokenParameter);
     std::cout << "Selective Restore Job Id: " << selectiveRestore.Value.JobId << std::endl
               << "Selective Restore Status: " << selectiveRestore.Value.Status << std::endl;
 

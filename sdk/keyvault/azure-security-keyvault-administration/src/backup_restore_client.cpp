@@ -53,7 +53,8 @@ BackupRestoreClient::BackupRestoreClient(
 }
 
 Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
-    SasTokenParameter const& azureStorageBlobContainerUri,
+    Azure::Core::Url const& blobContainerUrl,
+    SasTokenParameter const& sasToken,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
@@ -65,16 +66,16 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
   {
     auto jsonRoot = Core::Json::_internal::json::object();
 
-    jsonRoot["storageResourceUri"] = azureStorageBlobContainerUri.StorageResourceUri;
+    jsonRoot["storageResourceUri"] = blobContainerUrl.GetAbsoluteUrl();
 
-    if (azureStorageBlobContainerUri.Token.HasValue())
+    if (sasToken.Token.HasValue())
     {
-      jsonRoot["token"] = azureStorageBlobContainerUri.Token.Value();
+      jsonRoot["token"] = sasToken.Token.Value();
     }
 
-    if (azureStorageBlobContainerUri.UseManagedIdentity.HasValue())
+    if (sasToken.UseManagedIdentity.HasValue())
     {
-      jsonRoot["useManagedIdentity"] = azureStorageBlobContainerUri.UseManagedIdentity.Value();
+      jsonRoot["useManagedIdentity"] = sasToken.UseManagedIdentity.Value();
     }
 
     jsonBody = jsonRoot.dump();
@@ -211,7 +212,9 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
 }
 
 Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
-    RestoreOperationParameters const& restoreBlobDetails,
+    Azure::Core::Url const& blobContainerUrl,
+    std::string folderToRestore,
+    SasTokenParameter const& sasToken,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
@@ -224,20 +227,20 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
     auto jsonRoot = Core::Json::_internal::json::object();
 
     jsonRoot["sasTokenParameters"]["storageResourceUri"]
-        = restoreBlobDetails.SasTokenParameters.StorageResourceUri;
+        = blobContainerUrl.GetAbsoluteUrl();
 
-    if (restoreBlobDetails.SasTokenParameters.Token.HasValue())
+    if (sasToken.Token.HasValue())
     {
-      jsonRoot["sasTokenParameters"]["token"] = restoreBlobDetails.SasTokenParameters.Token.Value();
+      jsonRoot["sasTokenParameters"]["token"] = sasToken.Token.Value();
     }
 
-    if (restoreBlobDetails.SasTokenParameters.UseManagedIdentity.HasValue())
+    if (sasToken.UseManagedIdentity.HasValue())
     {
       jsonRoot["sasTokenParameters"]["useManagedIdentity"]
-          = restoreBlobDetails.SasTokenParameters.UseManagedIdentity.Value();
+          = sasToken.UseManagedIdentity.Value();
     }
 
-    jsonRoot["folderToRestore"] = restoreBlobDetails.FolderToRestore;
+    jsonRoot["folderToRestore"] = folderToRestore;
 
     jsonBody = jsonRoot.dump();
   }
@@ -357,7 +360,9 @@ Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
 
 Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyRestore(
     std::string const& keyName,
-    SelectiveKeyRestoreOperationParameters const& restoreBlobDetails,
+    Azure::Core::Url const& blobContainerUrl,
+    std::string folderToRestore,
+    SasTokenParameter const& sasToken,
     Core::Context const& context)
 {
   auto url = m_vaultBaseUrl;
@@ -372,20 +377,20 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
     auto jsonRoot = Core::Json::_internal::json::object();
 
     jsonRoot["sasTokenParameters"]["storageResourceUri"]
-        = restoreBlobDetails.SasTokenParameters.StorageResourceUri;
+        = blobContainerUrl.GetAbsoluteUrl();
 
-    if (restoreBlobDetails.SasTokenParameters.Token.HasValue())
+    if (sasToken.Token.HasValue())
     {
-      jsonRoot["sasTokenParameters"]["token"] = restoreBlobDetails.SasTokenParameters.Token.Value();
+      jsonRoot["sasTokenParameters"]["token"] = sasToken.Token.Value();
     }
 
-    if (restoreBlobDetails.SasTokenParameters.UseManagedIdentity.HasValue())
+    if (sasToken.UseManagedIdentity.HasValue())
     {
       jsonRoot["sasTokenParameters"]["useManagedIdentity"]
-          = restoreBlobDetails.SasTokenParameters.UseManagedIdentity.Value();
+          = sasToken.UseManagedIdentity.Value();
     }
 
-    jsonRoot["folder"] = restoreBlobDetails.Folder;
+    jsonRoot["folder"] = folderToRestore;
 
     jsonBody = jsonRoot.dump();
   }

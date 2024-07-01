@@ -42,7 +42,7 @@ namespace Azure {
       // the backup/restore needs a SAS token to access the storage account
       sasTokenParameter.Token = GetEnv("AZURE_KEYVAULT_BACKUP_TOKEN");
       // the backup/restore needs a url to a blob storage resource
-      sasTokenParameter.StorageResourceUri = GetEnv("AZURE_KEYVAULT_BACKUP_URL");
+      m_blobUrl = Azure::Core::Url(GetEnv("AZURE_KEYVAULT_BACKUP_URL"));
 
       sasTokenParameter.UseManagedIdentity = managedIdentity;
       return sasTokenParameter;
@@ -55,6 +55,7 @@ namespace Azure {
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
+    Azure::Core::Url m_blobUrl;
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::minutes(1);
 
