@@ -276,7 +276,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Creates a new child context with \p key and \p value
-     * associated with it. The new child context has no deadline.
+     * associated with it.
      *
      * @tparam T The type of the value to be stored with the key.
      * @param key A key to associate with this context.
