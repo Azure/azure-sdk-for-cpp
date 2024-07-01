@@ -226,8 +226,7 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
   {
     auto jsonRoot = Core::Json::_internal::json::object();
 
-    jsonRoot["sasTokenParameters"]["storageResourceUri"]
-        = blobContainerUrl.GetAbsoluteUrl();
+    jsonRoot["sasTokenParameters"]["storageResourceUri"] = blobContainerUrl.GetAbsoluteUrl();
 
     if (sasToken.Token.HasValue())
     {
@@ -236,8 +235,7 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
 
     if (sasToken.UseManagedIdentity.HasValue())
     {
-      jsonRoot["sasTokenParameters"]["useManagedIdentity"]
-          = sasToken.UseManagedIdentity.Value();
+      jsonRoot["sasTokenParameters"]["useManagedIdentity"] = sasToken.UseManagedIdentity.Value();
     }
 
     jsonRoot["folderToRestore"] = folderToRestore;
@@ -376,8 +374,7 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
   {
     auto jsonRoot = Core::Json::_internal::json::object();
 
-    jsonRoot["sasTokenParameters"]["storageResourceUri"]
-        = blobContainerUrl.GetAbsoluteUrl();
+    jsonRoot["sasTokenParameters"]["storageResourceUri"] = blobContainerUrl.GetAbsoluteUrl();
 
     if (sasToken.Token.HasValue())
     {
@@ -386,8 +383,7 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
 
     if (sasToken.UseManagedIdentity.HasValue())
     {
-      jsonRoot["sasTokenParameters"]["useManagedIdentity"]
-          = sasToken.UseManagedIdentity.Value();
+      jsonRoot["sasTokenParameters"]["useManagedIdentity"] = sasToken.UseManagedIdentity.Value();
     }
 
     jsonRoot["folder"] = folderToRestore;

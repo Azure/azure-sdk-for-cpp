@@ -7,6 +7,8 @@
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_HSM_URL:  To the Key Vault HSM URL.
+ * - AZURE_KEYVAULT_BACKUP_TOKEN : The SAS token to access the blob storage account for backup/restore
+ * - AZURE_KEYVAULT_BACKUP_URL : The URL to the blob storage account
  *
  */
 

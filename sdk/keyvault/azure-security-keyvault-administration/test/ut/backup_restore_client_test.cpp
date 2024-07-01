@@ -82,7 +82,8 @@ TEST_F(BackupRestoreClientTest, BackupFullErrorStatus_RECORDEDONLY_)
     CreateHSMClientForTest();
     auto& client = GetClientForTest(testName);
     SasTokenParameter sasTokenParameter = GetSasTokenBackup();
-    Azure::Core::Url defectiveUrl ( m_blobUrl.GetScheme() + "://" + m_blobUrl.GetHost()); // invalid uri
+    Azure::Core::Url defectiveUrl(
+        m_blobUrl.GetScheme() + "://" + m_blobUrl.GetHost()); // invalid uri
     auto response = client.FullBackup(defectiveUrl, sasTokenParameter);
 
     EXPECT_EQ(response.Value.Status, "InProgress");

@@ -7,6 +7,9 @@
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_HSM_URL:  To the Key Vault HSM URL.
+ * - AZURE_KEYVAULT_BACKUP_TOKEN : The SAS token to access the blob storage account for
+ * backup/restore
+ * - AZURE_KEYVAULT_BACKUP_URL : The URL to the blob storage account
  *
  */
 
@@ -31,8 +34,8 @@ int main()
   sasTokenParameter.Token
       = Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_TOKEN");
   // the backup/restore needs a url to a blob storage resource
-  Azure::Core::Url blobUrl
-      = Azure::Core::Url(Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_URL"));
+  Azure::Core::Url blobUrl = Azure::Core::Url(
+      Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_URL"));
   // the key name to restore from backup
   const std::string keyName = "trytry";
   try
