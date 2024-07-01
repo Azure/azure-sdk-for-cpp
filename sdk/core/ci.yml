@@ -108,8 +108,6 @@ extends:
           Value: "33333333-3333-3333-3333-333333333333"
         - Name: AZURE_CLIENT_ID
           Value: "non-real-client"
-        - Name: AZURE_CLIENT_SECRET
-          Value: "non-real-secret"
 # Storage
         - Name: AAD_TENANT_ID
           Value: "33333333-3333-3333-3333-333333333333"
