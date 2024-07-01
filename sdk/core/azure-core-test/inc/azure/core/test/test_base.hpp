@@ -15,6 +15,8 @@
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
+#include <azure/identity/azure_pipelines_credential.hpp>
+#include <azure/identity/chained_token_credential.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/identity/default_azure_credential.hpp>
 
@@ -246,7 +248,16 @@ namespace Azure { namespace Core { namespace Test {
         }
         if (clientSecret.empty())
         {
-          m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+          m_testCredential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
+              Azure::Identity::ChainedTokenCredential::Sources{
+                  std::make_shared<Azure::Identity::AzurePipelinesCredential>(
+                      GetEnv("AZURE_TENANT_ID"),
+                      GetEnv("AZURE_CLIENT_ID"),
+                      "serviceConnectionId", // gearama these need to be updated to use the proper
+                                             // ENVs defined in the pipeline
+                      "systemAccessToken"), // gearama these need to be updated to use the proper
+                                            // ENVs defined in the pipeline
+                  std::make_shared<Azure::Identity::DefaultAzureCredential>()});
         }
         else
         {
