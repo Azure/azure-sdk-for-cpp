@@ -177,3 +177,4 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [rbac_guide]: https://learn.microsoft.com/azure/key-vault/general/rbac-guide
 [best_practices]: https://learn.microsoft.com/azure/key-vault/managed-hsm/best-practices
 [built_in_roles]: https://learn.microsoft.com/azure/key-vault/managed-hsm/built-in-roles
+
