@@ -374,7 +374,8 @@ namespace Azure { namespace Core {
      * and use it where you would have otherwise used `ApplicationContext`.
      *
      */
-    [[deprecated("ApplicationContext is no longer supported. Instead customers should create their "
-                 "own root context objects.")]] static const AZ_CORE_DLLEXPORT Context ApplicationContext;
+    [[deprecated(
+        "ApplicationContext is no longer supported. Instead customers should create their "
+        "own root context objects.")]] static const AZ_CORE_DLLEXPORT Context ApplicationContext;
   };
 }} // namespace Azure::Core
