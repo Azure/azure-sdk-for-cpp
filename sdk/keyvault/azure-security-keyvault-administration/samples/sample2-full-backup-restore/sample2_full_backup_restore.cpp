@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <thread>
 
 using namespace Azure::Security::KeyVault::Administration;
 using namespace std::chrono_literals;
