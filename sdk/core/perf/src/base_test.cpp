@@ -292,10 +292,8 @@ namespace Azure { namespace Perf {
                 std::make_shared<Azure::Identity::AzurePipelinesCredential>(
                     GetEnv("AZURE_TENANT_ID"),
                     GetEnv("AZURE_CLIENT_ID"),
-                    "serviceConnectionId", // gearama these need to be updated to use the proper
-                                           // ENVs defined in the pipeline
-                    "systemAccessToken"), // gearama these need to be updated to use the proper
-                                          // ENVs defined in the pipeline
+                    GetEnv("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
+                    GetEnv("SYSTEM_ACCESSTOKEN")),
                 std::make_shared<Azure::Identity::DefaultAzureCredential>()});
       }
       else
