@@ -268,67 +268,67 @@
                 "Purge"
               ]
             }
+          },
+          {
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "List",
+                "Update",
+                "Create",
+                "Import",
+                "Delete",
+                "Recover",
+                "Backup",
+                "Restore",
+                "Decrypt",
+                "Encrypt",
+                "UnwrapKey",
+                "WrapKey",
+                "Sign",
+                "Purge",
+                "Rotate",
+                "Verify",
+                "GetRotationPolicy",
+                "SetRotationPolicy"
+              ],
+              "secrets": [
+                "Get",
+                "List",
+                "Set",
+                "Delete",
+                "Recover",
+                "Backup",
+                "Restore",
+                "Purge"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Update",
+                "Create",
+                "Import",
+                "Delete",
+                "Recover",
+                "Backup",
+                "Restore",
+                "ManageContacts",
+                "ManageIssuers",
+                "GetIssuers",
+                "ListIssuers",
+                "SetIssuers",
+                "DeleteIssuers",
+                "Purge"
+              ]
+            }
           }
         ],
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
         "enableSoftDelete": "[parameters('enableSoftDelete')]"
-      }
-    },
-    {
-      "tenantId": "[parameters('tenantId')]",
-      "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
-      "permissions": {
-        "keys": [
-          "Get",
-          "List",
-          "Update",
-          "Create",
-          "Import",
-          "Delete",
-          "Recover",
-          "Backup",
-          "Restore",
-          "Decrypt",
-          "Encrypt",
-          "UnwrapKey",
-          "WrapKey",
-          "Sign",
-          "Purge",
-          "Rotate",
-          "Verify",
-          "GetRotationPolicy",
-          "SetRotationPolicy"
-        ],
-        "secrets": [
-          "Get",
-          "List",
-          "Set",
-          "Delete",
-          "Recover",
-          "Backup",
-          "Restore",
-          "Purge"
-        ],
-        "certificates": [
-          "Get",
-          "List",
-          "Update",
-          "Create",
-          "Import",
-          "Delete",
-          "Recover",
-          "Backup",
-          "Restore",
-          "ManageContacts",
-          "ManageIssuers",
-          "GetIssuers",
-          "ListIssuers",
-          "SetIssuers",
-          "DeleteIssuers",
-          "Purge"
-        ]
       }
     },
     {
