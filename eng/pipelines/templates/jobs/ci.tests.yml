@@ -82,7 +82,8 @@ jobs:
         sdl:
           codeql:
             compiled: 
-              enabled: false      
+              enabled: false
+
     variables:
     - name: CMOCKA_XML_FILE
       value: "%g-test-results.xml"
