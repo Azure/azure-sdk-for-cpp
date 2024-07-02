@@ -419,8 +419,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareServiceClientTest, OAuth_PLAYBACKONLY_)
   {
-
-    // Create from client secret credential.
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
