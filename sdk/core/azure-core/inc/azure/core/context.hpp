@@ -213,9 +213,10 @@ namespace Azure { namespace Core {
     /**
      * @brief Copies a context.
      *
-     * This operation copies one context to another. Context objects are copied by reference, so the
-     * new context will share the same state as the original context. This also means that
-     * cancelling one context cancels all contexts which are copied from the original context.
+     * This operation copies one context to another. Context objects are copied by reference,
+     * so the new context will share the same state as the original context. This also means
+     * that cancelling one context cancels all contexts which are copied from the original
+     * context.
      *
      * 	@param other Another context to copy.
      *
