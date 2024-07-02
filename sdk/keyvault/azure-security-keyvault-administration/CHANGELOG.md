@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add support for Backup/Restore operations for Key Vault HSM.
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -76,6 +76,10 @@ extends:
           Value: "debug"
         - Name: LOGGING__LOGLEVEL__MICROSOFT
           Value: "debug"
+        - Name: AZURE_KEYVAULT_BACKUP_TOKEN
+          Value: "Sanitized"
+        - Name: AZURE_KEYVAULT_BACKUP_URL
+          Value: "https://non-real-account.blob.core.windows.net/backup"
       CMakeTestOptions:
         - Name: Default
           Value: ''
