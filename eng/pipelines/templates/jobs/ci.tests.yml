@@ -76,6 +76,13 @@ jobs:
       ${{ else }}:
         image: $(OSVmImage)
       os: ${{ parameters.OSName }}
+
+    ${{ if eq(parameters.OSName, 'macOS') }}:
+      templateContext:
+        sdl:
+          codeql:
+            compiled: 
+              enabled: false      
     variables:
     - name: CMOCKA_XML_FILE
       value: "%g-test-results.xml"
