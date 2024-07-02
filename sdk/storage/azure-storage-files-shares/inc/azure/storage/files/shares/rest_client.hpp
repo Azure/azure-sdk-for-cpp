@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-08-04";
+    constexpr static const char* ApiVersion = "2024-11-04";
   } // namespace _detail
   namespace Models {
     /**
@@ -137,6 +137,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Settings for SMB protocol.
        */
       SmbSettings Settings;
+    };
+    /**
+     * @brief Valid value is backup.
+     */
+    class ShareTokenIntent final {
+    public:
+      /** Constructs a new ShareTokenIntent instance */
+      ShareTokenIntent() = default;
+      /** Constructs a new ShareTokenIntent from a string. */
+      explicit ShareTokenIntent(std::string value) : m_value(std::move(value)) {}
+      /** Compares with another ShareTokenIntent. */
+      bool operator==(const ShareTokenIntent& other) const { return m_value == other.m_value; }
+      /** Compares with another ShareTokenIntent. */
+      bool operator!=(const ShareTokenIntent& other) const { return !(*this == other); }
+      /** Converts the value to a string. */
+      const std::string& ToString() const { return m_value; }
+      /** Constant value of type ShareTokenIntent: Backup */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
+
+    private:
+      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareServiceClient::SetProperties.
@@ -746,27 +767,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * share at the time the share snapshot was taken.
        */
       DateTime LastModified;
-    };
-    /**
-     * @brief Valid value is backup.
-     */
-    class ShareTokenIntent final {
-    public:
-      /** Constructs a new ShareTokenIntent instance */
-      ShareTokenIntent() = default;
-      /** Constructs a new ShareTokenIntent from a string. */
-      explicit ShareTokenIntent(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another ShareTokenIntent. */
-      bool operator==(const ShareTokenIntent& other) const { return m_value == other.m_value; }
-      /** Compares with another ShareTokenIntent. */
-      bool operator!=(const ShareTokenIntent& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
-      /** Constant value of type ShareTokenIntent: Backup */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::CreatePermission.
@@ -2061,6 +2061,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct SetServicePropertiesOptions final
       {
         Models::ShareServiceProperties ShareServiceProperties;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetServicePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2069,6 +2070,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Context& context);
       struct GetServicePropertiesOptions final
       {
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::ShareServiceProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2081,6 +2083,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Marker;
         Nullable<int32_t> MaxResults;
         Nullable<Models::ListSharesIncludeFlags> Include;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ListSharesResponse> ListSharesSegment(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2098,6 +2101,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareProtocols> EnabledProtocols;
         Nullable<Models::ShareRootSquash> RootSquash;
         Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2108,6 +2112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Nullable<std::string> Sharesnapshot;
         Nullable<std::string> LeaseId;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::ShareProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2119,6 +2124,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Sharesnapshot;
         Nullable<Models::DeleteSnapshotsOption> DeleteSnapshots;
         Nullable<std::string> LeaseId;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::DeleteShareResult> Delete(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2130,6 +2136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<int32_t> Duration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<std::string> Sharesnapshot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::AcquireShareLeaseResult> AcquireLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2140,6 +2147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         std::string LeaseId;
         Nullable<std::string> Sharesnapshot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ReleaseShareLeaseResult> ReleaseLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2151,6 +2159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string LeaseId;
         Nullable<std::string> ProposedLeaseId;
         Nullable<std::string> Sharesnapshot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ChangeShareLeaseResult> ChangeLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2161,6 +2170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         std::string LeaseId;
         Nullable<std::string> Sharesnapshot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::RenewShareLeaseResult> RenewLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2172,6 +2182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<int32_t> BreakPeriod;
         Nullable<std::string> LeaseId;
         Nullable<std::string> Sharesnapshot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::BreakShareLeaseResult> BreakLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2181,6 +2192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct CreateShareSnapshotOptions final
       {
         std::map<std::string, std::string> Metadata;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::CreateShareSnapshotResult> CreateSnapshot(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2214,6 +2226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareRootSquash> RootSquash;
         Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2224,6 +2237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetShareMetadataResult> SetMetadata(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2233,6 +2247,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct GetShareAccessPolicyOptions final
       {
         Nullable<std::string> LeaseId;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::ShareAccessPolicy> GetAccessPolicy(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2243,6 +2258,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         std::vector<Models::SignedIdentifier> ShareAcl;
         Nullable<std::string> LeaseId;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetShareAccessPolicyResult> SetAccessPolicy(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2252,6 +2268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct GetShareStatisticsOptions final
       {
         Nullable<std::string> LeaseId;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::ShareStatistics> GetStatistics(
           Core::Http::_internal::HttpPipeline& pipeline,
