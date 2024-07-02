@@ -184,7 +184,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * specified service instance.
      */
     Response<Models::OpenIdMetadata> GetOpenIdMetadata(
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = {}) const;
 
     /**
      * @brief Retrieve the attestation signing certificates for this attestation instance.

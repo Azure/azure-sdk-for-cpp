@@ -76,23 +76,21 @@ TEST(ClientOptions, copyWithOperator)
   options.PerRetryPolicies.emplace_back(std::make_unique<PerRetryPolicy>());
 
   // Now Copy
-  auto copyOptions = options;
+  ClientOptions copyOptions = options;
 
   // Compare
   EXPECT_EQ(1, copyOptions.Retry.MaxRetries);
   EXPECT_EQ(std::string("pleaseCopyMe"), copyOptions.Telemetry.ApplicationId);
   Request r(HttpMethod::Get, Url(""));
-  auto result = copyOptions.Transport.Transport->Send(r, Context::ApplicationContext);
+  auto result = copyOptions.Transport.Transport->Send(r, Context{});
   EXPECT_EQ(nullptr, result);
 
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
-  result = copyOptions.PerOperationPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerOperationPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
-  result = copyOptions.PerRetryPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerRetryPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -113,17 +111,15 @@ TEST(ClientOptions, copyWithConstructor)
   EXPECT_EQ(1, copyOptions.Retry.MaxRetries);
   EXPECT_EQ(std::string("pleaseCopyMe"), copyOptions.Telemetry.ApplicationId);
   Request r(HttpMethod::Get, Url(""));
-  auto result = copyOptions.Transport.Transport->Send(r, Context::ApplicationContext);
+  auto result = copyOptions.Transport.Transport->Send(r, Context{});
   EXPECT_EQ(nullptr, result);
 
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
-  result = copyOptions.PerOperationPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerOperationPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
-  result = copyOptions.PerRetryPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerRetryPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -151,17 +147,15 @@ TEST(ClientOptions, copyDerivedClassConstructor)
   EXPECT_EQ(1, copyOptions.Retry.MaxRetries);
   EXPECT_EQ(std::string("pleaseCopyMe"), copyOptions.Telemetry.ApplicationId);
   Request r(HttpMethod::Get, Url(""));
-  auto result = copyOptions.Transport.Transport->Send(r, Context::ApplicationContext);
+  auto result = copyOptions.Transport.Transport->Send(r, Context{});
   EXPECT_EQ(nullptr, result);
 
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
-  result = copyOptions.PerOperationPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerOperationPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
-  result = copyOptions.PerRetryPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerRetryPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -182,24 +176,22 @@ TEST(ClientOptions, copyDerivedClassOperator)
   options.PerRetryPolicies.emplace_back(std::make_unique<PerRetryPolicy>());
 
   // Now Copy
-  auto copyOptions = options;
+  ServiceClientOptions copyOptions = options;
 
   // Compare
   EXPECT_EQ("I am not real!", copyOptions.ApiVersion);
   EXPECT_EQ(1, copyOptions.Retry.MaxRetries);
   EXPECT_EQ(std::string("pleaseCopyMe"), copyOptions.Telemetry.ApplicationId);
   Request r(HttpMethod::Get, Url(""));
-  auto result = copyOptions.Transport.Transport->Send(r, Context::ApplicationContext);
+  auto result = copyOptions.Transport.Transport->Send(r, Context{});
   EXPECT_EQ(nullptr, result);
 
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
-  result = copyOptions.PerOperationPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerOperationPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
-  result = copyOptions.PerRetryPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerRetryPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
 
@@ -227,16 +219,14 @@ TEST(ClientOptions, moveConstruct)
   EXPECT_EQ(1, copyOptions.Retry.MaxRetries);
   EXPECT_EQ(std::string("pleaseCopyMe"), copyOptions.Telemetry.ApplicationId);
   Request r(HttpMethod::Get, Url(""));
-  auto result = copyOptions.Transport.Transport->Send(r, Context::ApplicationContext);
+  auto result = copyOptions.Transport.Transport->Send(r, Context{});
   EXPECT_EQ(nullptr, result);
 
   EXPECT_EQ(1, copyOptions.PerOperationPolicies.size());
-  result = copyOptions.PerOperationPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerOperationPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerCallPolicy"), result->GetReasonPhrase());
 
   EXPECT_EQ(1, copyOptions.PerRetryPolicies.size());
-  result = copyOptions.PerRetryPolicies[0]->Send(
-      r, NextHttpPolicy(0, {}), Context::ApplicationContext);
+  result = copyOptions.PerRetryPolicies[0]->Send(r, NextHttpPolicy(0, {}), Context{});
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }

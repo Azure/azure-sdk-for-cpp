@@ -87,7 +87,7 @@ TEST(TracingContextFactory, SimpleServiceSpanTests)
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my.service", "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", Context{});
     EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
   }
 }
@@ -184,7 +184,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", Context{});
     ServiceSpan span = std::move(contextAndSpan.Span);
 
     span.End();
@@ -200,7 +200,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", Context{});
     ServiceSpan span = std::move(contextAndSpan.Span);
 
     span.End();
@@ -221,7 +221,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", Context{});
     ServiceSpan span = std::move(contextAndSpan.Span);
 
     span.End();

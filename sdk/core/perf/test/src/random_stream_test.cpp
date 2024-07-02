@@ -16,11 +16,11 @@ TEST(circular_stream, basic)
   std::vector<uint8_t> buffer2(chunk);
 
   // 1st read
-  auto count = r_stream->Read(buffer.data(), chunk, Azure::Core::Context::ApplicationContext);
+  auto count = r_stream->Read(buffer.data(), chunk, Azure::Core::Context{});
   EXPECT_EQ(count, chunk);
 
   // 2nd read
-  count = r_stream->Read(buffer2.data(), chunk, Azure::Core::Context::ApplicationContext);
+  count = r_stream->Read(buffer2.data(), chunk, Azure::Core::Context{});
   EXPECT_EQ(count, chunk);
   for (size_t i = 0; i != chunk; i++)
   {
@@ -28,7 +28,7 @@ TEST(circular_stream, basic)
   }
 
   // 3nd read
-  count = r_stream->Read(buffer.data(), chunk, Azure::Core::Context::ApplicationContext);
+  count = r_stream->Read(buffer.data(), chunk, Azure::Core::Context{});
   EXPECT_EQ(count, chunk);
   for (size_t i = 0; i != chunk; i++)
   {
@@ -36,7 +36,7 @@ TEST(circular_stream, basic)
   }
 
   // 4nd read
-  count = r_stream->Read(buffer.data(), chunk, Azure::Core::Context::ApplicationContext);
+  count = r_stream->Read(buffer.data(), chunk, Azure::Core::Context{});
   EXPECT_EQ(count, 0U);
   // should not change buffer
   for (size_t i = 0; i != chunk; i++)

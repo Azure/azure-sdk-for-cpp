@@ -13,12 +13,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
   add_compile_options(-Wno-error=deprecated-declarations)
 endif()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-# Disable deprecation warnings.
-  add_compile_options(/wd4996)
-endif()
-
-
 project (azure-core-tracing-opentelemetry-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

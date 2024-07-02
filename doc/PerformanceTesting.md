@@ -61,7 +61,7 @@ Contains one cpp file that contains the main method defintion
         Service::Namespace::Test::TestName::GetTestMetadata(),
     };
     
-    Azure::Perf::Program::Run(Azure::Core::Context::ApplicationContext, tests, argc, argv);
+    Azure::Perf::Program::Run(Azure::Core::Context{}, tests, argc, argv);
 
     return 0;
     }

@@ -165,7 +165,7 @@ TEST(RequestActivityPolicy, Basic)
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", Context{});
     Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
@@ -197,7 +197,7 @@ TEST(RequestActivityPolicy, Basic)
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "Azure.Service", "service", "1.0.0.beta-2");
-    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", Context{});
     Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
