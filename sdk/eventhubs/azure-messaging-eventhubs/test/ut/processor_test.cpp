@@ -217,8 +217,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     void TestPartitionAcquisition(Models::ProcessorStrategy processorStrategy)
     {
-      Azure::Core::Context context
-        = Azure::Core::Context{} .WithDeadline(Azure::DateTime::clock::now() + std::chrono::minutes(5));
+      Azure::Core::Context context = Azure::Core::Context{}.WithDeadline(
+          Azure::DateTime::clock::now() + std::chrono::minutes(5));
 
       Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
       consumerClientOptions.ApplicationID
