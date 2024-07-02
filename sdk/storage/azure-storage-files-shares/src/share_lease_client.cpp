@@ -47,6 +47,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::ShareClient::AcquireShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseId = GetLeaseId();
       protocolLayerOptions.Duration = static_cast<int32_t>(duration.count());
+      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
 
       auto response = _detail::ShareClient::AcquireLease(
           *(m_shareClient.Value().m_pipeline),
@@ -82,6 +83,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       _detail::ShareClient::RenewShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
+      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
 
       auto response = _detail::ShareClient::RenewLease(
           *(m_shareClient.Value().m_pipeline),
@@ -132,6 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       _detail::ShareClient::ReleaseShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
+      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
 
       auto response = _detail::ShareClient::ReleaseLease(
           *(m_shareClient.Value().m_pipeline),
@@ -190,6 +193,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::ShareClient::ChangeShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
+      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
 
       auto response = _detail::ShareClient::ChangeLease(
           *(m_shareClient.Value().m_pipeline),
@@ -243,6 +247,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     else if (m_shareClient.HasValue())
     {
       _detail::ShareClient::BreakShareLeaseOptions protocolLayerOptions;
+      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
 
       auto response = _detail::ShareClient::BreakLease(
 
