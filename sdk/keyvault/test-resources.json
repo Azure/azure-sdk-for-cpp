@@ -329,7 +329,8 @@
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
-        "enableSoftDelete": "[parameters('enableSoftDelete')]"
+        "enableSoftDelete": "[parameters('enableSoftDelete')]",
+        "networkAcls": "[variables('networkAcls')]"
       }
     },
     {
