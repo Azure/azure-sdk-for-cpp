@@ -32,6 +32,7 @@ extends:
       LiveTestTimeoutInMinutes: 120
       LineCoverageTarget: 27
       BranchCoverageTarget: 13
+      UseFederatedAuth: true
       Artifacts:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs
@@ -51,8 +52,6 @@ extends:
           Value: "33333333-3333-3333-3333-333333333333"
         - Name: AZURE_CLIENT_ID
           Value: "non-real-client"
-        - Name: AZURE_CLIENT_SECRET
-          Value: "non-real-secret"
         - Name: AZURE_SUBSCRIPTION_ID
           Value: "non-real-sub"
         - Name: EVENTHUB_CONSUMER_GROUP
