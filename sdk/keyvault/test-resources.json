@@ -54,50 +54,50 @@
       "type": "string",
       "defaultValue": "brazilsouth",
       "allowedValues": [
-          "australiacentral",
-          "australiacentral2",
-          "australiaeast",
-          "brazilsouth",
-          "brazilsoutheast",
-          "canadacentral",
-          "canadaeast",
-          "centralindia",
-          "centralus",
-          "eastasia",
-          "eastus",
-          "eastus2",
-          "eastus2euap",
-          "francecentral",
-          "germanywestcentral",
-          "israelcentral",
-          "italynorth",
-          "japaneast",
-          "japanwest",
-          "koreacentral",
-          "northcentralus",
-          "northeurope",
-          "norwayeast",
-          "norwaywest",
-          "polandcentral",
-          "qatarcentral",
-          "southafricanorth",
-          "southcentralus",
-          "southindia",
-          "southeastasia",
-          "swedencentral",
-          "switzerlandnorth",
-          "switzerlandwest",
-          "uaenorth",
-          "uksouth",
-          "westcentralus",
-          "westeurope",
-          "westindia",
-          "westus",
-          "westus2",
-          "westus3"
+        "australiacentral",
+        "australiacentral2",
+        "australiaeast",
+        "brazilsouth",
+        "brazilsoutheast",
+        "canadacentral",
+        "canadaeast",
+        "centralindia",
+        "centralus",
+        "eastasia",
+        "eastus",
+        "eastus2",
+        "eastus2euap",
+        "francecentral",
+        "germanywestcentral",
+        "israelcentral",
+        "italynorth",
+        "japaneast",
+        "japanwest",
+        "koreacentral",
+        "northcentralus",
+        "northeurope",
+        "norwayeast",
+        "norwaywest",
+        "polandcentral",
+        "qatarcentral",
+        "southafricanorth",
+        "southcentralus",
+        "southindia",
+        "southeastasia",
+        "swedencentral",
+        "switzerlandnorth",
+        "switzerlandwest",
+        "uaenorth",
+        "uksouth",
+        "westcentralus",
+        "westeurope",
+        "westindia",
+        "westus",
+        "westus2",
+        "westus3"
       ],
       "metadata": {
-          "description": "The location of the Managed HSM. By default, this is 'brazilsouth'."
+        "description": "The location of the Managed HSM. By default, this is 'brazilsouth'."
       }
     },
     "enableSoftDelete": {
@@ -161,6 +161,10 @@
       "metadata": {
         "description": "Whether to enable deployment of Managed HSM. The default is false."
       }
+    },
+    "identityName": {
+      "type": "string",
+      "defaultValue": "identityForKeyVault"
     }
   },
   "variables": {
@@ -172,9 +176,31 @@
       "defaultAction": "Allow",
       "virtualNetworkRules": [],
       "ipRules": []
-    }
+    },
+    "bootstrapRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
+    "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
   },
   "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2018-11-30",
+      "name": "[parameters('identityName')]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2018-09-01-preview",
+      "name": "[variables('bootstrapRoleAssignmentId')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
+        "scope": "[resourceGroup().id]",
+        "principalType": "ServicePrincipal"
+      }
+    },
     {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2021-11-01-preview",
@@ -248,6 +274,61 @@
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
         "enableSoftDelete": "[parameters('enableSoftDelete')]"
+      }
+    },
+    {
+      "tenantId": "[parameters('tenantId')]",
+      "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
+      "permissions": {
+        "keys": [
+          "Get",
+          "List",
+          "Update",
+          "Create",
+          "Import",
+          "Delete",
+          "Recover",
+          "Backup",
+          "Restore",
+          "Decrypt",
+          "Encrypt",
+          "UnwrapKey",
+          "WrapKey",
+          "Sign",
+          "Purge",
+          "Rotate",
+          "Verify",
+          "GetRotationPolicy",
+          "SetRotationPolicy"
+        ],
+        "secrets": [
+          "Get",
+          "List",
+          "Set",
+          "Delete",
+          "Recover",
+          "Backup",
+          "Restore",
+          "Purge"
+        ],
+        "certificates": [
+          "Get",
+          "List",
+          "Update",
+          "Create",
+          "Import",
+          "Delete",
+          "Recover",
+          "Backup",
+          "Restore",
+          "ManageContacts",
+          "ManageIssuers",
+          "GetIssuers",
+          "ListIssuers",
+          "SetIssuers",
+          "DeleteIssuers",
+          "Purge"
+        ]
       }
     },
     {
