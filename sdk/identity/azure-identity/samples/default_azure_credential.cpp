@@ -29,7 +29,7 @@ int main()
   {
     // Step 4: Handle authentication errors, if needed
     // (invalid credential parameters, insufficient permissions).
-    std::cout << "Authentication error: " << exception.what() << std::endl;
+    std::cout << "Authentication error." << std::endl;
   }
 
   return 0;
