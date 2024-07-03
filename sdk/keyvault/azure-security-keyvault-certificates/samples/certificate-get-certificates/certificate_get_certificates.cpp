@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <pipeline_auth_helper.hpp>
 #include <thread>
 
 using namespace Azure::Security::KeyVault::Certificates;
@@ -30,7 +31,7 @@ KeyVaultCertificateWithPolicy CreateCertificate(
 int main()
 {
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  auto credential = PipelineAuthHelper::GetSampleCredentials();
   std::chrono::milliseconds defaultWait(10s);
   // create client
   CertificateClient certificateClient(keyVaultUrl, credential);

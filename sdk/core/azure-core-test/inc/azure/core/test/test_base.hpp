@@ -248,14 +248,23 @@ namespace Azure { namespace Core { namespace Test {
         }
         if (clientSecret.empty())
         {
-          m_testCredential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
-              Azure::Identity::ChainedTokenCredential::Sources{
-                  std::make_shared<Azure::Identity::AzurePipelinesCredential>(
-                      GetEnv("AZURE_TENANT_ID"),
-                      GetEnv("AZURE_CLIENT_ID"),
-                      GetEnv("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
-                      GetEnv("SYSTEM_ACCESSTOKEN")),
-                  std::make_shared<Azure::Identity::DefaultAzureCredential>()});
+          try
+          {
+            // the ENVs are defined only by the pipeline and not by the user thus this will throw
+            // when
+            // trying to get ENVs outside of the pipeline thus will fall back on the default azure
+            // credential
+            m_testCredential = std::make_shared<Azure::Identity::AzurePipelinesCredential>(
+                GetEnv("AZURESUBSCRIPTION_TENANT_ID"),
+                GetEnv("AZURESUBSCRIPTION_CLIENT_ID"),
+                GetEnv("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
+                GetEnv("SYSTEM_ACCESSTOKEN"));
+          }
+          catch (...)
+          {
+            // failed to create the pipeline credentials, fall back to default credentials
+            m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+          };
         }
         else
         {

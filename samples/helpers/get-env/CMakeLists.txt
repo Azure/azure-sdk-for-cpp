@@ -13,6 +13,7 @@ add_library(
     OBJECT
       inc/get_env.hpp
       src/get_env.cpp
+      inc/pipeline_auth_helper.hpp
 )
-
+target_link_libraries(get-env-helper PUBLIC azure-core azure-identity)
 target_include_directories(get-env-helper PUBLIC inc)

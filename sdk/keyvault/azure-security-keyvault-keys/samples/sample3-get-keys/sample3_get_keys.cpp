@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <pipeline_auth_helper.hpp>
 #include <thread>
 
 using namespace Azure::Security::KeyVault::Keys;
@@ -26,7 +27,7 @@ using namespace Azure::Security::KeyVault::Keys;
 int main()
 {
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  auto credential = PipelineAuthHelper::GetSampleCredentials();
 
   KeyClient keyClient(keyVaultUrl, credential);
 
