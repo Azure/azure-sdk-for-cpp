@@ -53,9 +53,14 @@ namespace Azure { namespace Identity { namespace Test {
 using namespace Azure::Identity::Test;
 using namespace Azure::Identity;
 
-TEST_F(TokenCredentialTest, ClientSecret_RECORDEDONLY_)
+TEST_F(TokenCredentialTest, ClientSecret)
 {
-  std::string const testName("ClientSecret");
+  if (GetEnv("AZURE_TEST_MODE") == "LIVE" || GetEnv("AZURE_TEST_MODE") == "live")
+  {
+    SkipTest();
+    return;
+  }
+  std::string const testName(GetTestName());
   auto const clientSecretCredential = GetClientSecretCredential(testName);
 
   Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
@@ -69,9 +74,14 @@ TEST_F(TokenCredentialTest, ClientSecret_RECORDEDONLY_)
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
 }
 
-TEST_F(TokenCredentialTest, EnvironmentCredential_RECORDEDONLY_)
+TEST_F(TokenCredentialTest, EnvironmentCredential)
 {
-  std::string const testName("EnvironmentCredential");
+  if (GetEnv("AZURE_TEST_MODE") == "LIVE" || GetEnv("AZURE_TEST_MODE") == "live")
+  {
+    SkipTest();
+    return;
+  }
+  std::string const testName(GetTestName());
   auto const clientSecretCredential = GetEnvironmentCredential(testName);
 
   Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
