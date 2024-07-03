@@ -255,7 +255,6 @@ jobs:
             export AZURESUBSCRIPTION_TENANT_ID=$(${{parameters.ServiceDirectory}}_CLIENT_ID)
             export AZURESUBSCRIPTION_CLIENT_ID=$(${{parameters.ServiceDirectory}}_TENANT_ID)
             #export AZURESUBSCRIPTION_SERVICE_CONNECTION_ID=$(${{parameters.ServiceDirectory}}_CLIENT_SECRET)
-            export SYSTEM_ACCESSTOKEN = $(System.AccessToken)
             echo "**********Running sample: ${sample}"
             bash -c "$sample"
             status=$?
@@ -271,6 +270,7 @@ jobs:
       displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
       condition: and(succeeded(), eq(variables['RunSamples'], '1'))
       env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ else }}:
