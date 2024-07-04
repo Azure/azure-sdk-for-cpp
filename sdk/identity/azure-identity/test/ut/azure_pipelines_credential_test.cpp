@@ -644,7 +644,7 @@ TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
   }
 }
 
-TEST(AzurePipelinesCredential, InvalidSystemAccessToken_DISABLED_)
+/*TEST(AzurePipelinesCredential, InvalidSystemAccessToken_DISABLED_)
 {
   std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
   std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
@@ -675,4 +675,4 @@ TEST(AzurePipelinesCredential, InvalidSystemAccessToken_DISABLED_)
   {
     EXPECT_TRUE(std::string(ex.what()).find("302 (Found)") != std::string::npos) << ex.what();
   }
-}
+}*/
