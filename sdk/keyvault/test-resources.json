@@ -161,10 +161,6 @@
       "metadata": {
         "description": "Whether to enable deployment of Managed HSM. The default is false."
       }
-    },
-    "identityName": {
-      "type": "string",
-      "defaultValue": "identityForKeyVault"
     }
   },
   "variables": {
@@ -176,31 +172,9 @@
       "defaultAction": "Allow",
       "virtualNetworkRules": [],
       "ipRules": []
-    },
-    "bootstrapRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
-    "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+    }
   },
   "resources": [
-    {
-      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-      "apiVersion": "2018-11-30",
-      "name": "[parameters('identityName')]",
-      "location": "[parameters('location')]"
-    },
-    {
-      "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
-      "name": "[variables('bootstrapRoleAssignmentId')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))]"
-      ],
-      "properties": {
-        "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
-        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
-        "scope": "[resourceGroup().id]",
-        "principalType": "ServicePrincipal"
-      }
-    },
     {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2021-11-01-preview",
@@ -268,69 +242,12 @@
                 "Purge"
               ]
             }
-          },
-          {
-            "tenantId": "[parameters('tenantId')]",
-            "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
-            "permissions": {
-              "keys": [
-                "wrapKey",
-                "decrypt",
-                "list",
-                "purge",
-                "recover",
-                "restore",
-                "getrotationpolicy",
-                "sign",
-                "release",
-                "encrypt",
-                "rotate",
-                "import",
-                "create",
-                "verify",
-                "setrotationpolicy",
-                "backup",
-                "update",
-                "get",
-                "unwrapKey",
-                "delete"
-              ],
-              "secrets": [
-                "Get",
-                "List",
-                "Set",
-                "Delete",
-                "Recover",
-                "Backup",
-                "Restore",
-                "Purge"
-              ],
-              "certificates": [
-                "Get",
-                "List",
-                "Update",
-                "Create",
-                "Import",
-                "Delete",
-                "Recover",
-                "Backup",
-                "Restore",
-                "ManageContacts",
-                "ManageIssuers",
-                "GetIssuers",
-                "ListIssuers",
-                "SetIssuers",
-                "DeleteIssuers",
-                "Purge"
-              ]
-            }
           }
         ],
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
-        "enableSoftDelete": "[parameters('enableSoftDelete')]",
-        "networkAcls": "[variables('networkAcls')]"
+        "enableSoftDelete": "[parameters('enableSoftDelete')]"
       }
     },
     {
