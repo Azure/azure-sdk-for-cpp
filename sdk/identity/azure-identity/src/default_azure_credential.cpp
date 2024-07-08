@@ -4,10 +4,10 @@
 #include "azure/identity/default_azure_credential.hpp"
 
 #include "azure/identity/azure_cli_credential.hpp"
+#include "azure/identity/azure_pipelines_credential.hpp"
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/managed_identity_credential.hpp"
 #include "azure/identity/workload_identity_credential.hpp"
-#include "azure/identity/azure_pipelines_credential.hpp"
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
@@ -49,7 +49,8 @@ DefaultAzureCredential::DefaultAzureCredential(
   // calls.
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
       GetCredentialName(),
-      ChainedTokenCredential::Sources{pipelineCred, envCred, wiCred, azCliCred, managedIdentityCred},
+      ChainedTokenCredential::Sources{
+          pipelineCred, envCred, wiCred, azCliCred, managedIdentityCred},
       true);
 }
 
