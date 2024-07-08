@@ -17,7 +17,6 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
-#include <pipeline_auth_helper.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
@@ -26,7 +25,15 @@ void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& ac
 int main()
 {
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-  auto credential = PipelineAuthHelper::GetSampleCredentials();
+  auto credential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
+      Azure::Identity::ChainedTokenCredential::Sources{
+          std ::make_shared<Azure::Identity::AzurePipelinesCredential>(
+              Azure::Core::_internal::Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID"),
+              Azure::Core::_internal::Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID"),
+              Azure::Core::_internal::Environment::GetVariable(
+                  "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
+              Azure::Core::_internal::Environment::GetVariable("SYSTEM_ACCESSTOKEN")),
+          std::make_shared<Azure::Identity::DefaultAzureCredential>()});
 
   // create client
   SecretClient secretClient(keyVaultUrl, credential);
