@@ -91,7 +91,9 @@ namespace Azure { namespace Identity {
         AzurePipelinesCredentialOptions const& options = {});
 
     /**
-     * @brief Constructs an Azure Pipelines Credential using environment variables.
+     * @brief Constructs an Azure Pipelines Credential using the following environment variables.
+     * AZURESUBSCRIPTION_TENANT_ID, AZURESUBSCRIPTION_CLIENT_ID,
+     * AZURESUBSCRIPTION_SERVICE_CONNECTION_ID, SYSTEM_ACCESSTOKEN
      *
      * @param options Options for token retrieval.
      */
