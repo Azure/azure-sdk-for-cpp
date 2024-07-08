@@ -542,7 +542,7 @@ namespace Azure { namespace Storage { namespace _internal {
     XmlBufferPtr buffer;
     XmlTextWriterPtr writer;
 
-    XmlWriterContext(XmlBufferPtr && buffer_, XmlTextWriterPtr && writer_)
+    explicit XmlWriterContext(XmlBufferPtr && buffer_, XmlTextWriterPtr && writer_)
       : buffer(std::move(buffer_))
       , writer(std::move(writer_))
     {}

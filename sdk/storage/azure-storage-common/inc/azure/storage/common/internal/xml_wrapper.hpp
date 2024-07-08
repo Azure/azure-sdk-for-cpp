@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
 
 namespace Azure { namespace Storage { namespace _internal {
@@ -37,7 +38,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   class XmlReader final {
   public:
-    XmlReader(const char* data, size_t length);
+    explicit XmlReader(const char* data, size_t length);
     XmlReader(const XmlReader& other) = delete;
     XmlReader& operator=(const XmlReader& other) = delete;
     XmlReader(XmlReader&& other) noexcept;
@@ -53,7 +54,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   class XmlWriter final {
   public:
-    XmlWriter();
+    explicit XmlWriter();
     XmlWriter(const XmlWriter& other) = delete;
     XmlWriter& operator=(const XmlWriter& other) = delete;
     XmlWriter(XmlWriter&& other) noexcept;
