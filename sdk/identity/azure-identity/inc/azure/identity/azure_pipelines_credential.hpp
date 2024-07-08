@@ -55,7 +55,7 @@ namespace Azure { namespace Identity {
    */
   class AzurePipelinesCredential final : public Core::Credentials::TokenCredential {
   private:
-    std::string m_serviceConnectionId;
+    std::string m_serviceConnectionId;    
     std::string m_systemAccessToken;
     _detail::ClientCredentialCore m_clientCredentialCore;
     Azure::Core::Http::_internal::HttpPipeline m_httpPipeline;
@@ -90,6 +90,13 @@ namespace Azure { namespace Identity {
         std::string systemAccessToken,
         AzurePipelinesCredentialOptions const& options = {});
 
+    explicit AzurePipelinesCredential(AzurePipelinesCredentialOptions const& options = {})
+        : AzurePipelinesCredential(
+            _detail::DefaultOptionValues::GetSubscriptionTenantId(),
+            _detail::DefaultOptionValues::GetSubscriptionClientId(),
+            _detail::DefaultOptionValues::GetSubscriptionServiceConnectionId(),
+            _detail::DefaultOptionValues::GetSystemAccessToken(),
+            options){};
     /**
      * @brief Destructs `%AzurePipelinesCredential`.
      *

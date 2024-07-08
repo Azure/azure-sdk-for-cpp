@@ -287,23 +287,7 @@ namespace Azure { namespace Perf {
       }
       if (clientSecret.empty())
       {
-        try
-        {
-          // the ENVs are defined only by the pipeline and not by the user thus this will throw
-          // when
-          // trying to get ENVs outside of the pipeline thus will fall back on the default azure
-          // credential
-          m_testCredential = std::make_shared<Azure::Identity::AzurePipelinesCredential>(
-              GetEnv("AZURESUBSCRIPTION_TENANT_ID"),
-              GetEnv("AZURESUBSCRIPTION_CLIENT_ID"),
-              GetEnv("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
-              GetEnv("SYSTEM_ACCESSTOKEN"));
-        }
-        catch (...)
-        {
-          // failed to create the pipeline credentials, fall back to default credentials
-          m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
-        };
+        m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
       }
       else
       {

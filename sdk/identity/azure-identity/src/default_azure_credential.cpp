@@ -7,6 +7,7 @@
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/managed_identity_credential.hpp"
 #include "azure/identity/workload_identity_credential.hpp"
+#include "azure/identity/azure_pipelines_credential.hpp"
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
@@ -42,12 +43,13 @@ DefaultAzureCredential::DefaultAzureCredential(
   auto const wiCred = std::make_shared<WorkloadIdentityCredential>(options);
   auto const azCliCred = std::make_shared<AzureCliCredential>(options);
   auto const managedIdentityCred = std::make_shared<ManagedIdentityCredential>(options);
+  auto const pipelineCred = std::make_shared<AzurePipelinesCredential>();
 
   // DefaultAzureCredential caches the selected credential, so that it can be reused on subsequent
   // calls.
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
       GetCredentialName(),
-      ChainedTokenCredential::Sources{envCred, wiCred, azCliCred, managedIdentityCred},
+      ChainedTokenCredential::Sources{pipelineCred, envCred, wiCred, azCliCred, managedIdentityCred},
       true);
 }
 
