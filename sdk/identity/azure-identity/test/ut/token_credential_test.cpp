@@ -55,7 +55,7 @@ using namespace Azure::Identity;
 
 TEST_F(TokenCredentialTest, ClientSecret)
 {
-  if (GetEnv("AZURE_TEST_MODE") == "LIVE" || GetEnv("AZURE_TEST_MODE") == "live")
+  if (m_testContext.IsLiveMode())
   {
     SkipTest();
     return;
@@ -76,7 +76,7 @@ TEST_F(TokenCredentialTest, ClientSecret)
 
 TEST_F(TokenCredentialTest, EnvironmentCredential)
 {
-  if (GetEnv("AZURE_TEST_MODE") == "LIVE" || GetEnv("AZURE_TEST_MODE") == "live")
+  if (m_testContext.IsLiveMode())
   {
     SkipTest();
     return;

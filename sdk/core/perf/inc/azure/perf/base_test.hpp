@@ -100,7 +100,7 @@ namespace Azure { namespace Perf {
      *
      * @return The value of the environment variable retrieved.
      *
-     * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID are not available in the
+     * @note If AZURE_TENANT_ID or AZURE_CLIENT_ID are not available in the
      * environment, the AZURE_SERVICE_DIRECTORY environment variable is used to set those values
      * with the values emitted by the New-TestResources.ps1 script.
      *
