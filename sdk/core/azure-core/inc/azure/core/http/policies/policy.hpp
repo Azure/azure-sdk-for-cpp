@@ -30,6 +30,14 @@
 #include <utility>
 #include <vector>
 
+#if defined(_azure_TESTING_BUILD)
+// Define the classes used from tests
+namespace Azure { namespace Core { namespace Test {
+  class RetryPolicyTest;
+  class RetryLogic;
+}}} // namespace Azure::Core::Test
+#endif
+
 /**
  * A function that should be implemented and linked to the end-user application in order to override
  * an HTTP transport implementation provided by Azure SDK with custom implementation.
@@ -368,6 +376,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
         final
 #endif
         : public HttpPolicy {
+#if defined(_azure_TESTING_BUILD)
+      // make tests classes friends
+      friend class Azure::Core::Test::RetryPolicyTest;
+      friend class Azure::Core::Test::RetryLogic;
+#endif
     private:
       RetryOptions m_retryOptions;
 
@@ -402,7 +415,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        */
       static int32_t GetRetryCount(Context const& context);
 
-    protected:
+    private:
       virtual bool ShouldRetryOnTransportFailure(
           RetryOptions const& retryOptions,
           int32_t attempt,
@@ -416,7 +429,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
 
-    private:
       /**
        * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
        * a request, based on the returned HTTP response.
