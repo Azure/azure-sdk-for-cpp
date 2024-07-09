@@ -169,7 +169,7 @@ TEST(DefaultAzureCredential, LogMessages)
 
         auto credential = std::make_unique<DefaultAzureCredential>(options);
 
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(16));
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(11));
 
         EXPECT_EQ(log[0].first, Logger::Level::Verbose);
         EXPECT_EQ(
@@ -256,6 +256,13 @@ TEST(DefaultAzureCredential, LogMessages)
   EXPECT_EQ(
       log[4].second,
       "Identity: DefaultAzureCredential: Saved this credential at index 0 for subsequent calls.");
+
+  EXPECT_EQ(log[10].first, Logger::Level::Informational);
+  EXPECT_EQ(
+      log[10].second,
+      "Identity: DefaultAzureCredential: Created with the following credentials: "
+      "EnvironmentCredential, WorkloadIdentityCredential, AzureCliCredential, "
+      "ManagedIdentityCredential.");
 
   Logger::SetListener(nullptr);
 }

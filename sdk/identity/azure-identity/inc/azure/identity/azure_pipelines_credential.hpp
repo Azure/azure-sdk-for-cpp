@@ -91,20 +91,6 @@ namespace Azure { namespace Identity {
         AzurePipelinesCredentialOptions const& options = {});
 
     /**
-     * @brief Constructs an Azure Pipelines Credential using the following environment variables.
-     * AZURESUBSCRIPTION_TENANT_ID, AZURESUBSCRIPTION_CLIENT_ID,
-     * AZURESUBSCRIPTION_SERVICE_CONNECTION_ID, SYSTEM_ACCESSTOKEN
-     *
-     * @param options Options for token retrieval.
-     */
-    explicit AzurePipelinesCredential(AzurePipelinesCredentialOptions const& options = {})
-        : AzurePipelinesCredential(
-            _detail::DefaultOptionValues::GetSubscriptionTenantId(),
-            _detail::DefaultOptionValues::GetSubscriptionClientId(),
-            _detail::DefaultOptionValues::GetSubscriptionServiceConnectionId(),
-            _detail::DefaultOptionValues::GetSystemAccessToken(),
-            options){};
-    /**
      * @brief Destructs `%AzurePipelinesCredential`.
      *
      */

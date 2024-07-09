@@ -248,7 +248,17 @@ namespace Azure { namespace Core { namespace Test {
         }
         if (clientSecret.empty())
         {
-          m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+          m_testCredential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
+              Azure::Identity::ChainedTokenCredential::Sources{
+                  std ::make_shared<Azure::Identity::AzurePipelinesCredential>(
+                      Azure::Core::_internal::Environment::GetVariable(
+                          "AZURESUBSCRIPTION_TENANT_ID"),
+                      Azure::Core::_internal::Environment::GetVariable(
+                          "AZURESUBSCRIPTION_CLIENT_ID"),
+                      Azure::Core::_internal::Environment::GetVariable(
+                          "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
+                      Azure::Core::_internal::Environment::GetVariable("SYSTEM_ACCESSTOKEN")),
+                  std::make_shared<Azure::Identity::DefaultAzureCredential>()});
         }
         else
         {

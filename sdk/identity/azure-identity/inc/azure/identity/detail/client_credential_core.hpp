@@ -19,10 +19,6 @@ namespace Azure { namespace Identity { namespace _detail {
   constexpr auto AzureFederatedTokenFileEnvVarName = "AZURE_FEDERATED_TOKEN_FILE";
   const std::string OidcRequestUrlEnvVarName = "SYSTEM_OIDCREQUESTURI";
   const std::string AadGlobalAuthority = "https://login.microsoftonline.com/";
-  constexpr auto AzureSubscriptionTenantId = "AZURESUBSCRIPTION_TENANT_ID";
-  constexpr auto AzureSubscriptionClientId = "AZURESUBSCRIPTION_CLIENT_ID";
-  constexpr auto AzureSubscriptionServiceConnectionId = "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID";
-  constexpr auto SystemAccessToken = "SYSTEM_ACCESSTOKEN";
 
   class DefaultOptionValues final {
     DefaultOptionValues() = delete;
@@ -55,26 +51,6 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::string GetOidcRequestUrl()
     {
       return Core::_internal::Environment::GetVariable(OidcRequestUrlEnvVarName.c_str());
-    }
-
-    static std::string GetSubscriptionTenantId()
-    {
-      return Core::_internal::Environment::GetVariable(AzureSubscriptionTenantId);
-    }
-
-    static std::string GetSubscriptionClientId()
-    {
-      return Core::_internal::Environment::GetVariable(AzureSubscriptionClientId);
-    }
-
-    static std::string GetSubscriptionServiceConnectionId()
-    {
-      return Core::_internal::Environment::GetVariable(AzureSubscriptionServiceConnectionId);
-    }
-
-    static std::string GetSystemAccessToken()
-    {
-      return Core::_internal::Environment::GetVariable(SystemAccessToken);
     }
   };
 
