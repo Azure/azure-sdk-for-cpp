@@ -169,7 +169,7 @@ TEST(DefaultAzureCredential, LogMessages)
 
         auto credential = std::make_unique<DefaultAzureCredential>(options);
 
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(17));
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(16));
 
         EXPECT_EQ(log[0].first, Logger::Level::Verbose);
         EXPECT_EQ(
@@ -234,13 +234,6 @@ TEST(DefaultAzureCredential, LogMessages)
             log[4].second,
             "Identity: AzureCliCredential created."
             "\nSuccessful creation does not guarantee further successful token retrieval.");
-
-        EXPECT_EQ(log[16].first, Logger::Level::Informational);
-        EXPECT_EQ(
-            log[16].second,
-            "Identity: DefaultAzureCredential: Created with the following credentials: "
-            "EnvironmentCredential, WorkloadIdentityCredential, AzureCliCredential, "
-            "ManagedIdentityCredential, AzurePipelinesCredential.");
 
         log.clear();
 
