@@ -11,7 +11,7 @@
 ### Other Changes
 
 - Updated JSON library to 3.11.3.
-- Hide methods on the RetryPolicy that are not intended for public use.
+- Hide methods on the `RetryPolicy` that are not intended for public use.
 
 ## 1.13.0-beta.1 (2024-06-06)
 
