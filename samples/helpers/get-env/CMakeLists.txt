@@ -14,5 +14,4 @@ add_library(
       inc/get_env.hpp
       src/get_env.cpp
 )
-target_link_libraries(get-env-helper PUBLIC azure-core azure-identity)
 target_include_directories(get-env-helper PUBLIC inc)

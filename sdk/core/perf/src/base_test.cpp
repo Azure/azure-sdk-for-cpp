@@ -11,8 +11,6 @@
 #endif
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/identity/azure_pipelines_credential.hpp>
-#include <azure/identity/chained_token_credential.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/identity/default_azure_credential.hpp>
 

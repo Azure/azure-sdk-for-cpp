@@ -15,7 +15,6 @@
 
 #include <chrono>
 #include <iostream>
-#include <memory>
 #include <thread>
 
 using namespace Azure::Security::KeyVault::Certificates;
