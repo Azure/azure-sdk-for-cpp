@@ -8,7 +8,7 @@
 
 - Deprecated the `Azure::Core::Context::ApplicationContext` object. 
   - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
-  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`.
+  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context{}.WithDeadline()` instead of `Azure::Core::Context::ApplicationContext.WithDeadline()`.
 
 ### Bugs Fixed
 
