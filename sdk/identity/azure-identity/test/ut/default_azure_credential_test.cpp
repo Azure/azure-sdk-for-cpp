@@ -235,6 +235,13 @@ TEST(DefaultAzureCredential, LogMessages)
             "Identity: AzureCliCredential created."
             "\nSuccessful creation does not guarantee further successful token retrieval.");
 
+        EXPECT_EQ(log[10].first, Logger::Level::Informational);
+        EXPECT_EQ(
+            log[10].second,
+            "Identity: DefaultAzureCredential: Created with the following credentials: "
+            "EnvironmentCredential, WorkloadIdentityCredential, AzureCliCredential, "
+            "ManagedIdentityCredential.");
+
         log.clear();
 
         return credential;
@@ -256,13 +263,6 @@ TEST(DefaultAzureCredential, LogMessages)
   EXPECT_EQ(
       log[4].second,
       "Identity: DefaultAzureCredential: Saved this credential at index 0 for subsequent calls.");
-
-  EXPECT_EQ(log[10].first, Logger::Level::Informational);
-  EXPECT_EQ(
-      log[10].second,
-      "Identity: DefaultAzureCredential: Created with the following credentials: "
-      "EnvironmentCredential, WorkloadIdentityCredential, AzureCliCredential, "
-      "ManagedIdentityCredential.");
 
   Logger::SetListener(nullptr);
 }
